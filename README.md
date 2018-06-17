@@ -9,14 +9,14 @@ https://github.com/Ginger-Automation/Ginger/releases/download/v2.7-beta/Ginger.2
 # Highlights
 - Record & Playback
 - Window Explorer
-- BDD Behaviour Driven Development – Integrated Gherkin editor powered by intelli-sense text prediction, automatic generation of business flow from feature files
+- BDD (Behavior Driven Development) – Integrated Gherkin editor powered by intelli-sense text prediction, automatic generation of scenarios from feature files
 - Ginger on Web – Scheduling and execution of Ginger automation flows via Web site with no technical knowledge needed
-- Advanced capabilities and rich user experience
+- Advanced capabilities and rich user experience 
 - Parallel Execution - Execute different scripts at the same time on the same machine or distributed machines, keep working while scripts executed in the background
 - Reusability - Create building blocks and reuse with different parameters
-- End to end scenarios - Execute flows which start from the front end, goes to backend and back, verify each step in the way for better coverage and all from the same Ginger UI without writing any code
+- End to end scenarios - Execute flows which starts from front end, goes to backend and back, verify each step in the way for better coverage and all from the same Ginger UI without writing any code
 - Support Micro Services, Service Virtualization, Contract validation via PACT
-- API Models - Machine learning of WSDL, define API calls with parameters make it very easy to call APIs
+- API Models - Machine learning of WSDL, define API calls with parameters make it very easy to call APIs without having to manipulate XMLs manually
 
 # Supported Platforms
 Web, Mobile, Web Services, Java application, Windows, Power Builder, Linux/Unix and more...
@@ -27,22 +27,22 @@ Web, Mobile, Web Services, Java application, Windows, Power Builder, Linux/Unix 
 - Web Service APIs: SOAP, REST
 - Java: Swing application and Widgets
 - Windows Application written in .NET, Windows forms...
-- Powerbuilder
+- Power Builder
 - Linux/Unix
 - DOS Console
-- Mainfame 3270
+- Mainframe 3270
 
 # Why we created Ginger? Is it just another Automation tool/framework? Why is it different?
-Same like many other testers we used a commercial tool for our testing, and top of it we create a framework same like many others did, it was great for many years until the evolution of digital and free open source automation libraries, then we wanted something smarter, easier to use and maintain, and yes we wanted it to be free too, in 2014 we looked at several open source libraries like Selenium, Appium and since we also needed to automate Windows Apps, PowerBuilder, MF and Linux we decided to create a wrapper with nice UI on top of all these free libraries, and that's where it started.
+Same like many testing organizations we used a commercial tool for our testing, and added on top of it a framework to with our libraries and needs, it worked great for many years but had several limitations: like machine is locked for testing, one test at a time, slow execution, required VBScript knowledge.    During the evolution of digital and more free open source automation libraries, we wanted something smarter, easier to use and maintain, and yes we wanted it to be free too, in 2014 we looked at several open source libraries like Selenium, Appium and since we also needed to automate Windows Apps, PowerBuilder, MF and Linux we decided to create a wrapper with nice UI on top of all these free libraries, and that's where it all started.
 We wanted one IDE for all platforms. Making it easy for a tester to create scripts while focusing on WHAT to test and not HOW to test.
 we have created a unified framework, with amazing UI to make it cool and fun to work with. Of course, developers can utilize it as well to quickly test their application.
-Ginger is a full Automation IDE, not an automation library for specific platform, we have a lot of items in our roadmap which is going to make it even greater, we have more than 1,000 Unique users per month running Ginger, and millions of executions, with all the great feedback we got so far and many requests to make it open source we have decided to contribute it to the community for everyone to enjoy.
+Ginger is a full Automation IDE, not an automation library for specific platform, we have a lot of great ideas for our roadmap which is going to make Ginger even greater, we have more than 1,000 Unique users per month running Ginger, and millions of executions, with all the great feedback we got so far and many requests to make it open source we have decided to contribute it to the community for everyone to enjoy.
 
 # DevOps CI/CD integration
-Jenkins - Ginger scripts can be executed from Jenkins build, we have created a Ginger Jenkins plugin for easy integration
+Jenkins - Ginger scripts can be executed from Jenkins build, we have created a Ginger Jenkins plugin which make it very easy to trigger a Ginger execution step.
 
 # Source Control Integration
-## You can save Ginger Scripts(XMLs) to source control, with easy Check-in, Get latest when working in a team
+## You can save Ginger Scripts(XMLs) to source control, with easy Check-in, Get latest making team collaboration and updates very easy.
 - SVN 
 - Git
 
@@ -74,7 +74,7 @@ You can add plugins or create your own.
 - Variables 
 
 # Automation libraries
-Ginger is leveraging on a variaty of great open source libraries, like: Selenenium for Web, Appium for Mobile and more
+Ginger is leveraging on a variety of great open source libraries, like: Selenium for Web, Appium for Mobile and more
 
 # Scripts
 ### You can also run you own scripts and integrate the input/output easily
