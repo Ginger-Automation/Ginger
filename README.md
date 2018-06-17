@@ -1,6 +1,8 @@
 # Ginger
 Ginger is an Automation IDE, Drag & Drop automation, no coding skills needed, open platform with plugin capabilities.
 
+![Ginger Logo](https://github.com/Ginger-Automation/Ginger/blob/master/Images/Ginger.png)
+
 # Setup
 Ginger v2.7-beta
 https://github.com/Ginger-Automation/Ginger/releases/download/v2.7-beta/Ginger.2.7.0.0.exe
