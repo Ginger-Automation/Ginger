@@ -5,8 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ginger"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="1000" WindowStartupLocation="CenterOwner">
     <Grid>
-        
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label  FontSize="30">The full Ginger source code will move to Git before the end of 2018</Label>
+            <Label FontSize="20">We are working on moving it from TFS to Git</Label>
+            <Label  FontSize="20">We will upload the full source code for everyone to enjoy</Label>
+        </StackPanel>
     </Grid>
 </Window>
