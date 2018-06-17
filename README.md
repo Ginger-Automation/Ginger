@@ -6,64 +6,93 @@ Ginger is an Automation IDE, Drag & Drop automation, no coding skills needed, op
 Ginger v2.7-beta
 https://github.com/Ginger-Automation/Ginger/releases/download/v2.7-beta/Ginger.2.7.0.0.exe
 
+# Highlights
+- Record & Playback
+- Window Explorer
+- BDD Behaviour Driven Development – Integrated Gherkin editor powered by intelli-sense text prediction, automatic generation of business flow from feature files
+- Ginger on Web – Scheduling and execution of Ginger automation flows via Web site with no technical knowledge needed
+- Advanced capabilities and rich user experience
+- Parallel Execution - Execute different scripts at the same time on the same machine or distributed machines, keep working while scripts executed in the background
+- Reusability - Create building blocks and reuse with different parameters
+- End to end scenarios - Execute flows which start from the front end, goes to backend and back, verify each step in the way for better coverage and all from the same Ginger UI without writing any code
+- Support Micro Services, Service Virtualization, Contract validation via PACT
+- API Models - Machine learning of WSDL, define API calls with parameters make it very easy to call APIs
+
 # Supported Platforms
 Web, Mobile, Web Services, Java application, Windows, Power Builder, Linux/Unix and more...
 
 # What Ginger can automate
-Browsers: Chrome, Firefox, Safari, Edge, Internet Explorer
-Mobile Devices: IOS, Android
-Web Service APIs: SOAP, REST
-Java: Swing application and Widgets
-Windows Application written in .NET, Windows forms...
-Powerbuilder
-Linux/Unix
-DOS Console
-Mainfame 3270
+- Browsers: Chrome, Firefox, Safari, Edge, Internet Explorer
+- Mobile Devices: IOS, Android
+- Web Service APIs: SOAP, REST
+- Java: Swing application and Widgets
+- Windows Application written in .NET, Windows forms...
+- Powerbuilder
+- Linux/Unix
+- DOS Console
+- Mainfame 3270
+
+# Why we created Ginger? Is it just another Automation tool/framework? Why is it different?
+Same like many other testers we used a commercial tool for our testing, and top of it we create a framework same like many others did, it was great for many years until the evolution of digital and free open source automation libraries, then we wanted something smarter, easier to use and maintain, and yes we wanted it to be free too, in 2014 we looked at several open source libraries like Selenium, Appium and since we also needed to automate Windows Apps, PowerBuilder, MF and Linux we decided to create a wrapper with nice UI on top of all these free libraries, and that's where it started.
+We wanted one IDE for all platforms. Making it easy for a tester to create scripts while focusing on WHAT to test and not HOW to test.
+we have created a unified framework, with amazing UI to make it cool and fun to work with. Of course, developers can utilize it as well to quickly test their application.
+Ginger is a full Automation IDE, not an automation library for specific platform, we have a lot of items in our roadmap which is going to make it even greater, we have more than 1,000 Unique users per month running Ginger, and millions of executions, with all the great feedback we got so far and many requests to make it open source we have decided to contribute it to the community for everyone to enjoy.
 
 # DevOps CI/CD integration
-Jenkins
+Jenkins - Ginger scripts can be executed from Jenkins build, we have created a Ginger Jenkins plugin for easy integration
 
-# Soure Control
-SVN and Git
+# Source Control Integration
+## You can save Ginger Scripts(XMLs) to source control, with easy Check-in, Get latest when working in a team
+- SVN 
+- Git
+
+# Reporting
+### Amazing HTML Execution Report – With drill down from Runners to business flows, activities, and actions, including screenshots
+### Report can be customized and include your own logo
+
+# Database
+### Ginger can retrieve and store data from different types of databases
+- Oracle
+- SQL server
+- MS Access
+- DB2
+- Cassandra
+- and more
+
+# Common functions library
+### Ginger have built in actions for common tasks
+- Read/Write from Excel...
 
 # Ginger open platform
 You can add plugins or create your own.
 
-# Reporting
-HTML Execution Report – With drill down from Runners to business flows, activities, and actions, including screenshots
-
-# Database
-Oracle, SQL server, MS Access, DP2, Cassandra
-
-# Common function library
-Read/Write from Excel...
-
 # Shared repository
-
-# Why we created Ginger? Is it just another Automation tool/framework?
-We wanted one IDE for all platforms. Making it easy for a tester to create scripts while focusing on WHAT to test and not HOW to test.
-we have created a unified framework, with amazing UI to make it cool and fun to work with. Of course, developers can utilize it as well to quickly test their application.
+### Ginger components can be saved to shared repository for easy drag and drop automation
+- Activities
+- Activities group
+- Actions
+- Variables 
 
 # Automation libraries
 Ginger is leveraging on a variaty of great open source libraries, like: Selenenium for Web, Appium for Mobile and more
 
 # Scripts
-VB Script, Javascript, batch files
+### You can also run you own scripts and integrate the input/output easily
+- VB Script
+- Javascript
+- Python
+- batch files
+- More...
 
-# Automation Framework
-Ginger is integrated and can execute: SoapUI test cases, call RobotFramework scripts and more.
+# Integration with other Automation Frameworks
+### Ginger is execute script of other automation framework so you can reuse existing scripts 
+- SoapUI
+- RobotFramework
 
 # ALM - Application life cycle management
-ALM Integration – HP ALM/QC, IBM Rational
-
-# Highlights
-Record & Playback – rec/play of automation flows
-Micro Services PACT Support – PACT Virtualization testing
-BDD Support – Integrated Gherkin editor powered by intelli-sense text prediction
-Ginger on Web – Scheduling and execution of Ginger automation flows via Web site with no technical knowledge needed
-Advanced capabilities and rich user experience
-Scheduling, Parallel Execution, Reusability, and End to end scenarios
-pic of Ginger
+### Ginger Can import test cases, upload test results, create defects and more
+- HP ALM/QC
+- IBM Rational
 
 # Coming soon
 Ginger is free to use and the open source code is in process of moving to Git from our TFS server it will be completed before the end of 2018
