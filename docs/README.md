@@ -1,0 +1,1 @@
+for Ginger pages
