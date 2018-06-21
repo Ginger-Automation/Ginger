@@ -14,7 +14,7 @@ All Field and Properties which are marked with [IsSerialziedForLocalRepository] 
 Yes, When RepositoryItem.StartTracking() is called it will drill down to Observable list
 
 # When is the modified icon appear? turned off?
-any change which trigger PropertyChanged event is checked against DirtyFieldsTracking if the properrty/field in the list it will be marked modified, when item is saved or undo it will be switched to 'NoChange'
+any change which trigger PropertyChanged event is checked against DirtyFieldsTracking if the properrty/field in the list it will be marked modified, when item is saved or undo it will be switched to 'NoChange', also if the item XML file is change in the file system, FileWatcher will detect the change and reload it, the item will be marked as 'Nochange'
 
 # Where is the code
 In RepositoryItemBase - DirtyStatus region
