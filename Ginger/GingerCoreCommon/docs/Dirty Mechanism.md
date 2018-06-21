@@ -20,3 +20,6 @@ any change which trigger PropertyChanged event is checked against DirtyFieldsTra
 In RepositoryItemBase - DirtyStatus region
 for tree view item - in TreeViewItemBase
 
+# Be careful
+If the repository item is having ObservableList<*> items and you do new ObservableList<*>(), the tracking will not be active on the list and changes in sub items will not trigger the is dirty of the parent, use clear, or trigger StartDirty manually
+
