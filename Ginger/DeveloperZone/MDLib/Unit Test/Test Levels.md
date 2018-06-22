@@ -2,7 +2,7 @@
 
 for example
 
-''''
+'''C#
   [TestMethod]
         public void VariableRandomNumber_Min5_Max10_Interval_1()
         {
@@ -19,7 +19,7 @@ for example
             Assert.IsTrue(decimal.Parse(VRN.Value) >= 5, "vn.Value>=5");
             Assert.IsTrue(decimal.Parse(VRN.Value) <= 10, "vn.Value<=10");
         }
-''''
+'''
 
 - Level 1: For core test of items which are stand alone classes and requires very minimal setup to test the method
 - Level 2: 
