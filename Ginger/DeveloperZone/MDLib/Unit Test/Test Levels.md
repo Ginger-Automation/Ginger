@@ -2,7 +2,7 @@
 
 for example
 
-'''csharp
+'''cs
   [TestMethod]
         public void VariableRandomNumber_Min5_Max10_Interval_1()
         {
