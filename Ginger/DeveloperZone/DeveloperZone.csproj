@@ -86,7 +86,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="MDLib\General\Ginger Projects.md" />
-    <None Include="MDLib\Git.md" />
+    <None Include="MDLib\Git\Git.md" />
     <None Include="MDLib\Unit Test\Test Levels.md" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
