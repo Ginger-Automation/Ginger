@@ -25,7 +25,7 @@ These tests execution takes 36 hours and they are executed once a week on the de
 ## Level 1-10 are executed as part of every build, after every push.
 ## Level 20+ are executed only on env were the required componenets exist and setup
 
-
+## Test class name should end with *Test*
 ## Mark the test class with the test level, do not mark specific methods
 ## Name the test method describing what the test does, do not use underscore '_' in test method
 ## Keep the test method code minimal 
@@ -41,30 +41,30 @@ For example
 ```cs
 
 public class StandAlonePluginTest
+{
+    [ClassInitialize]
+    public static void ClassInit(TestContext TC)
     {
-        [ClassInitialize]
-        public static void ClassInit(TestContext TC)
-        {
-            // put class initialization code here, will be exeucted once 
-        }
+        // put class initialization code here, will be exeucted once 
+    }
 
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-			// put class cleanup code here if needed 
-        }
+    [ClassCleanup]
+    public static void ClassCleanup()
+    {
+		// put class cleanup code here if needed 
+    }
 
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            // Code that will be executed before each test method start
-        }
+    [TestInitialize]
+    public void TestInitialize()
+    {
+        // Code that will be executed before each test method start
+    }
 
-        [TestCleanup]
-        public void TestCleanUp()
-        {
-            // Code which will be executed after the test method
-        }
+    [TestCleanup]
+    public void TestCleanUp()
+    {
+        // Code which will be executed after the test method
+    }
 
 [Level1]
 [TestMethod]
