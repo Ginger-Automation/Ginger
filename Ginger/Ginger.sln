@@ -5,9 +5,15 @@ VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ginger", "Ginger\Ginger.csproj", "{455C2995-1BB8-4358-93EB-ECB8AC72DB56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerCoreCommon", "GingerCoreCommon\GingerCoreCommon.csproj", "{9D569B65-EC6C-4677-A59B-CF12C24B5EB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerCoreCommon", "GingerCoreCommon\GingerCoreCommon.csproj", "{9D569B65-EC6C-4677-A59B-CF12C24B5EB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerUtils", "GingerUtils\GingerUtils.csproj", "{80A06C2B-7DA2-4F78-BF2A-5C0234F2349E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerUtils", "GingerUtils\GingerUtils.csproj", "{80A06C2B-7DA2-4F78-BF2A-5C0234F2349E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Developer Zone", "Developer Zone", "{6415BB54-0B7A-4E5D-B1A0-FE4A2B1D067B}"
+	ProjectSection(SolutionItems) = preProject
+		Ginger Namespace.txt = Ginger Namespace.txt
+		Ginger Projects.md = Ginger Projects.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
