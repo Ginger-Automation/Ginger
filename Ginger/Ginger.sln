@@ -9,11 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerCoreCommon", "GingerC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerUtils", "GingerUtils\GingerUtils.csproj", "{80A06C2B-7DA2-4F78-BF2A-5C0234F2349E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Developer Zone", "Developer Zone", "{6415BB54-0B7A-4E5D-B1A0-FE4A2B1D067B}"
-	ProjectSection(SolutionItems) = preProject
-		Ginger Namespace.txt = Ginger Namespace.txt
-		Ginger Projects.md = Ginger Projects.md
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeveloperZone", "DeveloperZone\DeveloperZone.csproj", "{190E6C52-A12A-4023-AD7A-AAA81D15A1D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +29,10 @@ Global
 		{80A06C2B-7DA2-4F78-BF2A-5C0234F2349E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80A06C2B-7DA2-4F78-BF2A-5C0234F2349E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80A06C2B-7DA2-4F78-BF2A-5C0234F2349E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{190E6C52-A12A-4023-AD7A-AAA81D15A1D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{190E6C52-A12A-4023-AD7A-AAA81D15A1D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{190E6C52-A12A-4023-AD7A-AAA81D15A1D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{190E6C52-A12A-4023-AD7A-AAA81D15A1D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
