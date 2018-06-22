@@ -1,31 +1,11 @@
 ﻿# Ginger unit test are marked with Levels and marked with AAA - Arrange, Act Assert
 
-for example
-
-```cs
-  [TestMethod]
-        public void VariableRandomNumber_Min5_Max10_Interval_1()
-        {
-            //Arrange
-            VariableRandomNumber VRN = new VariableRandomNumber();
-            VRN.Min = 5;
-            VRN.Max = 10;
-            VRN.Interval = 1;
-
-            //Act
-            VRN.GenerateAutoValue();
-
-            //Assert
-            Assert.IsTrue(decimal.Parse(VRN.Value) >= 5, "vn.Value>=5");
-            Assert.IsTrue(decimal.Parse(VRN.Value) <= 10, "vn.Value<=10");
-        }
-'''
-
 - Level 1: For core test of items which are stand alone classes and requires very minimal setup to test the method
-- Level 2: 
-- Level 3:
-- Level 4:
-- Level 5:
+	- tests only basic core test runs in less than 500 ms, can run in parallel – no dependency – no Mutex
+- Level 2: Plugins, Driver, Standalone actions, GingerConsole
+- Level 3: GingerWPF, include UI testing launch browser, test app etc, can have Mutex – sequential
+- Level 4: Slower Longer tests – test durability, parallelism
+- Level 5: Check Performance only, speed of execution, can be long test running the same action many times
 - Level 6: Requires internet connection - going to public web sites, for example to test Github check-in
 - Level 7: 
 - Level 8:
@@ -44,4 +24,65 @@ These tests execution takes 36 hours and they are executed once a week on the de
 
 ## Level 1-10 are executed as part of every build, after every push.
 ## Level 20+ are executed only on env were the required componenets exist and setup
+
+
+## Mark the test class with the test level, do not mark specific methods
+## Name the test method describing what the test does, do not use underscore '_' in test method
+## Keep the test method code minimal 
+## More asserts per test method is better no limit
+## Assert should have comments 
+## Use Test resources methods to get test data
+## Output data
+## Data Driver TestMethod input from CSV, or DataRow
+## Run seqencial test using Mutex
+
+For example
+
+```cs
+
+public class StandAlonePluginTest
+    {
+        [ClassInitialize]
+        public static void ClassInit(TestContext TC)
+        {
+            // put class initialization code here, will be exeucted once 
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+			// put class cleanup code here if needed 
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            // Code that will be executed before each test method start
+        }
+
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+            // Code which will be executed after the test method
+        }
+
+[Level1]
+[TestMethod]
+public void VariableRandomNumberMin5Max10Interval1()
+{
+    //Arrange
+    VariableRandomNumber VRN = new VariableRandomNumber();
+    VRN.Min = 5;
+    VRN.Max = 10;
+    VRN.Interval = 1;
+
+    //Act
+    VRN.GenerateAutoValue();
+
+    //Assert
+    Assert.IsTrue(decimal.Parse(VRN.Value) >= 5, "vn.Value>=5");
+    Assert.IsTrue(decimal.Parse(VRN.Value) <= 10, "vn.Value<=10");
+}
+```
+
 
