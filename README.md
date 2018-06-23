@@ -1,5 +1,5 @@
 
-# | <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Images/Ginger.png" width="64"> Ginger Automation
+# | <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/images/Ginger.png" width="64"> Ginger Automation
 Ginger is an Automation IDE, Drag & Drop automation, no coding skills needed, open platform with plugin capabilities.
 
 # Setup
