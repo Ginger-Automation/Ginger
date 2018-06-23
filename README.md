@@ -1,5 +1,5 @@
 
-# | <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Images/Ginger.png" width="64"> Ginger Automation
+# | <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/images/Ginger.png" width="64"> Ginger Automation
 Ginger is an Automation IDE, Drag & Drop automation, no coding skills needed, open platform with plugin capabilities.
 
 # Setup
@@ -7,7 +7,7 @@ Ginger v2.7-beta
 https://github.com/Ginger-Automation/Ginger/releases/download/v2.7-beta/Ginger.2.7.0.0.exe
 
 # Highlights
-- Record & Playback
+- **Record & Playback** - Record user operation on target application and playback 
 - Window Explorer
 - BDD (Behavior Driven Development) – Integrated Gherkin editor powered by intelli-sense text prediction, automatic generation of scenarios from feature files
 - Ginger on Web – Scheduling and execution of Ginger automation flows via Web site with no technical knowledge needed
@@ -93,6 +93,15 @@ Ginger is leveraging on a variety of great open source libraries, like: Selenium
 ### Ginger Can import test cases, upload test results, create defects and more
 - HP ALM/QC
 - IBM Rational
+
+# HW/SW Requirements
+|  Component  | Minimum | Recomended  |
+| ------------- |:-------------:| -----:|
+| CPU      | 2GHZ+ | 3GHZ+ |
+| RAM      | 4GB+ |   8GB+ |
+| Hard disk space | 2GB   |  6GB+  |
+| .NET | 4.6.1 | 4.7.1 |
+
 
 # Coming soon
 Ginger is free to use and the open source code is in process of moving to Git from our TFS server it will be completed before the end of 2018

@@ -6,7 +6,7 @@
 - *Changed:* The item exist in Source Control but was modified locally
 - *No change:* The item exist in source control and was not modifed
 
-<img src="https://github.com/Ginger-Automation/Ginger/blob/master/Images/Agents.png" width="300">
+<img src="https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/images/Agents.png" width="300">
 
 - When TreeViewItem heaser is created the icon is binded to the RepositoryItem.SourceControlImage each change will automatically shown to the user
 
