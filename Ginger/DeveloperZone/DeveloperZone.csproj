@@ -105,5 +105,11 @@
   <ItemGroup>
     <None Include="Documents\General\Ginger Namespace.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Documents\Images\SourceControl\%40SourceControlItemAdded_10x10.png" />
+    <Resource Include="Documents\Images\SourceControl\%40SourceControlItemChange_10x10.png" />
+    <Resource Include="Documents\Images\SourceControl\%40SourceControlItemDeleted_10x10.png" />
+    <Resource Include="Documents\Images\SourceControl\%40SourceControlItemUnchanged_10x10.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
