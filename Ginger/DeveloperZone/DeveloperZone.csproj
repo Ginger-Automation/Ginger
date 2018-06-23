@@ -85,9 +85,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="MDLib\General\Ginger Projects.md" />
-    <None Include="MDLib\Git\Git.md" />
-    <None Include="MDLib\Unit Test\Test Levels.md" />
+    <None Include="Documents\General\Ginger Projects.md" />
+    <None Include="Documents\Git\Git.md" />
+    <None Include="Documents\RepositoryItems\Dirty Mechanism.md" />
+    <None Include="Documents\RepositoryItems\SourceControlStatus.md" />
+    <None Include="Documents\Unit Test\Test Levels.md" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -96,9 +98,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <None Include="MDLib\General\Ginger Namespace.md" />
+    <Resource Include="Documents\Images\Agents.png" />
+    <Resource Include="Documents\Images\Ginger.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Documents\General\Ginger Namespace.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
