@@ -1,10 +1,12 @@
 # When Ginger is connected with Source Control like Git or SVN an icon will indicate the status of the item
 
 # New, Changed, No Change
-
-- *New:* The item was added locally and was not checked-in yet
-- *Changed:* The item exist in Source Control but was modified locally
-- *No change:* The item exist in source control and was not modifed
+- `New` <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/Images/SourceControl/%40SourceControlItemAdded_10x10.png">
+The item was added locally and was not checked-in yet
+- `Changed` <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/Images/SourceControl/%40SourceControlItemChange_10x10.png">
+The item exist in Source Control but was modified locally
+- `No Change` <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/Images/SourceControl/%40SourceControlItemUnchanged_10x10.png">
+The item exist in source control and was not modifed
 
 <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/images/Agents.png" width="300">
 
