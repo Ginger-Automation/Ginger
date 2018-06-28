@@ -30,8 +30,8 @@ All Repository Items
 - General Enums communly used
  Generic types and interface: IObservableList, ObservableList
 
-#GingerApp
-## Items shared when Ginger/GingerConsole is up 
+# GingerApp
+## Items shared when Ginger.exe/GingerConsole is up 
 - WorkSpace
 - Reporter
 - Find/Replace
