@@ -27,18 +27,22 @@ Sample table
 | 4  |32 |Dana	|Roberts | 878375|	No  |
 
 
-Row - Can be "#3" (row 3) or "User='No'" (criteria)  - represent one row only
-Column - can be "#C" (column c), "#3" (column 3), "Last" (Column name from row 1) - all refer to the same column
-Columns - columns seperated with ',' - "#B, #C"   or "First,Last" if empty means all columns.
-Values - set of column,value - "Used='Yes'" or "ID='12', First='Dave'"  
+### Parameters
+- Row - Can be "#3" (row 3) or "User='No'" (criteria)  - represent one row only
+- Column - can be "#C" (column c), "#3" (column 3), "Last" (Column name from row 1) - all refer to the same column
+- Columns - columns seperated with ',' - "#B, #C"   or "First,Last" if empty means all columns.
+- Values - set of column,value - "Used='Yes'" or "ID='12', First='Dave'"  or just values "'55', 'John', 'Smith'"
 
 #### Read Data from Excel
 
 - ReadExcellCell(row, col)
 - ReadExcellRow(row, columns) 
 - ReadExcellAndUpdate(row, columns, Values) 
+- Append(values)
+- WriteCell(row, col, value)
 
 ### Examples:
+
 - ReadExcellCell("#3", "#B", ) - will return: 'Moshe' in output values
 - ReadExcellCell("First=Moshe", "ID") - will return: 'Moshe' in output values
 
