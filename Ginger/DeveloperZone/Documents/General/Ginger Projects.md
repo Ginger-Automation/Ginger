@@ -36,14 +36,17 @@ All Repository Items
 - Reporter
 - Find/Replace
 
-# GingerCoreNET.dll  --> # GingerExecution.dll
+# GingerAutoPilot
+* .NET Standard 2.0 *
+
+# GingerCoreNET.dll  --> # GingerExecution.dll, GingerEngine.dll?
 *.NET Standard 2.0 *
 ## Ginger components requires for execution 
 
 - GingerRunner, GingerRunners, 
 - GingerGrid
 - Source control
-- ValueExpression - calcuate 
+- ValueExpression - calculate 
 
 # GingerUtils.dll - Stanalone utils which doesn't require any other Ginger project/ref
 *.NET Standard 2.0 *

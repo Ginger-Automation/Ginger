@@ -1,10 +1,13 @@
 
-# | <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/images/Ginger.png" width="64"> Ginger Automation
+
+#  <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/images/Ginger.png" width="64"> Ginger Automation
 Ginger is an Automation IDE, Drag & Drop automation, no coding skills needed, open platform with plugin capabilities.
 
 # Setup
 Ginger v2.7-beta
 https://github.com/Ginger-Automation/Ginger/releases/download/v2.7-beta/Ginger.2.7.0.0.exe
+
+[![Build status](https://ci.appveyor.com/api/projects/status/8d4lhipx6l46w19w/branch/master?svg=true)](https://ci.appveyor.com/project/ambarkhan/ginger/branch/master)
 
 # Highlights
 - **Record & Playback** - Record user operation on target application and playback 
