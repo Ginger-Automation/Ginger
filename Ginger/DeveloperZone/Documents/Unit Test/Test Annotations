@@ -1,0 +1,11 @@
+[Ignore]  
+
+On Class level:
+  will not run the tests in the class
+
+On Test level:
+  Will not run the specific test
+  
+  # Avoid marking tests with Ignore, either fix them or delete them
+  Or comment the whole test 
+  
