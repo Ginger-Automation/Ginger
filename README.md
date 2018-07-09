@@ -9,6 +9,8 @@ https://github.com/Ginger-Automation/Ginger/releases/download/v2.7-beta/Ginger.2
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8d4lhipx6l46w19w/branch/master?svg=true)](https://ci.appveyor.com/project/ambarkhan/ginger/branch/master)
 
+### [Ginger YouTube Channel](http://www.youtube.com/channel/UCQ2TRVoBhYi6zSU9r395EtQ/videos)
+
 # Highlights
 - **Record & Playback** - Record user operation on target application and playback 
 - Window Explorer
