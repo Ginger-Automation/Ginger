@@ -1,9 +1,9 @@
 
 
-#  <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/images/Ginger.png" width="64"> Ginger Automation
+#  <img src="https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/images/Ginger.png" width="64"> Ginger Automation [![Build status](https://ci.appveyor.com/api/projects/status/1wcp41xf6q49988m?svg=true)](https://ci.appveyor.com/project/ambarkhan/ginger) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/Ginger-Automation/)
 Ginger is an Automation IDE, Drag & Drop automation, no coding skills needed, open platform with plugin capabilities.
 
-[![Build status](https://ci.appveyor.com/api/projects/status/8d4lhipx6l46w19w/branch/master?svg=true)](https://ci.appveyor.com/project/ambarkhan/ginger/branch/master)
+
 
 - ### [Download Ginger](https://github.com/Ginger-Automation/Ginger/releases)
 
