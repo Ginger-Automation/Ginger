@@ -6,8 +6,8 @@ Ginger is an Automation IDE, Drag & Drop automation, no coding skills needed, op
 [![Build status](https://ci.appveyor.com/api/projects/status/8d4lhipx6l46w19w/branch/master?svg=true)](https://ci.appveyor.com/project/ambarkhan/ginger/branch/master)
 
 - ### [Download Ginger](https://github.com/Ginger-Automation/Ginger/releases)
-
 - ### [Ginger YouTube Channel](http://www.youtube.com/channel/UCQ2TRVoBhYi6zSU9r395EtQ/videos)
+- ### Gitter (Coming soon)
 
 # Highlights
 - **Record & Playback** - Record user operation on target application and playback 
