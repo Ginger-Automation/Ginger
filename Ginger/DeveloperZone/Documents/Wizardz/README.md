@@ -41,7 +41,7 @@ WPF for UI
 
 Validation are done using rules and displayed to the user in red below the control
 
-![alt text](../images/AddAgentWizradAgnetDetails.png)
+![alt text](../images/AddAgentWizradAgnetDetails.png?raw=true)
 
 - Use *Field*.AddValidationRule()
 
@@ -101,4 +101,7 @@ Use WizardIntroPage
 
 
 
+### Long task Show Processing
 
+- Processing image if unknow length
+- Progress bar if number of steps known
