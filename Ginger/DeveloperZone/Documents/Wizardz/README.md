@@ -1,24 +1,49 @@
-# Creating Ginger Wizard
+# Ginger Wizard
 
-### Wizard are used to help user naviage during a process while guiding step by step
+- Wizard help the user naviage and fill smaller chuncks of data during a process while guiding step by step to accomplish a goal
+- Wizard is helping the user to focus on one step at a time
+
 
 ### Each Wizard consist of 3 items
-- Intro page
-- Data collection page(s)
-- Summary page
+- Intro page - Generla infomation about what the wizard will do
+- Data collection page(s) - forms with data the user needs to fill
+- Summary page - Shows all users selections so he can verify before finish
 
+### Guidelines
+- Keep the number of steps between 3-5 pages
+- Each step need to be clear, add label with explanation if needed
+- Request only the minimal information needed, so user stay focused and can complete quickly
+- Use good defaults if possible
+
+### Coding
 - Create each wizard in folder for example wizard for Addnew agent will be in AddAgentWizardLib
-each wizard page is seperate Page
-start with intro page
+- Each wizard page is seperate Page
+- Use the generic Intro/finish pages
 
 Sample of 3 screens intro and summary
 
 
-# Miminal code create work class - Wizard pages only for data collection
+### Wizard Reuse - Windows/Linux/OSx
+- Pgaes should have only daat colelction
+code which does work need to be in .NET Standards class in it's DLL
+- Windows - WPF
 
-### Create Wizard clas 
+### Miminal code create work class - Wizard pages only for data collection
+WPF for UI
+.NET Standards - code to create/check etc. - so we can reuse for Web
 
-# Fields Validation
+### Create Wizard class
+
+- in DLL not WPF project
+- Pages - create in WPF project
+
+### Fields Validation
+
+Validation are done using rules and displayed to the user in red below the control
+
+![alt text](../images/AddAgentWizradAgnetDetails.png)
+
+- Use *Field*.AddValidationRule()
 
 - xDriverTypeComboBox.AddValidationRule(new EmptyValidationRule());
 
@@ -32,10 +57,10 @@ Check File exist
 
 Can add more thean one validation
 
-# Page code
+### Page code
 Should be minimal only for data collection, 
 
-## Buttons
+### Buttons
 
 When are they enabled/disabled
 - *Previous* if the current page is not the first page
@@ -47,18 +72,19 @@ When are they enabled/disabled
 Enable disable buttons in code:
 Next/Prev and Finish - dont change - automatically done based on validation
 
+- Pages List - user can jump to page, backword any, forward if validation pass
 
-## Automated Testing
+### Automated Testing
 
 if there are 5 pages Finish button should be enabled at start, then validation, if fails disable, user doesn't have to go over all screen
 
 You can use same valdiaiton for edit pages - for example Agent Edit Page - not allowed empty name
 
 
-## finish code
+### finish code
 in the Wizard
 
-## Wizard events use Switch case
+### Wizard events use Switch case
 
 
 ```cs
@@ -70,5 +96,9 @@ in the Wizard
             }
 ```
 
-## Pages - start with Intro and fisnih with Summery
+### Pages - start with Intro and fisnih with Summery
 Use WizardIntroPage
+
+
+
+

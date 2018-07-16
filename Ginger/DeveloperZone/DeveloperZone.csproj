@@ -91,6 +91,7 @@
     <None Include="Documents\RepositoryItems\Dirty Mechanism.md" />
     <None Include="Documents\RepositoryItems\SourceControlStatus.md" />
     <None Include="Documents\Unit Test\Test Levels.md" />
+    <None Include="Documents\Wizardz\README.md" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -111,6 +112,9 @@
     <Resource Include="Documents\Images\SourceControl\%40SourceControlItemChange_10x10.png" />
     <Resource Include="Documents\Images\SourceControl\%40SourceControlItemDeleted_10x10.png" />
     <Resource Include="Documents\Images\SourceControl\%40SourceControlItemUnchanged_10x10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Documents\Images\AddAgentWizradAgnetDetails.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
