@@ -67,12 +67,17 @@ When are they enabled/disabled
 - *Next* Enable when first time showing the page
          Disabled if user click next and validation(s) fails or this is the last page
 - *Finish* Disabled when wizard just start and this is the first page
-              Enabled Wizard return true for CanFinish validation
+              Enabled Wizard return true for CanFinish validation approved by all pages
 
 Enable disable buttons in code:
 Next/Prev and Finish - dont change - automatically done based on validation
 
 - Pages List - user can jump to page, backword any, forward if validation pass
+
+### Navigation list
+- Show all pages including intro and summary
+- User can switch page by click on page which he visited earlier (like 'back' to the page)
+- Pages which haven't been visited yet, are greyed - disabled
 
 ### Automated Testing
 
@@ -105,3 +110,10 @@ Use WizardIntroPage
 
 - Processing image if unknow length
 - Progress bar if number of steps known
+
+
+### Opening the wizard from code
+
+code sample
+
+use width if the size is bigger than 800
