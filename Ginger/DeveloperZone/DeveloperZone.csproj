@@ -91,7 +91,7 @@
     <None Include="Documents\RepositoryItems\Dirty Mechanism.md" />
     <None Include="Documents\RepositoryItems\SourceControlStatus.md" />
     <None Include="Documents\Unit Test\Test Levels.md" />
-    <None Include="Documents\Wizardz\README.md" />
+    <None Include="Documents\Wizard\README.md" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
