@@ -88,6 +88,7 @@
     <None Include="Documents\General\Ginger Projects.md" />
     <None Include="Documents\Git\Git.md" />
     <None Include="Documents\Plugins\ExcelPlugin.md" />
+    <None Include="Documents\Plugins\README.md" />
     <None Include="Documents\RepositoryItems\Dirty Mechanism.md" />
     <None Include="Documents\RepositoryItems\SourceControlStatus.md" />
     <None Include="Documents\Unit Test\Test Levels.md" />
