@@ -177,6 +177,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         {
             // run server and client on 2 threads to simulate real world and enable bi-directinal comuncation
             context.WriteLine("$$$$$$$$$$$$$$$$$$$$$$$$$$ Class Init");
+            // context.CurrentTestOutcome
 
             Task task1 = new Task(() =>
             {
