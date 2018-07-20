@@ -1,0 +1,340 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Ginger Repository Item created with version: 2.6.0.0-->
+<GingerCore.BusinessFlow Active="True" Created="11/9/2014 6:00:01 AM" CreatedBy="YARONWE" Description="Using hard coded value as it was recorded" Elapsed="18024" EnableActivitiesVariablesDependenciesControl="False" ExternalID="0" Guid="2592715d-f34b-4636-a7d9-1bbdaec7cf09" LastUpdate="11/16/2017 3:52:26 PM" LastUpdateBy="YARONWE" Name="SCM - Create Customer 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Active" Version="231">
+<Activities>
+<GingerCore.Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="0" ActivityName="Goto SCM URL" AutomationStatus="Development" Created="11/9/2014 6:00:01 AM" CreatedBy="YARONWE" EnableActionsVariablesDependenciesControl="False" ExternalID="0" Guid="6d6d4d03-28fa-4e1f-8791-b7a7800bb899" LastUpdate="3/11/2015 10:58:47 PM" LastUpdateBy="YARONWE" Mandatory="False" ParentGuid="6aefa5d0-ed16-4bbe-b67d-2a0ec3a0c830" PercentAutomated="100%" TargetApplication="SCM" Version="2">
+<Acts>
+<GingerCore.Actions.ActGotoURL Active="True" ConfigOutputDS="False" Created="11/9/2014 6:02:36 AM" CreatedBy="YARONWE" Description="Goto App URL" EnableRetryMechanism="False" Guid="0c7f6abf-d446-4eae-ba00-3c5601933109" LastUpdate="11/9/2014 6:02:36 AM" LastUpdateBy="YARONWE" LocateBy="NA" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" StatusConverter="None" SupportSimulation="False" TakeScreenShot="True" Version="1" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="3/24/2015 3:30:48 AM" CreatedBy="YARONWE" Guid="0ec6701a-9b43-4c08-a5e1-efe338b1ea18" LastUpdate="1/1/0001 12:00:00 AM" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="http://cmitechint1srv:8099/" Value="http://cmitechint1srv:8099/" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActGotoURL>
+</Acts>
+
+<Tags>
+</Tags>
+
+<Variables>
+</Variables>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Activity>
+<GingerCore.Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="0" ActivityName="Login" AutomationStatus="Development" Created="11/9/2014 6:01:21 AM" CreatedBy="YARONWE" EnableActionsVariablesDependenciesControl="False" ExternalID="0" Guid="48055f38-9a93-47bb-a826-a5b88fc7bbc5" LastUpdate="11/9/2014 6:01:21 AM" LastUpdateBy="YARONWE" Mandatory="True" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="SCM" Version="1">
+<Acts>
+<GingerCore.Actions.ActTextBox Active="True" ConfigOutputDS="False" Created="11/9/2014 6:04:56 AM" CreatedBy="YARONWE" Description="Enter value in UserName" EnableRetryMechanism="False" Guid="a9b35902-b9d0-453f-8ca9-c2bf289c4876" LastUpdate="11/9/2014 6:04:56 AM" LastUpdateBy="YARONWE" LocateBy="ByID" LocateValue="UserName" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" StatusConverter="None" SupportSimulation="False" TakeScreenShot="True" TextBoxAction="SetValueFast" Version="1" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="3/24/2015 3:30:48 AM" CreatedBy="YARONWE" Guid="3169e4f7-ca2e-4850-a923-e15ee0b59b1b" LastUpdate="1/1/0001 12:00:00 AM" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="Yaron" Value="Yaron" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActTextBox>
+<GingerCore.Actions.ActTextBox Active="True" ConfigOutputDS="False" Created="11/9/2014 6:06:02 AM" CreatedBy="YARONWE" Description="Enter value in Password" EnableRetryMechanism="False" Guid="43ee91e8-e069-4562-8077-8c2a4fb7864f" LastUpdate="11/9/2014 6:06:02 AM" LastUpdateBy="YARONWE" LocateBy="ByID" LocateValue="Password" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" StatusConverter="None" SupportSimulation="False" TakeScreenShot="True" TextBoxAction="SetValueFast" Version="1" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="3/24/2015 3:30:48 AM" CreatedBy="YARONWE" Guid="082d3ed4-0950-4e87-8905-25bdcc90b640" LastUpdate="1/1/0001 12:00:00 AM" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="123456" Value="123456" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActTextBox>
+<GingerCore.Actions.ActSubmit Active="True" ConfigOutputDS="False" Created="11/9/2014 6:04:48 AM" CreatedBy="YARONWE" Description="Submit Page - login" EnableRetryMechanism="False" Guid="6df48a86-c9dc-41f1-adb0-2925dfea30f5" LastUpdate="11/9/2014 6:04:48 AM" LastUpdateBy="YARONWE" LocateBy="ByValue" LocateValue="Log in" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" StatusConverter="None" SupportSimulation="False" TakeScreenShot="True" Version="1" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="8/7/2015 12:39:08 AM" CreatedBy="YARONWE" Guid="8c17a36a-75d7-4971-a72e-06b1cad533a3" LastUpdate="1/1/0001 12:00:00 AM" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="" Value="" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActSubmit>
+</Acts>
+
+<Tags>
+</Tags>
+
+<Variables>
+</Variables>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Activity>
+<GingerCore.Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="0" ActivityName="Select Customer Management" AutomationStatus="Development" Created="11/9/2014 6:01:33 AM" CreatedBy="YARONWE" EnableActionsVariablesDependenciesControl="False" ExternalID="0" Guid="73c38037-67d3-4d66-98d5-794a2ad091cd" LastUpdate="3/11/2015 10:58:49 PM" LastUpdateBy="YARONWE" Mandatory="False" ParentGuid="9ee01e3e-db3b-4a6a-b58a-3216598ac2c9" PercentAutomated="100%" TargetApplication="SCM" Version="2">
+<Acts>
+<GingerCore.Actions.ActLink Active="True" ConfigOutputDS="False" Created="11/9/2014 6:02:56 AM" CreatedBy="YARONWE" Description="Click Link Manage Customer" EnableRetryMechanism="False" Guid="cb34c081-df34-433e-9ef7-ff6c134c76ca" LastUpdate="11/9/2014 6:02:56 AM" LastUpdateBy="YARONWE" LinkAction="Click" LocateBy="ByLinkText" LocateValue="Manage Customer" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" StatusConverter="None" SupportSimulation="False" TakeScreenShot="True" Version="1" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="8/7/2015 12:39:14 AM" CreatedBy="YARONWE" Guid="e0f57fbd-ca8c-43cd-9a29-b5ab6dfce51e" LastUpdate="1/1/0001 12:00:00 AM" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="" Value="" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActLink>
+</Acts>
+
+<Tags>
+</Tags>
+
+<Variables>
+</Variables>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Activity>
+<GingerCore.Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="0" ActivityName="Create new customer" AutomationStatus="Development" Created="2/25/2015 6:27:40 PM" CreatedBy="YARONWE" EnableActionsVariablesDependenciesControl="False" ExternalID="0" Guid="1a11db41-97d9-484f-b037-56347e819e33" LastUpdate="3/11/2015 10:58:51 PM" LastUpdateBy="YARONWE" Mandatory="False" ParentGuid="e93f5211-784c-461f-b66b-3b9b9af041d5" PercentAutomated="100%" TargetApplication="SCM" Version="2">
+<Acts>
+<GingerCore.Actions.ActLink Active="True" ConfigOutputDS="False" Created="2/25/2015 6:27:53 PM" CreatedBy="YARONWE" Description="Click Link Create New" EnableRetryMechanism="False" Guid="c67caa64-9a5d-4ef9-a075-4d36c5a69446" LastUpdate="2/25/2015 6:27:53 PM" LastUpdateBy="YARONWE" LinkAction="Click" LocateBy="ByLinkText" LocateValue="Create New" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" StatusConverter="None" SupportSimulation="False" TakeScreenShot="True" Version="0" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="4/1/2015 11:53:33 AM" CreatedBy="YARONWE" Guid="9a3a6a55-b406-4c92-9611-66790cb7b394" LastUpdate="1/1/0001 12:00:00 AM" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="" Value="" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActLink>
+<GingerCore.Actions.ActTextBox Active="True" ConfigOutputDS="False" Created="2/25/2015 6:28:04 PM" CreatedBy="YARONWE" Description="Enter value in FirstName" EnableRetryMechanism="False" Guid="f58c3c7c-980d-4da9-b982-9ae0d890076f" LastUpdate="2/25/2015 6:28:04 PM" LastUpdateBy="YARONWE" LocateBy="ByID" LocateValue="FirstName" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" StatusConverter="None" SupportSimulation="False" TakeScreenShot="True" TextBoxAction="SetValueFast" Version="0" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="3/24/2015 3:30:48 AM" CreatedBy="YARONWE" Guid="2baa3be1-4605-4905-ae83-c8bde76d2abc" LastUpdate="1/1/0001 12:00:00 AM" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="David" Value="David" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActTextBox>
+<GingerCore.Actions.ActTextBox Active="True" ConfigOutputDS="False" Created="2/25/2015 6:28:05 PM" CreatedBy="YARONWE" Description="Enter value in LastName" EnableRetryMechanism="False" Guid="1594356f-ff0c-4db2-9727-8b135810844f" LastUpdate="2/25/2015 6:28:05 PM" LastUpdateBy="YARONWE" LocateBy="ByID" LocateValue="LastName" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" StatusConverter="None" SupportSimulation="False" TakeScreenShot="True" TextBoxAction="SetValueFast" Version="1" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="3/24/2015 3:30:48 AM" CreatedBy="YARONWE" Guid="de8e321d-a6ef-4393-94a7-23ccc558bb25" LastUpdate="1/1/0001 12:00:00 AM" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="Smith" Value="Smith" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActTextBox>
+<GingerCore.Actions.ActTextBox Active="True" ConfigOutputDS="False" Created="2/25/2015 6:28:06 PM" CreatedBy="YARONWE" Description="Enter value in HomeAddress" EnableRetryMechanism="False" Guid="9e014ee3-4c4d-480c-8907-f36aac961c85" LastUpdate="2/25/2015 6:28:06 PM" LastUpdateBy="YARONWE" LocateBy="ByID" LocateValue="HomeAddress" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" StatusConverter="None" SupportSimulation="False" TakeScreenShot="True" TextBoxAction="SetValueFast" Version="1" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="3/24/2015 3:30:48 AM" CreatedBy="YARONWE" Guid="beb46e73-99b6-4593-839b-d008885cf576" LastUpdate="1/1/0001 12:00:00 AM" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="2109 Fox Dr" Value="2109 Fox Dr" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActTextBox>
+<GingerCore.Actions.ActTextBox Active="True" ConfigOutputDS="False" Created="2/25/2015 6:28:10 PM" CreatedBy="YARONWE" Description="Enter value in EmailAddress" EnableRetryMechanism="False" Guid="f0d8dd7b-574c-4b10-ad54-150534ccc034" LastUpdate="2/25/2015 6:28:10 PM" LastUpdateBy="YARONWE" LocateBy="ByID" LocateValue="EmailAddress" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" StatusConverter="None" SupportSimulation="False" TakeScreenShot="True" TextBoxAction="SetValueFast" Version="1" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="3/24/2015 3:30:48 AM" CreatedBy="YARONWE" Guid="00923a40-2db6-4e30-a7fe-26a7d68c8904" LastUpdate="1/1/0001 12:00:00 AM" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="aa@aa.com" Value="aa@aa.com" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActTextBox>
+<GingerCore.Actions.ActSubmit Active="True" ConfigOutputDS="False" Created="2/25/2015 6:28:12 PM" CreatedBy="YARONWE" Description="Submit Page - " EnableRetryMechanism="False" Guid="8b61ca75-67f1-4edc-ad23-f542a913d75a" LastUpdate="2/25/2015 6:28:12 PM" LastUpdateBy="YARONWE" LocateBy="ByValue" LocateValue="Create" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" StatusConverter="None" SupportSimulation="False" TakeScreenShot="True" Version="1" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="8/7/2015 12:39:24 AM" CreatedBy="YARONWE" Guid="cd5cb6d6-dfdc-4011-8fbb-780a6d866831" LastUpdate="1/1/0001 12:00:00 AM" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="" Value="" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActSubmit>
+</Acts>
+
+<Tags>
+</Tags>
+
+<Variables>
+</Variables>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Activity>
+<GingerCore.Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="0" ActivityName="Verify Customer in DB" AutomationStatus="Development" Created="5/14/2015 5:02:17 PM" CreatedBy="YARONWE" EnableActionsVariablesDependenciesControl="False" ExternalID="0" Guid="0b0cadcd-8915-4a63-94ae-96aedd9271af" LastUpdate="1/1/0001 12:00:00 AM" Mandatory="False" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="SCM" Version="0">
+<Acts>
+<GingerCore.Actions.ActDBValidation Active="True" AppName="SCM" ConfigOutputDS="False" Created="4/21/2015 1:38:56 PM" CreatedBy="YARONWE" DBName="MainDB" DBValidationType="FreeSQL" Description="DB Action" EnableRetryMechanism="False" Guid="2351ac59-b6a8-4dd0-a63e-2143265ea373" LastUpdate="5/14/2015 5:01:59 PM" LastUpdateBy="YARONWE" LocateBy="NA" MaxNumberOfRetries="0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="0" SQL="select * from CustomerModels where id=1" StatusConverter="None" SupportSimulation="False" TakeScreenShot="False" Version="1" Wait="0" WindowsToCapture="OnlyActiveWindow">
+<DSOutputConfigParams>
+</DSOutputConfigParams>
+
+<FlowControls>
+</FlowControls>
+
+<InputValues>
+<GingerCore.Actions.ActInputValue Created="5/11/2017 4:08:03 PM" CreatedBy="yaronwe" Guid="e2a41004-d1f3-4dcb-a31d-9f9b6061c5e5" LastUpdate="1/1/0001 12:00:00 AM" Param="SQL" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="select * from CustomerModels where id=1" Value="select * from CustomerModels where id=1" Version="0" />
+<GingerCore.Actions.ActInputValue Created="9/6/2017 8:52:04 PM" CreatedBy="YARONWE" Guid="70c5abe0-fbba-4e22-9314-f978bf2aaf0e" LastUpdate="1/1/0001 12:00:00 AM" Param="QueryTypeRadioButton" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="FreeSQL" Value="FreeSQL" Version="0" />
+<GingerCore.Actions.ActInputValue Created="9/6/2017 8:52:04 PM" CreatedBy="YARONWE" Guid="30a3da88-d29d-4891-86cb-59222b57d649" LastUpdate="1/1/0001 12:00:00 AM" Param="QueryFile" ParentGuid="00000000-0000-0000-0000-000000000000" Version="0" />
+<GingerCore.Actions.ActInputValue Created="9/6/2017 8:52:04 PM" CreatedBy="YARONWE" Guid="63c9f14f-2e6b-49c9-9333-994797e9c7bf" LastUpdate="1/1/0001 12:00:00 AM" Param="ImportFile" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="True" Value="True" Version="0" />
+<GingerCore.Actions.ActInputValue Created="9/6/2017 8:52:04 PM" CreatedBy="YARONWE" Guid="e931dd82-6c09-48cc-9412-17c47de0051d" LastUpdate="1/1/0001 12:00:00 AM" Param="CommitDB" ParentGuid="00000000-0000-0000-0000-000000000000" Version="0" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+
+<Tags>
+</Tags>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Actions.ActDBValidation>
+</Acts>
+
+<Tags>
+</Tags>
+
+<Variables>
+</Variables>
+
+<VariablesDependencies>
+</VariablesDependencies>
+</GingerCore.Activity>
+</Activities>
+
+<ActivitiesGroups>
+</ActivitiesGroups>
+
+<Tags>
+</Tags>
+
+<TargetApplications>
+<GingerCore.Platforms.TargetApplication AppName="SCM" Created="8/21/2015 11:07:06 PM" CreatedBy="YARONWE" Guid="7aea47b2-1fbc-4dc8-8850-2e61e3f72734" LastExecutingAgentName="Chrome 1" LastUpdate="1/1/0001 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" Version="0" />
+</TargetApplications>
+
+<Variables>
+<GingerCore.Variables.VariableString Created="9/4/2015 6:10:01 PM" CreatedBy="YARONWE" CycleCount="10" Description="Variable String" DiffrentFromOrigin="False" Guid="be08588f-93a3-4dcf-9e2e-5c406eb7e489" InitialStringValue="aaaaaa" LastUpdate="1/1/0001 12:00:00 AM" MappedOutputType="None" Name="URL" ParentGuid="2592715d-f34b-4636-a7d9-1bbdaec7cf09" ParentName="SCM - Create Customer 1" ParentType="Business Flow" SetAsInputValue="True" SetAsOutputValue="True" Value="aaaaaa" VarValChanged="False" Version="0">
+<Tags>
+</Tags>
+</GingerCore.Variables.VariableString>
+<GingerCore.Variables.VariableString Created="2/6/2015 7:25:17 PM" CreatedBy="YARONWE" CycleCount="10" Description="Variable String" DiffrentFromOrigin="False" Guid="3177d5c0-a90c-44bb-bef4-335a8aa209eb" InitialStringValue="Moshe" LastUpdate="2/6/2015 7:25:17 PM" LastUpdateBy="YARONWE" MappedOutputType="None" Name="UserName" ParentGuid="2592715d-f34b-4636-a7d9-1bbdaec7cf09" ParentName="SCM - Create Customer 1" ParentType="Business Flow" SetAsInputValue="True" SetAsOutputValue="True" Value="Moshe" VarValChanged="False" Version="1">
+<Tags>
+</Tags>
+</GingerCore.Variables.VariableString>
+<GingerCore.Variables.VariableString Created="8/5/2015 7:37:55 PM" CreatedBy="YARONWE" CycleCount="10" Description="Variable String" DiffrentFromOrigin="False" Guid="135218c7-3657-422b-86c1-4c4765ab00b3" InitialStringValue="TopSecret!" LastUpdate="1/1/0001 12:00:00 AM" MappedOutputType="None" Name="UserPassword" ParentGuid="2592715d-f34b-4636-a7d9-1bbdaec7cf09" ParentName="SCM - Create Customer 1" ParentType="Business Flow" SetAsInputValue="True" SetAsOutputValue="True" Value="TopSecret!" VarValChanged="False" Version="0">
+<Tags>
+</Tags>
+</GingerCore.Variables.VariableString>
+</Variables>
+</GingerCore.BusinessFlow>

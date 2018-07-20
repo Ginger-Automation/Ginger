@@ -1,0 +1,178 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="TestResources\Repository\Default Run Set.Ginger.RunSetConfig.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TestResources\Repository\Default Run Set.Ginger.RunSetConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!--<ItemGroup>
+    <None Remove="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml" />
+    <None Remove="TestResources\Solutions\BasicSimple\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml" />
+    <None Remove="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.Ginger.DataSource.xml" />
+    <None Remove="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb" />
+    <None Remove="TestResources\Solutions\BasicSimple\Environments\Default.Ginger.Environment.xml" />
+    <None Remove="TestResources\Solutions\BasicSimple\Ginger.Solution.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\BasicSimple\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\BasicSimple\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\BasicSimple\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>-->
+
+  <ItemGroup>
+    <PackageReference Include="GingerTestHelper" Version="1.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\ActivitiesGroups\" />
+    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\Activities\" />
+    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\Variables\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestResources\CommandProcessorFiles\StartSeleniumDriver.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Conversion\SCM - Create Customer 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Excel\Names.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\JSON\sample.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\chromedriver.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\geckodriver.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\GingerPlugInsNET.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\GingerPlugInsNET.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\IEDriverServer.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\IEDriverServer64.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\Microsoft.mshtml.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\Selenium.GingerPlugin.deps.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\Selenium.GingerPlugin.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\Selenium.GingerPlugin.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDriver.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDriverExtended.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDrivers\chromedriver.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDrivers\geckodriver.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDrivers\IEDriverServer.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDrivers\IEDriverServer64.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\StandAlonePluginPackage.1.0.0\StandAloneActions.GingerPlugin.deps.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\StandAlonePluginPackage.1.0.0\StandAloneActions.GingerPlugin.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\StandAlonePluginPackage.1.0.0\StandAloneActions.GingerPlugin.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\StandAlonePluginPackage.1.0.0\System.IO.Packaging.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\StandAlonePluginPackage.1.0.0\System.Security.Permissions.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\RecentlyUsed.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\UserProfiles\GingerUserProfile.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\XML\XmlDoc.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

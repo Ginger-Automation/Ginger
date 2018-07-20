@@ -1,0 +1,358 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:soap.embus.sbc.com" xmlns:urn1="urn:PamFacadePackage.pam.idl.eia.sbc.com">
+   <soapenv:Header>
+      <urn:MessageHeader>
+         <urn:MessageTag></urn:MessageTag>
+   
+         <urn:ApplicationID>?</urn:ApplicationID>
+   
+         <urn:MessageID>?</urn:MessageID>
+   
+         <urn:CorrelationID>?</urn:CorrelationID>
+   
+         <urn:ConversationKey>?</urn:ConversationKey>
+   
+         <urn:LoggingKey>?</urn:LoggingKey>
+   
+         <urn:ResponseMessageExpiration>?</urn:ResponseMessageExpiration>
+      </urn:MessageHeader>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:com.sbc.eia.idl.pam.PamFacadePackage._createPaymentProfileRequestBISMsg>
+         <context>
+            <properties>
+               <!--Zero or more repetitions:-->
+               <item>
+                  <tag>?</tag>
+                  <value>?</value>
+               </item>
+            </properties>
+         </context>
+         <paymentProfileRequest>
+            <paymentProfileItem>
+               <sourceSystem>?</sourceSystem>
+               <sourceLocation>?</sourceLocation>
+               <profileUserID>?</profileUserID>
+               <sourceUser>?</sourceUser>
+            </paymentProfileItem>
+            <paymentProfileMethod>
+         
+               <check>
+                  <profileName>?</profileName>
+                  <checkData>
+                     <method>?</method>
+                     <aBARoutingTransitNumber>?</aBARoutingTransitNumber>
+                     <bankAccountNumber>?</bankAccountNumber>
+               
+                     <checkNumber>?</checkNumber>
+               
+                     <payeeName>?</payeeName>
+               
+                     <accountType>?</accountType>
+                     <sBusinessBankAccount>?</sBusinessBankAccount>
+                  </checkData>
+               </check>
+         
+               <creditCard>
+                  <profileName>?</profileName>
+                  <creditCardData>
+                     <method>?</method>
+                     <cardNumber>?</cardNumber>
+                     <expirationDate>
+                        <year>?</year>
+                        <month>?</month>
+                        <day>?</day>
+                     </expirationDate>
+               
+                     <creditCardType>?</creditCardType>
+                     <payeeName>?</payeeName>
+               
+                     <address>
+                  
+                        <fieldedAddress>
+                     
+                           <route>?</route>
+                     
+                           <box>?</box>
+                     
+                           <houseNumberPrefix>?</houseNumberPrefix>
+                     
+                           <houseNumber>?</houseNumber>
+                     
+                           <assignedHouseNumber>?</assignedHouseNumber>
+                     
+                           <houseNumberSuffix>?</houseNumberSuffix>
+                     
+                           <streetDirection>?</streetDirection>
+                     
+                           <streetName>?</streetName>
+                     
+                           <streetThoroughfare>?</streetThoroughfare>
+                     
+                           <streetNameSuffix>?</streetNameSuffix>
+                     
+                           <city>?</city>
+                     
+                           <state>?</state>
+                     
+                           <postalCode>?</postalCode>
+                     
+                           <postalCodePlus4>?</postalCodePlus4>
+                     
+                           <county>?</county>
+                     
+                           <country>?</country>
+                     
+                           <structureType>?</structureType>
+                     
+                           <structureValue>?</structureValue>
+                     
+                           <levelType>?</levelType>
+                     
+                           <levelValue>?</levelValue>
+                     
+                           <unitType>?</unitType>
+                     
+                           <unitValue>?</unitValue>
+                     
+                           <originalStreetDirection>?</originalStreetDirection>
+                     
+                           <originalStreetNameSuffix>?</originalStreetNameSuffix>
+                     
+                           <cassAddressLines>
+                              <!--Zero or more repetitions:-->
+                              <item>?</item>
+                           </cassAddressLines>
+                     
+                           <auxiliaryAddressLines>
+                              <!--Zero or more repetitions:-->
+                              <item>?</item>
+                           </auxiliaryAddressLines>
+                     
+                           <cassAdditionalInfo>?</cassAdditionalInfo>
+                     
+                           <additionalInfo>?</additionalInfo>
+                     
+                           <businessName>?</businessName>
+                     
+                           <countryCode>?</countryCode>
+                     
+                           <cityCode>?</cityCode>
+                     
+                           <serviceLocationName>?</serviceLocationName>
+                     
+                           <addressId>?</addressId>
+                     
+                           <aliasName>?</aliasName>
+                     
+                           <attention>?</attention>
+                        </fieldedAddress>
+                  
+                        <unfieldedAddress>
+                     
+                           <addressLines>
+                              <!--Zero or more repetitions:-->
+                              <item>?</item>
+                           </addressLines>
+                     
+                           <city>?</city>
+                     
+                           <state>?</state>
+                     
+                           <postalCode>?</postalCode>
+                     
+                           <postalCodePlus4>?</postalCodePlus4>
+                     
+                           <county>?</county>
+                     
+                           <country>?</country>
+                     
+                           <structureType>?</structureType>
+                     
+                           <structureValue>?</structureValue>
+                     
+                           <levelType>?</levelType>
+                     
+                           <levelValue>?</levelValue>
+                     
+                           <unitType>?</unitType>
+                     
+                           <unitValue>?</unitValue>
+                     
+                           <additionalInfo>?</additionalInfo>
+                     
+                           <businessName>?</businessName>
+                     
+                           <countryCode>?</countryCode>
+                     
+                           <cityCode>?</cityCode>
+                     
+                           <serviceLocationName>?</serviceLocationName>
+                     
+                           <addressId>?</addressId>
+                     
+                           <aliasName>?</aliasName>
+                     
+                           <attention>?</attention>
+                        </unfieldedAddress>
+                     </address>
+               
+                     <cardVerification>?</cardVerification>
+                     <cardVerificationIndicator>?</cardVerificationIndicator>
+                  </creditCardData>
+               </creditCard>
+         
+               <debitCard>
+                  <profileName>?</profileName>
+                  <creditCardData>
+                     <method>?</method>
+                     <cardNumber>?</cardNumber>
+                     <expirationDate>
+                        <year>?</year>
+                        <month>?</month>
+                        <day>?</day>
+                     </expirationDate>
+               
+                     <creditCardType>?</creditCardType>
+                     <payeeName>?</payeeName>
+               
+                     <address>
+                  
+                        <fieldedAddress>
+                     
+                           <route>?</route>
+                     
+                           <box>?</box>
+                     
+                           <houseNumberPrefix>?</houseNumberPrefix>
+                     
+                           <houseNumber>?</houseNumber>
+                     
+                           <assignedHouseNumber>?</assignedHouseNumber>
+                     
+                           <houseNumberSuffix>?</houseNumberSuffix>
+                     
+                           <streetDirection>?</streetDirection>
+                     
+                           <streetName>?</streetName>
+                     
+                           <streetThoroughfare>?</streetThoroughfare>
+                     
+                           <streetNameSuffix>?</streetNameSuffix>
+                     
+                           <city>?</city>
+                     
+                           <state>?</state>
+                     
+                           <postalCode>?</postalCode>
+                     
+                           <postalCodePlus4>?</postalCodePlus4>
+                     
+                           <county>?</county>
+                     
+                           <country>?</country>
+                     
+                           <structureType>?</structureType>
+                     
+                           <structureValue>?</structureValue>
+                     
+                           <levelType>?</levelType>
+                     
+                           <levelValue>?</levelValue>
+                     
+                           <unitType>?</unitType>
+                     
+                           <unitValue>?</unitValue>
+                     
+                           <originalStreetDirection>?</originalStreetDirection>
+                     
+                           <originalStreetNameSuffix>?</originalStreetNameSuffix>
+                     
+                           <cassAddressLines>
+                              <!--Zero or more repetitions:-->
+                              <item>?</item>
+                           </cassAddressLines>
+                     
+                           <auxiliaryAddressLines>
+                              <!--Zero or more repetitions:-->
+                              <item>?</item>
+                           </auxiliaryAddressLines>
+                     
+                           <cassAdditionalInfo>?</cassAdditionalInfo>
+                     
+                           <additionalInfo>?</additionalInfo>
+                     
+                           <businessName>?</businessName>
+                     
+                           <countryCode>?</countryCode>
+                     
+                           <cityCode>?</cityCode>
+                     
+                           <serviceLocationName>?</serviceLocationName>
+                     
+                           <addressId>?</addressId>
+                     
+                           <aliasName>?</aliasName>
+                     
+                           <attention>?</attention>
+                        </fieldedAddress>
+                  
+                        <unfieldedAddress>
+                     
+                           <addressLines>
+                              <!--Zero or more repetitions:-->
+                              <item>?</item>
+                           </addressLines>
+                     
+                           <city>?</city>
+                     
+                           <state>?</state>
+                     
+                           <postalCode>?</postalCode>
+                     
+                           <postalCodePlus4>?</postalCodePlus4>
+                     
+                           <county>?</county>
+                     
+                           <country>?</country>
+                     
+                           <structureType>?</structureType>
+                     
+                           <structureValue>?</structureValue>
+                     
+                           <levelType>?</levelType>
+                     
+                           <levelValue>?</levelValue>
+                     
+                           <unitType>?</unitType>
+                     
+                           <unitValue>?</unitValue>
+                     
+                           <additionalInfo>?</additionalInfo>
+                     
+                           <businessName>?</businessName>
+                     
+                           <countryCode>?</countryCode>
+                     
+                           <cityCode>?</cityCode>
+                     
+                           <serviceLocationName>?</serviceLocationName>
+                     
+                           <addressId>?</addressId>
+                     
+                           <aliasName>?</aliasName>
+                     
+                           <attention>?</attention>
+                        </unfieldedAddress>
+                     </address>
+               
+                     <cardVerification>?</cardVerification>
+                     <cardVerificationIndicator>?</cardVerificationIndicator>
+                  </creditCardData>
+               </debitCard>
+            </paymentProfileMethod>
+         </paymentProfileRequest>
+   
+         <customerAgreement>?</customerAgreement>
+      </urn1:com.sbc.eia.idl.pam.PamFacadePackage._createPaymentProfileRequestBISMsg>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Ginger Repository Item created with version: 2.6.0.0-->
+<Ginger.Run.RunSetConfig Created="04-Feb-18 7:59:27 PM" CreatedBy="MENIK" Guid="7f6a5568-da68-4611-8a82-1d273f577633" LastUpdate="20-Feb-18 4:51:41 PM" LastUpdateBy="MENIK" Name="Default Run Set" ParentGuid="00000000-0000-0000-0000-000000000000" RunModeParallel="True" RunWithAnalyzer="True" Version="5">
+<GingerRunners>
+<Ginger.Run.GingerRunner Created="04-Feb-18 7:59:27 PM" CreatedBy="MENIK" FilterExecutionByTags="False" Guid="75a8a53d-ff49-4dcc-9087-66276d4f041c" LastUpdate="01-Jan-01 12:00:00 AM" Name="Runner 1" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall" Selected="False" UseSpecificEnvironment="False" Version="0">
+<ApplicationAgents>
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+</BusinessFlowsRunList>
+
+<FilterExecutionTags>
+</FilterExecutionTags>
+</Ginger.Run.GingerRunner>
+<Ginger.Run.GingerRunner Created="04-Feb-18 7:59:44 PM" CreatedBy="MENIK" FilterExecutionByTags="False" Guid="4f39664e-3ae1-4f68-8d93-1d1317bcd460" LastUpdate="01-Jan-01 12:00:00 AM" Name="Runner 1" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall" Selected="False" UseSpecificEnvironment="False" Version="0">
+<ApplicationAgents>
+<GingerCore.Platforms.ApplicationAgent AgentName="MyNewWebApp - Agent 1" AppName="MyNewWebApp" Created="20-Feb-18 4:49:40 PM" CreatedBy="MENIK" Guid="2c18b819-60d5-43fa-b8c7-a7fb4f6386ae" LastUpdate="01-Jan-01 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" Version="0" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<Ginger.Run.BusinessFlowRun BusinessFlowGuid="78248b52-fdef-4c1f-8038-1936b161b397" BusinessFlowIsActive="True" BusinessFlowName="Business Flow 1" Created="20-Feb-18 4:51:41 PM" CreatedBy="MENIK" Guid="3977a1da-f7af-4fc3-8d53-9ddc01eac5df" LastUpdate="01-Jan-01 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" Version="0">
+<BusinessFlowCustomizedRunVariables>
+</BusinessFlowCustomizedRunVariables>
+</Ginger.Run.BusinessFlowRun>
+<Ginger.Run.BusinessFlowRun BusinessFlowGuid="78248b52-fdef-4c1f-8038-1936b161b397" BusinessFlowIsActive="True" BusinessFlowName="Business Flow 1" Created="20-Feb-18 4:51:41 PM" CreatedBy="MENIK" Guid="0357fdbb-0b4a-444f-865d-d1e5653efe10" LastUpdate="01-Jan-01 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" Version="0">
+<BusinessFlowCustomizedRunVariables>
+</BusinessFlowCustomizedRunVariables>
+</Ginger.Run.BusinessFlowRun>
+</BusinessFlowsRunList>
+
+<FilterExecutionTags>
+</FilterExecutionTags>
+</Ginger.Run.GingerRunner>
+</GingerRunners>
+
+<RunSetActions>
+<Ginger.Run.RunSetActions.RunSetActionHTMLReport Active="True" Condition="AlwaysRun" Created="20-Feb-18 4:49:57 PM" CreatedBy="MENIK" Guid="9d1e6350-396f-42e2-bcdb-806faa96723e" isHTMLReportFolderNameUsed="False" isHTMLReportPermanentFolderNameUsed="False" LastUpdate="01-Jan-01 12:00:00 AM" Name="Produce HTML Report" ParentGuid="00000000-0000-0000-0000-000000000000" RunAt="ExecutionEnd" selectedHTMLReportTemplateID="1" Version="0" />
+<Ginger.Run.RunSetActions.RunSetActionHTMLReportSendEmail Active="True" Condition="AlwaysRun" Created="20-Feb-18 4:49:57 PM" CreatedBy="MENIK" Guid="2291c455-8bfa-419f-b95f-3ca5c91d8286" HTMLReportTemplate="HTMLReport" LastUpdate="01-Jan-01 12:00:00 AM" Name="Send HTML Report Email" ParentGuid="00000000-0000-0000-0000-000000000000" RunAt="ExecutionEnd" selectedHTMLReportTemplateID="1" Version="0">
+<Email>
+<GingerCore.GeneralLib.Email Attachments="System.Collections.Generic.List`1[System.String]" Created="20-Feb-18 4:49:57 PM" CreatedBy="MENIK" EmailMethod="SMTP" EnableSSL="True" Guid="6892c683-8ca7-4b60-b197-079731d8b3e6" ID="0" LastUpdate="01-Jan-01 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" SMTPMailHost="cmimail.corp.amdocs.com" SMTPPort="25" Version="0" />
+</Email>
+
+<EmailAttachments>
+</EmailAttachments>
+</Ginger.Run.RunSetActions.RunSetActionHTMLReportSendEmail>
+<Ginger.Run.RunSetActions.RunSetActionSendFreeEmail Active="True" Condition="AlwaysRun" Created="20-Feb-18 4:51:11 PM" CreatedBy="MENIK" Guid="7553e50f-4917-4918-a250-d43f3f6b057d" LastUpdate="01-Jan-01 12:00:00 AM" Name="Send Free Text Email" ParentGuid="00000000-0000-0000-0000-000000000000" RunAt="ExecutionStart" Version="0">
+<Email>
+<GingerCore.GeneralLib.Email Attachments="System.Collections.Generic.List`1[System.String]" Created="20-Feb-18 4:51:11 PM" CreatedBy="MENIK" EmailMethod="SMTP" EnableSSL="True" Guid="68234703-d532-4eb0-aedd-373b58aaf9ce" ID="0" LastUpdate="01-Jan-01 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" SMTPMailHost="cmimail.corp.amdocs.com" SMTPPort="25" Version="0" />
+</Email>
+</Ginger.Run.RunSetActions.RunSetActionSendFreeEmail>
+<Ginger.Run.RunSetActions.RunSetActionHTMLReport Active="True" Condition="AlwaysRun" Created="20-Feb-18 4:50:03 PM" CreatedBy="MENIK" Guid="8963e4dc-9bcc-4574-9b1d-105929d8a504" isHTMLReportFolderNameUsed="False" isHTMLReportPermanentFolderNameUsed="False" LastUpdate="01-Jan-01 12:00:00 AM" Name="Produce HTML Report" ParentGuid="00000000-0000-0000-0000-000000000000" RunAt="ExecutionEnd" selectedHTMLReportTemplateID="1" Version="0" />
+<Ginger.Run.RunSetActions.RunSetActionHTMLReportSendEmail Active="True" Condition="AlwaysRun" Created="20-Feb-18 4:50:03 PM" CreatedBy="MENIK" Guid="84a12650-476b-4d63-a404-6cced806cf5b" HTMLReportTemplate="HTMLReport" LastUpdate="01-Jan-01 12:00:00 AM" Name="Send HTML Report Email" ParentGuid="00000000-0000-0000-0000-000000000000" RunAt="ExecutionEnd" selectedHTMLReportTemplateID="1" Version="0">
+<Email>
+<GingerCore.GeneralLib.Email Attachments="System.Collections.Generic.List`1[System.String]" Created="20-Feb-18 4:50:03 PM" CreatedBy="MENIK" EmailMethod="SMTP" EnableSSL="True" Guid="011f1e09-1995-4a48-b3fe-3496049ad637" ID="0" LastUpdate="01-Jan-01 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" SMTPMailHost="cmimail.corp.amdocs.com" SMTPPort="25" Version="0" />
+</Email>
+
+<EmailAttachments>
+</EmailAttachments>
+</Ginger.Run.RunSetActions.RunSetActionHTMLReportSendEmail>
+</RunSetActions>
+
+<Tags>
+</Tags>
+</Ginger.Run.RunSetConfig>

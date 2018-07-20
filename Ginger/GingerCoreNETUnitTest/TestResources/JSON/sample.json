@@ -1,0 +1,19 @@
+﻿{
+
+  "swagger": "2.0",
+  "info": {
+    "version": "v10.2",
+    "title": "Product Order",
+    "description": "This service manages product order resource, it allows retrival of product\norders with its items, their prices, total price, related party, notes,\nchannel, items ordered configuration. It allows to add, delete, modify items\nin order. it also allows to delete product order.\n",
+    "license": {
+      "name": "Amdocs Inc.",
+      "url": "http://"
+    },
+    "contact": {
+      "name": "Amdocs Inc.",
+      "url": "http://www.amdocs.com",
+      "email": "support@amdocs.com"
+    }
+  }
+
+}
