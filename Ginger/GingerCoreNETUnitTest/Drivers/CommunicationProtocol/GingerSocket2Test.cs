@@ -229,260 +229,260 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(txt, txt2, "txt = txt2");
         }
 
-        //[TestMethod]
-        //public void Echo1000Speed()
-        //{
-        //    // We measure speed so we will not introduce code with communcation speed impact 
+        [TestMethod]
+        public void Echo1000Speed()
+        {
+            // We measure speed so we will not introduce code with communcation speed impact 
 
-        //    // Arrange            
-        //    Thread.Sleep(100);  // let the system or other process relax...
+            // Arrange            
+            Thread.Sleep(100);  // let the system or other process relax...
 
-        //    //Act
-        //    Stopwatch st = new Stopwatch();
-        //    st.Reset();
-        //    st.Start();
-
-
-        //    for (int i = 0; i < 1000; i++)
-        //    {                
-        //        NewPayLoad PL = new NewPayLoad("SpeedTest", "Hello Server - " + i);
-        //        NewPayLoad PLRC = mMyGingerClient.Send(PL);
-        //        Assert.IsTrue(PLRC.IsOK(), " PLRC.IsOK()");
-        //    }
-        //    st.Stop();
-
-        //    //Assert
-        //    // on fast PC it take less than 500, on the build server it take ??? so keeping some buffer so UT will not fail            
-        //    Assert.IsTrue(st.ElapsedMilliseconds < 500, "st.ElapsedMilliseconds < 500");
-        //}
-
-        //[TestMethod]
-        //public void EchoBig10KMessage()
-        //{
-        //    // Arrange
-        //    StringBuilder sb = new StringBuilder();
-
-        //    for (int i = 0; i < 1000; i++)
-        //    {
-        //        sb.Append("0123456789");
-        //    }
-
-        //    NewPayLoad PL = new NewPayLoad("Echo", sb.ToString());
-
-        //    //Act
-        //    NewPayLoad PLRC = mMyGingerClient.Send(PL);
-        //    string txt2 = PLRC.GetValueString();
-
-        //    //Assert
-        //    Assert.AreEqual(PLRC.Name, "EchoBack", "PLRC.Name = EchoBack");
-        //    Assert.AreEqual(sb.ToString(), txt2, "sb.ToString() = txt2");
-        //}
+            //Act
+            Stopwatch st = new Stopwatch();
+            st.Reset();
+            st.Start();
 
 
-        //[TestMethod]
-        //public void EchoRandomMessageSize()
-        //{
-        //    // Arrange
-        //    // Create SB size of 1M Bytes - 1,000,000
-        //    StringBuilder sb = new StringBuilder();
-        //    for (int i = 0; i < 100000; i++)
-        //    {
-        //        sb.Append("0123456789");
-        //    }
+            for (int i = 0; i < 1000; i++)
+            {
+                NewPayLoad PL = new NewPayLoad("SpeedTest", "Hello Server - " + i);
+                NewPayLoad PLRC = mMyGingerClient.Send(PL);
+                Assert.IsTrue(PLRC.IsOK(), " PLRC.IsOK()");
+            }
+            st.Stop();
 
-        //    List<string> list = new List<string>();
-        //    list.Add(sb.ToString().Substring(0, 106660));
+            //Assert
+            // on fast PC it take less than 500, on the build server it take ??? so keeping some buffer so UT will not fail            
+            Assert.IsTrue(st.ElapsedMilliseconds < 500, "st.ElapsedMilliseconds < 500");
+        }
 
-        //    list.Add(sb.ToString().Substring(0, 10));
-        //    list.Add(sb.ToString().Substring(0, 500));
-        //    list.Add(sb.ToString().Substring(0, 30000));
-        //    list.Add(sb.ToString().Substring(0, 10));
-        //    list.Add(sb.ToString().Substring(0, 1));
-        //    list.Add(sb.ToString().Substring(0, 20000));
-        //    list.Add(sb.ToString().Substring(0, 100));
-        //    // list.Add(sb.ToString().Substring(0, 1000000));           !!!!!!!!!!!!!!!FIXME
-        //    list.Add(sb.ToString().Substring(0, 400));
-        //    list.Add(sb.ToString().Substring(0, 10000));
-        //    list.Add(sb.ToString().Substring(0, 1024));
-        //    list.Add(sb.ToString().Substring(0, 50000));
+        [TestMethod]
+        public void EchoBig10KMessage()
+        {
+            // Arrange
+            StringBuilder sb = new StringBuilder();
 
-        //    list.Add(sb.ToString().Substring(0, 1350));
-        //    list.Add(sb.ToString().Substring(0, 8921));
+            for (int i = 0; i < 1000; i++)
+            {
+                sb.Append("0123456789");
+            }
 
+            NewPayLoad PL = new NewPayLoad("Echo", sb.ToString());
 
-        //    int count = 0;
+            //Act
+            NewPayLoad PLRC = mMyGingerClient.Send(PL);
+            string txt2 = PLRC.GetValueString();
 
-        //    //Act
-        //    foreach (string s in list)
-        //    {
-        //        NewPayLoad PL = new NewPayLoad("Echo", s);
-
-        //        NewPayLoad PLRC = mMyGingerClient.Send(PL);
-        //        string txt2 = PLRC.GetValueString();
-        //        if (s == txt2)
-        //        {
-        //            count++;
-        //        }
-        //    }
-
-        //    //Assert
-        //    Assert.AreEqual(list.Count, count);
+            //Assert
+            Assert.AreEqual(PLRC.Name, "EchoBack", "PLRC.Name = EchoBack");
+            Assert.AreEqual(sb.ToString(), txt2, "sb.ToString() = txt2");
+        }
 
 
-        //}
+        [TestMethod]
+        public void EchoRandomMessageSize()
+        {
+            // Arrange
+            // Create SB size of 1M Bytes - 1,000,000
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 100000; i++)
+            {
+                sb.Append("0123456789");
+            }
 
-        
-        //[TestMethod]
-        //public void SlowResponse1000()
-        //{
-        //    // Arrange            
-        //    NewPayLoad PL = new NewPayLoad("SlowResponse1000", "Please respond after 1000 ms");
+            List<string> list = new List<string>();
+            list.Add(sb.ToString().Substring(0, 106660));
 
-        //    //Act
-        //    NewPayLoad PLRC = mMyGingerClient.Send(PL);
+            list.Add(sb.ToString().Substring(0, 10));
+            list.Add(sb.ToString().Substring(0, 500));
+            list.Add(sb.ToString().Substring(0, 30000));
+            list.Add(sb.ToString().Substring(0, 10));
+            list.Add(sb.ToString().Substring(0, 1));
+            list.Add(sb.ToString().Substring(0, 20000));
+            list.Add(sb.ToString().Substring(0, 100));
+            // list.Add(sb.ToString().Substring(0, 1000000));           !!!!!!!!!!!!!!!FIXME
+            list.Add(sb.ToString().Substring(0, 400));
+            list.Add(sb.ToString().Substring(0, 10000));
+            list.Add(sb.ToString().Substring(0, 1024));
+            list.Add(sb.ToString().Substring(0, 50000));
 
-        //    //Assert
-        //    Assert.AreEqual(PLRC.Name, "OK1000", "PLRC.Name = OK1000");
-        //}
-
-
-        //[TestMethod]
-        //public void LongAction()
-        //{
-        //    // Arrange            
-        //    NewPayLoad PL = new NewPayLoad("LongAction", "Please respond after 10 seconds");
-
-        //    //Act
-        //    NewPayLoad PLRC = mMyGingerClient.Send(PL);
-
-        //    //Assert
-        //    Assert.AreEqual(PLRC.Name, "LongActionDone", "PLRC.Name = LongActionDone");
-        //}
-
-        //[TestMethod]
-        //public void ServerSendMessagetoClient()
-        //{
-        //    //FIXME  get stuck!!!
-
-        //    // Arrange
-        //    string txt = "This is your server";
-        //    NewPayLoad PL = new NewPayLoad("MyServerMessage", txt);
-
-        //    //Act
-        //    NewPayLoad PLRC = mMyGingerServer.SendPayLoad(mMyGingerClient.SessionID, PL);
-        //    string txt2 = PLRC.GetValueString();
-
-        //    //Assert
-        //    Assert.AreEqual("Client Response to server", PLRC.Name, "PLRC.Name = Client Response to server");
-        //    Assert.AreEqual("OK", txt2);
-        //}
+            list.Add(sb.ToString().Substring(0, 1350));
+            list.Add(sb.ToString().Substring(0, 8921));
 
 
+            int count = 0;
 
-        //[TestMethod]
-        //public void ClientSendCalcSum()
-        //{
-        //    // Arrange            
-        //    NewPayLoad PL = new NewPayLoad("CalcSum", 100000000);
+            //Act
+            foreach (string s in list)
+            {
+                NewPayLoad PL = new NewPayLoad("Echo", s);
 
+                NewPayLoad PLRC = mMyGingerClient.Send(PL);
+                string txt2 = PLRC.GetValueString();
+                if (s == txt2)
+                {
+                    count++;
+                }
+            }
 
-        //    //Act
-        //    NewPayLoad PLRC = mMyGingerClient.Send(PL);
-
-
-        //    int total = PLRC.GetValueInt();
-
-        //    //Assert
-        //    // Assert.AreEqual("ClientMessage", PLRC.Name, "PLRC.Name = ClientMessage");
-        //    // Assert.AreEqual("Processing Started", txt2);
-        //}
-
-
-        //[TestMethod]
-        //public void ClientConnectSendClose()
-        //{
-            
-        //    // Arrange
-        //    MyGingerClient client1 = new MyGingerClient();
-        //    string txt = "Hi from Client 1";
-        //    NewPayLoad PL = new NewPayLoad("Echo", txt);
-
-        //    //Act
-        //    client1.Connect();
-        //    NewPayLoad PLRC = client1.Send(PL);
-        //    string txt2 = PLRC.GetValueString();
-        //    client1.Disconnect();
-
-        //    //Assert
-        //    Assert.AreEqual(PLRC.Name, "EchoBack", "PLRC.Name = EchoBack");
-        //    Assert.AreEqual(txt, txt2, "txt = txt2");
-        //}
-
-        
-        //[TestMethod]
-        //public void Run10ClientsParallel()
-        //{
-        //    // Arrange
-        //    List<Task> list = new List<Task>();
-
-        //    for (int i = 0; i < 10; i++)
-        //    {
-        //        Task t = new Task(() =>
-        //        {
-        //            Random r = new Random();
-        //            MyGingerClient client1 = new MyGingerClient();
-        //            string txt = "Hi from Client 1";
-        //            NewPayLoad PL = new NewPayLoad("Echo", txt);
-        //            client1.Connect();
-        //            for (int j = 0; j < 1000; j++)
-        //            {
-        //                NewPayLoad PLRC = client1.Send(PL);
-        //                string txt2 = PLRC.GetValueString();
-        //                if (txt != txt2)
-        //                {
-        //                    throw new Exception("Error in Echo!!");
-        //                }
-
-        //                int sleep = r.Next(0, 20);
-        //                Thread.Sleep(sleep);
-        //            }
-        //            client1.Disconnect();
-        //        });
-        //        t.Start();
-        //        list.Add(t);
-        //    }
+            //Assert
+            Assert.AreEqual(list.Count, count);
 
 
-        //    //Act
-        //    // Wait for all clients to complete their work
-        //    foreach (Task t in list)
-        //    {
-        //        t.Wait();
-        //    }
+        }
 
 
-        //    //Assert
-        //    //Assert.AreEqual(PLRC.Name, "EchoBack", "PLRC.Name = EchoBack");
-        //    //Assert.AreEqual(txt, txt2, "txt = txt2");
-        //}
+        [TestMethod]
+        public void SlowResponse1000()
+        {
+            // Arrange            
+            NewPayLoad PL = new NewPayLoad("SlowResponse1000", "Please respond after 1000 ms");
+
+            //Act
+            NewPayLoad PLRC = mMyGingerClient.Send(PL);
+
+            //Assert
+            Assert.AreEqual(PLRC.Name, "OK1000", "PLRC.Name = OK1000");
+        }
 
 
-        //[TestMethod]
-        //public void VerifyClientGetUniqueGUID()
-        //{
-        //    // Arrange
-        //    Guid EmptyGuid = new Guid();
-        //    MyGingerClient client1 = new MyGingerClient();
-        //    Guid guid;
-            
-        //    //Act
-        //    client1.Connect();
-        //    guid = client1.SessionID;
-        //    client1.Disconnect();
+        [TestMethod]
+        public void LongAction()
+        {
+            // Arrange            
+            NewPayLoad PL = new NewPayLoad("LongAction", "Please respond after 10 seconds");
 
-        //    //Assert
-        //    Assert.AreNotEqual(EmptyGuid.ToString(), guid.ToString(), "GUID of client session is not empty GUID");            
-        //}
+            //Act
+            NewPayLoad PLRC = mMyGingerClient.Send(PL);
+
+            //Assert
+            Assert.AreEqual(PLRC.Name, "LongActionDone", "PLRC.Name = LongActionDone");
+        }
+
+        [TestMethod]
+        public void ServerSendMessagetoClient()
+        {
+            //FIXME  get stuck!!!
+
+            // Arrange
+            string txt = "This is your server";
+            NewPayLoad PL = new NewPayLoad("MyServerMessage", txt);
+
+            //Act
+            NewPayLoad PLRC = mMyGingerServer.SendPayLoad(mMyGingerClient.SessionID, PL);
+            string txt2 = PLRC.GetValueString();
+
+            //Assert
+            Assert.AreEqual("Client Response to server", PLRC.Name, "PLRC.Name = Client Response to server");
+            Assert.AreEqual("OK", txt2);
+        }
+
+
+
+        [TestMethod]
+        public void ClientSendCalcSum()
+        {
+            // Arrange            
+            NewPayLoad PL = new NewPayLoad("CalcSum", 100000000);
+
+
+            //Act
+            NewPayLoad PLRC = mMyGingerClient.Send(PL);
+
+
+            int total = PLRC.GetValueInt();
+
+            //Assert
+            // Assert.AreEqual("ClientMessage", PLRC.Name, "PLRC.Name = ClientMessage");
+            // Assert.AreEqual("Processing Started", txt2);
+        }
+
+
+        [TestMethod]
+        public void ClientConnectSendClose()
+        {
+
+            // Arrange
+            MyGingerClient client1 = new MyGingerClient();
+            string txt = "Hi from Client 1";
+            NewPayLoad PL = new NewPayLoad("Echo", txt);
+
+            //Act
+            client1.Connect();
+            NewPayLoad PLRC = client1.Send(PL);
+            string txt2 = PLRC.GetValueString();
+            client1.Disconnect();
+
+            //Assert
+            Assert.AreEqual(PLRC.Name, "EchoBack", "PLRC.Name = EchoBack");
+            Assert.AreEqual(txt, txt2, "txt = txt2");
+        }
+
+
+        [TestMethod]
+        public void Run10ClientsParallel()
+        {
+            // Arrange
+            List<Task> list = new List<Task>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Task t = new Task(() =>
+                {
+                    Random r = new Random();
+                    MyGingerClient client1 = new MyGingerClient();
+                    string txt = "Hi from Client 1";
+                    NewPayLoad PL = new NewPayLoad("Echo", txt);
+                    client1.Connect();
+                    for (int j = 0; j < 1000; j++)
+                    {
+                        NewPayLoad PLRC = client1.Send(PL);
+                        string txt2 = PLRC.GetValueString();
+                        if (txt != txt2)
+                        {
+                            throw new Exception("Error in Echo!!");
+                        }
+
+                        int sleep = r.Next(0, 20);
+                        Thread.Sleep(sleep);
+                    }
+                    client1.Disconnect();
+                });
+                t.Start();
+                list.Add(t);
+            }
+
+
+            //Act
+            // Wait for all clients to complete their work
+            foreach (Task t in list)
+            {
+                t.Wait();
+            }
+
+
+            //Assert
+            //Assert.AreEqual(PLRC.Name, "EchoBack", "PLRC.Name = EchoBack");
+            //Assert.AreEqual(txt, txt2, "txt = txt2");
+        }
+
+
+        [TestMethod]
+        public void VerifyClientGetUniqueGUID()
+        {
+            // Arrange
+            Guid EmptyGuid = new Guid();
+            MyGingerClient client1 = new MyGingerClient();
+            Guid guid;
+
+            //Act
+            client1.Connect();
+            guid = client1.SessionID;
+            client1.Disconnect();
+
+            //Assert
+            Assert.AreNotEqual(EmptyGuid.ToString(), guid.ToString(), "GUID of client session is not empty GUID");
+        }
 
 
 
