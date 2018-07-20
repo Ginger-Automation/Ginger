@@ -30,8 +30,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
     {
         public static string GetLocalHostIP()
         {
-            IPAddress ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);            
-            return ipAddress.ToString(); ;
+             IPAddress ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);            
+             return ipAddress.ToString(); ;
+            // return "localhost";
         }
 
         //TODO: think if we want to have multiple display - enable set for this value
@@ -48,7 +49,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         //Verify we provide one port at a time, for unit test this function can be called in parallel
         static Semaphore semaphore = new Semaphore(3, 10);  // Enable 3 port allocator at a time with max up to 10        
-        static int LastPort = 50000;  // Ginger Grid and nodes will be on 15000+ ports - this area is mainly free to find ports
+        static int LastPort = 15000;  // Ginger Grid and nodes will be on 15000+ ports - this area is mainly free to find ports
         public static int GetOpenPort()
         {
             semaphore.WaitOne(); // control the reentry if several threads request at the same time                        

@@ -176,6 +176,8 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         public static void ClassInit(TestContext context)
         {
             // run server and client on 2 threads to simulate real world and enable bi-directinal comuncation
+            context.WriteLine("$$$$$$$$$$$$$$$$$$$$$$$$$$ Class Init");
+            // context.CurrentTestOutcome
 
             Task task1 = new Task(() =>
             {
@@ -184,7 +186,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             });
             task1.Start();
 
-            Thread.Sleep(100);
+            Thread.Sleep(2000);
 
             Task task2 = new Task(() =>
             {
@@ -227,32 +229,32 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(txt, txt2, "txt = txt2");
         }
 
-        //[TestMethod]
-        //public void Echo1000Speed()
-        //{
-        //    // We measure speed so we will not introduce code with communcation speed impact 
+        [TestMethod]
+        public void Echo1000Speed()
+        {
+            // We measure speed so we will not introduce code with communcation speed impact 
 
-        //    // Arrange            
-        //    Thread.Sleep(100);  // let the system or other process relax...
+            // Arrange            
+            Thread.Sleep(100);  // let the system or other process relax...
 
-        //    //Act
-        //    Stopwatch st = new Stopwatch();
-        //    st.Reset();
-        //    st.Start();
+            //Act
+            Stopwatch st = new Stopwatch();
+            st.Reset();
+            st.Start();
 
 
-        //    for (int i = 0; i < 1000; i++)
-        //    {                
-        //        NewPayLoad PL = new NewPayLoad("SpeedTest", "Hello Server - " + i);
-        //        NewPayLoad PLRC = mMyGingerClient.Send(PL);
-        //        Assert.IsTrue(PLRC.IsOK(), " PLRC.IsOK()");
-        //    }
-        //    st.Stop();
+            for (int i = 0; i < 1000; i++)
+            {
+                NewPayLoad PL = new NewPayLoad("SpeedTest", "Hello Server - " + i);
+                NewPayLoad PLRC = mMyGingerClient.Send(PL);
+                Assert.IsTrue(PLRC.IsOK(), " PLRC.IsOK()");
+            }
+            st.Stop();
 
-        //    //Assert
-        //    // on fast PC it take less than 500, on the build server it take ??? so keeping some buffer so UT will not fail            
-        //    Assert.IsTrue(st.ElapsedMilliseconds < 500, "st.ElapsedMilliseconds < 500");
-        //}
+            //Assert
+            // on fast PC it take less than 500, on the build server it take ??? so keeping some buffer so UT will not fail            
+            Assert.IsTrue(st.ElapsedMilliseconds < 500, "st.ElapsedMilliseconds < 500");
+        }
 
         [TestMethod]
         public void EchoBig10KMessage()
@@ -329,7 +331,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
         }
 
-        
+
         [TestMethod]
         public void SlowResponse1000()
         {
@@ -399,6 +401,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         [TestMethod]
         public void ClientConnectSendClose()
         {
+
             // Arrange
             MyGingerClient client1 = new MyGingerClient();
             string txt = "Hi from Client 1";
@@ -415,7 +418,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(txt, txt2, "txt = txt2");
         }
 
-        
+
         [TestMethod]
         public void Run10ClientsParallel()
         {
@@ -471,14 +474,14 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Guid EmptyGuid = new Guid();
             MyGingerClient client1 = new MyGingerClient();
             Guid guid;
-            
+
             //Act
             client1.Connect();
             guid = client1.SessionID;
             client1.Disconnect();
 
             //Assert
-            Assert.AreNotEqual(EmptyGuid.ToString(), guid.ToString(), "GUID of client session is not empty GUID");            
+            Assert.AreNotEqual(EmptyGuid.ToString(), guid.ToString(), "GUID of client session is not empty GUID");
         }
 
 
