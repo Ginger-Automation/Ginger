@@ -52,7 +52,9 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
                 mGingerSocketServer = new GingerSocketServer2();
                 mGingerSocketServer.MessageHandler = MessageHandler;
                 ServerPort = SocketHelper.GetOpenPort();
-                mGingerSocketServer.StartServer(ServerPort);   
+                Console.WriteLine("################################ Ginger Server IP:Port = " + mGingerSocketServer.IPInfo);
+                mGingerSocketServer.StartServer(ServerPort);
+                Console.WriteLine("################################ Ginger Server Started");
             }
 
             public void ShutDown()
