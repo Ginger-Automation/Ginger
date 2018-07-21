@@ -69,10 +69,10 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
 
                 case eUIALibraryType.FlaUI:
-                    mUIAutomationHelper= new FlaUIHelper();
-                    ((FlaUIHelper)mUIAutomationHelper).WindowExplorer = this;
-                    ((FlaUIHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
-                    ((FlaUIHelper)mUIAutomationHelper).mPlatform = UIAutomationHelperBase.ePlatform.Windows;
+                    //mUIAutomationHelper= new FlaUIHelper();
+                    //((FlaUIHelper)mUIAutomationHelper).WindowExplorer = this;
+                    //((FlaUIHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
+                    //((FlaUIHelper)mUIAutomationHelper).mPlatform = UIAutomationHelperBase.ePlatform.Windows;
                     break;
             }
         }

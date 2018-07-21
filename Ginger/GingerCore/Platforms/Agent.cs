@@ -22,16 +22,13 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
-using GingerCore.Drivers.AndroidADB;
 using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.ASCF;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.ConsoleDriverLib;
 using GingerCore.Drivers.InternalBrowserLib;
 using GingerCore.Drivers.JavaDriverLib;
-using GingerCore.Drivers.MainFrame;
 using GingerCore.Drivers.Mobile.Perfecto;
-using GingerCore.Drivers.PBDriver;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
@@ -383,31 +380,31 @@ namespace GingerCore
                                 break;
 
                             case eDriverType.PowerBuilder:
-                                Driver = new PBDriver(BusinessFlow);
+                                //Driver = new PBDriver(BusinessFlow);
                                 break;
 
                             case eDriverType.FlaUIPB:
-                                Driver = new PBDriver(BusinessFlow, UIAutomationDriverBase.eUIALibraryType.FlaUI);
+                                //Driver = new PBDriver(BusinessFlow, UIAutomationDriverBase.eUIALibraryType.FlaUI);
                                 break;
 
                             case eDriverType.JavaDriver:
                                 Driver = new JavaDriver(BusinessFlow);
                                 break;
-                            case eDriverType.MainFrame3270:
-                                Driver = new MainFrameDriver(BusinessFlow);
-                                break;
-                            case eDriverType.AndroidADB:
-                                string DeviceConfigFolder = GetOrCreateParam("DeviceConfigFolder").Value;
-                                if (!string.IsNullOrEmpty(DeviceConfigFolder))
-                                {
-                                    Driver = new AndroidADBDriver(BusinessFlow, SolutionFolder + @"\Documents\Devices\" + DeviceConfigFolder + @"\");
-                                }
-                                else
-                                {
-                                    //TODO: Load create sample folder/device, or start the wizard
-                                    throw new Exception("Please set device config folder");
-                                }
-                                break;
+                            //case eDriverType.MainFrame3270:
+                            //    Driver = new MainFrameDriver(BusinessFlow);
+                            //    break;
+                            // case eDriverType.AndroidADB:
+                                //string DeviceConfigFolder = GetOrCreateParam("DeviceConfigFolder").Value;
+                                //if (!string.IsNullOrEmpty(DeviceConfigFolder))
+                                //{
+                                //    Driver = new AndroidADBDriver(BusinessFlow, SolutionFolder + @"\Documents\Devices\" + DeviceConfigFolder + @"\");
+                                //}
+                                //else
+                                //{
+                                //    //TODO: Load create sample folder/device, or start the wizard
+                                //    throw new Exception("Please set device config folder");
+                                //}
+                                //break;
 
                                 //TODO: default mess
                         }
@@ -567,7 +564,7 @@ namespace GingerCore
                     SetDriverDefualtParams(typeof(SeleniumAppiumDriver));
                     break;
                 case Agent.eDriverType.PowerBuilder:
-                    SetDriverDefualtParams(typeof(PBDriver));
+                    //SetDriverDefualtParams(typeof(PBDriver));
                     break;
                 case Agent.eDriverType.WindowsAutomation:
                     SetDriverDefualtParams(typeof(WindowsDriver));
@@ -578,11 +575,11 @@ namespace GingerCore
                 case Agent.eDriverType.JavaDriver:
                     SetDriverDefualtParams(typeof(JavaDriver));
                     break;
-                case Agent.eDriverType.MainFrame3270:
-                    SetDriverDefualtParams(typeof(MainFrameDriver));
-                    break;
+                //case Agent.eDriverType.MainFrame3270:
+                //    SetDriverDefualtParams(typeof(MainFrameDriver));
+                //    break;
                 case Agent.eDriverType.AndroidADB:
-                    SetDriverDefualtParams(typeof(AndroidADBDriver));
+                    //SetDriverDefualtParams(typeof(AndroidADBDriver));
                     break;
                 case Agent.eDriverType.PerfectoMobile:
                     SetDriverDefualtParams(typeof(PerfectoDriver));
