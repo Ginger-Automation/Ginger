@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns2:testplan xmlns:ns2="http://jazz.net/xmlns/alm/qm/v0.1/"
+    xmlns:ns1="http://schema.ibm.com/vega/2008/" xmlns:ns3="http://purl.org/dc/elements/1.1/"
+    xmlns:ns4="http://jazz.net/xmlns/prod/jazz/process/0.6/"
+    xmlns:ns5="http://jazz.net/xmlns/alm/v0.1/" xmlns:ns6="http://purl.org/dc/terms/"
+    xmlns:ns7="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:ns8="http://jazz.net/xmlns/alm/qm/v0.1/tsl/v0.1/"
+    xmlns:ns9="http://jazz.net/xmlns/alm/qm/v0.1/testscript/v0.1/"
+    xmlns:ns10="http://jazz.net/xmlns/alm/qm/qmadapter/task/v0.1"
+    xmlns:ns11="http://jazz.net/xmlns/alm/qm/qmadapter/v0.1"
+    xmlns:ns12="http://jazz.net/xmlns/alm/qm/v0.1/executionworkitem/v0.1"
+    xmlns:ns13="http://open-services.net/ns/core#" xmlns:ns14="http://open-services.net/ns/qm#"
+    xmlns:ns15="http://jazz.net/xmlns/prod/jazz/rqm/process/1.0/"
+    xmlns:ns16="http://www.w3.org/2002/07/owl#"
+    xmlns:ns17="http://jazz.net/xmlns/alm/qm/v0.1/executionresult/v0.1"
+    xmlns:ns18="http://jazz.net/xmlns/alm/qm/v0.1/catalog/v0.1"
+    xmlns:ns20="http://jazz.net/xmlns/alm/qm/styleinfo/v0.1/"
+    xmlns:ns21="http://www.w3.org/1999/XSL/Transform">
+    <ns2:projectArea
+        href="{ALM.Domain}/{ALM.manageType}/resource/itemOid/com.ibm.team.process.ProjectArea/{ALM.ProjectGUID}"
+        alias="{ALM.ProjectName}"/>
+    <ns3:title>{ALM.TestPlanName}</ns3:title>
+    <ns3:description>{ALM.TestPlanDesc}</ns3:description>
+    <ns5:state
+        ns7:resource="{ALM.Domain}/{ALM.manageType}/service/com.ibm.rqm.integration.service.IIntegrationService/process-info/{ALM.ProjectGUID}/workflowstate/com.ibm.rqm.process.testplan.workflow/com.ibm.rqm.planning.common.new">
+        com.ibm.rqm.planning.common.new
+    </ns5:state>
+    <ns3:creator
+        ns7:resource="{ALM.Domain}/jts/resource/itemName/com.ibm.team.repository.Contributor/{ALM.UserName}">
+        {ALM.UserName}
+    </ns3:creator>
+    <ns5:owner>unassigned</ns5:owner>
+    <ns2:priority
+        ns7:resource="{ALM.Domain}/{ALM.manageType}/service/com.ibm.rqm.integration.service.IIntegrationService/process-info/{ALM.ProjectGUID}/priority/literal.priority.101"
+        >literal.priority.101
+    </ns2:priority>
+    <ns2:locked>false</ns2:locked>
+    <ns2:estimation>
+        <ns2:planningEffort>0</ns2:planningEffort>
+        <ns2:executionEffort>0</ns2:executionEffort>
+        <ns2:planningEffortPersonHours>0.0</ns2:planningEffortPersonHours>
+        <ns2:executionEffortPersonHours>0.0</ns2:executionEffortPersonHours>
+        <ns2:planning effort="0.0" units="PH"/>
+        <ns2:execution effort="0.0" units="PH"/>
+        </ns2:estimation>
+    {ALM.TestPlanCatagory}
+    <div ALM.id="catagory_struct">
+        <ns2:category
+            term="PRISM Project PMT"
+            value=""/>
+        <ns2:category
+            term="Program"
+            value=""/>
+        <ns2:category
+            term="PRISM Project ID"
+            value=""/>
+        <ns2:category
+            term="Release"
+            value=""/>
+        <ns2:category
+            term="Application"
+            value=""/>
+        <ns2:category
+            term="Test Phase"
+            value=""/>
+        <ns2:category
+            term="PRISM Release ID"
+            value=""/>
+        <ns2:category
+            term="Non-MOTS Team"
+            value=""/>
+        <ns2:category
+            term="Progression/Regression"
+            value=""/>
+        <ns2:category
+            term="PRISM Project Name"
+            value=""/>
+    </div>
+    {ALM.TestCaseContent}
+    <ns2:testcase ALM.id="testcase_loop_link"
+        href="{ALM.Domain}/{ALM.manageType}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ALM.ProjectName}/testcase/urn:com.ibm.rqm:testcase:{ALM.TestCaseWebId}"/>
+    <ns2:template
+        href="{ALM.Domain}/{ALM.manageType}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ALM.ProjectGUID}/template/testcase/tdp.template.testcase.defult"/>
+    {ALM.CustomAttributes} 
+    <ns2:customAttributes ALM.id="coustom_attribute">
+        <ns2:customAttribute type="MEDIUM_STRING" required="false">
+            <ns2:identifier>Alternate_Project_Identifier</ns2:identifier>
+            <ns2:name>Alternate Project Identifier</ns2:name>
+            <ns2:value ALM.id="Alternate Project Identifier"></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="MEDIUM_STRING" required="false">
+            <ns2:identifier>External_Sync_Area__DO_NOT_EDIT_</ns2:identifier>
+            <ns2:name>External Sync Area (DO NOT EDIT)</ns2:name>
+            <ns2:value ALM.id="External Sync Area (DO NOT EDIT)"></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="TIMESTAMP" required="false">
+            <ns2:identifier>Production_Deployment_Date</ns2:identifier>
+            <ns2:name>Production Deployment Date</ns2:name>
+            <ns2:value ALM.id="Production Deployment Date"></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="TIMESTAMP" required="false">
+            <ns2:identifier>Sync_Start_Date__DO_NOT_EDIT_</ns2:identifier>
+            <ns2:name>Sync Start Date (DO NOT EDIT)</ns2:name>
+            <ns2:value ALM.id="Sync Start Date (DO NOT EDIT)"></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="MEDIUM_STRING" required="false">
+            <ns2:identifier>Sync_Status__DO_NOT_EDIT_</ns2:identifier>
+            <ns2:name>Sync Status (DO NOT EDIT)</ns2:name>
+            <ns2:value ALM.id="Sync Status (DO NOT EDIT)"></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="SMALL_STRING" required="false">
+            <ns2:identifier>User_1</ns2:identifier>
+            <ns2:name>User 1</ns2:name>
+            <ns2:value ALM.id="User 1"></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="SMALL_STRING" required="false">
+            <ns2:identifier>User_2</ns2:identifier>
+            <ns2:name>User 2</ns2:name>
+            <ns2:value ALM.id="User 2"></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="SMALL_STRING" required="false">
+            <ns2:identifier>User_3</ns2:identifier>
+            <ns2:name>User 3</ns2:name>
+            <ns2:value ALM.id="User 3"></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+    </ns2:customAttributes>
+</ns2:testplan>
