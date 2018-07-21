@@ -1,0 +1,61 @@
+  <?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:p="/lib/hudson/project" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+
+
+
+
+
+
+	<f:section title="1 - Source Control">	
+		<f:entry  title="Source Control Type" field="scType" >			
+			<select name="scType">
+				<option value="SVN" selected="${instance.scType.equals('SVN')? 'true':null}">SVN</option>
+		        <option value="GIT" selected="${instance.scType.equals('GIT')? 'true':null}">GIT</option>		        
+		    </select>
+		</f:entry>		
+		<f:entry  title="URL" field="scUrl" >
+				<f:textbox name="scUrl"/>
+		</f:entry>				
+	 	 <f:entry  title="Username" field="scUsername"  >
+			<f:textbox name="scUsername" />
+		</f:entry>
+		<f:entry  title="Password" field="scPassword"  >
+			<f:password name="scPassword"  default="password"/>
+		</f:entry>				
+			
+		<f:entry  title="Proxy Server" field="scProxyServer"  >
+			<f:textbox name="scProxyServer" />
+		</f:entry>
+		<f:entry  title="Proxy Port" field="scProxyPort"  >
+			<f:textbox name="scProxyPort" />
+		</f:entry>	
+			
+		<f:validateButton  title="${%Test Connection}" progress="Testing connection to Source Control ..." method="testConnection" with="scType,scUrl,scUsername,scPassword,scProxyServer,scProxyPort" />
+	</f:section>
+	
+	<f:section title="2 - Test Properties">
+		<f:entry title="Solution Name" field="solutionName"  >
+			<f:textbox  name="solutionName"/>
+		</f:entry>
+		<f:validateButton  title="Get Solution details" progress="Fetching" method="fetchSolutionDetails" with="solutionName" /> 
+		
+		<f:entry   title="RunSet Name" field="runSetName" >
+			<f:textbox   name="runSetName"/>
+		</f:entry>
+		
+		<f:entry  title="Environment Name"  field="targetEnvCode" >
+			<f:textbox name="targetEnvCode"/>
+		</f:entry>
+	</f:section>
+
+	<f:section title="3 - Ginger Execution Definition">
+		<f:entry  title="Solution Full Path [Optional]" field="remoteSolutionPath" >
+			<f:textbox class="main_table_style" name="remoteSolutionPath"/>
+		</f:entry>
+		<f:entry  title="Ginger Executable  Full Path" field="gingerInstallationPath" >
+			<f:textbox class="main_table_style" default="Ginger.exe" name="gingerInstallationPath"/>
+		</f:entry>
+	</f:section>
+	
+</j:jelly>

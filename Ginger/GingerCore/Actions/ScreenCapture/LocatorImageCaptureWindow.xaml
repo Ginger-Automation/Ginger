@@ -1,0 +1,29 @@
+    <Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="GingerCore.Actions.ScreenCapture.LocatorImageCaptureWindow"
+        MouseDown="Window_MouseDown"
+        MouseUp="Window_MouseUp"
+        MouseMove="Window_MouseMove"
+        MouseDoubleClick="Window_DClick"
+        Title="LocatorImageCaptureWindow" WindowState="Maximized" 
+     AllowsTransparency="True" WindowStyle="None"
+    Topmost="True">
+    
+    <Window.Background>
+        <SolidColorBrush Opacity="0.1" Color="White"/>
+    </Window.Background>
+    <Canvas
+            x:Name="dragSelectionCanvas1"
+            Visibility="Collapsed"
+            >
+        <Border 
+                x:Name="dragSelectionBorder1"
+                BorderBrush="Blue"
+                BorderThickness="1"
+                Background="LightBlue"
+                CornerRadius="1"
+                Opacity="0.5"
+                />
+    </Canvas>
+</Window>
