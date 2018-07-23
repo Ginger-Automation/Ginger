@@ -1,0 +1,23 @@
+    <Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.PlugInsWindows"
+      xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.PlugInsWindows.PlugInsPage"
+      mc:Ignorable="d" 
+      d:DesignHeight="800" d:DesignWidth="600"
+      Title="PlugInsPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="11*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="49*"/>
+        </Grid.ColumnDefinitions>
+
+        <Ginger:ucGrid x:Name="PlugInsGrid" Title="Installed Plug Ins"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed"/>
+
+    </Grid>
+</Page>

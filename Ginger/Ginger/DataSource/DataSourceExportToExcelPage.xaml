@@ -1,0 +1,28 @@
+    <Page x:Class="Ginger.DataSource.DataSourceExportToExcel" xmlns:Actions="clr-namespace:Ginger.Actions" 
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Data Source"
+      Height="60" Width="500"
+	Title="Export to Excel">
+
+    <Grid Background="{StaticResource @Skin1_ColorC}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="515"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition x:Name="SheetRow"  Height="30"/>            
+        </Grid.RowDefinitions>
+        
+        <Label Style="{StaticResource @InputFieldLabelStyle}">Excel File Path:</Label>
+        <Actions:UCValueExpression x:Name="ExcelFilePath" Grid.Column="1" VerticalAlignment="Center" ToolTip="Excel file full path"/>
+        
+        <Label Content="Sheet Name:" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+        <TextBox Height="24" x:Name="OutSheetName" Grid.Row="1" Grid.Column="1" Style="{StaticResource @TextBoxStyle}"/>
+
+    </Grid>
+</Page>

@@ -1,0 +1,19 @@
+    <Window x:Class="GingerWPF.DragDropLib.DragDropWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DragDropWindow" Height="50" Width="272" Opacity="0.5" WindowStyle="None"
+        
+        >
+    <Window.Effect>
+        <DropShadowEffect/>
+    </Window.Effect>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15*"/>
+            <ColumnDefinition Width="73*"/>
+        </Grid.ColumnDefinitions>
+        <Label x:Name="HeaderLabel" Content="Header" Grid.Column="1"/>
+      
+        <Image x:Name="DragIconImage" Source="{StaticResource @PassIconWithBack_Large.png}"/>
+    </Grid>
+</Window>

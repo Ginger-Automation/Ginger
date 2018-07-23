@@ -1,0 +1,42 @@
+    <Page x:Class="Ginger.Actions.ActCreatePDFChartEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      mc:Ignorable="d" 
+      d:DesignHeight="180" d:DesignWidth="480"
+	Title="ActCreatePDFChartEditPage" >
+
+    <Grid Height="380" VerticalAlignment="Top" Margin="0,0,5,-200">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="375"/>
+            <ColumnDefinition Width="21"/>
+
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="60"/>
+
+        </Grid.RowDefinitions>
+
+        <StackPanel  Grid.Row="0" Margin="30,0,0,0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Data File Name</Label>
+            <StackPanel>
+                <Actions:UCValueExpression x:Name="DataFileNameTextBox" RenderTransformOrigin="0.5,0.933" Height="28"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Margin="30,0,0,0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Params Name</Label>
+            <UserControlsLib:UCComboBox x:Name="ParamsComboBox" Margin="0,0,0,10"/>
+        </StackPanel>
+
+        <Button x:Name="BrowseExcelButton" Style="{StaticResource @InputButtonStyle}" 
+                Content="Browse" Grid.Column="1" Grid.Row="0" Width="Auto" Click="BrowseDataButton_Click" 
+                HorizontalAlignment="Stretch" Margin="9,29,-57,10" Height="22" />
+
+    </Grid>
+</Page>

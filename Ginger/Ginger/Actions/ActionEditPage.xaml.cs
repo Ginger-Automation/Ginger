@@ -1,0 +1,1542 @@
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using Ginger.Actions.UserControls;
+using Ginger.BusinessFlowFolder;
+using Ginger.BusinessFlowWindows;
+using Ginger.Help;
+using Ginger.Reports;
+using Ginger.Repository;
+using Ginger.UserControls;
+using Ginger.WindowExplorer;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Actions.Java;
+using GingerCore.DataSource;
+using GingerCore.Drivers;
+using GingerCore.Platforms;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+
+namespace Ginger.Actions
+{
+    enum eGridView {All,NonSimulation}
+
+    public partial class ActionEditPage : Page
+    {
+        private Act mAction;
+        static public string sMultiLocatorVals = "";
+        GenericWindow _pageGenericWin = null;
+        public ActionsPage ap;
+
+        bool IsPageClosing = false;
+
+        ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
+        ObservableList<DataSourceTable> mDSTableList = new ObservableList<DataSourceTable>();
+        List<string> mDSNames = new List<string>();
+        private DataSourceTable mDSTable;
+        private string mDataSourceName;
+        List<String> mColNames = null;
+        ObservableList<ActOutDataSourceConfig> aOutDSConfigParam = new ObservableList<ActOutDataSourceConfig>();
+
+        private BusinessFlow mActParentBusinessFlow = null;
+        private Activity mActParentActivity = null;
+
+        Button mSimulateRunBtn = new Button();
+        Button mRunActionBtn = new Button();
+        Button mStopRunBtn = new Button();
+        ComboBox dsOutputParamMapType = new ComboBox();
+        private bool saveWasDone = false;
+
+        public General.RepositoryItemPageViewMode EditMode { get; set; }
+
+        public ActionEditPage(Act act, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation, BusinessFlow actParentBusinessFlow = null, Activity actParentActivity = null)
+        {
+            InitializeComponent();
+            
+            mAction = act;
+            mAction.SaveBackup();
+
+            RunDescritpion.Init(act, Act.Fields.RunDescription);
+
+            if (actParentBusinessFlow != null)
+                mActParentBusinessFlow = actParentBusinessFlow;
+            else
+                mActParentBusinessFlow = App.BusinessFlow;
+            if (actParentActivity != null)
+                mActParentActivity = actParentActivity;
+            else
+                mActParentActivity = App.BusinessFlow.CurrentActivity;
+
+            EditMode = editMode;
+            mAction.PropertyChanged += ActionPropertyChanged;
+
+            GingerHelpProvider.SetHelpString(this, act.ActionDescription);
+
+            if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
+            {
+                DataSourceExpander.IsExpanded = true;
+                mAction.OutDataSourceName = mAction.DSOutputConfigParams[0].DSName;
+                mAction.OutDataSourceTableName = mAction.DSOutputConfigParams[0].DSTable;
+                if (mAction.DSOutputConfigParams[0].OutParamMap == null)
+                    mAction.OutDSParamMapType = Act.eOutputDSParamMapType.ParamToRow.ToString();
+                else
+                    mAction.OutDSParamMapType = mAction.DSOutputConfigParams[0].OutParamMap;
+            }
+
+
+            if (mActParentActivity.GetType() == typeof(ErrorHandler))
+            {
+                RetyrMechainsmTab.IsEnabled = false;
+                FlowControlTab.IsEnabled = false;
+                ScreenShotTab.IsEnabled = false;
+            }
+            //Binding            
+            txtDescription.BindControl(mAction, Act.Fields.Description);
+            cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy());
+            comboWindowsToCapture.BindControl(mAction, Act.Fields.WindowsToCapture);
+            txtLocateValue.BindControl(mAction, Act.Fields.LocateValue);
+
+            //Run Details binding
+            App.ObjFieldBinding(RTStatusLabel, Label.ContentProperty, mAction, Act.Fields.Status, BindingMode.OneWay);
+            App.ObjFieldBinding(RTElapsedLabel, Label.ContentProperty, mAction, Act.Fields.ElapsedSecs, BindingMode.OneWay);
+            App.ObjFieldBinding(RTErrorLabel, TextBox.TextProperty, mAction, Act.Fields.Error, BindingMode.OneWay);
+            App.ObjFieldBinding(RTExInfoLabel, TextBox.TextProperty, mAction, Act.Fields.ExInfo, BindingMode.OneWay);
+
+            //TODO: add tooltip on class level 
+            //TODO: Add BindToolTip or use BindControl and supply DependecyProperty
+            App.ObjFieldBinding(txtLocateValue, TextBox.ToolTipProperty, mAction, Act.Fields.LocateValue);
+            // TODO: create BindControl for 
+            App.ObjFieldBinding(TakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.TakeScreenShot);
+            App.ObjFieldBinding(FailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.FailIgnored);
+
+            comboFinalStatus.BindControl(mAction, Act.Fields.StatusConverter);
+            xWaittxtWait.BindControl(mAction, nameof(Act.WaitVE));
+            App.ObjFieldBinding(txtTimeout, TextBox.TextProperty, mAction, Act.Fields.Timeout);
+            App.ObjFieldBinding(StatusLabel, Label.ContentProperty, mAction, Act.Fields.Status);
+            GingerCore.General.ObjFieldBinding(ErrorTextBlock, TextBlock.TextProperty, mAction, Act.Fields.Error);
+            GingerCore.General.ObjFieldBinding(ExtraInfoTextBlock, TextBlock.TextProperty, mAction, Act.Fields.ExInfo);
+            App.ObjFieldBinding(EnableRetryMechanismCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.EnableRetryMechanism);
+            App.ObjFieldBinding(RetryMechanismIntervalTextBox, TextBox.TextProperty, mAction, Act.Fields.RetryMechanismInterval);
+            App.ObjFieldBinding(RetryMechanismMaxRetriesTextBox, TextBox.TextProperty, mAction, Act.Fields.MaxNumberOfRetries);
+
+            dsOutputParamMapType = DataSourceConfigGrid.AddComboBox(typeof(Act.eOutputDSParamMapType), "Out Param Mapping", "", new RoutedEventHandler(OutDSParamType_SelectionChanged));
+            App.ObjFieldBinding(AddOutDS, CheckBox.IsCheckedProperty, mAction, Act.Fields.ConfigOutputDS);
+            App.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceName);
+            App.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);   
+            App.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
+
+            txtLocateValue.BindControl(mAction, Act.Fields.LocateValue);
+            txtLocateValue.ValueTextBox.Text = mAction.LocateValue;  // Why ?
+
+            SwitchingInputValueBoxAndGrid(mAction);
+            LoadActionInfoPage(mAction);
+
+            LoadActionFlowcontrols(mAction);
+            TagsViewer.Init(mAction.Tags);
+
+            mDSList = App.LocalRepository.GetSolutionDataSources();
+            if (mDSList.Count == 0)
+                AddOutDS.IsEnabled = false;
+
+            OutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
+            OutputValuesGrid.AddSeparator();
+
+            //allowing return values automaticlly in Edit Action window
+            if (mAction.AddNewReturnParams == null && mAction.ReturnValues.Count() == 0)
+                mAction.AddNewReturnParams = true;
+            App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, Act.Fields.AddNewReturnParams);
+            App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, Act.Fields.SupportSimulation);
+            OutputValuesGrid.AddToolbarTool("@Reset_16x16.png", "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter));
+            SetActReturnValuesGrid();
+            SetActInputValuesGrid();
+
+            OutputValuesGrid.DataSourceList = mAction.ReturnValues;
+            InputValuesGrid.DataSourceList = mAction.InputValues;
+            mAction.InputValues.CollectionChanged += InputValues_CollectionChanged;
+
+            ShowHideRunStopButtons();
+            UpdatePassFailImages();
+
+            mAction.PropertyChanged += ActPropertyChanged;
+            if (mAction.ObjectLocatorConfigsNeeded == false)
+                ActionLocatorPanel.Visibility = System.Windows.Visibility.Collapsed;
+            
+            UpdateTabsVisual();
+            UpdateHelpTab();
+
+            mAction.FlowControls.CollectionChanged += FlowControls_CollectionChanged;
+            mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
+            DataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
+
+            if (EditMode == General.RepositoryItemPageViewMode.Automation|| EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+                SharedRepoInstanceUC.Init(mAction, null);
+            else
+            {
+                SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
+                SharedRepoInstanceUC_Col.Width = new GridLength(0);
+            }
+            if (editMode == General.RepositoryItemPageViewMode.View)
+            {
+                SetViewMode();
+            }
+
+            if (mAction.Status == null || mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.NA)
+                xRunStatusExpander.IsExpanded = false;
+        }
+
+        private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateOutputTabVisual();
+        }
+
+        private void FlowControls_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateFlowControlTabVisual();
+        }
+
+        private void ClearUnusedParameter(object sender, RoutedEventArgs e)
+        {
+            mAction.ClearUnUsedReturnParams();
+        }
+
+        private void RefreshOutputColumns(object sender, RoutedEventArgs e)
+        {
+            if (mAction.SupportSimulation)
+                OutputValuesGrid.ChangeGridView(eGridView.All.ToString());
+            else
+                OutputValuesGrid.ChangeGridView(eGridView.NonSimulation.ToString());
+        }
+
+        private void LoadActionFlowcontrols(Act a)
+        {
+            FlowControlFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
+            ActionFlowControlPage AFCP;
+            if(EditMode == General.RepositoryItemPageViewMode.View)
+            {
+                AFCP = new ActionFlowControlPage(a, mActParentBusinessFlow, mActParentActivity, General.RepositoryItemPageViewMode.View);
+            }
+            else
+            {
+                AFCP = new ActionFlowControlPage(a, mActParentBusinessFlow, mActParentActivity);
+            }
+            FlowControlFrame.Content = AFCP;
+        }
+        
+        private void InputValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {         
+            SwitchingInputValueBoxAndGrid(mAction);     
+        }
+
+        //FIXME - remove after moving to ActUIElement !!!!
+        //TODO: Ugly code. Find a better way to do it
+        // Split the flags in to two one for value field needed and other for grid needed
+        // and grid needed flag will be set only for those actions where it is needed.
+        // This way we will remove all below ugly else if conditions
+        private void SwitchingInputValueBoxAndGrid(Act a)
+        {
+            if (IsPageClosing) return; // no need to update the UI since we are closing, when done in Undo changes/Cancel 
+            // we do restore and don't want to raise events which will cause excpetion  (a.Value = ""  - is the messer)
+
+            if (mAction.ValueConfigsNeeded == false)
+            {
+                InputValuesEditControls.Visibility = System.Windows.Visibility.Collapsed;
+                return;
+            }
+
+            if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) && a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) && a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand))
+            {
+                if (a.InputValues.Count > 1)
+                {
+                    ValueGridPanel.Visibility = Visibility.Visible;
+                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                }
+                else if (a.InputValues.Count == 1)
+                {
+                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Visible;
+                    ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
+                    ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
+                }
+                else
+                {
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Visible;
+                    a.Value = "";
+                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                }
+            }
+            else if (a.GetType() == typeof(ActGenElement))
+            {
+                if (a.InputValues.Count == 0)
+                {
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Visible;
+                    a.AddOrUpdateInputParamValue("Value", "");
+                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                }
+                else
+                {
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Visible;
+                    ValueUC.Init(mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
+                }
+            }
+            else if (a.GetType() == typeof(ActLaunchJavaWSApplication) || a.GetType() == typeof(ActJavaEXE))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
+            {
+                if (a.InputValues.Count <= 1)
+                {
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                }
+                else if (a.InputValues.Count >= 2)
+                {
+                    ValueGridPanel.Visibility = Visibility.Visible;
+                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                }
+            }
+            else if (a.GetType() == typeof(ActTableElement))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
+            {
+                if (a.InputValues.Count == 0)
+                {
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Visible;
+                    a.AddOrUpdateInputParamValue("Value", "");
+                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                }
+                else
+                {
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Visible;
+                    ValueUC.Init(mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), ActInputValue.Fields.Value);
+                }
+            }
+            else if (a.GetType() == typeof(ActDBValidation))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
+            {
+                if (a.InputValues.Count == 1)
+                {
+                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                    ValueUC.ValueTextBox.Text = mAction.InputValues.FirstOrDefault().Value;
+                    ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
+                }
+                else
+                {
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                    ValueUC.Init(a.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                }
+            }
+            else if (a.GetType() == typeof(ActScript))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
+            {
+                if (a.InputValues.Count > 1)
+                {
+                    ValueGridPanel.Visibility = Visibility.Visible;
+                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                }
+                else if (a.InputValues.Count == 1)
+                {
+                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Visible;
+                    ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
+                    ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
+                }
+            }
+            else if (a.GetType() == typeof(ActConsoleCommand))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
+            {
+                if (a.InputValues.Count == 1)
+                {   
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Visible;
+                    ValueUC.Init(mAction.InputValues.FirstOrDefault(), ActInputValue.Fields.Value);
+                    ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
+                    ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
+                }
+                else if (a.InputValues.Count > 1)
+                {
+                    ValueGridPanel.Visibility = Visibility.Visible;
+                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ValueGridPanel.Visibility = Visibility.Collapsed;
+                    ValueBoxPanel.Visibility = Visibility.Collapsed;                    
+                }
+            }
+        }
+
+        private void AddReturnValue(object sender, RoutedEventArgs e)
+        {
+            mAction.ReturnValues.Add(new ActReturnValue() { Active = true });
+        }
+
+        private void AddInputValue(object sender, RoutedEventArgs e)
+        {
+            mAction.InputValues.Add(new ActInputValue() { Param = "p" + mAction.InputValues.Count });
+        }
+
+        private void SetActDataSourceConfigGrid()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            view.GridColsView = viewCols;
+
+            viewCols.Add(new GridColView() { Field = ActOutDataSourceConfig.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            viewCols.Add(new GridColView() { Field = ActOutDataSourceConfig.Fields.OutputType, Header = "Output Type", WidthWeight = 150, ReadOnly = true });
+            viewCols.Add(new GridColView() { Field = ActOutDataSourceConfig.Fields.TableColumn, Header = "Table Column", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActOutDataSourceConfig.Fields.PossibleValues, ActOutDataSourceConfig.Fields.TableColumn) });
+            if (DataSourceConfigGrid.SelectedViewName != null && DataSourceConfigGrid.SelectedViewName != "")
+                DataSourceConfigGrid.updateAndSelectCustomView(view);
+            else
+                DataSourceConfigGrid.SetAllColumnsDefaultView(view);
+            DataSourceConfigGrid.InitViewItems();
+            DataSourceConfigGrid.SetTitleLightStyle = true;
+        }
+        private void SetActReturnValuesGrid()
+        {
+            GridViewDef SimView = new GridViewDef(eGridView.All.ToString());
+            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            SimView.GridColsView = viewCols;
+
+            //Simulation view
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Param, Header = "Parameter", WidthWeight = 150 });
+            viewCols.Add(new GridColView() { Field = "..", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ParamValueExpressionButton"] });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Path, WidthWeight = 100 });
+            viewCols.Add(new GridColView() { Field = "...", WidthWeight = 30, Header = "...", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["PathValueExpressionButton"] });
+
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Header = "Simulated Value", WidthWeight = 150 });
+            viewCols.Add(new GridColView() { Field = "....", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["SimulatedlValueExpressionButton"] });
+            viewCols.Add(new GridColView() { Field = "<<", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToSimulButton"] });
+
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Header = "Actual Value", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
+
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Header = "Expected Value", WidthWeight = 150 });
+            viewCols.Add(new GridColView() { Field = ".....", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.ExpectedCalculated, Header = "Calculated Expected", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Status, WidthWeight = 70, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty)) });
+            
+            List<String> varsCollc = mActParentBusinessFlow.GetAllHierarchyVariables().Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+            varsCollc.Sort();
+            if (varsCollc.Count > 0)
+                varsCollc.Insert(0, string.Empty);//to be used for clearing selection
+
+            ObservableList<GlobalAppModelParameter> appsModelsGlobalParamsList = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, varsCollc, mAppGlobalParamList: appsModelsGlobalParamsList) });
+
+            //Default mode view
+            GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString());
+            defView.GridColsView = new ObservableList<GridColView>();
+            defView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Visible = false });
+            defView.GridColsView.Add(new GridColView() { Field = "....", Visible = false });
+            defView.GridColsView.Add(new GridColView() { Field = "<<", Visible = false });
+
+            OutputValuesGrid.SetAllColumnsDefaultView(SimView);
+            OutputValuesGrid.AddCustomView(defView);
+            OutputValuesGrid.InitViewItems();
+
+            if (mAction.SupportSimulation == true)
+                OutputValuesGrid.ChangeGridView(eGridView.All.ToString());
+            else
+                OutputValuesGrid.ChangeGridView(eGridView.NonSimulation.ToString());
+
+            OutputValuesGrid.ShowViewCombo = Visibility.Collapsed;
+            OutputValuesGrid.ShowEdit = Visibility.Collapsed;
+        }
+
+        private void SetActInputValuesGrid()
+        {
+            //Show/hide if needed
+            InputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddInputValue));//?? going to be hide in next line code
+
+            InputValuesGrid.SetTitleLightStyle = true;
+            InputValuesGrid.ClearTools();
+            InputValuesGrid.ShowDelete = System.Windows.Visibility.Visible;
+
+            //List<GridColView> view = new List<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["InputValueExpressionButton"] });
+            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.ValueForDriver, Header = "Value ForDriver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+
+            InputValuesGrid.SetAllColumnsDefaultView(view);
+            InputValuesGrid.InitViewItems();
+        }
+        
+        private void LoadActionInfoPage(Act a)
+        {
+            //Each Action need to implement ActionEditPage which return the name of the page for edit
+            //TODO: check all action are working and showing the correct Edit Page
+
+            if (a.ActionEditPage != null)
+            {
+                string classname = "Ginger.Actions." + a.ActionEditPage;
+                Type t = Assembly.GetExecutingAssembly().GetType(classname);
+                if (t == null)
+                {
+                    throw new Exception("Action edit page not found - " + classname);
+                }
+                Page p = (Page)Activator.CreateInstance(t, a);
+                if (p != null)
+                {
+                    // For no driver actions we give the BF and env - used for example in set var value.
+                    if (typeof(ActWithoutDriver).IsAssignableFrom(a.GetType()))
+                    {
+                        ((ActWithoutDriver)a).RunOnBusinessFlow = App.AutomateTabGingerRunner.CurrentBusinessFlow;
+                        ((ActWithoutDriver)a).RunOnEnvironment = App.AutomateTabGingerRunner.ProjEnvironment;
+                        ((ActWithoutDriver)a).DSList = App.AutomateTabGingerRunner.DSList;
+                    }
+
+                    // Load the page
+                    ActionPrivateConfigsFrame.Content = p;
+                    ActionPrivateConfigsPanel.Visibility = System.Windows.Visibility.Visible;
+                }
+            }
+            else
+            {
+                ActionPrivateConfigsPanel.Visibility = System.Windows.Visibility.Collapsed;
+            }
+        }
+        
+        private void NextActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+            if (ap == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.CurrentActionNotSaved);
+            }
+            else if (ap.grdActions.grdMain.Items.CurrentPosition < ap.grdActions.grdMain.Items.Count - 1)
+            {
+                ap.grdActions.grdMain.Items.MoveCurrentToNext();
+                Act tempact = (Act)ap.grdActions.grdMain.Items.CurrentItem;
+                if (tempact != null)
+                {
+                    mAction = tempact;
+
+                    ActionEditPage actedit = new ActionEditPage(mAction);
+                    actedit.ap = ap;
+                    actedit.ShowAsWindow();
+                    _pageGenericWin.Close();
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "No Action to move to.");
+            }
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void PrevActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            if (ap == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.CurrentActionNotSaved);
+            }
+            else if (ap.grdActions.grdMain.Items.CurrentPosition >= 1)
+            {
+                ap.grdActions.grdMain.Items.MoveCurrentToPrevious();
+                Act tempact = (Act)ap.grdActions.grdMain.Items.CurrentItem;
+                if (tempact != null)
+                {
+                    mAction = tempact;
+                    ActionEditPage actedit = new ActionEditPage(mAction);
+                    actedit.ap = ap;
+                    actedit.ShowAsWindow();
+                    _pageGenericWin.Close();
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "No Action to move to.");
+            }
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private async void RunActioInSimulationnButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool originalSimulationFlagValue = App.AutomateTabGingerRunner.RunInSimulationMode;
+            App.AutomateTabGingerRunner.RunInSimulationMode = true;
+
+            int res = await RunAction().ConfigureAwait(false);
+
+            App.AutomateTabGingerRunner.RunInSimulationMode = originalSimulationFlagValue;
+        }
+
+        private async void RunActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool originalSimulationFlagValue = App.AutomateTabGingerRunner.RunInSimulationMode;
+            App.AutomateTabGingerRunner.RunInSimulationMode = false;
+
+            int res = await RunAction().ConfigureAwait(false);
+
+            App.AutomateTabGingerRunner.RunInSimulationMode = originalSimulationFlagValue;
+        }
+
+        private void StopRunBtn_Click(object sender, RoutedEventArgs e)
+        {
+            App.MainWindow.StopAutomateRun();
+        }
+
+        private void ShowHideRunStopButtons()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                if (mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
+                {
+                    mRunActionBtn.Visibility = Visibility.Collapsed;
+                    mStopRunBtn.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    mRunActionBtn.Visibility = Visibility.Visible;
+                    mStopRunBtn.Visibility = Visibility.Collapsed;
+                }
+            });
+        }
+
+        private async Task<int> RunAction()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                mAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+                if (mAction.GetType() == typeof(ActLowLevelClicks))
+                    App.MainWindow.WindowState = WindowState.Minimized;
+                mAction.IsSingleAction = true;
+                
+                App.MainWindow.SetAutomateTabRunnerForExecution();
+
+                //No need for agent for some actions like DB and read for excel. For other need agent   
+                if (!(typeof(ActWithoutDriver).IsAssignableFrom(mAction.GetType())))
+                {
+                    App.AutomateTabGingerRunner.SetCurrentActivityAgent();
+                }
+
+                App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+            });
+            
+            var result = await App.AutomateTabGingerRunner.RunActionAsync(mAction, false, true).ConfigureAwait(false);
+
+            this.Dispatcher.Invoke(() =>
+            {
+                mAction.IsSingleAction = false;
+                UpdateTabsVisual();
+                UpdateScreenShotPage();
+                Mouse.OverrideCursor = null;
+            });
+            return result;
+        }
+
+        private void UpdatePassFailImages()
+        {
+            PassImage.Visibility = System.Windows.Visibility.Collapsed;
+            FailImage.Visibility = System.Windows.Visibility.Collapsed;
+            WarningImage.Visibility = System.Windows.Visibility.Collapsed;
+            ErrorTextBlock.Visibility = System.Windows.Visibility.Collapsed;
+            ExtraInfoTextBlock.Visibility = System.Windows.Visibility.Collapsed;
+            if (mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
+            {
+                PassImage.Visibility = System.Windows.Visibility.Visible;
+                ExtraInfoTextBlock.Visibility = System.Windows.Visibility.Visible;
+            }
+            else if (mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+            {
+                FailImage.Visibility = System.Windows.Visibility.Visible;
+                ErrorTextBlock.Visibility = System.Windows.Visibility.Visible;
+                ExtraInfoTextBlock.Visibility = System.Windows.Visibility.Visible;
+            }
+            else if (mAction.Status != null)
+            {
+                WarningImage.Visibility = System.Windows.Visibility.Visible;
+                ExtraInfoTextBlock.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
+
+        private void GridVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Expected);
+            VEEW.ShowAsWindow();
+        }
+        private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActInputValue AIV = (ActInputValue)InputValuesGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
+            VEEW.ShowAsWindow();
+        }
+        private void GridAddActualToExpectButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
+            ARV.Expected = ARV.Actual;
+        }
+
+        private void GridAddActualToSimulButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
+            ARV.SimulatedActual = ARV.Actual;
+        }
+
+        private void SimulatedOutputGridVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.SimulatedActual);
+            VEEW.ShowAsWindow();
+        }
+
+        private string RemoveActionWord(string str)
+        {
+            return str.Replace("Action", "").Trim();
+        }
+
+
+        public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free, bool startupLocationWithOffset = false)
+        {
+            //changed the style to be free - since many other windows get stuck and doesn't show
+            // Need to find a solution if 2 windows show as Dialog...
+            string title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
+
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+            switch (EditMode)
+            {
+                case General.RepositoryItemPageViewMode.Automation:
+                    Button okBtn = new Button();
+                    okBtn.Content = "Ok";
+                    okBtn.Click += new RoutedEventHandler(okBtn_Click);
+                    winButtons.Add(okBtn);
+                    Button undoBtn = new Button();
+                    undoBtn.Content = "Undo & Close";
+                    undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+                    winButtons.Add(undoBtn);
+
+                    Button nextAction = new Button();
+                    nextAction.Content = "Next Action";
+                    nextAction.Click += new RoutedEventHandler(NextActionButton_Click);
+                    nextAction.Margin = new Thickness(0, 0, 60, 0);
+                    winButtons.Add(nextAction);
+                    Button prevAction = new Button();
+                    prevAction.Content = "Previous Action";
+                    prevAction.Click += new RoutedEventHandler(PrevActionButton_Click);
+                    winButtons.Add(prevAction);
+
+                    mRunActionBtn.Content = "Run";
+                    mRunActionBtn.Click += new RoutedEventHandler(RunActionButton_Click);
+                    mRunActionBtn.Margin = new Thickness(0, 0, 60, 0);
+                    winButtons.Add(mRunActionBtn);
+                    mSimulateRunBtn.Content = "Simulate Run";
+                    mSimulateRunBtn.Click += new RoutedEventHandler(RunActioInSimulationnButton_Click);
+                    ShowHideRunSimulation();
+                    winButtons.Add(mSimulateRunBtn);
+
+                    mStopRunBtn.Content = "Stop";
+                    mStopRunBtn.Click += new RoutedEventHandler(StopRunBtn_Click);
+                    mStopRunBtn.Margin = new Thickness(0, 0, 60, 0);
+                    winButtons.Add(mStopRunBtn);
+                    mStopRunBtn.Visibility = Visibility.Collapsed;
+                    break;
+
+
+                case General.RepositoryItemPageViewMode.SharedReposiotry:
+                    title = "Edit Shared Repository " + RemoveActionWord(mAction.ActionDescription) + " Action";
+                    Button saveBtn = new Button();
+                    saveBtn.Content = "Save";
+                    saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
+                    Button closeBtn = new Button();
+                    closeBtn.Content = "Undo & Close";
+                    closeBtn.Click += new RoutedEventHandler(undoBtn_Click);
+                    winButtons.Add(saveBtn);
+                    winButtons.Add(closeBtn);
+                    break;
+
+                case General.RepositoryItemPageViewMode.Child:
+                    title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
+                    Button saveBtnAnalyzer = new Button();
+                    saveBtnAnalyzer.Content = "Save";
+                    saveBtnAnalyzer.Click += new RoutedEventHandler(saveBtnAnalyzer_Click);
+                    Button closeBtnAnalyzer = new Button();
+                    closeBtnAnalyzer.Content = "Undo & Close";
+                    closeBtnAnalyzer.Click += new RoutedEventHandler(undoBtn_Click);
+                    winButtons.Add(saveBtnAnalyzer);
+                    winButtons.Add(closeBtnAnalyzer);
+                    break;
+                case General.RepositoryItemPageViewMode.View:
+                    title = "View " + RemoveActionWord(mAction.ActionDescription) + " Action";
+                    Button okBtnView = new Button();
+                    okBtnView.Content = "Ok";
+                    okBtnView.Click += new RoutedEventHandler(okBtn_Click);
+                    winButtons.Add(okBtnView);
+                    break;
+            }
+
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            SwitchingInputValueBoxAndGrid(mAction);
+            return saveWasDone;
+        }
+        private void SetViewMode()
+        {
+            RetryMechanismStackPanel.IsEnabled = false;
+            DataSourceConfigGrid.ToolsTray.Visibility = Visibility.Collapsed;
+            DataSourceConfigGrid.DisableGridColoumns();
+            ConfigDS.IsEnabled = false;
+            OutputsToDsConfig.IsEnabled = false;
+            OutputValuesGrid.ToolsTray.Visibility = Visibility.Collapsed;
+            OutputValuesGrid.DisableGridColoumns();
+            xScreenshotsSetting.IsEnabled = false;
+            xActionRunDetails.IsEnabled = false;
+            xActionsDetails.IsEnabled = false;
+            xActionConfiguration.IsEnabled = false;
+        }
+        private void UndoChangesAndClose()
+        {
+            IsPageClosing = true;
+            _pageGenericWin.Close();
+
+            Mouse.OverrideCursor = Cursors.Wait;
+            mAction.RestoreFromBackup();
+            Mouse.OverrideCursor = null;
+        }
+
+        private void CloseWinClicked(object sender, EventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            {
+                UndoChangesAndClose();
+            }
+            else
+            {
+                if (EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+                    CheckIfUserWantToSave();
+                else
+                    _pageGenericWin.Close();
+            }
+        }
+
+        private void undoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UndoChangesAndClose();
+        }
+
+        private void okBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // cause prop change so grid will refresh the data
+            mAction.OnPropertyChanged(Act.Fields.Details);
+            mAction.OnPropertyChanged(Act.Fields.FlowControls);
+            IsPageClosing = true;
+            _pageGenericWin.Close();
+        }
+        public void UpdateGrid()
+        {
+            Act currentact = (Act)ap.grdActions.grdMain.Items.CurrentItem;
+            if (currentact != null)
+            {
+                mAction = currentact;
+                ap.UpdateActionGrid();
+            }
+        }
+
+        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CheckIfUserWantToSave();
+        }
+
+        private void saveBtnAnalyzer_Click(object sender, RoutedEventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKeys.SaveAnalyzerItemWarning) == MessageBoxResult.Yes)
+            {
+                Reporter.ToGingerHelper(eGingerHelperMsgKey.AnalyzerSavingFixedIssues, null, mAction.Description);
+                saveWasDone = true;
+                mActParentBusinessFlow.Save();
+                Reporter.CloseGingerHelper();
+            }
+
+            IsPageClosing = true;
+            _pageGenericWin.Close();
+        }
+        private void CheckIfUserWantToSave()
+        {
+            if (LocalRepository.CheckIfSureDoingChange(mAction, "change") == true)
+            {
+                saveWasDone = true;
+                mAction.Save();
+                IsPageClosing = true;
+                _pageGenericWin.Close();
+            }
+        }
+
+        private void cboLocateBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cboLocateBy.SelectedItem.ToString() == "ByMulitpleProperties")
+            {
+                sMultiLocatorVals = txtLocateValue.ValueTextBox.Text;
+                txtLocateValue.Background = System.Windows.Media.Brushes.LightGray;
+                btnEditLocator.Width = 30;
+                if (mAction.LocateBy != eLocateBy.ByMulitpleProperties)
+                {
+                    EditLocatorsWindow.sMultiLocatorVals = txtLocateValue.ValueTextBox.Text;
+                    EditLocatorsWindow ELW = new EditLocatorsWindow(mActParentBusinessFlow);
+                    ELW.ShowDialog();
+                    txtLocateValue.ValueTextBox.Text = EditLocatorsWindow.sMultiLocatorVals;
+                }
+            }
+            else
+            {
+                txtLocateValue.Background = System.Windows.Media.Brushes.White;
+                btnEditLocator.Width = 0;
+            }
+        }
+
+        private void btnEditLocator_Click(object sender, RoutedEventArgs e)
+        {
+            EditLocatorsWindow.sMultiLocatorVals = txtLocateValue.ValueTextBox.Text;
+            EditLocatorsWindow ELW = new EditLocatorsWindow(mActParentBusinessFlow);
+            ELW.ShowDialog();
+            txtLocateValue.ValueTextBox.Text = EditLocatorsWindow.sMultiLocatorVals;
+        }
+
+        private void GridParamVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Param);
+            VEEW.ShowAsWindow();
+        }
+        private void GridPathVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ARV, ActReturnValue.Fields.Path);
+            VEEW.ShowAsWindow();
+        }
+
+        private void actionInfoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ActDescriptionPage desPage = new ActDescriptionPage(mAction);
+            desPage.ShowAsWindow();
+        }
+
+        private void ActionTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //set the selected tab text style
+            try
+            {
+                if (ActionTab.SelectedItem != null)
+                {
+                    foreach (TabItem tab in ActionTab.Items)
+                    {
+                        foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
+
+                            if (ctrl.GetType() == typeof(TextBlock))
+                            {
+                                if (ActionTab.SelectedItem == tab)
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                else
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+
+                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+            }
+
+            if (ActionTab.SelectedItem == ScreenShotTab)
+            {
+                UpdateScreenShotPage();
+                return;
+            }
+            else if (ActionTab.SelectedItem == HelpTab)
+            {
+                General.ShowGingerHelpWindow(mAction.ActionDescription);
+            }
+        }
+
+        private void UpdateScreenShotPage()
+        {
+
+            ScreenShotsGrid.Children.Clear();
+            ScreenShotsGrid.RowDefinitions.Clear();
+            ScreenShotsGrid.ColumnDefinitions.Clear();
+
+            if (!mAction.TakeScreenShot && mAction.ScreenShots.Count == 0)  // keep count check for visual testing
+            {
+                Label lbl = new Label();
+                lbl.Content = "To take screen shot(s) after this action is executed select Take Screen Shot check box in General tab";
+                lbl.FontSize = 16;
+                ScreenShotsGrid.Children.Add(lbl);
+                return;
+            }
+
+            if (mAction.TakeScreenShot && mAction.ScreenShots.Count == 0)
+            {
+                Label lbl = new Label();
+                lbl.Content = "Run the action to see Screen shot(s)";
+                lbl.FontSize = 16;
+                ScreenShotsGrid.Children.Add(lbl);
+                return;
+            }
+
+            if (mAction.ScreenShots.Count > 0)
+            {
+                // create grid row cols based on screen shots count, can be 1x1, 2x2, 3x3 etc.. 
+                int rowcount = 1;
+                int colsPerRow = 1;
+                while (rowcount * colsPerRow < mAction.ScreenShots.Count)
+                {
+                    if (rowcount < colsPerRow)
+                        rowcount++;    // enable 1 row 2 columns, 2x3, 3x4 etc.. - avoid showing empty row
+                    else
+                        colsPerRow++;
+                    // we can limit cols if we want for example max 3 per row, and then the grid will have vertical scroll bar
+                }
+
+                for (int rows = 0; rows < rowcount; rows++)
+                {
+                    RowDefinition rf = new RowDefinition() { Height = new GridLength(50, GridUnitType.Star) };
+                    ScreenShotsGrid.RowDefinitions.Add(rf);
+                }
+
+                for (int cols = 0; cols < colsPerRow; cols++)
+                {
+                    ColumnDefinition cf = new ColumnDefinition() { Width = new GridLength(50, GridUnitType.Star) };
+                    ScreenShotsGrid.ColumnDefinitions.Add(cf);
+                }
+
+                // loop thru the screen shot and create new frame per each to show and place in the grid
+
+                int r = 0;
+                int c = 0;
+
+                for (int i = 0; i < mAction.ScreenShots.Count; i++)
+                {
+                    //TODO: clean me when Screenshots changed to class instead of list of strings
+                    // just in case we don't have name, TOOD: fix all places where we add screen shots to include name
+                    string Name = "";
+                    if (mAction.ScreenShotsNames.Count > i)
+                    {
+                        Name = mAction.ScreenShotsNames[i];
+                    }
+                    ScreenShotViewPage p = new ScreenShotViewPage(Name, mAction.ScreenShots[i]);
+                    Frame f = new Frame();
+                    Grid.SetRow(f, r);
+                    Grid.SetColumn(f, c);
+                    f.HorizontalAlignment = HorizontalAlignment.Center;
+                    f.VerticalAlignment = VerticalAlignment.Center;
+                    f.Content = p;
+                    ScreenShotsGrid.Children.Add(f);
+
+                    c++;
+                    if (c == colsPerRow)
+                    {
+                        c = 0;
+                        r++;
+                    }
+                }
+            }
+        }
+
+        private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: fixme - Currenlty working with first agent
+            ApplicationAgent aa = App.AutomateTabGingerRunner.ApplicationAgents[0];
+            if (aa != null)
+            {
+                DriverBase driver = aa.Agent.Driver;
+                App.AutomateTabGingerRunner.PrepActionVE(mAction);
+                if (driver != null)
+                {
+                    driver.HighlightActElement(mAction);
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKeys.MissingImplementation2);
+            }
+        }
+
+        private void ControlSelectorButton_Click(object sender, RoutedEventArgs e)
+        {
+            ApplicationAgent aa = App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+            if (aa != null)
+            {
+                if (aa.Agent.Driver == null)
+                {
+                    aa.Agent.DSList = mDSList;
+                    aa.Agent.StartDriver();
+                }
+                DriverBase driver = aa.Agent.Driver;
+                //Instead of check make it disabled ?
+                if (driver is IWindowExplorer)
+                {
+                    WindowExplorerPage WEP = new WindowExplorerPage(aa, mAction);
+                    WEP.ShowAsWindow();
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Control selection is not available yet for driver - " + driver.GetType().ToString());
+                }
+            }
+        }
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+        }
+
+        private void txtTimeout_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (txtTimeout.Text == String.Empty || txtTimeout.Text == null)
+            {
+                txtTimeout.Text = "0";
+                txtTimeout.CaretIndex = 1;
+            }
+        }
+
+        private void TakeScreenShot_Checked(object sender, RoutedEventArgs e)
+        {
+            TakeScreenshotsConfigs.IsEnabled = true;
+            UpdateScreenshotTabVisual();
+        }
+
+        private void TakeScreenShot_UnChecked(object sender, RoutedEventArgs e)
+        {
+            TakeScreenshotsConfigs.IsEnabled = false;
+            UpdateScreenshotTabVisual();
+        }
+
+        void UpdateTabsVisual()
+        {
+            UpdateRetryMechanismTabVisual();
+            UpdateFlowControlTabVisual();
+            UpdateOutputTabVisual();
+            UpdateScreenshotTabVisual();
+        }
+
+        //Output Tab
+        void UpdateOutputTabVisual()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                int count = mAction.ReturnValues.Count();
+                if (count > 0)
+                {
+                    SetTabOnOffSign(OutputTab, true);
+                    OutputCount.Text = "(" + count + ")";
+                }
+                else
+                {
+                    SetTabOnOffSign(OutputTab, false);
+                    OutputCount.Text = "";
+                }
+
+                if (mAction.ConfigOutputDS)
+                    SetTabOnOffSign(OutputTab, true);
+            });
+        }
+
+        public class ActReturnValueStatusConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter,
+                    System.Globalization.CultureInfo culture)
+            {
+                string status = value.ToString();
+                if (status.Equals(ActReturnValue.eStatus.Passed.ToString())) return System.Windows.Media.Brushes.Green;//System.Drawing.Brushes.Green;
+                if (status.Equals(ActReturnValue.eStatus.Failed.ToString())) return System.Windows.Media.Brushes.Red;
+                if (status.Equals(ActReturnValue.eStatus.Pending.ToString())) return System.Windows.Media.Brushes.Orange;
+                if (status.Equals(ActReturnValue.eStatus.Skipped.ToString())) return System.Windows.Media.Brushes.Black;
+
+                return System.Drawing.Brushes.Gray;
+            }
+
+            public object ConvertBack(object value, Type targetType,
+                object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        void UpdateScreenshotTabVisual()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                SetTabOnOffSign(ScreenShotTab, mAction.TakeScreenShot);
+
+                int count = mAction.ScreenShots.Count;
+                if (count > 0)
+                {
+                    ScreenShotCount.Text = "(" + count + ")";
+                }
+                else
+                {
+                    ScreenShotCount.Text = "";
+                }
+            });
+        }
+
+        // Retry Tab
+        private void UpdateRetryMechanismTabVisual()
+        {
+            SetTabOnOffSign(RetyrMechainsmTab, mAction.EnableRetryMechanism);
+
+            if (mAction.EnableRetryMechanism)
+                RetryMechConfigsPnl.IsEnabled = true;
+            else
+                RetryMechConfigsPnl.IsEnabled = false;
+        }
+
+        private void UpdateFlowControlTabVisual()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                bool b = mAction.FlowControls.Count() > 0;
+                SetTabOnOffSign(FlowControlTab, b);
+                if (b)
+                {
+                    FlowControlCountLabel.Text = "(" + mAction.FlowControls.Count() + ")";
+                }
+                else
+                {
+                    FlowControlCountLabel.Text = "";
+                }
+            });
+        }
+
+        private void UpdateHelpTab()
+        {
+            ActDescriptionPage desPage = new ActDescriptionPage(mAction);
+            ActDescriptionFrm.Content = desPage;
+        }
+
+        void SetTabOnOffSign(TabItem tab, bool indicatorToShow)
+        {
+            try
+            {
+                //set the selected tab text style
+                if (tab != null)
+                {
+                    foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
+                        if (ctrl.GetType() == typeof(System.Windows.Controls.Image))
+                        {
+                            System.Windows.Controls.Image img = (System.Windows.Controls.Image)ctrl;
+                            if (img.Tag != null)
+                            {
+                                if (img.Tag.ToString() == "OffSignImage")
+                                    if (indicatorToShow)
+                                        img.Visibility = Visibility.Collapsed;
+                                    else
+                                        img.Visibility = Visibility.Visible;
+                                else if (img.Tag.ToString() == "OnSignImage")
+                                    if (indicatorToShow)
+                                        img.Visibility = Visibility.Visible;
+                                    else
+                                        img.Visibility = Visibility.Collapsed;
+                            }
+                        }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+            }
+        }
+
+        private void EnableRetryMechanismCheckBox_CheckedUnChecked(object sender, RoutedEventArgs e)
+        {
+            UpdateRetryMechanismTabVisual();
+        }
+
+        private void GridDSVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActReturnValue ARV = (ActReturnValue)OutputValuesGrid.CurrentItem;
+            ActDataSourcePage ADSP = new ActDataSourcePage(ARV, ActReturnValue.Fields.StoreToDataSource);
+            ADSP.ShowAsWindow();
+        }
+
+        private void DataSourceExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            SetDataSourceConfigTabView();
+        }
+
+        private void AddOutDS_Checked(object sender, RoutedEventArgs e)
+        {
+            mDSList = App.LocalRepository.GetSolutionDataSources();
+            if (mDSList.Count == 0)
+                return;
+            mDSNames.Clear();
+            foreach (DataSourceBase ds in mDSList)
+                mDSNames.Add(ds.Name);
+            GingerCore.General.FillComboFromList(cmbDataSourceName, mDSNames);           
+            if (mAction.OutDataSourceName != null && mAction.OutDataSourceTableName != null && mAction.OutDataSourceName != "" && mAction.OutDataSourceTableName != "")
+            {
+                cmbDataSourceName.SelectedValue = mAction.OutDataSourceName;
+                cmbDataSourceTableName.SelectedValue = mAction.OutDataSourceTableName;
+            }
+            else
+            {
+                cmbDataSourceName.SelectedIndex = 0;
+                mDataSourceName = mDSNames[0];
+            }
+
+            if (mAction.OutDSParamMapType == null || mAction.OutDSParamMapType == "")
+            {
+                dsOutputParamMapType.SelectedValue=Act.eOutputDSParamMapType.ParamToRow;
+            }
+            else
+                dsOutputParamMapType.SelectedValue = mAction.OutDSParamMapType;
+
+            SetDataSourceConfigTabView();
+
+            UpdateOutputTabVisual();
+        }
+
+        private void AddOutDS_Unchecked(object sender, RoutedEventArgs e)
+        {
+            mAction.DSOutputConfigParams.Clear();            
+            SetDataSourceConfigTabView();
+            UpdateOutputTabVisual();
+        }
+        private void SetDataSourceConfigTabView()
+        {
+            if(DataSourceExpander.IsExpanded)
+            {
+                if(AddOutDS.IsChecked == true)
+                {
+                        DataSourceRow.Height = new GridLength(270);
+                }
+                else
+                {
+                    DataSourceRow.Height = new GridLength(60);
+                }
+            }
+            else
+                DataSourceRow.Height = new GridLength(32);
+
+            if (mAction.ConfigOutputDS)
+            {
+                OutputsToDsConfig.IsEnabled = true;
+                DataSourceConfigGrid.IsEnabled = true;
+            }
+            else
+            {
+                OutputsToDsConfig.IsEnabled = false;
+                DataSourceConfigGrid.IsEnabled = false;
+            }        
+        }
+        private void updateDSOutGrid()
+        {
+            if (cmbDataSourceTableName == null || cmbDataSourceTableName.Items.Count == 0 || cmbDataSourceTableName.SelectedValue == null)
+                return;            
+
+            List<ActOutDataSourceConfig> DSConfigParam = mAction.DSOutputConfigParams.Where(x => x.DSName == mDataSourceName && x.DSTable == mDSTable.Name && x.OutParamMap == mAction.OutDSParamMapType).ToList();
+            SetDataSourceConfigTabView();
+
+            if (mDSTable.DSTableType == DataSourceTable.eDSTableType.Customized)
+            {
+                dsOutputParamMapType.IsEnabled = true;
+                mColNames.Remove("GINGER_ID");
+                if (mColNames.Contains("GINGER_LAST_UPDATED_BY"))
+                    mColNames.Remove("GINGER_LAST_UPDATED_BY");
+                if (mColNames.Contains("GINGER_LAST_UPDATE_DATETIME"))
+                    mColNames.Remove("GINGER_LAST_UPDATE_DATETIME");
+                if (mColNames.Contains("GINGER_USED"))
+                    mColNames.Remove("GINGER_USED");
+
+                if (mAction.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToRow.ToString())
+                {
+                    mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Parameter.ToString(), "Parameter", "", mColNames);
+                    mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Path.ToString(), "Path", "", mColNames);
+                    mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Actual.ToString(), "Actual", "", mColNames);
+                }
+                else
+                {                    
+                    foreach(ActOutDataSourceConfig oDSParam in DSConfigParam)
+                    {
+                        mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, oDSParam.OutputType, oDSParam.TableColumn, "", mColNames,mAction.OutDSParamMapType);
+                    }
+                }
+            }
+            else
+            {                
+                dsOutputParamMapType.IsEnabled = false;
+                dsOutputParamMapType.SelectedValue = Act.eOutputDSParamMapType.ParamToRow;
+                mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Parameter.ToString(), "GINGER_KEY_NAME");
+                mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Parameter_Path.ToString(), "GINGER_KEY_NAME");
+                mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Actual.ToString(), "GINGER_KEY_VALUE");
+
+            }
+
+            DSConfigParam = mAction.DSOutputConfigParams.Where(x => x.DSName == mDataSourceName && x.DSTable == mDSTable.Name && x.OutParamMap == mAction.OutDSParamMapType).ToList();
+            aOutDSConfigParam.Clear();
+            
+            foreach (ActOutDataSourceConfig aOutDSConfig in DSConfigParam)
+                aOutDSConfigParam.Add(aOutDSConfig);
+
+            DataSourceConfigGrid.Visibility = Visibility.Visible;
+
+            SetActDataSourceConfigGrid();
+            mAction.DSOutputConfigParams = aOutDSConfigParam;
+            DataSourceConfigGrid.DataSourceList = mAction.DSOutputConfigParams;
+        }
+        private void OutDSParamType_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            updateDSOutGrid();
+        }
+
+        private void cmbDataSourceTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cmbDataSourceTableName == null || cmbDataSourceTableName.Items.Count == 0 || cmbDataSourceTableName.SelectedValue == null)
+                return;
+            foreach (DataSourceTable dst in mDSTableList)
+            {
+                if (dst.Name == cmbDataSourceTableName.SelectedValue.ToString())
+                {                    
+                    mDSTable = dst;
+                   
+                    mColNames = mDSTable.DSC.GetColumnList(mDSTable.Name);
+                    if (mAction.OutDSParamMapType == null)
+                        mAction.OutDSParamMapType = Act.eOutputDSParamMapType.ParamToRow.ToString();
+                    dsOutputParamMapType.SelectedValue = mAction.OutDSParamMapType;
+                    updateDSOutGrid();
+                    break;
+                }               
+            }
+        }
+
+        private void DataSourceConfigGrid_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (mDSTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
+            {                
+                if (e.OriginalSource.GetType() == typeof(CheckBox))
+                {
+                    DataGridCell cell = (DataGridCell)((CheckBox)e.OriginalSource).Parent;
+                    ActOutDataSourceConfig currRow = (ActOutDataSourceConfig)cell.DataContext;                    
+                    if (currRow.OutputType == "Actual")
+                        mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Actual.ToString(), "GINGER_KEY_VALUE", "true");
+                    else if(currRow.OutputType == "Parameter")
+                        mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Parameter_Path.ToString(), "GINGER_KEY_NAME", (!currRow.Active).ToString());
+                    else
+                        mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Parameter.ToString(), "GINGER_KEY_NAME", (!currRow.Active).ToString());
+                    DataSourceConfigGrid.DataSourceList = mAction.DSOutputConfigParams;
+                }                
+            }
+        }               
+
+        private void cmbDataSourceName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cmbDataSourceName == null || cmbDataSourceName.Items.Count == 0 || cmbDataSourceName.SelectedValue == null)
+                return;
+            foreach (DataSourceBase ds in mDSList)
+            {
+                if (ds.Name == cmbDataSourceName.SelectedValue.ToString())
+                {
+                    mDataSourceName = cmbDataSourceName.SelectedValue.ToString();
+                    if (ds.FilePath.StartsWith("~"))
+                    {
+                        ds.FileFullPath = ds.FilePath.Replace("~", "");
+                        ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
+                    }
+                    ds.Init(ds.FileFullPath);
+                    List<string> dsTableNames = new List<string>();
+                    mDSTableList.Clear();
+                    mDSTableList = ds.GetTablesList();
+                    foreach (DataSourceTable dst in mDSTableList)
+                    {
+                        dsTableNames.Add(dst.Name);
+                        if (cmbDataSourceTableName.SelectedValue != null && cmbDataSourceTableName.SelectedValue.ToString() == dst.Name)
+                            mDSTable = dst;
+                    }
+                                                
+                    if (mDSTableList.Count == 0)
+                        return;
+                    GingerCore.General.FillComboFromList(cmbDataSourceTableName, dsTableNames);
+                    if(cmbDataSourceTableName.SelectedValue == null)
+                    {
+                        mDSTable = mDSTableList[0];
+                        cmbDataSourceTableName.SelectedIndex = 0;
+                    }
+                    break;
+                }
+            }
+        }
+
+        private void DataSourceExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            DataSourceRow.Height = new GridLength(35);
+        }
+
+        private void ActPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == Act.Fields.Status)
+            {
+                PassImage.Dispatcher.Invoke(() =>
+                {
+                    UpdatePassFailImages();
+                    ShowHideRunStopButtons();
+                    xRunStatusExpander.IsExpanded = true;
+                });
+            }
+        }
+
+        private void ShowHideRunSimulation()
+        {
+            if (mAction.SupportSimulation)
+                mSimulateRunBtn.Visibility = Visibility.Visible;
+            else
+                mSimulateRunBtn.Visibility = Visibility.Collapsed;
+        }
+        private void ActionPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {                       
+            if (e.PropertyName == Act.Fields.SupportSimulation)
+            {
+                ShowHideRunSimulation();
+            }
+        }
+
+        private void xRunStatusExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            xRunStatusRow.Height = new GridLength(125);
+        }
+
+        private void xRunStatusExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            xRunStatusRow.Height = new GridLength(30);
+        }
+    }
+}

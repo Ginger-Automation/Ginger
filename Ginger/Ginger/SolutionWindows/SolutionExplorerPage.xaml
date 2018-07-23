@@ -1,0 +1,40 @@
+    <Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+    x:Class="Ginger.SolutionWindows.SolutionExplorerPage" 
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+	Title="Solution Explorer">
+
+   
+    <DockPanel>
+        <Label x:Name="NoSolutionLabel" DockPanel.Dock="Top" Visibility="Collapsed"  Content="Please create a new solution or open an existing one" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontFamily="open sans" Foreground="{DynamicResource @Skin1_ColorA}"  />
+
+        <Grid x:Name="ExplorerTreeGrid" DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="SolutionTreeColumn" Width="300" MinWidth="35"/>
+                <ColumnDefinition Width="250*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Expander x:Name="SolutionTreeExpander" Grid.Row="0" Grid.Column="0" ExpandDirection="Right" Style="{StaticResource @ExpanderDarkStyle}" Expanded="SolutionTreeExpander_ExpandedCollapsed" Collapsed="SolutionTreeExpander_ExpandedCollapsed" SizeChanged="SolutionTreeExpander_SizeChanged" Margin="0,-1,0,0" MouseDoubleClick="SolutionTreeExpander_MouseDoubleClick" >
+                <Expander.Header>
+                    <Label x:Name="SolutionTreeExpanderLabel" Style="{StaticResource @VerticalExpanderLabelStyle}"/> 
+                </Expander.Header>
+                <Expander.Content>
+                    <UCTreeView:TreeView2 x:Name="SolutionTreeView" HorizontalAlignment="Stretch" SizeChanged="SolutionTreeView_SizeChanged"/>
+                </Expander.Content>
+            </Expander>
+                      
+            <GridSplitter x:Name="SolutionSplitter" ResizeDirection="Columns" Grid.Row="0" Grid.Column="1" Grid.RowSpan="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource @Skin1_ColorA}" IsEnabled="True" Margin="0,0,0,0"/>
+          
+            <Frame x:Name="ItemDetailsFrame" Grid.Column="3" Background="#FFFFFF" Margin="6,0,5,0"/>
+            
+        </Grid>
+    </DockPanel>
+</Page>

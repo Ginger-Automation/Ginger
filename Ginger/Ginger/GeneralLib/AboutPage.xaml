@@ -1,0 +1,53 @@
+    <Page x:Class="Ginger.GeneralLib.AboutPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      Height="550" Width="700"
+	Title="About Ginger">
+
+    <Grid Background="{StaticResource @Skin1_ColorC}" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150"/>
+            <RowDefinition Height="150" />
+            <RowDefinition Height="100" />
+            <RowDefinition Height="150*"/>
+        </Grid.RowDefinitions>
+
+        <Image Grid.Row="0"  Source="{StaticResource @GingerLogo}" DockPanel.Dock="Top" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" Margin="0,0,0,0" />
+        
+        <DockPanel Grid.Row="1">            
+            <Label Content="Application Details:" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
+            <ScrollViewer DockPanel.Dock="Top" Margin="0,10,0,10">
+                <TextBlock x:Name="txtBlkApplicationInfo" Text="Application Details:" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}"></TextBlock>
+            </ScrollViewer>
+        </DockPanel>
+
+        <DockPanel Grid.Row="2">
+            <Label Content="Credit:" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
+            <ScrollViewer DockPanel.Dock="Top" Margin="0,10,0,10">
+                <TextBlock x:Name="txtCredit" Text="Credit:" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" ></TextBlock>
+            </ScrollViewer>
+        </DockPanel>
+        
+        <DockPanel Grid.Row="3">
+            <Label Content="Support:" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
+            <ScrollViewer DockPanel.Dock="Top" Margin="0,10,0,10">
+                
+                <TextBlock x:Name="txtSupport" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" >
+                    <Run Text="For help documents and Videos just click "/><Span FontWeight="Bold"><Run Text="F1"/></Span><Run Text=" from anywhere."/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run Text="For Questions, Downloads &amp; more please visit: "/>
+                    <LineBreak/>                    
+                    <LineBreak/>
+                    <Run /><Hyperlink NavigateUri="http://ginger/" RequestNavigate="HandleLinkClick">Ginger Support Center</Hyperlink><Run Text=" (http://Ginger)"/>
+                    <LineBreak/><LineBreak/>
+                    <LineBreak/>
+                    <Run Text="BEAT Ginger R&amp;D Team."/>
+                </TextBlock>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+</Page>

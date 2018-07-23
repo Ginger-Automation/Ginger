@@ -1,0 +1,14 @@
+    <Page x:Class="Ginger.UserControlsLib.TextEditor.ValueExpression.ValueExpressionDDSEditorPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.UserControlsLib.TextEditor.ValueExpression"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="ValueExpressionDDSEditorPage">
+
+    <Grid>
+        <Label FontSize="20">DDS</Label>
+    </Grid>
+</Page>

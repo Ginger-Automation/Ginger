@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">GingerService</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main2">Main2Activity</string>
+</resources>

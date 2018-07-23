@@ -1,0 +1,26 @@
+    <Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ginger="clr-namespace:Ginger"
+    x:Class="GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard.ScanAPIModelWizardPage"
+      mc:Ignorable="d" 
+      d:DesignHeight="1555.556" d:DesignWidth="3453.333"
+      Title="ScanAPIModelWizardPage">
+
+    <Grid Name="MainGrid" Background="{StaticResource $BackgroundGray}">
+        <Grid.Resources>
+            <DataTemplate x:Key="IsSelectedTemplate">
+                <CheckBox x:Name="IsSelected_FieldSelection" Click="IsSelected_FieldSelection_Click" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            </DataTemplate>
+        </Grid.Resources>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="300*"/>
+        </Grid.RowDefinitions>
+
+        <ginger:ucGrid x:Name="OperationsDataGrid"  Grid.Row="0" Margin="0,0,0,0" Visibility="Visible" Title="API's Source/s Content to Select From"  ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed"  ShowUpDown="Collapsed"></ginger:ucGrid>
+        
+    </Grid>
+</Page>

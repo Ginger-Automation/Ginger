@@ -1,0 +1,22 @@
+    <UserControl x:Class="Ginger.Activities.UCValueExpression"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="300">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="64*"/>
+            <ColumnDefinition x:Name="MidCol" Width="30"/>
+            <ColumnDefinition x:Name="LastCol" Width="0"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="Row" Height="25"/>
+        </Grid.RowDefinitions>
+
+        <TextBox x:Name="ValueTextBox" TextWrapping="Wrap" HorizontalAlignment="Stretch" Grid.Row="0"  Text="" AcceptsReturn="True" Style="{StaticResource @TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        <Button x:Name="OpenExpressionEditorButton"  Grid.Column="1" Grid.Row="0" Click="OpenExpressionEditorButton_Click" Content="..." Width="Auto"  HorizontalAlignment="Stretch"  VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Visibility="Visible"  Margin="2,0,0,0" />
+        <Button x:Name="BrowseButton"  Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Browse" Margin="2,0,0,0" Style="{StaticResource @InputButtonStyle}" Visibility="Collapsed" />
+    </Grid>
+</UserControl>

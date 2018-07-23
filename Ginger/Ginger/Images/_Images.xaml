@@ -1,0 +1,6 @@
+    <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ImageSource x:Key="image2">Add32x32.png</ImageSource>
+    
+</ResourceDictionary>

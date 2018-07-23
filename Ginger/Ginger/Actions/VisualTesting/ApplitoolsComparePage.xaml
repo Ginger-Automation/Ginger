@@ -1,0 +1,63 @@
+    <Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"       
+      xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns:Ginger="clr-namespace:Ginger"
+    xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+    x:Class="Ginger.Actions.VisualTesting.ApplitoolsComparePage"                  
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+	Title="ApplitoolsComparePage">
+
+    <Grid x:Name="ColApplitoolsComparison">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Applitools Action:"/>
+            <UserControlsLib:UCComboBox  x:Name="xApplitoolsActionComboBox" HorizontalAlignment="Left" Width="250"/>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="1" x:Name="xApplitoolsKey">
+            <Label Content="Applitools Key:" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" />
+            <Actions:UCValueExpression x:Name="ApplitoolsKeyUCVE"/>
+        </StackPanel>
+
+
+        <StackPanel Grid.Row="2" x:Name="xApplitoolsApplicationName">
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Application Name:"/>
+            <Actions:UCValueExpression x:Name="ApplicationNameUCVE"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" x:Name="xApplitoolsTestName">
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Test Name:"/>
+            <Actions:UCValueExpression x:Name="TestNameUCVE"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" HorizontalAlignment="Left" x:Name="xApplitoolsMatchLevel">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Match Level:"/>
+                <UserControlsLib:UCComboBox HorizontalAlignment="Left" x:Name="SetMatchLevelComboBox" Width="250"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="5" Margin="1,25,0,0" x:Name="xDoNotFailActionOnMismatchPanel">
+            <CheckBox x:Name="DoNotFailActionOnMismatch" VerticalAlignment="Center" Style="{StaticResource @InputCheckBoxStyle}" Content="Fail Action on Mismatch" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="6" x:Name="xApplitoolsResultsButton" HorizontalAlignment="Left" Margin="0,25,0,0">
+            <Button x:Name="OpenResultsURL" Click="OpenResultsURL_Click" Style="{StaticResource @InputButtonStyle}" Width="250">Open Results URL</Button>
+        </StackPanel>
+
+    </Grid>
+</Page>

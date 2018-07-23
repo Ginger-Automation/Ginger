@@ -1,0 +1,53 @@
+﻿<html>
+<head>
+    <title>Skeleton HTML</title>
+</head>
+<body>
+    
+    <!--BusinessFlowStart-->
+
+   <h1>BusinessFlows[i].Seq : BusinessFlows[i].Name - BusinessFlows[i].RunStatus</h1>
+    <p><b>Description: </b> BusinessFlows[i].Description</p>
+   
+    <h2>Variables</h2>
+    <table border="1">
+        <tr><th>#</th><th>Name</th><th>Value</th></tr>
+        <!--VariableStart-->
+
+        <tr>
+            <td>BusinessFlows[i].Variables[i].Seq</td><td>BusinessFlows[i].Variables[i].Name</td><td>BusinessFlows[i].Variables[i].Value</td>
+        </tr>    
+       <!--VariableEnd-->
+        </table>
+    
+    <!--ActivityStart-->
+     <table border="1">
+         <tr>
+             <td>BusinessFlows[i].Activities[i].Seq<td></td> <td>BusinessFlows[i].Activities[i].ActivityName</td><td>BusinessFlows[i].Activities[i].Status</td><td>BusinessFlows[i].Activities[i].ElapsedSecs</td>
+         </tr>
+     </table>
+    <table border="1">
+        <tr>
+
+            <th>#</th>
+            <th>Actions</th>
+            <th>Status</th>
+            <th>Elapses</th>
+            <th>Screenshot</th>
+        </tr>
+        <!--ActionStart-->
+        <tr>
+            <td>BusinessFlows[i].Activities[i].Actions[i].Seq</td>
+            <td>BusinessFlows[i].Activities[i].Actions[i].Description</td>
+            <td>BusinessFlows[i].Activities[i].Actions[i].Status</td>
+            <td>BusinessFlows[i].Activities[i].Actions[i].ElapsedSecs</td>
+            <td>BusinessFlows[i].Activities[i].Actions[i].ScreenShots</td>
+        </tr>
+        <!--ActionEnd-->
+    </table>
+    <!--ActivityEnd-->
+    <hr />
+    <!--BusinessFlowEnd-->
+</body>
+
+</html>

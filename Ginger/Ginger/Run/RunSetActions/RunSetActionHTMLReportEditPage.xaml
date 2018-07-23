@@ -1,0 +1,28 @@
+    <Page x:Class="Ginger.Run.RunSetActions.RunSetActionHTMLReportEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="150" d:DesignWidth="600"
+	Title="RunSetActionHTMLReportEditPage">
+
+    <Grid Background="{StaticResource @Skin1_ColorC}">
+
+        <StackPanel>
+            <StackPanel Margin="0,5,0,15" Orientation="Horizontal">
+                <Label Margin="0,0,10,0" Style="{StaticResource @LabelStyle}" Content="Select Report Template:"/>
+                <ComboBox x:Name="CurrentTemplatePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource @InputComboBoxStyle}" SelectionChanged="CurrentTemplatePickerCbx_SelectionChanged" ></ComboBox>
+            </StackPanel>
+            <CheckBox x:Name="UsePermanentHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Content="Save HTML report to Permanent folder"></CheckBox>
+            <CheckBox x:Name="UseAlternativeHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Content="Save HTML report to Alternative folder" Checked="UseAlternativeHTMLReportFolderCbx_Checked" Unchecked="UseAlternativeHTMLReportFolderCbx_Unchecked"></CheckBox>
+            <StackPanel x:Name="HTMLReportFolderPanel" Orientation="Vertical" IsEnabled="False">
+                
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="HTMLReportFolderTextBox" Margin="5" Width="500" Style="{StaticResource @TextBoxStyle}" ></TextBox>
+                    <Button x:Name="SelectFolderButton" Style="{StaticResource @InputButtonStyle}" Width="55" Margin="5,0,0,0" VerticalAlignment="Center" Click="SelectFolderButton_Click">Browse</Button>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

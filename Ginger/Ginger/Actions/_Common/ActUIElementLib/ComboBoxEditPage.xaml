@@ -1,0 +1,22 @@
+    <Page x:Class="Ginger.Actions._Common.ActUIElementLib.ComboBoxEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="ComboBoxEditPage">
+
+    <Grid>
+        <StackPanel>
+            <Label>Available ComboBox items</Label>
+            <DataGrid Height="30">
+                
+            </DataGrid>
+            <RadioButton>A</RadioButton>
+            <RadioButton>B</RadioButton>
+            <RadioButton>C</RadioButton>
+            
+        </StackPanel>
+    </Grid>
+</Page>

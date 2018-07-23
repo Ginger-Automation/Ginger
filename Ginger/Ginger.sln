@@ -36,6 +36,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8E8355
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerATS", "GingerATS\GingerATS.csproj", "{781CC017-737A-4458-A4C9-E9F42563AA2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ginger", "Ginger\Ginger.csproj", "{276B433A-790B-45B7-9FFB-8E3C8B8A0CB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +98,14 @@ Global
 		{D5329D81-7FF0-4AF1-B186-A2FD65EF0583}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5329D81-7FF0-4AF1-B186-A2FD65EF0583}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5329D81-7FF0-4AF1-B186-A2FD65EF0583}.Release|Any CPU.Build.0 = Release|Any CPU
+		{781CC017-737A-4458-A4C9-E9F42563AA2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{781CC017-737A-4458-A4C9-E9F42563AA2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{781CC017-737A-4458-A4C9-E9F42563AA2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{781CC017-737A-4458-A4C9-E9F42563AA2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{276B433A-790B-45B7-9FFB-8E3C8B8A0CB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{276B433A-790B-45B7-9FFB-8E3C8B8A0CB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{276B433A-790B-45B7-9FFB-8E3C8B8A0CB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{276B433A-790B-45B7-9FFB-8E3C8B8A0CB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

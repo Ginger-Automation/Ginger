@@ -1,0 +1,41 @@
+    <Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.Run.GingerRunnerConfigurationsPage" 
+      mc:Ignorable="d" 
+        xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Run"
+      Height="500" Width="600"
+	Title="Ginger Runner Configurations">
+    
+    <Grid Background="{StaticResource @Skin1_ColorC}">
+        <DockPanel>
+            <StackPanel x:Name="GingerDetailsPanel" DockPanel.Dock="Top" Margin="0,10,0,10">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Ginger Name:" Style="{StaticResource @LabelStyle}" Width="100"/>
+                    <TextBox x:Name="GingerNameTextBox" Margin="0,0,0,0" Style="{StaticResource @MultiRowsTextBoxStyle}" Width="400" FontSize="14" FontWeight="Bold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Label Content="Run Option:" Style="{StaticResource @LabelStyle}" Width="100"/>
+                    <ComboBox x:Name="RunOptionComboBox"  SelectionChanged="RunOptionComboBox_SelectionChanged" Style="{DynamicResource @InputComboBoxStyle}" Width="315"/>
+                    <CheckBox x:Name="SimulationMode" Content="Run in simulation mode" Style="{StaticResource @CheckBoxStyle}" Margin="10,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="5,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                   <CheckBox x:Name="useSpecificEnvChkbox" Content="Use Specific Environment" Style="{StaticResource @CheckBoxStyle}" Margin="0,0,10,0" VerticalAlignment="Center" Checked="useSpecificEnvChkbox_Checked" Unchecked="useSpecificEnvChkbox_Checked"/>
+                    <DockPanel x:Name="specificEnvSelectionPnl"  HorizontalAlignment="Stretch" Visibility="Collapsed" Margin="18,2,0,0" >
+                        <ComboBox x:Name="specificEnvComboBox"  Style="{DynamicResource @InputComboBoxStyle}" Width="215"  DockPanel.Dock="Left" Margin="10,0,0,0"/>
+                        
+                    </DockPanel>
+                    </StackPanel>
+                    <CheckBox x:Name="ExecutionTagsChkbox" Content="Filter Execution by Tags" Style="{StaticResource @CheckBoxStyle}" Margin="0,6,10,0" VerticalAlignment="Center" Checked="ExecutionTagsChkbox_Checked" Unchecked="ExecutionTagsChkbox_Unchecked"/>
+                    <Ginger:ucTagsViewer x:Name="ExecutionTags" HorizontalContentAlignment="Left" Margin="14,0,0,0" Visibility="Collapsed"></Ginger:ucTagsViewer>
+                    
+                </StackPanel>
+            </StackPanel>
+
+            <Ginger:ucGrid x:Name="grdApplicationsAgentsMapping" DockPanel.Dock="Top" Title="T. Applications - Agents Mapping" ShowEdit="Visible" ShowSearch="Visible" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
+        </DockPanel>        
+    </Grid>
+</Page>

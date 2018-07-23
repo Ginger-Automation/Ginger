@@ -1,0 +1,203 @@
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.GeneralLib;
+using Ginger.Reports;
+
+namespace Ginger.Run.RunSetActions
+{
+    /// <summary>
+    /// Interaction logic for RunSetActionEmailReportEditPage.xaml
+    /// </summary>
+    public partial class RunSetActionSendEmailEditPage : Page
+    {
+        private RunSetActionSendEmail runSetActionEmailReport;
+
+        
+        public RunSetActionSendEmailEditPage(RunSetActionSendEmail runSetActionSendEmail)
+        {
+            InitializeComponent();
+            
+            this.runSetActionEmailReport = runSetActionSendEmail;
+
+            if (runSetActionSendEmail.Email == null)
+            {
+                runSetActionSendEmail.Email = new Email();                
+            }
+            foreach (HTMLReportTemplate HT in App.LocalRepository.GetSolutionHTMLReportTemplates())
+            {
+                CustomHTMLReportComboBox.Items.Add(HT.Name);
+            }
+
+            App.ObjFieldBinding(SMTPMailHostTextBox , TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPMailHost);
+            App.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPort);
+            App.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPUser);
+            App.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPass);
+            App.ObjFieldBinding(MailFromTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.MailFrom);
+            App.ObjFieldBinding(MailToTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.MailTo);
+            App.ObjFieldBinding(MailCCTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.MailCC);
+            App.ObjFieldBinding(SubjectTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.Subject);
+            App.ObjFieldBinding(BodyTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.Body);
+            App.FillComboFromEnumVal(HTMLReportComboBox, runSetActionSendEmail.HTMLReportTemplate);
+            App.ObjFieldBinding(HTMLReportComboBox, ComboBox.SelectedValueProperty, runSetActionSendEmail, RunSetActionSendEmail.Fields.HTMLReportTemplate);
+            App.ObjFieldBinding(CustomHTMLReportComboBox, ComboBox.SelectedValueProperty, runSetActionSendEmail, RunSetActionSendEmail.Fields.CustomHTMLReportTemplate);
+            App.FillComboFromEnumVal(EmailMethodComboBox, runSetActionSendEmail.Email.EmailMethod);
+            App.ObjFieldBinding(EmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendEmail.Email, Email.Fields.EmailMethod);
+            App.ObjFieldBinding(SMTPMailHostTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPMailHost);
+            App.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPort);
+            App.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPUser);
+            App.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPass);
+            App.ObjFieldBinding(cbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendEmail.Email, Email.Fields.EnableSSL);
+
+            InitAttachmentsGrid();
+        }
+
+        private void InitAttachmentsGrid()
+        {
+            SetGridView();
+            AttachmentsGrid.AddButton("Add Report", AddReport);
+            AttachmentsGrid.AddButton("Add File", AddFile);
+            if (runSetActionEmailReport.EmailAttachments == null) runSetActionEmailReport.EmailAttachments = new ObservableList<EmailAttachment>();
+            AttachmentsGrid.DataSourceList = runSetActionEmailReport.EmailAttachments;
+        }
+
+        private void AddFile(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog(); ;
+            dlg.DefaultExt = ".*";
+            dlg.Filter = "All Files (*.*)|*.*";
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                runSetActionEmailReport.EmailAttachments.Add(new EmailAttachment() { Name = dlg.FileName, AttachmentType = EmailAttachment.eAttachmentType.File });
+            }
+        }
+
+        private void AddReport(object sender, RoutedEventArgs e)
+        {
+            ReportTemplateSelector RTS = new ReportTemplateSelector();            
+            RTS.ShowAsWindow();
+            if (RTS.SelectedReportTemplate != null)
+            {
+                runSetActionEmailReport.EmailAttachments.Add(new EmailAttachment() { Name = RTS.SelectedReportTemplate.Name, AttachmentType = EmailAttachment.eAttachmentType.Report });
+            }
+        }
+
+        private void SetGridView()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            view.GridColsView = viewCols;
+
+            viewCols.Add(new GridColView() { Field = EmailAttachment.Fields.AttachmentType, WidthWeight = 50, BindingMode = BindingMode.OneTime });
+            viewCols.Add(new GridColView() { Field = EmailAttachment.Fields.Name, WidthWeight = 300 });
+            viewCols.Add(new GridColView() { Field = EmailAttachment.Fields.ZipIt, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });            
+            
+            AttachmentsGrid.SetAllColumnsDefaultView(view);
+            AttachmentsGrid.InitViewItems();
+        }
+
+        private void HTMLReportComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (runSetActionEmailReport.HTMLReportTemplate == RunSetActionSendEmail.eHTMLReportTemplate.Custom)
+            {
+                CustomReportSection.Visibility = Visibility.Visible;
+            }
+            else if (runSetActionEmailReport.HTMLReportTemplate == RunSetActionSendEmail.eHTMLReportTemplate.FreeText)
+            {
+                BodyWebBrowser.Visibility = Visibility.Collapsed;
+                BodyTextBox.Visibility = Visibility.Visible;
+
+                BodyTextBox.Text = "";
+                CustomReportSection.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                BodyWebBrowser.Visibility = System.Windows.Visibility.Visible;
+                BodyTextBox.Visibility = System.Windows.Visibility.Collapsed;
+
+                ReportInfo RI = new ReportInfo(App.RunsetExecutor.RunsetExecutionEnvironment, App.RunsetExecutor);
+                runSetActionEmailReport.SetBodyFromHTMLReport(RI);
+
+                BodyWebBrowser.NavigateToString(runSetActionEmailReport.Email.Body);
+                CustomReportSection.Visibility = System.Windows.Visibility.Hidden;
+            }
+        }
+
+        private void CustomHTMLReportComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {  
+            
+            BodyWebBrowser.Visibility = System.Windows.Visibility.Visible;
+            ReportInfo RI = new ReportInfo(App.RunsetExecutor.RunsetExecutionEnvironment, App.RunsetExecutor);
+            string html = String.Empty;
+            
+            if (CustomHTMLReportComboBox.SelectedItem == null)
+                return;
+            
+            foreach (HTMLReportTemplate htr in App.LocalRepository.GetSolutionHTMLReportTemplates())
+            {
+               if(htr.Name==CustomHTMLReportComboBox.SelectedItem.ToString())
+               {
+                   html = htr.HTML;
+               }
+            }
+
+            HTMLReportPage HTP = new HTMLReportPage(RI,html);
+            
+            BodyWebBrowser.NavigateToString(HTP.HTML);
+        }
+
+        private void rfsrh_Click(object sender, RoutedEventArgs e)
+        {
+            string current = null;
+            if (CustomHTMLReportComboBox.SelectedItem != null)
+            {
+                current = CustomHTMLReportComboBox.SelectedItem.ToString();
+            }
+            CustomHTMLReportComboBox.Items.Clear();
+
+            foreach (var htr in App.LocalRepository.GetSolutionHTMLReportTemplates())
+            {
+                CustomHTMLReportComboBox.Items.Add(htr.Name);
+            }
+
+            if (current != null)
+            {
+                CustomHTMLReportComboBox.SelectedItem = current;
+            }
+        }
+
+        private void EmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(EmailMethodComboBox.SelectedItem.ToString()=="OUTLOOK")
+            {                
+                SMTPConfig.Visibility = Visibility.Collapsed;
+            }
+            else
+            {             
+                SMTPConfig.Visibility = Visibility.Visible;
+            }
+        }
+    }
+}

@@ -1,0 +1,36 @@
+    <Page x:Class="Ginger.Actions.RobotFramework.ActRobotEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d" 
+      d:DesignHeight="500" d:DesignWidth="600"
+	Title="ActRobotExecPage">
+
+    <Grid>
+        <StackPanel>
+
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Robot File Location</Label>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="17*"/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="RobotFileTextBox" Grid.ColumnSpan="2"/>
+                <Button x:Name="BrowseButton" Click="BrowseButton_Click"  Content="..." Style="{StaticResource @InputButtonStyle}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+            </Grid>            
+            
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Robot Libraries</Label>
+            <TextBox x:Name="RobotLibsTextBox" Text="test" Height="25"/>
+
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Robot File Content</Label>
+            <TextBox x:Name="RobotFileContentsTextBox" Height="300"
+                TextWrapping="Wrap"
+                AcceptsReturn="True"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto" FontFamily="Courier New" IsReadOnly="True"/>
+
+        </StackPanel>
+    </Grid>
+</Page>

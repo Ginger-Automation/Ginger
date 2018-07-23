@@ -1,0 +1,19 @@
+<Application x:Class="Ginger.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             StartupUri="SplashWindow.xaml" 
+             DispatcherUnhandledException="Application_DispatcherUnhandledException"
+             >
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefualtSkinDictionary.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Ginger;component/Dictionaries/Terminologies/GingerDefualtTerminologyDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>    
+    
+
+    

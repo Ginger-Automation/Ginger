@@ -1,0 +1,33 @@
+    <Page x:Class="Ginger.Actions.ActSetVariableValuePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      mc:Ignorable="d" 
+      d:DesignHeight="180" d:DesignWidth="400"
+	Title="ActSetVariableValuePage">
+
+    <Grid>
+        <DockPanel>
+            <Label HorizontalAlignment="Left" DockPanel.Dock="Top" Style="{StaticResource @InputFieldLabelStyle}" Background="Transparent">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="[Variable] Name:"/>
+                </Label.Content>
+            </Label>
+            <ComboBox x:Name="VariableNameComboBox" HorizontalAlignment="Left" DockPanel.Dock="Top" VerticalAlignment="Top" Width="400" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="VariableNameComboBox_SelectionChanged"></ComboBox>
+            <Label HorizontalAlignment="Left" DockPanel.Dock="Top" Style="{StaticResource @InputFieldLabelStyle}" Background="Transparent" Margin="0,10,0,0">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="[Variable] Type:"/>
+                </Label.Content>
+            </Label>
+            <TextBox x:Name="VariableTypeTextBox" HorizontalAlignment="Left" DockPanel.Dock="Top" Style="{StaticResource @TextBoxStyle}" IsReadOnly="True" Width="400" Background="#FFF6F6F6"/>
+            <Label HorizontalAlignment="Left" DockPanel.Dock="Top" Style="{StaticResource @InputFieldLabelStyle}" Background="Transparent" Margin="0,10,0,0">                
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="Set [Variable] Value Operation Type:"/>
+                </Label.Content>
+            </Label>
+            <ComboBox x:Name="OperationTypeComboBox" HorizontalAlignment="Left" DockPanel.Dock="Top" Width="400" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>            
+        </DockPanel>
+    </Grid>
+</Page>

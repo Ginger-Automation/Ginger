@@ -1,0 +1,31 @@
+    <Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Ginger="clr-namespace:Ginger"
+    x:Class="Ginger.ApplicationModelsLib.POMModels.POMsManagerPage"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+      Title="Page Object Model Manager">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="34"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Orientation="Horizontal"/>
+
+        <Button x:Name="AddButton" Click="AddButton_Click">Add</Button>
+
+        <Button Content="Automate" Grid.Column="1" HorizontalAlignment="Left" Height="25" Margin="10,3,0,0" VerticalAlignment="Top" Width="83" Click="Button_Click"/>
+        <Button Content="Compare" Grid.Column="1" HorizontalAlignment="Left" Height="25" Margin="117,4,0,0" VerticalAlignment="Top" Width="95"/>
+        <Button Content="Visual Flow" Grid.Column="1" HorizontalAlignment="Left" Height="25" Margin="227,3,0,0" VerticalAlignment="Top" Width="95"/>
+
+        <Frame x:Name="MainFrame" Grid.Row="1" Grid.ColumnSpan="2"/>
+
+        
+
+    </Grid>
+</Page>

@@ -1,0 +1,16 @@
+    <Page x:Class="Ginger.UserControlsLib.TextEditor.Gherkin.ImportGherkinFeatureSummaryPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.UserControlsLib.TextEditor.Gherkin"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="ImportGherkinFeatureSummaryPage">
+
+    <Grid>
+        <Label Content="Summary" HorizontalAlignment="Left" Height="45" Margin="53,33,0,0" VerticalAlignment="Top" Width="169"/>
+        <Label Content="Import File" HorizontalAlignment="Left" Height="45" Margin="53,107,0,0" VerticalAlignment="Top" Width="169"/>
+
+    </Grid>
+</Page>

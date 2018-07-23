@@ -1,0 +1,16 @@
+    <Page x:Class="Ginger.ApiModelsFolder.APIModelSelectionWizardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.ApiModelsFolder"
+      xmlns:Ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="APIModelSelectionPage">
+
+    <Grid>
+        <Ginger:ucGrid x:Name="xApiModelsGrid" Grid.Row ="0" Margin="0,0,0,10" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowUpDown="Visible" ShowTagsFilter="Collapsed" ShowSearch="Collapsed">
+        </Ginger:ucGrid>
+    </Grid>
+</Page>

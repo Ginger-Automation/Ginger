@@ -1,0 +1,104 @@
+    <Page x:Class="Ginger.ApplicationModelsLib.POMModels.POMEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+      Title="POMEditPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="551*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <Label>POM Name</Label>
+            <TextBox x:Name="PageNameTextBox" Width="200" Margin="5"></TextBox>
+            <Label>Target Application</Label>
+            <ComboBox x:Name="TargetApplicationComboBox" Width="200" Margin="5"></ComboBox>
+        </StackPanel>
+
+        <TabControl Grid.Row="1">
+            <TabItem Header="Screen Shot">
+                <Frame x:Name="ScreenShotFrame"></Frame>
+            </TabItem>
+
+            <TabItem Header="Design">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="115*"/>
+                        <ColumnDefinition Width="521*"/>
+                        <ColumnDefinition Width="158*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="463*"/>
+                    </Grid.RowDefinitions>
+                    <Frame x:Name="DesignFrame" Grid.Row="1" Grid.ColumnSpan="3"></Frame>
+
+                    <ListBox x:Name="ControlsListBox" Grid.RowSpan="2">
+                        <ListBoxItem>
+                            <Label Width="80">Label</Label>
+                        </ListBoxItem>
+
+                        <ListBoxItem>
+                            <Button Width="80">Button</Button>
+                        </ListBoxItem>
+
+                        <ListBoxItem>
+                            <TextBox Width="80">TextBox</TextBox>
+                        </ListBoxItem>
+
+                        <ListBoxItem>
+                            <ComboBox Width="80"></ComboBox>
+                        </ListBoxItem>
+
+
+                    </ListBox>
+                    <Button x:Name="ClearButton" Click="ClearButton_Click" Content="Clear" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="426,10,0,0" VerticalAlignment="Top" Width="85"/>
+
+                    <Label Grid.Column="2">Control Properties</Label>
+                    <DataGrid x:Name="ControlPropertiesGrid" Grid.Column="2" Grid.Row="1"></DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="UI Elements">
+                <Frame x:Name="UIElementsFrame"></Frame>
+            </TabItem>
+            <TabItem Header="Mapping">
+                <Frame x:Name="MappingFrame"></Frame>
+            </TabItem>
+
+            <TabItem Header="Activities">
+                <StackPanel HorizontalAlignment="Left">
+                    <Label>Login (User, Pass)</Label>
+                    <Label>Remember Me</Label>
+                    <Label>Forgot Password</Label>
+                </StackPanel>
+
+            </TabItem>
+
+            <TabItem Header="Actions">
+            </TabItem>
+
+            <TabItem Header="Navigations">
+                <Frame x:Name="NaviagtionsFrame" Content="NavigationFrame"/>
+            </TabItem>
+
+            <TabItem Header="Simulator">
+                <Frame x:Name="POMSimulatorFrame"></Frame>
+            </TabItem>
+
+            <TabItem Header="Usage">
+
+            </TabItem>
+
+            <TabItem Header="Compare">
+
+            </TabItem>
+
+        </TabControl>
+    </Grid>
+</Page>

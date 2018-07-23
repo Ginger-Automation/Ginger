@@ -1,0 +1,23 @@
+    <Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.TagsLib"
+      xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.TagsLib.TagsSelectorPage"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="TagsSelectorPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="269*"/>
+            <RowDefinition Height="31*"/>
+        </Grid.RowDefinitions>
+
+        <Ginger:ucGrid x:Name="TagsGrid" Title="Select Tags"/>
+        
+        <Label Grid.Row="1">New tags can be defined on solution level</Label>
+
+    </Grid>
+</Page>

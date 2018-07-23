@@ -1,0 +1,29 @@
+    <UserControl x:Class="Amdocs.Ginger.UserControls.PieChart.NewLegend"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="clr-namespace:Ginger.UserControlsLib.PieChart"
+    Height="20" Width="20">
+    
+    <UserControl.Resources>
+        <c:LegendConverter x:Key="legendConverter" />
+        <c:ColorConverter x:Key="colorConverter"/>
+    </UserControl.Resources>
+    <Grid >
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <ListBox HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding}" Margin="0" Name="legend" Background="Transparent" ItemContainerStyle="{StaticResource $BorderlessList}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid HorizontalAlignment="Stretch" Margin="2">
+                            <TextBlock Tag="{Binding}" Text="{Binding Path=Count}" Foreground="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource colorConverter}}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+    </Grid>
+</UserControl>

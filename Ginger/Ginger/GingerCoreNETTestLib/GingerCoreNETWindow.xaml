@@ -1,0 +1,44 @@
+    <Window x:Class="Ginger.GingerCoreNETTestLib.GingerCoreNETWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="GingerCoreNETWindow" Height="600" Width="800" Closing="Window_Closing">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="343*"/>
+            <ColumnDefinition Width="249*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45"/>
+            <RowDefinition Height="401*"/>
+            <RowDefinition Height="90*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <TextBox x:Name="LogTextBox" TextWrapping="Wrap" Text="hh:mm:ss Log" Grid.Row="2" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="3" />
+        <DataGrid x:Name="MainDataGrid" Grid.Row="1" Grid.Column="1" IsReadOnly="True"/>
+        <Button x:Name="ClearButton" Click="ClearButton_Click" Content="Clear" HorizontalAlignment="Left" Height="30" Margin="71,10,0,0" VerticalAlignment="Top" Width="74" Grid.Column="2"/>
+
+        <ListBox x:Name="ActionsListBox" MouseDoubleClick="ActionsListBox_MouseDoubleClick" DisplayMemberPath="Name" Grid.Row="1"/>
+
+        <Button x:Name="ExecuteButton" Click="ExecuteButton_Click" Content="Execute Selected action" HorizontalAlignment="Left" Height="29" Margin="19,11,0,0" VerticalAlignment="Top" Width="164"/>
+
+
+        <StatusBar  Grid.Row="3" Grid.ColumnSpan="3">
+            <Label Content="Last request" Width="100"/>
+            <Label Content="Elapsed MS" Width="100"/>
+            <Label x:Name="ElapsedLabel" Foreground="Red" FontWeight= "Bold">0.0</Label>
+
+            <Label Content="Mem diff KB" Width="100"/>
+            <Label x:Name="MemKBLabel" Foreground="Red" FontWeight= "Bold">0.0</Label>
+
+            <Label Content="Total Mem MB" Width="100"/>
+            <Label x:Name="TotalmemeoryLabel" Foreground="Red" FontWeight= "Bold">0.0</Label>
+        </StatusBar>
+        <Button x:Name="CrazyRandomRun" Click="CrazyRandomRun_Click" Content="Crazy Random Run"  Grid.Column="1" HorizontalAlignment="Left" Height="30" Margin="27,10,0,0" VerticalAlignment="Top" Width="124"/>
+        <Frame x:Name="PageFrame" Content="Frame" Grid.Column="2" Grid.Row="1"/>
+
+    </Grid>
+</Window>

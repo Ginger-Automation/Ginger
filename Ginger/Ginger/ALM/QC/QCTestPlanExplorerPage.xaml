@@ -1,0 +1,17 @@
+    <Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+    x:Class="Ginger.ALM.QC.QCTestPlanExplorerPage" 
+      mc:Ignorable="d" 
+      Height="600" Width="700" Title="QC/ALM Test Plan">
+    
+    <Grid x:Name="ExplorerTreeGrid">
+        
+
+        <UCTreeView:TreeView2 x:Name="TestPlanExplorerTreeView" TreeTitle="Test Plan Explorer"/>
+    </Grid>
+
+</Page>

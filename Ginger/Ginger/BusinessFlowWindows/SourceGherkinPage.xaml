@@ -1,0 +1,16 @@
+    <Page x:Class="Ginger.BusinessFlowWindows.SourceGherkinPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="25" d:DesignWidth="800"
+	Title="SourceGherkinPage">
+
+    <StackPanel Orientation="Horizontal">
+        <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Source:"/>
+        <TextBox x:Name="SourceTextBox" Style="{StaticResource @TextBoxStyle}" Width="125" Margin="5,0,0,0" IsReadOnly="True"/>
+        <Label Style="{StaticResource @InputFieldLabelStyle}" Content="External ID:"/>        
+        <TextBox x:Name="ExternalIDTextBox" Style="{StaticResource @TextBoxStyle}" Width="400" Margin="5,0,0,0" IsReadOnly="True"/>        
+    </StackPanel>
+</Page>
