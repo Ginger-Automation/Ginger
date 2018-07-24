@@ -109,7 +109,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\FlaUI.UIA3.dll</HintPath>
     </Reference>
-    <Reference Include="FontAwesome.WPF">
+    <Reference Include="FontAwesome.WPF, Version=4.7.0.37774, Culture=neutral, PublicKeyToken=0758b07a11a4f466, processorArchitecture=MSIL">
       <HintPath>..\packages\FontAwesome.WPF.4.7.0.9\lib\net40\FontAwesome.WPF.dll</HintPath>
     </Reference>
     <Reference Include="Gherkin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=86496cfa5b4a5851, processorArchitecture=MSIL">
