@@ -38,7 +38,7 @@ namespace UnitTests.UITests.JavaDriverTest
 {
     [TestClass]
     [Level3]
-    
+    [Ignore]
     public class JavaDriverTest 
     {
         static BusinessFlow mBF;

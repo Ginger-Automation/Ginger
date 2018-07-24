@@ -31,7 +31,7 @@ using System.Data;
 
 namespace UnitTests.NonUITests
 {
-    
+    [Ignore]
     [TestClass]
     public class XLSFunctionsTest
     {
