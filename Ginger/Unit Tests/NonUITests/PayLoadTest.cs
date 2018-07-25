@@ -35,6 +35,7 @@ namespace UnitTests.NonUITests.PayLoadTest
 {
     [TestClass]
     [Level1]
+    [Ignore]
     public class PayLoadTest 
     {
 
