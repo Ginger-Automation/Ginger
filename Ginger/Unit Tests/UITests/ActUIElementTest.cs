@@ -35,6 +35,7 @@ using Amdocs.Ginger;
 namespace UnitTests.UITests
 {    
     [TestClass]
+    [Ignore]
     public class ActUIElementTest
     {
 

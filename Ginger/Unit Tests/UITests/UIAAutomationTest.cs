@@ -34,6 +34,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 namespace UnitTestsNonUITests
 {
     [TestClass]
+    [Ignore]
     public class UIAAutomationTest
     {
         UIAComWrapperHelper UIA;
