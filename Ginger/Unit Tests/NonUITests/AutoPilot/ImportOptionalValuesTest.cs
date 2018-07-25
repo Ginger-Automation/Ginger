@@ -47,6 +47,8 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(dic.Count, 9, "Count of Parameters With New Optional Values");
         }
 
+
+        [Ignore]
         [TestMethod]
         public void ImportOptionalFromDBRegressionTest()
         {
