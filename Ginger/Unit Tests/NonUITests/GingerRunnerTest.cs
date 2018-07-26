@@ -35,6 +35,7 @@ namespace UnitTests.NonUITests
 {
     [TestClass]
     [Level3]
+    [Ignore]  // cannot run Chrome...
     public class GingerRunnerTest
     {
 

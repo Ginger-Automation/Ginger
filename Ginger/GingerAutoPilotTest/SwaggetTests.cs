@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 namespace UnitTests.NonUITests.AutoPilot
 {
     [TestClass]
+    [Level3]
     public class SwaggetTests
     {
 
