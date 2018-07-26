@@ -169,6 +169,7 @@ namespace UnitTests.NonUITests
         //}
 
         [TestMethod]
+        [Ignore]
         public void BizFlowCheckIsDirtyTrue()
         {
 
@@ -305,6 +306,7 @@ namespace UnitTests.NonUITests
 
 
         [TestMethod]
+        [Ignore]
         public void BizFlowAddActivitiesFromSharedRepoSaveLoad()
         {
 
@@ -773,6 +775,7 @@ namespace UnitTests.NonUITests
 
                
         [TestMethod]
+        [Ignore]
         public void FlowcontrolTest_WithBFCreateCopy()
         {
             //Arrange
