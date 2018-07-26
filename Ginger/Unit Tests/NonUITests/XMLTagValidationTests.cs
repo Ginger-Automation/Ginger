@@ -33,6 +33,7 @@ namespace UnitTests.NonUITests
     /// Summary description for XMLTagValidationTests
     /// </summary>
     [TestClass]
+    [Ignore]
     public class XMLTagValidationTests
     {
         static string jsonFileName = string.Empty;

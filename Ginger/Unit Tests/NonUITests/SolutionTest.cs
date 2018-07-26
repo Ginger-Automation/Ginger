@@ -28,6 +28,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Ignore]
     public class SolutionTest 
     {
         [ClassInitialize]

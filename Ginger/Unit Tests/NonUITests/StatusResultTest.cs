@@ -40,6 +40,7 @@ namespace UnitTests.NonUITests
     // Test all statues after execution: Action, Action Return Value (Expected vs Actual), Activity, BF.
 
     [TestClass]
+    [Ignore]
     public class StatusResultTest 
     {
 

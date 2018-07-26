@@ -39,6 +39,7 @@ using System.Xml;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Ignore]
     public class WebServicesTest 
     {
         static BusinessFlow mBF;

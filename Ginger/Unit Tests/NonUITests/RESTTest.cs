@@ -30,7 +30,8 @@ using Amdocs.Ginger.Repository;
 
 namespace UnitTests.NonUITests
 {
-    [TestClass]    
+    [TestClass]
+    [Ignore]
     public class RESTTest 
     {
         
