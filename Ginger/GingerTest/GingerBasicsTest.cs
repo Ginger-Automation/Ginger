@@ -31,7 +31,7 @@ using static GingerWPFUnitTest.Scenarios;
 namespace GingerWPFUnitTest
 {
     [TestClass]
-    //[Level1]
+    [Level3]
     public class GingerBasicsTest
     {        
         static TestContext mTC;
