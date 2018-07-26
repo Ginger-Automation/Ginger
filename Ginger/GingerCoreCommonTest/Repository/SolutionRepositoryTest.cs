@@ -40,6 +40,7 @@ namespace GingerCoreCommonTest.Repository
     // Test Big solution
 
     [TestClass]
+    [Ignore]
     [Level1]
     public class SolutionRepositoryTest
     {
