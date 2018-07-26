@@ -40,7 +40,7 @@ namespace UnitTests.NonUITests
 {
 
     [TestClass]
-    [Ignore]
+    [Level2]
     public class RepositoryTest 
     {
         [ClassInitialize]
