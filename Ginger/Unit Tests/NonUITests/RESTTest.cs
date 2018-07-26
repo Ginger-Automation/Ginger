@@ -27,6 +27,7 @@ using System.Data;
 using GingerCore;
 using GingerCore.Actions;
 using Amdocs.Ginger.Repository;
+using GingerTestHelper;
 
 namespace UnitTests.NonUITests
 {
@@ -43,13 +44,9 @@ namespace UnitTests.NonUITests
         // Need to have our own REST server, so will not be dependent on David server
         
         [TestMethod]        
+        [Level3]
         public void WebServices_RestAction()
         {
-
-            
-        
-
-
             ActREST a2 = new ActREST();
             a2.RequestType = ActREST.eRequestType.GET;
             a2.ReqHttpVersion = ActREST.eHttpVersion.HTTPV11;

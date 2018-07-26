@@ -222,26 +222,26 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
-        public void RunSetConfigSaveLoad()
-        {
-            //Arrange
+        //[TestMethod]
+        //public void RunSetConfigSaveLoad()
+        //{
+        //    //Arrange
 
-            //Act
-            RunSetConfig RSC = new RunSetConfig();
-            RSC.Name = "UT RSC1";
-            GingerRunner ARC1= new GingerRunner();
-            ARC1.Name = " Agent 1";
-            BusinessFlowRun BFR = new BusinessFlowRun();
-            BFR.BusinessFlowName = "BF1";
-            ARC1.BusinessFlowsRunList.Add(BFR);
-            RSC.GingerRunners.Add(ARC1);
-            RSC.SaveToFile(@"c:\temp\UTRSC1.xml");
+        //    //Act
+        //    RunSetConfig RSC = new RunSetConfig();
+        //    RSC.Name = "UT RSC1";
+        //    GingerRunner ARC1= new GingerRunner();
+        //    ARC1.Name = " Agent 1";
+        //    BusinessFlowRun BFR = new BusinessFlowRun();
+        //    BFR.BusinessFlowName = "BF1";
+        //    ARC1.BusinessFlowsRunList.Add(BFR);
+        //    RSC.GingerRunners.Add(ARC1);
+        //    RSC.SaveToFile(@"c:\temp\UTRSC1.xml");
 
-            //Assert
+        //    //Assert
 
-            RunSetConfig RSC2 = (RunSetConfig)RepositoryItem.LoadFromFile(typeof(RunSetConfig), @"c:\temp\UTRSC1.xml");
-        }
+        //    RunSetConfig RSC2 = (RunSetConfig)RepositoryItem.LoadFromFile(typeof(RunSetConfig), @"c:\temp\UTRSC1.xml");
+        //}
 
         //[Ignore]
         //[TestMethod]       
