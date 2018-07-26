@@ -32,6 +32,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.UITests
 {
     [TestClass]
+
     public class ActLaunchJavaWSApplicationTest
     {
 

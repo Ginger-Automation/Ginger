@@ -24,7 +24,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTest
 {
-    [TestClass]    
+    [TestClass]
+    [Ignore]
     public class RESTTest 
     {
         [TestInitialize]

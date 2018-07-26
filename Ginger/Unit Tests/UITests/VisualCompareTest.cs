@@ -38,6 +38,7 @@ using GingerTestHelper;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Ignore]
     public class VisualCompareTest 
     {
 

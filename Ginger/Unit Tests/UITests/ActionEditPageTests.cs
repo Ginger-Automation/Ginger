@@ -29,6 +29,7 @@ using System.Windows.Controls;
 namespace UnitTests.UITests
 {
     [TestClass]
+    [Ignore]
     public class ActionEditPageTests
     {
 
