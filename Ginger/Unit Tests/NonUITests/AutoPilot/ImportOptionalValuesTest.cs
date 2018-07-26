@@ -27,7 +27,9 @@ namespace UnitTests.NonUITests.AutoPilot
             ImportOptionalValues.ShowMessage = false;
         }
 
+
         [TestMethod]
+        [Ignore]
         public void ImportOptionalFromExcelRegressionTest()
         {
             createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"AutoPilot\ImportOptionalValue\createPayment.xml");
