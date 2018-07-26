@@ -1,0 +1,53 @@
+﻿## AppVeyor test script
+
+
+```ps
+# Run the Test from Level 1 to 10
+# Run by DLL order
+# Continute to the next level if all tests passed otherwise exit
+
+# List of Test DLL to test order by priortiy
+$TestDLLs = @()
+$TestDLLs += ".\GingerCoreCommonTest\bin\Debug\netcoreapp2.1\GingerCoreCommonTest.dll"
+$TestDLLs +=".\GingerCoreNetUnitTest\bin\Debug\netcoreapp2.1\GingerCoreNetUnitTest.dll"
+$TestDLLs +=".\GingerUtilsTest\bin\Debug\netcoreapp2.1\GingerUtilsTest.dll"
+$TestDLLs += ".\Unit Tests\bin\Debug\UnitTests.dll"
+$TestDLLs += ".\GingerAutoPilotTest\bin\debug\netcoreapp2.1\GingerAutoPilotTest.dll"
+$TestDLLs += ".\GingerConsoleTest\bin\Debug\netcoreapp2.1\GingerConsoleTest.dll"
+
+
+# $TestDLLs = Get-ChildItem ".\Unit Tests\bin\Debug\*Test.dll" - Will NOT Work
+                           
+
+$i=1
+Do {     
+	Write-Host ===========================================================================
+	Write-Host Test Level $i Started
+	Write-Host ===========================================================================
+
+	Foreach($TestDll in $TestDLLs)
+	{
+		Write-Host ===========================================================================
+		Write-Host Test Level $i Started for DLL: $TestDll
+		Write-Host ===========================================================================
+		vstest.console.exe /logger:Appveyor "$TestDll"/TestCaseFilter:TestCategory=Level$i
+		if ($LastExitCode -ne 0)
+		{	    
+		    Write-Host !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	            Write-Host !!!              Test Level $i failed !!! exiting                       !!!
+		    Write-Host !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            
+		    exit $LastExitCode 
+		}
+	}
+	Write-Host ===========================================================================
+	Write-Host Test Level $i Passed
+	Write-Host ===========================================================================
+	
+	$i++
+    }
+While ($i -le 10)
+Write-Host ***************************************************************************
+Write-Host *                          ALL test level Passed                          *
+Write-Host ***************************************************************************
+```

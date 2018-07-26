@@ -85,6 +85,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Documents\AppVeyor\readme.md" />
     <None Include="Documents\General\Ginger Projects.md" />
     <None Include="Documents\Git\Git.md" />
     <None Include="Documents\Plugins\ExcelPlugin.md" />
@@ -117,5 +118,6 @@
   <ItemGroup>
     <Resource Include="Documents\Images\AddAgentWizradAgnetDetails.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
