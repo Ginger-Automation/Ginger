@@ -33,6 +33,7 @@ using Amdocs.Ginger;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Ignore]
     public class GingerRunnerTest
     {
 
