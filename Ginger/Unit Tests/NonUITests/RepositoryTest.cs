@@ -38,7 +38,9 @@ using System.Linq;
 
 namespace UnitTests.NonUITests
 {
+
     [TestClass]
+    [Ignore]
     public class RepositoryTest 
     {
         [ClassInitialize]
@@ -113,58 +115,58 @@ namespace UnitTests.NonUITests
 
 
       
-        [TestMethod]
-        public void BizFlowCheckIsDirtyFalse()
-        {
+        //[TestMethod]
+        //public void BizFlowCheckIsDirtyFalse()
+        //{
 
-            //Arrange
-            int ActivitiesToCreate = 2;
+        //    //Arrange
+        //    int ActivitiesToCreate = 2;
             
-            BusinessFlow BF = new BusinessFlow();
-            BF.Name = "Biz flow 1";
-            BF.Description = "Desc 1";
-            //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
-            BF.Activities = new ObservableList<Activity>();
+        //    BusinessFlow BF = new BusinessFlow();
+        //    BF.Name = "Biz flow 1";
+        //    BF.Description = "Desc 1";
+        //    //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
+        //    BF.Activities = new ObservableList<Activity>();
 
-            for (int i = 1; i <= ActivitiesToCreate; i++)
-            {
-                Activity a = new Activity();
-                a.ActivityName = "Activity number " + i;
-                a.Description = "Desc - " + i;
-                BF.Activities.Add(a);
-                a.Status = eRunStatus.Passed;
-                for (int j = 1; j <= 2; j++)
-                {
-                    ActTextBox t = new ActTextBox();
-                    t.Description = "Set text box " + j;
-                    t.LocateBy = eLocateBy.ByID;
-                    t.LocateValue = "ID" + j;
-                    a.Acts.Add(t);
+        //    for (int i = 1; i <= ActivitiesToCreate; i++)
+        //    {
+        //        Activity a = new Activity();
+        //        a.ActivityName = "Activity number " + i;
+        //        a.Description = "Desc - " + i;
+        //        BF.Activities.Add(a);
+        //        a.Status = eRunStatus.Passed;
+        //        for (int j = 1; j <= 2; j++)
+        //        {
+        //            ActTextBox t = new ActTextBox();
+        //            t.Description = "Set text box " + j;
+        //            t.LocateBy = eLocateBy.ByID;
+        //            t.LocateValue = "ID" + j;
+        //            a.Acts.Add(t);
 
-                    ActGotoURL g = new ActGotoURL();
-                    g.Description = "goto URL " + j;
-                    g.LocateValue = "ID" + j;
-                    a.Acts.Add(g);
-                }
-            }
-            VariableString v = new VariableString();
-            v.Name = "Var1";
-            v.Description = "VDesc 1";
-            BF.AddVariable(v);
+        //            ActGotoURL g = new ActGotoURL();
+        //            g.Description = "goto URL " + j;
+        //            g.LocateValue = "ID" + j;
+        //            a.Acts.Add(g);
+        //        }
+        //    }
+        //    VariableString v = new VariableString();
+        //    v.Name = "Var1";
+        //    v.Description = "VDesc 1";
+        //    BF.AddVariable(v);
 
 
-            //Act
-            BF.SaveToFile(@"c:\temp\bfIsDirty.xml");
+        //    //Act
+        //    BF.SaveToFile(@"c:\temp\bfIsDirty.xml");
              
 
-            // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\bfIsDirty.xml");
-            //BF2.isDirty();
+        //    // Assert
+        //    BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\bfIsDirty.xml");
+        //    //BF2.isDirty();
 
-            Assert.IsFalse(BF2.IsDirty);
+        //    Assert.IsFalse(BF2.IsDirty);
             
 
-        }
+        //}
 
         [TestMethod]
         public void BizFlowCheckIsDirtyTrue()
