@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem>
+  <Header ItemGuid="6d194b22-f2f7-49c8-8a91-afb0ad467a30" ItemType="ProjEnvironment" CreatedBy="YARONWE" Created="201806131423" GingerVersion="3.0.0.0" Version="1" LastUpdateBy="YARONWE" LastUpdate="201806131423" />
+  <ProjEnvironment Active="False" Created="6/13/2018 2:23:31 PM" CreatedBy="YARONWE" Guid="6d194b22-f2f7-49c8-8a91-afb0ad467a30" LastUpdate="1/1/0001 12:00:00 AM" Name="Default" ParentGuid="00000000-0000-0000-0000-000000000000" Version="0" />
+</GingerRepositoryItem>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Ginger Repository Item created with version: 3.0.0.0-->
+<GingerCore.BusinessFlow Active="True" Created="6/13/2018 2:23:31 PM" CreatedBy="YARONWE" EnableActivitiesVariablesDependenciesControl="False" Guid="0a5b371c-8eb9-4752-a447-5bbcb4b0804e" LastUpdate="6/20/2018 11:08:28 PM" LastUpdateBy="YARONWE" Mandatory="False" Name="Business Flow 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Version="2">
+  <Activities>
+    <GingerCore.Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="New Activity" AutomationStatus="Development" Created="6/20/2018 11:05:00 PM" CreatedBy="YARONWE" EnableActionsVariablesDependenciesControl="False" ErrorHandlerMappingType="AllAvailableHandlers" Guid="d6ff2874-e422-44ec-93d6-f23d7f86c758" LastUpdate="1/1/0001 12:00:00 AM" Mandatory="False" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="crm" Version="0">
+      <Acts>
+        <GingerCore.Actions.ActGotoURL Active="True" ConfigOutputDS="False" Created="6/20/2018 11:05:09 PM" CreatedBy="YARONWE" Description="Goto URL Action" EnableRetryMechanism="False" ExternalID="" Guid="bd4731dc-13dd-448b-b483-8907d18ff103" LastUpdate="1/1/0001 12:00:00 AM" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" SupportSimulation="False" TakeScreenShot="False" Version="0" Wait="0" WindowsToCapture="OnlyActiveWindow">
+          <DSOutputConfigParams></DSOutputConfigParams>
+          <FlowControls></FlowControls>
+          <InputValues>
+            <Amdocs.Ginger.Repository.ActInputValue Guid="90154066-6be7-4f51-93ce-bfb4512c239b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="https://www.google.com" Value="https://www.google.com" />
+          </InputValues>
+          <ReturnValues></ReturnValues>
+          <Tags></Tags>
+          <VariablesDependencies></VariablesDependencies>
+        </GingerCore.Actions.ActGotoURL>
+        <GingerCore.Actions.ActTextBox Active="True" ConfigOutputDS="False" Created="6/20/2018 11:06:24 PM" CreatedBy="YARONWE" Description="TextBox Action" EnableRetryMechanism="False" ExternalID="" Guid="4d197c07-ce76-4515-b832-70ab73888bc9" LastUpdate="1/1/0001 12:00:00 AM" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" SupportSimulation="False" TakeScreenShot="False" TextBoxAction="SetValueFast" Version="0" Wait="0" WindowsToCapture="OnlyActiveWindow">
+          <DSOutputConfigParams></DSOutputConfigParams>
+          <FlowControls></FlowControls>
+          <InputValues>
+            <Amdocs.Ginger.Repository.ActInputValue Guid="093a3212-d0d9-45e3-b150-e8b04aa53166" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="" Value="" />
+          </InputValues>
+          <ReturnValues></ReturnValues>
+          <Tags></Tags>
+          <VariablesDependencies></VariablesDependencies>
+        </GingerCore.Actions.ActTextBox>
+        <GingerCore.Actions.ActGenElement Active="True" ConfigOutputDS="False" Created="6/20/2018 11:06:59 PM" CreatedBy="YARONWE" Description="Set Text 'lst-ib'" EnableRetryMechanism="False" GenElementAction="SendKeys" Guid="6cec4ca4-fb1e-4d27-a92b-e81e91166b7e" LastUpdate="1/1/0001 12:00:00 AM" LocateBy="ByID" LocateValue="lst-ib" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" SupportSimulation="False" TakeScreenShot="False" Version="0" Wait="0" WindowsToCapture="OnlyActiveWindow">
+          <DSOutputConfigParams></DSOutputConfigParams>
+          <FlowControls></FlowControls>
+          <InputValues>
+            <Amdocs.Ginger.Repository.ActInputValue Guid="0c5b2de8-8337-45dd-92a5-35a936d528e0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="bbb" Value="bbb" />
+          </InputValues>
+          <ReturnValues></ReturnValues>
+          <Tags></Tags>
+          <VariablesDependencies></VariablesDependencies>
+        </GingerCore.Actions.ActGenElement>
+      </Acts>
+      <MappedErrorHandlers></MappedErrorHandlers>
+      <Tags></Tags>
+      <Variables></Variables>
+      <VariablesDependencies></VariablesDependencies>
+    </GingerCore.Activity>
+  </Activities>
+  <ActivitiesGroups></ActivitiesGroups>
+  <BFFlowControls></BFFlowControls>
+  <Tags></Tags>
+  <TargetApplications>
+    <GingerCore.Platforms.TargetApplication AppName="crm" Created="6/13/2018 2:23:31 PM" CreatedBy="YARONWE" Guid="8f764616-fa6e-42fd-9a9c-7ea5b4c0aa27" LastUpdate="1/1/0001 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" Version="0" />
+  </TargetApplications>
+  <Variables></Variables>
+</GingerCore.BusinessFlow>
