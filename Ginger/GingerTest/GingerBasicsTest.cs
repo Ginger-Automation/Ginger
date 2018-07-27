@@ -79,8 +79,9 @@ namespace GingerWPFUnitTest
         // Run before each test
         [TestInitialize]
         public void TestInitialize()
-        {            
-             mutex.WaitOne();  
+        {
+            mTC.WriteLine("TestInitialize: " + mTC.FullyQualifiedTestClassName + "." + mTC.TestName);            
+            mutex.WaitOne();  
         }
 
         [TestCleanup]
