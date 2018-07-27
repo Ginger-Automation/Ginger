@@ -42,7 +42,8 @@ namespace GingerWPFUnitTest
 
         [ClassInitialize]
         public static void ClassInit(TestContext TC)
-        {            
+        {
+            TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ ClassInit @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             mTC = TC;
             Console.WriteLine("===> Starting Ginger");
             mGingerAutomator.StartGinger();
@@ -56,6 +57,7 @@ namespace GingerWPFUnitTest
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
 
             Console.WriteLine("===> Open solution");
+            TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ Open solution @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             mGingerAutomator.OpenSolution(SolutionFolder);            
 
             LogFile = mTC.TestLogsDir + @"\Ginger_BasicsTest.txt";         
