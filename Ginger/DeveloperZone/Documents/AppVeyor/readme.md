@@ -2,6 +2,7 @@
 
 
 ```ps
+
 # Run the Test from Level 1 to 10
 # Run by DLL order
 # Continute to the next level if all tests passed otherwise exit
@@ -14,6 +15,7 @@ $TestDLLs +=".\GingerUtilsTest\bin\Debug\netcoreapp2.1\GingerUtilsTest.dll"
 $TestDLLs += ".\Unit Tests\bin\Debug\UnitTests.dll"
 $TestDLLs += ".\GingerAutoPilotTest\bin\debug\netcoreapp2.1\GingerAutoPilotTest.dll"
 $TestDLLs += ".\GingerConsoleTest\bin\Debug\netcoreapp2.1\GingerConsoleTest.dll"
+$TestDLLs += ".\GingerTest\bin\Debug\GingerTest.dll"
 
 
 # $TestDLLs = Get-ChildItem ".\Unit Tests\bin\Debug\*Test.dll" - Will NOT Work
@@ -50,4 +52,5 @@ While ($i -le 10)
 Write-Host ***************************************************************************
 Write-Host *                          ALL test level Passed                          *
 Write-Host ***************************************************************************
+
 ```
