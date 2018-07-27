@@ -32,6 +32,7 @@ namespace GingerWPFUnitTest
 {
     [TestClass]
     [Level3]
+    [Ignore]
     public class GingerBasicsTest
     {        
         static TestContext mTC;
