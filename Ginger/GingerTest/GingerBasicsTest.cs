@@ -31,8 +31,7 @@ using static GingerWPFUnitTest.Scenarios;
 namespace GingerWPFUnitTest
 {
     [TestClass]
-    [Level3]
-    [Ignore]
+    [Level3]    
     public class GingerBasicsTest
     {        
         static TestContext mTC;
@@ -45,6 +44,7 @@ namespace GingerWPFUnitTest
         public static void ClassInit(TestContext TC)
         {            
             mTC = TC;
+            Console.WriteLine("===> Starting Ginger");
             mGingerAutomator.StartGinger();
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
             SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\EnvsTest");
@@ -54,7 +54,8 @@ namespace GingerWPFUnitTest
             }
 
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
-            
+
+            Console.WriteLine("===> Open solution");
             mGingerAutomator.OpenSolution(SolutionFolder);            
 
             LogFile = mTC.TestLogsDir + @"\Ginger_BasicsTest.txt";         
