@@ -106,6 +106,7 @@ namespace GingerWPFUnitTest
         }
 
         [TestMethod]
+        [Ignore]
         public void CheckTabsWhenSolutionOpen()
         {
             //Arrange
@@ -138,6 +139,7 @@ namespace GingerWPFUnitTest
 
 
         [TestMethod]
+        [Ignore]
         public void AddEnvUsingWizard()
         {
             //Arrange            
@@ -177,6 +179,7 @@ namespace GingerWPFUnitTest
 
         
         [TestMethod]
+        [Ignore]
         public void DeleteEnvFromFileSystem()
         {
             // Arrange            
@@ -198,7 +201,9 @@ namespace GingerWPFUnitTest
 
         }
 
+        
         [TestMethod]
+        [Ignore]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
             //Arrange
