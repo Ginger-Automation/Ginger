@@ -141,7 +141,11 @@ namespace UnitTests.NonUITests
             //Assert
            Assert.AreEqual(v, DateTime.Now.AddDays(1).ToString("M/d/yyyy"));
         }
+
+
         [TestMethod]
+        [Ignore]  //test can fail due to time sensitivity
+                  // Assert.AreEqual failed. Expected:<7/26/2018 8:49:58 AM>. Actual:<7/26/2018 8:49:59 AM>. 
         public void GetVarNowMinus1()
         {
             //Arrange            
