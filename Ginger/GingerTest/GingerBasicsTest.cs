@@ -76,7 +76,7 @@ namespace GingerWPFUnitTest
             //File.Copy(LogFile, @"c:\temp\GingerWPF\" + @"\GingerWPF_BasicsTest.txt");
             //string s = mTC.TestDir;
             //string s2 = mTC.TestRunResultsDirectory;
-            mGingerAutomator.CloseGinger();
+            //mGingerAutomator.CloseGinger();
         }
 
         // Run before each test
@@ -132,7 +132,8 @@ namespace GingerWPFUnitTest
 
 
 
-        [TestMethod]        
+        [TestMethod]
+        //[Ignore]
         public void VerifyEnvsShowinTree()
         {
             //Arrange            
