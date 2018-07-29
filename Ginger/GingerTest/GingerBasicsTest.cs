@@ -52,16 +52,16 @@ namespace GingerWPFUnitTest
             SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\EnvsTest");
             if (Directory.Exists(SolutionFolder))
             {
-                Directory.Delete(SolutionFolder,true);
+                Directory.Delete(SolutionFolder, true);
             }
 
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
 
             Console.WriteLine("===> Open solution");
             TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ Open solution @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-            mGingerAutomator.OpenSolution(SolutionFolder);            
+            mGingerAutomator.OpenSolution(SolutionFolder);
 
-            LogFile = mTC.TestLogsDir + @"\Ginger_BasicsTest.txt";         
+            LogFile = mTC.TestLogsDir + @"\Ginger_BasicsTest.txt";
         }
 
         static void LogTest(Scenario scenario)
@@ -83,7 +83,7 @@ namespace GingerWPFUnitTest
         [TestInitialize]
         public void TestInitialize()
         {
-            mTC.WriteLine("TestInitialize: " + mTC.FullyQualifiedTestClassName + "." + mTC.TestName);            
+            mTC.WriteLine("TestInitialize: " + mTC.FullyQualifiedTestClassName + "." + mTC.TestName);                        
             mutex.WaitOne();  
         }
 
@@ -132,8 +132,7 @@ namespace GingerWPFUnitTest
 
 
 
-        [TestMethod]
-        [Ignore]
+        [TestMethod]        
         public void VerifyEnvsShowinTree()
         {
             //Arrange            
