@@ -67,9 +67,16 @@ namespace GingerWPFUnitTest
 
                     GingerPOMBase.mDispatcher = app.GetMainWindowDispatcher();
                     MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
-               
-                    // Makes the thread support message pumping                 
-                    System.Windows.Threading.Dispatcher.Run();
+
+                    // Makes the thread support message pumping       
+                    try
+                    {
+                        System.Windows.Threading.Dispatcher.Run();
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
 
                 });
                 
@@ -85,12 +92,13 @@ namespace GingerWPFUnitTest
                     i++;
                 }
 
-                Thread.Sleep(3000);
+                // !!!!!!!
+                Thread.Sleep(5000);
 
-                while (splash.IsVisible)
-                {
-                    Thread.Sleep(100);
-                }
+                //while (splash.IsVisible)
+                //{
+                //    Thread.Sleep(100);
+                //}
                 // Here Ginger is live and visible
             }
             catch(Exception ex)

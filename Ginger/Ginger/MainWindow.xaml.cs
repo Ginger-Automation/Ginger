@@ -322,35 +322,36 @@ namespace Ginger
 
         public void CloseWithoutAsking()
         {
-            mAskUserIfToClose = false;
-            this.Close();
+            mAskUserIfToClose = false;            
+            // this.Close();
+            Application.Current.Shutdown();
         }
 
         private void RibbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             //To Clear the AutoSave Directory Folder
-            if (Directory.Exists(App.AppSolutionAutoSave.AutoSaveFolderPath))
-            {
-                try
-                {
-                    Directory.Delete(App.AppSolutionAutoSave.AutoSaveFolderPath, true);
-                }
-                catch
-                {
+            //if (Directory.Exists(App.AppSolutionAutoSave.AutoSaveFolderPath))
+            //{
+            //    try
+            //    {
+            //        Directory.Delete(App.AppSolutionAutoSave.AutoSaveFolderPath, true);
+            //    }
+            //    catch
+            //    {
 
-                }
-            }
-            if (Directory.Exists(App.AppSolutionRecover.RecoverFolderPath))
-            {
-                try
-                {
-                    Directory.Delete(App.AppSolutionRecover.RecoverFolderPath, true);
-                }
-                catch 
-                {
+            //    }
+            //}
+            //if (Directory.Exists(App.AppSolutionRecover.RecoverFolderPath))
+            //{
+            //    try
+            //    {
+            //        Directory.Delete(App.AppSolutionRecover.RecoverFolderPath, true);
+            //    }
+            //    catch 
+            //    {
 
-                }
-            }
+            //    }
+            //}
             if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKeys.AskIfSureWantToClose) == MessageBoxResult.Yes)
             {
                 AppCleanUp();

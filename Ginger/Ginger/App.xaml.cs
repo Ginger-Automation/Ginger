@@ -438,8 +438,8 @@ namespace Ginger
         private static void StanndAloneThreadsExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
             Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occured on stand alone thread(non UI) - " + e.ExceptionObject.ToString());
-            MessageBox.Show("Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
-            App.AppSolutionAutoSave.DoAutoSave();
+            // MessageBox.Show("Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
+            // App.AppSolutionAutoSave.DoAutoSave();
 
             /// if (e.IsTerminating)...
             /// 

@@ -23,6 +23,7 @@ using GingerTest.POMs;
 using GingerWPF.UserControlsLib;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -46,8 +47,12 @@ namespace GingerWPFUnitTest.POMs
         public void Close()
         {
             Execute(() => {
-                mMainWindow.CloseWithoutAsking();
+                mMainWindow.CloseWithoutAsking();                
             });
+            //mMainWindow.is
+            //TODO: check main window is closed
+            //mMainWindow = null;
+            //Thread.Sleep(1000);
         }
 
         public Button TestButton()
