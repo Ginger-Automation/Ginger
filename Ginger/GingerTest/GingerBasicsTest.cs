@@ -46,8 +46,8 @@ namespace GingerWPFUnitTest
             TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ ClassInit @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             mTC = TC;
             Console.WriteLine("===> Starting Ginger");
-            //mGingerAutomator = new GingerAutomator();
-            //mGingerAutomator.StartGinger();
+            mGingerAutomator = new GingerAutomator();
+            mGingerAutomator.StartGinger();
             //string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
             //SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\EnvsTest");
             //if (Directory.Exists(SolutionFolder))
