@@ -77,6 +77,7 @@ namespace GingerWPFUnitTest
             //string s = mTC.TestDir;
             //string s2 = mTC.TestRunResultsDirectory;
             mGingerAutomator.CloseGinger();
+            
         }
 
         // Run before each test

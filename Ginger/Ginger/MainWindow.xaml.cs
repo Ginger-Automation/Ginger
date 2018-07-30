@@ -323,8 +323,8 @@ namespace Ginger
         public void CloseWithoutAsking()
         {
             mAskUserIfToClose = false;            
-            // this.Close();
-            Application.Current.Shutdown();
+            this.Close();
+            // Application.Current.Shutdown();
         }
 
         private void RibbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

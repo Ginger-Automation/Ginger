@@ -110,7 +110,8 @@ namespace GingerWPFUnitTest
         
         internal void CloseGinger()
         {            
-            MainWindowPOM.Close();            
+            MainWindowPOM.Close();
+            MainWindowPOM = null;
             mutex.ReleaseMutex();            
         }
 
