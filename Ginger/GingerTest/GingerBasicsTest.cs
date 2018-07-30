@@ -46,22 +46,22 @@ namespace GingerWPFUnitTest
             TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ ClassInit @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             mTC = TC;
             Console.WriteLine("===> Starting Ginger");
-            mGingerAutomator = new GingerAutomator();
-            mGingerAutomator.StartGinger();
-            string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
-            SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\EnvsTest");
-            if (Directory.Exists(SolutionFolder))
-            {
-                Directory.Delete(SolutionFolder, true);
-            }
+            //mGingerAutomator = new GingerAutomator();
+            //mGingerAutomator.StartGinger();
+            //string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
+            //SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\EnvsTest");
+            //if (Directory.Exists(SolutionFolder))
+            //{
+            //    Directory.Delete(SolutionFolder, true);
+            //}
 
-            CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
+            //CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
 
-            Console.WriteLine("===> Open solution");
-            TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ Open solution @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-            mGingerAutomator.OpenSolution(SolutionFolder);
+            //Console.WriteLine("===> Open solution");
+            //TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ Open solution @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            //mGingerAutomator.OpenSolution(SolutionFolder);
 
-            LogFile = mTC.TestLogsDir + @"\Ginger_BasicsTest.txt";
+            //LogFile = mTC.TestLogsDir + @"\Ginger_BasicsTest.txt";
         }
 
         static void LogTest(Scenario scenario)
@@ -133,7 +133,7 @@ namespace GingerWPFUnitTest
 
 
         [TestMethod]
-        //[Ignore]
+        [Ignore]
         public void VerifyEnvsShowinTree()
         {
             //Arrange            
