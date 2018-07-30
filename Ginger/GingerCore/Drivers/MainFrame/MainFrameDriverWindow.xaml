@@ -1,4 +1,4 @@
-﻿<Window x:Class="GingerCore.Drivers.MainFrame.MainFrameDriverWindow"
+    <Window x:Class="GingerCore.Drivers.MainFrame.MainFrameDriverWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="GingerCore.Drivers.MainFrame"
@@ -11,7 +11,7 @@
             <RowDefinition Height="271*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Background="{StaticResource @Skin1_ColorC}">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Background="{StaticResource @Skin1_ColorC}">  
             <ToggleButton x:Name="RecordBtn" Click="RecordButton_Click" ToolTip="Record Operations" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,3">
                 <Image Source="{StaticResource @Record_24x24.png}"/>
             </ToggleButton>
@@ -22,7 +22,7 @@
             <ToggleButton x:Name="SendBtn" Click="SendKey_Click" ToolTip="Send Key" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,3">
                 <Image Source="{StaticResource @Run_16x16}"/>
             </ToggleButton>
-
+           
         </StackPanel>
 
         <Canvas x:Name="ConsoleCanvas" Background="Black" Grid.Row="1" SizeChanged="ConsoleCanvas_SizeChanged" ></Canvas>
@@ -32,6 +32,6 @@
             <TextBox x:Name="CaretIndex" Width="50" FontSize="14" IsReadOnly="True"   Background="Black" Foreground="Cyan" TextChanged="CaretIndex_TextChanged"/>
             <Label Content="X/Y"   Background="Black" Foreground="Cyan"/>
             <TextBox x:Name="CaretXY" Width="50" FontSize="14" IsReadOnly="True"   Background="Black" Foreground="Cyan"/>
-        </StackPanel>
+         </StackPanel>
     </Grid>
 </Window>

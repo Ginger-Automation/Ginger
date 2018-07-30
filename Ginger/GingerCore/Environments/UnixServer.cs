@@ -20,7 +20,7 @@ using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Environments
 {
-    public class UnixServer : RepositoryItem
+    public class UnixServer : RepositoryItemBase
     {
         public override bool UseNewRepositorySerializer { get { return true; } }
 

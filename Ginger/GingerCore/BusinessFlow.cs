@@ -321,7 +321,7 @@ namespace GingerCore
             return var;
         }
 
-        public VariableBase GetHierarchyVariableByNameAndType(string varName, string varType)
+        public VariableBase GetHierarchyVariableByNameAndType(string varName, string varType, bool considreLinkedVar = true)
         {
             VariableBase var = null;
             if (SolutionVariables != null)
@@ -334,9 +334,9 @@ namespace GingerCore
             }
 
             //check if linked variable was used and return it instead of original one if yes
-            if (var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
+            if (considreLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
             {
-                var = GetHierarchyVariableByNameAndType(var.LinkedVariableName, varType);
+                var = GetHierarchyVariableByNameAndType(var.LinkedVariableName, varType, false);
             }
 
             return var;

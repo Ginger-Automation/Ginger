@@ -382,7 +382,10 @@ namespace GingerCore.Drivers.Common
             if (i1 > 0 && i2 > 0) // We have index
             {
                 string sIDX = NodePath.Substring(i1 + 2, i2 - i1 - 2);
-                NodePath = NodePath.Substring(0, i1 + 1) + "]";
+                if(NodePath.EndsWith("]]"))
+                    NodePath = NodePath.Substring(0, i1 + 1) + "]";
+                else
+                    NodePath = NodePath.Substring(0, i1 + 1);
                 index = int.Parse(sIDX);
             }
         }

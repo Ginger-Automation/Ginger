@@ -157,7 +157,9 @@ namespace GingerCore.Actions.Communication
         public string AttachmentFileName
         {
             get { return GetInputParamValue(Fields.AttachmentFileName); }
-            set { AddOrUpdateInputParamValue(Fields.AttachmentFileName, value); }
+            set { AddOrUpdateInputParamValue(Fields.AttachmentFileName, value);
+                OnPropertyChanged(nameof(AttachmentFileName));
+            }
         }
 
         [IsSerializedForLocalRepository]

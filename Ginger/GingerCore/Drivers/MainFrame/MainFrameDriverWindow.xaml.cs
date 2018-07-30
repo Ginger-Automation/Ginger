@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -49,7 +49,7 @@ namespace GingerCore.Drivers.MainFrame
 
             MainFrameUIHelper.SetupMainframeDriverComponents(mDriver, this, ConsoleCanvas);
         }
-
+       
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             Refresh();

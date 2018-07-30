@@ -442,7 +442,7 @@ namespace GingerCore.Drivers
                                 if (p.ProcessName == "AcroRd32")
                                 {
                                     WindowTitle = Process.GetProcessById(window.Current.ProcessId).MainWindowTitle;
-                                }
+                                }                                
                             }
                             if (!String.IsNullOrEmpty(WindowTitle))
                             {
@@ -454,8 +454,8 @@ namespace GingerCore.Drivers
                             {
                                 if (IsWindowValid(window))
                                 {
-                                    CurrentWindow = window;
-                                    CurrentWindowName = window.Current.Name;
+                                    CurrentWindow = window;                                    
+                                    CurrentWindowName = GetWindowInfo(window);                                    
                                 }
                             }
                         }
@@ -4130,7 +4130,7 @@ namespace GingerCore.Drivers
                     return true; 
                 }
             }
-
+            
             return SwitchToWindow(locateValue);
             
         }
@@ -4194,8 +4194,8 @@ namespace GingerCore.Drivers
                             {
                                 CurrentWindow = window;
                                 UpdateRootElement();
-                                isLoaded = true;
-                                CurrentWindowName = window.Current.Name;
+                                isLoaded = true;                                
+                                CurrentWindowName = GetWindowInfo(window);                                
                                 break; 
                             }
                         }
@@ -4344,14 +4344,22 @@ namespace GingerCore.Drivers
             return true;
 
         }
-        
+
         public override string GetWindowInfo(object obj)
-        {           
+        {
             AutomationElement window = (AutomationElement) obj;
             string locVal = String.Empty;
             try
             {
-                locVal = getAEProperty(window, AutomationElement.NameProperty);
+                locVal = getAEProperty(window, AutomationElement.NameProperty);            
+                if (!IsWindowValid(obj))
+                    return "";
+                
+                if (string.IsNullOrEmpty(locVal) && !string.IsNullOrEmpty(window.Current.AutomationId))
+                {                                        
+                    locVal = window.Current.LocalizedControlType;
+                    locVal += " (" + window.Current.AutomationId + ")";                    
+                }                
             }
             catch (COMException e)
             {
@@ -4376,7 +4384,7 @@ namespace GingerCore.Drivers
             }
             return locVal;
         }
-
+        
         public AutomationElement GetLastFocusedElement()
         {
             return lastFocusedElement;
@@ -4610,7 +4618,7 @@ namespace GingerCore.Drivers
         public int GetRowNumFromCollection(AutomationElement[] AECollection, ActTableElement.eRunColPropertyValue propVal, ActTableElement.eRunColOperator WhereOperator, string value)
         {
             AutomationElement targetElement;
-            string controlValue="";            
+            string controlValue="";
             if (ActTableElement.eRunColOperator.Equals == WhereOperator)
             {
                 for (int i = 0; i < AECollection.Count(); i++)
@@ -4620,7 +4628,7 @@ namespace GingerCore.Drivers
                         controlValue = GetControlText(targetElement);
                     else if (propVal == ActTableElement.eRunColPropertyValue.Value)
                         controlValue = GetControlValue(targetElement);
-                    
+
                     if (value.Equals(controlValue))
                     {
                         return i;
@@ -4648,10 +4656,10 @@ namespace GingerCore.Drivers
             throw new Exception("Given Row Value " + value + " is not present in Grid");
         }
 
-        public Dictionary<string, AutomationElement[]> GetUpdateDictionary(AutomationElement AE)
+        public Dictionary<string, AutomationElement[]> GetUpdateDictionary(AutomationElement AE, ref bool isElementsFromPoints)
         {
             Dictionary<string, AutomationElement[]> MainDict = new Dictionary<string, AutomationElement[]>();
-            MainDict = GetDictionaryForGrid(AE);
+            MainDict = GetDictionaryForGrid(AE, ref isElementsFromPoints);
             parentDictionary.Remove(AE);
             parentDictionary.Add(AE, MainDict);
             return MainDict;
@@ -4690,8 +4698,8 @@ namespace GingerCore.Drivers
                 case ActTableElement.eRunColSelectorValue.ColTitle:
                     List<string> keys = MainDict.Keys.ToList();
                     if (!keys.Contains(ColValue))
-                    {                        
-                            throw new Exception("Input Column Name " + ColValue + " not present in Grid");
+                    {
+                        throw new Exception("Input Column Name " + ColValue + " not present in Grid");
                     }
                     AEColl = MainDict[ColValue];
                     if (AEColl == null)
@@ -4716,7 +4724,7 @@ namespace GingerCore.Drivers
 
         public override void HandleGridControlAction(ActTableElement actGrid)
         {
-
+            bool isElementsFromPoints = false;
             object obj = GetActElement(actGrid);
             if (obj == null)
             {
@@ -4724,11 +4732,13 @@ namespace GingerCore.Drivers
                 return;
             }
             AutomationElement AE = (AutomationElement)obj;
-            AutomationElement[] AEColl, AEWhereColl;
-            int RowNumber, RowCount;
+            AutomationElement[] AEColl = null, AEWhereColl = null;
+            AutomationElement targetAE = null;
+            int RowNumber = -1, RowCount;
+
             //Dictionary<string, AutomationElementCollection> MainDict = new Dictionary<string, AutomationElementCollection>();            
 
-            MainDict = GetUpdateDictionary(AE);
+            MainDict = GetUpdateDictionary(AE, ref isElementsFromPoints);
             //Not to Remove Yet
             //if (!parentDictionary.ContainsKey(AE) || parentDictionary[AE].Keys.Count == 0)
             //{
@@ -4751,10 +4761,8 @@ namespace GingerCore.Drivers
                     actGrid.AddOrUpdateReturnParamActual("Actual", RowCount.ToString());
                     actGrid.ExInfo = RowCount.ToString();
                     return;
-                }
-
-                AEColl = GetColumnCollection(actGrid.ColSelectorValue, actGrid.LocateColTitle, AE);
-
+                }                                              
+                
                 switch (actGrid.LocateRowType)
                 {
                     case "Row Number":
@@ -4765,25 +4773,45 @@ namespace GingerCore.Drivers
                             actGrid.Error = "Given Row Number " + RowNumber + " is not present in Column";
                             return;
                         }
-                        HandleTableAction(AEColl[RowNumber], actGrid);
 
                         break;
 
                     case "Any Row":
                         Random rnd = new Random();
                         RowNumber = rnd.Next(0, RowCount);
-                        HandleTableAction(AEColl[RowNumber], actGrid);
                         break;
 
                     case "By Selected Row":
                         break;
 
                     case "Where":
-                        AEWhereColl = GetColumnCollection(actGrid.WhereColSelector, actGrid.WhereColumnTitle, AE);
-                        RowNumber = GetRowNumFromCollection(AEWhereColl,actGrid.WhereProperty, actGrid.WhereOperator, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));
-                        HandleTableAction(AEColl[RowNumber], actGrid);
-                        break;
+                        if (!isElementsFromPoints)
+                        {
+                            AEWhereColl = GetColumnCollection(actGrid.WhereColSelector, actGrid.WhereColumnTitle, AE);
+                            RowNumber = GetRowNumFromCollection(AEWhereColl,actGrid.WhereProperty, actGrid.WhereOperator, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));                            
+                        }
+                        else
+                        {
+                            AutomationElement WhereColumnAE = GetColumnElementByPoint(AE, actGrid.WhereColumnTitle, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));
+                            targetAE = GetColOnScreenByPoint(AE, WhereColumnAE, actGrid.LocateColTitle);                            
+                        }                        
+                        break;                        
                 }
+
+                if(targetAE==null)
+                {
+                    AEColl = GetColumnCollection(actGrid.ColSelectorValue, actGrid.LocateColTitle, AE);
+                    if (AEColl[RowNumber].Current.IsOffscreen)
+                        getTableElementOnScreen(AE, AEColl[RowNumber], RowNumber);
+                    if (AEColl[RowNumber].Current.IsOffscreen)
+                    {
+                        actGrid.Error = "Unable to bring cell on screen";
+                        return;
+                    }
+                    targetAE = AEColl[RowNumber];
+                }
+
+                HandleTableAction(targetAE, actGrid);
 
             }
             catch (System.Runtime.InteropServices.COMException e)
@@ -4791,9 +4819,217 @@ namespace GingerCore.Drivers
                 parentDictionary.Remove(AE);
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
                 throw new System.Runtime.InteropServices.COMException();
+            }
+        }
 
+        /// <summary>
+        /// finding Expected Column then Expected Cell from that column by point
+        /// </summary>
+        public AutomationElement GetColumnElementByPoint(AutomationElement AE, string ColTitle, string ColValue)
+        {
+            AutomationElement[] AEColl = MainDict[MainDict.Keys.Last()];
+            AutomationElement targetColFirstAE;
+            int count = AEColl.Length, j = MainDict.Count - 1;
+
+            while (count != 0 && (AEColl[0].Current.LocalizedControlType.Equals("thumb")) || AEColl[0].Current.LocalizedControlType.Equals("scroll bar") || AEColl[0].Current.LocalizedControlType.Equals("image") || (AEColl[0].Current.LocalizedControlType.Equals("button")))
+            {                
+                j--;
+                AEColl = MainDict.Values.ElementAt(j);
+                count = AEColl.Count();
+            }
+            if (!AEColl[0].Current.IsOffscreen)
+            {
+                targetColFirstAE = GetColOnScreenByPoint(AE, AEColl[0], ColTitle);
+                return GetColTargetCellByPoint(AE, targetColFirstAE, ColValue);
+            }
+            return null;
+        }
+
+        public void getTableElementOnScreen(AutomationElement AE, AutomationElement targetAE, int RowNumber)
+        {            
+                int minRowOnScreen = -1;
+                string ColName = targetAE.Current.Name;
+                minRowOnScreen = getColumnOnScreen(AE,ColName);
+                if (minRowOnScreen == -1)
+                    return;
+
+                getRowOnScreen(AE, targetAE, RowNumber, minRowOnScreen);
+                return;            
+        }
+
+        /// <summary>
+        /// finding Expected Row from Column and moving it OnScreen
+        /// </summary>
+        public AutomationElement GetColTargetCellByPoint(AutomationElement tableAE, AutomationElement colFirstAE, string targetCellvalue)
+        {
+            AutomationElement Scroll = tableAE.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.OrientationProperty, OrientationType.Vertical));
+            AutomationElement pageUp = null, pageDown = null, TargetAE = null;            
+
+            int x = ((int)colFirstAE.Current.BoundingRectangle.X + 2);
+            int y = ((int)tableAE.Current.BoundingRectangle.Y) + (((int)(colFirstAE.Current.BoundingRectangle.Height)) / 2);
+            int Limit = (int)tableAE.Current.BoundingRectangle.Y + (int)tableAE.Current.BoundingRectangle.Height;
+
+            TargetAE = FindElementFromRowByPoint(x, y, Limit, targetCellvalue);
+            if (TargetAE != null)
+            {
+                return TargetAE;
             }
 
+            if (Scroll != null)
+            {
+                pageDown = Scroll.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
+                pageUp = Scroll.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page up"));
+                while (pageUp != null && (!pageUp.Current.IsOffscreen))
+                {
+                    ClickElement(pageUp);
+                }
+                do
+                {
+                    pageDown = Scroll.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
+                    TargetAE = FindElementFromRowByPoint(x, y, Limit, targetCellvalue);
+                    if (TargetAE != null)
+                    {
+                        return TargetAE;
+                    }
+                    if (pageDown != null && (!pageDown.Current.IsOffscreen))
+                        ClickElement(pageDown);                    
+                } while (pageDown!=null);                
+            }
+            throw new Exception("Could not find Row with value  :  " + targetCellvalue);            
+        }
+
+        /// <summary>
+        /// Moving Expected Column OnScreen 
+        /// </summary>
+        public AutomationElement GetColOnScreenByPoint(AutomationElement TableAE, AutomationElement refCol, string targetColValue)
+        {
+            int x = (int)TableAE.Current.BoundingRectangle.X;
+            int y = (int)refCol.Current.BoundingRectangle.Y + 2;
+            AutomationElement Scroll = TableAE.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.OrientationProperty, OrientationType.Horizontal));
+            AutomationElement pageLeft = null, pageRight = null;
+
+            //if element is visible on screen
+            refCol = FindColumnByPoint(x, y, ((int)TableAE.Current.BoundingRectangle.X + (int)TableAE.Current.BoundingRectangle.Width), targetColValue);
+            if (refCol!=null)            
+                return refCol;
+
+            if (Scroll != null)
+            {
+                pageLeft = Scroll.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page left"));
+                while (pageLeft != null && (!pageLeft.Current.IsOffscreen))
+                {
+                    ClickElement(pageLeft);
+                }
+                do
+                {
+                    pageRight = Scroll.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page right"));
+                    refCol = FindColumnByPoint(x, y, ((int)TableAE.Current.BoundingRectangle.X + (int)TableAE.Current.BoundingRectangle.Width), targetColValue);
+                    if (refCol != null)
+                        return refCol;
+
+                    if (pageRight != null && (!pageRight.Current.IsOffscreen))
+                        ClickElement(pageRight);
+
+                } while(pageRight!=null);
+            }                       
+            throw new Exception("Unable to bring " + targetColValue + " Column on screen ");
+        }
+
+        public AutomationElement FindColumnByPoint(int x, int y, int xLimit, string value)
+        {
+            while (x < xLimit)
+            {
+                System.Windows.Point point = new System.Windows.Point(x, y);
+                AutomationElement targetAE = AutomationElement.FromPoint(point);
+                if (!String.IsNullOrEmpty(targetAE.Current.Name) && value.Equals(targetAE.Current.Name) && (!targetAE.Current.IsOffscreen))
+                {
+                    return targetAE;
+                }
+                x = x + 3;
+            }
+            return null;
+        }
+
+        public AutomationElement FindElementFromRowByPoint(int x, int y, int yLimit, string value)
+        {
+            AutomationElement TargetElement = null;
+            string elementValue = "";
+            while (y < yLimit)
+            {
+                System.Windows.Point point = new System.Windows.Point(x, y);
+                TargetElement = AutomationElement.FromPoint(point);
+                elementValue = GetControlValue(TargetElement);
+                if (!String.IsNullOrEmpty(elementValue) && value.Equals(GetControlValue(TargetElement)) && (!TargetElement.Current.IsOffscreen))
+                {
+                    return TargetElement;
+                }
+                y = y + 3;
+            }
+            return null;
+        }
+
+        public void getRowOnScreen(AutomationElement AE, AutomationElement targetAE, int RowNumber, int MinRowOnScreen)
+        {
+            AutomationElement ScrollButton = AE.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.OrientationProperty, OrientationType.Vertical));
+            if (MinRowOnScreen > RowNumber)
+            {
+                ScrollButton = ScrollButton.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page up"));
+            }
+            else
+            {
+                ScrollButton = ScrollButton.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
+            }
+            do
+            {
+                if (!targetAE.Current.IsOffscreen)
+                {
+                    break;
+                }
+                ClickElement(ScrollButton);
+            } while (!ScrollButton.Current.IsOffscreen);
+        }
+
+
+
+        public int getColumnOnScreen(AutomationElement AE, string ColName)
+        {
+            AutomationElement[] AEColl = MainDict[ColName];
+            int minRowOnScreen = -1;
+            AutomationElement horScroll = AE.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.OrientationProperty, OrientationType.Horizontal));
+            AutomationElement pageRight = null;
+            if (horScroll != null)
+            {
+                AutomationElement pageLeft = horScroll.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page left"));
+                while (pageLeft != null && !pageLeft.Current.IsOffscreen)
+                {
+                    ClickElement(pageLeft);
+                }
+                pageRight = horScroll.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page right"));
+            }
+
+            minRowOnScreen = getMinRowOnscreen(AEColl);
+            if (minRowOnScreen != -1)
+            {
+                return minRowOnScreen;
+            }
+            while ((pageRight != null) && ((!pageRight.Current.IsOffscreen) || minRowOnScreen == -1))
+            {
+                ClickElement(pageRight);
+                minRowOnScreen = getMinRowOnscreen(AEColl);
+            }
+            return minRowOnScreen;
+        }
+
+        public int getMinRowOnscreen(AutomationElement[] AEColl)
+        {
+            for (int i = 0; i < AEColl.Length; i++)
+            {
+                if (!AEColl[i].Current.IsOffscreen)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         public int GetRowCountforGrid(AutomationElement AE, bool avail = false)
@@ -4802,9 +5038,9 @@ namespace GingerCore.Drivers
             int maxcount = 0, tempcount = 0;
             AutomationElement element = null;
             foreach (string str in keys)
-            {                
+            {
                 AutomationElement[] AECollection = MainDict[str];
-                tempcount = AECollection.Count();                
+                tempcount = AECollection.Count();
                 if (tempcount > maxcount)
                 {
                     maxcount = tempcount;
@@ -4822,14 +5058,14 @@ namespace GingerCore.Drivers
                 {
                     return tempcount;
                 }
-            }           
+            }
             return tempcount;
         }
-        
+
         private void HandleTableAction(AutomationElement AE, ActTableElement actGrid)
         {
             switch (actGrid.ControlAction)
-            {                
+            {
                 case ActTableElement.eTableAction.SetValue:
                     SetControlValue(AE, actGrid.ValueForDriver);
                     actGrid.ExInfo = actGrid.ValueForDriver + " set";
@@ -4861,7 +5097,7 @@ namespace GingerCore.Drivers
                         actGrid.ExInfo += status;
                     break;
                 case ActTableElement.eTableAction.ClickXY:
-                    ClickOnXYPoint(AE, actGrid.ValueForDriver);                    
+                    ClickOnXYPoint(AE, actGrid.ValueForDriver);
                     break;
 
                 case ActTableElement.eTableAction.DoubleClick:
@@ -4889,7 +5125,7 @@ namespace GingerCore.Drivers
                     if (aeChild.TryGetCurrentPattern(ValuePatternIdentifiers.Pattern, out vp))
                     {
                         if (vp != null)
-                        {                            
+                        {
                             if (((ValuePattern)vp).Current.Value != null && (((ValuePattern)vp).Current.Value != "" || (((ValuePattern)vp).Current.Value == "" && aeChild.Current.IsOffscreen == false)))
                                 count++;
                         }
@@ -5009,20 +5245,20 @@ namespace GingerCore.Drivers
                     }
                 }
             }
-            
+
             return count;
         }
-        
-        
-        public Dictionary<string, AutomationElement[]> GetDictionaryForGrid(AutomationElement AE)
-        {           
+
+
+        public Dictionary<string, AutomationElement[]> GetDictionaryForGrid(AutomationElement AE, ref bool isElementsFromPoints)
+        {
             Dictionary<string, AutomationElement[]> MainDict = new Dictionary<string, AutomationElement[]>();
-            AutomationElement tempElement;            
-            ElementLocator eleLoc = new ElementLocator();            
+            AutomationElement tempElement;
+            ElementLocator eleLoc = new ElementLocator();
             tempElement = TreeWalker.ContentViewWalker.GetFirstChild(AE);
             eleLoc.LocateBy = eLocateBy.ByName;
             AutomationElementCollection AECollection;
-            
+
             //Calculate total cells of Grid
             string sElementName = "";
             do
@@ -5033,10 +5269,10 @@ namespace GingerCore.Drivers
                 {
                     if (!MainDict.ContainsKey(sElementName))
                     {
-                        System.Windows.Automation.Condition NameCond = new PropertyCondition(AutomationElementIdentifiers.NameProperty, sElementName);                        
-                        AECollection = AE.FindAll(TreeScope.Children, NameCond);                         
-                        AutomationElement[] elementArray = new AutomationElement[AECollection.Count];                        
-                        AECollection.CopyTo(elementArray, 0);                        
+                        System.Windows.Automation.Condition NameCond = new PropertyCondition(AutomationElementIdentifiers.NameProperty, sElementName);
+                        AECollection = AE.FindAll(TreeScope.Children, NameCond);
+                        AutomationElement[] elementArray = new AutomationElement[AECollection.Count];
+                        AECollection.CopyTo(elementArray, 0);
                         MainDict.Add(sElementName, elementArray);
                     }
                     else { break; }
@@ -5044,16 +5280,17 @@ namespace GingerCore.Drivers
                 try
                 {
                     tempElement = TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
-                }catch(Exception e)
+                }catch(Exception e)                
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Exception in GetDictionaryForGrid", e);
                     tempElement = null;
                 }
-                
+
             } while (tempElement != null && !taskFinished);
             if(MainDict.Count < 4)
             {
                 List<AutomationElement> gridControls = GetGridControlsFromPoint(AE);
+                isElementsFromPoints = true;
                 foreach (AutomationElement grdElement in gridControls)
                 {
                     sElementName = grdElement.Current.Name;
@@ -5067,13 +5304,14 @@ namespace GingerCore.Drivers
                         else { break; }
                     }
                 }
-            }            
+            }
             return MainDict;
         }
-        
+
         public TableElementInfo GetTableElementInfoForGrid(AutomationElement AE)
         {
-            Dictionary<string, AutomationElement[]> tempDictionary = GetDictionaryForGrid(AE);
+            bool isElementsFromPoints = false;
+            Dictionary<string, AutomationElement[]> tempDictionary = GetDictionaryForGrid(AE, ref isElementsFromPoints);
             List<String> mColNames = new List<string>();
             List<string> keys = tempDictionary.Keys.ToList();
             int maxcount = 0, tempcount = 0;
@@ -5103,7 +5341,7 @@ namespace GingerCore.Drivers
             TBI.MainDict = tempDictionary;
             return TBI;
         }
-     
+
         private object GetComboValues(AutomationElement AE)
         {
             List<ComboBoxElementItem> ComboValues = new List<ComboBoxElementItem>();

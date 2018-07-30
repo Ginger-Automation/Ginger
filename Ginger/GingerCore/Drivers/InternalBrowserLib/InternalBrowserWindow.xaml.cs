@@ -80,18 +80,20 @@ namespace GingerCore.Drivers
             InitializeComponent();
             mBusinessFlow = Biz;
 
-            lstActivities.ItemsSource = mBusinessFlow.Activities;
             lstActivities.DisplayMemberPath = "ActivityName";
             lstActivities.SelectedValuePath = "Guid";
-                
-            // Select the first Acitivity
-            if (mBusinessFlow.Activities.Count > 0)
-            {
-                lstActivities.SelectedItem = lstActivities.Items[0] ;
-            }
 
-            //Hook When Biz Flow current Activity changes
-            mBusinessFlow.PropertyChanged += BizFlowPropChanges;
+            if (mBusinessFlow!= null)
+            {
+                lstActivities.ItemsSource = mBusinessFlow.Activities;
+                // Select the first Acitivity
+                if (mBusinessFlow.Activities!= null &&  mBusinessFlow.Activities.Count > 0)
+                {
+                    lstActivities.SelectedItem = lstActivities.Items[0];
+                }
+                //Hook When Biz Flow current Activity changes
+                mBusinessFlow.PropertyChanged += BizFlowPropChanges;
+            }                
 
             WBP = new WebBrowserPage();
             frmBrowser.Content = WBP;            

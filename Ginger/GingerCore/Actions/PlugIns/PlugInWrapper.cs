@@ -223,13 +223,14 @@ namespace GingerCore.Actions.PlugIns
         public List<PlugInTextFileEditorBase> TextEditors()
         {
             List<PlugInTextFileEditorBase> list = new List<PlugInTextFileEditorBase>();
-            foreach (PlugInCapability c in PlugIn.Capabilities())
-            {
-                if (c is PlugInTextFileEditorBase)
-                {
-                    list.Add((PlugInTextFileEditorBase)c);
-                }
-            }
+            //TODO:: Need to be handled once PACT implementation is done
+            //foreach (PlugInCapability c in PlugIn.Capabilities())
+            //{
+            //    if (c is PlugInTextFileEditorBase)
+            //    {
+            //        list.Add((PlugInTextFileEditorBase)c);
+            //    }
+            //}
             return list;
         }
 

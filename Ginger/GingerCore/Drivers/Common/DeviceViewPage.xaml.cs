@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Ginger;
-using GingerCore.Drivers.Common.Devices;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -28,6 +26,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using GingerCore.Drivers.AndroidADB;
+using GingerCore.Drivers.Common.Devices;
+using Ginger;
 
 
 namespace GingerCore.Drivers.Common

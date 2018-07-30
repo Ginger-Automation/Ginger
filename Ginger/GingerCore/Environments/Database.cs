@@ -35,18 +35,18 @@ using MySql.Data.MySqlClient;
 
 namespace GingerCore.Environments
 {
-    public class Database : RepositoryItem
+    public class Database : RepositoryItemBase
     {
         public override bool UseNewRepositorySerializer { get { return true; } }    
 
         public enum eDBTypes
         {
-            MSSQL = 1,
-            Oracle = 2,
-            MSAccess =3,
-            DB2 =4,
-            Cassandra=5,
-            PostgreSQL=6,
+            Oracle,
+            MSSQL,            
+            MSAccess,
+            DB2,
+            Cassandra,
+            PostgreSQL,
             MySQL,
         }
 
@@ -277,21 +277,24 @@ namespace GingerCore.Environments
         private DateTime LastConnectionUsedTime;
 
 
-        private void MakeSureConnectionIsOpen()
+        private bool MakeSureConnectionIsOpen()
         {
+            Boolean isCoonected = true;
 
-            if ((oConn == null) || (oConn.State != ConnectionState.Open)) Connect();
+            if ((oConn == null) || (oConn.State != ConnectionState.Open))
+                isCoonected= Connect();
 
             //make sure that the connection was not refused by the server               
             TimeSpan timeDiff = DateTime.Now - LastConnectionUsedTime;
             if (timeDiff.TotalMinutes > 5)
             {
-                Connect();
+                isCoonected= Connect();                
             }
             else
             {
-                LastConnectionUsedTime = DateTime.Now;
-            }         
+                LastConnectionUsedTime = DateTime.Now;                
+            }
+            return isCoonected;
         }
         
         public static string GetMissingDLLErrorDescription()
@@ -308,10 +311,7 @@ namespace GingerCore.Environments
 
             try
             {
-                // if DBType field is empty
-                if (DBType == 0)
-                    return false;
-
+                
                 switch (DBType)
                 {
                     case eDBTypes.MSSQL:
@@ -403,15 +403,19 @@ namespace GingerCore.Environments
                         oConn.Open();
                         break;
                 }
-                if ((oConn == null) || (oConn.State == ConnectionState.Open))
+                if ((oConn != null) && (oConn.State == ConnectionState.Open))
+                {
                     LastConnectionUsedTime = DateTime.Now;
-                return true;
+                    return true;
+                }
+                
             }
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + connectConnectionString, e);
                 throw (e);
             }
+            return false;
         }
        
         public void CloseConnection()
@@ -450,53 +454,54 @@ namespace GingerCore.Environments
 
         public List<string> GetTablesList(string Keyspace = null)
         {
-            MakeSureConnectionIsOpen();
-
+           
             List<string> rc = new List<string>() { "" };
-
-            try
+            if (MakeSureConnectionIsOpen())
             {
-                //if (oConn == null || oConn.State == ConnectionState.Closed) Connect();
-                if (DBType == Database.eDBTypes.Cassandra)
+                try
                 {
-                    NoSqlBase.NoSqlBase NoSqlDriver = null;
-                    NoSqlDriver = new GingerCassandra(this);
-                    rc = NoSqlDriver.GetTableList(Keyspace);
-                }
-                else
-                {
-                    DataTable table = oConn.GetSchema("Tables");
-                    string tableName = "";
-                    foreach (DataRow row in table.Rows)
+                    //if (oConn == null || oConn.State == ConnectionState.Closed) Connect();
+                    if (DBType == Database.eDBTypes.Cassandra)
                     {
-                        switch (DBType)
+                        NoSqlBase.NoSqlBase NoSqlDriver = null;
+                        NoSqlDriver = new GingerCassandra(this);
+                        rc = NoSqlDriver.GetTableList(Keyspace);
+                    }
+                    else
+                    {
+                        DataTable table = oConn.GetSchema("Tables");
+                        string tableName = "";
+                        foreach (DataRow row in table.Rows)
                         {
-                            case eDBTypes.MSSQL:
-                                tableName = (string)row[2];
-                                break;
-                            case eDBTypes.Oracle:
-                                tableName = (string)row[1];
-                                break;
-                            case eDBTypes.MSAccess:
-                                tableName = (string)row[2];
-                                break;
-                            case eDBTypes.DB2:
-                                tableName = (string)row[2];
-                                break;
-                            case eDBTypes.MySQL:
-                                tableName = (string)row[2];
-                                break;
-                        }
+                            switch (DBType)
+                            {
+                                case eDBTypes.MSSQL:
+                                    tableName = (string)row[2];
+                                    break;
+                                case eDBTypes.Oracle:
+                                    tableName = (string)row[1];
+                                    break;
+                                case eDBTypes.MSAccess:
+                                    tableName = (string)row[2];
+                                    break;
+                                case eDBTypes.DB2:
+                                    tableName = (string)row[2];
+                                    break;
+                                case eDBTypes.MySQL:
+                                    tableName = (string)row[2];
+                                    break;
+                            }
 
-                        rc.Add(tableName);
+                            rc.Add(tableName);
+                        }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list for DB:" + DBType.ToString(), e);
-                throw (e);
-            }
+                catch (Exception e)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list for DB:" + DBType.ToString(), e);
+                    throw (e);
+                }
+            }           
             return rc;
         }
 
@@ -505,14 +510,17 @@ namespace GingerCore.Environments
         {
             DbDataReader reader = null;
             List<string> rc = new List<string>() { "" };
-
+            if (oConn == null || string.IsNullOrEmpty(table))
+            {
+                return rc;
+            }
             if (DBType == Database.eDBTypes.Cassandra)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCassandra(this);
                 rc = NoSqlDriver.GetColumnList(table);
             }
-            else
+            else 
             {
                 try
                 {
@@ -546,71 +554,75 @@ namespace GingerCore.Environments
         }
         
         public string fUpdateDB(string updateCmd, bool commit)
-        {
-            MakeSureConnectionIsOpen();
+        {            
             string result = "";
             //if (oConn == null) Connect();
-
-            using (DbCommand command = oConn.CreateCommand())
+            if(MakeSureConnectionIsOpen())
             {
-               try
+                using (DbCommand command = oConn.CreateCommand())
                 {
-                    if (commit)
+                    try
                     {
-                        tran = oConn.BeginTransaction();
-                        // to Command object for a pending local transaction
-                        command.Connection = oConn;
-                        command.Transaction = tran;
-                    }
-                    command.CommandText = updateCmd;
-                    command.CommandType = CommandType.Text;
+                        if (commit)
+                        {
+                            tran = oConn.BeginTransaction();
+                            // to Command object for a pending local transaction
+                            command.Connection = oConn;
+                            command.Transaction = tran;
+                        }
+                        command.CommandText = updateCmd;
+                        command.CommandType = CommandType.Text;
 
-                    result = command.ExecuteNonQuery().ToString();
-                    if (commit)
+                        result = command.ExecuteNonQuery().ToString();
+                        if (commit)
+                        {
+                            tran.Commit();
+                        }
+                    }
+                    catch (Exception e)
                     {
-                        tran.Commit();
+                        tran.Rollback();
+                        Reporter.ToLog(eLogLevel.ERROR,"Commit failed for:"+updateCmd, e);
+                        throw e;
                     }
                 }
-                catch (Exception e)
-                {
-                    tran.Rollback();
-                    Reporter.ToLog(eLogLevel.ERROR,"Commit failed for:"+updateCmd, e);
-                    throw e;
-                }
-            }
+            }            
             return result;
         }
 
         public string fTableColWhere(string Table, string Column, string Where)
         {
-            MakeSureConnectionIsOpen();
+          
 
             string sql = "SELECT {0} FROM {1} WHERE {2}";
             sql = String.Format(sql, Column, Table, Where);
             String rc = null;
             DbDataReader reader = null;
-            try
+            if (MakeSureConnectionIsOpen())
             {
-                DbCommand command = oConn.CreateCommand();
-                command.CommandText = sql;
-                command.CommandType = CommandType.Text;
-
-                // Retrieve the data.
-                reader = command.ExecuteReader();
-                while (reader.Read())
+                try
                 {
-                    rc = reader[0].ToString();
-                    break; // We read only first row
+                    DbCommand command = oConn.CreateCommand();
+                    command.CommandText = sql;
+                    command.CommandType = CommandType.Text;
+
+                    // Retrieve the data.
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        rc = reader[0].ToString();
+                        break; // We read only first row
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                reader.Close();
-            }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }            
             return rc;
         }
 
@@ -620,42 +632,46 @@ namespace GingerCore.Environments
             MakeSureConnectionIsOpen();
             List<string>  Headers = new List<string>();
             List<List<string>> Records = new List<List<string>> ();
+            bool IsConnected = false;
             List<object> ReturnList = new List<object> ();
 
             DbDataReader reader = null;
             try
             {
                 if (oConn == null)
-                    Connect();
-                DbCommand command = oConn.CreateCommand();
-                command.CommandText = SQL;
-                command.CommandType = CommandType.Text;
-                if ((timeout != null) && (timeout > 0))           
-                    command.CommandTimeout = (int)timeout;
- 
-
-                // Retrieve the data.
-                reader = command.ExecuteReader();
-
-                // Create columns headers
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                    Headers.Add(reader.GetName(i));
-                }
-
-                while (reader.Read())
-                {
-
-                    List<string> record = new List<string>();
-                    for (int i = 0; i < reader.FieldCount; i++)
+                    IsConnected = Connect();
+                    if (IsConnected || oConn!=null)
                     {
-                        record.Add(reader[i].ToString());
-                    }
-                    Records.Add(record);
-                }
+                        DbCommand command = oConn.CreateCommand();
+                        command.CommandText = SQL;
+                        command.CommandType = CommandType.Text;
+                        if ((timeout != null) && (timeout > 0))
+                            command.CommandTimeout = (int)timeout;
 
-                ReturnList.Add(Headers);
-                ReturnList.Add(Records);
+
+                        // Retrieve the data.
+                        reader = command.ExecuteReader();
+
+                        // Create columns headers
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            Headers.Add(reader.GetName(i));
+                        }
+
+                        while (reader.Read())
+                        {
+
+                            List<string> record = new List<string>();
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                record.Add(reader[i].ToString());
+                            }
+                            Records.Add(record);
+                        }
+
+                        ReturnList.Add(Headers);
+                        ReturnList.Add(Records);
+                    }                
             }
             catch (Exception e)
             {
@@ -664,7 +680,8 @@ namespace GingerCore.Environments
             }
             finally
             {
-                reader.Close();
+                if(reader!=null)
+                    reader.Close();
             }
                 return ReturnList;            
         }
@@ -672,36 +689,38 @@ namespace GingerCore.Environments
 
         internal string GetRecordCount(string SQL)
         {
-            MakeSureConnectionIsOpen();
-
+           
             string sql = "SELECT COUNT(1) FROM " + SQL;
 
             String rc = null;
             DbDataReader reader = null;
-            try
+            if (MakeSureConnectionIsOpen())
             {
-                DbCommand command = oConn.CreateCommand();
-                command.CommandText = sql;
-                command.CommandType = CommandType.Text;
-
-                // Retrieve the data.
-                reader = command.ExecuteReader();
-                while (reader.Read())
+                try
                 {
-                    rc = reader[0].ToString();
-                    break; // We read only first row = count of records
+                    DbCommand command = oConn.CreateCommand();
+                    command.CommandText = sql;
+                    command.CommandType = CommandType.Text;
+
+                    // Retrieve the data.
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        rc = reader[0].ToString();
+                        break; // We read only first row = count of records
+                    }
+                }
+                catch (Exception e)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
+                    throw e;
+                }
+                finally
+                {
+                    reader.Close();
                 }
             }
-            catch (Exception e)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
-                throw e;
-            }
-            finally
-            {
-                reader.Close();
-            }
-
+            
             return rc;
         }
 

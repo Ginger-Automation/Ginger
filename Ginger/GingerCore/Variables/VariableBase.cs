@@ -154,13 +154,14 @@ namespace GingerCore.Variables
             {
                 string formula = GetFormula();                
                 if (formula != mFormula)
-                {                   
-                    if ((this is VariableSelectionList) == false)
-                    {
-                          if(mFormula != null)
-                            this.ResetValue();
-                    }                        
+                {
                     mFormula = formula;
+                    if ((this is VariableSelectionList) == false) 
+                    {
+                            if(mFormula != null)
+                            this.ResetValue();
+                    }        
+                    
                     OnPropertyChanged(Fields.Formula);
                 }
                 return mFormula;
@@ -168,13 +169,14 @@ namespace GingerCore.Variables
             set
             {
                 if (value != mFormula)
-                {                  
-                    if ((this is VariableSelectionList) == false)
-                    {
-                        if (mFormula != null)
-                            this.ResetValue();
-                    }
+                {
                     mFormula = value;
+                    if ((this is VariableSelectionList) == false) 
+                    {
+                           if (mFormula != null)
+                           this.ResetValue();
+                    }
+                    
                     OnPropertyChanged(Fields.Formula);
                 }
             }

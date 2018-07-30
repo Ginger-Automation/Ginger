@@ -20,7 +20,7 @@ using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Environments
 {
-    public class LoginUser : RepositoryItem
+    public class LoginUser : RepositoryItemBase
     {
         public override bool UseNewRepositorySerializer { get { return true; } }
 

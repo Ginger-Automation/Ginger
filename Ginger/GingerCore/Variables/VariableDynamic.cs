@@ -43,7 +43,7 @@ namespace GingerCore.Variables
         }
 
         public VariableDynamic()
-        {
+        {            
         }
 
         public override string VariableUIType
@@ -91,10 +91,13 @@ namespace GingerCore.Variables
         {
             try
             {
+                if (mProjEnvironment == null && mBusinessFlow == null)
+                    return "Value will be calulated during execution.";
+
                 ValueExpression Ve = new ValueExpression(mProjEnvironment, mBusinessFlow);
                 Ve.Value = ValueExpression;
 
-                if (Ve.Value.Contains("{Var Name="+Name+"}"))
+                if (Ve.Value != null && Ve.Value.Contains("{Var Name="+Name+"}"))
                     return "ERROR: " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value cannot point to itself. "; 
                     
                 return Ve.ValueCalculated;

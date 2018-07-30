@@ -38,30 +38,37 @@ namespace GingerCore.Environments
             public static string Active = "Active";
         }
 
-        private string mName { get; set; }
+        private string mName;
         [IsSerializedForLocalRepository]
         public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
 
+        private string mCoreProductName;
         [IsSerializedForLocalRepository]
-        public string CoreProductName { get; set; }
+        public string CoreProductName { get { return mCoreProductName; } set { if (mCoreProductName != value) { mCoreProductName = value; OnPropertyChanged(nameof(CoreProductName)); } } }
 
+        private string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }
+        public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
+        private string mCoreVersion;
         [IsSerializedForLocalRepository]
-        public string CoreVersion { get; set; }
+        public string CoreVersion { get { return mCoreVersion; } set { if (mCoreVersion != value) { mCoreVersion = value; OnPropertyChanged(nameof(CoreVersion)); } } }
 
+        private string mAppVersion;
         [IsSerializedForLocalRepository]
-        public string AppVersion { get; set; }
+        public string AppVersion { get { return mAppVersion; } set { if (mAppVersion != value) { mAppVersion = value; OnPropertyChanged(nameof(AppVersion)); } } }
 
+        private string mUrl;
         [IsSerializedForLocalRepository]
-        public string Url { get; set; }
+        public string Url { get { return mUrl; } set { if (mUrl != value) { mUrl = value; OnPropertyChanged(nameof(Url)); } } }
 
+        private string mVendor;
         [IsSerializedForLocalRepository]
-        public string Vendor { get; set; }
+        public string Vendor { get { return mVendor; } set { if (mVendor != value) { mVendor = value; OnPropertyChanged(nameof(Vendor)); } } }
 
+        private bool mActive;
         [IsSerializedForLocalRepository]
-        public bool Active { get; set; }
+        public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]
         public ObservableList<Database> Dbs = new ObservableList<Database>();

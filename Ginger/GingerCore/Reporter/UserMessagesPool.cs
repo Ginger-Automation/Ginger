@@ -508,7 +508,7 @@ namespace GingerCore
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ImageSize, new UserMessage(eMessageType.WARN, "Image Size", "Image Size should be less than 30 Kb", MessageBoxButton.OK, MessageBoxResult.None));
 
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.ReportsTemplatesSaveWarn, new UserMessage(eMessageType.WARN, "Defualt Template Report Change", "Defualt change will cause all templates to be updated and saved, to continue?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ReportsTemplatesSaveWarn, new UserMessage(eMessageType.WARN, "Default Template Report Change", "Default change will cause all templates to be updated and saved, to continue?", MessageBoxButton.YesNo, MessageBoxResult.No));
             
 
             #endregion Reports

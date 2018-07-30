@@ -39,7 +39,6 @@
 //        public Guid GUID { get; set; }
 
 //        // AppName can be NotePad, but if we have several running in same flow it will be Notepad1, Notepad2, Notepad3
-//        // For Sprint: CRM = ICare app and the know name for it
 //        private string mAppName;
 //        [IsSerializedForLocalRepository]
 //        public string AppName

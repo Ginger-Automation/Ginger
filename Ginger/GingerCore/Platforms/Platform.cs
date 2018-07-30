@@ -34,14 +34,15 @@ namespace GingerCore.Platforms
             public static string App = "App";
         }
 
+        private bool mActive;
         [IsSerializedForLocalRepository]
-        public bool Active { get; set; }
+        public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
+        private ePlatformType mPlatformType;
         [IsSerializedForLocalRepository]
-        public ePlatformType PlatformType { get; set; }
-        
+        public ePlatformType PlatformType { get { return mPlatformType; } set { if (mPlatformType != value) { mPlatformType = value; OnPropertyChanged(nameof(PlatformType)); } } }
+
         private string mAgentName;
-
         [IsSerializedForLocalRepository]
         public string AgentName { 
             get 

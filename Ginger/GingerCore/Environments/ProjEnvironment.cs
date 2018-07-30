@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace GingerCore.Environments
 {
-    public class ProjEnvironment : RepositoryItem
+    public class ProjEnvironment : RepositoryItemBase
     {
         public override bool UseNewRepositorySerializer { get { return true; } }
 
@@ -36,19 +36,22 @@ namespace GingerCore.Environments
             public static string Notes = "Notes";
             public static string Active = "Active";
         }
-       
-        private string mName { get; set; }
+
+        private string mName;
         [IsSerializedForLocalRepository]
         public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
 
+        private string mReleaseVersion;
         [IsSerializedForLocalRepository]
-        public string ReleaseVersion { get; set; }
+        public string ReleaseVersion { get { return mReleaseVersion; } set { if (mReleaseVersion != value) { mReleaseVersion = value; OnPropertyChanged(nameof(ReleaseVersion)); } } }
 
+        private string mNotes;
         [IsSerializedForLocalRepository]
-        public string Notes { get; set; }
+        public string Notes { get { return mNotes; } set { if (mNotes != value) { mNotes = value; OnPropertyChanged(nameof(Notes)); } } }
 
+        private bool mActive;
         [IsSerializedForLocalRepository]
-        public bool Active { get; set; }
+        public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]
         public ObservableList<EnvApplication> Applications = new ObservableList<EnvApplication>();

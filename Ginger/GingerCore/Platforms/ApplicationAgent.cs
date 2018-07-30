@@ -34,8 +34,22 @@ namespace GingerCore.Platforms
             public static string Agent = "Agent";
         }
 
+        private string mAppName;
         [IsSerializedForLocalRepository]
-        public string AppName { get; set; }
+        public string AppName {
+            get
+            {
+                return mAppName;
+            }
+            set
+            {
+                if (mAppName != value)
+                {
+                    mAppName = value;
+                    OnPropertyChanged(Fields.AppName);
+                }
+            }
+        }
         
         // No need to serialized as it used only in runtime        
         public Agent Agent 

@@ -40,13 +40,13 @@ using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Drivers.WindowsLib
 {
-    public class FlaUIHelper : UIAutomationHelperBase, IXPath
+    public class FlaUIHelper : UIAutomationHelperBase,IXPath
     {
         private UIA3Automation automation = null;
         public AutomationElement CurrentWindow = null;
         public AutomationElement CurrentItem = null;
         UIAComWrapperHelper UIA = new UIAComWrapperHelper();
-
+        
         #region Pattern Initialization
         UIA3AutomationElementProperties val = new UIA3AutomationElementProperties();
         SelectionItemPatternProperties selItmProp = new SelectionItemPatternProperties();
@@ -56,13 +56,13 @@ namespace GingerCore.Drivers.WindowsLib
 
         private XPathHelper mXPathHelper = null;
         List<string> ImportentProperties = new List<string>();
-
+        
         public FlaUIHelper()
         {
             automation = new UIA3Automation();
             InitXpathHelper();
         }
-
+        
         private void InitXpathHelper()
         {
             mXPathHelper = new XPathHelper(this, ImportentProperties);
@@ -74,7 +74,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public override string SetControlValue(object obj, string value)
         {
-            AutomationElement element = (AutomationElement)obj;
+            AutomationElement element = (AutomationElement) obj;
             //Check if control is enabled 
             if (!element.Properties.IsEnabled)
             {
@@ -92,7 +92,7 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 case "edit":
                 case "Edit Box":   // Windows     
-                    AutomationElementConversionExtensions.AsTextBox(element).Text = value;
+                    AutomationElementConversionExtensions.AsTextBox(element).Text=value;
                     break;
                 case "list":
                 case "list item":
@@ -102,7 +102,7 @@ namespace GingerCore.Drivers.WindowsLib
                     {
                         isMultiSelect = (bool)parentElement.BasicAutomationElement.GetPropertyValue(selectnPattrn.CanSelectMultiple);
                     }
-                    catch (Exception e)
+                    catch(Exception e)
                     {
                         isMultiSelect = false;
                         Console.WriteLine(e.StackTrace);
@@ -196,7 +196,7 @@ namespace GingerCore.Drivers.WindowsLib
         public override void StopRecording()
         {
         }
-
+        
         public override object GetCurrentWindow()
         {
             return CurrentWindow;
@@ -221,7 +221,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public override bool SwitchToWindow(string title)
         {
-            ConditionBase cb = new PropertyCondition(AutomationObjectIds.NameProperty, title);
+            ConditionBase cb=new PropertyCondition(AutomationObjectIds.NameProperty,title);
             //TODO: Handle when there more than 1 window with same name
             AutomationElement window = automation.GetDesktop().FindFirstChild(cb);
 
@@ -245,7 +245,7 @@ namespace GingerCore.Drivers.WindowsLib
             throw new NotImplementedException();
         }
 
-        public override string SetElementVisualState(object AE, string state)
+        public override string SetElementVisualState(object AE,string state)
         {
             throw new NotImplementedException();
         }
@@ -265,7 +265,7 @@ namespace GingerCore.Drivers.WindowsLib
             throw new NotImplementedException();
         }
 
-        public override string GetControlText(object element, string XY = "")
+        public override string GetControlText(object element,string XY="")
         {
             throw new NotImplementedException();
         }
@@ -285,7 +285,7 @@ namespace GingerCore.Drivers.WindowsLib
             throw new NotImplementedException();
         }
 
-        public override void DoRightClick(object element, string XY = "")
+        public override void DoRightClick(object element, string XY="")
         {
             throw new NotImplementedException();
         }
@@ -293,7 +293,7 @@ namespace GingerCore.Drivers.WindowsLib
         public override void DoDoubleClick(object element, string XY = "")
         {
             throw new NotImplementedException();
-        }
+        }        
 
         public override string GetSelectedItem(object element)
         {
@@ -320,7 +320,7 @@ namespace GingerCore.Drivers.WindowsLib
             throw new NotImplementedException();
         }
 
-        public override bool IsChildElementExist(eLocateBy eLocatorType, string LocateValue, string ValueForDriver)
+        public override bool IsChildElementExist(eLocateBy eLocatorType, string LocateValue,string ValueForDriver)
         {
             throw new NotImplementedException();
         }
@@ -338,7 +338,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
             throw new NotImplementedException();
         }
-
+        
         public override ElementInfo GetElementInfoFor(object element)
         {
             AutomationElement AE = (AutomationElement)element;
@@ -372,7 +372,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
             throw new NotImplementedException();
         }
-
+        
         public override object GetElementData(object element)
         {
             throw new NotImplementedException();
@@ -388,11 +388,11 @@ namespace GingerCore.Drivers.WindowsLib
             return GetControlPropertyValue(window, "Name");
         }
 
-        public override void TakeScreenShot(ActScreenShot act)
+        public  override void TakeScreenShot(ActScreenShot act)
         {
             throw new NotImplementedException();
         }
-
+        
         public override List<object> GetListOfWindows()
         {
             List<object> list = new List<object>();
@@ -453,7 +453,7 @@ namespace GingerCore.Drivers.WindowsLib
 
             return list;
         }
-
+        
         public override Bitmap GetCurrentWindowBitmap()
         {
             return CurrentWindow.Capture();
@@ -476,7 +476,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public override string GetControlPropertyValue(object obj, string propertyName)
         {
-            AutomationElement element = (AutomationElement)obj;
+            AutomationElement element = (AutomationElement) obj;
             if (propertyName == "XOffset")
             {
                 try
@@ -485,7 +485,7 @@ namespace GingerCore.Drivers.WindowsLib
                     if (r != null)
                         return element.Properties.BoundingRectangle.ValueOrDefault.X.ToString();
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
                     Console.WriteLine(e.StackTrace);
                 }
@@ -499,16 +499,16 @@ namespace GingerCore.Drivers.WindowsLib
                     if (r != null)
                         return element.Properties.BoundingRectangle.ValueOrDefault.Y.ToString();
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
                     Console.WriteLine(e.StackTrace);
                 }
                 return "1";
             }
 
-            PropertyId propertyId = GetPropertyIDByName(propertyName);
+            PropertyId propertyId= GetPropertyIDByName(propertyName);
 
-            if (propertyId == null)
+            if (propertyId==null)
             {
                 return null;
             }
@@ -543,7 +543,7 @@ namespace GingerCore.Drivers.WindowsLib
             List<ElementInfo> list = new List<ElementInfo>();
             AutomationElement element = (AutomationElement)obj;
 
-            AutomationElement[] elementList = element.FindAllChildren();
+            AutomationElement [] elementList=element.FindAllChildren();
 
             foreach (AutomationElement elementNode in elementList)
             {
@@ -587,7 +587,7 @@ namespace GingerCore.Drivers.WindowsLib
                 actSW.Error += "Window with title-" + windowTitle + " not found within specified time";
         }
 
-        public XPathHelper GetXPathHelper(ElementInfo ei = null)
+        public XPathHelper GetXPathHelper(ElementInfo ei=null)
         {
             return mXPathHelper;
         }
@@ -611,7 +611,7 @@ namespace GingerCore.Drivers.WindowsLib
 
             if (EI.ElementObject.Equals(CurrentWindow)) return null;
 
-            ITreeWalker walker = ((AutomationElement)EI.ElementObject).Automation.TreeWalkerFactory.GetControlViewWalker();
+            ITreeWalker walker = ((AutomationElement) EI.ElementObject).Automation.TreeWalkerFactory.GetControlViewWalker();
 
             AutomationElement ParentAE = walker.GetParent((AutomationElement)EI.ElementObject);
 
@@ -631,7 +631,7 @@ namespace GingerCore.Drivers.WindowsLib
                 throw new Exception("Error: GetElementProperty received ElementInfo with AutomationElement = null");
             }
             //FIXME
-            AutomationElement element = (AutomationElement)EI.ElementObject;
+            AutomationElement element = (AutomationElement) EI.ElementObject;
             if (PropertyName.ToUpper() == "XPATH") { return GetElementAbsoluteXPath(element); }
             if (PropertyName.ToUpper() == "VALUE") { return GetControlValue(element); }
 
@@ -667,7 +667,7 @@ namespace GingerCore.Drivers.WindowsLib
             ConditionBase cond = new PropertyCondition(AP, conditions[0].Value);
             //---
 
-            AutomationElement[] list = ((AutomationElement)EI.ElementObject).FindAll(TreeScope.Children, cond);
+            AutomationElement [] list=  ((AutomationElement)EI.ElementObject).FindAll(TreeScope.Children, cond);
 
             if (list.Length == 0) return null;
 
@@ -727,7 +727,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public override string GetElementControlType(object obj)
         {
-            AutomationElement element = (AutomationElement)obj;
+            AutomationElement element = (AutomationElement) obj;
             return element.Properties.LocalizedControlType.ValueOrDefault;
         }
 
@@ -765,7 +765,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public override bool HasAtleastOneChild(object obj)
         {
-            AutomationElement element = (AutomationElement)obj;
+            AutomationElement element = (AutomationElement) obj;
             ITreeWalker walker = element.Automation.TreeWalkerFactory.GetControlViewWalker();
             if (walker.GetFirstChild(element) != null)
                 return true;
@@ -775,7 +775,7 @@ namespace GingerCore.Drivers.WindowsLib
         public override ObservableList<ControlProperty> GetElementProperties(object obj)
         {
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
-            AutomationElement AE = (AutomationElement)obj;
+            AutomationElement AE = (AutomationElement) obj;
             foreach (PropertyId AP in AE.BasicAutomationElement.GetSupportedProperties())
             {
                 ControlProperty CP = new ControlProperty();
