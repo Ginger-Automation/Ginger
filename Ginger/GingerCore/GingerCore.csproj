@@ -338,10 +338,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Drivers\Appium\AppiumDriverWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -579,12 +575,7 @@
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="DataSource\DataSourceTable.cs" />
     <Compile Include="Dictionaries\GingerDicser.cs" />
-    <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
-    <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">
-      <DependentUpon>AndroidADBDriverWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Common\Devices\DeviceConfig.cs" />
-    <Compile Include="Drivers\AndroidADB\AndroidElementInfo.cs" />
     <Compile Include="Common\Devices\DeviceButton.cs" />
     <Compile Include="Common\Devices\DeviceControllerConfig.cs" />
     <Compile Include="Drivers\Appium\AppiumElementInfo.cs" />
@@ -871,26 +862,6 @@
     <None Include="Drivers\JavaDriverLib\GingerJavaAgent\GingerjarPreparation.bat" />
     <None Include="Resources\Table.png" />
     <None Include="Resources\Table_16x16.ico" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\.gitignore" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\app\.gitignore" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\app\app.iml" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\app\build.gradle" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\outputs\apk\com.amdocs.ginger.android-debug-androidTest.apk">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\outputs\apk\com.amdocs.ginger.android-debug.apk">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="Drivers\AndroidADB\Java\GingerService\app\proguard-rules.pro" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\build.gradle" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\build\android-profile\profile-2017-02-09-06-38-46-030.rawproto" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\GingerService.iml" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\gradle.properties" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\gradlew" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\gradlew.bat" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\gradle\wrapper\gradle-wrapper.properties" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\local.properties" />
-    <None Include="Drivers\AndroidADB\Java\GingerService\settings.gradle" />
     <None Include="Resources\SoapUI16x16.png" />
     <None Include="Resources\SoapUI.bmp" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -901,94 +872,6 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\compiler.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\copyright\profiles_settings.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\encodings.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\gradle.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\android_android_24.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\animated_vector_drawable_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\appcompat_v7_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\constraint_layout_1_0_0_alpha9.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\constraint_layout_solver_1_0_0_alpha9.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\design_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\espresso_core_2_2_2.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\espresso_idling_resource_2_2_2.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\exposed_instrumentation_api_publish_0_5.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\hamcrest_core_1_3.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\hamcrest_integration_1_3.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\hamcrest_library_1_3.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\javawriter_2_1_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\javax_annotation_api_1_2.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\javax_inject_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\jsr305_2_0_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\junit_4_12.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\recyclerview_v7_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\rules_0_5.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\runner_0_5.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\support_annotations_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\support_compat_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\support_core_ui_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\support_core_utils_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\support_fragment_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\support_media_compat_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\support_v4_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\support_vector_drawable_24_2_1.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\libraries\uiautomator_v18_2_1_2.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\misc.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\modules.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\runConfigurations.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\.idea\workspace.xml" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\buildConfig\androidTest\debug\ginger\amdocs\com\gingerservice\test\BuildConfig.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\buildConfig\debug\amdocs\ginger\android\BuildConfig.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\androidTest\debug\android\app\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\androidTest\debug\android\support\test\espresso\idling\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\androidTest\debug\android\support\test\espresso\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\androidTest\debug\android\support\test\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\androidTest\debug\android\support\test\rule\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\androidTest\debug\android\support\test\uiautomator\v18\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\androidTest\debug\ginger\amdocs\com\gingerservice\test\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\amdocs\ginger\android\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\compat\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\constraint\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\coreui\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\coreutils\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\design\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\fragment\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\graphics\drawable\animated\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\graphics\drawable\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\mediacompat\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\v4\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\v7\appcompat\R.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\v7\recyclerview\R.java" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\AndroidManifest.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\layout\activity_main.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\layout\content_main.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\mipmap-hdpi\ic_launcher.png" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\mipmap-mdpi\ic_launcher.png" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\mipmap-xhdpi\ic_launcher.png" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\mipmap-xxhdpi\ic_launcher.png" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\mipmap-xxxhdpi\ic_launcher.png" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\values\colors.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\values\dimens.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\values\strings.xml" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\values\styles.xml" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\android\AndroidDriver.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\android\Audio.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\android\Browser.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\android\GingerService.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\android\GingerServiceStarter.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\android\PhoneCallListener.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\android\Recorder.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\android\SMS.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\android\WiFi.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\Sockets\GingerSocket.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\Sockets\GingerSocketClient.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\Sockets\GingerSocketServer.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\Sockets\MessageEvent.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\com\amdocs\ginger\Sockets\PayLoad.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\app\src\test\java\ginger\amdocs\com\gingerservice\GingerServiceUnitTest.java" />
-    <Content Include="Drivers\AndroidADB\Java\GingerService\gradle\wrapper\gradle-wrapper.jar" />
     <None Include="Drivers\JavaDriverLib\GingerJavaAgent.docx" />
     <None Include="Drivers\JavaDriverLib\GingerJavaAgent\.classpath" />
     <None Include="Drivers\JavaDriverLib\GingerJavaAgent\.project" />
@@ -1037,12 +920,6 @@
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
-    <Folder Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\aidl\androidTest\debug\" />
-    <Folder Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\aidl\debug\" />
-    <Folder Include="Drivers\AndroidADB\Java\GingerService\app\build\outputs\logs\" />
-    <Folder Include="Drivers\AndroidADB\Java\GingerService\app\libs\" />
-    <Folder Include="Drivers\AndroidADB\Java\GingerService\app\src\main\java\" />
-    <Folder Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\drawable\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
     <Folder Include="Plugins\Jenkins\" />
     <Folder Include="Themes\Theme1\Images\Logo\" />
