@@ -134,7 +134,7 @@ namespace GingerWPFUnitTest
 
 
         [TestMethod]
-        //[Ignore]
+        [Ignore]
         public void VerifyEnvsShowinTree()
         {
             //Arrange            
