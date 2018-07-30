@@ -58,9 +58,9 @@ namespace GingerWPFUnitTest
 
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
 
-            //Console.WriteLine("===> Open solution");
-            //TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ Open solution @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-            //mGingerAutomator.OpenSolution(SolutionFolder);
+            Console.WriteLine("===> Open solution");
+            TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ Open solution @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            mGingerAutomator.OpenSolution(SolutionFolder);
 
             //LogFile = mTC.TestLogsDir + @"\Ginger_BasicsTest.txt";
         }
