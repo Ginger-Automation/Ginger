@@ -338,6 +338,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Drivers\Appium\AppiumDriverWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -578,6 +582,11 @@
     <Compile Include="Common\Devices\DeviceConfig.cs" />
     <Compile Include="Common\Devices\DeviceButton.cs" />
     <Compile Include="Common\Devices\DeviceControllerConfig.cs" />
+    <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
+    <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">
+      <DependentUpon>AndroidADBDriverWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\AndroidADB\AndroidElementInfo.cs" />
     <Compile Include="Drivers\Appium\AppiumElementInfo.cs" />
     <Compile Include="Drivers\ASCF\ASCFBrowserElementInfo.cs" />
     <Compile Include="Drivers\ASCF\ASCFControlInfo.cs" />
