@@ -39,11 +39,12 @@ namespace Ginger
 
         public enum RepositoryItemPageViewMode
         {
-            Automation = 0, //Item opened from Automate tab and saved item should be App.BusiessFlow  //was ExecutionFlow.     ActivityEditPage: OK, UNDO.        ActionEditPage: OK, NEXT, RUN, STOP
-            //Standalone = 1, //Item opened as standalone item like in Shared Repository in which the item iteself supposed to be saved to XML  //was SharedRepository. ActivityEditPage: Save, UNDO        ActionEditPage:                   OK, UNDO
-            SharedReposiotry = 1,  //suppoed to be merged with  Standalone                                                                       //ActionEditPage:Shared repository: Save, UNDO
-            Child = 2, //Item opened for edit but save need to be done for it parent which was provided for page  //was Analyzer. ActivityEditPage: AnalyzerSave, UNDO             ActionEditPage: AnalyzerSave, UNDO
-            View = 3 //item should be open for read only   //ActivityEditPage: OK                                             ActionEditPage: OK
+            Automation = 0, //Item opened from Automate tab and saved item should be App.BusiessFlow
+            Standalone = 1, //Allow edit with Save
+            SharedReposiotry = 1,  //Item opened as standalone item like in Shared Repository in which the item iteself supposed to be saved to XML
+            Child = 2, //Item opened for edit but save need to be done for it parent which was provided for page
+            View = 3 //item should be open for read only
+
         }
 
         public static bool isDesignMode()

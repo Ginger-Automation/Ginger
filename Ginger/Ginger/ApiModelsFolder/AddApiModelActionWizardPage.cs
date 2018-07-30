@@ -29,7 +29,7 @@ namespace Ginger.ApiModelsFolder
     {
         private ObservableList<ApplicationAPIModel> mAAMList = new ObservableList<ApplicationAPIModel>();
 
-        ObservableList<Act> actions = new ObservableList<Act>();
+        ObservableList<Act> mActions = App.BusinessFlow.CurrentActivity.Acts;
 
         public AddApiModelActionWizardPage()
         {
@@ -79,19 +79,20 @@ namespace Ginger.ApiModelsFolder
                 aNew.AddNewReturnParams = true;
                 aNew.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
 
-                actions.Add(aNew);
+
+                mActions.Add(aNew);
 
                 //adding the new act after the selected action in the grid  
                 
                 int selectedActIndex = -1;
-                if (actions.CurrentItem != null)
+                if (mActions.CurrentItem != null)
                 {
-                    selectedActIndex = actions.IndexOf((Act)actions.CurrentItem);
+                    selectedActIndex = mActions.IndexOf((Act)mActions.CurrentItem);
                 }
 
                 if (selectedActIndex >= 0)
                 {
-                    actions.Move(actions.Count - 1, selectedActIndex + 1);
+                    mActions.Move(mActions.Count - 1, selectedActIndex + 1);
                 }
             }
         }

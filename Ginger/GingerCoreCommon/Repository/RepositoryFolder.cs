@@ -316,6 +316,7 @@ namespace Amdocs.Ginger.Repository
 
         public override void PauseFileWatcher()
         {
+            if (mFileWatcher == null) return;
             if (mFileWatcher.EnableRaisingEvents != false)
             {
                 mFileWatcher.EnableRaisingEvents = false;
@@ -328,6 +329,7 @@ namespace Amdocs.Ginger.Repository
 
         public override void ResumeFileWatcher()
         {
+            if (mFileWatcher == null) return;
             if (mFileWatcher.EnableRaisingEvents != true)
             {
                 mFileWatcher.EnableRaisingEvents = true;

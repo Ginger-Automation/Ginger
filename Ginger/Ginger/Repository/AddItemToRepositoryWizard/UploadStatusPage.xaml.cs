@@ -66,12 +66,13 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             {
                 foreach (UploadItemSelection selectedItem in UploadItemSelection.mSelectedItems)
                 {
-                    if (selectedItem.Selected)
+                    if (selectedItem.Selected )
                     {
-                        SharedRepositoryOperations.UploadItemToRepository(selectedItem);
+                        if (selectedItem.ItemUploadStatus != UploadItemSelection.eItemUploadStatus.Uploaded)
+                            SharedRepositoryOperations.UploadItemToRepository(selectedItem);
                     }
-                    else
-                        selectedItem.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.Skipped;                   
+                    else 
+                        selectedItem.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.Skipped;
                 }
 
                 // UploadItemToRepositoryWizard.PrevVisible = false;

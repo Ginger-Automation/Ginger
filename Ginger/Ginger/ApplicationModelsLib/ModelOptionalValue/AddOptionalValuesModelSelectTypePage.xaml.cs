@@ -40,32 +40,28 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
     /// </summary>
     public partial class AddOptionalValuesModelSelectTypePage : Page, IWizardPage
     {
-        public AddModelOptionalValuesWizard AddModelOptionalValuesWizard;
-        ApplicationAPIModel mAAMB;
-        ImportOptionalValuesForParameters importOptionalValues = new ImportOptionalValuesForParameters();
-        ObservableList<GlobalAppModelParameter> mGlobalParamterList;
-        public AddOptionalValuesModelSelectTypePage(ApplicationAPIModel AAMB)
+        public AddModelOptionalValuesWizard mAddModelOptionalValuesWizard;
+        eOptionalValuesTargetType mOptionalValuesTargetType;
+
+        public AddOptionalValuesModelSelectTypePage(eOptionalValuesTargetType OptionalValuesTargetType)
         {
             InitializeComponent();
-            mAAMB = AAMB;
-            importOptionalValues.ParameterType = ImportOptionalValuesForParameters.eParameterType.Local;
-            ControlsBinding.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), null);
-
+            mOptionalValuesTargetType = OptionalValuesTargetType;
+            switch (mOptionalValuesTargetType)
+            {
+                case eOptionalValuesTargetType.ModelLocalParams:
+                    ControlsBinding.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), null);
+                    break;
+                case eOptionalValuesTargetType.GlobalParams:
+                    ControlsBinding.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), new List<object>() { eSourceType.Excel, eSourceType.DB });
+                    break;
+            }           
+                           
             xSourceTypeComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             SetFieldsGrid(); //XML & JSON
             SetDefaultPresentation();
         }
-        public AddOptionalValuesModelSelectTypePage(ObservableList<GlobalAppModelParameter> GlobalParamterList)
-        {
-            InitializeComponent();
-            mGlobalParamterList = GlobalParamterList;
-            importOptionalValues.ParameterType = ImportOptionalValuesForParameters.eParameterType.Global;
-            ControlsBinding.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), new List<object>() {eSourceType.Excel,eSourceType.DB});
-
-            xSourceTypeComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
-            SetFieldsGrid(); //XML & JSON
-            SetDefaultPresentation();
-        }
+        
         private void SetFieldsGrid()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -97,47 +93,39 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             if (WizardEventArgs.EventType == EventType.Init)
             {
-                AddModelOptionalValuesWizard = ((AddModelOptionalValuesWizard)WizardEventArgs.Wizard);
-                //AddModelOptionalValuesWizard.FinishEnabled = false;
-                //AddModelOptionalValuesWizard.NextEnabled = false;                
+                mAddModelOptionalValuesWizard = ((AddModelOptionalValuesWizard)WizardEventArgs.Wizard);              
             }
             else if (WizardEventArgs.EventType == EventType.LeavingForNextPage)
             {
                 if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.Excel.ToString())
                 {
                     LoadFile();
-                    AddModelOptionalValuesWizard.SourceType = eSourceType.Excel;
+                    mAddModelOptionalValuesWizard.SourceType = eSourceType.Excel;
                 }
                 else if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.XML.ToString())
                 {
-                    AddModelOptionalValuesWizard.SourceType = eSourceType.XML;
+                    mAddModelOptionalValuesWizard.SourceType = eSourceType.XML;
                 }
                 else if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.Json.ToString())
                 {
-                    AddModelOptionalValuesWizard.SourceType = eSourceType.Json;
+                    mAddModelOptionalValuesWizard.SourceType = eSourceType.Json;
                 }
                 else if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.DB.ToString())
                 {
                     LoadFile();
-                    AddModelOptionalValuesWizard.SourceType = eSourceType.DB;
+                    mAddModelOptionalValuesWizard.SourceType = eSourceType.DB;
                 }
-            }
-            else if (WizardEventArgs.EventType == EventType.Active)
-            {
-                //AddModelOptionalValuesWizard.NextEnabled = true;
-                //AddModelOptionalValuesWizard.FinishEnabled = false;
-                //AddModelOptionalValuesWizard.PrevEnabled = false;
             }
             else if (WizardEventArgs.EventType == EventType.Cancel)
             {
-                if (importOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
+                if (mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
                 {
-                    mAAMB.OptionalValuesTemplates.Clear();//XML & JSON
-                    AddModelOptionalValuesWizard.ParameterValuesByNameDic.Clear();//Excel & DB
+                    mAddModelOptionalValuesWizard.mAAMB.OptionalValuesTemplates.Clear();//XML & JSON
+                    mAddModelOptionalValuesWizard.ParameterValuesByNameDic.Clear();//Excel & DB
                 } 
-                else if(importOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
+                else if(mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
                 {
-                    AddModelOptionalValuesWizard.ParameterValuesByNameDic.Clear();//Excel & DB
+                    mAddModelOptionalValuesWizard.ParameterValuesByNameDic.Clear();//Excel & DB
                 }
             }
         }
@@ -185,10 +173,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     foreach (String file in dlg.FileNames)
                     {
-                        AddModelOptionalValuesWizard.OVFList.Add(new TemplateFile() { FilePath = file });
-                        mAAMB.OptionalValuesTemplates.Add(new TemplateFile() { FilePath = file });
+                        mAddModelOptionalValuesWizard.OVFList.Add(new TemplateFile() { FilePath = file });
+                        mAddModelOptionalValuesWizard.mAAMB.OptionalValuesTemplates.Add(new TemplateFile() { FilePath = file });
                     }
-                    xImportOptionalValuesGrid.DataSourceList = AddModelOptionalValuesWizard.OVFList;
+                    xImportOptionalValuesGrid.DataSourceList = mAddModelOptionalValuesWizard.OVFList;
                 }
             }
             else
@@ -198,18 +186,18 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         private void LoadFile()
         {
-            AddModelOptionalValuesWizard.ProcessStarted();
+            mAddModelOptionalValuesWizard.ProcessStarted();
             if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.Excel.ToString())
             {
-                AddModelOptionalValuesWizard.ParameterValuesByNameDic = importOptionalValues.UpdateParametersOptionalValuesFromCurrentExcelTable();
+                mAddModelOptionalValuesWizard.ParameterValuesByNameDic = mAddModelOptionalValuesWizard.ImportOptionalValues.UpdateParametersOptionalValuesFromCurrentExcelTable();
                 //AddModelOptionalValuesWizard.NextEnabled = true;
             }
             else if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.DB.ToString())
             {
-                importOptionalValues.ExecuteFreeSQL(xSQLTextBox.Text.Trim());
-                AddModelOptionalValuesWizard.ParameterValuesByNameDic = importOptionalValues.UpdateParametersOptionalValuesFromDB();
+                mAddModelOptionalValuesWizard.ImportOptionalValues.ExecuteFreeSQL(xSQLTextBox.Text.Trim());
+                mAddModelOptionalValuesWizard.ParameterValuesByNameDic = mAddModelOptionalValuesWizard.ImportOptionalValues.UpdateParametersOptionalValuesFromDB();
             }
-            AddModelOptionalValuesWizard.ProcessEnded();
+            mAddModelOptionalValuesWizard.ProcessEnded();
         }
         private void ShowRelevantPanel(string FileType)
         {
@@ -236,7 +224,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xSheetLable.Visibility = Visibility.Collapsed;
                 xDBStackPanel.Visibility = Visibility.Collapsed;
                 xImportOptionalValuesGrid.Visibility = Visibility.Visible;
-                xImportOptionalValuesGrid.DataSourceList = AddModelOptionalValuesWizard.OVFList;
+                xImportOptionalValuesGrid.DataSourceList = mAddModelOptionalValuesWizard.OVFList;
                 xImportOptionalValuesGrid.DataSourceList.CollectionChanged += xImportOptionalValuesGrid_CollectionChanged;
             }
             else if (FileType == eSourceType.DB.ToString())
@@ -268,7 +256,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         private void ClearAllOptionalValuesFiles(object sender, RoutedEventArgs e)
         {
-            AddModelOptionalValuesWizard.OVFList.Clear();
+            mAddModelOptionalValuesWizard.OVFList.Clear();
         }
         private void AddOptioanlValueFile(object sender, RoutedEventArgs e)
         {
@@ -281,35 +269,35 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             if (!string.IsNullOrEmpty(xSelectRowTextBox.Text))
             {
-                AddModelOptionalValuesWizard.ProcessStarted();
-                importOptionalValues.ExcelWhereCondition = xSelectRowTextBox.Text;
-                DataTable dt = importOptionalValues.GetExceSheetlData(true);
+                mAddModelOptionalValuesWizard.ProcessStarted();
+                mAddModelOptionalValuesWizard.ImportOptionalValues.ExcelWhereCondition = xSelectRowTextBox.Text;
+                DataTable dt = mAddModelOptionalValuesWizard.ImportOptionalValues.GetExceSheetlData(true);
                 if (dt != null)
                 {
                     xExcelDataGrid.ItemsSource = dt.AsDataView();
                     xExcelDataGridDockPanel.Visibility = Visibility.Visible;
                     //AddModelOptionalValuesWizard.NextEnabled = true;
                 }
-                AddModelOptionalValuesWizard.ProcessEnded(); 
+                mAddModelOptionalValuesWizard.ProcessEnded(); 
             }
         }
         private void xExcelViewDataButton_Click(object sender, RoutedEventArgs e)
         {
-            AddModelOptionalValuesWizard.ProcessStarted();
-            DataTable dt = importOptionalValues.GetExceSheetlData(false);
+            mAddModelOptionalValuesWizard.ProcessStarted();
+            DataTable dt = mAddModelOptionalValuesWizard.ImportOptionalValues.GetExceSheetlData(false);
             if (dt != null)
             {
                 xExcelDataGrid.ItemsSource = dt.AsDataView();
                 xExcelDataGridDockPanel.Visibility = Visibility.Visible;
                 //AddModelOptionalValuesWizard.NextEnabled = true;
             }
-            AddModelOptionalValuesWizard.ProcessEnded();
+            mAddModelOptionalValuesWizard.ProcessEnded();
         }
         private void xSheetNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (xSheetNameComboBox.SelectedValue != null)
             {
-                importOptionalValues.ExcelSheetName = xSheetNameComboBox.SelectedValue.ToString();
+                mAddModelOptionalValuesWizard.ImportOptionalValues.ExcelSheetName = xSheetNameComboBox.SelectedValue.ToString();
                 if (!string.IsNullOrEmpty(xSheetNameComboBox.SelectedValue.ToString()))
                 {
                     xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
@@ -325,11 +313,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         private void FillSheetCombo()
         {
-            AddModelOptionalValuesWizard.ProcessStarted();
-            importOptionalValues.ExcelFileName = xPathTextBox.Text;
-            List<string> SheetsList = importOptionalValues.GetSheets();
+            mAddModelOptionalValuesWizard.ProcessStarted();
+            mAddModelOptionalValuesWizard.ImportOptionalValues.ExcelFileName = xPathTextBox.Text;
+            List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets();
             GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
-            AddModelOptionalValuesWizard.ProcessEnded();
+            mAddModelOptionalValuesWizard.ProcessEnded();
         }
         private void xPathTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -338,22 +326,22 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             if (string.IsNullOrEmpty(xPathTextBox.Text.Trim())) { Reporter.ToUser(eUserMsgKeys.MissingExcelDetails); return; }
             if (!xPathTextBox.Text.Trim().ToLower().EndsWith(".xlsx")) { Reporter.ToUser(eUserMsgKeys.InvalidExcelDetails); return; }
-            AddModelOptionalValuesWizard.ProcessStarted();
+            mAddModelOptionalValuesWizard.ProcessStarted();
             bool exportSuccess = false;
-            if (importOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
+            if (mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
             {
-                exportSuccess = importOptionalValues.ExportTemplateExcelFileForImportOptionalValues(mAAMB.AppModelParameters.ToList(), xPathTextBox.Text.Trim());
+                exportSuccess = mAddModelOptionalValuesWizard.ImportOptionalValues.ExportTemplateExcelFileForImportOptionalValues(mAddModelOptionalValuesWizard.mAAMB.AppModelParameters.ToList(), xPathTextBox.Text.Trim());
             }
-            else if (importOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
+            else if (mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
             {
-                List<AppModelParameter> GlobalParamList = mGlobalParamterList.ToList().ConvertAll(x => (AppModelParameter)x);
-                exportSuccess = importOptionalValues.ExportTemplateExcelFileForImportOptionalValues(GlobalParamList, xPathTextBox.Text.Trim());
+                List<AppModelParameter> GlobalParamList = mAddModelOptionalValuesWizard.mGlobalParamterList.ToList().ConvertAll(x => (AppModelParameter)x);
+                exportSuccess = mAddModelOptionalValuesWizard.ImportOptionalValues.ExportTemplateExcelFileForImportOptionalValues(GlobalParamList, xPathTextBox.Text.Trim());
             }
             if (exportSuccess)
             {
                 System.Diagnostics.Process.Start(xPathTextBox.Text.Trim());
             }
-            AddModelOptionalValuesWizard.ProcessEnded();
+            mAddModelOptionalValuesWizard.ProcessEnded();
         }
         #endregion
 
@@ -361,11 +349,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
         private void FillDBTypeComboBox()
         {
-            AddModelOptionalValuesWizard.ProcessStarted();
-            List<string> DBTypeList = importOptionalValues.GetDBTypeList().Where(x => x == eDBTypes.Oracle.ToString() || x == eDBTypes.MSAccess.ToString()).ToList();
+            mAddModelOptionalValuesWizard.ProcessStarted();
+            List<string> DBTypeList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetDBTypeList().Where(x => x == eDBTypes.Oracle.ToString() || x == eDBTypes.MSAccess.ToString()).ToList();
             GingerCore.General.FillComboFromList(xDBTypeComboBox, DBTypeList);
            
-            AddModelOptionalValuesWizard.ProcessEnded();
+            mAddModelOptionalValuesWizard.ProcessEnded();
         }
         private void xSQLTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -391,8 +379,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 try
                 {
-                    importOptionalValues.SetDBDetails(xDBTypeComboBox.SelectedValue.ToString(), xBDHostTextBox.Text.Trim(), xDBUserTextBox.Text.Trim(), xDBPasswordTextBox.Text.Trim());
-                    if (importOptionalValues.Connect())
+                    mAddModelOptionalValuesWizard.ImportOptionalValues.SetDBDetails(xDBTypeComboBox.SelectedValue.ToString(), xBDHostTextBox.Text.Trim(), xDBUserTextBox.Text.Trim(), xDBPasswordTextBox.Text.Trim());
+                    if (mAddModelOptionalValuesWizard.ImportOptionalValues.Connect())
                     {
                         xSQLLable.Visibility = Visibility.Visible;
                         xSQLTextBox.Visibility = Visibility.Visible;

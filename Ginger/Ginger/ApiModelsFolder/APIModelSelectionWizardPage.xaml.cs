@@ -55,7 +55,7 @@ namespace Ginger.ApiModelsFolder
             xApiModelsGrid.InitViewItems();
 
             xApiModelsGrid.DataSourceList = mAddApiModelActionWizardPage.AAMList;
-            xApiModelsGrid.AddValidationRule(eValidationRule.CannotBeEmpty);
+            xApiModelsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
 
             // xApiModelsGrid.btnClearAll.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteApiButtonClicked));
             xApiModelsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddApiButtonClicked));

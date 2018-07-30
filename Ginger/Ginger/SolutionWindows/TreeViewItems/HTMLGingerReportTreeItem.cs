@@ -60,7 +60,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         StackPanel ITreeViewItem.Header()
         {
             // TODO: have eimagetype on RIBase
-            return TreeViewUtils.CreateItemHeader(HTMLReportConfiguration, nameof(HTMLReportConfiguration.Name), eImageType.HtmlReport, GetSourceControlImage(HTMLReportConfiguration), true, nameof(HTMLReportConfiguration.IsDirty));
+            //return TreeViewUtils.CreateItemHeader(HTMLReportConfiguration, nameof(HTMLReportConfiguration.Name), eImageType.HtmlReport, GetSourceControlImage(HTMLReportConfiguration), true, nameof(HTMLReportConfiguration.IsDirty));
+            return NewTVItemStyle(HTMLReportConfiguration, eImageType.HtmlReport, nameof(HTMLReportConfiguration.Name));
         }
         
         bool ITreeViewItem.IsExpandable()

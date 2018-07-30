@@ -58,7 +58,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(mDataSourcesRepositoryFolder, nameof(RepositoryFolder<DataSourceBase>.DisplayName), eImageType.DataSource, GetSourceControlImage(mDataSourcesRepositoryFolder), false);
+            return TreeViewUtils.NewRepositoryItemTreeHeader(mDataSourcesRepositoryFolder, nameof(RepositoryFolder<DataSourceBase>.DisplayName), eImageType.DataSource, GetSourceControlImage(mDataSourcesRepositoryFolder), false);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

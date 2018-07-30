@@ -1133,11 +1133,16 @@ public void RemoveCustomView(string viewName)
                 }
                 else if(gridCol.GetType() == typeof(DataGridComboBoxColumn))
                 {
+                    ((DataGridComboBoxColumn)gridCol).IsReadOnly = true;
                     ((DataGridComboBoxColumn)gridCol).ElementStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
                 }
                 else if(gridCol.GetType() == typeof(DataGridTemplateColumn))
                 {
                     ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                }
+                else if (gridCol.GetType() == typeof(DataGridTextColumn))
+                {
+                    ((DataGridTextColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
                 }
                 else
                 {
@@ -1838,7 +1843,9 @@ public void RemoveCustomView(string viewName)
 
 
             DataSourceList.Insert(currentIndex + 1, item);
-            DataSourceList.CurrentItem = item; 
+            
+            grdMain.SelectedIndex = currentIndex + 1;
+            DataSourceList.CurrentItem = item;
         }
 
         public int MoveItemAfterCurrent(RepositoryItemBase item)
@@ -1969,14 +1976,48 @@ public void RemoveCustomView(string viewName)
                 ClearFloatingButtons();
         }
 
+
+        public static readonly DependencyProperty RowsCountProperty = DependencyProperty.Register(
+                    "RowsCount", typeof(int), typeof(ucGrid), new PropertyMetadata(0));        
+
         public int RowsCount
         {
-            get { return grdMain.Items.Count; }         
+            get { return (int)this.GetValue(RowsCountProperty); }
+            set { this.SetValue(RowsCountProperty, value); }
         }
 
-        // Register DependencyProperty of RowsCount - can be used for validation rule
-        public static readonly DependencyProperty RowsCountProperty = DependencyProperty.Register(
-                    "RowsCount", typeof(int), typeof(ucGrid), new PropertyMetadata(0));
+        public enum eUcGridValidationRules
+        {
+            CantBeEmpty,
+            OnlyOneItem,
+        }
 
+        public List<eUcGridValidationRules> ValidationRules = new List<eUcGridValidationRules>();
+
+        public bool HasValidationError()
+        {
+            bool validationRes = false;
+            foreach(eUcGridValidationRules rule in ValidationRules)
+            {
+                switch (rule)
+                {
+                    case eUcGridValidationRules.CantBeEmpty:
+                        if (Grid.Items.Count == 0) validationRes= true;
+                        break;
+
+                    case eUcGridValidationRules.OnlyOneItem:
+                        if (Grid.Items.Count != 1) validationRes= true;
+                        break;
+                }
+            }
+
+            //set border color based on vlidation
+            if (validationRes == true)
+                Grid.BorderBrush = System.Windows.Media.Brushes.Red;
+            else
+                Grid.BorderBrush = FindResource("@Skin1_ColorA") as Brush;
+
+            return validationRes;
+        }
     }
 }

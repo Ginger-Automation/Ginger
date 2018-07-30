@@ -37,9 +37,9 @@
 
         <StackPanel Orientation="Horizontal" Grid.Row="0" >
             <Label x:Name="xMainItemTypeLabel" Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center">Item Type:</Label>
-            <ComboBox x:Name="xMainItemTypeComboBox"  SelectionChanged="ItemTypeComboBox_SelectionChanged" VerticalAlignment="Center"   Width="150" IsEditable="true" />
+            <ComboBox x:Name="xMainItemTypeComboBox"  SelectionChanged="ItemTypeComboBox_SelectionChanged" VerticalAlignment="Center"   Width="150" IsEditable="true" Style="{StaticResource $FlatInputComboBoxStyle}" />
             <Label x:Name="xSubItemTypeLabel" Style="{StaticResource @InputFieldLabelStyle}" Visibility="Collapsed"  VerticalAlignment="Center" Margin="20,0,0,0">Sub Item Type:</Label>
-            <ComboBox x:Name="xSubItemTypeComboBox"  SelectionChanged="SubItemTypeComboBox_SelectionChanged"  Width="260" IsEditable="true" VerticalAlignment="Center"  Visibility="Collapsed"  />
+            <ComboBox x:Name="xSubItemTypeComboBox"  SelectionChanged="SubItemTypeComboBox_SelectionChanged"  Width="260" IsEditable="true" VerticalAlignment="Center"  Visibility="Collapsed" Style="{StaticResource $FlatInputComboBoxStyle}"  />
 
         </StackPanel>
 
@@ -58,7 +58,7 @@
         <StackPanel Orientation="Horizontal" Grid.Row="3">
             <Label x:Name="xReplaceLabel"  Style="{StaticResource @InputFieldLabelStyle}" Visibility="Collapsed" VerticalAlignment="Center" >Replace:</Label>
             <TextBox x:Name="xReplaceValueTextBox" Margin="12,0,0,0" Style="{StaticResource @TextBoxStyle}" Visibility="Collapsed" VerticalAlignment="Center" Width="425" TextChanged="ValueToReplaceTextBoxTextChanges"/>
-            <ComboBox x:Name="xReplaceValueComboBox"  Margin="12,0,0,0" SelectionChanged="ReplaceValueComboBox_SelectionChanged" Width="425" IsEditable="true" VerticalAlignment="Center"  Visibility="Collapsed"  />
+            <ComboBox x:Name="xReplaceValueComboBox"  Margin="12,0,0,0" SelectionChanged="ReplaceValueComboBox_SelectionChanged" Width="425" IsEditable="true" VerticalAlignment="Center"  Visibility="Collapsed" Style="{StaticResource $FlatInputComboBoxStyle}"  />
         </StackPanel>
 
         <StackPanel Margin="5,0,0,0" Orientation="Vertical" Grid.Row="4">

@@ -29,24 +29,28 @@ namespace Amdocs.Ginger.Repository
         //[IsSerializedForLocalRepository]
         /* public string GroupName { get; set; } *///Need for Reflecting the Name, Name field is not eanogh it needs to come with GroupName
 
+        ApplicationAPIUtils.eWebApiType mAPIType = ApplicationAPIUtils.eWebApiType.REST;
         [IsSerializedForLocalRepository]
-        public ApplicationAPIUtils.eWebApiType APIType { get; set; }
+        public ApplicationAPIUtils.eWebApiType APIType { get { return mAPIType; } set { if (mAPIType != value) { mAPIType = value; OnPropertyChanged(nameof(APIType)); } } }
 
         private bool mIsSelected = true;
         // [IsSerializedForLocalRepository]
-        public bool IsSelected { get { return mIsSelected; } set { mIsSelected = value; OnPropertyChanged(nameof(IsSelected)); } }
+        public bool IsSelected { get { return mIsSelected; } set { if (mIsSelected != value) { mIsSelected = value; OnPropertyChanged(nameof(IsSelected)); } } }
 
         //[IsSerializedForLocalRepository]
         public Guid ApplicationGuid { get; set; }//Do not use, for backward support
 
+        string mRequestBody = string.Empty;
         [IsSerializedForLocalRepository]
-        public string RequestBody { get; set; } = string.Empty;
+        public string RequestBody { get { return mRequestBody; } set { if (mRequestBody != value) { mRequestBody = value; OnPropertyChanged(nameof(RequestBody)); } } }
 
+        string mEndpointURL;
         [IsSerializedForLocalRepository]
-        public string EndpointURL { get; set; }
+        public string EndpointURL { get { return mEndpointURL; } set { if (mEndpointURL != value) { mEndpointURL = value; OnPropertyChanged(nameof(EndpointURL)); } } }
 
+        ApplicationAPIUtils.eHttpVersion mReqHttpVersion = ApplicationAPIUtils.eHttpVersion.HTTPV10;
         [IsSerializedForLocalRepository]
-        public ApplicationAPIUtils.eHttpVersion ReqHttpVersion { get; set; }
+        public ApplicationAPIUtils.eHttpVersion ReqHttpVersion { get { return mReqHttpVersion; } set { if (mReqHttpVersion != value) { mReqHttpVersion = value; OnPropertyChanged(nameof(ReqHttpVersion)); } } }
 
         [IsSerializedForLocalRepository]
         public ObservableList<APIModelKeyValue> HttpHeaders = new ObservableList<APIModelKeyValue>();
@@ -57,32 +61,39 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public ApplicationAPIUtils.eNetworkCredentials NetworkCredentials { get; set; }
 
+        string mURLUser;
         [IsSerializedForLocalRepository]
-        public string URLUser { get; set; }
+        public string URLUser { get { return mURLUser; } set { if (mURLUser != value) { mURLUser = value; OnPropertyChanged(nameof(URLUser)); } } }
 
+        string mURLDomain;
         [IsSerializedForLocalRepository]
-        public string URLDomain { get; set; }
+        public string URLDomain { get { return mURLDomain; } set { if (mURLDomain != value) { mURLDomain = value; OnPropertyChanged(nameof(URLDomain)); } } }
 
+        string mURLPass;
         [IsSerializedForLocalRepository]
-        public string URLPass { get; set; }
+        public string URLPass { get { return mURLPass; } set { if (mURLPass != value) { mURLPass = value; OnPropertyChanged(nameof(URLPass)); } } }
 
+        bool mDoNotFailActionOnBadRespose = false;
         [IsSerializedForLocalRepository]
-        public bool DoNotFailActionOnBadRespose { get; set; }
-        
+        public bool DoNotFailActionOnBadRespose { get { return mDoNotFailActionOnBadRespose; } set { if (mDoNotFailActionOnBadRespose != value) { mDoNotFailActionOnBadRespose = value; OnPropertyChanged(nameof(DoNotFailActionOnBadRespose)); } } }
+
         [IsSerializedForLocalRepository]
         public ApplicationAPIUtils.eRequestBodyType RequestBodyType { get; set; }
 
         [IsSerializedForLocalRepository]
         public ApplicationAPIUtils.eCretificateType CertificateType { get; set; }
 
+        string mCertificatePath;
         [IsSerializedForLocalRepository]
-        public string CertificatePath { get; set; }
+        public string CertificatePath { get { return mCertificatePath; } set { if (mCertificatePath != value) { mCertificatePath = value; OnPropertyChanged(nameof(CertificatePath)); } } }
 
+        bool mImportCetificateFile;
         [IsSerializedForLocalRepository]
-        public bool ImportCetificateFile { get; set; }
+        public bool ImportCetificateFile { get { return mImportCetificateFile; } set { if (mImportCetificateFile != value) { mImportCetificateFile = value; OnPropertyChanged(nameof(ImportCetificateFile)); } } }
 
+        string mCertificatePassword;
         [IsSerializedForLocalRepository]
-        public string CertificatePassword { get; set; }
+        public string CertificatePassword { get { return mCertificatePassword; } set { if (mCertificatePassword != value) { mCertificatePassword = value; OnPropertyChanged(nameof(CertificatePassword)); } } }
 
         [IsSerializedForLocalRepository]
         public ApplicationAPIUtils.eSercurityType SecurityType { get; set; }
@@ -90,45 +101,55 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public ApplicationAPIUtils.eAuthType AuthorizationType { get; set; }
 
+        string mTemplateFileNameFileBrowser = string.Empty;
         [IsSerializedForLocalRepository]
-        public string TemplateFileNameFileBrowser { get; set; } = string.Empty;
+        public string TemplateFileNameFileBrowser { get { return mTemplateFileNameFileBrowser; } set { if (mTemplateFileNameFileBrowser != value) { mTemplateFileNameFileBrowser = value; OnPropertyChanged(nameof(TemplateFileNameFileBrowser)); } } }
 
+        string mImportRequestFile;
         [IsSerializedForLocalRepository]
-        public string ImportRequestFile { get; set; }
+        public string ImportRequestFile { get { return mImportRequestFile; } set { if (mImportRequestFile != value) { mImportRequestFile = value; OnPropertyChanged(nameof(ImportRequestFile)); } } }
 
+        string mAuthUsername = string.Empty;
         [IsSerializedForLocalRepository]
-        public string AuthUsername { get; set; } = string.Empty;
+        public string AuthUsername { get { return mAuthUsername; } set { if (mAuthUsername != value) { mAuthUsername = value; OnPropertyChanged(nameof(AuthUsername)); } } }
 
+        string mAuthPassword = string.Empty;
         [IsSerializedForLocalRepository]
-        public string AuthPassword { get; set; } = string.Empty;
+        public string AuthPassword { get { return mAuthPassword; } set { if (mAuthPassword != value) { mAuthPassword = value; OnPropertyChanged(nameof(AuthPassword)); } } }
 
         // We overide the file extension so all subclass of ApplicationAPIModelBase will have the same extension
         public override string ObjFileExt
         {
             get
-            {                
+            {
                 return "Ginger.ApplicationAPIModel";
             }
         }
 
         #region SOAP Action 
 
+        string mSOAPAction;
         [IsSerializedForLocalRepository]
-        public string SOAPAction { get; set; }
+        public string SOAPAction { get { return mSOAPAction; } set { if (mSOAPAction != value) { mSOAPAction = value; OnPropertyChanged(nameof(SOAPAction)); } } }
         #endregion 
 
         #region REST Action 
-        [IsSerializedForLocalRepository]
-        public ApplicationAPIUtils.eRequestType RequestType { get; set; }
 
+        ApplicationAPIUtils.eRequestType mRequestType = ApplicationAPIUtils.eRequestType.GET;
         [IsSerializedForLocalRepository]
-        public ApplicationAPIUtils.eContentType ResponseContentType { get; set; }
+        public ApplicationAPIUtils.eRequestType RequestType { get { return mRequestType; } set { if (mRequestType != value) { mRequestType = value; OnPropertyChanged(nameof(RequestType)); } } }
 
+        ApplicationAPIUtils.eContentType mResponseContentType = ApplicationAPIUtils.eContentType.JSon;
         [IsSerializedForLocalRepository]
-        public ApplicationAPIUtils.eContentType ContentType { get; set; }
+        public ApplicationAPIUtils.eContentType ResponseContentType { get { return mResponseContentType; } set { if (mResponseContentType != value) { mResponseContentType = value; OnPropertyChanged(nameof(ResponseContentType)); } } }
 
+        ApplicationAPIUtils.eContentType mContentType = ApplicationAPIUtils.eContentType.JSon;
         [IsSerializedForLocalRepository]
-        public ApplicationAPIUtils.eCookieMode CookieMode { get; set; }
+        public ApplicationAPIUtils.eContentType ContentType { get { return mContentType; } set { if (mContentType != value) { mContentType = value; OnPropertyChanged(nameof(ContentType)); } } }
+
+        ApplicationAPIUtils.eCookieMode mCookieMode = ApplicationAPIUtils.eCookieMode.Session;
+        [IsSerializedForLocalRepository]
+        public ApplicationAPIUtils.eCookieMode CookieMode { get { return mCookieMode; } set { if (mCookieMode != value) { mCookieMode = value; OnPropertyChanged(nameof(CookieMode)); } } }
         #endregion
 
         //[IsSerializedForLocalRepository]

@@ -161,7 +161,7 @@ namespace Ginger
 
         public static ITreeViewItem CurrentSelectedTreeItem { get; set; }
 
-        public static ObservableList<RepositoryItem> ItemstoSave = new ObservableList<RepositoryItem>();
+        public static ObservableList<RepositoryItemBase> ItemstoSave = new ObservableList<RepositoryItemBase>();
 
         public static string RecoverFolderPath = null;
         public static IEnumerable<object> CurrentFolderItem { get; set; }        
@@ -329,20 +329,21 @@ namespace Ginger
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StanndAloneThreadsExceptionHandler);
+
             if (Environment.GetCommandLineArgs().Count() > 1)
             {
                 //Check that Ginger is not executed from GingerTest
-                //if (!Environment.GetCommandLineArgs()[0].Contains("testhost"))
-                //{
-                //    // OK we run with command line args of run set to execute
-                //    RunningFromConfigFile = true;
-                //    Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
-                //    Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)
-                //}
+                if (!Environment.GetCommandLineArgs()[0].Contains("testhost"))
+                {
+                    // OK we run with command line args of run set to execute
+                    RunningFromConfigFile = true;
+                    Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
+                    Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)
+                }
             }
 
             string phase = string.Empty;
-
+            
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
 
@@ -438,8 +439,8 @@ namespace Ginger
         private static void StanndAloneThreadsExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
             Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occured on stand alone thread(non UI) - " + e.ExceptionObject.ToString());
-            // MessageBox.Show("Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
-            // App.AppSolutionAutoSave.DoAutoSave();
+            MessageBox.Show("Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
+            App.AppSolutionAutoSave.DoAutoSave();
 
             /// if (e.IsTerminating)...
             /// 
@@ -450,8 +451,12 @@ namespace Ginger
             // when loading check restore and restore
         }
 
+
+        static bool bDone = false;
         public static void InitClassTypesDictionary()
-        {            
+        {
+            if (bDone) return;
+            bDone = true;
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
             RepositoryItemBase.InitSerializers(new RepositorySerializer());
 
@@ -757,8 +762,8 @@ namespace Ginger
                         BusinessFlow.SolutionVariables = sol.Variables;
                         App.AutomateTabGingerRunner.CurrentSolution = sol;
                         LoadRecentBusinessFlow();
-                        //if (!App.RunningFromConfigFile)
-                        //    DoSolutionAutoSaveAndRecover();
+                        if (!App.RunningFromConfigFile)
+                            DoSolutionAutoSaveAndRecover();
                     }
                     else
                     {
@@ -1063,7 +1068,7 @@ namespace Ginger
             App.AutomateTabGingerRunner.UpdateApplicationAgents();
         }
 
-        public static void AddItemToSaveAll(RepositoryItem itemToSave=null)
+        public static void AddItemToSaveAll(RepositoryItemBase itemToSave =null)
         {
             if (itemToSave == null)
                 if (CurrentRepositoryItem != null && CurrentSelectedTreeItem != null)

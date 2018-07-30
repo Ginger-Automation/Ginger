@@ -51,20 +51,21 @@ namespace Ginger.Variables
             BusinessFlow = 1,
             Activity = 2,
             Global = 4,
-            FindAndReplace = 5
+            FindAndReplace = 5,
+            View = 6
         }
 
         public eEditMode editMode { get; set; }
                 
-        public VariableEditPage(VariableBase v, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.BusinessFlow, RepositoryItemBase BF = null)
+        public VariableEditPage(VariableBase v, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.BusinessFlow, RepositoryItemBase parent = null)
         {
             InitializeComponent();
            
             this.Title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Variable);
-            mVariable = v;           
+            mVariable = v;                   
             mVariable.SaveBackup();
             editMode = mode;
-            mParent = BF;
+            mParent = parent;
 
             App.ObjFieldBinding(txtVarName, TextBox.TextProperty, mVariable, VariableBase.Fields.Name);
             App.ObjFieldBinding(txtVarDescritpion, TextBox.TextProperty, mVariable, VariableBase.Fields.Description);
@@ -156,6 +157,7 @@ namespace Ginger.Variables
                 case VariableEditPage.eEditMode.BusinessFlow:
                 case VariableEditPage.eEditMode.Activity:
                 case VariableEditPage.eEditMode.Global:
+                case VariableEditPage.eEditMode.View:
                     Button okBtn = new Button();
                     okBtn.Content = "Ok";
                     okBtn.Click += new RoutedEventHandler(okBtn_Click);
@@ -176,23 +178,27 @@ namespace Ginger.Variables
                     winButtons.Add(FindAndRepalceSaveBtn);
                     break; 
             }
-            Button undoBtn = new Button();
-            undoBtn.Content = "Undo & Close";
-            undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
-            winButtons.Add(undoBtn);
-            if (!(mVariable is VariableString) && !(mVariable is VariableSelectionList) && !(mVariable is VariableDynamic))
+
+            if (editMode != eEditMode.View)
             {
-                Button AutoValueBtn = new Button();
-                AutoValueBtn.Content = "Generate Auto Value";
-                AutoValueBtn.Click += new RoutedEventHandler(AutoValueBtn_Click);
-                winButtons.Add(AutoValueBtn);
-            }
-            if (!(mVariable is VariableRandomString) && !(mVariable is VariableRandomNumber))
-            {
-                Button resetBtn = new Button();
-                resetBtn.Content = "Reset Value";
-                resetBtn.Click += new RoutedEventHandler(resetBtn_Click);
-                winButtons.Add(resetBtn);
+                Button undoBtn = new Button();
+                undoBtn.Content = "Undo & Close";
+                undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+                winButtons.Add(undoBtn);
+                if (!(mVariable is VariableString) && !(mVariable is VariableSelectionList) && !(mVariable is VariableDynamic))
+                {
+                    Button AutoValueBtn = new Button();
+                    AutoValueBtn.Content = "Generate Auto Value";
+                    AutoValueBtn.Click += new RoutedEventHandler(AutoValueBtn_Click);
+                    winButtons.Add(AutoValueBtn);
+                }
+                if (!(mVariable is VariableRandomString) && !(mVariable is VariableRandomNumber))
+                {
+                    Button resetBtn = new Button();
+                    resetBtn.Content = "Reset Value";
+                    resetBtn.Click += new RoutedEventHandler(resetBtn_Click);
+                    winButtons.Add(resetBtn);
+                }
             }
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
@@ -227,7 +233,7 @@ namespace Ginger.Variables
         private void UndoChangesAndClose()
         {
             Mouse.OverrideCursor = Cursors.Wait;            
-            mVariable.RestoreFromBackup();
+            mVariable.RestoreFromBackup(true);
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();

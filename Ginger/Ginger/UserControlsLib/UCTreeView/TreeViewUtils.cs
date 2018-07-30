@@ -55,7 +55,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         /// <param name="addItemModifiedIndication">Define is to show Change/Modified/Dirty indication or not</param>
         /// <param name="objItemModifiedIndicationBoolPropertyName">The obj Bool field name which reflect if the obj is Dirty/Changed or not- to be used for binding</param>
         /// <returns></returns>
-        public static StackPanel CreateItemHeader(Object itemObj, string itemObjTitleProperty, eImageType itemIcon, eImageType itemSourceControlStateIcon, bool addItemModifiedIndication = false, string objItemModifiedIndicationBoolPropertyName="")
+        public static StackPanel NewRepositoryItemTreeHeader(Object itemObj, string itemObjTitleProperty, eImageType itemIcon, eImageType itemSourceControlStateIcon, bool addItemModifiedIndication = false, string objItemModifiedIndicationBoolPropertyName="")
         {
             StackPanel headerStack = new StackPanel();
             headerStack.Orientation = Orientation.Horizontal;
@@ -98,7 +98,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             try
             {
                 Label itemTitleLbl = new Label();
-                BindingLib.ControlsBinding.ObjFieldBinding(itemTitleLbl, Label.ContentProperty, itemObj, itemObjTitleProperty);
+                if (itemObj != null)
+                    BindingLib.ControlsBinding.ObjFieldBinding(itemTitleLbl, Label.ContentProperty, itemObj, itemObjTitleProperty);
+                else
+                    itemTitleLbl.Content = itemObjTitleProperty;
                 headerStack.Children.Add(itemTitleLbl);
             }
             catch

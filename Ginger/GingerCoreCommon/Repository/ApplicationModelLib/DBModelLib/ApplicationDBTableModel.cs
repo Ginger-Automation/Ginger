@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -32,7 +33,7 @@ namespace Amdocs.Ginger.Repository
         public string Description { get; set; }
 
         [IsSerializedForLocalRepository]
-        public List<ApplicationDBTableColumnModel> Columns;
+        public ObservableList<ApplicationDBTableColumnModel> Columns;
 
 
         public override string ItemName { get { return Name; } set { Name = value; } }

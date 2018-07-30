@@ -37,25 +37,28 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         public AddModelOptionalValuesWizard AddModelOptionalValuesWizard;
         
         ObservableList<AppModelParameter> OriginalAppModelParameters = new ObservableList<AppModelParameter>();
-        
-        
-                
+        eOptionalValuesTargetType mOptionalValuesTargetType;
+
+
         string GridPlaceholderHeader = "Place Holder";
 
-        public AddOptionalValuesModelSelectParamPage(ApplicationAPIModel AAMB)
+        public AddOptionalValuesModelSelectParamPage(eOptionalValuesTargetType OptionalValuesTargetType)
         {
             InitializeComponent();
-            AddModelOptionalValuesWizard.mAAMB = AAMB;
-            AddModelOptionalValuesWizard.ImportOptionalValues.ParameterType = ImportOptionalValuesForParameters.eParameterType.Local;
-            InitxModelParametersGrid();
+            mOptionalValuesTargetType = OptionalValuesTargetType;
+            switch (mOptionalValuesTargetType)
+            {
+                case eOptionalValuesTargetType.ModelLocalParams:
+                    
+                    break;
+                case eOptionalValuesTargetType.GlobalParams:
+                   
+                    break;
+            }
+            
+            
         }
-        public AddOptionalValuesModelSelectParamPage(ObservableList<GlobalAppModelParameter> GlobalParamterList)
-        {
-            InitializeComponent();
-            AddModelOptionalValuesWizard.mGlobalParamterList = GlobalParamterList;
-            AddModelOptionalValuesWizard.ImportOptionalValues.ParameterType = ImportOptionalValuesForParameters.eParameterType.Global;
-            InitxModelParametersGrid();
-        }
+       
         private void InitParametersListForGrid()
         {
             if (AddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
@@ -162,6 +165,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             if (WizardEventArgs.EventType == EventType.Init)
             {
                 AddModelOptionalValuesWizard = ((AddModelOptionalValuesWizard)WizardEventArgs.Wizard);
+                InitxModelParametersGrid();
             }
             else if (WizardEventArgs.EventType == EventType.Active)
             {

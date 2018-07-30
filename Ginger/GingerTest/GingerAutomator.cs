@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+//using Amdocs.Ginger.Repository;
 using GingerWPFUnitTest.POMs;
 using System;
 using System.IO;

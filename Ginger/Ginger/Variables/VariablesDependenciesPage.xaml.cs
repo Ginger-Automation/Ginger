@@ -661,7 +661,7 @@ namespace Ginger.Variables
         private void UndoChangesAndClose()
         {
             Mouse.OverrideCursor = Cursors.Wait;            
-            ((RepositoryItem)mParentObject).RestoreFromBackup();
+            ((RepositoryItem)mParentObject).RestoreFromBackup(true);
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();

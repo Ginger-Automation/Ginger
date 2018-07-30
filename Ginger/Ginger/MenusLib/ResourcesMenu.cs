@@ -82,7 +82,7 @@ namespace Ginger.MenusLib
             documentsFolderRoot.IsGingerDefualtFolder = true;
             documentsFolderRoot.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents");
             documentsFolderRoot.Folder = "Documents";
-            SingleItemTreeViewExplorerPage dataSourcesRootPage = new SingleItemTreeViewExplorerPage("Documents", eImageType.AddCircle, documentsFolderRoot, documentsFolderRoot.SaveAllTreeFolderItemsHandler, documentsFolderRoot.AddDocument);
+            SingleItemTreeViewExplorerPage dataSourcesRootPage = new SingleItemTreeViewExplorerPage("Documents", eImageType.File, documentsFolderRoot, saveAllHandler:null, addHandler:null);
             return dataSourcesRootPage;
         }
 

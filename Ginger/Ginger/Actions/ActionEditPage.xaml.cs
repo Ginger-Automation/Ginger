@@ -66,7 +66,7 @@ namespace Ginger.Actions
         private string mDataSourceName;
         List<String> mColNames = null;
         ObservableList<ActOutDataSourceConfig> aOutDSConfigParam = new ObservableList<ActOutDataSourceConfig>();
-
+        
         private BusinessFlow mActParentBusinessFlow = null;
         private Activity mActParentActivity = null;
 
@@ -83,7 +83,10 @@ namespace Ginger.Actions
             InitializeComponent();
             
             mAction = act;
-            mAction.SaveBackup();
+            if (editMode != General.RepositoryItemPageViewMode.View)
+            {
+                mAction.SaveBackup();
+            }            
 
             RunDescritpion.Init(act, Act.Fields.RunDescription);
 
@@ -830,7 +833,7 @@ namespace Ginger.Actions
             _pageGenericWin.Close();
 
             Mouse.OverrideCursor = Cursors.Wait;
-            mAction.RestoreFromBackup();
+            mAction.RestoreFromBackup(true);
             Mouse.OverrideCursor = null;
         }
 

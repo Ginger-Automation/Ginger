@@ -12,7 +12,7 @@
     <Grid Background="{StaticResource $BackgroundGray}">
         <StackPanel Margin="10" HorizontalAlignment="Left">
             <Label HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}">Name:</Label>
-            <TextBox x:Name="xNameTextBox" Width="450" Style="{StaticResource @TextBoxStyle}" Margin="5,0,0,0" FontWeight="Bold"></TextBox>
+            <TextBox x:Name="xNameTextBox" AutomationProperties.AutomationId="Name AID" Width="450" Style="{StaticResource @TextBoxStyle}" Margin="5,0,0,0" FontWeight="Bold"></TextBox>
             <Label  x:Name="xNameNotUniqueLbl" HorizontalAlignment="Left" Content="Name is missing or not Unique" Style="{StaticResource $LabelStyle}" Foreground="Red" Visibility="Collapsed"/>
             <Ginger:ucTagsViewer x:Name="xEnvTagsViewer" Margin="0,10,0,0" HorizontalAlignment="Left"/>
         </StackPanel>

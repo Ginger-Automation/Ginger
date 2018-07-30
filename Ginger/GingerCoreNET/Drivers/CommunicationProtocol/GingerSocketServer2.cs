@@ -43,12 +43,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         public void StartServer(int port)
         {
-            
             // Run the server on its own thread
             mTask = new Task(() => {
-                Console.WriteLine("@@@@@@@@@@@@@@@@@@@@ starting server on port: " + port);
                 DoStartServer(port);
-                
             }) ;            
             mTask.Start();
             while (!isReady)
@@ -73,9 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             try
             {
                 mServerSocketlistener.Bind(localEndPoint); // TODO: Add Endpoint, config - can bind several IPs on same machine
-                Console.WriteLine("@@@@@@@@@@@@@@@@@@@@ Before Listen");
                 mServerSocketlistener.Listen(100);
-                Console.WriteLine("@@@@@@@@@@@@@@@@@@@@ After Listen");
                 isReady = true;
                 while (true)
                 {

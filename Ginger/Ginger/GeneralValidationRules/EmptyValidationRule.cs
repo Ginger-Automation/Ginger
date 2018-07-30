@@ -24,7 +24,7 @@ namespace Amdocs.Ginger.ValidationRules
 
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            if (value == null)
+            if (value == null || value.ToString() == string.Empty)
             {
                 return new ValidationResult(false, mMessage);
             }

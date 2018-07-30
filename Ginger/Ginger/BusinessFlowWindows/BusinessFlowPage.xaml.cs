@@ -31,6 +31,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Ginger.BusinessFlowFolder
 {
@@ -49,6 +50,8 @@ namespace Ginger.BusinessFlowFolder
         GridLength mMinColsExpanderSize = new GridLength(35);
         GenericWindow _pageGenericWin = null;
         public bool OKButtonClicked = false;
+        private bool saveWasDone = false;
+
         public General.RepositoryItemPageViewMode mEditMode { get; set; }
 
         public BusinessFlowPage(BusinessFlow BizFlow, bool showMiniView=false, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry)
@@ -76,7 +79,10 @@ namespace Ginger.BusinessFlowFolder
             {
                 mActivitiesPage = new ActivitiesPage(mBusinessFlow, mEditMode);
                 if(mEditMode!= General.RepositoryItemPageViewMode.View)
+                {
                     mActivitiesPage.grdActivities.ChangeGridView(eAutomatePageViewStyles.Design.ToString());
+                    mBusinessFlow.SaveBackup();
+                }
                 mActivitiesPage.grdActivities.ShowTitle = System.Windows.Visibility.Collapsed;
                 BfActivitiesFrame.Content = mActivitiesPage;
 
@@ -269,12 +275,33 @@ namespace Ginger.BusinessFlowFolder
         {
             Row3.Height = new GridLength(35);
         }
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
+        public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
             string title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
             ObservableList<Button> winButtons = new ObservableList<Button>();
             switch (mEditMode)
-            {                
+            {
+                case General.RepositoryItemPageViewMode.Automation:
+                    Button okBtn = new Button();
+                    okBtn.Content = "Ok";
+                    okBtn.Click += new RoutedEventHandler(okBtn_Click);
+                    Button undoBtn = new Button();
+                    undoBtn.Content = "Undo & Close";
+                    undoBtn.Click += new RoutedEventHandler(undoAndCloseBtn_Click);
+                    winButtons.Add(undoBtn);
+                    winButtons.Add(okBtn);
+                    break;
+                case General.RepositoryItemPageViewMode.Standalone:
+                    title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                    Button saveBtn = new Button();
+                    saveBtn.Content = "Save";
+                    saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
+                    Button undoBtnSr = new Button();
+                    undoBtnSr.Content = "Undo & Close";
+                    undoBtnSr.Click += new RoutedEventHandler(undoAndCloseBtn_Click);
+                    winButtons.Add(undoBtnSr);
+                    winButtons.Add(saveBtn);
+                    break;
                 case General.RepositoryItemPageViewMode.View:
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     Button okBtnView = new Button();
@@ -284,8 +311,45 @@ namespace Ginger.BusinessFlowFolder
                     break;
             }
             
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            return saveWasDone;
         }
+
+        private void CloseWinClicked(object sender, EventArgs e)
+        {
+            if (mEditMode != General.RepositoryItemPageViewMode.View && mEditMode != General.RepositoryItemPageViewMode.Automation)
+            {
+                if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+                    UndoChanges();
+                else
+                    mBusinessFlow.Save();
+            }
+            _pageGenericWin.Close();
+        }
+
+        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (LocalRepository.CheckIfSureDoingChange(mBusinessFlow, "change") == true)
+            {
+                saveWasDone = true;
+                mBusinessFlow.Save();
+                _pageGenericWin.Close();
+            }
+        }
+
+        private void undoAndCloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UndoChanges();
+            _pageGenericWin.Close();
+        }
+
+        private void UndoChanges()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            mBusinessFlow.RestoreFromBackup(true);
+            Mouse.OverrideCursor = null;
+        }
+
         private void okBtn_Click(object sender, RoutedEventArgs e)
         {
             OKButtonClicked = true;

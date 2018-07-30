@@ -63,7 +63,7 @@ namespace Ginger.Run
             mGingerRunner = mRunner;
             mBusinessFlow = businessFlow;
             mPrevBusinessFlowsInFlow = prevBusinessFlowsInFlow;
-
+            
             mBusinessFlow.SaveBackup();
 
 			App.ObjFieldBinding(MandatoryBusinessFlowCB, CheckBox.IsCheckedProperty, businessFlow, BusinessFlow.Fields.Mandatory, BindingMode.TwoWay);
@@ -316,7 +316,7 @@ namespace Ginger.Run
         private void UndoChangesAndClose()
         {
             Mouse.OverrideCursor = Cursors.Wait;            
-            mBusinessFlow.RestoreFromBackup();
+            mBusinessFlow.RestoreFromBackup(true);
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();

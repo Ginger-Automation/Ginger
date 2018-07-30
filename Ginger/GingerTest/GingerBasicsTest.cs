@@ -150,44 +150,44 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod]
-        [Ignore]
-        public void AddEnvUsingWizard()
-        {
-            //Arrange            
-            EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
+        //[TestMethod]
+        //[Ignore]
+        //public void AddEnvUsingWizard()
+        //{
+        //    //Arrange            
+        //    EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
 
-            //Act
-            EnvsPOM.CreateEnvironment("bbb");
-            EnvsPOM.SelectEnvironment("bbb");
-            ProjEnvironment bbbEnv = (from x in amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "bbb" select x).SingleOrDefault();
+        //    //Act
+        //    EnvsPOM.CreateEnvironment("bbb");
+        //    EnvsPOM.SelectEnvironment("bbb");
+        //    ProjEnvironment bbbEnv = (from x in amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "bbb" select x).SingleOrDefault();
 
-            // assert
-            Assert.AreEqual("bbb", bbbEnv.Name);
-        }
+        //    // assert
+        //    Assert.AreEqual("bbb", bbbEnv.Name);
+        //}
 
 
-        [TestMethod]
-        [Ignore]
-        public void AddEnvToFileSystemWillShowinEnvsTree()
-        {            
-            // Arrange                                                
-            EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
+        //[TestMethod]
+        //[Ignore]
+        //public void AddEnvToFileSystemWillShowinEnvsTree()
+        //{            
+        //    // Arrange                                                
+        //    EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
 
-            // Act
+        //    // Act
 
-            // Create env on disk
-            ProjEnvironment e1 = new ProjEnvironment() { Name = "aaa" };
-            string txt = e1.RepositorySerializer.SerializeToString(e1);
-            string fileName = Path.Combine(SolutionFolder, @"Environments\aaa.Ginger.Environment.xml");                
-            File.WriteAllText(fileName, txt);
+        //    // Create env on disk
+        //    ProjEnvironment e1 = new ProjEnvironment() { Name = "aaa" };
+        //    string txt = e1.RepositorySerializer.SerializeToString(e1);
+        //    string fileName = Path.Combine(SolutionFolder, @"Environments\aaa.Ginger.Environment.xml");                
+        //    File.WriteAllText(fileName, txt);
 
-            // Verify it show in treeview - FileWatcher should detect the new file on disk
-            ProjEnvironment aaa = EnvsPOM.SelectEnvironment("aaa");
+        //    // Verify it show in treeview - FileWatcher should detect the new file on disk
+        //    ProjEnvironment aaa = EnvsPOM.SelectEnvironment("aaa");
 
-            //Assert
-            Assert.AreEqual("aaa", aaa.Name);
-        }
+        //    //Assert
+        //    Assert.AreEqual("aaa", aaa.Name);
+        //}
 
 
         
@@ -215,27 +215,27 @@ namespace GingerWPFUnitTest
         }
 
         
-        [TestMethod]
-        [Ignore]
-        public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
-        {
-            //Arrange
-            string EnvName = "Env to rename";
-            string EnvNewName = "Env to rename ZZZ";            
-            EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
-            EnvsPOM.CreateEnvironment(EnvName);
-            ProjEnvironment env = EnvsPOM.SelectEnvironment(EnvName);
+        //[TestMethod]
+        //[Ignore]
+        //public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
+        //{
+        //    //Arrange
+        //    string EnvName = "Env to rename";
+        //    string EnvNewName = "Env to rename ZZZ";            
+        //    EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
+        //    EnvsPOM.CreateEnvironment(EnvName);
+        //    ProjEnvironment env = EnvsPOM.SelectEnvironment(EnvName);
 
-            //Act
-            string txt = File.ReadAllText(env.FilePath);
-            txt = txt.Replace(EnvName, EnvName + " ZZZ");
-            File.WriteAllText(env.FilePath, txt);
-            bool b = EnvsPOM.EnvironmentsTree.IsItemExist(EnvNewName);
+        //    //Act
+        //    string txt = File.ReadAllText(env.FilePath);
+        //    txt = txt.Replace(EnvName, EnvName + " ZZZ");
+        //    File.WriteAllText(env.FilePath, txt);
+        //    bool b = EnvsPOM.EnvironmentsTree.IsItemExist(EnvNewName);
 
-            // assert
-            Assert.AreEqual(EnvNewName, env.Name);
-            Assert.IsTrue(b);
-        }
+        //    // assert
+        //    Assert.AreEqual(EnvNewName, env.Name);
+        //    Assert.IsTrue(b);
+        //}
 
         [TestMethod]
         [Ignore]

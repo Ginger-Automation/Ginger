@@ -62,7 +62,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(mHtmlReportsFolder, nameof(RepositoryFolder<HTMLReportConfiguration>.DisplayName), eImageType.HtmlReport, GetSourceControlImage(mHtmlReportsFolder), false);
+            return TreeViewUtils.NewRepositoryItemTreeHeader(mHtmlReportsFolder, nameof(RepositoryFolder<HTMLReportConfiguration>.DisplayName), eImageType.HtmlReport, GetSourceControlImage(mHtmlReportsFolder), false);
         }
 
         public override ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)

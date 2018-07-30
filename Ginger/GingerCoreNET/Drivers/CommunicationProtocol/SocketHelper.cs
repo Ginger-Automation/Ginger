@@ -30,9 +30,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
     {
         public static string GetLocalHostIP()
         {
-             IPAddress ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);            
-             return ipAddress.ToString(); ;
-            // return "localhost";
+            IPAddress ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);            
+            return ipAddress.ToString(); ;
         }
 
         //TODO: think if we want to have multiple display - enable set for this value

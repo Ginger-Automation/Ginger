@@ -26,8 +26,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         [IsSerializedForLocalRepository]
         public Guid GUID { get; set; }
 
-        // AppName can be NotePad, but if we have several running in same flow it will be Notepad1, Notepad2, Notepad3
-        // For Sprint: CRM = ICare app and the know name for it
+        // AppName can be NotePad, but if we have several running in same flow it will be Notepad1, Notepad2, Notepad3        
         [IsSerializedForLocalRepository]
         public string AppName { get; set; }
 

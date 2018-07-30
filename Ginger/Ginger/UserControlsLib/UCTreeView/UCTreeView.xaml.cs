@@ -447,6 +447,16 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             btn.Content = image;
         }
 
+        public void ExpandTreeItem(ITreeViewItem treeItem)
+        {
+            TreeViewItem TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], treeItem);
+            if (TVI != null)
+            {
+                TVI.IsExpanded = true;
+                GingerCore.General.DoEvents();
+            }            
+        }
+
 
         public ITreeViewItem AddChildItemAndSelect(ITreeViewItem Parent, ITreeViewItem Child)
         {
@@ -456,7 +466,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 TVI.IsExpanded = true;             
                 GingerCore.General.DoEvents();
             }
-
+            
             TreeViewItem TVIChild = AddItem(Child, TVI);
             TVIChild.Focus();
 

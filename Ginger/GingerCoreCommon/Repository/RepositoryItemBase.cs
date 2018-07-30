@@ -36,22 +36,26 @@ namespace Amdocs.Ginger.Repository
         public Guid newGuid { get; set; } // pointer to obj
     }
 
-    public abstract class RepositoryItemBase : INotifyPropertyChanged, ISearchFilter 
+    public abstract class RepositoryItemBase : INotifyPropertyChanged, ISearchFilter
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         public RepositoryItemHeader RepositoryItemHeader { get; set; }
 
+        private Guid mParentGuid;
         [IsSerializedForLocalRepository]
-        public Guid ParentGuid { get; set; }
+        public Guid ParentGuid { get { return mParentGuid; } set { if (mParentGuid != value) { mParentGuid = value; OnPropertyChanged(nameof(ParentGuid)); } } }
 
+        private string mExternalID;
         [IsSerializedForLocalRepository]
-        public string ExternalID { get; set; }
+        public string ExternalID { get { return mExternalID; } set { if (mExternalID != value) { mExternalID = value; OnPropertyChanged(nameof(ExternalID)); } } }
 
         public string ObjFolderName { get { return FolderName(this.GetType()); } }
 
         //DO Not save
         protected Dictionary<string, object> mBackupDic;
+
+        protected Dictionary<string, object> mLocalBackupDic;
 
         public virtual string ObjFileExt
         {
@@ -84,12 +88,12 @@ namespace Amdocs.Ginger.Repository
             return s;
         }
 
-        
+
 
         // TypeName cache
         private static ConcurrentDictionary<string, string> ShortNameDictionary = new ConcurrentDictionary<string, string>();
 
-        
+
 
         public static string GetClassShortName(Type t)
         {
@@ -157,7 +161,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        
+
 
         Guid mGuid = Guid.Empty;
         [IsSerializedForLocalRepository]
@@ -172,6 +176,7 @@ namespace Amdocs.Ginger.Repository
             set
             {
                 mGuid = value;
+                OnPropertyChanged(nameof(Guid));
             }
         }
 
@@ -185,7 +190,7 @@ namespace Amdocs.Ginger.Repository
                     return true;
             }
         }
-               
+
         public void SaveToFile(string FilePath)
         {
             RepositorySerializer.SaveToFile(this, FilePath);
@@ -195,20 +200,33 @@ namespace Amdocs.Ginger.Repository
         {
             if (IsDirty == false)
             {
-                CreateBackup();
+                CreateBackup();              
                 OnPropertyChanged(nameof(IsDirty));
+            }
+            else
+            {
+                CreateBackup(true);
             }
         }
 
         // Deep backup keep obj ref and all prop, restore to real original situation
-        private void CreateBackup()
+        private void CreateBackup(bool isLocalBackup = false)
         {
-            mBackupDic = new Dictionary<string, object>();
+
+            if (!isLocalBackup)
+            {
+                mBackupDic = new Dictionary<string, object>();                
+            }             
+            mLocalBackupDic = new Dictionary<string, object>();
+            
             var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
-            {
-                if (mi.Name == nameof(mBackupDic)) continue; // since we are running on repo item which contain the dic we need to ignore trying to save it...
-
+            {               
+                if (!isLocalBackup)
+                {                    
+                    if (mi.Name == nameof(mBackupDic)) continue; // since we are running on repo item which contain the dic we need to ignore trying to save it...
+                }
+                if (mi.Name == nameof(mLocalBackupDic)) continue;
                 dynamic v = null;
                 if (mi.MemberType == MemberTypes.Property)
                 {
@@ -228,22 +246,27 @@ namespace Amdocs.Ginger.Repository
                 {
                     v = this.GetType().GetField(mi.Name).GetValue(this);
                 }
-
+                
                 if (v is IObservableList)
                 {
-                    BackupList(mi.Name, v);
+                    BackupList(mi.Name, v, isLocalBackup);
                 }
                 else
                 {
                     // TODO: add List<string>
                 }
                 // Save it
-                mBackupDic.Add(mi.Name, v);
+
+                if (!isLocalBackup)
+                {
+                    mBackupDic.Add(mi.Name, v);                  
+                }                    
+                mLocalBackupDic.Add(mi.Name, v);
             }
         }
 
-
-        private void BackupList(string Name, IObservableList v)
+        
+        private void BackupList(string Name, IObservableList v, bool isLocalBackup = false)
         {
             //TODO: if v is Lazy bak the text without drill down
             List<dynamic> list = new List<dynamic>();
@@ -252,14 +275,18 @@ namespace Amdocs.Ginger.Repository
                 // Run back on each item, so will drill down the hierarchy
                 if (o is RepositoryItemBase)
                 {
-                    ((RepositoryItemBase)o).CreateBackup();
+                    ((RepositoryItemBase)o).CreateBackup(isLocalBackup);
                 }
                 list.Add(o);
             }
             // we keep the original list of items in special name like: Activities~List
-            mBackupDic.Add(Name + "~List", list);
+            if (!isLocalBackup)
+            {                
+                mBackupDic.Add(Name + "~List", list);
+            }                        
+                mLocalBackupDic.Add(Name + "~List", list);            
         }
-        
+
         // Item which will not be saved to the XML - for example dynamic activities or temp output values - no expected or store to
         // Only when in Observable list 
         public virtual bool IsTempItem
@@ -271,28 +298,70 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public void ClearBackup()
+        public void ClearBackup(bool isLocalBackup = false)
         {
-            mBackupDic = null;
-            OnPropertyChanged(nameof(IsDirty));
+            var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
+            foreach (MemberInfo mi in properties)
+            {               
+                if(!isLocalBackup)
+                {
+                    if (mi.Name == nameof(mBackupDic)) continue;             
+                }
+                if (mi.Name == nameof(mLocalBackupDic)) continue;
+                dynamic v = null;
+                v = this.GetType().GetField(mi.Name).GetValue(this);
+                if (v is IObservableList)
+                {
+                    foreach (object o in v)
+                    {
+                        if (o is RepositoryItemBase)
+                        {
+                            ((RepositoryItemBase)o).ClearBackup(isLocalBackup);
+                        }                        
+                    }
+                }
+            }
+            if (!isLocalBackup)
+            {
+                mBackupDic = null;
+                OnPropertyChanged(nameof(IsDirty));
+            }                        
+             mLocalBackupDic = null;                         
         }
 
-        private void RestoreBackup()
+        private void RestoreBackup(bool isLocalBackup = false)
         {
-            if (mBackupDic == null || mBackupDic.Count == 0)
+            if (isLocalBackup)
             {
-                return;
+                if (mLocalBackupDic == null || mLocalBackupDic.Count == 0)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                if (mBackupDic == null || mBackupDic.Count == 0)
+                {
+                    return;
+                }
             }
 
             var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
-                // Console.WriteLine(this.ToString() +  " - mi:" + mi.Name + " - " + mi.ToString());               
-                if (mi.Name == nameof(mBackupDic) || mi.Name == nameof(FileName) || mi.Name == nameof(FilePath) || mi.Name == nameof(ObjFolderName) || mi.Name == nameof(ObjFileExt) || mi.Name == nameof(ContainingFolder) || mi.Name == nameof(ContainingFolderFullPath))
-                        continue;
-               
+                // Console.WriteLine(this.ToString() +  " - mi:" + mi.Name + " - " + mi.ToString());                              
+                if (mi.Name == nameof(mBackupDic) || mi.Name == nameof(mLocalBackupDic) || mi.Name == nameof(FileName) || mi.Name == nameof(FilePath) || mi.Name == nameof(ObjFolderName) || mi.Name == nameof(ObjFileExt) || mi.Name == nameof(ContainingFolder) || mi.Name == nameof(ContainingFolderFullPath))
+                    continue;
                 dynamic v;
-                bool b = mBackupDic.TryGetValue(mi.Name, out v);
+                bool b;
+                if (isLocalBackup)
+                {
+                    b = mLocalBackupDic.TryGetValue(mi.Name, out v);
+                }
+                else
+                {
+                    b = mBackupDic.TryGetValue(mi.Name, out v);
+                }
                 if (!b)
                 {
                     //TODO: handle Error
@@ -329,7 +398,7 @@ namespace Amdocs.Ginger.Repository
                 if (v is IObservableList)
                 {
                     // Console.WriteLine("Restoring IObservableList: - " + mi.Name);
-                    RestoreList(mi.Name, v);
+                    RestoreList(mi.Name, v, isLocalBackup);
                 }
                 else
                 {
@@ -337,23 +406,47 @@ namespace Amdocs.Ginger.Repository
                     // else err
                     //temp below until we have it
                 }
-
-                mBackupDic.Remove(mi.Name);
-                // Console.WriteLine(mi.MemberType + " : " + mi.ToString() + " " + mi.Name + "=" + v);
+                if (isLocalBackup)
+                {
+                    mLocalBackupDic.Remove(mi.Name);
+                }
+                else
+                {
+                    mBackupDic.Remove(mi.Name);
+                }
+                // Console.WriteLine(mi.MemberType + " : " + mi.ToString() + " " + mi.Name + "=" + v);                
             }
             // make sure we cleared all bak items = full restore
-            if (mBackupDic.Count() != 0)
+            if (isLocalBackup)
             {
-                // TODO: err handler
+                if (mLocalBackupDic.Count() != 0)
+                {
+                    // TODO: err handler
+                }
+            }
+            else
+            {
+                if (mBackupDic.Count() != 0)
+                {
+                    // TODO: err handler
+                }
             }
         }
 
-        private void RestoreList(string Name, IObservableList v)
+        private void RestoreList(string Name, IObservableList v, bool isLocalBackup = false)
         {
             v.Clear();
 
             object Backuplist;
-            bool b = mBackupDic.TryGetValue(Name + "~List", out Backuplist);
+            bool b;
+            if (isLocalBackup)
+            {
+                b = mLocalBackupDic.TryGetValue(Name + "~List", out Backuplist);
+            }
+            else
+            {
+                b = mBackupDic.TryGetValue(Name + "~List", out Backuplist);
+            }
             if (!b)
             {
                 // TODO: handle err 
@@ -365,19 +458,26 @@ namespace Amdocs.Ginger.Repository
 
                 if (o is RepositoryItemBase)
                 {
-                    ((RepositoryItemBase)o).RestoreBackup();   // Drill down the restore
+                    ((RepositoryItemBase)o).RestoreBackup(isLocalBackup);   // Drill down the restore
                 }
             }
-            mBackupDic.Remove(Name + "~List");
+            if (isLocalBackup)
+            {
+                mLocalBackupDic.Remove(Name + "~List");
+            }
+            else
+            {
+                mBackupDic.Remove(Name + "~List");
+            }
         }
 
-        public void RestoreFromBackup()
+        public void RestoreFromBackup(bool isLocalBackup = false)
         {
-            RestoreBackup();
-            ClearBackup();
+            RestoreBackup(isLocalBackup);
+            ClearBackup(isLocalBackup);
         }
 
-        private string mFileName = null;        
+        private string mFileName = null;
         public string FileName
         {
             get
@@ -393,7 +493,7 @@ namespace Amdocs.Ginger.Repository
             }
             set { mFileName = value; }
         }
-        
+
         public virtual string GetNameForFileName()
         {
             //Only the Repository items which are stored as XML should override this.
@@ -402,7 +502,7 @@ namespace Amdocs.Ginger.Repository
             // In case no override impl then throw
             //throw new Exception("Please override this method in class - " + this.GetType().ToString());
         }
-        
+
         public abstract string ItemName
         {
             get;
@@ -429,7 +529,7 @@ namespace Amdocs.Ginger.Repository
             DateTime dt2 = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0);
             return dt2;
         }
-        
+
         public RepositoryItemBase CreateCopy(bool setNewGUID = true)
         {
             // Create a copy by serailized and load from the text, it will not copy all atrs only the one which are saved to XML
@@ -453,8 +553,8 @@ namespace Amdocs.Ginger.Repository
 
             }
 
-          
-            
+
+
             return duplicatedItem;
         }
 
@@ -462,10 +562,10 @@ namespace Amdocs.Ginger.Repository
 
 
 
-               
+
         private void UpdateRepoItemGuids(RepositoryItemBase item, List<GuidMapper> guidMappingList)
-        {            
-            
+        {
+
             foreach (FieldInfo PI in item.GetType().GetFields())
             {
                 var token = PI.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
@@ -492,8 +592,8 @@ namespace Amdocs.Ginger.Repository
                             UpdateRepoItemGuids(ri, guidMappingList);
                         }
                     }
-                }          
-         
+                }
+
             }
 
         }
@@ -505,11 +605,11 @@ namespace Amdocs.Ginger.Repository
             foreach (GuidMapper mapper in list)
             {
                 s = s.Replace(mapper.Original.ToString(), mapper.newGuid.ToString());
-            }          
+            }
 
             return (RepositoryItemBase)RepositorySerializer.DeserializeFromText(this.GetType(), s, filePath: this.FilePath);
         }
-        
+
 
         public static string GetOldRepositoryItemFileExt(Type T)
         {
@@ -526,13 +626,13 @@ namespace Amdocs.Ginger.Repository
             {
                 return OldRepositorySerializer.GetShortType(T);
             }
-            
-            
+
+
             //TODO: use below after we move to GingerCoreCommon
         }
 
         private RepositoryItemKey mRepositoryItemKey;
-        
+
         public RepositoryItemKey Key
         {
             get
@@ -619,14 +719,14 @@ namespace Amdocs.Ginger.Repository
                     }
                     else
                     {
-                        mContainingFolderFullPath = System.IO.Path.GetDirectoryName(mFilePath);                        
+                        mContainingFolderFullPath = System.IO.Path.GetDirectoryName(mFilePath);
                     }
                 }
                 return mContainingFolderFullPath;
             }
             set { mContainingFolderFullPath = value; }
         }
-        
+
         private string mFilePath = null;
         public string FilePath
         {
@@ -648,7 +748,7 @@ namespace Amdocs.Ginger.Repository
 
         public static ISourceControl SourceControl = null;
         public eImageType? SourceControlStatus
-        {             
+        {
             get
             {
                 if (SourceControl != null)
@@ -665,7 +765,7 @@ namespace Amdocs.Ginger.Repository
 
         public void RefreshSourceControlStatus()
         {
-            OnPropertyChanged(nameof(SourceControlStatus));            
+            OnPropertyChanged(nameof(SourceControlStatus));
         }
 
         #endregion SourceControl
@@ -687,7 +787,7 @@ namespace Amdocs.Ginger.Repository
                     mDirtyStatus = value;
                     RaiseDirtyChangedEvent();
                     OnPropertyChanged(nameof(DirtyStatus));
-                    OnPropertyChanged(nameof(DirtyStatusImage));                    
+                    OnPropertyChanged(nameof(DirtyStatusImage));
                 }
             }
         }
@@ -704,13 +804,13 @@ namespace Amdocs.Ginger.Repository
                 else
                 {
                     return eImageType.Empty;
-                }                   
-            }            
+                }
+            }
         }
 
 
         public event EventHandler OnDirtyStatusChanged;
-    
+
         void RaiseDirtyChangedEvent()
         {
             if (OnDirtyStatusChanged != null)
@@ -719,24 +819,24 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        
+
         private void DirtyCheck(string name)
         {
             if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTrackingFields.Contains(name))
             {
                 DirtyStatus = eDirtyStatus.Modified;
                 // RaiseDirtyChangedEvent();
-            }            
+            }
         }
 
 
         internal void RaiseDirtyChanged(object sender, EventArgs e)
-        {            
+        {
             DirtyStatus = eDirtyStatus.Modified;
             // RaiseDirtyChangedEvent();
         }
 
-        
+
 
         internal void ChildCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -747,9 +847,9 @@ namespace Amdocs.Ginger.Repository
 
         List<string> DirtyTrackingFields;
         public void StartDirtyTracking()
-        {            
+        {
             if (DirtyStatus != eDirtyStatus.NoTracked)
-            {     
+            {
                 // Nothing to do
                 return;
             }
@@ -769,14 +869,14 @@ namespace Amdocs.Ginger.Repository
                 if (token == null) continue;
 
                 DirtyTrackingFields.Add(PI.Name);
-                
+
                 // We track observable list which are seriazlized - drill down recursivley in obj tree
                 if (typeof(IObservableList).IsAssignableFrom(PI.PropertyType))
-                {                    
+                {
                     IObservableList obj = (IObservableList)PI.GetValue(this);
-                    if (obj == null) return;
+                    if (obj == null) continue;
                     TrackObservableList((IObservableList)obj);
-                    
+
                 }
             }
 
@@ -822,7 +922,7 @@ namespace Amdocs.Ginger.Repository
                 {
 
                     // for now we ignore list of Guids - like Agents.Tags as user cannot change the value, but if he add/remove it will be tracked
-                    if (item is Guid) continue;  
+                    if (item is Guid || item is RepositoryItemKey) continue;
                     throw new Exception("Error: trying to track object which is Serialzied in a list but is not RepositoryItemBase " + this.GetType().FullName + " " + item.ToString() );
                 }
             }

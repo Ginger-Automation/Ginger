@@ -43,7 +43,7 @@
 
         <Label Name="URLLable" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" Content="URL:" VerticalAlignment="Center"  />
 
-        <TextBox Grid.Row="2" Grid.Column="1"  Background="White"   x:Name="URLTextBox" TextChanged="URLTextBoxTextChange" Text="" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,5,0"/>
+        <TextBox Grid.Row="2" Grid.Column="1"  Background="White"   x:Name="xURLTextBox" TextChanged="URLTextBoxTextChange" Text="" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,5,0"/>
 
         <DockPanel HorizontalAlignment="Right"  Grid.Row="3" Grid.Column="1">
 

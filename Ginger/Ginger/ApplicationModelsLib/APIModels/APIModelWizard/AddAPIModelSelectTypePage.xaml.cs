@@ -89,8 +89,9 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 AddAPIModelWizard = ((AddAPIModelWizard)WizardEventArgs.Wizard);
                 mWSDLParser = new WSDLParser();
-                //AddAPIModelWizard.FinishEnabled = false;
-                //AddAPIModelWizard.NextEnabled = false;
+
+                GingerCore.General.ObjFieldBinding(xURLTextBox, TextBox.TextProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.URL));
+                xURLTextBox.AddValidationRule(eValidationRule.CannotBeEmpty);
             }
             else if (WizardEventArgs.EventType == EventType.LeavingForNextPage)
             {
@@ -160,7 +161,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void LoadBrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            string URLString = URLTextBox.Text;
+            string URLString = xURLTextBox.Text;
             XmlTextReader reader = new XmlTextReader(URLString);
             XmlDocument doc = new XmlDocument();
             doc.Load(reader);
@@ -172,18 +173,24 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             //if (AddAPIModelWizard != null)
                 //AddAPIModelWizard.NextEnabled = false;
 
-            if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
+            if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString() || APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
             {
                 SecondRow.Height = new GridLength(30);
                 ThirdRow.Height = new GridLength(40);
                 XMLTemplatesGrid.Visibility = Visibility.Collapsed;
-                URLTextBox.IsEnabled = true;
-                if (string.IsNullOrEmpty(URLTextBox.Text))
+                xURLTextBox.IsEnabled = true;
+                if (string.IsNullOrEmpty(xURLTextBox.Text))
                     xBrowseLoadButton.Visibility = Visibility.Collapsed;
                 else
                     xBrowseLoadButton.Visibility = Visibility.Visible;
                 xBrowseLoadButton.ButtonText = "Load";
                 XMLTemplatesLable.Visibility = Visibility.Collapsed;
+
+                if (AddAPIModelWizard != null)
+                {
+                    GingerCore.General.ObjFieldBinding(xURLTextBox, TextBox.TextProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.URL));
+                    xURLTextBox.AddValidationRule(eValidationRule.CannotBeEmpty);
+                }
             }
             else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString() || APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
             {
@@ -193,12 +200,14 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 AddAPIModelWizard.XTFList.Clear();
                 XMLTemplatesGrid.DataSourceList = AddAPIModelWizard.XTFList;
                 XMLTemplatesGrid.DataSourceList.CollectionChanged += XMLTemplatesGrid_CollectionChanged;
-                XMLTemplatesGrid.AddValidationRule(eValidationRule.CannotBeEmpty);
+                XMLTemplatesGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
 
                 xBrowseLoadButton.Visibility = Visibility.Collapsed;
                 xPreviewButton.Visibility = Visibility.Collapsed;
                 XMLTemplatesLable.Visibility = Visibility.Visible;
                 BrowseButtonClicked(new object(), new RoutedEventArgs());
+
+                xURLTextBox.ClearValidations(TextBox.TextProperty);
             }
             xPreviewButton.Visibility = Visibility.Collapsed;
             SourceRviewLable.Visibility = Visibility.Collapsed;
@@ -231,8 +240,8 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 XMLViewer.xmlDocument = null;
             }
 
-            if (URLTextBox != null)
-                URLTextBox.Text = string.Empty;
+            if (xURLTextBox != null)
+                xURLTextBox.Text = string.Empty;
         }
 
         private void FileRadioButtonChecked(object sender, RoutedEventArgs e)
@@ -252,12 +261,12 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 XMLViewer.xmlDocument = null;
             }
-            URLTextBox.Text = string.Empty;
+            xURLTextBox.Text = string.Empty;
         }
 
         private void URLTextBoxTextChange(object sender, TextChangedEventArgs e)
         {
-            AddAPIModelWizard.URL = URLTextBox.Text;
+            
             xPreviewButton.Visibility = Visibility.Collapsed;
             SourceRviewLable.Visibility = Visibility.Collapsed;
             XMLViewer.Visibility = Visibility.Collapsed;
@@ -265,7 +274,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             XMLViewer.xmlDocument = new XmlDocument();
             if (URLRadioButton.IsChecked == true)
             {
-                if (!string.IsNullOrEmpty(URLTextBox.Text))
+                if (!string.IsNullOrEmpty(xURLTextBox.Text))
                 {
                     xBrowseLoadButton.Visibility = Visibility.Visible;
                 }
@@ -278,7 +287,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
             else if (FileRadioButton.IsChecked == true)
             {
-                if (!string.IsNullOrEmpty(URLTextBox.Text))
+                if (!string.IsNullOrEmpty(xURLTextBox.Text))
                 {
                     xBrowseLoadButton.ButtonText = "Load";
                 }
@@ -296,7 +305,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 if (FileRadioButton.IsChecked == true)
                 {
-                    if (string.IsNullOrEmpty(URLTextBox.Text))
+                    if (string.IsNullOrEmpty(xURLTextBox.Text))
                     {
                         System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
 
@@ -306,7 +315,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
                         if (result == System.Windows.Forms.DialogResult.OK)
                         {
-                            URLTextBox.Text = dlg.FileName;
+                           xURLTextBox.Text = dlg.FileName;
                             // AddAPIModelWizard.NextEnabled = true;
                             LoadFileValidation();
                         }
@@ -335,7 +344,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
                     if (result == System.Windows.Forms.DialogResult.OK)
                     {
-                        URLTextBox.Text = dlg2.FileName;
+                        xURLTextBox.Text = dlg2.FileName;
                         // AddAPIModelWizard.NextEnabled = true;
                         AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = dlg2.FileName });
 
@@ -344,7 +353,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 else
                 {
                     string tempfile = System.IO.Path.GetTempFileName();
-                    string filecontent = Amdocs.Ginger.Common.GeneralLib.HttpUtilities.DownloadFileAsync(new System.Uri(URLTextBox.Text)).Result;
+                    string filecontent = Amdocs.Ginger.Common.GeneralLib.HttpUtilities.DownloadFileAsync(new System.Uri(xURLTextBox.Text)).Result;
                     System.IO.File.WriteAllText(tempfile, filecontent);
                     AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = tempfile });
                     // AddAPIModelWizard.NextEnabled = true;
@@ -386,13 +395,13 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
             try
             {
-                if (!mWSDLParser.ValidateWSDLURL(URLTextBox.Text, URLRadioButton.IsChecked, ref error))
+                if (!mWSDLParser.ValidateWSDLURL(xURLTextBox.Text, URLRadioButton.IsChecked, ref error))
                 {
                     throw new Exception(error);
                 }
 
                 XmlDocument doc = null;
-                string s = URLTextBox.Text;
+                string s = xURLTextBox.Text;
 
                 await Task.Run(() => doc = GetDocumentFromWeb(s));
                 PreviewContent = doc;
@@ -430,7 +439,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         {
             xPreviewButton.IsEnabled = false;
             XmlDocument doc = null;
-            string s = URLTextBox.Text;
+            string s = xURLTextBox.Text;
             await Task.Run(() => doc = GetDocumentFromWeb(s));
             XMLViewer.xmlDocument = doc;
             xPreviewButton.IsEnabled = true;

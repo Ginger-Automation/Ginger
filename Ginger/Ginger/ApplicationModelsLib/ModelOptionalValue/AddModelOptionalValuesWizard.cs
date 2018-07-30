@@ -39,25 +39,33 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             [EnumValueDescription("DataBase")]
             DB
         }
-        public ObservableList<TemplateFile> OVFList = new ObservableList<TemplateFile>();//optional values files list
-        public Dictionary<string, List<string>> ParameterValuesByNameDic = new Dictionary<string, List<string>>();// EXCEL & DB
-        public ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
-        public Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict;//XML&JSON
-        public ObservableList<GlobalAppModelParameter> mGlobalParamterList;
-        public ApplicationAPIModel mAAMB;
-        public ObservableList<AppModelParameter> ParamsList = new ObservableList<AppModelParameter>();//Grid presentation
-        public ObservableList<GlobalAppModelParameter> GlobalParamsList = new ObservableList<GlobalAppModelParameter>();//Grid presentation
+        public enum eOptionalValuesTargetType
+        {
+            ModelLocalParams,GlobalParams
+        }
+        public  ObservableList<TemplateFile> OVFList = new ObservableList<TemplateFile>();//optional values files list
+        public  Dictionary<string, List<string>> ParameterValuesByNameDic = new Dictionary<string, List<string>>();// EXCEL & DB
+        public  ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
+        public  Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict;//XML&JSON
+        public  ObservableList<GlobalAppModelParameter> mGlobalParamterList;
+        public  ApplicationAPIModel mAAMB;
+        public  ObservableList<AppModelParameter> ParamsList = new ObservableList<AppModelParameter>();//Grid presentation
+        public  ObservableList<GlobalAppModelParameter> GlobalParamsList = new ObservableList<GlobalAppModelParameter>();//Grid presentation
 
         public eSourceType SourceType { get; set; }
         public AddModelOptionalValuesWizard(ApplicationAPIModel AAMB)//Local Parameters
         {
-            AddPage(Name: "Select Document", Title: "Import Source", SubTitle: "Select And Import Source For Optional Values", Page: new AddOptionalValuesModelSelectTypePage(AAMB));
-            AddPage(Name: "Select Parameters", Title: "Select Parameters", SubTitle: "Select Parameters For The Chosen Values", Page: new AddOptionalValuesModelSelectParamPage(AAMB));
+            mAAMB = AAMB;
+            ImportOptionalValues.ParameterType = ImportOptionalValuesForParameters.eParameterType.Local;
+            AddPage(Name: "Select Document", Title: "Import Source", SubTitle: "Select And Import Source For Optional Values", Page: new AddOptionalValuesModelSelectTypePage(eOptionalValuesTargetType.ModelLocalParams));
+            AddPage(Name: "Select Parameters", Title: "Select Parameters", SubTitle: "Select Parameters For The Chosen Values", Page: new AddOptionalValuesModelSelectParamPage(eOptionalValuesTargetType.ModelLocalParams));
         }
         public AddModelOptionalValuesWizard(ObservableList<GlobalAppModelParameter> GlobalParamterList)//Global Parameters
         {
-            AddPage(Name: "Select Document", Title: "Import Source", SubTitle: "Select And Import Source For Optional Values", Page: new AddOptionalValuesModelSelectTypePage(GlobalParamterList));
-            AddPage(Name: "Select Parameters", Title: "Select Parameters", SubTitle: "Select Parameters For The Chosen Values", Page: new AddOptionalValuesModelSelectParamPage(GlobalParamterList));
+            mGlobalParamterList = GlobalParamterList;
+            ImportOptionalValues.ParameterType = ImportOptionalValuesForParameters.eParameterType.Global;
+            AddPage(Name: "Select Document", Title: "Import Source", SubTitle: "Select And Import Source For Optional Values", Page: new AddOptionalValuesModelSelectTypePage(eOptionalValuesTargetType.GlobalParams));
+            AddPage(Name: "Select Parameters", Title: "Select Parameters", SubTitle: "Select Parameters For The Chosen Values", Page: new AddOptionalValuesModelSelectParamPage(eOptionalValuesTargetType.GlobalParams));
         }
         public override string Title { get { return "Import Optional Values For Parameters Wizard"; } }
 

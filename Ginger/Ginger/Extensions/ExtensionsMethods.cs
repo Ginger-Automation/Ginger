@@ -113,7 +113,7 @@ namespace Ginger
             ComboBox.DisplayMemberPath = DisplayMemberPath;
             ComboBox.SelectedValuePath = SelectedValuePath;
         }
-
+     
         // ------------------------------------------------------------
         // Validation rules
         // ------------------------------------------------------------
@@ -122,9 +122,11 @@ namespace Ginger
         {
             CannotBeEmpty,
             FileExist
-
         }
 
+        // ------------------------------------------------------------
+        // Combo Box
+        // ------------------------------------------------------------
         public static void AddValidationRule(this ComboBox comboBox, ValidationRule validationRule)
         {
             BindingExpression bd = null;
@@ -265,19 +267,19 @@ namespace Ginger
         // ucGrid
         // ------------------------------------------------------------
 
-        public static void AddValidationRule(this ucGrid ucgrid , ValidationRule validationRule)
-        {
-            AddValidation(ucgrid, ucGrid.RowsCountProperty, validationRule);
-        }
+        //public static void AddValidationRule(this ucGrid ucgrid , ValidationRule validationRule)
+        //{
+        //    AddValidation(ucgrid, ucGrid.RowsCountProperty, validationRule);
+        //}
 
-        public static void AddValidationRule(this ucGrid ucgrid, eValidationRule validationRule)
-        {
-            if (validationRule == eValidationRule.CannotBeEmpty)
-            {
-                AddValidation(ucgrid, ucGrid.RowsCountProperty, new GridValidationRule());
-            }
-            //TODO: throw...
-        }
+        //public static void AddValidationRule(this ucGrid ucgrid, eValidationRule validationRule)
+        //{
+        //    if (validationRule == eValidationRule.CannotBeEmpty)
+        //    {
+        //        AddValidation(ucgrid, ucGrid.RowsCountProperty, new GridValidationRule());
+        //    }
+        //    //TODO: throw...
+        //}
 
         // ------------------------------------------------------------
         // Validations
@@ -338,6 +340,18 @@ namespace Ginger
             Validation.SetErrorTemplate(frameworkElement, controlTemplate);
         }
 
+        public static void ClearValidations(this FrameworkElement frameworkElement, DependencyProperty dependencyProperty)
+        {
+            //try
+            //{
+                BindingExpression bd = frameworkElement.GetBindingExpression(dependencyProperty);
+                bd.ParentBinding.ValidationRules.Clear();
+            //}
+            //catch (Exception ex)
+            //{
+            //    Reporter.ToLog(eLogLevel.WARN, "Failed to clear control validations", ex, true, true)
+            // }
+        }
 
     }
 }

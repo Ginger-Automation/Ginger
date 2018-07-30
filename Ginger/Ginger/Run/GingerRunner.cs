@@ -1219,8 +1219,9 @@ namespace Ginger.Run
             }
 
             if (act.Wait > 0)
-            {
-                for (int i = 0; i < act.Wait * 10; i++)
+            {               
+                DateTime startingTime = DateTime.Now;                
+                while((DateTime.Now - startingTime).TotalSeconds <= act.Wait)
                 {
                     if (mStopRun)
                     {
@@ -1228,7 +1229,7 @@ namespace Ginger.Run
                         return;
                     }
                     UpdateActionStatus(act, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Wait, st);
-                    Thread.Sleep(100);  // Multiply * 10 to get 1 sec                    
+                    Thread.Sleep(100);               
                 }
             }
         }

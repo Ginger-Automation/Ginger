@@ -526,6 +526,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         public Dictionary<string, List<string>> UpdateParametersOptionalValuesFromCurrentExcelTable()
         {
+            if (dtCurrentExcelTable == null)//added as quick fix
+                GetExceSheetlData(false);
             return GetParametersAndValuesDictionary(dtCurrentExcelTable);
         }
         private Dictionary<string, List<string>> GetParametersAndValuesDictionary(DataTable dt)

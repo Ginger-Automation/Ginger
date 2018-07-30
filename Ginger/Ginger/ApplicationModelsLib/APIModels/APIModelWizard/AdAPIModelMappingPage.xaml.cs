@@ -21,9 +21,11 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.UserControls;
+using GingerCore;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -59,10 +61,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             else if (WizardEventArgs.EventType == EventType.Active)
             {
                 SetApplicationModelsGrid();
-                ApplicationModelsGrid.DataSourceList = AddAPIModelWizard.SelectedAAMList;
+                //ApplicationModelsGrid.DataSourceList = AddAPIModelWizard.SelectedAAMList;
+                ApplicationModelsGrid.DataSourceList = General.ConvertListToObservableList(AddAPIModelWizard.AAMList.Where(x => x.IsSelected == true).ToList());
                 XMLOptionalValuesTemplatesGrid.DataSourceList = CurrentSelectedAPIModel.OptionalValuesTemplates;
-                //AddAPIModelWizard.FinishEnabled = false;
-                //AddAPIModelWizard.NextEnabled = true;
             }
         }
 

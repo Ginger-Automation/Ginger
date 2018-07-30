@@ -213,7 +213,8 @@ namespace GingerWPF.TreeViewItemsLib
                     RepositoryItemBase RI = (RepositoryItemBase)node.NodeObject();
                     if (RI != null)
                     {
-                        if (RI.IsDirty)
+                        if ((RI.DirtyStatus == eDirtyStatus.NoTracked && RI.IsDirty) 
+                                || (RI.DirtyStatus == eDirtyStatus.Modified))
                         {
                             // Try to save only items with file name = standalone xml, avoid items like env app                            
                             if (!string.IsNullOrEmpty(RI.ContainingFolder))
@@ -246,7 +247,8 @@ namespace GingerWPF.TreeViewItemsLib
                     mBulkOperationIsInProcess = true;
                     //refresh cache
                     RepositoryFolderBase repoFolder = (RepositoryFolderBase)(((ITreeViewItem)this).NodeObject());
-                    repoFolder.ReloadItems(); // .RefreshFolderCache();
+                    if (repoFolder != null)
+                        repoFolder.ReloadItems(); // .RefreshFolderCache();
                     
                     //refresh tree
                     mTreeView.Tree.RefresTreeNodeChildrens((ITreeViewItem)this);
@@ -520,7 +522,7 @@ namespace GingerWPF.TreeViewItemsLib
             return GetSourceControlImageByPath(repositoryFolderBase.FolderFullPath);         
         }
 
-        private eImageType GetSourceControlImageByPath(string path)
+        protected eImageType GetSourceControlImageByPath(string path)
         {            
             return SourceControlIntegration.GetFileImage(path);            
         }

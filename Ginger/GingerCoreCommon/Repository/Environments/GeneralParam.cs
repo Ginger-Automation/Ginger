@@ -36,8 +36,22 @@ namespace Amdocs.Ginger.Repository
             public static string Encrypt = "Encrypt";
         }
 
+        private string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }
+        public string Description {
+            get
+            {
+                return mDescription;
+            }
+            set
+            {
+                if (mDescription != value)
+                {
+                    mDescription = value;
+                    OnPropertyChanged(Fields.Description);
+                }
+            }
+        }
 
         private string mValue;
         [IsSerializedForLocalRepository]
@@ -49,8 +63,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mValue = value;
-               OnPropertyChanged(Fields.Value);
+                if (mValue != value)
+                {
+                    mValue = value;
+                    OnPropertyChanged(Fields.Value);                
+                }
             }
         }
 
@@ -61,8 +78,11 @@ namespace Amdocs.Ginger.Repository
             get { return mName; }
             set
             {
-                mName = value;
-                OnPropertyChanged(Fields.Name);
+                if (mName != value)
+                {
+                    mName = value;
+                    OnPropertyChanged(Fields.Name);
+                }
             }
         }
         public string NameBeforeEdit{ get; set; }
@@ -76,8 +96,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mEncryptValue = value;
-                OnPropertyChanged(Fields.Encrypt);
+                if (mEncryptValue != value)
+                {
+                    mEncryptValue = value;
+                    OnPropertyChanged(Fields.Encrypt);
+                }
             }
         }
 

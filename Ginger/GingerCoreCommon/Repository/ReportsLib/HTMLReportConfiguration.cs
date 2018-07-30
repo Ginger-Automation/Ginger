@@ -26,7 +26,7 @@ namespace Ginger.Reports
     {
         public override bool UseNewRepositorySerializer { get { return true; } }
 
-        public new static partial class Fields
+        public  static partial class Fields
         {
             public static string ID = "ID";
             public static string Name = "Name";
@@ -44,8 +44,9 @@ namespace Ginger.Reports
             public static string HTMLReportConfigurationMaximalFolderSize = "HTMLReportConfigurationMaximalFolderSize";
         }
 
+        bool mIsSelected;
         [IsSerializedForLocalRepository]
-        public bool IsSelected { get; set; }
+        public bool IsSelected { get { return mIsSelected; } set { if (mIsSelected != value) { mIsSelected = value; OnPropertyChanged(nameof(IsSelected)); } } }
 
         bool mIsDefualt;
         [IsSerializedForLocalRepository]
@@ -62,26 +63,33 @@ namespace Ginger.Reports
             }
         }
 
+        bool mShowAllIterationsElements;
         [IsSerializedForLocalRepository]
-        public bool ShowAllIterationsElements { get; set; }
+        public bool ShowAllIterationsElements { get { return mShowAllIterationsElements; } set { if (mShowAllIterationsElements != value) { mShowAllIterationsElements = value; OnPropertyChanged(nameof(ShowAllIterationsElements)); } } }
 
+        bool mUseLocalStoredStyling;
         [IsSerializedForLocalRepository]
-        public bool UseLocalStoredStyling { get; set; }
+        public bool UseLocalStoredStyling { get { return mUseLocalStoredStyling; } set { if (mUseLocalStoredStyling != value) { mUseLocalStoredStyling = value; OnPropertyChanged(nameof(UseLocalStoredStyling)); } } }
 
+        string mLogoBase64Image;
         [IsSerializedForLocalRepository]
-        public string LogoBase64Image { get; set; }
+        public string LogoBase64Image { get { return mLogoBase64Image; } set { if (mLogoBase64Image != value) { mLogoBase64Image = value; OnPropertyChanged(nameof(LogoBase64Image)); } } }
 
+        int mID;
         [IsSerializedForLocalRepository]
-        public int ID { get; set; }
+        public int ID { get { return mID; } set { if (mID != value) { mID = value; OnPropertyChanged(nameof(ID)); } } }
 
+        string mName;
         [IsSerializedForLocalRepository]
-        public string Name { get; set; }
+        public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
 
+        string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }
+        public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
+        string mReportLowerLevelToShow;
         [IsSerializedForLocalRepository]
-        public string ReportLowerLevelToShow { get; set; }
+        public string ReportLowerLevelToShow { get { return mReportLowerLevelToShow; } set { if (mReportLowerLevelToShow != value) { mReportLowerLevelToShow = value; OnPropertyChanged(nameof(ReportLowerLevelToShow)); } } }
 
         public enum ReportsLevel
         {
@@ -152,7 +160,7 @@ namespace Ginger.Reports
 
     public class HTMLReportConfigFieldToSelect : RepositoryItemBase
     {
-        public new static class Fields
+        public  static class Fields
         {
             public static string FieldKey = "FieldKey";
             public static string FieldName = "FieldName";
@@ -164,14 +172,17 @@ namespace Ginger.Reports
 
         public string FieldName { get; set; }
 
+        string mFieldKey;
         [IsSerializedForLocalRepository]
-        public string FieldKey { get; set; }
+        public string FieldKey { get { return mFieldKey; } set { if (mFieldKey != value) { mFieldKey = value; OnPropertyChanged(nameof(FieldKey)); } } }
 
+        bool mIsSelected;
         [IsSerializedForLocalRepository]
-        public bool IsSelected { get; set; }
+        public bool IsSelected { get { return mIsSelected; } set { if (mIsSelected != value) { mIsSelected = value; OnPropertyChanged(nameof(IsSelected)); } } }
 
+        bool mIsSectionCollapsed;
         [IsSerializedForLocalRepository]
-        public bool IsSectionCollapsed { get; set; }
+        public bool IsSectionCollapsed { get { return mIsSectionCollapsed; } set { if (mIsSectionCollapsed != value) { mIsSectionCollapsed = value; OnPropertyChanged(nameof(IsSectionCollapsed)); } } }
 
         public bool IsNotMandatory { get; set; }
 

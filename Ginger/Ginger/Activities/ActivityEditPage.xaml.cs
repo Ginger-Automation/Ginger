@@ -53,7 +53,8 @@ namespace Ginger.BusinessFlowWindows
             this.Title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
 
             mActivity = activity;
-            mActivity.SaveBackup();
+            if (editMode != General.RepositoryItemPageViewMode.View)
+                mActivity.SaveBackup();
             editMode = mode;
 
             RunDescritpion.Init(activity, Activity.Fields.RunDescription);
@@ -199,6 +200,7 @@ namespace Ginger.BusinessFlowWindows
             {
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.AnalyzerSavingFixedIssues, null, mActivity.ActivityName);
                 mActivityParentBusinessFlow.Save();
+                saveWasDone = true;
                 Reporter.CloseGingerHelper();
             }
             _pageGenericWin.Close();
@@ -207,7 +209,7 @@ namespace Ginger.BusinessFlowWindows
         private void UndoChangesAndClose()
         {
             Mouse.OverrideCursor = Cursors.Wait;            
-            mActivity.RestoreFromBackup();
+            mActivity.RestoreFromBackup(true);
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();

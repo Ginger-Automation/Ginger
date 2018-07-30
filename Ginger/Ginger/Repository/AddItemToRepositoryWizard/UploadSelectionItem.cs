@@ -43,6 +43,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
         public enum eItemUploadStatus
         {
+            PendingUpload,
             Uploaded,
             FailedToUpload,
             Skipped

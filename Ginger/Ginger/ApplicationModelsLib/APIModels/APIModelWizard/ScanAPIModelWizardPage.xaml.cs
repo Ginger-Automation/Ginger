@@ -46,11 +46,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         public ScanAPIModelWizardPage()
         {
             InitializeComponent();
-            OperationsDataGrid.SetTitleLightStyle = true;
-            OperationsDataGrid.btnMarkAll.Visibility = Visibility.Visible;
-            OperationsDataGrid.MarkUnMarkAllActive += MarkUnMarkAllActions;
-            OperationsDataGrid.btnRefresh.Visibility = Visibility.Visible;
-            OperationsDataGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(BtnRefreshClicked));
+            xApisSelectionGrid.SetTitleLightStyle = true;
+            xApisSelectionGrid.btnMarkAll.Visibility = Visibility.Visible;
+            xApisSelectionGrid.MarkUnMarkAllActive += MarkUnMarkAllActions;
+            xApisSelectionGrid.btnRefresh.Visibility = Visibility.Visible;
+            xApisSelectionGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(BtnRefreshClicked));
             SetFieldsGrid();
         }
         private void BtnRefreshClicked(object sender, RoutedEventArgs e)
@@ -61,7 +61,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            if (WizardEventArgs.EventType == EventType.Prev)
+            if (WizardEventArgs.EventType == EventType.Init)
+            {
+                xApisSelectionGrid.ValidationRules.Add(Ginger.ucGrid.eUcGridValidationRules.CantBeEmpty);
+            }
+            else if (WizardEventArgs.EventType == EventType.Prev)
             {
                 if (AddAPIModelWizard.APIType == AddAPIModelWizard.eAPIType.WSDL)
                 {
@@ -76,7 +80,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 if (WSDLP != null && AddAPIModelWizard != null)
                 {
                     WSDLP.mStopParsing = true;
-                   // AddAPIModelWizard.ProcessStarted = Visibility.Collapsed;
+                    // AddAPIModelWizard.ProcessStarted = Visibility.Collapsed;
                 }
             }
             else if (WizardEventArgs.EventType == EventType.Active)
@@ -88,16 +92,16 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     //AddAPIModelWizard.NextEnabled = false;
                     //WizardEventArgs.IgnoreDefaultNextButtonSettings = true;
                     Parse();
-                }                
-            }
-            else if (WizardEventArgs.EventType == EventType.LeavingForNextPage)
-            {
-                if (AddAPIModelWizard.AAMList != null)
-                {
-                    ObservableList<ApplicationAPIModel> List = General.ConvertListToObservableList(AddAPIModelWizard.AAMList.Where(x => x.IsSelected == true).ToList());
-                    AddAPIModelWizard.SelectedAAMList = List;
                 }
             }
+            //else if (WizardEventArgs.EventType == EventType.LeavingForNextPage)
+            //{
+            //    if (AddAPIModelWizard.AAMList != null)
+            //    {
+            //        ObservableList<ApplicationAPIModel> List = General.ConvertListToObservableList(AddAPIModelWizard.AAMList.Where(x => x.IsSelected == true).ToList());
+            //        AddAPIModelWizard.SelectedAAMList = List;
+            //    }
+            //}
         }
 
         private async void Parse()
@@ -169,7 +173,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
 
             AddAPIModelWizard.AAMList = AAMCompletedList;
-            OperationsDataGrid.DataSourceList = AddAPIModelWizard.AAMList;
+            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMList;
             // AddAPIModelWizard.FinishEnabled = false;
             AddAPIModelWizard.ProcessEnded();
 
@@ -202,7 +206,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
 
             AddAPIModelWizard.AAMList = AAMCompletedList;
-            OperationsDataGrid.DataSourceList = AddAPIModelWizard.AAMList;
+            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMList;
             // AddAPIModelWizard.FinishEnabled = false;
             AddAPIModelWizard.ProcessEnded();
 
@@ -234,7 +238,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
 
             AddAPIModelWizard.AAMList = AAMCompletedList;
-            OperationsDataGrid.DataSourceList = AddAPIModelWizard.AAMList;
+            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMList;
             // AddAPIModelWizard.FinishEnabled = false;
 
             return parseSuccess;
@@ -257,17 +261,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             AddAPIModelWizard.ProcessEnded();
             AddAPIModelWizard.AAMList = AAMSList;
-            OperationsDataGrid.DataSourceList = AddAPIModelWizard.AAMList;
+            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMList;
 
             return parseSuccess;
         }
         
         private void MarkUnMarkAllActions(bool ActiveStatus)
         {
-            if (OperationsDataGrid.DataSourceList.Count <= 0) return;
-            if (OperationsDataGrid.DataSourceList.Count > 0)
+            if (xApisSelectionGrid.DataSourceList.Count <= 0) return;
+            if (xApisSelectionGrid.DataSourceList.Count > 0)
             {
-                ObservableList<ApplicationAPIModel> lstMarkUnMarkAPI = (ObservableList<ApplicationAPIModel>)OperationsDataGrid.DataSourceList;
+                ObservableList<ApplicationAPIModel> lstMarkUnMarkAPI = (ObservableList<ApplicationAPIModel>)xApisSelectionGrid.DataSourceList;
                 foreach (ApplicationAPIModel AAMB in lstMarkUnMarkAPI)
                 {
                     AAMB.IsSelected = ActiveStatus;
@@ -278,7 +282,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 //else
                 //    AddAPIModelWizard.NextEnabled = true;
 
-                OperationsDataGrid.DataSourceList = lstMarkUnMarkAPI;
+                xApisSelectionGrid.DataSourceList = lstMarkUnMarkAPI;
             }
         }
 
@@ -289,8 +293,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.IsSelected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["IsSelectedTemplate"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.Name), Header = "Name", WidthWeight = 20 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.Description), Header = "Description", WidthWeight = 20 });
-            OperationsDataGrid.SetAllColumnsDefaultView(view);
-            OperationsDataGrid.InitViewItems();
+            xApisSelectionGrid.SetAllColumnsDefaultView(view);
+            xApisSelectionGrid.InitViewItems();
         }
 
         private void ExportAPIFiles(List<ApplicationAPIModel> AAMList)

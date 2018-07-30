@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -413,9 +413,11 @@ namespace Amdocs.Ginger.Repository
                     // Fix me for Linux !!!
                     string A = mSolutionFolderPath; //.TrimEnd(Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar);
                     string B = fileFolderPath.Replace(cSolutionRootFolderSign, Path.DirectorySeparatorChar.ToString()).TrimStart(Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
-                    A += Path.DirectorySeparatorChar;
-                    fileFolderPath = Path.Combine(A, B);
-                    Console.WriteLine("fileFolderPath3 =" + fileFolderPath);
+                    if (!A.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                    {
+                        A += Path.DirectorySeparatorChar;
+                    }
+                    fileFolderPath = Path.Combine(A, B);                    
                 }
 
                 //FILE

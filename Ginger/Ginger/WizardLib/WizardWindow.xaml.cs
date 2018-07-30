@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Ginger;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -166,6 +167,7 @@ namespace GingerWPF.WizardLib
                     DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
                     if (child != null)
                     {
+                        //.NET Controls Validation
                         BindingExpression bindingExpression = null;
                         if (child is TextBox)
                         {
@@ -187,9 +189,19 @@ namespace GingerWPF.WizardLib
                                 errorsFound = true;
                             }
                         }
+
+                        //Custome controls Validations
+                        if (errorsFound == false)
+                        {
+                            if (child is ucGrid)
+                                errorsFound = ((ucGrid)child).HasValidationError();
+                        }
                     }
 
-                    SearchValidationsRecursive(child);
+                    if (errorsFound == true)
+                        return;
+                    else
+                        SearchValidationsRecursive(child);
                 }
             }
         }
@@ -238,9 +250,9 @@ namespace GingerWPF.WizardLib
             //First we validate all pages are OK
             foreach (WizardPage p in mWizard.Pages)
             {
-                SearchValidationsRecursive((Page)p.Page);
-                // if (errorsFound) return;  // TODO: focus on the item and highlight
-                if (mValidationErrors.Count > 0)
+                errorsFound = false;
+                SearchValidationsRecursive((Page)p.Page);                 
+                if (mValidationErrors.Count > 0 || errorsFound)// TODO: focus on the item and highlight
                 {
                     mWizard.Pages.CurrentItem = p;
                     UpdatePrevNextButton();

@@ -130,7 +130,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 
         public override void Finish()
         {
-            throw new System.NotImplementedException();
+            mWizardWindow.Close();
         }
     }
 }

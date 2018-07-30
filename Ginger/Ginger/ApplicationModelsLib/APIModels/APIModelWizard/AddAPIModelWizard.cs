@@ -21,9 +21,11 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
+using GingerCore;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 {
@@ -60,7 +62,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         public bool IsParsingWasDone { get; set; }
 
         public WSDLParser mWSDLParser { get; set; }
-        public ObservableList<ApplicationAPIModel> SelectedAAMList { get; set; }
+        //public ObservableList<ApplicationAPIModel> SelectedAAMList { get; set; }
 
         public override string Title { get { return "API Model Import Wizard"; } }
 
@@ -83,7 +85,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         public override void Finish()
         {
-            ExportAPIFiles(SelectedAAMList);
+            //ExportAPIFiles(SelectedAAMList);
+            ExportAPIFiles(General.ConvertListToObservableList(AAMList.Where(x => x.IsSelected == true).ToList()));
         }
 
         private void ExportAPIFiles(ObservableList<ApplicationAPIModel> SelectedAAMList)

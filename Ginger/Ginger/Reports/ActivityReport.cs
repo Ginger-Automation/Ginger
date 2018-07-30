@@ -32,6 +32,7 @@ namespace Ginger.Reports
     [JsonObject(MemberSerialization.OptIn)]
     public class ActivityReport
     {
+        enum ActStatus {  Passed, Other }
         public static partial class Fields
         {
             public static string ActivityGroupName = "ActivityGroupName";
@@ -217,13 +218,13 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public double PassPercent { get { return ActionReports.Count != 0 ? Math.Round((double)(TotalActionsPassed * 100 / ActionReports.Count), MidpointRounding.AwayFromZero) : 0; } }
+        public double PassPercent { get { return ActionReports.Count != 0 ? Math.Round((double)TotalActionsPassed * 100 / ActionReports.Count, MidpointRounding.AwayFromZero) + AddOnePercent(ActStatus.Passed) : 0; } }
         
-        public double FailPercent { get { return ActionReports.Count != 0 ? Math.Round((double)(TotalActionsFailed * 100 / ActionReports.Count), MidpointRounding.AwayFromZero) : 0; } }
+        public double FailPercent { get { return ActionReports.Count != 0 ? Math.Round((double)TotalActionsFailed * 100 / ActionReports.Count, MidpointRounding.AwayFromZero) : 0; } }
         
-        public double StoppedPercent { get { return ActionReports.Count != 0 ? Math.Round((double)(TotalActionsStopped * 100 / ActionReports.Count), MidpointRounding.AwayFromZero) : 0; } }
+        public double StoppedPercent { get { return ActionReports.Count != 0 ? Math.Round((double)TotalActionsStopped * 100 / ActionReports.Count, MidpointRounding.AwayFromZero) : 0; } }
         
-        public double OtherPercent { get { return ActionReports.Count != 0 ? Math.Round((double)(TotalActionsOther * 100 / ActionReports.Count), MidpointRounding.AwayFromZero) : 0; } }
+        public double OtherPercent { get { return ActionReports.Count != 0 ? Math.Round((double)TotalActionsOther * 100 / ActionReports.Count, MidpointRounding.AwayFromZero) + AddOnePercent(ActStatus.Other) : 0; } }
 
         [JsonProperty]
         public List<string> VariablesBeforeExec { get; set; }
@@ -368,6 +369,16 @@ namespace Ginger.Reports
                 }
 
             }
+        }
+        private int AddOnePercent(ActStatus actionsStatus)
+        {
+            double totalActPassed = Math.Round((double)TotalActionsPassed * 100 / ActionReports.Count, MidpointRounding.AwayFromZero);
+            if (actionsStatus.Equals(ActStatus.Other) && totalActPassed > 0) return 0;
+            double totalActFailed = Math.Round((double)TotalActionsFailed * 100 / ActionReports.Count, MidpointRounding.AwayFromZero);
+            double totalActStopped = Math.Round((double)TotalActionsStopped * 100 / ActionReports.Count, MidpointRounding.AwayFromZero);
+            double totalActOther = Math.Round((double)TotalActionsOther * 100 / ActionReports.Count, MidpointRounding.AwayFromZero);
+            if ((totalActFailed + totalActPassed + totalActStopped + totalActOther) == 99 && totalActPassed != 0) return 1;
+            return 0;
         }
     }
 }

@@ -54,8 +54,8 @@ namespace Ginger.Activities
         {
             InitializeComponent();
             mEditMode = mode;
-            mActivitiesGroup = activitiesGroup;
-            mActivitiesGroup.SaveBackup();
+            mActivitiesGroup = activitiesGroup;            
+                mActivitiesGroup.SaveBackup();
 
             App.ObjFieldBinding(txtGroupName, TextBox.TextProperty, mActivitiesGroup, ActivitiesGroup.Fields.Name);
             App.ObjFieldBinding(txtGroupDescription, TextBox.TextProperty, mActivitiesGroup, ActivitiesGroup.Fields.Description);
@@ -167,7 +167,7 @@ namespace Ginger.Activities
         private void UndoChangesAndClose()
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            mActivitiesGroup.RestoreFromBackup();
+            mActivitiesGroup.RestoreFromBackup(true);
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();

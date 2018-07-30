@@ -60,7 +60,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(mProjEnvironmentFolder, nameof(RepositoryFolder<ProjEnvironment>.DisplayName), eImageType.Folder, GetSourceControlImage(mProjEnvironmentFolder), false);
+            return TreeViewUtils.NewRepositoryItemTreeHeader(mProjEnvironmentFolder, nameof(RepositoryFolder<ProjEnvironment>.DisplayName), eImageType.Folder, GetSourceControlImage(mProjEnvironmentFolder), false);
         }        
 
         public override ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)

@@ -61,7 +61,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(ApplicationPOM, nameof(ApplicationPOM.Name), eImageType.Application , eImageType.Null, true, nameof(ApplicationPOM.IsDirty));            
+            return TreeViewUtils.NewRepositoryItemTreeHeader(ApplicationPOM, nameof(ApplicationPOM.Name), eImageType.Application , eImageType.Null, true, nameof(ApplicationPOM.IsDirty));            
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

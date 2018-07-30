@@ -55,15 +55,17 @@ namespace Ginger.Activities
                 mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
                 App.PropertyChanged += AppPropertychanged;
             }
-            if(editMode == General.RepositoryItemPageViewMode.View)
+
+            SetActivitiesGroupsGridView();
+            RefreshActivitiesGroupsGrid();
+
+            if (editMode == General.RepositoryItemPageViewMode.View)
             {
                 grdActivitiesGroups.ShowToolsBar = Visibility.Collapsed;
                 grdActivitiesGroups.ToolsTray.Visibility = Visibility.Collapsed;
                 grdActivitiesGroups.RowDoubleClick -= grdActivitiesGroups_grdMain_MouseDoubleClick;
                 grdActivitiesGroups.DisableGridColoumns();
             }
-            SetActivitiesGroupsGridView();
-            RefreshActivitiesGroupsGrid();
         }
 
         private void grdActivitiesGroups_SelectionChanged(object sender, SelectionChangedEventArgs e)

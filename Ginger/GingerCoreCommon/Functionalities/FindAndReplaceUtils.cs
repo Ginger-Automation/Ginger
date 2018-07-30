@@ -80,8 +80,9 @@ namespace Amdocs.Ginger.Common.Functionalities
                         else if (mi.MemberType == MemberTypes.Field)
                             value = item.GetType().GetField(mi.Name).GetValue(item);
                     }
-                    catch (Exception ex)
+                    catch 
                     {
+                        
                         continue;
                     }
 
@@ -179,14 +180,14 @@ namespace Amdocs.Ginger.Common.Functionalities
                                 }
 
                             }
-                            catch (Exception ex)
+                            catch 
                             {
 
                             }
                         }
                     }
                 }
-                catch (Exception ex)
+                catch 
                 {
 
                 }
@@ -272,7 +273,7 @@ namespace Amdocs.Ginger.Common.Functionalities
 
 
             }
-            catch (Exception ex)
+            catch 
             {
                 return false;
             }

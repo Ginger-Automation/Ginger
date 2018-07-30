@@ -20,7 +20,7 @@
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
 
-        <ginger:ucGrid x:Name="OperationsDataGrid"  Grid.Row="0" Margin="0,0,0,0" Visibility="Visible" Title="API's Source/s Content to Select From"  ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed"  ShowUpDown="Collapsed"></ginger:ucGrid>
+        <ginger:ucGrid x:Name="xApisSelectionGrid"  Grid.Row="0" Margin="0,0,0,0" Visibility="Visible" Title="API's Source/s Content to Select From"  ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed"  ShowUpDown="Collapsed"></ginger:ucGrid>
         
     </Grid>
 </Page>
