@@ -960,7 +960,6 @@
     <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\v4\R.java" />
     <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\v7\appcompat\R.java" />
     <Content Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\r\debug\android\support\v7\recyclerview\R.java" />
-    <Resource Include="Drivers\AndroidADB\Java\GingerService\app\build\outputs\logs\manifest-merger-debug-report.txt" />
     <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\androidTest\java\AndroidManifest.xml" />
     <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml" />
     <Resource Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\layout\activity_main.xml" />
@@ -1040,6 +1039,7 @@
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
     <Folder Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\aidl\androidTest\debug\" />
     <Folder Include="Drivers\AndroidADB\Java\GingerService\app\build\generated\source\aidl\debug\" />
+    <Folder Include="Drivers\AndroidADB\Java\GingerService\app\build\outputs\logs\" />
     <Folder Include="Drivers\AndroidADB\Java\GingerService\app\libs\" />
     <Folder Include="Drivers\AndroidADB\Java\GingerService\app\src\main\java\" />
     <Folder Include="Drivers\AndroidADB\Java\GingerService\app\src\main\res\drawable\" />
