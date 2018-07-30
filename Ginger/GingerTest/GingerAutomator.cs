@@ -36,6 +36,8 @@ namespace GingerWPFUnitTest
         static Ginger.App app;
         public MainWindowPOM MainWindowPOM;
 
+        Thread t;
+
         //public static Dispatcher mDispatcher;
         public void StartGinger()
         {
@@ -47,7 +49,7 @@ namespace GingerWPFUnitTest
 
                 Ginger.SplashWindow splash = null;
                 // We start Ginger on STA thread
-                var t = new Thread(() =>
+                t = new Thread(() =>
                 {                
                     // we need sample class - Dummy
                     Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
@@ -68,16 +70,8 @@ namespace GingerWPFUnitTest
                     GingerPOMBase.mDispatcher = app.GetMainWindowDispatcher();
                     MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
 
-                    // Makes the thread support message pumping       
-                    try
-                    {
-                        System.Windows.Threading.Dispatcher.Run();
-                    }
-                    catch(Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-
+                    // Makes the thread support message pumping                           
+                    System.Windows.Threading.Dispatcher.Run();                    
                 });
                 
                 // Configure the thread
@@ -93,7 +87,7 @@ namespace GingerWPFUnitTest
                 }
 
                 // !!!!!!!
-                Thread.Sleep(5000);
+                Thread.Sleep(500);
 
                 //while (splash.IsVisible)
                 //{
@@ -112,7 +106,21 @@ namespace GingerWPFUnitTest
         {            
             MainWindowPOM.Close();
             MainWindowPOM = null;
-            mutex.ReleaseMutex();            
+            mutex.ReleaseMutex();
+
+            
+
+            // System.Windows.Threading.Dispatcher.
+
+            Console.WriteLine("Waiting for app thread to close");
+            
+            t.Abort();
+            //while (t.IsAlive)
+            //{
+            //    Thread.Sleep(100);
+            //}
+            
+            Console.WriteLine("thread app closed exiting");
         }
 
 
