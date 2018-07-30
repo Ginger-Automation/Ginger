@@ -336,7 +336,7 @@ namespace Ginger
                 if (!Environment.GetCommandLineArgs()[0].Contains("testhost"))
                 {
                     // OK we run with command line args of run set to execute
-                    RunningFromConfigFile = true;
+                    // RunningFromConfigFile = true;
                     Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
                     Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)
                 }

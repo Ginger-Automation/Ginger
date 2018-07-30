@@ -108,13 +108,11 @@ namespace GingerWPFUnitTest
             MainWindowPOM = null;
             mutex.ReleaseMutex();
 
-            
-
             // System.Windows.Threading.Dispatcher.
 
             Console.WriteLine("Waiting for app thread to close");
             
-            t.Abort();
+            // t.Abort();
             //while (t.IsAlive)
             //{
             //    Thread.Sleep(100);
