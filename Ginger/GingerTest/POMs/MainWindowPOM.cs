@@ -52,7 +52,7 @@ namespace GingerWPFUnitTest.POMs
             //mMainWindow.is
             //TODO: check main window is closed
             //mMainWindow = null;
-            //Thread.Sleep(1000);
+            Thread.Sleep(1000);
         }
 
         public Button TestButton()
