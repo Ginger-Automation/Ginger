@@ -136,8 +136,7 @@ namespace GingerWPFUnitTest
         // ==============================>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
-        [TestMethod]       
-        //[Ignore]
+        [TestMethod]               
         public void VerifyEnvsShowinTree()
         {
             //Arrange            
@@ -153,47 +152,45 @@ namespace GingerWPFUnitTest
         }
 
 
-        //[TestMethod]
-        //[Ignore]
-        //public void AddEnvUsingWizard()
-        //{
-        //    //Arrange            
-        //    EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
+        [TestMethod]        
+        public void AddEnvUsingWizard()
+        {
+            //Arrange            
+            EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
 
-        //    //Act
-        //    EnvsPOM.CreateEnvironment("bbb");
-        //    EnvsPOM.SelectEnvironment("bbb");
-        //    ProjEnvironment bbbEnv = (from x in amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "bbb" select x).SingleOrDefault();
+            //Act
+            EnvsPOM.CreateEnvironment("bbb");
+            EnvsPOM.SelectEnvironment("bbb");
+            ProjEnvironment bbbEnv = (from x in amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "bbb" select x).SingleOrDefault();
 
-        //    // assert
-        //    Assert.AreEqual("bbb", bbbEnv.Name);
-        //}
-
-
-        //[TestMethod]
-        //[Ignore]
-        //public void AddEnvToFileSystemWillShowinEnvsTree()
-        //{            
-        //    // Arrange                                                
-        //    EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
-
-        //    // Act
-
-        //    // Create env on disk
-        //    ProjEnvironment e1 = new ProjEnvironment() { Name = "aaa" };
-        //    string txt = e1.RepositorySerializer.SerializeToString(e1);
-        //    string fileName = Path.Combine(SolutionFolder, @"Environments\aaa.Ginger.Environment.xml");                
-        //    File.WriteAllText(fileName, txt);
-
-        //    // Verify it show in treeview - FileWatcher should detect the new file on disk
-        //    ProjEnvironment aaa = EnvsPOM.SelectEnvironment("aaa");
-
-        //    //Assert
-        //    Assert.AreEqual("aaa", aaa.Name);
-        //}
+            // assert
+            Assert.AreEqual("bbb", bbbEnv.Name);
+        }
 
 
-        
+        [TestMethod]        
+        public void AddEnvToFileSystemWillShowinEnvsTree()
+        {
+            // Arrange                                                
+            EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
+
+            // Act
+
+            // Create env on disk
+            ProjEnvironment e1 = new ProjEnvironment() { Name = "aaa" };
+            string txt = e1.RepositorySerializer.SerializeToString(e1);
+            string fileName = Path.Combine(SolutionFolder, @"Environments\aaa.Ginger.Environment.xml");
+            File.WriteAllText(fileName, txt);
+
+            // Verify it show in treeview - FileWatcher should detect the new file on disk
+            ProjEnvironment aaa = EnvsPOM.SelectEnvironment("aaa");
+
+            //Assert
+            Assert.AreEqual("aaa", aaa.Name);
+        }
+
+
+
         [TestMethod]
         [Ignore]
         public void DeleteEnvFromFileSystem()
