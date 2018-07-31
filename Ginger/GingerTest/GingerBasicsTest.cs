@@ -215,6 +215,7 @@ namespace GingerWPFUnitTest
 
 
         [TestMethod]        
+        [Ignore]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
             //Arrange
