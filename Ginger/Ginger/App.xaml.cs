@@ -762,8 +762,8 @@ namespace Ginger
                         BusinessFlow.SolutionVariables = sol.Variables;
                         App.AutomateTabGingerRunner.CurrentSolution = sol;
                         LoadRecentBusinessFlow();
-                        if (!App.RunningFromConfigFile)
-                            DoSolutionAutoSaveAndRecover();
+                        // if (!App.RunningFromConfigFile)
+                            //DoSolutionAutoSaveAndRecover();
                     }
                     else
                     {
