@@ -615,7 +615,7 @@ namespace Ginger
             //clear existing solution data
             try
             {
-                AppSolutionAutoSave.SolutionAutoSaveEnd();
+                //AppSolutionAutoSave.SolutionAutoSaveEnd();
                 App.UserProfile.Solution = null;
                 //clear exsiting solution data- TODO: catch the solution value change event and if null then clear all below in relevant class/places
                 App.LocalRepository.ClearAllCache();
@@ -634,18 +634,18 @@ namespace Ginger
                     IEnumerable<string> solutionFiles = Solution.SolutionFiles(SolutionFolder);
 
                     //check if Ginger Upgrade is needed for loading this Solution
-                    Reporter.ToLog(eLogLevel.INFO, "Checking if Ginger upgrade is needed for loading the Solution");
-                    ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
-                    if (higherVersionFiles.Count > 0)
-                    {                        
-                        if (App.RunningFromConfigFile == false)
-                        {
-                            UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
-                            gingerUpgradePage.ShowAsWindow();
-                        }
-                        Reporter.ToLog(eLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
-                        return false;
-                    }
+                    //Reporter.ToLog(eLogLevel.INFO, "Checking if Ginger upgrade is needed for loading the Solution");
+                    //ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
+                    //if (higherVersionFiles.Count > 0)
+                    //{                        
+                    //    if (App.RunningFromConfigFile == false)
+                    //    {
+                    //        UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
+                    //        gingerUpgradePage.ShowAsWindow();
+                    //    }
+                    //    Reporter.ToLog(eLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
+                    //    return false;
+                    //}
 
                     Solution sol = (Solution)RepositoryItem.LoadFromFile(typeof(Solution), SolFile);
 
@@ -655,78 +655,78 @@ namespace Ginger
                         ValueExpression.SolutionFolder = SolutionFolder;
 
                         //Offer to upgrade Solution items to current version
-                        if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false)
-                        {
-                            //TODO: think if it safe to use Async upgrade offer while already started to load the solution
+                        //if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false)
+                        //{
+                        //    //TODO: think if it safe to use Async upgrade offer while already started to load the solution
 
-                            ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
-                            if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
-                            {
-                                UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
-                                solutionUpgradePage.ShowAsWindow();
-                            }
-                        }
+                        //    ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
+                        //    if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
+                        //    {
+                        //        UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
+                        //        solutionUpgradePage.ShowAsWindow();
+                        //    }
+                        //}
 
-                        string RepositoryRootFolder = string.Empty;
-                        switch (SourceControlIntegration.CheckForSolutionSourceControlType(SolutionFolder, ref RepositoryRootFolder))
-                        {
-                            case SourceControlBase.eSourceControlType.GIT:
-                                {
-                                    sol.SourceControl = new GITSourceControl();
-                                }
-                                break;
-                            case SourceControlBase.eSourceControlType.SVN:
-                                {
-                                    sol.SourceControl = new SVNSourceControl();
-                                }
-                                break;
-                        }
-                        if (sol.SourceControl != null)
-                        {
-                            if (string.IsNullOrEmpty(App.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(App.UserProfile.SolutionSourceControlPass))
-                            {
-                                if (App.UserProfile.SourceControlUser != null && App.UserProfile.SourceControlPass != null)
-                                {
-                                    sol.SourceControl.SourceControlUser = App.UserProfile.SourceControlUser;
-                                    sol.SourceControl.SourceControlPass = App.UserProfile.SourceControlPass;
+                        //string RepositoryRootFolder = string.Empty;
+                        //switch (SourceControlIntegration.CheckForSolutionSourceControlType(SolutionFolder, ref RepositoryRootFolder))
+                        //{
+                        //    case SourceControlBase.eSourceControlType.GIT:
+                        //        {
+                        //            sol.SourceControl = new GITSourceControl();
+                        //        }
+                        //        break;
+                        //    case SourceControlBase.eSourceControlType.SVN:
+                        //        {
+                        //            sol.SourceControl = new SVNSourceControl();
+                        //        }
+                        //        break;
+                        //}
+                        //if (sol.SourceControl != null)
+                        //{
+                        //    if (string.IsNullOrEmpty(App.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(App.UserProfile.SolutionSourceControlPass))
+                        //    {
+                        //        if (App.UserProfile.SourceControlUser != null && App.UserProfile.SourceControlPass != null)
+                        //        {
+                        //            sol.SourceControl.SourceControlUser = App.UserProfile.SourceControlUser;
+                        //            sol.SourceControl.SourceControlPass = App.UserProfile.SourceControlPass;
 
-                                    sol.SourceControl.SolutionSourceControlAuthorEmail = App.UserProfile.SolutionSourceControlAuthorEmail;
-                                    sol.SourceControl.SolutionSourceControlAuthorName = App.UserProfile.SolutionSourceControlAuthorName;
-                                }
-                            }
-                            else
-                            {
-                                sol.SourceControl.SourceControlUser = App.UserProfile.SolutionSourceControlUser;
-                                sol.SourceControl.SourceControlPass = App.UserProfile.SolutionSourceControlPass;
+                        //            sol.SourceControl.SolutionSourceControlAuthorEmail = App.UserProfile.SolutionSourceControlAuthorEmail;
+                        //            sol.SourceControl.SolutionSourceControlAuthorName = App.UserProfile.SolutionSourceControlAuthorName;
+                        //        }
+                        //    }
+                        //    else
+                        //    {
+                        //        sol.SourceControl.SourceControlUser = App.UserProfile.SolutionSourceControlUser;
+                        //        sol.SourceControl.SourceControlPass = App.UserProfile.SolutionSourceControlPass;
 
-                                sol.SourceControl.SolutionSourceControlAuthorEmail = App.UserProfile.SolutionSourceControlAuthorEmail;
-                                sol.SourceControl.SolutionSourceControlAuthorName = App.UserProfile.SolutionSourceControlAuthorName;
-                            }
+                        //        sol.SourceControl.SolutionSourceControlAuthorEmail = App.UserProfile.SolutionSourceControlAuthorEmail;
+                        //        sol.SourceControl.SolutionSourceControlAuthorName = App.UserProfile.SolutionSourceControlAuthorName;
+                        //    }
 
-                            string error = string.Empty;
-                            sol.SourceControl.SolutionFolder = SolutionFolder;
-                            sol.SourceControl.RepositoryRootFolder = RepositoryRootFolder;
-                            sol.SourceControl.SourceControlURL = sol.SourceControl.GetRepositoryURL(ref error);
-                            sol.SourceControl.SourceControlLocalFolder = App.UserProfile.SourceControlLocalFolder;
+                        //    string error = string.Empty;
+                        //    sol.SourceControl.SolutionFolder = SolutionFolder;
+                        //    sol.SourceControl.RepositoryRootFolder = RepositoryRootFolder;
+                        //    sol.SourceControl.SourceControlURL = sol.SourceControl.GetRepositoryURL(ref error);
+                        //    sol.SourceControl.SourceControlLocalFolder = App.UserProfile.SourceControlLocalFolder;
 
-                            sol.SourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
-                            sol.SourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
+                        //    sol.SourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
+                        //    sol.SourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
 
-                            MainWindow.CheckInSolutionBtn.Visibility = Visibility.Visible;
-                            MainWindow.GetLatestSolutionBtn.Visibility = Visibility.Visible;
-                            MainWindow.ResolveConflictsBtn.Visibility = Visibility.Visible;
-                            MainWindow.ConnectionDetailsBtn.Visibility = Visibility.Visible;
-                            MainWindow.RepositoryDetailsBtn.Visibility = Visibility.Visible;
-                            MainWindow.SourceControlSolutioRibbonGroup.Visibility = Visibility.Visible;
-                        }
-                        else
-                        {
+                        //    MainWindow.CheckInSolutionBtn.Visibility = Visibility.Visible;
+                        //    MainWindow.GetLatestSolutionBtn.Visibility = Visibility.Visible;
+                        //    MainWindow.ResolveConflictsBtn.Visibility = Visibility.Visible;
+                        //    MainWindow.ConnectionDetailsBtn.Visibility = Visibility.Visible;
+                        //    MainWindow.RepositoryDetailsBtn.Visibility = Visibility.Visible;
+                        //    MainWindow.SourceControlSolutioRibbonGroup.Visibility = Visibility.Visible;
+                        //}
+                        //else
+                        //{
                             MainWindow.CheckInSolutionBtn.Visibility = Visibility.Collapsed;
                             MainWindow.GetLatestSolutionBtn.Visibility = Visibility.Collapsed;
                             MainWindow.ResolveConflictsBtn.Visibility = Visibility.Collapsed;
                             MainWindow.ConnectionDetailsBtn.Visibility = Visibility.Collapsed;
                             MainWindow.SourceControlSolutioRibbonGroup.Visibility = Visibility.Collapsed;
-                        }
+                       // }
 
                         
 

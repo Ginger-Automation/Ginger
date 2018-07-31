@@ -60,7 +60,7 @@ namespace GingerWPFUnitTest
 
             Console.WriteLine("===> Open solution");
             TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ Open solution @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-            // mGingerAutomator.OpenSolution(SolutionFolder);
+            mGingerAutomator.OpenSolution(SolutionFolder);
 
             //LogFile = mTC.TestLogsDir + @"\Ginger_BasicsTest.txt";
         }
