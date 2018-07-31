@@ -191,8 +191,7 @@ namespace GingerWPFUnitTest
 
 
 
-        [TestMethod]
-        [Ignore]
+        [TestMethod]        
         public void DeleteEnvFromFileSystem()
         {
             // Arrange            
@@ -214,31 +213,29 @@ namespace GingerWPFUnitTest
 
         }
 
-        
-        //[TestMethod]
-        //[Ignore]
-        //public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
-        //{
-        //    //Arrange
-        //    string EnvName = "Env to rename";
-        //    string EnvNewName = "Env to rename ZZZ";            
-        //    EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
-        //    EnvsPOM.CreateEnvironment(EnvName);
-        //    ProjEnvironment env = EnvsPOM.SelectEnvironment(EnvName);
 
-        //    //Act
-        //    string txt = File.ReadAllText(env.FilePath);
-        //    txt = txt.Replace(EnvName, EnvName + " ZZZ");
-        //    File.WriteAllText(env.FilePath, txt);
-        //    bool b = EnvsPOM.EnvironmentsTree.IsItemExist(EnvNewName);
+        [TestMethod]        
+        public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
+        {
+            //Arrange
+            string EnvName = "Env to rename";
+            string EnvNewName = "Env to rename ZZZ";
+            EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
+            EnvsPOM.CreateEnvironment(EnvName);
+            ProjEnvironment env = EnvsPOM.SelectEnvironment(EnvName);
 
-        //    // assert
-        //    Assert.AreEqual(EnvNewName, env.Name);
-        //    Assert.IsTrue(b);
-        //}
+            //Act
+            string txt = File.ReadAllText(env.FilePath);
+            txt = txt.Replace(EnvName, EnvName + " ZZZ");
+            File.WriteAllText(env.FilePath, txt);
+            bool b = EnvsPOM.EnvironmentsTree.IsItemExist(EnvNewName);
 
-        [TestMethod]
-        [Ignore]
+            // assert
+            Assert.AreEqual(EnvNewName, env.Name);
+            Assert.IsTrue(b);
+        }
+
+        [TestMethod]        
         public void AddEnvFolderShowinTree()
         {
             //Arrange
@@ -256,8 +253,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod]
-        [Ignore]
+        [TestMethod]        
         public void DeleteEnvFolderRemovedfromTree()
         {
             //Arrange
@@ -278,7 +274,7 @@ namespace GingerWPFUnitTest
 
 
         [TestMethod]
-        [Ignore]
+        
         public void RenameEnvFolderSyncWithTree()
         {
             //Arrange
