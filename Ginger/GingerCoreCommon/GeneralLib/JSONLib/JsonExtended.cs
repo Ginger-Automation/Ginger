@@ -162,10 +162,10 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public IEnumerable<JsonExtended> GetEndingNodes(bool IncludeSelfClosingTags = true)
         {
-            List<JsonExtended> mEndingnodes=new List<JsonExtended>();
+            List<JsonExtended> mEndingnodes = new List<JsonExtended>();
 
             var Jpropertytype = typeof(JProperty);
-          //  mEndingnodes=   this.GetAllNodes().Where(x=> x.GetToken().GetType()== Jpropertytype & (x.GetToken().Children().Count()>0)).ToList();
+            //  mEndingnodes=   this.GetAllNodes().Where(x=> x.GetToken().GetType()== Jpropertytype & (x.GetToken().Children().Count()>0)).ToList();
             /* if (IncludeSelfClosingTags)
              {
                  mEndingnodes = this.GetAllNodes().Where(x => x.ChildNodes.Count == 0 && x.GetXmlNode().NodeType != XmlNodeType.EndElement && x.GetXmlNode().NodeType != XmlNodeType.Comment).ToList();
@@ -176,15 +176,15 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
              }*/
 
-            foreach( var nodes in this.GetAllNodes())
+            foreach (var nodes in this.GetAllNodes())
             {
-           if(nodes.GetToken().GetType() == Jpropertytype)
-                    {
+                if (nodes.GetToken().GetType() == Jpropertytype)
+                {
 
                     mEndingnodes.Add(nodes);
                 }
             }
-            return this.GetAllNodes().Where(x=>x.GetToken().Children().Count()==0);
+            return this.GetAllNodes().Where(x => x.GetToken().Children().Count() == 0);
         }
 
 
@@ -211,6 +211,29 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
+        public void RemoveDuplicatesNodes()
+        {
+            List<JsonExtended> childNodesList = this.GetChildNodes();
+            if (childNodesList.Count() == 0)
+                return;
+
+            if (childNodesList.Count() > 1)
+            {
+                for (int i = 0; i < childNodesList.Count(); i++)
+                {
+                    List<JsonExtended> duplicateChildren;
+                    duplicateChildren = childNodesList.Where(x => x.GetToken().First.Path.Split('.').LastOrDefault() == childNodesList[i].GetToken().First.Path.Split('.').LastOrDefault() && x.GetToken().First.Path != childNodesList[i].GetToken().First.Path).ToList();
+                    foreach (JsonExtended child in duplicateChildren)
+                    {
+                        ChildNodes.Remove(child);
+                        child.JT.Remove();
+                    }
+                }
+            }
+
+            foreach (JsonExtended child in childNodesList)
+                child.RemoveDuplicatesNodes();
+        }
 
         #endregion
 

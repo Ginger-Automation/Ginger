@@ -20,6 +20,9 @@ using System;
 using System.IO;
 using System.Windows.Controls;
 using GingerCore.Actions;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Ginger.Actions
 {
@@ -30,13 +33,14 @@ namespace Ginger.Actions
     {
         private GingerCore.Actions.ActConsoleCommand f;
 
-        string SHFilesPath = App.UserProfile.Solution.Folder + @"\Documents\sh\";
+        string SHFilesPath = App.UserProfile.Solution.Folder + @"\Documents\sh\";        
 
         public ActConsoleCommandEditPage(GingerCore.Actions.ActConsoleCommand Act)
         {
             InitializeComponent();
             this.f = Act;
-            App.FillComboFromEnumVal(ConsoleActionComboBox, Act.ConsoleCommand);
+            List<object> list = GetActionListPlatform();            
+            App.FillComboFromEnumVal(ConsoleActionComboBox, Act.ConsoleCommand, list);
             App.ObjFieldBinding(ConsoleActionComboBox, ComboBox.TextProperty, Act, ActConsoleCommand.Fields.ConsoleCommand);
             App.ObjFieldBinding(CommandTextBox, TextBox.TextProperty, Act, ActConsoleCommand.Fields.Command);
             App.ObjFieldBinding(ScriptNameComboBox, ComboBox.TextProperty, Act, ActConsoleCommand.Fields.ScriptName);
@@ -44,6 +48,25 @@ namespace Ginger.Actions
             txtExpected.Init(f, ActConsoleCommand.Fields.ExpString);           
         }
 
+        private List<object> GetActionListPlatform()
+        {
+            List<object> actionList = new List<object>();
+            string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
+            ePlatformType platform = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            actionList.Add(ActConsoleCommand.eConsoleCommand.FreeCommand);
+
+            if (platform == ePlatformType.Unix)
+            {                
+                actionList.Add(ActConsoleCommand.eConsoleCommand.ParametrizedCommand);
+                actionList.Add(ActConsoleCommand.eConsoleCommand.Script);
+            }
+            else if(platform == ePlatformType.DOS)
+            {
+                actionList.Add(ActConsoleCommand.eConsoleCommand.CopyFile);
+                actionList.Add(ActConsoleCommand.eConsoleCommand.IsFileExist);
+            }
+            return actionList;
+        }
         private void ConsoleActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ScriptStackPanel.Visibility = System.Windows.Visibility.Collapsed;

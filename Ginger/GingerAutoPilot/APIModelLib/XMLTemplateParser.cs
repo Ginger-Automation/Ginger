@@ -17,13 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
-using System.Xml.XPath;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -32,8 +28,7 @@ namespace Amdocs.Ginger.Repository
 
         private Dictionary<string, int> AllPlaceHolders = new Dictionary<string, int>();
 
-
-        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName)
+        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, bool avoidDuplicatesNodes = false)
         {
             ObservableList<ApplicationAPIModel> AAMSList = new ObservableList<ApplicationAPIModel>();
             ApplicationAPIModel AAM = new ApplicationAPIModel();
@@ -42,8 +37,13 @@ namespace Amdocs.Ginger.Repository
             XmlDocument doc = new XmlDocument();
             doc.Load(FileName);
             XMLDocExtended XDE = new XMLDocExtended(doc);
+
+            if (avoidDuplicatesNodes)
+                XDE.RemoveDuplicatesNodes();
+
             IEnumerable<XMLDocExtended> NodeList = XDE.GetEndingNodes(false);
             ObservableList<AppModelParameter> AMPList = new ObservableList<AppModelParameter>();
+
             foreach (XMLDocExtended XDN in NodeList)
             {
 

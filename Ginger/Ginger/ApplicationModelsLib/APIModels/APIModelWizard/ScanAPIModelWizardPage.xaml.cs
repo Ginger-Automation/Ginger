@@ -192,7 +192,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 try
                 {
-                    AAMTempList = await Task.Run(() => WSDLP.ParseDocument(XTF.FilePath));
+                    AAMTempList = await Task.Run(() => WSDLP.ParseDocument(XTF.FilePath, AddAPIModelWizard.AvoidDuplicatesNodes));
                     if (!string.IsNullOrEmpty(XTF.MatchingResponseFilePath))
                         AAMTempList[0].ReturnValues = await Task.Run(() => APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath)); 
                     AAMCompletedList.Add(AAMTempList[0]);
@@ -224,7 +224,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 try
                 {
-                    AAMTempList = await Task.Run(() => JsonTemplate.ParseDocument(XTF.FilePath));
+                    AAMTempList = await Task.Run(() => JsonTemplate.ParseDocument(XTF.FilePath, AddAPIModelWizard.AvoidDuplicatesNodes));
                     if (!string.IsNullOrEmpty(XTF.MatchingResponseFilePath))
                         AAMTempList[0].ReturnValues = await Task.Run(() => APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath));
                     AAMCompletedList.Add(AAMTempList[0]);

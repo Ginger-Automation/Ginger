@@ -30,12 +30,13 @@ namespace Amdocs.Ginger.Common.GeneralLib
         public static async Task<string> DownloadFileAsync(Uri url)
         {
             WebClient wbClient = new WebClient();
-          /* wbClient.Proxy = new WebProxy()
-            {
-                
-                UseDefaultCredentials = true,
-            };*/
-            return wbClient.DownloadString(url);
+            /* wbClient.Proxy = new WebProxy()
+              {
+
+                  UseDefaultCredentials = true,
+              };*/
+            return await wbClient.DownloadStringTaskAsync(url);
+
 
         }
     }

@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        private string mStoreToVariable;
+        private string mStoreToVariable = string.Empty;
         /// <summary>
         /// Do not use - check if can be deleted
         /// </summary>

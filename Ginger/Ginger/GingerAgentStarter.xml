@@ -9,7 +9,7 @@
         <attribute name="Class-Path" value="."/>
       </manifest>
       <fileset dir="C:\projects\ginger\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\bin"/>
-      <zipfileset excludes="META-INF/*.SF" src="C:/Program Files (x86)/Java/jdk1.7.0/lib/tools.jar"/>     
+      <zipfileset excludes="META-INF/*.SF" src="C:/Program Files (x86)/Java/jdk1.7.0/lib/tools.jar"/>
     </jar>
   </target>
 </project>

@@ -70,7 +70,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                mServiceDescriptionsList.Add(sd);
         }
 
-        public override ObservableList<ApplicationAPIModel> ParseDocument(string URL)
+        public override ObservableList<ApplicationAPIModel> ParseDocument(string URL, bool avoidDuplicatesNodes = false)
         {
             mURL = URL;
 
