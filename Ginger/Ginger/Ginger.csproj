@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{276B433A-790B-45B7-9FFB-8E3C8B8A0CB0}</ProjectGuid>
+    <ProjectGuid>{3EFCB931-48FC-45BF-9598-0F8138802411}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ginger</RootNamespace>

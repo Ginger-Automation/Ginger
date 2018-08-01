@@ -627,7 +627,8 @@ namespace Ginger
 
         public void ScrollToViewCurrentItem()
         {
-            grdMain.ScrollIntoView(mObjList.CurrentItem);
+            if(mObjList.CurrentItem!=null)
+                grdMain.ScrollIntoView(mObjList.CurrentItem);
         }
 
         private void btnClearAll_Click(object sender, RoutedEventArgs e)

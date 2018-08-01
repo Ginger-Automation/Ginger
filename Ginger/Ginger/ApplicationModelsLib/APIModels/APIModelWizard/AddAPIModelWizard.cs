@@ -70,6 +70,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         
         public ObservableList<RepositoryItemKey> TagsKeys = new ObservableList<RepositoryItemKey>();
 
+        public bool AvoidDuplicatesNodes { get; set; }
+
         public AddAPIModelWizard(RepositoryFolder<ApplicationAPIModel> APIModelsFolder)
         {
             APIModelFolder = APIModelsFolder;

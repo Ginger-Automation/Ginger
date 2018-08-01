@@ -88,8 +88,7 @@ namespace Ginger.Actions.UserControls
         private void UCFlowControlAction_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             FC = (FlowControl)e.NewValue;
-            
-            FC.PropertyChanged += FC_PropertyChanged;
+                        
 
             if (mBfParentRunner != null)
             {
@@ -131,17 +130,7 @@ namespace Ginger.Actions.UserControls
                 FC.Value = null;
             }
         }
-
-        private void FC_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName != nameof(FlowControl.Status) && e.PropertyName != nameof(FlowControl.Condition) && e.PropertyName != nameof(FlowControl.ConditionCalculated) && e.PropertyName != nameof(FlowControl.Value) && e.PropertyName != nameof(FlowControl.ValueCalculated) && e.PropertyName != nameof(FlowControl.FilePath))
-            {
-                this.Dispatcher.Invoke(() =>
-                {
-                    SetActionValueComboData();
-                });                
-            }
-        }
+      
 
         private void SetActionValueComboData()
         {

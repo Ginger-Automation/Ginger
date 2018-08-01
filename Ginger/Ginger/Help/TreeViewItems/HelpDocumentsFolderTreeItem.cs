@@ -30,7 +30,7 @@ namespace Ginger.Help.TreeViewItems
         public string Folder { get; set; }
         public string Path { get; set; }
 
-        private ContextMenu mContextMenu = new ContextMenu();
+      //  private ContextMenu mContextMenu = new ContextMenu();
         public eBusinessFlowsTreeViewMode mViewMode;
 
         public HelpDocumentsFolderTreeItem()
