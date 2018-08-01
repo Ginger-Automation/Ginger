@@ -4,7 +4,7 @@
 #define MyAppName "Amdocs BEAT Ginger Automation"
 #define MyAppVersion "3.0.0.0"
 #define MyAppPublisher "Amdocs"
-#define MyAppURL "http://Ginger"
+#define MyAppURL "http://https://github.com/Ginger-Automation"
 #define MyAppExeName "Ginger.exe"
 
 
