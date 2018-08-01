@@ -8,7 +8,7 @@
 	<property name="GingerAgentJar" value="GingerAgent.jar" />
 	<path id="GingerJavaAgent.classpath">
 
-		<pathelement location="C:\Program Files (x86)\Java\jdk1.6.0_29\lib\tools.jar" />
+		<pathelement location="C:\Program Files (x86)\Java\jdk1.6.0\lib\tools.jar" />
 			
 		<pathelement location="javassist.jar" />
 		<pathelement location="jsoup.jar" />
