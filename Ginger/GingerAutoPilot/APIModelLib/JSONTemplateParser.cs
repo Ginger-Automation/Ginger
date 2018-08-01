@@ -28,41 +28,26 @@ namespace Amdocs.Ginger.Common.APIModelLib
 {
     public class JSONTemplateParser : APIConfigurationsDocumentParserBase
     {
-        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName)
+        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, bool avoidDuplicatesNodes = false)
         {
             ObservableList<ApplicationAPIModel> AAMSList = new ObservableList<ApplicationAPIModel>();
 
             ApplicationAPIModel AAM = new ApplicationAPIModel();
-            //ObservableList<APIParameter> APIPList = new ObservableList<APIParameter>();
             AAM.Name = Path.GetFileNameWithoutExtension(FileName);
-
 
             string JSOnText = System.IO.File.ReadAllText(FileName);
 
+            //JObject jo = JObject.Parse(JSOnText);
+            //IList<string> keys = jo.Properties().Select(p => p.Path).ToList();
 
-
-            JObject jo = JObject.Parse(JSOnText);
-
-
-
-
-            IList<string> keys = jo.Properties().Select(p => p.Path).ToList();
-
-
-
-
-
-
-
-
-
-
-
-
-
+            if (avoidDuplicatesNodes)
+            {
+                JsonExtended fullJSOnObjectExtended = new JsonExtended(JSOnText);
+                fullJSOnObjectExtended.RemoveDuplicatesNodes();
+                JSOnText = fullJSOnObjectExtended.JsonString;
+            }
 
             object[] BodyandModelParameters = GenerateBodyANdModelParameters(JSOnText);
-
 
             AAM.RequestBody = (string)BodyandModelParameters[0];
             AAM.AppModelParameters = (ObservableList<AppModelParameter>)BodyandModelParameters[1];
@@ -86,7 +71,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
             }
 
             return ReturnValues;
-        }   
+        }
 
         public static object[] GenerateBodyANdModelParameters(string JSOnText)
         {
@@ -111,8 +96,6 @@ namespace Amdocs.Ginger.Common.APIModelLib
                 {
                     i++;
                     param = "<" + paramname + i + ">";
-
-
                 }
 
                 ParamPath.Add(param, Jn.Path);

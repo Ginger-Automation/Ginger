@@ -362,6 +362,34 @@ namespace Amdocs.Ginger.Common
 
             return XN.Name + "[" + i + "]";
         }
+
+        public void RemoveDuplicatesNodes()
+        {
+            List<XMLDocExtended> childNodesList = this.GetChildNodes();
+            if (childNodesList.Count == 0)
+                return;
+
+            if (childNodesList.Count > 1)
+            {
+                for (int i = 0; i < childNodesList.Count; i++)
+                {
+                    if (!childNodesList[i].Name.Equals("comment"))
+                    {
+                        List<XMLDocExtended> duplicateChild = null;
+                        duplicateChild = childNodesList.Where(x => x.Name == childNodesList[i].Name && x.XPath != childNodesList[i].XPath).ToList();
+                        foreach (XMLDocExtended child in duplicateChild)
+                        {
+                            childNodesList[i].XN.ParentNode.RemoveChild(child.XN);
+                            childNodesList.Remove(child);
+                        }
+                    }
+                }
+            }
+
+            foreach (XMLDocExtended child in childNodesList)
+                child.RemoveDuplicatesNodes();
+        }
+
         #endregion
 
     }

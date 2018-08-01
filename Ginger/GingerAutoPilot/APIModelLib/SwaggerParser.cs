@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
         string ResolvedJson = "";
         SwaggerDocument Swaggerdoc = null;
 
-        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName)
+        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, bool avoidDuplicatesNodes = false)
         {
             string FinalFileName = "";
             Uri url = new Uri(FileName);

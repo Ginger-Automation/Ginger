@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.Repository
 {
     public abstract class APIConfigurationsDocumentParserBase
     {
-        public abstract ObservableList<ApplicationAPIModel> ParseDocument(string FileName);
+        public abstract ObservableList<ApplicationAPIModel> ParseDocument(string FileName, bool avoidDuplicatesNodes = false);
         public static bool ParameterValuesUpdated { get; set; }
 
         public static ObservableList<ActReturnValue> ParseResponseSampleIntoReturnValuesPerFileType(string FilePath)
