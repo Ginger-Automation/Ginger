@@ -3,13 +3,13 @@
   <!--this file was created by Eclipse Runnable JAR Export Wizard-->
   <!--ANT 1.7 is required                                        -->
   <target name="create_run_jar">
-    <jar destfile="D:/GingerSources/Devs/GingerNextVer_Dev/Ginger/ExternalAgents/GingerAgentStarter.jar" filesetmanifest="mergewithoutmain">
+    <jar destfile="C:GingerAgentStarter.jar" filesetmanifest="mergewithoutmain">
       <manifest>
         <attribute name="Main-Class" value="com.amdocs.ginger.GingerAgent"/>
         <attribute name="Class-Path" value="."/>
       </manifest>
-      <fileset dir="D:/GingerSources/Devs/GingerNextVer_Dev/GingerCore/Drivers/JavaDriverLib/GingerJavaAgent/bin"/>
-      <zipfileset excludes="META-INF/*.SF" src="C:/Program Files (x86)/Java/jdk1.6.0_29/lib/tools.jar"/>     
+      <fileset dir="C:\projects\ginger\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\bin"/>
+      <zipfileset excludes="META-INF/*.SF" src="C:/Program Files (x86)/Java/jdk1.7.0/lib/tools.jar"/>     
     </jar>
   </target>
 </project>
