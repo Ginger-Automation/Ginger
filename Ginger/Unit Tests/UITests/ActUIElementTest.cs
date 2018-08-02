@@ -75,7 +75,7 @@ namespace UnitTests.UITests
         }
 
         [TestMethod,Timeout(60000)]
-        [Timeout(60000)]
+      
         public void DragAndDropJS()
         {
             ResetBusinessFlow();
@@ -108,7 +108,7 @@ namespace UnitTests.UITests
         }
 
         [TestMethod,Timeout(60000)]
-        [Timeout(60000)]
+  
         public void DragAndDropSelenium()
         {
             ResetBusinessFlow();
@@ -143,7 +143,7 @@ namespace UnitTests.UITests
         }
 
         [TestMethod,Timeout(60000)]
-        [Timeout(60000)]
+  
         public void DrawObject()
         {
             ResetBusinessFlow();
