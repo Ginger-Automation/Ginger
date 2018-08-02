@@ -119,7 +119,7 @@ namespace UnitTests.UITests.PBDriverTest
         }
 
         #region Text box field
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SetTextField_tb_lastname()
         {           
             //Arrange                        
@@ -160,7 +160,7 @@ namespace UnitTests.UITests.PBDriverTest
            Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetTextField_tb_lastname()
         {
             //Arrange                        
@@ -195,7 +195,7 @@ namespace UnitTests.UITests.PBDriverTest
         #endregion
 
         #region Windows
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void WindowVisualStateCheck()
         {
 
@@ -248,7 +248,7 @@ namespace UnitTests.UITests.PBDriverTest
         #endregion
         #region Button
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ClickButton_ByText()
         {
             
@@ -289,7 +289,7 @@ namespace UnitTests.UITests.PBDriverTest
         #endregion
 
         #region CheckBox
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SetCheckboxValue_ByName()
         {
             //Arrange                        
@@ -332,7 +332,7 @@ namespace UnitTests.UITests.PBDriverTest
            Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetCheckboxValue_ByName()
         {
             //Arrange      
@@ -367,7 +367,7 @@ namespace UnitTests.UITests.PBDriverTest
            Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ToggleCheckboxValue_ByName()
         {//Arrange                        
 
@@ -420,7 +420,7 @@ namespace UnitTests.UITests.PBDriverTest
            Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void IsCheckboxEnabled_ByName()
         {
             //Arrange                        
@@ -444,7 +444,7 @@ namespace UnitTests.UITests.PBDriverTest
         #endregion
 
         #region radio button
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SelectRadioButton_Bachelors()
         {
             //Select the radio button
@@ -481,7 +481,7 @@ namespace UnitTests.UITests.PBDriverTest
            Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetValueRadioButton_Bachelors()
         {
             ActPBControl c1 = new ActPBControl();
@@ -514,7 +514,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void IsSelectedRadioButton_Masters()
         {
             //Select the radio button
@@ -548,7 +548,7 @@ namespace UnitTests.UITests.PBDriverTest
         #endregion
 
         #region Title Bar
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetTitleBarText_SimplePage()
         {
             ActPBControl c = new ActPBControl();
@@ -569,7 +569,7 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetTextByName_name()
         {
             ActPBControl c = new ActPBControl();
@@ -589,7 +589,7 @@ namespace UnitTests.UITests.PBDriverTest
         #endregion
 
         #region combo box
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SelectComboBoxItem_Indian()
         {
             
@@ -626,7 +626,7 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetSelectedItem_ComboBox()
         {
 
@@ -658,7 +658,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetAllItems_ComboBox()
         {
 
@@ -679,7 +679,7 @@ namespace UnitTests.UITests.PBDriverTest
         #endregion
 
         #region List box
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ClickListBoxItem_English()
         {
             ActPBControl c = new ActPBControl();
@@ -713,7 +713,7 @@ namespace UnitTests.UITests.PBDriverTest
         }
 
                      
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetSelectedItems_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -744,7 +744,7 @@ namespace UnitTests.UITests.PBDriverTest
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetAllItems_ListBox()
         {
 
@@ -767,7 +767,7 @@ namespace UnitTests.UITests.PBDriverTest
         #endregion
 
         #region Dialog control
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetDialogTitle_ClickMeButton()
         {
 
@@ -805,7 +805,7 @@ namespace UnitTests.UITests.PBDriverTest
             mGR.RunAction(c, false);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetDialogText_ClickMeButton()
         {
             ActPBControl c = new ActPBControl();
@@ -846,7 +846,7 @@ namespace UnitTests.UITests.PBDriverTest
         #endregion
 
         #region Menu bar
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetAllMenuBarElements()
         {
             ActPBControl c = new ActPBControl();
@@ -869,7 +869,7 @@ namespace UnitTests.UITests.PBDriverTest
         #endregion
 
         #region XPath locator
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SetTextBoxValue_ByXpath()
         {
             ActPBControl c = new ActPBControl();
@@ -902,7 +902,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetTextBoxValue_ByXpath()
         {
             ActPBControl c = new ActPBControl();
@@ -934,7 +934,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetTextBoxValue_ByXpathWithValueProperty()
         {
             ActPBControl c = new ActPBControl();
@@ -966,7 +966,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SelectCountry_ByXpathWithMultipleProperty()
         {
             ActPBControl c = new ActPBControl();
@@ -999,7 +999,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetText_TableActionGrid()
         {            
             ActTableElement actGrid = new ActTableElement();
@@ -1031,7 +1031,7 @@ namespace UnitTests.UITests.PBDriverTest
         }
 
          
-         [TestMethod]
+         [TestMethod,Timeout(60000)]
         public void SetText_TableActionGrid()
         {
             ActTableElement actGrid1 = new ActTableElement();
@@ -1098,7 +1098,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
          public void Click_TableAction()
         {
              ActTableElement actGrid = new ActTableElement();
@@ -1138,7 +1138,7 @@ namespace UnitTests.UITests.PBDriverTest
 
         #region Table Action on Grid
         //For Xpath with only name property
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetText_TableActionGrid_OnRowNumColNum()
         { 
             ActTableElement actGrid = new ActTableElement();
@@ -1174,7 +1174,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetText_TableActionGrid_OnRowNumColTitle()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1210,7 +1210,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetText_TableActionGrid_OnAnyRowColNum()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1249,7 +1249,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetText_TableActionGrid_OnAnyRowColtitle()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1289,7 +1289,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
 
         public void GetText_TableActionGrid_OnColNumwhereColTitle()
         {
@@ -1322,7 +1322,7 @@ namespace UnitTests.UITests.PBDriverTest
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetText_TableActionGrid_OnColTitlewhereColTitle()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1353,7 +1353,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetText_TableActionGrid_OnColNumwhereColNum()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1384,7 +1384,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetText_TableActionGrid_OnColTitlewhereColNum()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1415,7 +1415,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GetRowCount_TableActionGrid()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1454,7 +1454,7 @@ namespace UnitTests.UITests.PBDriverTest
         #endregion
 
         #region UIElement Action- Click and Validate
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void TestClickAndValidate_isExist()
         {
             ActUIElement actUI = new ActUIElement();
@@ -1520,7 +1520,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(actUI.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void TestClickAndValidate_NotExist()
         {
             ActPBControl c = new ActPBControl();
@@ -1594,7 +1594,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(actUI.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void TestClickAndValidate_isEnabled()
         {
             ActUIElement actUI = new ActUIElement();
@@ -1671,7 +1671,7 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(actUI.Error, null, "Act.Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void TestClickAndValidate_LoopThroughClicks()
         {
             ActPBControl c = new ActPBControl();

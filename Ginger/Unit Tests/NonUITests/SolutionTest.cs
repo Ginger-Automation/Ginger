@@ -46,7 +46,7 @@ namespace UnitTests.NonUITests
         /// <summary>
         /// Test the new solution been created successfully
         /// </summary>
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void CreateNewSolution()
         {
             // Arrange
@@ -67,7 +67,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(loadSol.Name, createSol.Name);
            Assert.AreEqual(loadSol.MainPlatform, createSol.MainPlatform);
         }
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void CreateNewSolutionWithMultiUnderscore()
         {
             // Arrange

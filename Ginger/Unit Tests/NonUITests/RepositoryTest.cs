@@ -56,7 +56,7 @@ namespace UnitTests.NonUITests
                         
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void BizFlowSaveLoad()
         {
             
@@ -115,7 +115,7 @@ namespace UnitTests.NonUITests
 
 
       
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void BizFlowCheckIsDirtyFalse()
         //{
 
@@ -168,7 +168,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         [Ignore]
         public void BizFlowCheckIsDirtyTrue()
         {
@@ -223,7 +223,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void RunSetConfigSaveLoad()
         //{
         //    //Arrange
@@ -245,7 +245,7 @@ namespace UnitTests.NonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]       
+        //[TestMethod,Timeout(60000)]       
         //public void SaveLoadRunSetWithRunSetActionSendFreeEmailX2()
         //{
         //    //Arrange
@@ -266,7 +266,7 @@ namespace UnitTests.NonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void SaveLoadRunSetWithRunSetActionSendFreeEmailValidateEmail()
         //{
         //    //Arrange
@@ -290,7 +290,7 @@ namespace UnitTests.NonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void LoadRunSetWith5Operations()
         //{
         //    //Arrange
@@ -305,7 +305,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         [Ignore]
         public void BizFlowAddActivitiesFromSharedRepoSaveLoad()
         {
@@ -398,7 +398,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void BackUpRestore()
         {
             //Arrange
@@ -516,7 +516,7 @@ namespace UnitTests.NonUITests
        }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void BackUpRestoreBFWithVariableSelectionList()
         {
             //Arrange
@@ -548,7 +548,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count(), 3, "(VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count()");
         }
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void ActivitiesReadSpeedTest()
         //{
 
@@ -571,7 +571,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void TestObjectAttrofOneRepoItem()
         {
             //Check Save and Load of RunSetConfig with Send Email action - RunSetActionSendEmail have 'Email' field which is single object as field, if save load correctly test pass
@@ -608,7 +608,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void BizFlowWithTags()
         {
 
@@ -646,7 +646,7 @@ namespace UnitTests.NonUITests
 
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void BizFlowSaveLoadSpeedTest()
         //{
 
@@ -710,7 +710,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void BigBizFlowLoadSpeedTest()
         //{
 
@@ -738,7 +738,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void CopyAction()
         {
 
@@ -755,7 +755,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void CreateDuplicationAction()
         {
 
@@ -774,7 +774,7 @@ namespace UnitTests.NonUITests
 
 
                
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         [Ignore]
         public void FlowcontrolTest_WithBFCreateCopy()
         {
@@ -837,7 +837,7 @@ namespace UnitTests.NonUITests
         }
         
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void FlowcontrolTest_WithActivityCreateInstance()
         {
             //Arrange
@@ -875,7 +875,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ActionVariableDependancyTest_WithCreateInstance()
         {
             //Arrange
@@ -910,7 +910,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void ActivityVariableDependancyTest_UnserializeFile()
         //{
         //    //Arrange
@@ -927,7 +927,7 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ActivityVariableDependancyTest_WithCreateInstance()
         {
             //Arrange

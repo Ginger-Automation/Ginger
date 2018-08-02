@@ -76,7 +76,7 @@ namespace UnitTests.NonUITests
             mGR.BusinessFlows.Add(mBF);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SCM_Login()
         {
 
@@ -124,7 +124,7 @@ namespace UnitTests.NonUITests
 
 
         // Test the time to enter data into text box
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SpeedTest()
         {
             //Arrange
@@ -167,7 +167,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void TestVariableResetIssue()
         {
             //This was a tricky bug not repro every time.

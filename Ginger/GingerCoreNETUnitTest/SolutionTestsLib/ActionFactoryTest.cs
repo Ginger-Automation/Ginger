@@ -43,7 +43,7 @@
 
 //        }
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void GetAllInterfacesAction()
 //        {
 //            // Arrange

@@ -83,7 +83,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void VisualCompareAgentConfig()
         {
             //Arrange
@@ -104,7 +104,7 @@ namespace GingerWPFUnitTest.AgentsLib
 
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void AddAgentUsingWizard()
         {
             //Arrange       
@@ -120,7 +120,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.AreEqual(name, agent.Name, "Agent.Name is same");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void RenameAgent()
         {
             //Arrange     
@@ -142,7 +142,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void AddAgentsFolderinFilesystemShowinTree()
         {
             //Arrange
@@ -158,7 +158,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(agentExist, "Agent exist in tree");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void AddAgentsFolderUsingMenu()
         {
             //Arrange
@@ -177,7 +177,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(Directory.Exists(subFolder),"sub folder exist");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void AddAgentsFolderUsingMenuAndAddAgent()
         {
             //Arrange
@@ -199,7 +199,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
         [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", @".\TestData\Agents.csv", "Agents#csv", DataAccessMethod.Sequential)]        
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void CreateAgentsFromCSV()
         {
             // arrange
@@ -222,7 +222,7 @@ namespace GingerWPFUnitTest.AgentsLib
 
         [DataRow("Web 1", "Web", "SeleniumChrome")]
         [DataRow("Web 2", "Web", "SeleniumFireFox")]
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void CreateAgentsbyTestData(string agentName, string platfromType, string driverType)
         {
             // arrange
@@ -242,7 +242,7 @@ namespace GingerWPFUnitTest.AgentsLib
 
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void CopyPasteAgentinAgentRoot()
         {
             //Arrange            
@@ -268,7 +268,7 @@ namespace GingerWPFUnitTest.AgentsLib
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void CutPasteAgentFromRootToSubFolder()
         {
             //Arrange            
@@ -299,7 +299,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void CutPasteAgentFromSubFolderToroot()
         {
             //Arrange            

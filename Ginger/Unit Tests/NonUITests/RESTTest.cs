@@ -43,7 +43,7 @@ namespace UnitTests.NonUITests
 
         // Need to have our own REST server, so will not be dependent on David server
         
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         [Level3]
         public void WebServices_RestAction()
         {

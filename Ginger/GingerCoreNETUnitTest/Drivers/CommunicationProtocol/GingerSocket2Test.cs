@@ -213,7 +213,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Echo()
         {
             // Arrange
@@ -229,7 +229,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(txt, txt2, "txt = txt2");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Echo1000Speed()
         {
             // We measure speed so we will not introduce code with communcation speed impact 
@@ -256,7 +256,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.IsTrue(st.ElapsedMilliseconds < 500, "st.ElapsedMilliseconds < 500");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void EchoBig10KMessage()
         {
             // Arrange
@@ -279,7 +279,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void EchoRandomMessageSize()
         {
             // Arrange
@@ -332,7 +332,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SlowResponse1000()
         {
             // Arrange            
@@ -346,7 +346,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void LongAction()
         {
             // Arrange            
@@ -359,7 +359,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(PLRC.Name, "LongActionDone", "PLRC.Name = LongActionDone");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ServerSendMessagetoClient()
         {
             //FIXME  get stuck!!!
@@ -379,7 +379,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ClientSendCalcSum()
         {
             // Arrange            
@@ -398,7 +398,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ClientConnectSendClose()
         {
 
@@ -419,7 +419,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Run10ClientsParallel()
         {
             // Arrange
@@ -467,7 +467,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void VerifyClientGetUniqueGUID()
         {
             // Arrange

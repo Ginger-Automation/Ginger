@@ -42,7 +42,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void NewRepositorySerializer_ReadOldXMLwithOldRS()
         {
             //read old xml using old RS
@@ -51,7 +51,7 @@ namespace UnitTests.NonUITests
         }
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void NewRepositorySerializer_ReadOldXML()
         //{
         //    // Using new SR2 to load and write old XML but load old object, save with the style

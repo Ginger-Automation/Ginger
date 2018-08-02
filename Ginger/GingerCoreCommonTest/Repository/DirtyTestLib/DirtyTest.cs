@@ -42,7 +42,7 @@ namespace GingerCoreCommonTest.Repository
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ObjWithoutTracking()
         {
             //Arrange
@@ -57,7 +57,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         public void CheckObjDirty()
         {
             //Arrange
@@ -73,7 +73,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void PropertyNotSerializedNochangetoDirty()
         {
             //Arrange
@@ -89,7 +89,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
         bool DirtyStatusChangedTriggered = false;
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ObjWitChildsTracking()
         {
             //Arrange
@@ -116,7 +116,7 @@ namespace GingerCoreCommonTest.Repository
             DirtyStatusChangedTriggered = true;
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void AddChildToList()
         {
             //Arrange
@@ -133,7 +133,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void RemoveChildFromList()
         {
             //Arrange
@@ -154,7 +154,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
         //[Ignore]  // Need repsoitory serializer to work
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void CopyItem()
         //{
         //    //Arrange
@@ -171,7 +171,7 @@ namespace GingerCoreCommonTest.Repository
         //}
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void UpdateChildPropertyWhichisNotSerialzied()
         {
             //Arrange

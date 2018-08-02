@@ -78,7 +78,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         //}
 
         #region PayLoad on C# Side
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SimpleString()
         {
             //Arrange
@@ -100,7 +100,7 @@ namespace UnitTests.NonUITests.PayLoadTest
            Assert.AreEqual(pl.Name, pl2.Name);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void PayloadOnSameSide()
         {
             //Arrange
@@ -119,7 +119,7 @@ namespace UnitTests.NonUITests.PayLoadTest
             Assert.AreEqual(pl.Name, pl2.Name);
         }
 
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         public void UTF16String()
         {
             //Arrange
@@ -140,7 +140,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void LongString5000()
         {
             //Arrange
@@ -167,7 +167,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void VeryLongString500000()
         {
             //Arrange
@@ -193,7 +193,7 @@ namespace UnitTests.NonUITests.PayLoadTest
            Assert.AreEqual(s0, s1);
         }
 
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         public void StringWithSpecialCharsUTF8()
         {
             //Arrange            
@@ -215,7 +215,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SimpleInt()
         {
             //Arrange
@@ -235,7 +235,7 @@ namespace UnitTests.NonUITests.PayLoadTest
            Assert.AreEqual(val, val2);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void NegativeInt()
         {
             //Arrange
@@ -255,7 +255,7 @@ namespace UnitTests.NonUITests.PayLoadTest
            Assert.AreEqual(val, val2);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void IntMaxValue()
         {
             //Arrange
@@ -278,7 +278,7 @@ namespace UnitTests.NonUITests.PayLoadTest
 
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ComplexStringWith2Ints()
         {
             //Arrange
@@ -306,7 +306,7 @@ namespace UnitTests.NonUITests.PayLoadTest
            Assert.AreEqual(vals, vals2);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ComplexEnumStringsInts()
         {
             //Arrange
@@ -343,7 +343,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void DumpTest()
         {
             //Arrange
@@ -363,7 +363,7 @@ namespace UnitTests.NonUITests.PayLoadTest
             //Assert
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ActJavaElementAction()
         {
             //Arrange
@@ -395,7 +395,7 @@ namespace UnitTests.NonUITests.PayLoadTest
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SpeedTestSimpleStringX100()
         {
             //Arrange
@@ -423,7 +423,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void NullTest()
         {
             //Arrange
@@ -445,7 +445,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void PayLoadList()
         {
 
@@ -488,7 +488,7 @@ namespace UnitTests.NonUITests.PayLoadTest
 
         #region Validate Payload Response from Side
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void SimpleInt_ResponseFromJava()
         //{
         //    //Arrange
@@ -506,7 +506,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         //    Assert.AreEqual(val, val2);
         //}
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void NegativeInt_ResponseFromJava()
         //{
         //    //Arrange
@@ -525,7 +525,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         //    Assert.AreEqual(val, val2);
         //}
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void IntMinValue_ResponseFromJava()
         //{
         //    //Arrange
@@ -544,7 +544,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         //    Assert.AreEqual(val, val2);
         //}
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void IntMaxValue_ResponseFromJava()
         //{
         //    //Arrange
@@ -565,7 +565,7 @@ namespace UnitTests.NonUITests.PayLoadTest
 
 
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void IntRangeOfNumberTest()
         //{
         //    for (int i = -500; i < 500; i++)

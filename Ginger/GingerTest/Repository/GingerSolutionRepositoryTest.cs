@@ -105,7 +105,7 @@
 
       
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void VerifyEnvcopyIsOK()
 //        {
 //            //Arrange
@@ -122,7 +122,7 @@
 //            Assert.AreEqual(env1.Guid, env1Copy.Guid);
 //        }
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void EnvRenameshouldKeepOriginalFileName()
 //        {
 //            //Arrange
@@ -141,7 +141,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void EnvRenameDupWithFileNameExist()
 //        {
 //            //Arrange
@@ -164,7 +164,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void EnvRenameDupWithFileNameExistx3()
 //        {
 //            //Arrange
@@ -197,7 +197,7 @@
 
 //        //TODO: add another test which update value with same and see prop changed didn't trigger
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        [Ignore]
 //        public void CheckPropertyChangedTriggered()
 //        {

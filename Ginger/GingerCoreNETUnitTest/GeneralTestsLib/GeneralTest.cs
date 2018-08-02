@@ -42,7 +42,7 @@ namespace GingerCoreNETUnitTests.GeneralTestsLib
         }
 
         
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void CheckReferences()
         //{
         //    // we check reference to make sure we keep Gigner CoreNET minimal with less dependecies

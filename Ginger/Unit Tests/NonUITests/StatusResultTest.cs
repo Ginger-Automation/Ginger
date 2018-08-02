@@ -85,7 +85,7 @@ namespace UnitTests.NonUITests
             mGR.BusinessFlows.Add(mBF);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Simple_Act()
         {
             //Arrange
@@ -99,7 +99,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(act1.Status, eRunStatus.Passed, "act1.Status=eRunStatus.Passed");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Simple_Act_With_Error()
         {
             //Arrange
@@ -114,7 +114,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(act1.Status, eRunStatus.Failed, "act1.Status=eRunStatus.Failed");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Simple_Act_ReturnValue_As_Expected()
         {
             //Arrange
@@ -134,7 +134,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(RV.Status, ActReturnValue.eStatus.Passed, "RV.Status, ActReturnValue.eStatus.Passed");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Simple_Act_ReturnValue_Not_As_Expected()
         {
             //Arrange
@@ -154,7 +154,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(RV.Status, ActReturnValue.eStatus.Failed, "RV.Status, ActReturnValue.eStatus.Failed");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Activity_With_Action_Pass()
         {
             //Arrange
@@ -192,7 +192,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(a1.Status, eRunStatus.Passed, "a1.Status=eRunStatus.Passed");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         [Ignore]
         public void Activity_With_Action_Fail_And_RunOption_Stop()
         {
@@ -220,7 +220,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(act3.Status, eRunStatus.Blocked, "act3.Status=eRunStatus.Blocked");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Activity_With_Action_Fail_And_RunOption_Continue()
         {
             Activity a1 = new Activity();
@@ -249,7 +249,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(act3.Status, eRunStatus.Passed, "act1.Status=eRunStatus.Passed");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void BF_No_Activities()
         {
             //Arrange
@@ -283,7 +283,7 @@ namespace UnitTests.NonUITests
         }
 
       
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //[Ignore]
         //public void BF_Activities_All_Pass()
         //{
@@ -311,7 +311,7 @@ namespace UnitTests.NonUITests
         //   Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed, "mBF.RunStatus=eRunStatus.Passed");
         //}
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //[Ignore]
         //public void BF_With_Activity_Fail_And_Mandatory()
         //{
@@ -349,7 +349,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //[Ignore]
         //public void BF_With_Activity_Fail_But_Not_Manadatory()
         //{
@@ -387,7 +387,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //[Ignore]
         //public void Timeout_WithAgent()
         //{            
@@ -412,7 +412,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Test_CalculateActivityStatus_Failed_Action()
         {
 
@@ -431,7 +431,7 @@ namespace UnitTests.NonUITests
             // since there is no failure we assume pass
             Assert.AreEqual(a1.Status, eRunStatus.Failed, "a1.Status=eRunStatus.Failed");
         }
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Test_CalculateActivityStatus_FailedAction_Then_Stop()
         {
 
@@ -456,7 +456,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(a1.Status, eRunStatus.Stopped, "a1.Status=eRunStatus.Stopped");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Test_CalculateBFStatus_FailedActivity()
         {
 
@@ -478,7 +478,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Test_CalculateBFStatus_FailedActivity_ThenStopped()
         {
 

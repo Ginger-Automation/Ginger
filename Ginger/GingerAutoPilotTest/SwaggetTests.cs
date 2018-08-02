@@ -41,7 +41,7 @@ namespace UnitTests.NonUITests.AutoPilot
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SwaggerParseCheckHeaderAndParamsCount()
         {
             //Arrange

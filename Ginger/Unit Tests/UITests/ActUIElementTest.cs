@@ -74,7 +74,7 @@ namespace UnitTests.UITests
             mGR.BusinessFlows.Add(mBF);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         [Timeout(60000)]
         public void DragAndDropJS()
         {
@@ -107,7 +107,7 @@ namespace UnitTests.UITests
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         [Timeout(60000)]
         public void DragAndDropSelenium()
         {
@@ -142,7 +142,7 @@ namespace UnitTests.UITests
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         [Timeout(60000)]
         public void DrawObject()
         {

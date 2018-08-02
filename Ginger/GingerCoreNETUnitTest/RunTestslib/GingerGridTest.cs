@@ -83,7 +83,7 @@
 
 
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void ListGingerNodes()
 //        {
 //            //Arrange  
@@ -97,7 +97,7 @@
 
 
         
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //          // TODO: find how we can utilzie categories
 //        public void DummyDriverA1()
 //        {

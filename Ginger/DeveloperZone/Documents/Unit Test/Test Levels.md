@@ -67,7 +67,7 @@ public class StandAlonePluginTest
     }
 
 [Level1]
-[TestMethod]
+[TestMethod,Timeout(60000)]
 public void VariableRandomNumberMin5Max10Interval1()
 {
     //Arrange

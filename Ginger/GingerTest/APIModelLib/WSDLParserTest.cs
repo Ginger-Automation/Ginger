@@ -53,7 +53,7 @@ namespace GingerWPFUnitTest.APIModelLib
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void GenerateAPIfromWSDL()
         {
             // Arrange

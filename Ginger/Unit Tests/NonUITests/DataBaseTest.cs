@@ -38,7 +38,7 @@ namespace UnitTests.NonUITests
             
         }
    /*
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void TestOracleDBConnectionAndReadAllTables()
         {
             Database db = new Database();
@@ -64,7 +64,7 @@ namespace UnitTests.NonUITests
     */
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         [Ignore]
         public void TestMSAccessDB()
         {
@@ -84,7 +84,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(b, true);    
         }
         /*
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void TestMSSQL()
         {
             Database db = new Database();
@@ -104,7 +104,7 @@ namespace UnitTests.NonUITests
         }
         
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void OracleFreeSQL()
         {
             Database db = new Database();
@@ -124,7 +124,7 @@ namespace UnitTests.NonUITests
             
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void OracleUpdateDB1InsertQuery()
         {
             Database db = new Database();
@@ -143,7 +143,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(impactedlines, "1");
         }
 
-        [TestMethod]     
+        [TestMethod,Timeout(60000)]     
         public void OracleUpdateDBUpdateQuery()
         {
             Database db = new Database();
@@ -163,7 +163,7 @@ namespace UnitTests.NonUITests
 
      
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void OracleUpdateDBDeleteQuery()
         {
             Database db = new Database();

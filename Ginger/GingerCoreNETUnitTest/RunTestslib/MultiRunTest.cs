@@ -87,7 +87,7 @@
 
 
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void ParallelRunTest()
 //        {
 //            //Arrange
@@ -160,7 +160,7 @@
             
 //        }
 
-//        //[TestMethod]
+//        //[TestMethod,Timeout(60000)]
 //        //public void GingerMultiRunTest()
 //        //{
 //        // Test how gingerMulturun with BFs and run work

@@ -61,7 +61,7 @@ namespace GingerTest.WizardLib
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void VerifyButtonsOnStartThenCancel()
         {
             //Arrange            
@@ -83,7 +83,7 @@ namespace GingerTest.WizardLib
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void CreateMyWizardItem()
         {
             //Arrange            
@@ -104,7 +104,7 @@ namespace GingerTest.WizardLib
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void WizardWithWindowWidth()
         {
             //Arrange            
@@ -122,7 +122,7 @@ namespace GingerTest.WizardLib
         }
 
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void WizardIntro()
         //{
         //    //Arrange                        

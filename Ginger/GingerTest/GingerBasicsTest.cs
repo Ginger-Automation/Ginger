@@ -96,12 +96,12 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         public void DummyTest()
         {
         }
 
-        [TestMethod]  
+        [TestMethod,Timeout(60000)]  
         [Ignore]
         public void CheckTabsWhenSolutionClosed()
         {
@@ -117,7 +117,7 @@ namespace GingerWPFUnitTest
             Assert.AreEqual("HomeRibbon,SolutionRibbon,SupportRibbon", tabs);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         [Ignore]
         public void CheckTabsWhenSolutionOpen()
         {
@@ -136,7 +136,7 @@ namespace GingerWPFUnitTest
         // ==============================>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
-        [TestMethod]               
+        [TestMethod,Timeout(60000)]               
         public void VerifyEnvsShowinTree()
         {
             //Arrange            
@@ -152,7 +152,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         public void AddEnvUsingWizard()
         {
             //Arrange            
@@ -168,7 +168,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         public void AddEnvToFileSystemWillShowinEnvsTree()
         {
             // Arrange                                                
@@ -191,7 +191,7 @@ namespace GingerWPFUnitTest
 
 
 
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         public void DeleteEnvFromFileSystem()
         {
             // Arrange            
@@ -214,7 +214,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         [Ignore]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
@@ -236,7 +236,7 @@ namespace GingerWPFUnitTest
             Assert.IsTrue(b);
         }
 
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         public void AddEnvFolderShowinTree()
         {
             //Arrange
@@ -254,7 +254,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         public void DeleteEnvFolderRemovedfromTree()
         {
             //Arrange
@@ -274,7 +274,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         
         public void RenameEnvFolderSyncWithTree()
         {
