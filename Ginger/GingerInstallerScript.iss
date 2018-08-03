@@ -21,10 +21,10 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\Amdocs\{#MyAppName}
-LicenseFile=C:\projects\ginger\Ginger\Ginger\bin\debug\Documents\License.rtf
+LicenseFile=Ginger\bin\release\Documents\License.rtf
 OutputDir=C:\projects\ginger\Output
 OutputBaseFilename="Ginger.3.0.0.0"
-SetupIconFile=C:\projects\ginger\Ginger\bin\debug\GingerIconNew.ico
+SetupIconFile=Ginger\bin\release\GingerIconNew.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName= {#MyAppName} 
 Compression=lzma
@@ -42,8 +42,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 
 [Files]
-Source: "C:\projects\ginger\Ginger\bin\debug\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; 
-Source: "C:\projects\ginger\Ginger\bin\debug\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;   Excludes: "Oracle.ManagedDataAccess.dll"
+Source: "Ginger\bin\release\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "Ginger\bin\release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;   Excludes: "Oracle.ManagedDataAccess.dll"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
