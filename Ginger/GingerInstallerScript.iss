@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Amdocs BEAT Ginger Automation"
-#define MyAppVersion "3.0.0.0"
+#define MyAppVersion "3.0.6.11"
 #define MyAppPublisher "Amdocs"
 #define MyAppURL "http://https://github.com/Ginger-Automation"
 #define MyAppExeName "Ginger.exe"
@@ -22,8 +22,8 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\Amdocs\{#MyAppName}
 LicenseFile=Ginger\bin\debug\Documents\License.rtf
-OutputDir=C:\projects\ginger\Output
-OutputBaseFilename="Ginger.3.0.0.0"
+OutputDir=D:\BuildConfigs\Publish\Installers
+OutputBaseFilename="Ginger.3.0.6.11"
 SetupIconFile=Ginger\bin\debug\GingerIconNew.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName= {#MyAppName} 
