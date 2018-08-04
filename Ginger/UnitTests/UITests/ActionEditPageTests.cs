@@ -29,10 +29,11 @@ using System.Windows.Controls;
 namespace UnitTests.UITests
 {
     [TestClass]
+    [Ignore]
     public class ActionEditPageTests
     {
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ActionEditPagesLoadTest()
         {
             AppDomain.CurrentDomain.Load("Ginger");

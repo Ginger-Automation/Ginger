@@ -88,7 +88,7 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void FindEqualStringValueTest()
         {
             ResetActionList();
@@ -104,7 +104,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void FindStringValueMatchCaseNotAllWordTest()
         {
             ResetActionList();
@@ -119,7 +119,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void FindStringValueNotMatchCaseButAllWordTest()
         {
             ResetActionList();
@@ -138,7 +138,7 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ReplaceRootedStringValueTest()
         {
             ResetActionList();
@@ -155,7 +155,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(value, "My Variable is Changed String", "string Value Validation");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ReplaceInnerListStringValueTest()
         {
             ResetActionList();
@@ -172,7 +172,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(value, "bla bli bla Changed String bla bla bla", "InnerList string Value Validation");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ReplaceBoolValueTest()
         {
             ResetActionList();
@@ -189,7 +189,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(value, false, "bool Value Validation");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ReplaceEnumValueTest()
         {
             ResetActionList();
@@ -207,7 +207,7 @@ namespace UnitTests.NonUITests
         }
 
         
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ReplaceIntValueTest()
         {
             ResetActionList();
@@ -227,7 +227,7 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void FindValuesFromRootedStringField_NameAndValueTest()
         {
             ResetActionList();
@@ -242,7 +242,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void FindValuesFromRootedIntField_NameAndValueTest()
         {
             ResetActionList();
@@ -257,7 +257,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void FindValuesFromRootedEnumField_NameAndValueTest()
         {
             ResetActionList();
@@ -272,7 +272,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void FindValuesFromListField_NameAndValueTest()
         {
             ResetActionList();
@@ -288,7 +288,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(foundItemsList[1].FieldValue, "I expect you to VTFInsideList behave", "Value Validation");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void FindValuesFromList_PathGenerationTest()
         {
             ResetActionList();

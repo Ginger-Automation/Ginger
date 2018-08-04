@@ -30,6 +30,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Ignore]
     public class OutputSimulation
     {
         static BusinessFlow mBF;
@@ -73,7 +74,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SimulatedOuputGingerRunnerFlagOn()
         {
 
@@ -122,7 +123,7 @@ namespace UnitTests.NonUITests
             }
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SimulatedOuputActionFlagOn()
         {
             Activity Activity2 = new Activity();
@@ -171,7 +172,7 @@ namespace UnitTests.NonUITests
             }
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SimulatedOutputWithVETest()
         {
             Activity Activity2 = new Activity();
@@ -223,7 +224,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void SimulatedOutputTest()
         {
             Activity Activity3 = new Activity();

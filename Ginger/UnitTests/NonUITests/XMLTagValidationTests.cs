@@ -33,6 +33,7 @@ namespace UnitTests.NonUITests
     /// Summary description for XMLTagValidationTests
     /// </summary>
     [TestClass]
+    [Ignore]
     public class XMLTagValidationTests
     {
         static string jsonFileName = string.Empty;
@@ -89,7 +90,7 @@ namespace UnitTests.NonUITests
         
         #endregion
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void JSonTests()
         {
             
@@ -111,7 +112,7 @@ namespace UnitTests.NonUITests
             //
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void XMLTests()
         {
             ActXMLTagValidation XTA = new ActXMLTagValidation();
