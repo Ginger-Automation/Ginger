@@ -20,6 +20,8 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.Repository;
 using GingerCore.Properties;
 using GingerCore.Repository;
+using System.Collections.Generic;
+using GingerCore.Actions;
 
 namespace GingerCore.Variables
 {
@@ -113,5 +115,12 @@ namespace GingerCore.Variables
         public override string VariableType() { return "RandomNumber"; }
 
         public override bool SupportSetValue { get { return false; } }
+
+        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        {
+            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();  
+            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.AutoGenerateValue);
+            return supportedOperations;
+        }
     }
 }

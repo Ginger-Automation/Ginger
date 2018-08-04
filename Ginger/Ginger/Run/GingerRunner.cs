@@ -411,7 +411,11 @@ namespace Ginger.Run
                 if (doContinueRun == false)
                     RunnerExecutionWatch.StartRunWatch();
                 else
+                {
                     RunnerExecutionWatch.ContinueWatch();
+
+                    ContinueTimerVariables(BusinessFlow.SolutionVariables);
+                }
 
                 //do Validations
 
@@ -491,7 +495,7 @@ namespace Ginger.Run
             {
                 //Post execution items to do
                 SetPendingBusinessFlowsSkippedStatus();
-
+                
                 if (Active)
                 {
 
@@ -502,7 +506,7 @@ namespace Ginger.Run
                             ProjEnvironment.CloseEnvironment();
                         Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Completed;
                     }
-
+                    PostScopeVariableHandling(BusinessFlow.SolutionVariables);
                     mIsRunning = false;
                     RunnerExecutionWatch.StopRunWatch();
                     Status = RunsetStatus;
@@ -2466,7 +2470,11 @@ namespace Ginger.Run
                 // since we are in continue mode - only for first activity of continue mode
                 // Just change the status to Pending
                 CurrentBusinessFlow.CurrentActivity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+
+                ContinueTimerVariables(CurrentBusinessFlow.CurrentActivity.Variables);
             }
+
+            
 
             //Do not disable the following two lines. thse helping the FC run proper activities
             CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
@@ -2596,6 +2604,7 @@ namespace Ginger.Run
                 SetNextActionsBlockedStatus();
                 ExecutionLogger.ActivityEnd(CurrentBusinessFlow, Activity);
 
+                
                 //TODO: Throw execption don't cover in log, so user will see it in report
                 Reporter.ToLog(eLogLevel.ERROR, "Run Activity got error ", ex);
                 throw ex;
@@ -2608,7 +2617,7 @@ namespace Ginger.Run
                 {
                     CalculateActivityFinalStatus(Activity);
                 }
-
+                PostScopeVariableHandling(Activity.Variables);
                 ExecutionLogger.ActivityEnd(CurrentBusinessFlow, Activity);
                 mLastExecutedActivity = Activity;
                 if (GiveUserFeedback) OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.DoEventsRequired, null);
@@ -2642,6 +2651,39 @@ namespace Ginger.Run
                 OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.ActivityEnd, null);
             }
         }
+
+        private void ContinueTimerVariables(ObservableList<VariableBase> variableList)
+        {
+            if (variableList == null || variableList.Count == 0)
+                return;
+
+            foreach (VariableBase variable in variableList)
+            {
+                if (variable.GetType() == typeof(VariableTimer) && ((VariableTimer)variable).IsStopped)
+                {
+                    ((VariableTimer)variable).ContinueTimer();                    
+                }
+            }
+        }
+        private void PostScopeVariableHandling(ObservableList<VariableBase> variableList)  
+        {
+            if (variableList == null || variableList.Count == 0)
+                return;
+
+            foreach(VariableBase variable in variableList)
+            {
+                if(variable.GetType()== typeof(VariableTimer))
+                {
+                    if(((VariableTimer)variable).RunWatch.IsRunning)
+                    {
+                        ((VariableTimer)variable).StopTimer();
+                        ((VariableTimer)variable).IsStopped = true;
+                    }
+                   
+                }               
+            }
+        }
+
 
         private void CurrentBusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -2821,6 +2863,16 @@ namespace Ginger.Run
                 {
                     CurrentBusinessFlow.Reset();
                 }
+
+                if(doContinueRun)
+                {
+                    ContinueTimerVariables(CurrentBusinessFlow.Variables);
+                    if(standaloneExecution)
+                    {
+                        ContinueTimerVariables(BusinessFlow.SolutionVariables);
+                    }
+                }
+
                 CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
                 OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.BusinessFlowStart, null);
                 mStopBusinessFlow = false;
@@ -2942,7 +2994,11 @@ namespace Ginger.Run
                     SetActivityGroupsExecutionStatus();
                 }
                 CalculateBusinessFlowFinalStatus(CurrentBusinessFlow);
-                
+                PostScopeVariableHandling(CurrentBusinessFlow.Variables);
+                if(standaloneExecution)
+                {
+                    PostScopeVariableHandling(BusinessFlow.SolutionVariables);
+                }
                 st.Stop();
                 CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
                 

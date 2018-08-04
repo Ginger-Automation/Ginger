@@ -261,7 +261,16 @@ namespace GingerCore.Drivers.WindowsLib
 
                     break;
                 case ActBrowserElement.eControlAction.SwitchFrame:
-                    mUIAutomationHelper.GetHTMLHelper().SwitchFrame(actWBE.LocateBy, actWBE.LocateValueCalculated);
+                    result=mUIAutomationHelper.GetHTMLHelper().SwitchFrame(actWBE.LocateBy, actWBE.LocateValueCalculated);
+                    if (result.Equals("true"))
+                    {
+                        actWBE.AddOrUpdateReturnParamActual("Actual", result);
+                        actWBE.ExInfo = "Switched to frame";
+                    }
+                    else
+                    {
+                        actWBE.Error = "Unable Switch frame";
+                    }                    
                     break;
                 case ActBrowserElement.eControlAction.SwitchToDefaultFrame:
                     mUIAutomationHelper.GetHTMLHelper().SwitchToDefaultFrame();
@@ -637,7 +646,7 @@ namespace GingerCore.Drivers.WindowsLib
             return GetControlFromMousePosition();
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
             return list;

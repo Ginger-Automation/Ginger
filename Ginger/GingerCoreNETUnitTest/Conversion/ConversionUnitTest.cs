@@ -40,7 +40,7 @@
 //        }
 
 //        [Ignore]
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void VerifyActionConvertedHaveOldClassName()
 //        {
 //            //Arrange

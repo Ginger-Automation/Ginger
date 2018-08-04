@@ -49,7 +49,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void CheckConnected()
 //        {
 //            //Arrange
@@ -62,7 +62,7 @@
 //        }
 
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void GetDomains()
 //        {
 //            // Arrange
@@ -77,7 +77,7 @@
 //            //...
 //        }
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void GetDomainProjects()
 //        {
 //            // Arrange
@@ -92,7 +92,7 @@
 //            //...
 //        }
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void AddTestPlan()
 //        {
 //            // Arrange
@@ -108,7 +108,7 @@
 //        }
 
 
-//        //[TestMethod]
+//        //[TestMethod,Timeout(60000)]
 //        //public void AddTestToTestLab()
 //        //{
 //        //    //TODO:
@@ -136,7 +136,7 @@
 //        //   // Assert.IsTrue(bUploaded);
 //        //}
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void CreateDefect()
 //        {
 //            // Arrange
@@ -152,7 +152,7 @@
 //            Assert.IsTrue(BugID > 0);
 //        }
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void GetTestPlanExplorer()
 //        {
 //            // Arrange           
@@ -166,7 +166,7 @@
 //            //...
 //        }
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void GetTestLabExplorer()
 //        {
 //            // Arrange           

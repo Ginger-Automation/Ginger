@@ -22,10 +22,11 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore.Actions.Common;
 
 namespace GingerCore.Actions
 {
-    public class ActHandleBrowserAlert : Act
+    public class ActHandleBrowserAlert : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Handle Browser Alerts"; } }
         public override string ActionUserDescription { get { return "Handle Browser Alerts"; } }
@@ -56,6 +57,8 @@ namespace GingerCore.Actions
             }
         }
 
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+
         public enum eHandleBrowseAlert
         {
             AcceptAlertBox = 1,
@@ -80,5 +83,94 @@ namespace GingerCore.Actions
             }
         }
         public override System.Drawing.Image Image { get { return Resources.ActLink; } }
+
+
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
+        {
+            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.NA)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.NA;
+        }
+        Type IObsoleteAction.TargetAction()
+        {
+            return GetActionTypeByElementActionName(GenElementAction);
+        }
+
+        String IObsoleteAction.TargetActionTypeName()
+        {
+            Type currentType = GetActionTypeByElementActionName(GenElementAction);
+            if (currentType == typeof(ActBrowserElement))
+            {
+                ActBrowserElement actBrowserElement = new ActBrowserElement();
+                return actBrowserElement.ActionDescription;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+        Act IObsoleteAction.GetNewAction()
+        {
+            AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActBrowserElement>(); });
+            ActBrowserElement NewActBrowserElement = mapConfigBrowserElementt.CreateMapper().Map<Act, ActBrowserElement>(this);
+
+            Type currentType = GetActionTypeByElementActionName(GenElementAction);
+            if (currentType == typeof(ActBrowserElement))
+            {
+                switch (GenElementAction)
+                {
+                    case eHandleBrowseAlert.AcceptAlertBox:
+                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.AcceptMessageBox;
+                        break;
+                    case eHandleBrowseAlert.DismissAlertBox:
+                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.DismissMessageBox;
+                        break;
+                    case eHandleBrowseAlert.GetAlertBoxText:
+                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.GetMessageBoxText;
+                        break;
+                    case eHandleBrowseAlert.SendKeysAlertBox:
+                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.SetAlertBoxText;
+                        break;
+                    default:
+                        NewActBrowserElement.ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), GenElementAction.ToString());
+                        break;
+                }
+            }
+
+            if (currentType == typeof(ActBrowserElement))
+            {
+                return NewActBrowserElement;
+            }
+            return null;
+        }
+
+        Type GetActionTypeByElementActionName(eHandleBrowseAlert genElementAction)
+        {
+            Type currentType = null;
+
+            switch (genElementAction)
+            {
+                case eHandleBrowseAlert.AcceptAlertBox:
+                case eHandleBrowseAlert.DismissAlertBox:
+                case eHandleBrowseAlert.GetAlertBoxText:
+                case eHandleBrowseAlert.SendKeysAlertBox:
+                    currentType = typeof(ActBrowserElement);
+                    break;
+
+                    //default:
+                    //    throw new Exception("Converter error, missing Action translator for - " + GenElementAction);
+            }
+            return currentType;
+        }
     }
 }

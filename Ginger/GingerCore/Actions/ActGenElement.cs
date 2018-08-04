@@ -40,9 +40,9 @@ namespace GingerCore.Actions
             public static string Yoffset = "Yoffset";
         }
 
-        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platfrom)
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platfrom == ePlatformType.AndroidDevice)
+            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.NA)
             {
                 return true;
             }
@@ -52,76 +52,210 @@ namespace GingerCore.Actions
             }
         }
 
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+
         ePlatformType IObsoleteAction.GetTargetPlatform()
         {
             return ePlatformType.NA;
         }
         Type IObsoleteAction.TargetAction()
         {
-            return typeof(ActUIElement);
+            return GetActionTypeByElementActionName(GenElementAction);
         }
+
         String IObsoleteAction.TargetActionTypeName()
         {
-            ActUIElement actUIElement = new ActUIElement();
-            return actUIElement.ActionDescription;
+            Type currentType = GetActionTypeByElementActionName(GenElementAction);
+            if (currentType == typeof(ActBrowserElement))
+            {
+                ActBrowserElement actBrowserElement = new ActBrowserElement();
+                return actBrowserElement.ActionDescription;
+            }
+            else if (currentType == typeof(ActUIElement))
+            {
+                ActUIElement actUIElement = new ActUIElement();
+                return actUIElement.ActionDescription;
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
         Act IObsoleteAction.GetNewAction()
         {
-            ActUIElement NewAct = new ActUIElement();
-            NewAct.CopyInfoFrom(this);
-            NewAct.Description = "[New] " + Description;
-            NewAct.ElementType = eElementType.Unknown;
+            bool uIElementTypeAssigned = false;
 
-            switch (GenElementAction)
-            {
-                case eGenElementAction.Click:
-                    NewAct.ElementAction = ActUIElement.eElementAction.Click;
-                    break;
-                case eGenElementAction.GetValue:
-                    NewAct.ElementAction = ActUIElement.eElementAction.GetValue;
-                    break;
-                case eGenElementAction.SetValue:
-                    NewAct.ElementAction = ActUIElement.eElementAction.SetValue;
-                    break;
-                default:
-                    throw new Exception("Converter error, missing Action translator for - " + GenElementAction);
-            }            
+            AutoMapper.MapperConfiguration mapConfigUIElement = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            ActUIElement NewActUIElement = mapConfigUIElement.CreateMapper().Map<Act, ActUIElement>(this);
 
-            //TODO: move to Act.cs so can be used by other converter
-            switch (LocateBy)
+            AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActBrowserElement>(); });
+            ActBrowserElement NewActBrowserElement = mapConfigBrowserElementt.CreateMapper().Map<Act, ActBrowserElement>(this);
+
+            Type currentType = GetActionTypeByElementActionName(GenElementAction);
+            if (currentType == typeof(ActBrowserElement))
             {
-                case eLocateBy.ByID:
-                    if (Platform == ePlatformType.AndroidDevice)
-                    {
-                        NewAct.LocateBy = eLocateBy.ByResourceID;
-                    }
-                    else
-                    {
-                        NewAct.LocateBy = eLocateBy.ByID;
-                    }                    
-                    break;
-                case eLocateBy.ByXPath:
-                    NewAct.LocateBy = eLocateBy.ByXPath;
-                    break;
-                case eLocateBy.ByCSS:
-                    NewAct.LocateBy = eLocateBy.ByCSS;
-                    break;
-                case eLocateBy.ByXY:
-                    NewAct.LocateBy = eLocateBy.ByXY;
-                    break;
-                default:
-                    throw new Exception("Converter error, missing LocateBy translator for - " + LocateBy);
-                //TODO: add all the rest
+                switch (GenElementAction)
+                {
+                    case eGenElementAction.Back:
+                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.NavigateBack;
+                        break;
+                    case eGenElementAction.CloseBrowser:
+                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.Close;
+                        break;
+                    case eGenElementAction.RunJavaScript:
+                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.InjectJS;
+                        break;
+                    default:
+                        NewActBrowserElement.ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), GenElementAction.ToString());
+                        break;
+                }
+            }
+            else if(currentType == typeof(ActUIElement))
+            {
+                switch (GenElementAction)
+                {
+                    case eGenElementAction.Click:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.JavaScriptClick;
+                        break;
+                    case eGenElementAction.RightClick:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.MouseRightClick;
+                        break;
+                    case eGenElementAction.Visible:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.IsVisible;
+                        break;
+                    case eGenElementAction.SelectFromListScr:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByIndex;
+                        NewActUIElement.ElementType = eElementType.List;
+                        uIElementTypeAssigned = true;
+                        break;
+                    case eGenElementAction.KeyboardInput:
+                    case eGenElementAction.KeyType:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        break;
+                    case eGenElementAction.SelectFromDropDown:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByText;
+                        NewActUIElement.ElementType = eElementType.ComboBox;
+                        uIElementTypeAssigned = true;
+                        break;
+                    case eGenElementAction.GetInnerText:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.GetText;
+                        break;
+                    case eGenElementAction.GetCustomAttribute:
+                    case eGenElementAction.GetElementAttributeValue:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.GetAttrValue;
+                        break;
+                    case eGenElementAction.BatchClicks:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.MultiClicks;
+                        break;
+                    case eGenElementAction.BatchSetValues:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.MultiSetValue;
+                        break;
+                    case eGenElementAction.SimpleClick:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.Click;
+                        break;
+                    case eGenElementAction.Disabled:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.IsDisabled;
+                        break;
+                    case eGenElementAction.Enabled:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.IsEnabled;
+                        break;
+                    case eGenElementAction.GetNumberOfElements:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.GetItemCount;
+                        break;
+                    case eGenElementAction.XYClick:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.ClickXY;
+                        break;
+                    case eGenElementAction.Focus:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.SetFocus;
+                        break;
+                    default:
+                        NewActUIElement.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), GenElementAction.ToString());
+                        break;
+                }
             }
 
-            NewAct.ElementLocateValue = this.LocateValue;
+            if (currentType == typeof(ActUIElement))
+            {
+                NewActUIElement.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
+                NewActUIElement.ElementLocateValue = String.Copy(this.LocateValue);
+                if (!uIElementTypeAssigned)
+                    NewActUIElement.ElementType = eElementType.Unknown;
+                if (!NewActUIElement.Platforms.Contains(this.Platform))
+                {
+                    NewActUIElement.Platform = ePlatformType.Web; // ??? to check
+                }
 
-            return NewAct;
+                return NewActUIElement;
+            }
+
+            if (currentType == typeof(ActBrowserElement))
+            {
+                return NewActBrowserElement;
+            }
+            return null;
         }
-        // --------------------------------------------------------------------------------------------------------------
-        // This Action is OBSOLETE and should be converted to new ActUIElement !!!!!!!!!!!!!!!!!!!!
-        // --------------------------------------------------------------------------------------------------------------
-        
+
+        Type GetActionTypeByElementActionName(eGenElementAction genElementAction)
+        {
+            Type currentType = null;
+
+            switch (genElementAction)
+            {
+                case eGenElementAction.GotoURL:
+                case eGenElementAction.Back:
+                case eGenElementAction.SwitchFrame:
+                case eGenElementAction.CloseBrowser:
+                case eGenElementAction.DismissMessageBox:
+                case eGenElementAction.SwitchWindow:
+                case eGenElementAction.DeleteAllCookies:
+                case eGenElementAction.SwitchToDefaultFrame:
+                case eGenElementAction.Refresh:
+                case eGenElementAction.RunJavaScript:
+                case eGenElementAction.SwitchToParentFrame:
+                case eGenElementAction.AcceptMessageBox:
+                case eGenElementAction.GetWindowTitle:
+                    currentType = typeof(ActBrowserElement);
+                    break;
+
+                //
+                case eGenElementAction.KeyType:
+                case eGenElementAction.SelectFromListScr:
+                case eGenElementAction.Hover:
+                case eGenElementAction.Click:
+                case eGenElementAction.GetValue:
+                case eGenElementAction.Visible:
+                case eGenElementAction.SetValue:
+                case eGenElementAction.MouseClick:
+                case eGenElementAction.KeyboardInput:
+                case eGenElementAction.GetInnerText:
+                case eGenElementAction.GetWidth:
+                case eGenElementAction.GetHeight:
+                case eGenElementAction.GetStyle:
+                case eGenElementAction.GetCustomAttribute:
+                case eGenElementAction.AsyncClick:
+                case eGenElementAction.ScrollToElement:
+                case eGenElementAction.SimpleClick:
+                case eGenElementAction.DoubleClick:
+                case eGenElementAction.RightClick:
+                case eGenElementAction.SelectFromDropDown:
+                case eGenElementAction.GetElementAttributeValue:
+                case eGenElementAction.BatchClicks:
+                case eGenElementAction.BatchSetValues:
+                case eGenElementAction.Disabled:
+                case eGenElementAction.GetNumberOfElements:
+                case eGenElementAction.SendKeys:
+                case eGenElementAction.Enabled:
+                case eGenElementAction.XYClick:
+                case eGenElementAction.Focus:
+                    currentType =  typeof(ActUIElement);
+                    break;
+
+                //default:
+                //    throw new Exception("Converter error, missing Action translator for - " + GenElementAction);
+            }
+            return currentType;
+        }
+
         public override string ActionDescription { get { return "Generic Element"; } }
         public override string ActionUserDescription { get { return "Click on a generic control object"; } }
 

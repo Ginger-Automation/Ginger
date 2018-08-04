@@ -25,6 +25,8 @@ using GingerCore.Platforms;
 using GingerCore.Repository;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Actions
 {
@@ -74,11 +76,27 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string VariableName { set; get; }
 
-        public enum eSetValueOptions {SetValue, ResetValue, AutoGenerateValue  };
+        public enum eSetValueOptions
+        {
+            [EnumValueDescription("Set Value")]
+            SetValue,
+            [EnumValueDescription("Reset Value")]
+            ResetValue,
+            [EnumValueDescription("Auto Generate Value")]
+            AutoGenerateValue,
+            [EnumValueDescription("Start Timer")]
+            StartTimer,
+            [EnumValueDescription("Stop Timer")]
+            StopTimer,
+            [EnumValueDescription("Continue Timer")]
+            ContinueTimer
+        }
+
+
         [IsSerializedForLocalRepository]
         public eSetValueOptions SetVariableValueOption 
         { set; get; }
-
+               
         public override void Execute()
         {
             VariableBase Var = RunOnBusinessFlow.GetHierarchyVariableByName(VariableName);
@@ -97,7 +115,7 @@ namespace GingerCore.Actions
                 if (Var.GetType() == typeof(VariableString))
                 {
                     ((VariableString)Var).Value = VE.ValueCalculated;
-                }
+                }                
                 else if (Var.GetType() == typeof(VariableSelectionList))
                 {
                     string calculatedValue = VE.ValueCalculated;
@@ -129,12 +147,55 @@ namespace GingerCore.Actions
                 }
             }
             else if (SetVariableValueOption == eSetValueOptions.ResetValue)
-            {
-                ((VariableBase)Var).ResetValue();
+            {                  
+                    ((VariableBase)Var).ResetValue();
             }
             else if (SetVariableValueOption == eSetValueOptions.AutoGenerateValue)
             {
                 ((VariableBase)Var).GenerateAutoValue();
+            }
+            else if (SetVariableValueOption == eSetValueOptions.StartTimer)
+            {
+                if (Var.GetType() == typeof(VariableTimer))
+                {
+                    ((VariableTimer)Var).StartTimer();                   
+                }
+                else
+                {
+                    Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
+
+                    return;
+                }
+            }
+
+            else if (SetVariableValueOption == eSetValueOptions.StopTimer)
+            {
+                if (Var.GetType() == typeof(VariableTimer))
+                {
+                    ((VariableTimer)Var).StopTimer();
+                }
+                else
+                {
+                    Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
+
+                    return;
+                }
+            }
+            else if (SetVariableValueOption == eSetValueOptions.ContinueTimer)
+            {
+                if (Var.GetType() == typeof(VariableTimer))
+                {
+                    ((VariableTimer)Var).ContinueTimer();
+                }
+                else
+                {
+                    Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
+
+                    return;
+                }
             }
             else
             {

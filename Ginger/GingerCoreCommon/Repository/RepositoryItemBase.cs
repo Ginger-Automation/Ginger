@@ -785,7 +785,7 @@ namespace Amdocs.Ginger.Repository
                 if (mDirtyStatus != value)
                 {
                     mDirtyStatus = value;
-                    RaiseDirtyChangedEvent();
+                    if (value == eDirtyStatus.Modified) RaiseDirtyChangedEvent();
                     OnPropertyChanged(nameof(DirtyStatus));
                     OnPropertyChanged(nameof(DirtyStatusImage));
                 }

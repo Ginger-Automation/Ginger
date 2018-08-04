@@ -31,6 +31,7 @@ namespace GingerCore.Actions.ActionConversion
             public static string Activities = "Activities";
             public static string ActionCount = "ActionCount";
             public static string SourceActionTypeName = "SourceActionTypeName";
+            public static string SourceOperationName = "SourceOperationName";
             public static string TargetActionTypeName = "TargetActionTypeName";
             public static string TargetActionPlatform = "TargetActionPlatform";
             public static string Selected = "Selected";

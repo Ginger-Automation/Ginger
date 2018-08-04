@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GingerCore.Properties;
+using GingerCore.Actions;
 
 namespace GingerCore.Variables
 {
@@ -171,5 +172,13 @@ namespace GingerCore.Variables
         }
 
         public override bool SupportSetValue { get { return true; } }
+
+        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        {
+            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();
+            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.SetValue);
+            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ResetValue);
+            return supportedOperations;
+        }
     }
 }

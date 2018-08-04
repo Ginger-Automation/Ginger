@@ -34,6 +34,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 namespace UnitTestsNonUITests
 {
     [TestClass]
+    [Ignore]
     public class UIAAutomationTest
     {
         UIAComWrapperHelper UIA;
@@ -85,14 +86,14 @@ namespace UnitTestsNonUITests
             { uiaForm.Close(); }
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Verify_Form_load()
         {
 
             Assert.AreEqual(uiaForm.IsHandleCreated, true);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Find_Butto1_XPath_Using_Full_Absolutue_Path()
         {
             //Arrange
@@ -111,7 +112,7 @@ namespace UnitTestsNonUITests
             Assert.AreEqual(button1, AEButton, "button1=AEButton");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Find_Button1_ByName_Find_Anywhere()
         {
             //Arrange
@@ -135,7 +136,7 @@ namespace UnitTestsNonUITests
             Assert.AreEqual(SmartXPath, "button1[AutomationId:button1][LocalizedControlType:button1]", "SmartXPath");  // We expect the smart XPath to find the name is unique
         }
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //[Ignore]
         //public void Find_checkListBox_XPath_Using_Full_Absolutue_Path_andByAutoID()
         //{
@@ -158,7 +159,7 @@ namespace UnitTestsNonUITests
         //}
 
         // Generic sample to use forward
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Find_Nested_Checkbox1_XPath_Using_Element_Name()
         //{
         //    //Arrange
@@ -181,7 +182,7 @@ namespace UnitTestsNonUITests
         
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_label()
         //{
         //    //Arrange
@@ -202,7 +203,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_linkLabel()
         //{
         //    //Arrange
@@ -223,7 +224,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_listBox1()
         //{
         //    //Arrange
@@ -244,7 +245,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_listView()
         //{
         //    //Arrange
@@ -265,7 +266,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_maskedTextBox()
         //{
         //    //Arrange
@@ -286,7 +287,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_menuStrip()
         //{
         //    //Arrange
@@ -307,7 +308,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_numericUpDown()
         //{
         //    //Arrange
@@ -328,7 +329,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_monthCalendar()
         //{
         //    //Arrange
@@ -349,7 +350,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_treeView()
         //{
         //    //Arrange
@@ -370,7 +371,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_tabControl()
         //{
         //    //Arrange
@@ -391,7 +392,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_medXPathtextBox()
         //{
         //    //Arrange
@@ -412,7 +413,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_medXPathradioButton()
         //{
         //    //Arrange
@@ -433,7 +434,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_medXPathlabel()
         //{
         //    //Arrange
@@ -454,7 +455,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_medXPathbutton()
         //{
         //    //Arrange
@@ -475,7 +476,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_medXPathcheckBox()
         //{
         //    //Arrange
@@ -496,7 +497,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_vScrollBar()
         //{
         //    //Arrange
@@ -517,7 +518,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_richTextBox()
         //{
         //    //Arrange
@@ -538,7 +539,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_deepXPathbutton()
         //{
         //    //Arrange
@@ -559,7 +560,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_deepXPathcheckBox()
         //{
         //    //Arrange
@@ -581,7 +582,7 @@ namespace UnitTestsNonUITests
 
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_deepXPathradioButton()
         //{
         //    //Arrange
@@ -602,7 +603,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_deepXPathlabel()
         //{
         //    //Arrange
@@ -623,7 +624,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Form_deepXPathtextBox()
         //{
         //    //Arrange
@@ -644,7 +645,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Button1_Xpath_Simple()
         //{
         //    //Arrange
@@ -662,7 +663,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void VerifyHTMLFirstNameTextBox_XPath()
         //{
         //    //Arrange
@@ -680,7 +681,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Browser_Xpath_Simple()
         //{
         //    //Arrange
@@ -695,7 +696,7 @@ namespace UnitTestsNonUITests
         //}
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Verify_Browser_Xpath_()
         //{
         //    //Arrange

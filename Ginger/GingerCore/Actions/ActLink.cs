@@ -22,11 +22,13 @@ using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using GingerCore.Actions.Common;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions
 {
     //This class is for UI link elemnet
-    public class ActLink : Act
+    public class ActLink : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Link Action"; } }
         public override string ActionUserDescription { get { return "Click on a link object"; } }
@@ -56,6 +58,8 @@ namespace GingerCore.Actions
             }
         }
 
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+
         public enum eLinkAction
         {
             Click = 1,
@@ -83,6 +87,95 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.ActLink; } } 
+        public override System.Drawing.Image Image { get { return Resources.ActLink; } }
+
+        Type IObsoleteAction.TargetAction()
+        {
+            return GetActionTypeByElementActionName(this.LinkAction);
+        }
+
+        String IObsoleteAction.TargetActionTypeName()
+        {
+            Type currentType = GetActionTypeByElementActionName(this.LinkAction);
+            if (currentType == typeof(ActUIElement))
+            {
+                ActUIElement actUIElement = new ActUIElement();
+                return actUIElement.ActionDescription;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.Web;
+        }
+
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
+        {
+            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.NA)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        Act IObsoleteAction.GetNewAction()
+        {
+            bool uIElementTypeAssigned = false;
+            AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
+
+            Type currentType = GetActionTypeByElementActionName(this.LinkAction);
+            if (currentType == typeof(ActUIElement))
+            {
+                // check special cases, where neame should be changed. Than at default case - all names that have no change
+                switch (this.LinkAction)
+                {
+                    case eLinkAction.Click:
+                        newAct.ElementAction = ActUIElement.eElementAction.JavaScriptClick;
+                        break;
+                    case eLinkAction.Visible:
+                        newAct.ElementAction = ActUIElement.eElementAction.IsVisible;
+                        break;
+                    default:
+                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.LinkAction.ToString());
+                        break;
+                }
+            }
+
+            newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
+            newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if (!uIElementTypeAssigned)
+                newAct.ElementType = eElementType.HyperLink;
+            newAct.Active = true;
+
+            return newAct;
+        }
+
+        Type GetActionTypeByElementActionName(eLinkAction dropDownElementAction)
+        {
+            Type currentType = null;
+            switch (dropDownElementAction)
+            {
+                case eLinkAction.Click:
+                case eLinkAction.Hover:
+                case eLinkAction.GetValue:
+                case eLinkAction.Visible:
+                case eLinkAction.GetWidth:
+                case eLinkAction.GetHeight:
+                case eLinkAction.GetStyle:
+                    currentType = typeof(ActUIElement);
+                    break;
+                    //default:
+                    //    throw new Exception("Converter error, missing Action translator for - " + dropDownElementAction);
+            }
+            return currentType;
+        }
     }
 }

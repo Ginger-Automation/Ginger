@@ -84,7 +84,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ElementActionComboBox.Items.Clear();
+            // ElementActionComboBox.Items.Clear();
             ElementLocateByComboBox.IsEnabled = true;
             if (!String.IsNullOrEmpty(ElementTypeComboBox.SelectionBoxItem.ToString()))
             {
@@ -99,7 +99,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mAction.ElementType = (eElementType)ElementTypeComboBox.SelectedValue;
             List<ActUIElement.eElementAction> list = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
             ElementTypeImage.Source = GetImageSource(mAction.Image);
-            ElementActionComboBox.BindControl(mAction, ActUIElement.Fields.ElementAction, list);
+            ElementActionComboBox.BindControlWithGrouping(mAction, ActUIElement.Fields.ElementAction, list);
             UpdateActionInfo(mAction.ElementAction);
             UIElementActionEditPageFrame.Visibility = Visibility.Collapsed;
             if (mAction.ElementType != eElementType.Unknown && mAction.ElementAction != ActUIElement.eElementAction.Unknown)
@@ -289,8 +289,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             if (new ActUIElement.eElementAction[] {     ActUIElement.eElementAction.SetValue, ActUIElement.eElementAction.SendKeys, ActUIElement.eElementAction.SetDate,
                                                         ActUIElement.eElementAction.SendKeyPressRelease, ActUIElement.eElementAction.SetText,
-                                                        ActUIElement.eElementAction.SetSelectedValueByIndex, ActUIElement.eElementAction.SetSelectedValueByValue, ActUIElement.eElementAction.SetSelectedValueByText,
-                                                        ActUIElement.eElementAction.IsPrepopulated}.Contains(mAction.ElementAction))
+                                                        ActUIElement.eElementAction.SetSelectedValueByIndex, ActUIElement.eElementAction.Select, ActUIElement.eElementAction.SelectByText}.Contains(mAction.ElementAction))
             {
                 if (mAction.ElementType == eElementType.TextBox || mAction.ElementType == eElementType.ComboBox || mAction.ElementType == eElementType.CheckBox ||
                     mAction.ElementType == eElementType.Unknown)

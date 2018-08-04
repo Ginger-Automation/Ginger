@@ -131,6 +131,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             App.UpdateApplicationsAgentsMapping(false);
         }
 
+        public override void PostSaveTreeItemHandler()
+        {            
+        }
+
         public override void PostDeleteTreeItemHandler()
         {
             App.UpdateApplicationsAgentsMapping();

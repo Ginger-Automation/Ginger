@@ -74,7 +74,7 @@ namespace UnitTests.NonUITests.GingerRunnerFlowControlTest
             mGR.BusinessFlows.Add(mBF);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Simple_All_Actions_Active()
         {
 
@@ -108,7 +108,7 @@ namespace UnitTests.NonUITests.GingerRunnerFlowControlTest
            Assert.AreEqual(act3.Status, eRunStatus.Passed);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Simple_One_Action_NotActive()
         {
 
@@ -140,7 +140,7 @@ namespace UnitTests.NonUITests.GingerRunnerFlowControlTest
            Assert.AreEqual(act3.Status, eRunStatus.Passed);
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void FlowControlTestFor_IfFailed_StopRunner()
         {
 

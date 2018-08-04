@@ -44,7 +44,7 @@ namespace UnitTests.UITests.IEBrowserWindowTest
         {
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void ClickButton()
         { 
         }*/

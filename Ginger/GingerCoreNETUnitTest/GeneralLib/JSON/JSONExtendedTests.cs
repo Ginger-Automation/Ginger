@@ -27,7 +27,7 @@ namespace GingerCoreNETUnitTest.GeneralLib.JSON
    public class JSONExtendedTests
     {
         private static JsonExtended XDE = null;
-        private static JToken XDoc = null;
+
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
@@ -36,7 +36,7 @@ namespace GingerCoreNETUnitTest.GeneralLib.JSON
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void XMLDocGetAllNodesTest()
         {
             //Arrange

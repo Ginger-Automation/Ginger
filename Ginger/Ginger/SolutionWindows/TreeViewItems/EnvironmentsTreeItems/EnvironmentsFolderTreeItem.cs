@@ -119,6 +119,10 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
             AddSourceControlOptions(mContextMenu);
         }
 
+        public override void PostSaveTreeItemHandler()
+        {                 
+        }
+
         internal void AddItemHandler(object sender, RoutedEventArgs e)
         {
             WizardWindow.ShowWizard(new AddEnvironmentWizard(mProjEnvironmentFolder));            

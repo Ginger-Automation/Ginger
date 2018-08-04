@@ -33,7 +33,8 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
     public class ApplicationPOMsTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         public RepositoryFolder<ApplicationPOMModel> mPOMModelFolder;
-        POMEditPage mPOMEditPage;
+        //POMEditPage mPOMEditPage;
+        private POMModelsPage mPOMModelsPage;
 
         public ApplicationPOMsTreeItem(RepositoryFolder<ApplicationPOMModel> POMModelFolder)
         {
@@ -95,11 +96,11 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         Page ITreeViewItem.EditPage()
         {
 
-            if (mPOMEditPage == null)
+            if (mPOMModelsPage == null)
             {
-                mPOMEditPage = new POMEditPage(new ApplicationPOMModel());
+                mPOMModelsPage = new POMModelsPage(mPOMModelFolder);
             }
-            return mPOMEditPage;
+            return mPOMModelsPage;
         }
 
         ContextMenu ITreeViewItem.Menu()

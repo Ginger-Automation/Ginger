@@ -42,7 +42,7 @@
            
             
 //        }
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        [Ignore]
 //        public void LoginWithOutPrivateKey()
 //        {
@@ -61,7 +61,7 @@
 //            uxsh.CloseDriver();
 //        }
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void LoginWithPrivateKey()
 //        {
 //            // TODO: Add AAA
@@ -79,7 +79,7 @@
 //            uxsh.CloseDriver();
 //        }
 
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        [Ignore]
 //        public void LoginWithPrivateKeyandPassPhrase()
 //        {
@@ -98,7 +98,7 @@
 //            uxsh.Disconnect();
 //            uxsh.CloseDriver();
 //        }
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void RunScripts()
 //        {
 //            // TODO: Add AAA
@@ -136,7 +136,7 @@
 //            uxsh.Disconnect();
 //            uxsh.CloseDriver();
 //        }
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void RunScriptsAgainstLinux()
 //        {
 //            // TODO: Add AAA
@@ -175,36 +175,36 @@
 //            uxsh.RunAction(act);
             
 //        }
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        [Ignore]
 //        public void RunScriptsAgainstFreeBSD()
 //        {
 
 //        }
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        [Ignore]
 //        public void RunScriptsAgainstHPUX()
 //        {
 
 //        }
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        [Ignore]
 //        public void RunScriptsAgainstSunOS()
 //        {
 
 //        }
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        [Ignore]
 //        public void LongRunCommands()
 //        {
 
 //        }
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        public void MultiInput()
 //        {
 
 //        }
-//        [TestMethod]
+//        [TestMethod,Timeout(60000)]
 //        [Ignore]
 //        public void MultiOuput()
 //        {

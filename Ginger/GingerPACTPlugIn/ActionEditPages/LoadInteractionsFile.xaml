@@ -1,0 +1,28 @@
+    <Page x:Class="GingerPACTPlugIn.ActionEditPages.LoadInteractionsFile"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:GingerPACTPlugIn.ActionEditPages"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="700"
+      Title="LoadInteractionFile">
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="80"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="Row1" Height="30"/>
+            <RowDefinition x:Name="Row2" Height="25"/>
+            <RowDefinition x:Name="Row3" Height="50"/>
+        </Grid.RowDefinitions>
+
+
+        <Label Content="Load PACT Interactions json File" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" FontFamily="Open Sans" FontSize="16" Foreground="#20334f" />
+        <Label Content="File Name:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" FontFamily="Open Sans" FontSize="14" Foreground="#20334f"/>
+        <TextBox x:Name="FileName" Grid.Row="2" Grid.Column="0"  Text="c:\PACT\interactions\customer_Serivce_interactions.json"  VerticalAlignment="Top" BorderBrush="#20334f" FontSize="12"/>
+        <Button x:Name="BrowseButton" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="2,-27,0,0"  Click="BrowseButtonClicked" Content="Browse"/>
+    </Grid>
+</Page>

@@ -61,6 +61,8 @@ namespace GingerCore.Actions
             }
         }
 
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile, ePlatformType.ASCF }; } }
+
         public new static partial class Fields
         {
             public static string ActDropDownListAction = "ActDropDownListAction";
@@ -95,13 +97,21 @@ namespace GingerCore.Actions
 
         Type IObsoleteAction.TargetAction()
         {
-            return typeof(ActUIElement);
+            return GetActionTypeByElementActionName(this.ActDropDownListAction);
         }
 
         String IObsoleteAction.TargetActionTypeName()
         {
-            ActUIElement actUIElement = new ActUIElement();
-            return actUIElement.ActionDescription;
+            Type currentType = GetActionTypeByElementActionName(this.ActDropDownListAction);
+            if (currentType == typeof(ActUIElement))
+            {
+                ActUIElement actUIElement = new ActUIElement();
+                return actUIElement.ActionDescription;
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
         ePlatformType IObsoleteAction.GetTargetPlatform()
@@ -111,7 +121,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.ASCF)
+            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.NA)
             {
                 return true;
             }
@@ -127,47 +137,28 @@ namespace GingerCore.Actions
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
             newAct.ElementType = eElementType.Unknown;
 
-            switch (this.ActDropDownListAction)
+            Type currentType = GetActionTypeByElementActionName(this.ActDropDownListAction);
+            if (currentType == typeof(ActUIElement))
             {
-                case eActDropDownListAction.SetSelectedValueByValue:
-                    newAct.ElementAction = ActUIElement.eElementAction.SetSelectedValueByValue;
-                    break;
-                case eActDropDownListAction.SetSelectedValueByIndex:
-                    newAct.ElementAction = ActUIElement.eElementAction.SetSelectedValueByIndex;
-                    break;
-                case eActDropDownListAction.SetSelectedValueByText:
-                    newAct.ElementAction = ActUIElement.eElementAction.SetSelectedValueByText;
-                    break;
-                case eActDropDownListAction.ClearSelectedValue:
-                    newAct.ElementAction = ActUIElement.eElementAction.ClearSelectedValue;
-                    break;
-                case eActDropDownListAction.SetFocus:
-                    newAct.ElementAction = ActUIElement.eElementAction.SetFocus;
-                    break;
-                case eActDropDownListAction.GetValidValues:
-                    newAct.ElementAction = ActUIElement.eElementAction.GetValidValues;
-                    break;
-                case eActDropDownListAction.GetSelectedValue:
-                    newAct.ElementAction = ActUIElement.eElementAction.GetSelectedValue;
-                    break;
-                case eActDropDownListAction.IsPrepopulated:
-                    newAct.ElementAction = ActUIElement.eElementAction.IsPrepopulated;
-                    break;
-                case eActDropDownListAction.GetFont:
-                    newAct.ElementAction = ActUIElement.eElementAction.GetFont;
-                    break;
-                case eActDropDownListAction.GetWidth:
-                    newAct.ElementAction = ActUIElement.eElementAction.GetWidth;
-                    break;
-                case eActDropDownListAction.GetHeight:
-                    newAct.ElementAction = ActUIElement.eElementAction.GetHeight;
-                    break;
-                case eActDropDownListAction.GetStyle:
-                    newAct.ElementAction = ActUIElement.eElementAction.GetStyle;
-                    break;
-                default:
-                    newAct.ElementAction = ActUIElement.eElementAction.Unknown;
-                    break;
+                // check special cases, where neame should be changed. Than at default case - all names that have no change
+                switch (this.ActDropDownListAction)
+                {
+                    case eActDropDownListAction.SetSelectedValueByIndex:
+                        newAct.ElementAction = ActUIElement.eElementAction.SelectByIndex;
+                        break;
+                    case eActDropDownListAction.SetSelectedValueByValue:
+                        newAct.ElementAction = ActUIElement.eElementAction.Select;
+                        break;
+                    case eActDropDownListAction.SetSelectedValueByText:
+                        newAct.ElementAction = ActUIElement.eElementAction.SelectByText;
+                        break;
+                    case eActDropDownListAction.IsPrepopulated:
+                        newAct.ElementAction = ActUIElement.eElementAction.IsValuePopulated;
+                        break;
+                    default:
+                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ActDropDownListAction.ToString());
+                        break;
+                }
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
@@ -176,6 +167,30 @@ namespace GingerCore.Actions
             newAct.Active = true;
 
             return newAct;
+        }
+
+        Type GetActionTypeByElementActionName(eActDropDownListAction dropDownElementAction)
+        {
+            Type currentType = null;
+            switch (dropDownElementAction)
+            {
+                case eActDropDownListAction.SetSelectedValueByValue:
+                case eActDropDownListAction.SetSelectedValueByIndex:
+                case eActDropDownListAction.SetSelectedValueByText:
+                case eActDropDownListAction.SetFocus:
+                case eActDropDownListAction.GetValidValues:
+                case eActDropDownListAction.GetSelectedValue:
+                case eActDropDownListAction.IsPrepopulated:
+                case eActDropDownListAction.GetFont:
+                case eActDropDownListAction.GetWidth:
+                case eActDropDownListAction.GetHeight:
+                case eActDropDownListAction.GetStyle:
+                    currentType = typeof(ActUIElement);
+                    break;
+                //default:
+                //    throw new Exception("Converter error, missing Action translator for - " + dropDownElementAction);
+            }
+            return currentType;
         }
     }
 }

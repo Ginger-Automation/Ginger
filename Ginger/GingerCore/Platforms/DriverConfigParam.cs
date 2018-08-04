@@ -30,8 +30,9 @@ namespace GingerCore
             public static string Description = "Description";         
         }
 
+        string mParameter;
         [IsSerializedForLocalRepository]
-        public string Parameter { get; set; }
+        public string Parameter { get { return mParameter; } set { if (mParameter != value) { mParameter = value; OnPropertyChanged(nameof(Parameter)); } } }
 
         public string mValue;
         [IsSerializedForLocalRepository]
@@ -43,13 +44,17 @@ namespace GingerCore
             }
             set
             {
-                mValue = value;
-                OnPropertyChanged(Fields.Value);
+                if (mValue != value)
+                {
+                    mValue = value;
+                    OnPropertyChanged(nameof(Value));
+                }
             }
         }
 
+        string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }
+        public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         public override string ItemName
         {

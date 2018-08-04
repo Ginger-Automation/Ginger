@@ -50,7 +50,7 @@
 //        }
 
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void LoadSeleniumPluginPackage1_0_0()
 //        {
 //            // Keep loading and testing old selenium package to make sure we didn't break backword compatibility

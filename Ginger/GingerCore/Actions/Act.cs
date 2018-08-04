@@ -388,6 +388,8 @@ namespace GingerCore.Actions
         /// </summary>
         public virtual bool IsLegacyAction { get { return false; } }
 
+        public virtual List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>(); } }
+
         //Required to know if to show Locator Configuration fields in Action Edit window
         public abstract bool ObjectLocatorConfigsNeeded { get; }
         //Required to know if to show Value Configuration fields in Action Edit window

@@ -8,13 +8,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="AddPOMIntorPage">
 
-    <Grid>
-        <StackPanel>
-            <Label>Add new POM - Page Object Model</Label>
-            <Label>POM:</Label>
-            <Label>This Wizard will help you add a new POM</Label>
-            
-            
-        </StackPanel>
+    <Grid Background="{StaticResource $BackgroundGray}">
+        <TextBlock x:Name="xNewPOMIntroTxtBlock" Style="{StaticResource $TextBlockStyle}" TextWrapping="Wrap" Margin="10,10,10,0"></TextBlock>
     </Grid>
 </Page>

@@ -31,6 +31,7 @@ using UnitTests;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Ignore]
 
     public class JSPayloadTest 
     {
@@ -57,7 +58,7 @@ namespace UnitTests.NonUITests
             mDriver.CloseDriver();
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void EchoSimpleString()
         {
             // Arrange            
@@ -76,7 +77,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(txt, txtRC, "txt=txtRC");            
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void EchoSringwithSymbols()
         {
             // Arrange            
@@ -95,7 +96,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //[Ignore]
         //public void EchoSringwithHebrew()
         //{
@@ -115,7 +116,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void EchoLongSring()
         {
             // Arrange            
@@ -138,7 +139,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]        
+        [TestMethod,Timeout(60000)]        
         public void GetVisibleElements()
         {            
             PayLoad PLRequest = new PayLoad("GetVisibleElements");         
