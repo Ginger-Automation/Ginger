@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -388,7 +388,7 @@ namespace GingerCore.Drivers
             int x = 0;
             int y = 0;
 
-            if (XY != "" && XY.IndexOf(",") > 0)
+            if ((!String.IsNullOrEmpty(XY))&& XY.IndexOf(",") > 0)
             {
                 string[] coordinates = XY.Split(',');
                 //User will specify the X,Y relative to the element instead of related to whole window

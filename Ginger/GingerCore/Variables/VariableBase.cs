@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
+using GingerCore.Actions;
 
 namespace GingerCore.Variables
 {
@@ -519,6 +520,8 @@ namespace GingerCore.Variables
             }
         }
         public abstract bool SupportSetValue { get; }
+
+        public abstract List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations();
 
         public abstract String VariableUIType { get; }
     }

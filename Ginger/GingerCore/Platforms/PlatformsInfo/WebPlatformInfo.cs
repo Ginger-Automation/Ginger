@@ -101,6 +101,15 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eElementAction.MouseClick);
                     list.Add(ActUIElement.eElementAction.MousePressRelease);
                     list.Add(ActUIElement.eElementAction.ClickAndValidate);
+                    list.Add(ActUIElement.eElementAction.Submit);
+
+                    list.Add(ActUIElement.eElementAction.GetValue);
+                    list.Add(ActUIElement.eElementAction.IsDisabled);
+                    list.Add(ActUIElement.eElementAction.GetFont);
+                    list.Add(ActUIElement.eElementAction.IsVisible);
+                    list.Add(ActUIElement.eElementAction.GetWidth);
+                    list.Add(ActUIElement.eElementAction.GetHeight);
+                    list.Add(ActUIElement.eElementAction.GetStyle);
                     break;
                 case eElementType.CheckBox:
                     list.Add(ActUIElement.eElementAction.SetValue);
@@ -109,24 +118,44 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eElementAction.MouseClick);
                     list.Add(ActUIElement.eElementAction.MousePressRelease);
                     list.Add(ActUIElement.eElementAction.ClickAndValidate);
+
+                    list.Add(ActUIElement.eElementAction.GetValue);
+                    list.Add(ActUIElement.eElementAction.IsDisabled);
+                    list.Add(ActUIElement.eElementAction.IsVisible);
+                    list.Add(ActUIElement.eElementAction.GetWidth);
+                    list.Add(ActUIElement.eElementAction.GetHeight);
+                    list.Add(ActUIElement.eElementAction.GetStyle);
                     break;
                 case eElementType.TextBox:
                     list.Add(ActUIElement.eElementAction.SetText);
+                    list.Add(ActUIElement.eElementAction.SendKeys);
+                    list.Add(ActUIElement.eElementAction.ClearValue);
+                    list.Add(ActUIElement.eElementAction.IsValuePopulated);
+                    list.Add(ActUIElement.eElementAction.GetTextLength);
+
+                    list.Add(ActUIElement.eElementAction.GetValue);
+                    list.Add(ActUIElement.eElementAction.IsDisabled);
+                    list.Add(ActUIElement.eElementAction.GetFont);
+                    list.Add(ActUIElement.eElementAction.IsVisible);
+                    list.Add(ActUIElement.eElementAction.GetWidth);
+                    list.Add(ActUIElement.eElementAction.GetHeight);
+                    list.Add(ActUIElement.eElementAction.GetStyle);
+                    list.Add(ActUIElement.eElementAction.GetSize);
                     break;
                 case eElementType.ComboBox:
-                    // list.Add(ActUIElement.eElementAction.SetText);
-                    list.Add(ActUIElement.eElementAction.SetSelectedValueByIndex);
-                    list.Add(ActUIElement.eElementAction.SetSelectedValueByValue);
-                    list.Add(ActUIElement.eElementAction.SetSelectedValueByText);
-                    list.Add(ActUIElement.eElementAction.ClearSelectedValue);
+                    list.Add(ActUIElement.eElementAction.SelectByIndex);
+                    list.Add(ActUIElement.eElementAction.Select);
+                    list.Add(ActUIElement.eElementAction.SelectByText);
                     list.Add(ActUIElement.eElementAction.SetFocus);
                     list.Add(ActUIElement.eElementAction.GetValidValues);
                     list.Add(ActUIElement.eElementAction.GetSelectedValue);
-                    list.Add(ActUIElement.eElementAction.IsPrepopulated);
+                    list.Add(ActUIElement.eElementAction.IsValuePopulated);
                     list.Add(ActUIElement.eElementAction.GetFont);
                     list.Add(ActUIElement.eElementAction.GetWidth);
                     list.Add(ActUIElement.eElementAction.GetHeight);
                     list.Add(ActUIElement.eElementAction.GetStyle);
+                    list.Add(ActUIElement.eElementAction.GetValue);
+                    list.Add(ActUIElement.eElementAction.GetAllValues);
                     break;
                 case eElementType.Table:
                     list.Add(ActUIElement.eElementAction.TableAction);
@@ -145,6 +174,13 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eElementAction.MouseClick);
                     list.Add(ActUIElement.eElementAction.MousePressRelease);
                     list.Add(ActUIElement.eElementAction.ClickAndValidate);
+
+                    list.Add(ActUIElement.eElementAction.GetWidth);
+                    list.Add(ActUIElement.eElementAction.GetHeight);
+                    list.Add(ActUIElement.eElementAction.GetStyle);
+                    list.Add(ActUIElement.eElementAction.GetValue);
+                    list.Add(ActUIElement.eElementAction.IsVisible);
+                    list.Add(ActUIElement.eElementAction.Hover);
                     break;
             }
             return list;
@@ -164,7 +200,35 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementLocatorsTypeList.Add(eLocateBy.ByXY);
                 mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);
 
-                // TODO: check/add all supported lcoators in Selenium Driver
+                mElementLocatorsTypeList.Add(eLocateBy.NA);
+                mElementLocatorsTypeList.Add(eLocateBy.Unknown);
+                mElementLocatorsTypeList.Add(eLocateBy.ByName);
+                mElementLocatorsTypeList.Add(eLocateBy.Unknown);
+                mElementLocatorsTypeList.Add(eLocateBy.ByRelXPath);
+                mElementLocatorsTypeList.Add(eLocateBy.ByXY);
+                mElementLocatorsTypeList.Add(eLocateBy.ByContainerName);
+                mElementLocatorsTypeList.Add(eLocateBy.ByHref);
+                mElementLocatorsTypeList.Add(eLocateBy.ByLinkText);
+                mElementLocatorsTypeList.Add(eLocateBy.ByValue);
+                mElementLocatorsTypeList.Add(eLocateBy.ByIndex);
+                mElementLocatorsTypeList.Add(eLocateBy.ByAutomationID);
+                mElementLocatorsTypeList.Add(eLocateBy.ByLocalizedControlType);
+                mElementLocatorsTypeList.Add(eLocateBy.ByBoundingRectangle);
+                mElementLocatorsTypeList.Add(eLocateBy.IsEnabled);
+                mElementLocatorsTypeList.Add(eLocateBy.IsOffscreen);
+                mElementLocatorsTypeList.Add(eLocateBy.ByTitle);
+                mElementLocatorsTypeList.Add(eLocateBy.ByCaretPosition);
+                mElementLocatorsTypeList.Add(eLocateBy.ByUrl);
+                mElementLocatorsTypeList.Add(eLocateBy.ByngModel);
+                mElementLocatorsTypeList.Add(eLocateBy.ByngRepeat);
+                mElementLocatorsTypeList.Add(eLocateBy.ByngBind);
+                mElementLocatorsTypeList.Add(eLocateBy.ByngSelectedOption);
+                mElementLocatorsTypeList.Add(eLocateBy.ByResourceID);
+                mElementLocatorsTypeList.Add(eLocateBy.ByContentDescription);
+                mElementLocatorsTypeList.Add(eLocateBy.ByText);
+                mElementLocatorsTypeList.Add(eLocateBy.ByElementsRepository);
+                mElementLocatorsTypeList.Add(eLocateBy.ByModelName);
+                mElementLocatorsTypeList.Add(eLocateBy.ByCSSSelector);
             }
             return mElementLocatorsTypeList;
         }

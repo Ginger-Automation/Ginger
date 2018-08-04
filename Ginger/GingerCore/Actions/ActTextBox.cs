@@ -22,11 +22,13 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore.Actions.Common;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions
 {
     //This class is for Text Box actions
-    public class ActTextBox : Act
+    public class ActTextBox : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "TextBox Action"; } }
         public override string ActionUserDescription { get { return "Click on a TextBox object"; } }
@@ -87,6 +89,8 @@ namespace GingerCore.Actions
             }
         }
 
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+
         public enum eTextBoxAction
         {
             SetValueFast = 0,
@@ -116,6 +120,110 @@ namespace GingerCore.Actions
             }
         }
         
-        public override System.Drawing.Image Image { get { return Resources.ActTextBox; } } 
+        public override System.Drawing.Image Image { get { return Resources.ActTextBox; } }
+
+        Type IObsoleteAction.TargetAction()
+        {
+            return GetActionTypeByElementActionName(this.TextBoxAction);
+        }
+
+        String IObsoleteAction.TargetActionTypeName()
+        {
+            Type currentType = GetActionTypeByElementActionName(this.TextBoxAction);
+            if (currentType == typeof(ActUIElement))
+            {
+                ActUIElement actUIElement = new ActUIElement();
+                return actUIElement.ActionDescription;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.Web;
+        }
+
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
+        {
+            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.NA)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        Act IObsoleteAction.GetNewAction()
+        {
+            bool uIElementTypeAssigned = false;
+            AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
+
+
+            Type currentType = GetActionTypeByElementActionName(this.TextBoxAction);
+            if (currentType == typeof(ActUIElement))
+            {
+                // check special cases, where neame should be changed. Than at default case - all names that have no change
+                switch (this.TextBoxAction)
+                {
+                    case eTextBoxAction.SetValueFast:
+                        newAct.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        break;
+                    case eTextBoxAction.SetValue:
+                        newAct.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        break;
+                    case eTextBoxAction.Clear:
+                        newAct.ElementAction = ActUIElement.eElementAction.ClearValue;
+                        break;
+                    case eTextBoxAction.IsPrepopulated:
+                        newAct.ElementAction = ActUIElement.eElementAction.IsValuePopulated;
+                        break;
+                    case eTextBoxAction.IsDisplayed:
+                        newAct.ElementAction = ActUIElement.eElementAction.IsVisible;
+                        break;
+                    case eTextBoxAction.GetInputLength:
+                        newAct.ElementAction = ActUIElement.eElementAction.GetTextLength;
+                        break;
+                    default:
+                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ActionType.ToString());
+                        break;
+                }
+            }
+
+            newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
+            newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if (!uIElementTypeAssigned)
+                newAct.ElementType = eElementType.TextBox;
+            newAct.Active = true;
+
+            return newAct;
+        }
+
+        Type GetActionTypeByElementActionName(eTextBoxAction dropDownElementAction)
+        {
+            Type currentType = null;
+            switch (dropDownElementAction)
+            {
+                case eTextBoxAction.SetValueFast:
+                case eTextBoxAction.SetValue:
+                case eTextBoxAction.Clear:
+                case eTextBoxAction.GetValue:
+                case eTextBoxAction.IsDisabled:
+                case eTextBoxAction.GetFont:
+                case eTextBoxAction.IsPrepopulated:
+                case eTextBoxAction.IsDisplayed:
+                case eTextBoxAction.GetInputLength:
+                    currentType = typeof(ActUIElement);
+                    break;
+                    //default:
+                    //    throw new Exception("Converter error, missing Action translator for - " + dropDownElementAction);
+            }
+            return currentType;
+        }
     }
 }

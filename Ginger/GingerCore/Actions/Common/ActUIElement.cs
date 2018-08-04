@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.ComponentModel;
 
 namespace GingerCore.Actions.Common
 {
@@ -44,7 +45,9 @@ namespace GingerCore.Actions.Common
         //public new float LocateBy;  // DUMMY_Locate_By_DO_NOT_USE_The_New_Is_ ElementLocateBy on this
         //public new float LocateValue;  // DUMMY_Locate_By_DO_NOT_USE_The_New_I ElementLocateValue on this
         // --------------------------------------------------------------------------------------------
-        
+
+        public const string EElementActionTypeGeneric = "Generic";
+
         public override string ActionDescription { get { return "UIElement Action"; } }
         public override string ActionUserDescription { get { return "UIElement Action"; } }
 
@@ -196,124 +199,248 @@ namespace GingerCore.Actions.Common
 
         public enum eElementAction
         {
-            //those are all available UI Control actions, each driver will filter what can be done based on the type and what it is supporting
-
-            //Below should be used
-            #region Usable Action Types
+            #region Generic Action Types
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("")]
             Unknown,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Activate Hover")]
+            Hover,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Set as Visible")]
+            Visible,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Click")]
             Click,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Get Custom Attribute")]
+            GetCustomAttribute,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Async Click")]
             AsyncClick,
-            [EnumValueDescription("Win Click")]
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Win Click")]             // not here at all ?
             WinClick,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Mouse Click")]
             MouseClick,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Mouse Press/Release")]
-            MousePressRelease,
-            [EnumValueDescription("Double Click")]
-            DoubleClick,
+            MousePressRelease,                              // JAVA ?
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Double Click")]      
+            DoubleClick,                                     // JAVA ?
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Java Script Click")]
-            JavaScriptClick,
+            JavaScriptClick,                                 // JAVA ?
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Click and Validate")]
-            ClickAndValidate,
+            ClickAndValidate,                                // JAVA ?
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Send Keys and Validate")]
-            SendKeysAndValidate,
+            SendKeysAndValidate,                             // JAVA ?
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Click X,Y")]
             ClickXY,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Set Text")]
             SetText,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Text")]
             GetText,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Set Value")]
             SetValue,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Value")]
             GetValue,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get X,Y")]
             GetXY,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Size")]
             GetSize,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Open Drop Down")]
             OpenDropDown,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Close Drop Down")]
             CloseDropDown,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get All Values")]
             GetAllValues,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Attribute Value")]
-            GetAttrValue,           
+            GetAttrValue,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Set Focus")]
             SetFocus,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Is Enabled")]
             IsEnabled,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Toggle")]
             Toggle,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Select")]
             Select,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Is Visible")]
             IsVisible,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Is Mandatory")]
             IsMandatory,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Exist")]
             Exist,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Does not exist")]
             NotExist,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Enabled")]
             Enabled,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Name")]
             GetName,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Dialog Text")]
             GetDialogText,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Accept Dialog")]
             AcceptDialog,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Dismiss Dialog")]
             DismissDialog,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Select UIF Date")]
             SetDate,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Scroll Up")]
             ScrollUp,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Scroll Down")]
             ScrollDown,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Scroll Left")]
             ScrollLeft,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Scroll Right")]
             ScrollRight,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Select By Index")]
             SelectByIndex,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Value By Index")]
             GetValueByIndex,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Item Count")]
             GetItemCount,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Send Keys")]
             SendKeys,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Send Key Press Release")]
             SendKeyPressRelease,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Wait Until Display")]
             WaitUntilDisplay,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Wait")]
+            Wait,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Wait Until Disappear")]
             WaitUntilDisappear,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Drag and Drop")]
             DragDrop,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Expand")]
             Expand,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Collapse")]
             Collapse,
-            Hover,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Switch")]
             Switch,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Close")]
             CloseWindow,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Is Exist")]
             IsExist,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Maximize")]
             Maximize,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Minimize")]
             Minimize,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Control Property")]
             GetControlProperty,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Initialize Editor Pane")]
             InitializeJEditorPane,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("JEditor Pane Element Action")]
             JEditorPaneElementAction,
-            // Table Actions
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Switch To Default Frame")]
+            SwitchToDefaultFrame,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Refresh")]
+            Refresh,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Get Contexts")]
+            GetContexts,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Set Contexts")]
+            SetContext,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Select From Dijit List")]
+            SelectFromDijitList,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Right Click")]
+            MouseRightClick,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Get Font")]
+            GetFont,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Get Width")]
+            GetWidth,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Get Height")]
+            GetHeight,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Get Style")]
+            GetStyle,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Switch To Parent Frame")]
+            SwitchToParentFrame,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Async Select From Drop Down (By Index)")]
+            AsyncSelectFromDropDownByIndex,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Multi Clicks")]
+            MultiClicks,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Multi Set Value")]
+            MultiSetValue,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Get Window Title")]
+            GetWindowTitle,
+            [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Set As Disabled")]
+            IsDisabled,
+            #endregion Generic Action Types
+
+            #region TextBox Action Types
+            [EnumValueDescription("Clear Value")]
+            ClearValue,
+            [EnumValueDescription("Get Text Length")]
+            GetTextLength,
+            #endregion TextBox Action Types
+
+            #region Table Action Types
             [EnumValueDescription("Table Row Action")]
             TableRowAction,
             [EnumValueDescription("Table Cell Action")]
@@ -328,38 +455,31 @@ namespace GingerCore.Actions.Common
             GetRowCount,
             [EnumValueDescription("Get Selected Row")]
             GetSelectedRow,
-
             [EnumValueDescription("Draw Object")]
             DrawObject,            
             [EnumValueDescription("Win Double Click")]
             winDoubleClick,
             [EnumValueDescription("Async Select")]
             AsyncSelect,
+            [EnumValueDescription("Scroll to Element")]
+            ScrollToElement,
+            #endregion Table Action Types
 
+            #region ComboBox related Types
             [EnumValueDescription("Set Selected Value By Index")]
             SetSelectedValueByIndex,
-            [EnumValueDescription("Set Selected Value By Value")]
-            SetSelectedValueByValue,
-            [EnumValueDescription("Set Selected Value By Text")]
-            SetSelectedValueByText,
-            [EnumValueDescription("Clear Selected Value")]
-            ClearSelectedValue,
+            [EnumValueDescription("Select By Text")]
+            SelectByText,
             [EnumValueDescription("Get Valid Values")]
             GetValidValues,
             [EnumValueDescription("Get Selected Value")]
             GetSelectedValue,
-            [EnumValueDescription("Is Prepopulated")]
-            IsPrepopulated,
-            [EnumValueDescription("Get Font")]
-            GetFont,
-            [EnumValueDescription("Get Width")]
-            GetWidth,
-            [EnumValueDescription("Get Height")]
-            GetHeight,
-            [EnumValueDescription("Get Style")]
-            GetStyle,
-
+            [EnumValueDescription("Is Value Populated")]
+            IsValuePopulated,
             #endregion Usable Action Types
+
+            [EnumValueDescription("Submit")]
+            Submit,
 
             //Below should NOT be used- only kept for old action types support
             #region NOT TO USE Action Types

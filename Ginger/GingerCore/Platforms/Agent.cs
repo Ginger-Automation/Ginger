@@ -289,8 +289,19 @@ namespace GingerCore
                 }
             }
         }
-        
-        public DriverBase Driver { get; set; }
+
+        private DriverBase mDriver;
+        public DriverBase Driver
+        {
+            get
+            {
+                return mDriver;
+            }
+            set
+            {
+                mDriver = value;
+            }
+        }
 
         private Task MSTATask = null;  // For STA Driver we keep the STA task 
         private CancellationTokenSource CTS = null;

@@ -6,21 +6,15 @@
 	<property name="target" value="1.5"/>
 	<property name="source" value="1.5"/>
 	<property name="GingerAgentJar" value="GingerAgent.jar" />
+	<path id="GingerJavaAgent.classpath">
 
-
-  <path id="GingerJavaAgent.classpath" >
-
-
-      <pathelement location="C:\Program Files (x86)\Java\jdk1.6.0_29\lib\tools.jar"  />
-    <pathelement location="C:\Program Files (x86)\Java\jdk1.7.0\lib\tools.jar"  />
-      
-    
+		<pathelement location="C:\Program Files (x86)\Java\jdk1.6.0_29\lib\tools.jar" />
+			
 		<pathelement location="javassist.jar" />
 		<pathelement location="jsoup.jar" />
 		<pathelement location="xsoup.jar" />
 
 	</path>
-
 	<target name="init">
 		<mkdir dir="bin"/>
 		<copy includeemptydirs="false" todir="bin">

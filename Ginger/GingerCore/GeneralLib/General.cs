@@ -126,14 +126,14 @@ namespace GingerCore
         /// <param name="comboBox"></param>
         /// <param name="EnumObj"></param>
         /// <param name="values"> leave values empty will take all possible vals, or pass a list to limit selection </param>
-        public static void FillComboFromEnumObj(ComboBox comboBox, Object EnumObj, List<object> values = null, bool sortValues = true)
+        public static void FillComboFromEnumObj(ComboBox comboBox, Object EnumObj, List<object> values = null, bool sortValues = true, ListCollectionView valuesCollView = null)
         {
-            comboBox.Items.Clear();
             comboBox.SelectedValuePath = "Value";
             Type Etype = EnumObj.GetType();
 
-            if (values == null)
+            if ((values == null) && (valuesCollView == null))
             {
+                comboBox.Items.Clear();
                 // Get all possible enum vals
                 foreach (object item in Enum.GetValues(Etype))
                 {
@@ -145,13 +145,21 @@ namespace GingerCore
             }
             else
             {
-                // get only subset from selected enum vals - used in Edit Action locate by to limit to valid values
-                foreach (object item in values)
+                if ((values == null) && (valuesCollView != null))
                 {
-                    ComboEnumItem CEI = new ComboEnumItem();
-                    CEI.text = GetEnumValueDescription(Etype, item);
-                    CEI.Value = item;
-                    comboBox.Items.Add(CEI);
+                    comboBox.ItemsSource = valuesCollView;
+                }
+                else
+                {
+                    comboBox.Items.Clear();
+                    // get only subset from selected enum vals - used in Edit Action locate by to limit to valid values
+                    foreach (object item in values)
+                    {
+                        ComboEnumItem CEI = new ComboEnumItem();
+                        CEI.text = GetEnumValueDescription(Etype, item);
+                        CEI.Value = item;
+                        comboBox.Items.Add(CEI);
+                    }
                 }
             }
 
@@ -255,6 +263,28 @@ namespace GingerCore
             }
         }
 
+        public static string GetEnumDescription(Type EnumType, object EnumValue)
+        {
+            try
+            {
+                DescriptionAttribute[] attributes = (DescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false);
+                string s;
+                if (attributes.Length > 0)
+                {
+                    s = attributes[0].Description;
+                }
+                else
+                {
+                    s = "NA";
+                }
+                return s;
+            }
+            catch
+            {
+                return "NA";
+            }
+        }
+
         // TODO: move to sperate class
         public class ComboEnumItem
         {
@@ -271,6 +301,20 @@ namespace GingerCore
 
             public string text { get; set; }
             public object Value { get; set; }
+        }
+
+        public class ComboGroupedEnumItem
+        {
+            public static class Fields
+            {
+                public static string text = "text";
+                public static string Value = "text";
+                public static string Category = "Value";
+            }
+
+            public object text { get; set; }
+            public object Value { get; set; }
+            public string Category { get; set; }
         }
 
         public class XmlNodeItem

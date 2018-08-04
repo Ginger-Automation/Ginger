@@ -21,13 +21,14 @@ using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore.Actions.Common;
 
 namespace GingerCore.Actions
 {
     //This class is for Browser actions
     //TODO: Replace to ActBrowser !? what if it is not browser? TBD
 
-    public class ActGotoURL : Act
+    public class ActGotoURL : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Goto URL Action"; } }
         public override string ActionUserDescription { get { return "Goto URL Action"; } }
@@ -55,6 +56,8 @@ namespace GingerCore.Actions
             }
         }
 
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+
         public override String ActionType
         {
             get
@@ -62,6 +65,79 @@ namespace GingerCore.Actions
                 return "Goto URL";
             }
         }
-        public override System.Drawing.Image Image { get { return Resources.ActGotoURL; } } 
+        public override System.Drawing.Image Image { get { return Resources.ActGotoURL; } }
+
+        //
+        // IObsoleteAction part
+        Type IObsoleteAction.TargetAction()
+        {
+            return GetActionTypeByElementActionName(this.ActionType);
+        }
+
+        String IObsoleteAction.TargetActionTypeName()
+        {
+            Type currentType = GetActionTypeByElementActionName(this.ActionType);
+            if (currentType == typeof(ActBrowserElement))
+            {
+                ActBrowserElement actBrowserElement = new ActBrowserElement();
+                return actBrowserElement.ActionDescription;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.Web;
+        }
+
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
+        {
+            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.NA)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        Act IObsoleteAction.GetNewAction()
+        {
+            AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActBrowserElement>(); });
+            ActBrowserElement NewActBrowserElement = mapConfigBrowserElementt.CreateMapper().Map<Act, ActBrowserElement>(this);
+
+            Type currentType = GetActionTypeByElementActionName(this.ActionType);
+            if (currentType == typeof(ActBrowserElement))
+            {
+                switch (this.ActionType)
+                {
+                    case "Goto URL":
+                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+                        break;
+                }
+            }
+
+            if (currentType == typeof(ActBrowserElement))
+            {
+                return NewActBrowserElement;
+            }
+            return null;
+        }
+
+        Type GetActionTypeByElementActionName(string actionType)
+        {
+            Type currentType = null;
+            switch (actionType)
+            {
+                case "Goto URL":
+                    currentType = typeof(ActBrowserElement);
+                    break;
+            }
+            return currentType;
+        }
     }
 }

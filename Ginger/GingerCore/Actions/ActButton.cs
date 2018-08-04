@@ -22,11 +22,13 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore.Actions.Common;
+using Amdocs.Ginger.Common.UIElement;
 
 // This class is for Button actions
 namespace GingerCore.Actions
 {
-    public class ActButton : Act
+    public class ActButton : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Button Action"; } }
         public override string ActionUserDescription { get { return "Click on a button object"; } }
@@ -56,6 +58,8 @@ namespace GingerCore.Actions
             }
         }
 
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+
         public enum eButtonAction
         {
             Click = 1,
@@ -78,6 +82,93 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.ActButton; } }        
+        public override System.Drawing.Image Image { get { return Resources.ActButton; } }
+
+        Type IObsoleteAction.TargetAction()
+        {
+            return GetActionTypeByElementActionName(this.ButtonAction);
+        }
+
+        String IObsoleteAction.TargetActionTypeName()
+        {
+            Type currentType = GetActionTypeByElementActionName(this.ButtonAction);
+            if (currentType == typeof(ActUIElement))
+            {
+                ActUIElement actUIElement = new ActUIElement();
+                return actUIElement.ActionDescription;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.Web;
+        }
+
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
+        {
+            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.NA)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        Act IObsoleteAction.GetNewAction()
+        {
+            bool uIElementTypeAssigned = false;
+            AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
+
+
+            Type currentType = GetActionTypeByElementActionName(this.ButtonAction);
+            if (currentType == typeof(ActUIElement))
+            {
+                // check special cases, where neame should be changed. Than at default case - all names that have no change
+                switch (this.ButtonAction)
+                {
+                    case eButtonAction.IsDisplayed:
+                        newAct.ElementAction = ActUIElement.eElementAction.IsVisible;
+                        break;
+                    default:
+                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ButtonAction.ToString());
+                        break;
+                }
+            }
+
+            newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
+            newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if (!uIElementTypeAssigned)
+                newAct.ElementType = eElementType.Button;
+            newAct.Active = true;
+
+            return newAct;
+        }
+
+        Type GetActionTypeByElementActionName(eButtonAction dropDownElementAction)
+        {
+            Type currentType = null;
+            switch (dropDownElementAction)
+            {
+                case eButtonAction.GetValue:
+                case eButtonAction.IsDisabled:
+                case eButtonAction.GetFont:
+                case eButtonAction.IsDisplayed:
+                case eButtonAction.GetWidth:
+                case eButtonAction.GetHeight:
+                case eButtonAction.GetStyle:
+                    currentType = typeof(ActUIElement);
+                    break;
+                    //default:
+                    //    throw new Exception("Converter error, missing Action translator for - " + dropDownElementAction);
+            }
+            return currentType;
+        }
     }
 }

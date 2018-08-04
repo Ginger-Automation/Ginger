@@ -20,12 +20,14 @@ using System;
 using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore.Actions.Common;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions
 {
     //This class is for submit
     //TODO: do we need a separate class or can combine with ActBrowser ?!
-    public class ActSubmit : Act
+    public class ActSubmit : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Submit Action"; } }
         public override string ActionUserDescription { get { return "Performs Submit Action"; } }
@@ -57,12 +59,92 @@ namespace GingerCore.Actions
             }
         }
 
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+
         public override String ActionType
         {
             get
             {
                 return "Submit";
             }
+        }
+
+        //
+        // IObsoleteAction part
+        Type IObsoleteAction.TargetAction()
+        {
+            return GetActionTypeByElementActionName(this.ActionType);
+        }
+
+        String IObsoleteAction.TargetActionTypeName()
+        {
+            Type currentType = GetActionTypeByElementActionName(ActionType);
+            if (currentType == typeof(ActUIElement))
+            {
+                ActUIElement actUIElement = new ActUIElement();
+                return actUIElement.ActionDescription;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.Web;
+        }
+
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
+        {
+            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.NA)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        Act IObsoleteAction.GetNewAction()
+        {
+            bool uIElementTypeAssigned = false;
+            AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
+
+
+            Type currentType = GetActionTypeByElementActionName(ActionType);
+            if (currentType == typeof(ActUIElement))
+            {
+                // check special cases, where neame should be changed. Than at default case - all names that have no change
+                switch (ActionType)
+                {
+                    case "Submit":
+                        newAct.ElementAction = ActUIElement.eElementAction.Submit;
+                        break;
+                }
+            }
+
+            newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
+            newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if (!uIElementTypeAssigned)
+                newAct.ElementType = eElementType.Button;
+            newAct.Active = true;
+
+            return newAct;
+        }
+
+        Type GetActionTypeByElementActionName(string actionType)
+        {
+            Type currentType = null;
+            switch (actionType)
+            {
+                case "Submit":
+                    currentType = typeof(ActUIElement);
+                    break;
+            }
+            return currentType;
         }
     }
 }
