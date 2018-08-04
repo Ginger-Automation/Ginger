@@ -40,7 +40,7 @@
 
         
 //        [Ignore]
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void CopyRepositoryItem()
 //        {
 //            // Arrange
@@ -60,7 +60,7 @@
 //        }
 
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void DuplicateRepositoryItem()
 //        {
 //            // Arrange

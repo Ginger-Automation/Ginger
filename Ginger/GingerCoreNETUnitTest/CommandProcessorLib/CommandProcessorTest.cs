@@ -63,7 +63,7 @@
 //        }
 
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void RunStandAloneAction()
 //        {
 //            //Arrange
@@ -86,7 +86,7 @@
 //            Assert.AreEqual("Mark", GA.Output.Values[0].ValueString);
 //        }
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void RunStandAloneActionScript()
 //        {
 //            //Arrange

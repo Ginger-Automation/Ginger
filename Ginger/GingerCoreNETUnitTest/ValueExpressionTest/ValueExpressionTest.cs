@@ -40,7 +40,7 @@
 //        }
 
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void SimpleSumEval()
 //        {
 //            //Arrange            
@@ -55,7 +55,7 @@
 //        }
 
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void EvalDateTime()
 //        {
 
@@ -71,7 +71,7 @@
 //            Assert.AreEqual(rc, dt);
 //        }
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void SumForLoopl()
 //        {
 //            //Arrange            
