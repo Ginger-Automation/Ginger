@@ -128,21 +128,21 @@
             
 //        }
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void HomeLinkXPath()
 //        {        
 //            //Act
 //            TestElementXPath("QAHome", ".//*[@id='home']");
 //        }
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void AdminLinkXPath()
 //        {
 //            //Act
 //            TestElementXPath("QAAdmin", ".//*[@id='menu']/li[2]/a");            
 //        }
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void ItemInTable()
 //        {
 //            //Act

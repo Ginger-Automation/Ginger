@@ -24,8 +24,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTest
 {
-    [TestClass]
-    [Ignore]
+    [TestClass]    
     public class RESTTest 
     {
         [TestInitialize]
@@ -35,7 +34,7 @@ namespace UnitTest
 
         // Need to have our own REST server, so will not be dependent on David server
         //[Ignore]
-        [TestMethod,Timeout(60000)]        
+        [TestMethod]        
         public void Rest1()
         {
 

@@ -27,7 +27,6 @@ namespace UnitTests.NonUITests
 {
     [TestClass]
     [Level1]
-    [Ignore]
 
     public class GingerSocketTest 
     {
@@ -104,7 +103,7 @@ namespace UnitTests.NonUITests
 
         
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void ClientConnect()
         {
             // Arrange
@@ -115,7 +114,7 @@ namespace UnitTests.NonUITests
             //Assert
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void Echo()
         {
             // Arrange
@@ -131,7 +130,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(txt, txt2, "txt = txt2");
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void Echo1000Speed()
         {
 
@@ -159,7 +158,7 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(st.ElapsedMilliseconds < 3000, "st.ElapsedMilliseconds < 3000");
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void SlowResponse1000()
         {
             // Arrange            
@@ -173,7 +172,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void LongAction()
         {
             // Arrange            

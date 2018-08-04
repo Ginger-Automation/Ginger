@@ -27,9 +27,7 @@ namespace UnitTests.NonUITests.AutoPilot
             ImportOptionalValues.ShowMessage = false;
         }
 
-
-        [TestMethod,Timeout(60000)]
-        [Ignore]
+        [TestMethod]
         public void ImportOptionalFromExcelRegressionTest()
         {
             createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"AutoPilot\ImportOptionalValue\createPayment.xml");
@@ -49,9 +47,7 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(dic.Count, 9, "Count of Parameters With New Optional Values");
         }
 
-
-        [Ignore]
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void ImportOptionalFromDBRegressionTest()
         {
             createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"AutoPilot\ImportOptionalValue\createPayment.xml");

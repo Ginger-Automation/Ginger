@@ -40,7 +40,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void BusinessFlow_IPDLSAM_v0_1_2_3()
         {
             //Arrange
@@ -55,7 +55,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(BF.Activities.Count(), 14);
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void Agent_IB1__v1_2_0_0()
         {
             //Arrange
@@ -71,7 +71,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(agent.DriverType,Agent.eDriverType.InternalBrowser);
         }
         /*
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void Env_CMIIIS__v1_2_0_0()
         {
             //Arrange
