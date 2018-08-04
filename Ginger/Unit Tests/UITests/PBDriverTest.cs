@@ -33,7 +33,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 
-namespace UnitTest
+namespace UnitTest { 
 
     [TestClass]
     public class PBDriverTest 
