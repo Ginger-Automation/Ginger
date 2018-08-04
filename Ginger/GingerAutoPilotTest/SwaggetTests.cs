@@ -30,7 +30,6 @@ using System.Threading.Tasks;
 namespace UnitTests.NonUITests.AutoPilot
 {
     [TestClass]
-    [Level3]
     public class SwaggetTests
     {
 
@@ -41,7 +40,7 @@ namespace UnitTests.NonUITests.AutoPilot
 
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void SwaggerParseCheckHeaderAndParamsCount()
         {
             //Arrange
