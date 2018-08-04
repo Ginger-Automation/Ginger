@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerWPFDriverWindow", "Gi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerWPFDriverWindowTest", "GingerWPFDriverWindowTest\GingerWPFDriverWindowTest.csproj", "{11D28BCF-EA5C-472A-A8FE-28DF1598A9E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIAComWrapper", "UIAComWrapper\UIAComWrapper\UIAComWrapper.csproj", "{1DD63894-DBB9-40EF-BFF2-55624CB285AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -192,6 +194,12 @@ Global
 		{11D28BCF-EA5C-472A-A8FE-28DF1598A9E9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{11D28BCF-EA5C-472A-A8FE-28DF1598A9E9}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{11D28BCF-EA5C-472A-A8FE-28DF1598A9E9}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{1DD63894-DBB9-40EF-BFF2-55624CB285AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DD63894-DBB9-40EF-BFF2-55624CB285AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DD63894-DBB9-40EF-BFF2-55624CB285AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DD63894-DBB9-40EF-BFF2-55624CB285AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DD63894-DBB9-40EF-BFF2-55624CB285AF}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DD63894-DBB9-40EF-BFF2-55624CB285AF}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
