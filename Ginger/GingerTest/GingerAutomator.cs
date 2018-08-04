@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-//using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Repository;
 using GingerWPFUnitTest.POMs;
 using System;
 using System.IO;
@@ -36,89 +36,67 @@ namespace GingerWPFUnitTest
         static Ginger.App app;
         public MainWindowPOM MainWindowPOM;
 
-        Thread t;
-
         //public static Dispatcher mDispatcher;
         public void StartGinger()
         {
-            try
-            {                
-                mutex.WaitOne();
-                
-                if (app != null) return;
+            mutex.WaitOne();
 
-                Ginger.SplashWindow splash = null;
-                // We start Ginger on STA thread
-                t = new Thread(() =>
-                {                
-                    // we need sample class - Dummy
-                    Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
-                    Assembly asm1 = d.GetType().Assembly;
-                    // Set the app resources to Ginger so image an other will be locally to Ginger
-                    Application.ResourceAssembly = asm1;
-                
-                    app = new Ginger.App();                
-                    splash = new Ginger.SplashWindow();                
-                    splash.Show();                  
-                
-                    Ginger.App.UserProfile.AutoLoadLastSolution = false;
-                    while (!app.IsReady && splash.IsVisible)
-                    {
-                        Thread.Sleep(100);
-                    }
+            if (app != null) return;
 
-                    GingerPOMBase.mDispatcher = app.GetMainWindowDispatcher();
-                    MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
+            Ginger.SplashWindow splash = null;
+            // We start Ginger on STA thread
+            var t = new Thread(() =>
+            {
+                // we need sample class - Dummy
+                Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
+                Assembly asm1 = d.GetType().Assembly;
+                // Set the app resources to Ginger so image an other will be locally to Ginger
+                Application.ResourceAssembly = asm1;
 
-                    // Makes the thread support message pumping                           
-                    System.Windows.Threading.Dispatcher.Run();                    
-                });
-                
-                // Configure the thread
-                t.SetApartmentState(ApartmentState.STA);
-                t.Start();
+                app = new Ginger.App();
+                splash = new Ginger.SplashWindow();
+                splash.Show();
+                //Ginger.App.UserProfile.AutoLoadLastSolution = false;                
 
-                //max 60 seconds for Mainwindow to be ready
-                int i = 0;
-                while (MainWindowPOM == null && i < 600)
+                while (!app.IsReady && splash.IsVisible)
                 {
                     Thread.Sleep(100);
-                    i++;
                 }
 
-                // !!!!!!!
-                Thread.Sleep(500);
+                GingerPOMBase.mDispatcher = app.GetMainWindowDispatcher();
+                MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
+                
+                // Makes the thread support message pumping                 
+                System.Windows.Threading.Dispatcher.Run();                
+            });
 
-                //while (splash.IsVisible)
-                //{
-                //    Thread.Sleep(100);
-                //}
-                // Here Ginger is live and visible
-            }
-            catch(Exception ex)
+
+            //// Configure the thread
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+
+            //max 60 seconds for Mainwindow to be ready
+            int i = 0;
+            while (MainWindowPOM == null && i <600)
             {
-                Console.WriteLine(ex.Message);
+                Thread.Sleep(100);
+                i++;
             }
+
+
+            while (splash.IsVisible)
+            {
+                Thread.Sleep(100);
+            }
+            // Here Ginger WPF is live and visible
+
         }
 
         
         internal void CloseGinger()
-        {            
+        {
             MainWindowPOM.Close();
-            MainWindowPOM = null;
             mutex.ReleaseMutex();
-
-            // System.Windows.Threading.Dispatcher.
-
-            Console.WriteLine("Waiting for app thread to close");
-            
-            // t.Abort();
-            //while (t.IsAlive)
-            //{
-            //    Thread.Sleep(100);
-            //}
-            
-            Console.WriteLine("thread app closed exiting");
         }
 
 
@@ -187,7 +165,7 @@ namespace GingerWPFUnitTest
         {
             GingerPOMBase.mDispatcher.Invoke(() =>
             {
-                // TODO: do it like user with open solution page                
+                // TODO: do it like user with open solution page
                 Ginger.App.CloseSolution();
 
             });

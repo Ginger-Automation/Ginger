@@ -31,38 +31,32 @@ using static GingerWPFUnitTest.Scenarios;
 namespace GingerWPFUnitTest
 {
     [TestClass]
-    [Level3]    
+    //[Level1]
     public class GingerBasicsTest
     {        
         static TestContext mTC;
         static string LogFile;
-        static GingerAutomator mGingerAutomator;
+        static GingerAutomator mGingerAutomator = new GingerAutomator();
         static string SolutionFolder;
         Mutex mutex = new Mutex();
 
         [ClassInitialize]
         public static void ClassInit(TestContext TC)
-        {
-            TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ ClassInit @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        {            
             mTC = TC;
-            Console.WriteLine("===> Starting Ginger");
-            mGingerAutomator = new GingerAutomator();
             mGingerAutomator.StartGinger();
-
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
             SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\EnvsTest");
             if (Directory.Exists(SolutionFolder))
             {
-                Directory.Delete(SolutionFolder, true);
+                Directory.Delete(SolutionFolder,true);
             }
 
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
+            
+            mGingerAutomator.OpenSolution(SolutionFolder);            
 
-            Console.WriteLine("===> Open solution");
-            TC.WriteLine("@@@@@@@@@@@@@@@@@@@@@@ Open solution @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-            mGingerAutomator.OpenSolution(SolutionFolder);
-
-            //LogFile = mTC.TestLogsDir + @"\Ginger_BasicsTest.txt";
+            LogFile = mTC.TestLogsDir + @"\Ginger_BasicsTest.txt";         
         }
 
         static void LogTest(Scenario scenario)
@@ -78,15 +72,13 @@ namespace GingerWPFUnitTest
             //string s = mTC.TestDir;
             //string s2 = mTC.TestRunResultsDirectory;
             mGingerAutomator.CloseGinger();
-            
         }
 
         // Run before each test
         [TestInitialize]
         public void TestInitialize()
-        {
-            mTC.WriteLine("TestInitialize: " + mTC.FullyQualifiedTestClassName + "." + mTC.TestName);                        
-            mutex.WaitOne();  
+        {            
+             mutex.WaitOne();  
         }
 
         [TestCleanup]
@@ -96,12 +88,8 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod,Timeout(60000)]        
-        public void DummyTest()
-        {
-        }
 
-        [TestMethod,Timeout(60000)]  
+        [TestMethod]  
         [Ignore]
         public void CheckTabsWhenSolutionClosed()
         {
@@ -117,8 +105,7 @@ namespace GingerWPFUnitTest
             Assert.AreEqual("HomeRibbon,SolutionRibbon,SupportRibbon", tabs);
         }
 
-        [TestMethod,Timeout(60000)]
-        [Ignore]
+        [TestMethod]
         public void CheckTabsWhenSolutionOpen()
         {
             //Arrange
@@ -133,10 +120,8 @@ namespace GingerWPFUnitTest
         }
 
 
-        // ==============================>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-
-        [TestMethod,Timeout(60000)]               
+        [TestMethod]
         public void VerifyEnvsShowinTree()
         {
             //Arrange            
@@ -152,7 +137,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod,Timeout(60000)]        
+        [TestMethod]
         public void AddEnvUsingWizard()
         {
             //Arrange            
@@ -168,9 +153,9 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod,Timeout(60000)]        
+        [TestMethod]
         public void AddEnvToFileSystemWillShowinEnvsTree()
-        {
+        {            
             // Arrange                                                
             EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
 
@@ -179,7 +164,7 @@ namespace GingerWPFUnitTest
             // Create env on disk
             ProjEnvironment e1 = new ProjEnvironment() { Name = "aaa" };
             string txt = e1.RepositorySerializer.SerializeToString(e1);
-            string fileName = Path.Combine(SolutionFolder, @"Environments\aaa.Ginger.Environment.xml");
+            string fileName = Path.Combine(SolutionFolder, @"Environments\aaa.Ginger.Environment.xml");                
             File.WriteAllText(fileName, txt);
 
             // Verify it show in treeview - FileWatcher should detect the new file on disk
@@ -190,8 +175,8 @@ namespace GingerWPFUnitTest
         }
 
 
-
-        [TestMethod,Timeout(60000)]        
+        
+        [TestMethod]
         public void DeleteEnvFromFileSystem()
         {
             // Arrange            
@@ -213,14 +198,12 @@ namespace GingerWPFUnitTest
 
         }
 
-
-        [TestMethod,Timeout(60000)]        
-        [Ignore]
+        [TestMethod]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
             //Arrange
             string EnvName = "Env to rename";
-            string EnvNewName = "Env to rename ZZZ";
+            string EnvNewName = "Env to rename ZZZ";            
             EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
             EnvsPOM.CreateEnvironment(EnvName);
             ProjEnvironment env = EnvsPOM.SelectEnvironment(EnvName);
@@ -236,7 +219,7 @@ namespace GingerWPFUnitTest
             Assert.IsTrue(b);
         }
 
-        [TestMethod,Timeout(60000)]        
+        [TestMethod]
         public void AddEnvFolderShowinTree()
         {
             //Arrange
@@ -254,7 +237,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod,Timeout(60000)]        
+        [TestMethod]
         public void DeleteEnvFolderRemovedfromTree()
         {
             //Arrange
@@ -274,8 +257,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [TestMethod,Timeout(60000)]
-        
+        [TestMethod]
         public void RenameEnvFolderSyncWithTree()
         {
             //Arrange
