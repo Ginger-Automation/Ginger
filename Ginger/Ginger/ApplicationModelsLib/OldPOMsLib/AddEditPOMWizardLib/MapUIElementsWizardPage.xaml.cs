@@ -20,8 +20,10 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
+using GingerCore.Drivers;
 using GingerWPF.WizardLib;
 using System;
+using System.Drawing;
 using System.Windows.Controls;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
@@ -33,19 +35,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     {
         IWindowExplorer mWinExplorer;
         AddPOMWizard mWizard;
-        public ObservableList<ElementLocator> mLocators;
+        //public ObservableList<ElementLocator> mLocators;
         ApplicationPOMModel mPOM;
 
         public MapUIElementsWizardPage(ApplicationPOMModel POM)
         {
             InitializeComponent();
-
             mPOM = POM;
-            SetControlsGridView();
-            InitLocatorsGrid();
-
-            ShowPOMInfo();
         }
+
+        ScreenShotViewPage mScreenshotPage;
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
@@ -56,43 +55,23 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     mWinExplorer = mWizard.WinExplorer;                    
                     break;
                 case EventType.Active:
-                    ShowPOMInfo();                    
+                    ShowScreenShot();
+
                     break;
             }
         }
 
-        private void ShowPOMInfo()
+        public void ShowScreenShot()
         {
+            mPOM.ScreenShot = ((SeleniumDriver)mWizard.WinExplorer).GetScreenShot();
+            mScreenshotPage = new ScreenShotViewPage(mPOM.Name, mPOM.ScreenShot);
+            MainFrame.Content = mScreenshotPage;
         }
 
-        private void SetControlsGridView()
+
+        private void TakeScreenShotButtonClicked(object sender, System.Windows.RoutedEventArgs e)
         {
-        }
-
-        private void InitLocatorsGrid()
-        {
-            ////TODO: need to add Help text or convert to icon...
-            //// LocatorsGrid.AddToolbarTool()
-            ////LocatorsGrid.AddButton("Test", TestSelectedLocator);
-            ////LocatorsGrid.AddButton("Test All", TestAllLocators);
-
-            //GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            //defView.GridColsView = new ObservableList<GridColView>();
-            //defView.GridColsView.Add(new GridColView() { Field = ElementLocator.Fields.LocateBy, WidthWeight = 10 });
-            //defView.GridColsView.Add(new GridColView() { Field = ElementLocator.Fields.LocateValue, WidthWeight = 30 });
-            //defView.GridColsView.Add(new GridColView() { Field = ElementLocator.Fields.Help, WidthWeight = 20 });
-            //defView.GridColsView.Add(new GridColView() { Field = ElementLocator.Fields.Count, WidthWeight = 10 });
-
-            //LocatorsGrid.SetAllColumnsDefaultView(defView);
-            //LocatorsGrid.InitViewItems();
-
-            //LocatorsGrid.DataSourceList = mLocators;
-
-            //LocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-        }
-
-        private void ElementsGrid_RowChangedEvent(object sender, EventArgs e)
-        {
+            ShowScreenShot();
         }
     }
 }

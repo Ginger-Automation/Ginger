@@ -67,38 +67,12 @@ namespace Ginger.Actions
                 //## Set type
                 VariableTypeTextBox.Text = var.GetType().ToString().Replace("GingerCore.Variables.", string.Empty).Trim();
                     
-                //## Set operation options
-                App.FillComboFromEnumVal(OperationTypeComboBox, mAct.SetVariableValueOption);
-                if (var.SupportSetValue == false)
-                {
-                    OperationTypeComboBox.SelectedItem = null;
-                    for (int indx = 0; indx < OperationTypeComboBox.Items.Count; indx++)
-                        if (OperationTypeComboBox.Items[indx].ToString() == ActSetVariableValue.eSetValueOptions.SetValue.ToString())
-                            OperationTypeComboBox.Items.RemoveAt(indx);
-                    OperationTypeComboBox.SelectedValue = mAct.SetVariableValueOption;
-                }
-                //remove Generate Auto value if not relevant
-                if (var.GetType() == typeof(VariableString) || var.GetType() == typeof(VariableSelectionList) || var.GetType() == typeof(VariableDynamic))
-                {
-                    OperationTypeComboBox.SelectedItem = null;
-                    for (int indx = 0; indx < OperationTypeComboBox.Items.Count; indx++)
-                        if (OperationTypeComboBox.Items[indx].ToString() == ActSetVariableValue.eSetValueOptions.AutoGenerateValue.ToString())
-                            OperationTypeComboBox.Items.RemoveAt(indx);
-                    OperationTypeComboBox.SelectedValue = mAct.SetVariableValueOption;
-                }
-                //remove Reset Value if not relevant
-                if (var.GetType() != typeof(VariableString) && var.GetType() != typeof(VariableSelectionList)
-                    && var.GetType() != typeof(VariableList) && var.GetType() != typeof(VariableSequence) )
-                {
-                    OperationTypeComboBox.SelectedItem = null;
-                    for (int indx = 0; indx < OperationTypeComboBox.Items.Count; indx++)
-                        if (OperationTypeComboBox.Items[indx].ToString() == ActSetVariableValue.eSetValueOptions.ResetValue.ToString())
-                            OperationTypeComboBox.Items.RemoveAt(indx);
-                    OperationTypeComboBox.SelectedValue = mAct.SetVariableValueOption;
-                }
+                //## Set operation options           
 
-                App.ObjFieldBinding(OperationTypeComboBox, ComboBox.TextProperty, mAct, "SetVariableValueOption");  
+                OperationTypeComboBox.BindControl(mAct, nameof(ActSetVariableValue.SetVariableValueOption), var.GetSupportedOperations());
+
             }
         }
+ 
     }
 }

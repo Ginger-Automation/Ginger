@@ -16,11 +16,21 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
+using Ginger.UserControls;
+using Ginger.WindowExplorer;
+using GingerCore;
+using GingerCore.Drivers;
+using GingerCore.Platforms;
 using GingerWPF.WizardLib;
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -33,15 +43,117 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     /// </summary>
     public partial class LearnWizardPage : Page, IWizardPage
     {
+
+        ApplicationPOMModel mPOM = new ApplicationPOMModel();
+
+        WindowExplorerPage mWindowExplorerPage;
+        ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
+        ObservableList<ElementInfo> mSelectedElementsList = new ObservableList<ElementInfo>();
+        Dictionary<string, List<string>> mRequestedElementTypesDict = new Dictionary<string, List<string>>();
+        List<string> mRequestedElementTagList = new List<string>();
+
+        AddPOMWizard mWizard;
+        IWindowExplorer mWinExplorer;
+
         public LearnWizardPage(ApplicationPOMModel POM)
         {
             InitializeComponent();
 
-            //mPOM = POM;
+            mPOM = POM;
+
+            mElementsList.CollectionChanged += ElementsListCollectionChanged;
+
             //SetControlsGridView();
-            //ElementsGrid.DataSourceList = mPOM.UIElements;
-            //ElementsGrid.btnRefresh.Click += RefreshClick;
+            //xFoundElementsGrid.SetTitleLightStyle = true;
+            //xFoundElementsGrid.DataSourceList = mPOM.UIElements;
+            //xFoundElementsGrid.btnRefresh.Click += RefreshClick;
             //ElementsGrid.btnAdd.Click += BtnAdd_Click;
+        }
+
+        private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ElementInfo EI = ((ObservableList<ElementInfo>)sender).Last();
+
+            mWinExplorer.UpdateElementInfoFields(EI);
+
+            EI.Locators = mWinExplorer.GetElementLocators(EI);
+
+            EI.ElementName = GetBestElementName(EI);
+
+            EI.WindowExplorer = mWinExplorer;
+
+            //TODO: Auto decide what is active
+            if (!string.IsNullOrEmpty(EI.ElementName))
+            {
+                //TODO: fix me temp, need to be in IWindowExplorer, or return from eleminfo
+                if (EI.ElementType != "BODY" && EI.ElementType != "HTML" && EI.ElementType != "DIV")
+                {
+                    EI.Active = true;
+                }
+            }
+            else
+            {
+                //TODO: fix me temp code !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                if (EI.ElementType == "INPUT.TEXT")
+                {
+                    EI.ElementName = EI.Value + " TextBox";
+                    EI.Active = true;
+                }
+            }
+
+
+            string elementTagName = string.Empty;
+            string elementType = string.Empty;
+
+            if (EI.ElementType.Contains("."))
+            {
+                elementTagName = EI.ElementType.Substring(0, EI.ElementType.IndexOf("."));
+                elementType = EI.ElementType.Substring(EI.ElementType.IndexOf(".") + 1);
+            }
+            else
+            {
+                elementTagName = EI.ElementType;
+            }
+
+            if (mRequestedElementTagList.Contains(elementTagName))
+            {
+                List<string> values = null;
+                if (mRequestedElementTypesDict.ContainsKey(elementTagName.ToLower()))
+                {
+                    values = mRequestedElementTypesDict[elementTagName.ToLower()];
+                }
+
+                if (values != null && !string.IsNullOrEmpty(elementType))
+                {
+                    List<string> upperList = values.Select(x => x.ToUpper()).ToList();
+                    if (upperList.Contains(elementType))
+                        mPOM.MappedUIElements.Add(EI);
+                }
+                else
+                {
+                    mPOM.MappedUIElements.Add(EI);
+                }
+
+            }
+            else
+            {
+                mPOM.UnMappedUIElements.Add(EI);
+            }
+
+        }
+
+        private void InitilizeWindowExplorer()
+        {
+            ApplicationAgent applicationAgent = new ApplicationAgent();
+            applicationAgent.Agent = mWizard.mAgent;
+            string targetApplicationName = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Key == mPOM.TargetApplicationKey).FirstOrDefault().AppName;
+            applicationAgent.AppName = targetApplicationName;
+            mWindowExplorerPage = new WindowExplorerPage(applicationAgent,null, WindowExplorerPage.eWindowExplorerPageContext.POMWizard);
+            mWindowExplorerPage.WindowControlsGridView.DataSourceList = mPOM.MappedUIElements;
+            mWindowExplorerPage.HorizontalAlignment = HorizontalAlignment.Stretch;
+            mWindowExplorerPage.Width = 700;
+            xWindowExlorerFrame.Content = mWindowExplorerPage;
+            
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
@@ -50,135 +162,123 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             //DO NOT  DELETE Temp commented for moving to GingerCoreCommon
             // ******************************************************************************
             ////TODO: create add page
-            //mPOM.UIElements.Add(new ElementInfo() { ElementName = "*New*"});
+            //mPOM.UIElements.Add(new ElementInfo() { ElementName = "*New*" });
         }
 
         private void RefreshClick(object sender, RoutedEventArgs e)
         {
-            //ElementsGrid.DataSourceList = mPOM.UIElements; 
+            mWizard.IsLearningWasDone = false;
+            //xFoundElementsGrid.DataSourceList = mPOM.UIElements;
         }
 
-        private void SetControlsGridView()
-        {
-            ////Set the Tool Bar look
-            ////ElementsGrid.ShowAdd = Visibility.Collapsed;
-            //ElementsGrid.ShowClearAll = Visibility.Collapsed;
-            //ElementsGrid.ShowUpDown = Visibility.Collapsed;
-            ////ElementsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
-            ////ElementsGrid.AddToolbarTool("@Filter16x16.png", "Filter Elements to show", new RoutedEventHandler(FilterElementButtonClicked));
-            ////TODO: enable refresh to do refresh
-            //// ControlsGrid.ShowRefresh = System.Windows.Visibility.Collapsed;
+        //private void SetControlsGridView()
+        //{
+        //    ////Set the Tool Bar look
+           
+        //    ////Set the Data Grid columns            
+        //    GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+        //    view.GridColsView = new ObservableList<GridColView>();
 
-            //ElementsGrid.ShowEdit = System.Windows.Visibility.Collapsed;
-            //ElementsGrid.ShowDelete = System.Windows.Visibility.Collapsed;
+        //    view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Active), WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+        //    view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), WidthWeight = 100 });
+        //    view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), WidthWeight = 100 });
+        //    view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100 });
+        //    view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), WidthWeight = 60 });
 
-            ////TODO: add button to show all...
-            //// ControlsGrid.AddButton("Show All", new RoutedEventHandler(ShowAll));            
+        //    view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.X), WidthWeight = 60 });
+        //    view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Y), WidthWeight = 60 });
+        //    view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Width), WidthWeight = 60 });
+        //    view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Height), WidthWeight = 60 });
+        //    view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100 });
+        //    view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150 });
 
-            ////Set the Data Grid columns            
-            //GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            //view.GridColsView = new ObservableList<GridColView>();
+        //    xFoundElementsGrid.SetAllColumnsDefaultView(view);
+        //    xFoundElementsGrid.InitViewItems();
+        //}
 
-            //// view.GridColsView.Add(new GridColView() { Field = "Image", Header = " ", BindImageCol = "Image", WidthWeight = 2.5, MaxWidth = 20 });
-            //view.GridColsView.Add(new GridColView() { Field = ElementInfo.Fields.Active, WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            //view.GridColsView.Add(new GridColView() { Field = ElementInfo.Fields.ElementName, WidthWeight = 100 });
-            //view.GridColsView.Add(new GridColView() { Field = ElementInfo.Fields.ElementTitle, WidthWeight = 100 });
-            //view.GridColsView.Add(new GridColView() { Field = ElementInfo.Fields.Value, WidthWeight = 100 });
-            //view.GridColsView.Add(new GridColView() { Field = ElementInfo.Fields.ElementType, WidthWeight = 60 });
-
-            //view.GridColsView.Add(new GridColView() { Field = ElementInfo.Fields.X, WidthWeight = 60 });
-            //view.GridColsView.Add(new GridColView() { Field = ElementInfo.Fields.Y, WidthWeight = 60 });
-            //view.GridColsView.Add(new GridColView() { Field = ElementInfo.Fields.Width, WidthWeight = 60 });
-            //view.GridColsView.Add(new GridColView() { Field = ElementInfo.Fields.Height, WidthWeight = 60 });
-            //// view.GridColsView.Add(new GridColView() { Field = ElementInfo.Fields.Path, WidthWeight = 100 });
-            //// view.GridColsView.Add(new GridColView() { Field = ElementInfo.Fields.XPath, WidthWeight = 150 });
-
-            //ElementsGrid.SetAllColumnsDefaultView(view);
-            //ElementsGrid.InitViewItems();
-        }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            //switch (WizardEventArgs.EventType)
-            //{
-            //    case EventType.Init:
-            //        mWizard = (AddEditPOMWizard)WizardEventArgs.Wizard;
-            //        mWinExplorer = mWizard.WinExplorer;
-            //        ElementsGrid.DataSourceList = mWizard.POM.UIElements;
-            //        break;
-            //    case EventType.Active:                    
-            //        mScreenshot = new ScreenShotViewPage(mWizard.POM.Name, mWizard.POM.ScreenShot);
-            //        mScreenshot.MouseClickOnScreenshot += MouseClickOnScreenshot_EventHandler;
-            //        MainFrame.Content = mScreenshot;
-            //        break;
-            //}            
+            switch (WizardEventArgs.EventType)
+            {
+                case EventType.Init:
+                    mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
+                    //mWinExplorer = mWizard.WinExplorer;
+                    //xFoundElementsGrid.DataSourceList = mWizard.POM.UIElements;
+                    break;
+                case EventType.Active:
+                    if (xWindowExlorerFrame.Content == null)
+                        InitilizeWindowExplorer();
+                    Learn();
+                    break;
+                case EventType.LeavingForNextPage:
+                    //mPOM.SelectedUIElements = GingerCore.General.ConvertListToObservableList(mPOM.UIElements.Where(x => x.Selected).ToList());
+
+                    break;
+            }
         }
 
-        private void MouseClickOnScreenshot_EventHandler(object sender, MouseclickonScrenshot e)
+
+        private async void Learn()
         {
-            ////MessageBox.Show("x=" + e.X + ", y=" + e.Y);
+            if (!mWizard.IsLearningWasDone)
+            {
+                mWizard.ProcessStarted();
+                mWinExplorer = mWizard.WinExplorer;
 
-            //ObservableList<ElementInfo> filteredlist = new ObservableList<ElementInfo>();
 
-            //foreach (ElementInfo EI in mPOM.UIElements)
-            //{
-            //    //Check the mouse point is in boundries of element if not filter it out 
-            //    if (e.X >= EI.X && e.X <= EI.X + EI.Width && e.Y >= EI.Y && e.Y <= EI.Y + EI.Height)
-            //    {
-            //        filteredlist.Add(EI);
-            //    }
-            //}
+                //Dictionary<string, List<string>> filteringCriteriasDict = mWinExplorer.GetFilteringCreteriaDict();
 
-            //ElementsGrid.DataSourceList = filteredlist;
+                mRequestedElementTypesDict = SeleniumDriver.GetFilteringCreteriaDict(mWizard.CheckedFilteringCreteriaList);
+                mRequestedElementTagList = mRequestedElementTypesDict.Keys.Select(x => x.ToUpper()).ToList();
 
-            //// TODO: return ToolBar unfilter
-            //// ElementsGrid.DataSourceList = mDPI.UIElements;
+                //mRequestedElementTypesList = mWizard.CheckedFilteringCreteriaList.Select(x => x.ElementType.ToString()).ToList();
+
+                mWizard.IsLearningWasDone = await GetElementsFromPage();
+                mWizard.ProcessEnded();
+            }
         }
 
-        private void LearnButton_Click(object sender, RoutedEventArgs e)
+        private async Task<bool> GetElementsFromPage()
         {
-            //MainProgressBar.Visibility = Visibility.Visible;
-            //ProcessingLabel.Visibility = Visibility.Visible;
-            //MainProgressBar.Visibility = Visibility.Visible;
-            //ProcessingLabel.Refresh();
+            bool learnSuccess = true;
 
-            //StartAnimation();
+            try
+            {
+                await Task.Run(() => GetElementFromPageTask());
 
-            //GingerCore.General.DoEvents();
+                xStopLoadButton.ButtonText = "Stop";
+                xStopLoadButton.IsEnabled = true;
+                ((DriverBase)mWinExplorer).mStopProcess = false;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMWizardFailedToLearnElement, ex.Message);
+                //MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "Failed to Parse the WSDL", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
+                learnSuccess = false;
+            }
 
-            //ProcessingLabel.Content = "Getting Screen elements";
+            return learnSuccess;
+        }
 
-            //// mPOM.Name = mWindowExplorerDriver.GetActiveWindow().Title;
+        private void GetElementFromPageTask()
+        {
+            //ObservableList<UIElementFilter> filters = mWizard.CheckedFilteringCreteriaList;
+            mPOM.MappedUIElements.Clear();
 
-            //ObservableList<UIElementFilter> filters = new ObservableList<UIElementFilter>();
-            //List<ElementInfo> list = mWinExplorer.GetVisibleControls(filters);
+            mWinExplorer.GetVisibleControls(new ObservableList<UIElementFilter>(), mElementsList);
 
-            //MainProgressBar.Value = 0;
-            //MainProgressBar.Maximum = list.Count();
-            //GingerCore.General.DoEvents();
-            //// Convert to observable for the grid
-            //mPOM.UIElements.Clear();
+
             //foreach (ElementInfo EI in list)
             //{
-            //    ProcessingLabel.Content = "Getting Element info: " + EI.ElementTitle + " " + EI.ElementType;
-            //    ProcessingLabel.Refresh();
-
-            //    MainProgressBar.Value++;
-            //    MainProgressBar.Refresh();
-            //    GingerCore.General.DoEvents();
-
-            //    //TODO: remove and let Lazy loading handle it
             //    mWinExplorer.UpdateElementInfoFields(EI);
-            //    // EI.X = mWindowExplorerDriver.
-                
+
             //    EI.Locators = mWinExplorer.GetElementLocators(EI);
 
             //    EI.ElementName = GetBestElementName(EI);
 
             //    EI.WindowExplorer = mWinExplorer;
 
-            //    //EI.Data = EI.GetElementData();
-                
             //    //TODO: Auto decide what is active
             //    if (!string.IsNullOrEmpty(EI.ElementName))
             //    {
@@ -186,7 +286,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             //        if (EI.ElementType != "BODY" && EI.ElementType != "HTML" && EI.ElementType != "DIV")
             //        {
             //            EI.Active = true;
-            //        }                    
+            //        }
             //    }
             //    else
             //    {
@@ -197,27 +297,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             //            EI.Active = true;
             //        }
             //    }
-            //    // EI.GetElementProperties
-
-            //    // EI.ElementName = "?";
 
             //    mPOM.UIElements.Add(EI);
             //}
-            
 
-            ////TODO: check support for IVisualTestingDriver
-            //// Bitmap bmp = ((IVisualTestingDriver)mWindowExplorerDriver).GetScreenShot();
-            //// mDPI.ScreenShot = bmp;
-
-            ////ScreenShotViewPage p = new ScreenShotViewPage(mWindowExplorerDriver.GetActiveWindow().Title , bmp);
-            ////ScreenShotFrame.Content = p;
-            //// ShowScreenShot();
-
-            //MainProgressBar.Visibility = Visibility.Collapsed;
-            //ProcessingLabel.Visibility = Visibility.Collapsed;
-            //MainProgressBar.Visibility = Visibility.Collapsed;
-
-            //StopAnimation();
         }
 
         string GetBestElementName(ElementInfo EI)
@@ -227,23 +310,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             return EI.Value + " " + EI.ElementType;
         }
 
-        private void StopAnimation()
-        {
-            rectangle1.RenderTransform = null;
-        }
-
-        private void StartAnimation()
-        {
-            DoubleAnimation da = new DoubleAnimation();
-            da.From = 0;
-            da.To = 360;
-            da.Duration = new Duration(TimeSpan.FromSeconds(3));
-            da.RepeatBehavior = RepeatBehavior.Forever;
-            RotateTransform rt = new RotateTransform();
-            rectangle1.RenderTransform = rt;
-            rt.BeginAnimation(RotateTransform.AngleProperty, da);
-            // AnimationLabel
-        }
+      
 
         private void ElementsGrid_RowChangedEvent(object sender, EventArgs e)
         {
@@ -263,6 +330,24 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             //    }
             //}            
 
+        }
+
+        private void StopButtonClicked(object sender, RoutedEventArgs e)
+        {
+            xStopLoadButton.ButtonText = "Stopping...";
+            xStopLoadButton.IsEnabled = false;
+            ((DriverBase)mWinExplorer).mStopProcess = true;
+        }
+
+        UnmappedElementsPage mUnmappedElementsPage;
+
+        private void UnmappedElementsButtonClicked(object sender, RoutedEventArgs e)
+        {
+            if (mUnmappedElementsPage == null)
+            {
+                mUnmappedElementsPage = new UnmappedElementsPage(mPOM);
+            }
+            mUnmappedElementsPage.ShowAsWindow();
         }
     }
 }

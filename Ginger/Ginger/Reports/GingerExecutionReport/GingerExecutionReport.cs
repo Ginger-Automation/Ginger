@@ -86,10 +86,10 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{company_logo}", CompanyLogo);
             ReportHTML = ReportHTML.Replace("{ginger_logo}", GingerLogo);
             if (currentTemplate.UseLocalStoredStyling)
-            {
-                ReportJS = ExtensionMethods.GetHTMLTemplate("graph.js", TemplatesFolder + "/assets/js/");
+            {                
                 ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");
             }
+            ReportJS = ExtensionMethods.GetHTMLTemplate("circlechart.js", TemplatesFolder + "/assets/js/");
             // populating "Run Set General Details"
             // running on all selected fields and getting this fields names AND values from the Report file (both into separate html-table string)
             StringBuilder fieldsNamesHTMLTableCells = new StringBuilder();
@@ -228,14 +228,11 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{ginger_logo}", GingerLogo);
             if (currentTemplate.UseLocalStoredStyling)
             {
-                ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");
-                CanvasJs = ExtensionMethods.GetHTMLTemplate("canvasjs.min.js", TemplatesFolder + "/assets/js/");
-                CanvasJs = "<script type='text / javascript'>" + CanvasJs + "</script>";
+                ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");                
             }
-            else
-            {
-                CanvasJs = "<script src='assets/js/canvasjs.min.js'></script>";
-            }
+            
+            CanvasJs = ExtensionMethods.GetHTMLTemplate("donutchart.js", TemplatesFolder + "/assets/js/");
+            CanvasJs = "<script type='text/jsx'>" + CanvasJs + "</script>";
             // populating "Run Set General Details"
             // running on all selected fields and getting this fields names AND values from the Report file (both into separate html-table string)
             StringBuilder fieldsNamesHTMLTableOneCells = new StringBuilder();
@@ -746,12 +743,12 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{beat_logo}", BeatLogo);
             ReportHTML = ReportHTML.Replace("{company_logo}", CompanyLogo);
             ReportHTML = ReportHTML.Replace("{ginger_logo}", GingerLogo);
-            if (currentTemplate.UseLocalStoredStyling)
+            if (ReportJS == string.Empty || ReportJS == "")
             {
-                if (ReportJS == string.Empty || ReportJS == "")
-                {
-                    ReportJS = ExtensionMethods.GetHTMLTemplate("graph.js", TemplatesFolder + "/assets/js/");
-                }
+                ReportJS = ExtensionMethods.GetHTMLTemplate("circlechart.js", TemplatesFolder + "/assets/js/");
+            }
+            if (currentTemplate.UseLocalStoredStyling)
+            {              
                 if (ReportsCSS == string.Empty || ReportsCSS == "")
                 {
                     ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");
@@ -960,6 +957,10 @@ namespace Ginger.Reports.GingerExecutionReport
                                         fieldsValuesHTMLTableCells.Append("<td>" + ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac) + "</td>");
                                         lastseq = ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString();
                                     }
+                                    else if (selectedField_internal.FieldKey == ActivityReport.Fields.Description)
+                                    {
+                                        fieldsValuesHTMLTableCells.Append("<td>" + ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac) + "</td>");
+                                    }
                                     else
                                     {
                                         if (ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac) != null)
@@ -1111,12 +1112,12 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{beat_logo}", BeatLogo);
             ReportHTML = ReportHTML.Replace("{company_logo}", CompanyLogo);
             ReportHTML = ReportHTML.Replace("{ginger_logo}", GingerLogo);
-            if (currentTemplate.UseLocalStoredStyling)
+            if (ReportJS == string.Empty || ReportJS == "")
             {
-                if (ReportJS == string.Empty || ReportJS == "")
-                {
-                    ReportJS = ExtensionMethods.GetHTMLTemplate("graph.js", TemplatesFolder + "/assets/js/");
-                }
+                ReportJS = ExtensionMethods.GetHTMLTemplate("circlechart.js", TemplatesFolder + "/assets/js/");
+            }
+            if (currentTemplate.UseLocalStoredStyling)
+            {               
                 if (ReportsCSS == string.Empty || ReportsCSS == "")
                 {
                     ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");
@@ -1566,12 +1567,12 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{beat_logo}", BeatLogo);
             ReportHTML = ReportHTML.Replace("{company_logo}", CompanyLogo);
             ReportHTML = ReportHTML.Replace("{ginger_logo}", GingerLogo);
-            if (currentTemplate.UseLocalStoredStyling)
+            if (ReportJS == string.Empty || ReportJS == "")
             {
-                if (ReportJS == string.Empty || ReportJS == "")
-                {
-                    ReportJS = ExtensionMethods.GetHTMLTemplate("graph.js", TemplatesFolder + "/assets/js/");
-                }
+                ReportJS = ExtensionMethods.GetHTMLTemplate("circlechart.js", TemplatesFolder + "/assets/js/");
+            }
+            if (currentTemplate.UseLocalStoredStyling)
+            {                
                 if (ReportsCSS == string.Empty || ReportsCSS == "")
                 {
                     ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");
@@ -1922,13 +1923,12 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{beat_logo}", BeatLogo);
             ReportHTML = ReportHTML.Replace("{company_logo}", CompanyLogo);
             ReportHTML = ReportHTML.Replace("{ginger_logo}", GingerLogo);
-
-            if (currentTemplate.UseLocalStoredStyling)
+            if (ReportJS == string.Empty || ReportJS == "")
             {
-                if (ReportJS == string.Empty || ReportJS == "")
-                {
-                    ReportJS = ExtensionMethods.GetHTMLTemplate("graph.js", TemplatesFolder + "/assets/js/");
-                }
+                ReportJS = ExtensionMethods.GetHTMLTemplate("circlechart.js", TemplatesFolder + "/assets/js/");
+            }
+            if (currentTemplate.UseLocalStoredStyling)
+            {               
                 if (ReportsCSS == string.Empty || ReportsCSS == "")
                 {
                     ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");
@@ -2587,14 +2587,21 @@ namespace Ginger.Reports.GingerExecutionReport
             StringBuilder mJSBundle = new StringBuilder();
             if (!currentTemplate.UseLocalStoredStyling)
             {
-                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/jquery.js'></script>");
-                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/bootstrap.js'></script>");
-                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/graph.js'></script>");
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/babel.js'></script>");
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/browser.js'></script>");
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/react-with-addons.min.js'></script>");
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/react-dom.min.js'></script>");                
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/prop-types.min.js'></script>");
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/Recharts.min.js'></script>");
             }
             else
             {
-                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>");
-                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.js'></script>");
+                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js'></script>");
+                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-core/6.1.19/browser.js'></script>");
+                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0-alpha1/react-with-addons.js'></script>");
+                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/react/0.14.1/react-dom.min.js'></script>");
+                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.2/prop-types.min.js'></script>");
+                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/recharts/1.1.0/Recharts.min.js'></script>");
             }
             return mJSBundle.ToString();
         }

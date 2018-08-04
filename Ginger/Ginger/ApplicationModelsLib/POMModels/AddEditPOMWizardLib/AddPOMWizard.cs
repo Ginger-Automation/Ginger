@@ -17,9 +17,12 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerWPF.WizardLib;
+using System;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -30,32 +33,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public ApplicationPOMModel POM;
         public string POMFolder;
+        public ObservableList<UIElementFilter> CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
+        internal Agent mAgent;
+
+        public bool IsLearningWasDone { get; set; }
 
         public AddPOMWizard()
         {
-            //this.WinExplorer = WinExplorer;
-            //this.POMFolder = POMFolder;
 
-            //string filename = mPOMFolder
+            POM = new ApplicationPOMModel();
 
-            //if (POM == null)
-            //{
-                //we are in Add mode
-                this.POM = new ApplicationPOMModel();
-
-                //Show Add page intro only for add mode
-                AddPage(Name: "Intro", Title: "Intro", SubTitle: "Add new POM page for application", Page: new AddPOMIntroWizardPage());
-            //}
-            //else
-            //{
-            //    this.POM = POM;
-            //}
-
-            // We can set specific page and text per mode of Add or Edit
+            AddPage(Name: "Intro", Title: "Intro", SubTitle: "Add new POM page for application", Page: new AddPOMIntroWizardPage());
 
             AddPage(Name: "Select App and folder", Title: "Select App and Folder", SubTitle: "Choose Target Application and Agent", Page: new SelectAppFolderWizardPage());
-
-            //AddPage(Name: "Scan Page", Title: "Scan Page", SubTitle: "Scan or import from Mockup", Page: new ScanPageWizardPage());
 
             AddPage(Name: "Scan Config", Title: "Scan Config", SubTitle: "Scan Config", Page: new LearnConfigWizardPage());
 

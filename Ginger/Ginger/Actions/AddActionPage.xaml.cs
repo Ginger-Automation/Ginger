@@ -111,6 +111,10 @@ namespace Ginger.Actions
                     {
                         LegacyActions.Add(cA);
                     }
+                    else if (cA.LegacyActionPlatformsList.Intersect(cA.Platforms).Any()) // App.BusinessFlow.CurrentActivity ??
+                    {
+                        LegacyActions.Add(cA);
+                    }
                     else if (cA.SupportedPlatforms == "All")
                     {
                         if((cA is ActPlugIn) == false)

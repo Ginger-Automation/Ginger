@@ -230,8 +230,11 @@ namespace Ginger.ALM
                 return;
             }
 
+            //
+            // Validation section
             foreach (ALMDefectProfile _ALMDefectProfile in mALMDefectProfiles.Where(x => x.ToUpdate == true).ToList())
             {
+                // Mandatory fields validation
                 ExternalItemFieldBase notPopulatedMandatoryField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => x.Mandatory == true && x.ExternalID != "description"
                                                                                                                                             && x.ExternalID != "name"
                                                                                                                                             && x.ExternalID != "Summary" && (x.SelectedValue == null || x.SelectedValue == string.Empty)).FirstOrDefault();
@@ -241,10 +244,35 @@ namespace Ginger.ALM
                     return;
                 }
 
-                ExternalItemFieldBase wrongSelectedField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => x.SelectedValue != null && x.SelectedValue != string.Empty && x.PossibleValues.Count > 0 && (!x.PossibleValues.Contains(x.SelectedValue))).FirstOrDefault();
+                // Wrong list selection validation
+                ExternalItemFieldBase wrongSelectedField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => ((string.Equals(x.Type, "LookupList", StringComparison.OrdinalIgnoreCase) || string.Equals(x.Type, "UserList", StringComparison.OrdinalIgnoreCase))) &&
+                                                                                                                 x.SelectedValue != null && x.SelectedValue != string.Empty && 
+                                                                                                                 x.PossibleValues.Count > 0 && (!x.PossibleValues.Contains(x.SelectedValue))).FirstOrDefault();    
                 if (wrongSelectedField != null)
                 {
                     Reporter.ToUser(eUserMsgKeys.WrongValueSelectedFromTheList, wrongSelectedField.Name, _ALMDefectProfile.Name);
+                    return;
+                }
+
+                // Numeric selection validation
+                int numeric = 0;
+                ExternalItemFieldBase wrongNonNumberValueField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => (string.Equals(x.Type, "Number", StringComparison.OrdinalIgnoreCase)) &&
+                                                                                                                      x.SelectedValue != null && x.SelectedValue != string.Empty && 
+                                                                                                                      !(int.TryParse(x.SelectedValue, out numeric))).FirstOrDefault();
+                if (wrongNonNumberValueField != null)
+                {
+                    Reporter.ToUser(eUserMsgKeys.WrongNonNumberValueInserted, wrongNonNumberValueField.Name, _ALMDefectProfile.Name);
+                    return;
+                }
+
+                // Date selection validation (QC reciving date in format yyyy-mm-dd)
+                DateTime dt;
+                ExternalItemFieldBase wrongDateValueField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => (string.Equals(x.Type, "Date", StringComparison.OrdinalIgnoreCase)) &&
+                                                                                                                      x.SelectedValue != null && x.SelectedValue != string.Empty &&
+                                                                                                                      !(DateTime.TryParseExact(x.SelectedValue, "yyyy-mm-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dt))).FirstOrDefault();
+                if (wrongDateValueField != null)
+                {
+                    Reporter.ToUser(eUserMsgKeys.WrongDateValueInserted, wrongDateValueField.Name, _ALMDefectProfile.Name);
                     return;
                 }
             }

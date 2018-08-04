@@ -26,6 +26,7 @@ using GingerCore;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -42,7 +43,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public SelectAppFolderWizardPage()
         {
-            InitializeComponent();            
+            InitializeComponent();
+
+           
+
+        }
+
+        private void Init()
+        {
+            ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList());
+            xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
+            xEnvTagsViewer.Init(mWizard.POM.TagsKeys);
+
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -51,60 +63,96 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
+                    Init();
+                    //xTargetApplicationComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
+                    //xAgentComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
 
-                    xTargetApplicationComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
-                    xAgentComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
 
-                    ObservableList<ApplicationPlatform> TargetApplications = App.UserProfile.Solution.ApplicationPlatforms;
-                    xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
                     //xAgentComboBox.SelectedValuePath = Agent.Fields.Name;
-                    xAgentComboBox.DisplayMemberPath = Agent.Fields.Name;
+                    //xAgentComboBox.DisplayMemberPath = Agent.Fields.Name;
                     //xNameTextBox.BindControl(mWizard.POM, nameof(ApplicationPOMModel.Name));
-                    if (mWizard.WinExplorer != null)
-                    {
-                        if (string.IsNullOrEmpty(mWizard.POM.Name))
-                        {
-                            //if title empty get something else maybe the url
-                            mWizard.POM.Name = mWizard.WinExplorer.GetActiveWindow().Title;
-                        }
-                    }
+                    //if (mWizard.WinExplorer != null)
+                    //{
+                    //    if (string.IsNullOrEmpty(mWizard.POM.Name))
+                    //    {
+                    //        //if title empty get something else maybe the url
+                    //        mWizard.POM.Name = mWizard.WinExplorer.GetActiveWindow().Title;
+                    //    }
+                    //}
                     break;
 
-             
+                case EventType.LeavingForNextPage:
+
+                    string error = string.Empty;
+                    if (ValidateFields(ref error))
+                    {
+                        mWizard.POM.Name = xNameTextBox.Text;
+                        mWizard.POM.Description = xDescriptionTextBox.Text;
+                        //mWizard.POM.TargetApplicationKey = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == ((ApplicationPlatform)xTargetApplicationComboBox.SelectedItem).Guid).Select(x => x.Key).FirstOrDefault(); ;
+                        mWizard.POM.TargetApplicationKey = (RepositoryItemKey)xTargetApplicationComboBox.SelectedValue;
+                    }
+                    else
+                    {
+                        //WizardEventArgs.AddError(error);
+                    }
+
+                    break;
             }
         }
 
-        private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private bool ValidateFields(ref string error)
         {
-            xAgentComboBox.IsEnabled = true;
-            ApplicationPlatform ap = (ApplicationPlatform)xTargetApplicationComboBox.SelectedItem;
-            List<Agent> optionalAgentsList = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == ap.Platform select x).ToList();
-            xAgentComboBox.ItemsSource = optionalAgentsList;
-
-        }
-
-        private void xStartAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            Agent agent = (Agent)xAgentComboBox.SelectedItem;
-            if(agent != null && agent.Status == Agent.eStatus.NotStarted)
-                StartAppAgent(agent);
-        }
-
-        private void StartAppAgent(Agent agent)
-        {
-            AutoLogProxy.UserOperationStart("StartAgentButton_Click");
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgent, null, agent.Name, "AppName"); //Yuval: change app name to be taken from current app
-            if (agent.Status == Agent.eStatus.Running) agent.Close();
-
-            agent.StartDriver();
-            if (agent.IsShowWindowExplorerOnStart && agent.Status == Agent.eStatus.Running)
+            if (string.IsNullOrEmpty(xNameTextBox.Text))
             {
-                WindowExplorerPage WEP = new WindowExplorerPage(new ApplicationAgent());
-                WEP.ShowAsWindow();
+                error = "Name field cannot be empty";
+                return false;
+            }
+            else if (string.IsNullOrEmpty(xDescriptionTextBox.Text))
+            {
+                error = "Description field cannot be empty";
+                return false;
+            }
+            else if (string.IsNullOrEmpty(xTargetApplicationComboBox.Text))
+            {
+                error = "Target Application field cannot be empty";
+                return false;
             }
 
-            Reporter.CloseGingerHelper();
-            AutoLogProxy.UserOperationEnd();
+            return true;
+
         }
+
+        //private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    //xAgentComboBox.IsEnabled = true;
+        //    ApplicationPlatform ap = (ApplicationPlatform)xTargetApplicationComboBox.SelectedItem;
+        //    List<Agent> optionalAgentsList = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == ap.Platform select x).ToList();
+        //    //xAgentComboBox.ItemsSource = optionalAgentsList;
+
+        //}
+
+        //private void xStartAgentButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    //Agent agent = (Agent)xAgentComboBox.SelectedItem;
+        //    //if(agent != null && agent.Status == Agent.eStatus.NotStarted)
+        //    //    StartAppAgent(agent);
+        //}
+
+        //private void StartAppAgent(Agent agent)
+        //{
+        //    AutoLogProxy.UserOperationStart("StartAgentButton_Click");
+        //    Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgent, null, agent.Name, "AppName"); //Yuval: change app name to be taken from current app
+        //    if (agent.Status == Agent.eStatus.Running) agent.Close();
+
+        //    agent.StartDriver();
+        //    if (agent.IsShowWindowExplorerOnStart && agent.Status == Agent.eStatus.Running)
+        //    {
+        //        WindowExplorerPage WEP = new WindowExplorerPage(new ApplicationAgent());
+        //        WEP.ShowAsWindow();
+        //    }
+
+        //    Reporter.CloseGingerHelper();
+        //    AutoLogProxy.UserOperationEnd();
+        //}
     }
 }
