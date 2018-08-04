@@ -23,6 +23,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
@@ -81,7 +82,7 @@ namespace Amdocs.Ginger.Repository
         // ------------------------------------------------------------------------------------------------
         // All Public function to use across
         // ------------------------------------------------------------------------------------------------
-       
+
         public void Open(string solutionFolderPath)
         {
             //TODO: check if folder exist else exit
@@ -96,7 +97,7 @@ namespace Amdocs.Ginger.Repository
             {
                 VerifyOrCreateSolutionFolders(solutionFolderPath);
             }
-            
+
         }
 
 
@@ -109,9 +110,9 @@ namespace Amdocs.Ginger.Repository
         public void AddRepositoryItem(RepositoryItemBase repositoryItem)
         {
             SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
-            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem);                       
+            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem);
         }
-        
+
         /// <summary>
         /// Save changes of exsiting Repository Item to file system
         /// </summary>
@@ -124,20 +125,44 @@ namespace Amdocs.Ginger.Repository
             }
 
             repositoryItem.UpdateBeforeSave();
-            
-            string txt = RepositorySerializer.SerializeToString(repositoryItem);            
+
+            string txt = RepositorySerializer.SerializeToString(repositoryItem);
             string filePath = CreateRepositoryItemFileName(repositoryItem);
             RepositoryFolderBase rf = GetItemRepositoryFolder(repositoryItem);
-            rf.SaveRepositoryItem(filePath,txt); 
+            rf.SaveRepositoryItem(filePath, txt);
             repositoryItem.FileName = filePath;
             repositoryItem.FilePath = filePath;
             //RI.isDirty = false;  //TODO: make is dirty to work
-            if (repositoryItem.DirtyStatus == Common.Enums.eDirtyStatus.Modified)
-            {
-                repositoryItem.DirtyStatus = Common.Enums.eDirtyStatus.NoChange;                
-            }
-            repositoryItem.OnPropertyChanged(nameof(RepositoryItemBase.SourceControlStatus));
+            SetDirtyStatusToNoChange(repositoryItem);
         }
+
+        /// <summary>
+        /// This method is used to set the DirtyStatus to NoChange
+        /// </summary>
+        /// <param name="repositoryItem"></param>
+        private void SetDirtyStatusToNoChange(object repositoryItem)
+        {
+            foreach (System.Reflection.PropertyInfo propInfo in repositoryItem.GetType().GetProperties())
+            {
+                if ((propInfo.Name == "DirtyStatus"))
+                {
+                    propInfo.SetValue(repositoryItem, Common.Enums.eDirtyStatus.NoChange, null);                    
+                }
+            }
+
+            foreach (System.Reflection.FieldInfo flds in repositoryItem.GetType().GetFields())
+            {
+                dynamic objLst = flds.GetValue(repositoryItem);
+                if (objLst is IEnumerable<object>)
+                {
+                    foreach (var obj in objLst)
+                    {
+                        SetDirtyStatusToNoChange(obj);
+                    } 
+                }
+            }
+        }
+
         public void Close()
         {
             StopAllRepositoryFolderWatchers(SolutionRootFolders);
@@ -152,11 +177,11 @@ namespace Amdocs.Ginger.Repository
         {
             foreach (RepositoryFolderBase RF in folders)
             {
-                RF.StopFileWatcherRecursive();                
+                RF.StopFileWatcherRecursive();
             }
         }
 
-        
+
 
         /// <summary>
         /// Delete the Repository Item from file system and removing it from cache
@@ -166,9 +191,9 @@ namespace Amdocs.Ginger.Repository
         {
             RepositoryFolderBase itemFolder = GetItemRepositoryFolder(repositoryItem);
             if (itemFolder != null)
-                itemFolder.DeleteRepositoryItem(repositoryItem);            
+                itemFolder.DeleteRepositoryItem(repositoryItem);
         }
-        
+
         /// <summary>
         /// Get the Repository Folder of the Repository Item
         /// </summary>
@@ -186,9 +211,9 @@ namespace Amdocs.Ginger.Repository
         /// <param name="folderPath"></param>
         /// <param name="recursive"></param>
         public void DeleteRepositoryItemFolder(RepositoryFolderBase repositoryFolder)
-        {            
+        {
             SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryFolder.ItemType);
-            SRII.DeleteRepositoryItemFolder(repositoryFolder);            
+            SRII.DeleteRepositoryItemFolder(repositoryFolder);
         }
 
         /// <summary>
@@ -223,7 +248,7 @@ namespace Amdocs.Ginger.Repository
         public ObservableList<T> GetAllRepositoryItems<T>()
         {
             SolutionRepositoryItemInfo<T> SRII = GetSolutionRepositoryItemInfo<T>();
-            return SRII.GetAllItemsCache();            
+            return SRII.GetAllItemsCache();
         }
 
         /// <summary>
@@ -315,7 +340,7 @@ namespace Amdocs.Ginger.Repository
             SRII.ItemFileSystemRootFolder = rootFolder;
             SRII.PropertyForFileName = PropertyNameForFileName;
             SRII.Pattern = pattern;
-            SRII.ItemRootReposiotryfolder = new RepositoryFolder<T>(this, SRII, pattern, rootFolder, containRepositoryItems, displayName, true);            
+            SRII.ItemRootReposiotryfolder = new RepositoryFolder<T>(this, SRII, pattern, rootFolder, containRepositoryItems, displayName, true);
             mSolutionRepositoryItemInfoDictionary.Add(typeof(T), SRII);
 
             if (addToRootFolders)
@@ -349,11 +374,11 @@ namespace Amdocs.Ginger.Repository
 
         private SolutionRepositoryItemInfo<T> GetSolutionRepositoryItemInfo<T>()
         {
-            SolutionRepositoryItemInfoBase SRIIBase = GetSolutionRepositoryItemInfo(typeof(T));            
+            SolutionRepositoryItemInfoBase SRIIBase = GetSolutionRepositoryItemInfo(typeof(T));
             SolutionRepositoryItemInfo<T> SRII = (SolutionRepositoryItemInfo<T>)SRIIBase;
             return SRII;
         }
-                
+
         private void VerifyOrCreateSolutionFolders(string folder)
         {
             foreach(RepositoryFolderBase RF in mSolutionRootFolders)
@@ -417,7 +442,7 @@ namespace Amdocs.Ginger.Repository
                     {
                         A += Path.DirectorySeparatorChar;
                     }
-                    fileFolderPath = Path.Combine(A, B);                    
+                    fileFolderPath = Path.Combine(A, B);
                 }
 
                 //FILE
@@ -430,7 +455,7 @@ namespace Amdocs.Ginger.Repository
                 fileName = fileName.Replace(@".", "");
 
                 string fileExtention = v.Pattern;  //string.Format(".{0}.xml", RI.ObjFileExt);
-                string fullName = v.Pattern.Replace("*", fileName);                
+                string fullName = v.Pattern.Replace("*", fileName);
 
 
                 string filefullPath = Path.Combine(fileFolderPath, fullName);
@@ -467,7 +492,7 @@ namespace Amdocs.Ginger.Repository
                     counter++;
                     Nameex = "~" + counter;
                     filefullPath = filefullPath.Replace(ext, Nameex + ext);
-                    
+
                     if (counter > 100)
                     {
                         throw new Exception("cannot find uniqe file after 100 tries");
@@ -495,7 +520,7 @@ namespace Amdocs.Ginger.Repository
 
 
 
-        
+
 
         public void CreateRepository(string path)
         {
@@ -511,7 +536,7 @@ namespace Amdocs.Ginger.Repository
 
             foreach (SolutionRepositoryItemInfoBase SRII in mSolutionRepositoryItemInfoDictionary.Values)
             {
-                string fullPath = GetFolderFullPath(SRII.ItemFileSystemRootFolder);                
+                string fullPath = GetFolderFullPath(SRII.ItemFileSystemRootFolder);
                 Directory.CreateDirectory(fullPath);
             }
         }
@@ -524,14 +549,14 @@ namespace Amdocs.Ginger.Repository
 
             SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
             RepositoryFolderBase rootRF = SRII.GetItemRepositoryFolder(repositoryItem);
-            RepositoryFolderBase targetRF = rootRF.GetSubFolderByName(targetFolder);            
+            RepositoryFolderBase targetRF = rootRF.GetSubFolderByName(targetFolder);
 
-            
+
 
             RF.MoveItem(repositoryItem, targetRF);
 
 
-            
+
         }
 
 

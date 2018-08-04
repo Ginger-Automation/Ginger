@@ -30,7 +30,10 @@ namespace Amdocs.Ginger.Common.UIElement
             ElementExtraInfo = elementExtraInfo;
         }
 
-        public bool Selected { get; set; }
+        private bool mSelected = true;
+        // [IsSerializedForLocalRepository]
+        public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(nameof(Selected)); } } }
+
         public eElementType ElementType { get; set; }
         public string ElementExtraInfo { get; set; }
 

@@ -19,6 +19,8 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.UIElement;
+using System;
+using System.Drawing;
 using System.Linq;
 
 namespace Amdocs.Ginger.Repository
@@ -27,12 +29,22 @@ namespace Amdocs.Ginger.Repository
     {
         public ApplicationPOMModel()
         {
-            UIElements = new ObservableList<ElementInfo>();
         }
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ElementInfo> UIElements;
+        public ObservableList<ElementInfo> UnMappedUIElements = new ObservableList<ElementInfo>();
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<ElementInfo> MappedUIElements = new ObservableList<ElementInfo>();
+
+       
+
+        public Bitmap ScreenShot { get; set; }
+
+
+        //[IsSerializedForLocalRepository]
+        //public ObservableList<Guid> Tags = new ObservableList<Guid>();
 
         //[IsSerializedForLocalRepository]
         //public ObservableList<ElementInfo> MappedUIElements
