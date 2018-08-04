@@ -208,6 +208,9 @@
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.4.5.0\lib\net461\System.Drawing.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System.Globalization.Calendars, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Globalization.Calendars.4.3.0\lib\net46\System.Globalization.Calendars.dll</HintPath>
       <Private>True</Private>
@@ -432,6 +435,15 @@
     </Compile>
     <Compile Include="Agents\AgentNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">
+      <DependentUpon>UnmappedElementsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\MappedUIElementsPage.xaml.cs">
+      <DependentUpon>MappedUIElementsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
+      <DependentUpon>POMModelsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
@@ -953,6 +965,9 @@
     </Compile>
     <Compile Include="Variables\VariablePasswordStringPage.xaml.cs">
       <DependentUpon>VariablePasswordStringPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VariableTimerPage.xaml.cs">
+      <DependentUpon>VariableTimerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="WindowExplorer\Common\WindowExplorerPOMPage.xaml.cs">
       <DependentUpon>WindowExplorerPOMPage.xaml</DependentUpon>
@@ -2620,6 +2635,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\UnmappedElementsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\MappedUIElementsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2627,6 +2650,10 @@
     <Page Include="ApplicationModelsLib\OldPOMsLib\POMSimulatorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMsManagerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2880,6 +2907,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Variables\VariableTimerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WizardLib\WizardIntroPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2899,6 +2930,24 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Lock_Red_10x10.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Lock_Red_16x16.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\DataSource_16x16.png" />
+    <Content Include="Reports\GingerExecutionReport\assets\js\babel.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\browser.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\prop-types.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\react-dom.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\react-with-addons.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\Recharts.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -4297,7 +4346,7 @@
     <Content Include="Reports\GingerExecutionReport\assets\img\comments-icon.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\GingerExecutionReport\assets\js\canvasjs.min.js">
+    <Content Include="Reports\GingerExecutionReport\assets\js\donutchart.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\EmailExecutionReport.html">
@@ -4359,7 +4408,7 @@
     <Content Include="Reports\GingerExecutionReport\assets\js\bootstrap.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\GingerExecutionReport\assets\js\graph.js">
+    <Content Include="Reports\GingerExecutionReport\assets\js\circlechart.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\assets\js\jquery.js">

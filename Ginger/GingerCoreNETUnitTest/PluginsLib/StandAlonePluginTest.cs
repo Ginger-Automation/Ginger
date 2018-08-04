@@ -55,7 +55,7 @@
 
 
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void StandAloneExcelAction()
 //        {            
 //            //Arrange            
@@ -79,7 +79,7 @@
 //            Assert.AreEqual("Mark", GA.Output.Values[0].ValueString);            
 //        }
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void ServiceExcelAction()
 //        {
 //            //Arrange            

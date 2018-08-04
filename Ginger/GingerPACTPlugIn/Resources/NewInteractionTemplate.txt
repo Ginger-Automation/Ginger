@@ -1,0 +1,17 @@
+Interaction: // Interaction Name
+	Given ""               
+	Upon Receiving ""
+		Method ""
+		Path ""
+		Headers:
+			|Key           |Value             |
+			|"Content-Type"|"application/json"|
+		Body:
+			{"param":"value", "param":"value"}	
+	Will Respond With
+		Status ""
+		Headers:
+			|Key           |Value             |
+			|"Content-Type"|"application/json"|
+		Body:
+			{"Param": "Value"}

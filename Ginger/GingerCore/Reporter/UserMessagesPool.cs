@@ -110,11 +110,11 @@ namespace GingerCore
         MissingTargetPlatformForConversion, NoConvertibleActionsFound, NoConvertibleActionSelected, SuccessfulConversionDone, NoActivitySelectedForConversion,
         CurrentActionNotSaved,
         FileExtensionNotSupported, NotifyFileSelectedFromTheSolution, FileImportedSuccessfully, CompilationErrorOccured, CompilationSucceed, Failedtosaveitems, SaveAnalyzerItemWarning,
-        APIParametersListUpdated, APIMappedToActionIsMissing, NoAPIExistToMappedTo, APIModelAlreadyContainsReturnValues, CreateRunset, DeleteRunners, DeleteRunner,DeleteBusinessflow, DeleteBusinessflows, MissingErrorHandler,CantDeleteRunner, AllItemsSaved,
-        InitializeBrowser,LoseChangesWarn, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
+        APIParametersListUpdated, APIMappedToActionIsMissing, NoAPIExistToMappedTo, CreateRunset, DeleteRunners, DeleteRunner,DeleteBusinessflow, DeleteBusinessflows, MissingErrorHandler,CantDeleteRunner, AllItemsSaved, APIModelAlreadyContainsReturnValues,
+        InitializeBrowser,LoseChangesWarn, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
         VisualTestingFailedToDeleteOldBaselineImage,ApplitoolsLastExecutionResultsNotExists,ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
         FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
-        
+        POMWizardFailedToLearnElement,
     }
 
     public static class UserMessagesPool
@@ -433,6 +433,8 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.IssuesInSelectedDefectProfile, new UserMessage(eMessageType.INFO, "ALM Defects Opening", "Please, revise the selected Defect Profile, current fields/values are not corresponded with ALM", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.NoDefectProfileCreated, new UserMessage(eMessageType.INFO, "Defect Profiles", "Please, create at least one Defect Profile", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.WrongValueSelectedFromTheList, new UserMessage(eMessageType.INFO, "Profiles Saving", "Please, select one of the existed values from the list\n(Field '{0}', Defect Profile '{1}')", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.WrongNonNumberValueInserted, new UserMessage(eMessageType.INFO, "Profiles Saving", "Please, insert numeric value\n(Field '{0}', Defect Profile '{1}')", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.WrongDateValueInserted, new UserMessage(eMessageType.INFO, "Profiles Saving", "Please, insert Date in format 'yyyy-mm-dd'\n(Field '{0}', Defect Profile '{1}')", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ALMDefectsWereOpened, new UserMessage(eMessageType.INFO, "ALM Defects Opening", "{0} ALM Defects were opened", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AskALMDefectsOpening, new UserMessage(eMessageType.QUESTION, "ALM Defects Opening", "Are you sure that you want to open {0} ALM Defects?", MessageBoxButton.YesNo, MessageBoxResult.No));
 
@@ -600,6 +602,8 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndRepalceFieldIsEmpty, new UserMessage(eMessageType.WARN, "Field is Empty", "Field '{0}' cannot be empty", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceListIsEmpty, new UserMessage(eMessageType.WARN, "List is Empty", "No items were found hence nothing can be replaced", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceNoItemsToRepalce, new UserMessage(eMessageType.WARN, "No Suiteable Items", "No suiteable items selected to replace.", MessageBoxButton.OK, MessageBoxResult.None));
+
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardFailedToLearnElement, new UserMessage(eMessageType.WARN, "Learn Elements Failed", "Error occured while learning the elements." + Environment.NewLine + "Error Details:" + Environment.NewLine + "'{0}'", MessageBoxButton.OK, MessageBoxResult.None));
             
         }
     }

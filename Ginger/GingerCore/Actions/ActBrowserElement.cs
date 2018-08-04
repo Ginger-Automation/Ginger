@@ -79,8 +79,17 @@ namespace GingerCore.Actions
             [EnumValueDescription("New Window")]
             NewWindow,
         }
+
         [IsSerializedForLocalRepository]
-        public eGotoURLType GotoURLRadioButton { get; set; }
+        public eGotoURLType GotoURLRadioButton
+        {
+            get { return gotoURLRadioButton; }
+            set
+            {
+                gotoURLRadioButton = value;
+            }
+        }
+        private eGotoURLType gotoURLRadioButton = eGotoURLType.Current;
 
         private int mImplicitWait = 60;
         [IsSerializedForLocalRepository]
@@ -128,10 +137,38 @@ namespace GingerCore.Actions
             CloseTabExcept,
             [EnumValueDescription("Close All")]
             CloseAll,
+            [EnumValueDescription("Close All")]
+            Refresh,
+            [EnumValueDescription("Navigate Back")]
+            NavigateBack,
+            [EnumValueDescription("Select From List Scr")]
+            SelectFromListScr,
+            [EnumValueDescription("Key Type")]
+            KeyType,
+            [EnumValueDescription("Get Inner Text")]
+            GetInnerText,
+            [EnumValueDescription("Close Browser")]
+            CloseBrowser,
+            [EnumValueDescription("Dismiss Message Box")]
+            DismissMessageBox,
+            [EnumValueDescription("Message Box")]
+            MsgBox,
+            [EnumValueDescription("Start Browser")]
+            StartBrowser,
+            [EnumValueDescription("Delete All Cookies")]
+            DeleteAllCookies,
+            [EnumValueDescription("Accept Message Box")]
+            AcceptMessageBox,
+            [EnumValueDescription("Get Window Title")]
+            GetWindowTitle,
+            [EnumValueDescription("Get MessageBox Text")]
+            GetMessageBoxText,
+            [EnumValueDescription("Set AlertBox Text")]
+            SetAlertBoxText
         }
-        
 
-            [IsSerializedForLocalRepository]
+
+        [IsSerializedForLocalRepository]
             public eControlAction ControlAction { get; set; }
 
             public override String ToString()

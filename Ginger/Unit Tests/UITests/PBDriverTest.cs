@@ -32,10 +32,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 
-namespace UnitTests.UITests.PBDriverTest
-{
-    //marked as Pending since it is not running when computer is in lock mode
-    // can be reproduced by running UT and locking the machine
+namespace UnitTest { 
 
     [TestClass]
     public class PBDriverTest 

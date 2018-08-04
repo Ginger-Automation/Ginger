@@ -22,6 +22,8 @@ using System;
 using System.Linq;
 using System.Text;
 using Amdocs.Ginger.Common.Repository;
+using GingerCore.Actions;
+using System.Collections.Generic;
 
 namespace GingerCore.Variables
 {
@@ -200,5 +202,13 @@ namespace GingerCore.Variables
         public override System.Drawing.Image Image { get { return Resources.Random; } }
         public override string VariableType() { return "RandomString"; }
         public override bool SupportSetValue { get { return false; } }
+
+        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        {
+            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();
+            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.AutoGenerateValue);
+          
+            return supportedOperations;
+        }
     }
 }

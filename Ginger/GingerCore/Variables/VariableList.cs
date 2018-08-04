@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.Properties;
 using System;
 using System.Collections.Generic;
@@ -104,5 +105,14 @@ namespace GingerCore.Variables
         public override string VariableType() { return "List"; }
 
         public override bool SupportSetValue { get { return true; } }
+
+        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        {
+            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();
+            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.SetValue);
+            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.AutoGenerateValue);
+            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ResetValue);
+            return supportedOperations;
+        }
     }
 }

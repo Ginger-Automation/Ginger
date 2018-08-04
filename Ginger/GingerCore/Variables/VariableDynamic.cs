@@ -20,6 +20,8 @@ using Amdocs.Ginger.Repository;
 using System;
 using GingerCore.Environments;
 using GingerCore.Properties;
+using GingerCore.Actions;
+using System.Collections.Generic;
 
 namespace GingerCore.Variables
 {
@@ -113,5 +115,10 @@ namespace GingerCore.Variables
         public override string VariableType() { return "Dynamic"; }
 
         public override bool SupportSetValue { get { return true; } }
+
+        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        {
+            throw new NotImplementedException();
+        }        
     }
 }

@@ -208,7 +208,7 @@ namespace GingerCore.Actions.Java
             }
         }
 
-        private void ParseRC(string sRC)
+        private new void ParseRC(string sRC)
         {
             string GingerRCStart = "~~~GINGER_RC_START~~~";
             string GingerRCEnd = "~~~GINGER_RC_END~~~";

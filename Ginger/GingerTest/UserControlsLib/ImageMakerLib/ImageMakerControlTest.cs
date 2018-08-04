@@ -62,7 +62,7 @@ namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
 
         private static Action EmptyDelegate = delegate () { };
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         [Ignore]
         public void ImageMakerControlsVisualTest1_50()
         {
@@ -89,7 +89,7 @@ namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
 
         
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         [Ignore]
         public void ImageMakerControlsVisualTest51_100()
         {

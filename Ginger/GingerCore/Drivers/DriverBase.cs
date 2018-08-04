@@ -51,6 +51,8 @@ namespace GingerCore.Drivers
         public Thread STAThread { get; set; }
         public Dispatcher Dispatcher { get; set; }
 
+        public bool mStopProcess { get; set; }
+
         public bool PreviousRunStopped { get; set; }
         public bool IsDriverRunning { get; set; }
         // Driver like IB will override and return true

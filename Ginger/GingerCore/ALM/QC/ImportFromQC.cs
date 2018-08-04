@@ -32,7 +32,7 @@ using QCRestClient.Data_Contracts;
 
 namespace GingerCore.ALM.QC
 {
-    public enum eQCItemType { TestCase, TestSet }
+    public enum eQCItemType { TestCase, TestSet, Defect }
 
     public static class ImportFromQC
     {
@@ -1378,7 +1378,7 @@ namespace GingerCore.ALM.QC
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
             string qcbin = "qcbin";
-            QCRestClient.QCClient qcClientREST = new QCClient(ALMCore.AlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMDomain, ALMCore.AlmConfig.ALMProjectName, 12);
+            QCRestClient.QCClient qcClientREST = new QCClient(ALMCore.AlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMDomain, ALMCore.AlmConfig.ALMProjectName, 11);           
 
             if (qcClientREST.Login())
             {
@@ -1399,7 +1399,8 @@ namespace GingerCore.ALM.QC
                         itemfield.SystemFieled = field.IsSystem;
                         if (itemfield.Mandatory)
                             itemfield.ToUpdate = true;
-                        itemfield.ItemType = eQCItemType.TestCase.ToString();
+                        itemfield.ItemType = eQCItemType.Defect.ToString();
+                        itemfield.Type = field.Type;
 
                         if ((field.ListId != null) && (field.ListId != string.Empty) && (field.FieldValues != null) && (field.FieldValues.Count > 0))
                         {

@@ -51,7 +51,7 @@
 //        }
 
      
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void GetInstalledPluginPackages()
 //        {
 //            //Arrange       
@@ -68,7 +68,7 @@
 
 //        }
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void GenstalledPluginPackages()
 //        {
 //            //Arrange       

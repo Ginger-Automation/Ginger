@@ -579,14 +579,14 @@
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="DataSource\DataSourceTable.cs" />
     <Compile Include="Dictionaries\GingerDicser.cs" />
-    <Compile Include="Common\Devices\DeviceConfig.cs" />
-    <Compile Include="Common\Devices\DeviceButton.cs" />
-    <Compile Include="Common\Devices\DeviceControllerConfig.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">
       <DependentUpon>AndroidADBDriverWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\Devices\DeviceConfig.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidElementInfo.cs" />
+    <Compile Include="Common\Devices\DeviceButton.cs" />
+    <Compile Include="Common\Devices\DeviceControllerConfig.cs" />
     <Compile Include="Drivers\Appium\AppiumElementInfo.cs" />
     <Compile Include="Drivers\ASCF\ASCFBrowserElementInfo.cs" />
     <Compile Include="Drivers\ASCF\ASCFControlInfo.cs" />
@@ -792,6 +792,7 @@
     <Compile Include="Variables\VariableBase.cs" />
     <Compile Include="Variables\VariableRandomString.cs" />
     <Compile Include="Variables\VariableSequence.cs" />
+    <Compile Include="Variables\VariableTimer.cs" />
     <Compile Include="Variables\VariableString.cs" />
     <Compile Include="Variables\VariableList.cs" />
     <Compile Include="Variables\VariableRandomNumber.cs" />

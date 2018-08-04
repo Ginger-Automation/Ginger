@@ -29,6 +29,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Ignore]
     public class VariableTest 
     {
        
@@ -38,7 +39,7 @@ namespace UnitTests.NonUITests
        
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void VariableRandomNumber_Min5_Max10_Interval_1()
         {
             //Arrange
@@ -56,7 +57,7 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(decimal.Parse(VRN.Value) <= 10, "vn.Value<=10");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void VariableRandomNumber_Min10_Max100_Interval_5()
         {
             //We want to verify that the numbers be get are in interval of 5, can be 10,15,20 etc... but number like 17 is not valid
@@ -90,7 +91,7 @@ namespace UnitTests.NonUITests
             
             
         }
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void VariableRandomNumber_Min500_Max100()
         {
             //Arrange
@@ -108,7 +109,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void var500_Interval_40()
         {
             //Arrange
@@ -126,7 +127,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(num1 % 40, 0, "num1 % 40 = 0");            
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Random_Negative_Minus10_to_Minus_5()
         {
             //Arrange
@@ -142,7 +143,7 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(num1 >= -10 && num1 <= -5, "num1>=-10 && num1 <=-5");            
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void LowerString15char()
         {
             //Arrange
@@ -157,7 +158,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(VRS.Value, VRS.Value.ToLower(), "VRS.Value, VRS.Value.ToLower()");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void upperString15char()
         {
             //Arrange
@@ -173,7 +174,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void bothupperlowerString15char_ShowError()
         {
             //Arrange
@@ -196,7 +197,7 @@ namespace UnitTests.NonUITests
             //Assert.AreEqual(VRS.Formula, "Error", "VRS.Formula=Error");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void RandomString_0_3_chars()
         {
             //Arrange
@@ -225,7 +226,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void DigitsString15char()
         {
             //Arrange
@@ -240,7 +241,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(VRS.Value, VRS.Value.ToLower());
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void BigNumbers_1111111111111__()
         {
             //Arrange
@@ -256,7 +257,7 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(num1 >= 1111111111111 && num1 <= 9999999999999, "num1 >= 1111111111111 && num1 <= 9999999999999");            
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Random_Integer_1_10_checkNoFractions()
         {
             //Arrange
@@ -275,7 +276,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void Random_With_Fractions()
         {
             //Arrange
@@ -292,7 +293,7 @@ namespace UnitTests.NonUITests
         }
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void Random_Check_Hit_All_Numbers()
         //{
         //    //Arrange
@@ -325,7 +326,7 @@ namespace UnitTests.NonUITests
             
         //}
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void RandomStringDigit_5_8()
         {
             //Arrange
@@ -341,7 +342,7 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(VRS.Value.Length >= 5 && VRS.Value.Length <= 8, "VRS.Value.Length >= 5 && VRS.Value.Length <= 8");
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void RandomStringDigit_6_10_HitAllRange()
         {
             //Arrange
@@ -367,7 +368,7 @@ namespace UnitTests.NonUITests
             }
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void RandomString_0_5_Hit0()
         {
             //Arrange
@@ -392,7 +393,7 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(Hit0, "Hit0");             
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void RandomStringDigit_13()
         {
             //Arrange
@@ -414,7 +415,7 @@ namespace UnitTests.NonUITests
         }
 
         //[Ignore]
-        //[TestMethod]
+        //[TestMethod,Timeout(60000)]
         //public void RandomString_CharsHit()
         //{
         //    //TODO: generate random string and check all chars expected are getting hit

@@ -1,0 +1,11 @@
+@Rule
+
+@Pact(provider="<<Provider>>", consumer="<<Consumer>>")
+public RequestResponsePact InteractionBuilder(PactDslWithProvider builder) 
+{
+<<Interactions_Data>>	
+	.toPact();
+}
+
+@Test
+@PactVerification("")

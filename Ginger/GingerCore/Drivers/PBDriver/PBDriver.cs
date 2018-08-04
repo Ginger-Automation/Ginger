@@ -358,7 +358,16 @@ namespace GingerCore.Drivers.PBDriver
                     }
                     break;
                 case ActBrowserElement.eControlAction.SwitchFrame:
-                    mUIAutomationHelper.GetHTMLHelper().SwitchFrame(actBE.LocateBy, actBE.LocateValueCalculated);
+                    result=mUIAutomationHelper.GetHTMLHelper().SwitchFrame(actBE.LocateBy, actBE.LocateValueCalculated);
+                    if (result.Equals("true"))
+                    {
+                        actBE.AddOrUpdateReturnParamActual("Actual", result);
+                        actBE.ExInfo = "Switched to frame";
+                    }
+                    else
+                    {
+                        actBE.Error = "Unable Switch frame";
+                    }
                     break;
                 case ActBrowserElement.eControlAction.SwitchToDefaultFrame:
                     mUIAutomationHelper.GetHTMLHelper().SwitchToDefaultFrame();
@@ -934,7 +943,7 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetListOfDriverAppWindows();
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
         {
             return mUIAutomationHelper.GetVisibleControls();
         }

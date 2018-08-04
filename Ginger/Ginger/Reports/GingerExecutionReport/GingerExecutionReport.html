@@ -7,11 +7,15 @@
 
     <meta name="description" content="Static &amp; Dynamic Tables" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    {css_path}        
+    {css_path}
     <style type="text/css">
         {css_to_place}
-    </style>  
-    {canvas_path}       
+    </style>
+    {canvas_path}
+    {js_path}
+    <script type="text/javascript">
+        {js_to_place}
+    </script>
 </head>
 <body class="no-skin">
     <div style="background-color:#EBEFF2">
@@ -110,37 +114,84 @@
                                             </a>
                                         </div>
                                         <div class="{ExecutionStatisticsIscollapse}" id="collapseExecutionStatistics">
-                                            <div class="row">
-                                                <script type='text/javascript'>
-
-                                                     window.onload = function () {
-                                                         var chart = CreateChart("GingerContainer", {GingerRunnersTotalPass}, {GingerRunnersTotalFail}, {GingerRunnersTotalStopped}, {GingerRunnersTotalOther}, "Ginger Runners");
-                                                         hideIndexLabel(chart);
-                                                         chart.render();                                                    
-                                                         var chart = CreateChart("BusinessFlowContainer", {BusinessFlowsTotalPass}, {BusinessFlowsTotalFail}, {BusinessFlowsTotalStopped}, {BusinessFlowsTotalOther}, "Business Flows");
-                                                         hideIndexLabel(chart);
-                                                         chart.render();                                                        
-                                                         var chart = CreateChart("ActivitiesContainer", {ActivitiesTotalPass}, {ActivitiesTotalFail}, {ActivitiesTotalStopped}, {ActivitiesTotalOther}, "Activities");
-                                                         hideIndexLabel(chart);
-                                                         chart.render();                                                        
-                                                         var chart = CreateChart("ActionContainer", {ActionsTotalPass}, {ActionsTotalFail}, {ActionsTotalStopped}, {ActionsTotalOther}, "Actions");
-                                                         hideIndexLabel(chart);
-                                                         chart.render();                                                       
-                                                     }
-                                                </script>
-                                                <div class="percentSpace" style="position:relative;left:12%;width:80%">
+                                            <div class="row">                                                
+                                                <div class="percentSpace" style="position:relative;left:3%;width:100%">
                                                     <div class="col-xs-12">
-                                                        <div style='height: 250px; float:left;padding-right:30px'>
-                                                            <div id="GingerContainer" style="height: 100%; width: 100%;"></div>                                                            
+                                                        <div style='height: 250px; float:left;'>
+                                                            <div id="GingerContainer" style="height: 100%; width: 100%;">
+                                                                <script type="text/jsx"
+                                                                        data-presets="es2017,react,stage-0"
+                                                                        data-plugins="transform-decorators-legacy">
+                                                                    const GingerRunnerStat = [{name: 'Passed', value: {GingerRunnersTotalPass}},
+                                                                    {name: 'Failed', value: {GingerRunnersTotalFail}},
+                                                                    {name: 'Stopped', value: {GingerRunnersTotalStopped}},
+                                                                    {name: 'Other', value: {GingerRunnersTotalOther}},
+                                                                    ]
+                                                                    var TotalGingerRunner = 0;
+                                                                    for (var i = 0; i< GingerRunnerStat.length; i++)
+                                                                    {
+                                                                    TotalGingerRunner += GingerRunnerStat[i].value;
+                                                                    }
+                                                                    CreateChart(GingerRunnerStat, 'GingerContainer', 'Ginger Runner', TotalGingerRunner );
+                                                                </script>
+                                                            </div>                                                            
                                                         </div>
-                                                        <div style='height: 250px; float:left;padding-right:30px'>
-                                                            <div id="BusinessFlowContainer" style="height: 100%; width: 100%;"></div>                                                            
+                                                        <div style='height: 250px; float:left;'>
+                                                            <div id="BusinessFlowContainer" style="height: 100%; width: 100%;">
+                                                                <script type="text/jsx"
+                                                                        data-presets="es2017,react,stage-0"
+                                                                        data-plugins="transform-decorators-legacy">
+                                                                    var BusinessflowStat = [{name: 'Passed', value: {BusinessFlowsTotalPass}},
+                                                                    {name: 'Failed', value: {BusinessFlowsTotalFail}},
+                                                                    {name: 'Stopped', value: {BusinessFlowsTotalStopped}},
+                                                                    {name: 'Other', value: {BusinessFlowsTotalOther}},
+                                                                    ]
+                                                                    var TotalBusinessflow = 0;
+                                                                    for (var i = 0; i< BusinessflowStat.length; i++)
+                                                                    {
+                                                                    TotalBusinessflow += BusinessflowStat[i].value;
+                                                                    }
+                                                                    CreateChart(BusinessflowStat, 'BusinessFlowContainer', 'Business Flows', TotalBusinessflow );
+                                                                </script>
+                                                            </div>                                                            
                                                         </div>
-                                                        <div style='height: 250px; float:left;padding-right:30px'>
-                                                            <div id="ActivitiesContainer" style="height: 100%; width: 100%;"></div>                                                            
+                                                        <div style='height: 250px; float:left;'>
+                                                            <div id="ActivitiesContainer" style="height: 100%; width: 100%;">
+                                                                <script type="text/jsx"
+                                                                        data-presets="es2017,react,stage-0"
+                                                                        data-plugins="transform-decorators-legacy">
+                                                                    var ActivitiesStat = [{name: 'Passed', value: {ActivitiesTotalPass}},
+                                                                    {name: 'Failed', value: {ActivitiesTotalFail}},
+                                                                    {name: 'Stopped', value: {ActivitiesTotalStopped}},
+                                                                    {name: 'Other', value: {ActivitiesTotalOther}},
+                                                                    ]
+                                                                    var TotalActivities = 0;
+                                                                    for (var i = 0; i< ActivitiesStat.length; i++)
+                                                                    {
+                                                                     TotalActivities += ActivitiesStat[i].value;
+                                                                    }
+                                                                    CreateChart(ActivitiesStat, 'ActivitiesContainer', 'Activities', TotalActivities );
+                                                                </script>
+                                                            </div>                                                            
                                                         </div>
-                                                        <div style='height: 250px; float:left;padding-right:30px'>                                                           
-                                                                <div id="ActionContainer" style="height: 100%; width: 100%;"></div>                                                                                                    
+                                                        <div style='height: 250px; float:left;'>                                                           
+                                                            <div id="ActionContainer" style="height: 100%; width: 100%;">
+                                                                <script type="text/jsx"
+                                                                        data-presets="es2017,react,stage-0"
+                                                                        data-plugins="transform-decorators-legacy">
+                                                                    var ActionsStat = [{name: 'Passed', value: {ActionsTotalPass}},
+                                                                    {name: 'Failed', value: {ActionsTotalFail}},
+                                                                    {name: 'Stopped', value: {ActionsTotalStopped}},
+                                                                    {name: 'Other', value: {ActionsTotalOther}},
+                                                                    ]
+                                                                    var TotalActions = 0;
+                                                                    for (var i = 0; i< ActionsStat.length; i++)
+                                                                    {
+                                                                      TotalActions += ActionsStat[i].value;
+                                                                    }
+                                                                    CreateChart(ActionsStat, 'ActionContainer', 'Actions', TotalActions );
+                                                                </script>
+                                                            </div>                                                                                                    
                                                         </div>
                                                     </div>
                                                 </div>
@@ -237,11 +288,7 @@
                 <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
             </a>
         </div>
-        <!-- basic scripts -->        
-        {js_path}
-        <script type="text/javascript">
-            {js_to_place}
-        </script>
+        <!-- basic scripts -->                
         <!-- The Modal -->
         <div id="myModal" class="modal">
             <span class="close">&times;</span>

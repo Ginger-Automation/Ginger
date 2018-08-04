@@ -5,10 +5,14 @@
     <title>Ginger Execution Report</title>
     <meta name="description" content="Static &amp; Dynamic Tables" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    {css_path}     
+    {css_path}
     <style type="text/css">
-       {css_to_place}
-    </style>   
+        {css_to_place}
+    </style>
+    {js_path}
+    <script type="text/jsx">
+        {js_to_place}
+    </script>   
 </head>
 <body class="no-skin">
     <div style="background-color:#EBEFF2">
@@ -151,30 +155,47 @@
                                             <div class="row">
                                                 <div class="percentSpace" style="position:relative;left:30%;width:70%">
                                                     <div class="col-xs-6">
-                                                    <div style='height: 150px; float:left'>
-                                                        <div class='easy-pie-chart percentage' data-percent='{PassPercent}' data-color='#008000'>
-                                                            <span class='percent makeCircle'>{PassPercent}%</span>
-                                                            <div class='statusLabel'>Passed ({TotalPass})</div>
+                                                        <div style='height: 150px; float:left' id="passContainer">
+                                                            
+                                                            <script type="text/jsx"
+                                                                    data-presets="es2017,react,stage-0"
+                                                                    data-plugins="transform-decorators-legacy">
+
+                                                                const PassStat = [{name: 'Passed', value: {PassPercent}}
+                                                                ]
+                                                                CreateChart(PassStat, 'passContainer', 'Passed', {TotalPass}, {PassPercent} );
+                                                            </script>
                                                         </div>
-                                                    </div>
-                                                    <div style='height: 150px; float:left'>
-                                                        <div class='easy-pie-chart percentage' data-percent='{FailPercent}' data-color='#FF0000'>
-                                                        <span class='percent makeCircle'>{FailPercent}%</span>
-                                                        <div class='statusLabel'>Failed ({TotalFail})</div>
+                                                        <div style='height: 150px; float:left' id="failContainer">                                                           
+                                                            <script type="text/jsx"
+                                                                    data-presets="es2017,react,stage-0"
+                                                                    data-plugins="transform-decorators-legacy">
+
+                                                                const failStat = [{name: 'Failed', value: {FailPercent}}
+                                                                ]
+                                                                CreateChart(failStat, 'failContainer', 'Failed', {TotalFail},  {FailPercent} );
+                                                            </script>
                                                         </div>
-                                                    </div>
-                                                    <div style='height: 150px; float:left'>
-                                                        <div class='easy-pie-chart percentage' data-percent='{StoppedPercent}' data-color='#ff57ab'>
-                                                        <span class='percent makeCircle'>{StoppedPercent}%</span>
-                                                        <div class='statusLabel'>Stopped ({TotalStopped})</div>
+                                                        <div style='height: 150px; float:left' id="stoppedContainer">                                                           
+                                                            <script type="text/jsx"
+                                                                    data-presets="es2017,react,stage-0"
+                                                                    data-plugins="transform-decorators-legacy">
+
+                                                                const StopStat = [{name: 'Stopped', value: {StoppedPercent}}
+                                                                ]
+                                                                CreateChart(StopStat, 'stoppedContainer', 'Stopped', {TotalStopped}, {StoppedPercent} );
+                                                            </script>
                                                         </div>
-                                                    </div>
-                                                    <div style='height: 150px; float:left'>
-                                                        <div class='easy-pie-chart percentage' data-percent='{OtherPercent}' data-color='#1B3651'>
-                                                        <span class='percent makeCircle'>{OtherPercent}%</span>
-                                                        <div class='statusLabel'>Other ({TotalOther})</div>
+                                                        <div style='height: 150px; float:left' id="otherContainer">                                                            
+                                                            <script type="text/jsx"
+                                                                    data-presets="es2017,react,stage-0"
+                                                                    data-plugins="transform-decorators-legacy">
+
+                                                                const otherStat = [{name: 'Other', value: {OtherPercent}}
+                                                                ]
+                                                                CreateChart(otherStat, 'otherContainer', 'Other', {TotalOther}, {OtherPercent} );
+                                                            </script>
                                                         </div>
-                                                    </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -210,11 +231,7 @@
             <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
                 <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
             </a>
-        </div>
-        {js_path}
-        <script type="text/javascript">
-            {js_to_place}
-        </script>
+        </div>       
         <!-- The Modal -->
         <div id="myModal" class="modal">
             <span class="close">&times;</span>

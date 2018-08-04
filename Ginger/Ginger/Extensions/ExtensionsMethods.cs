@@ -32,6 +32,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.ComponentModel;
+using GingerCore.Actions.Common;
 
 namespace Ginger
 {
@@ -94,6 +96,32 @@ namespace Ginger
                 App.FillComboFromEnumVal(ComboBox, CurrentFieldEnumValue, l);                 
             }
 
+            // Bind Combo for enum type, but provide the subset list of enums/valid values to show
+            // also using grouping on results, according to 
+            public static void BindControlWithGrouping(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist)
+            {
+                GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
+                List<GingerCore.General.ComboGroupedEnumItem> l = new List<GingerCore.General.ComboGroupedEnumItem>();
+                foreach (var v in enumslist)
+                {
+                    GingerCore.General.ComboGroupedEnumItem item = new GingerCore.General.ComboGroupedEnumItem();
+                    item.text = GingerCore.General.GetEnumValueDescription(v.GetType(), v);
+                    item.Category = GingerCore.General.GetEnumDescription(v.GetType(), v); ;
+                    item.Value = v;
+
+                    l.Add(item);
+                }
+
+                // Get yhe current value so it will be sleected in the combo after the list created
+                PropertyInfo PI = obj.GetType().GetProperty(Field);
+                object CurrentFieldEnumValue = PI.GetValue(obj);
+
+                ListCollectionView lcv = new ListCollectionView(l);
+                lcv.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+                lcv.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
+                
+                App.FillComboFromEnumVal(ComboBox, CurrentFieldEnumValue, null, true, lcv);
+            }
 
         /// <summary>
         /// Bind the combo box to ObservableList 
@@ -105,9 +133,9 @@ namespace Ginger
         /// <param name="list">List of Observable items to display in the combo box</param>
         /// <param name="DisplayMemberPath">list item field to display</param>
         /// <param name="SelectedValuePath">list item value to to return when selected</param>
-        public static void BindControl<T>(this ComboBox ComboBox, Object obj, string Field, ObservableList<T> list, string DisplayMemberPath, string SelectedValuePath)
+        public static void BindControl<T>(this ComboBox ComboBox, Object obj, string Field, ObservableList<T> list, string DisplayMemberPath, string SelectedValuePath, BindingMode bindingMode = BindingMode.TwoWay)
         {
-            ControlsBinding.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
+            ControlsBinding.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);
 
             ComboBox.ItemsSource = list;
             ComboBox.DisplayMemberPath = DisplayMemberPath;

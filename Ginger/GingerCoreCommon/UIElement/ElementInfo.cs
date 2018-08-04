@@ -147,6 +147,8 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mXPath = value; }
         }
 
+        public bool Selected { get; set; }
+
         // should be override in sub class when possible for lazy loading
         public virtual string GetAbsoluteXpath()
         {

@@ -181,6 +181,8 @@ namespace Ginger.Actions.ActionConversion
             // fetch list of existing platforms in the business flow
             List<string> lstExistingPlatform = mBusinessFlow.TargetApplications.Where(x => mSolution.ApplicationPlatforms
                                                .Any(a => a.AppName == x.AppName)).Select(x => x.AppName).ToList();
+            List<ePlatformType> lstExistingPlatformType = mSolution.ApplicationPlatforms.Where(x => mBusinessFlow.TargetApplications
+                                               .Any(a => a.AppName == x.AppName)).Select(x => x.Platform).ToList();
             Dictionary<ePlatformType, string> lstMissingPlatform = new Dictionary<ePlatformType, string>();
             // create list of missing platforms
             foreach (ActionConversionHandler ACH in lstActionToBeConverted)
@@ -188,12 +190,17 @@ namespace Ginger.Actions.ActionConversion
                 if (ACH.Selected && !lstExistingPlatform.Contains(ACH.TargetPlatform.ToString()) 
                     && !lstMissingPlatform.ContainsKey(ACH.TargetPlatform))
                 {
+                    if ((ACH.SourceActionType == typeof(ActGenElement) && 
+                       ((ACH.TargetActionType == typeof(ActUIElement) || (ACH.TargetActionType == typeof(ActBrowserElement)) &&     //
+                       (lstExistingPlatformType.Contains(ePlatformType.Web))))))                                                    // this is special case will be explaned
+                            continue;
+
                     lstMissingPlatform.Add(ACH.TargetPlatform, ACH.TargetActionTypeName);
                 }
             }
 
             // if there are any missing platforms
-            if (lstMissingPlatform.Count > 1)
+            if (lstMissingPlatform.Count > 0)
             {
                 foreach (var item in lstMissingPlatform)
                 {
@@ -241,7 +248,7 @@ namespace Ginger.Actions.ActionConversion
                             
                             foreach (Act oldAct in oldActivity.Acts.ToList())
                             {
-                                if (oldAct is IObsoleteAction && lstActionToBeConverted.Where(act => act.SourceActionType == oldAct.GetType() && act.Selected).FirstOrDefault() != null)
+                                if (oldAct is IObsoleteAction && lstActionToBeConverted.Where(act => act.SourceActionType == oldAct.GetType() && act.Selected && act.TargetActionType == ((IObsoleteAction)oldAct).TargetAction()).FirstOrDefault() != null)
                                 {
                                     // convert the old action
                                     Act newAct = ((IObsoleteAction)oldAct).GetNewAction();
@@ -282,7 +289,7 @@ namespace Ginger.Actions.ActionConversion
 
                             foreach (Act act in activity.Acts.ToList())
                             {
-                                if (act is IObsoleteAction && lstActionToBeConverted.Where(a => a.SourceActionType == act.GetType() && a.Selected).FirstOrDefault() != null)
+                                if (act is IObsoleteAction && lstActionToBeConverted.Where(a => a.SourceActionType == act.GetType() && a.Selected && a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
                                 {
                                     // get the index of the action that is being converted 
                                     int selectedActIndex = activity.Acts.IndexOf(act);
@@ -340,15 +347,17 @@ namespace Ginger.Actions.ActionConversion
                 {
                     foreach (Act act in convertibleActivity.Acts)
                     {
-                        if (act is IObsoleteAction)
+                        if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)))
                         {
-                            ActionConversionHandler existingConvertibleActionType = lstActionToBeConverted.Where(x => x.SourceActionType == act.GetType()).FirstOrDefault();
+                            ActionConversionHandler existingConvertibleActionType = lstActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
                             if (existingConvertibleActionType == null)
                             {
                                 ActionConversionHandler newConvertibleActionType = new ActionConversionHandler();
                                 newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
                                 newConvertibleActionType.SourceActionType = act.GetType();
                                 newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
+                                if (newConvertibleActionType.TargetActionType == null)
+                                    continue;
                                 newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
                                 newConvertibleActionType.ActionCount = 1;
                                 newConvertibleActionType.Actions.Add(act);

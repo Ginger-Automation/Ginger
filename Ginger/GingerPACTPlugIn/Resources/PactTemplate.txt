@@ -1,0 +1,44 @@
+/*PACT: PACT Name */
+
+Consumer: ""
+Provider: ""
+
+@Tag1 @Tag2
+
+Interaction: // Interaction Name
+	Given ""               
+	Upon Receiving ""
+		Method ""
+		Path ""
+		Headers:
+			|Key           |Value             |
+			|"Content-Type"|"application/json"|
+		Body:
+			{"param":"value", "param":"value"}	
+	Will Respond With
+		Status ""
+		Headers:
+			|Key           |Value             |
+			|"Content-Type"|"application/json"|
+		Body:
+			{"Param": "Value"}
+			
+
+
+Interaction: // get_alligator
+	Given "an alligator exists"      
+	Upon Receiving "a request for an alligator"
+		Method "Get"
+		Path "/alligator"
+		Headers:
+			|Key         |Value           |
+		Body:		
+	Will Respond With
+		Status "200"
+		Headers:
+			|Key           |Value             |
+			|"Content-Type"|"application/json"|
+		Body:
+		   {"name": "Betty"}
+
+			

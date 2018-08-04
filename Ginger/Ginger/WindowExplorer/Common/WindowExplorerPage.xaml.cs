@@ -76,11 +76,32 @@ namespace Ginger.WindowExplorer
         Page mControlFrameContentPage = null;
         WindowExplorerPOMPage mWindowExplorerPOMPage;
 
+        public enum eWindowExplorerPageContext
+        {
+            WindowExplorerPage,
+            POMWizard
+
+        }
+
+        private eWindowExplorerPageContext mContext;
+
         // We can open it from agents grid, or from Action Edit page with Action 
         // If we open from ActionEdit Page then we update the act with locator
-        public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null)
+        public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
         {           
             InitializeComponent();
+
+            mContext = Context;
+
+            if (mContext == eWindowExplorerPageContext.POMWizard)
+            {
+                WindowControlsTreeView.Visibility = System.Windows.Visibility.Collapsed;
+                WindowControlsGridView.Visibility = System.Windows.Visibility.Visible;
+                GridTreeViewButton.Visibility = Visibility.Collapsed;
+                RecordingButton.Visibility = Visibility.Collapsed;
+                //xWindowGrid.Visibility = Visibility.Collapsed;
+                WindowComboboxRow.Height = new GridLength(0);
+            }
 
             //Instead of check make it disabled ?
             if ((ApplicationAgent.Agent.Driver is IWindowExplorer) == false)
@@ -777,7 +798,8 @@ namespace Ginger.WindowExplorer
             WindowControlsGridView.ShowUpDown = Visibility.Collapsed;
             WindowControlsGridView.ShowRefresh = Visibility.Collapsed;
 
-            WindowControlsGridView.AddToolbarTool("@Filter16x16.png", "Filter Elements to show", new RoutedEventHandler(FilterElementButtonClicked));
+            if (mContext == eWindowExplorerPageContext.WindowExplorerPage)
+                WindowControlsGridView.AddToolbarTool("@Filter16x16.png", "Filter Elements to show", new RoutedEventHandler(FilterElementButtonClicked));
             //TODO: enable refresh to do refresh
 
             WindowControlsGridView.ShowEdit = System.Windows.Visibility.Collapsed;

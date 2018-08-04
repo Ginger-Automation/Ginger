@@ -28,6 +28,7 @@ namespace Amdocs.Ginger.Repository
             public static string ID = "ID";
             public static string Name = "Name";
             public static string ItemType = "ItemType";
+            public static string Type = "Type";
             public static string Mandatory = "Mandatory";
             public static string PossibleValues = "PossibleValues";
             public static string SelectedValue = "SelectedValue";
@@ -44,6 +45,9 @@ namespace Amdocs.Ginger.Repository
 
         [IsSerializedForLocalRepository]
         public string ItemType { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public string Type { get; set; }
 
         [IsSerializedForLocalRepository]
         public bool Mandatory { get; set; }

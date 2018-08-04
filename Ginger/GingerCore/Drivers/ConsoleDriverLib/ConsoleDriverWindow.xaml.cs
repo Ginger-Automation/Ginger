@@ -106,7 +106,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             mConsoleBuffer.Append(txt + Environment.NewLine);
             Paragraph p = new Paragraph();
             p.LineHeight = 10;
-            if (applyFormat = true)
+            if (applyFormat == true)
                 ApplyStyleToText(txt,ref p);
             else
             {

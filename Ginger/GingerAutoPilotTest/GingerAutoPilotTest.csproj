@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="GingerTestHelper" Version="1.0.4" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
   </ItemGroup>
 

@@ -77,7 +77,7 @@
 
 //        }
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void GetPlugins()
 //        {
 //            //Arrange            
@@ -91,7 +91,7 @@
 
 //        }
 
-//        //[TestMethod,Timeout(60000)]
+//        //[TestMethod]
 //        //public void GetSeleniumDriver()
 //        //{
 //        //    //Arrange            

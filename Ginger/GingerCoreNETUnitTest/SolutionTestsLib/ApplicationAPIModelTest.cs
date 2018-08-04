@@ -17,11 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.APIModelLib;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 
 namespace GingerCoreNETUnitTest.SolutionTestsLib
 {
@@ -58,7 +62,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void VerifyApplicationAPIModelFileExtension()
         {
             // Need to verify ext is coming from ApplicationAPIModel and file name will not have ApplicationAPIModel 
@@ -73,9 +77,68 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(ext, "Ginger.ApplicationAPIModel");
         }
 
-        
+        [TestMethod]
+        public void AddAPIFromXMLAndAvoidDuplicateNodesTest()
+        {
+            XMLTemplateParser WSDLP = new XMLTemplateParser();
+            XmlDocument doc = new XmlDocument();
+            List<XMLDocExtended> xmlElements = new List<XMLDocExtended>();
+            List<AppModelParameter> AppModelParameters = new List<AppModelParameter>();
 
-        [TestMethod,Timeout(60000)]
+            string XmlfFilePath = TestResources.GetTestResourcesFile(@"XML\createPaymentRequest2.xml");
+            ObservableList<ApplicationAPIModel> AAMTempList = new ObservableList<ApplicationAPIModel>();
+
+            AAMTempList = WSDLP.ParseDocument(XmlfFilePath, false);
+            //Test API Model Body
+            doc.LoadXml(AAMTempList[0].RequestBody);
+            xmlElements = new XMLDocExtended(doc).GetAllNodes().Where(x => x.Name == "tag").ToList();
+            Assert.AreEqual(xmlElements.Count, 4);
+            //Test API Model Parameters
+            AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "tag").ToList();
+            Assert.AreEqual(AppModelParameters.Count, 4);
+
+
+            AAMTempList = WSDLP.ParseDocument(XmlfFilePath, true);
+            //Test API Model Body
+            doc.LoadXml(AAMTempList[0].RequestBody);
+            xmlElements = new XMLDocExtended(doc).GetAllNodes().Where(x => x.Name == "tag").ToList();
+            Assert.AreEqual(xmlElements.Count, 1);
+            //Test API Model Parameters
+            AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "tag").ToList();
+            Assert.AreEqual(AppModelParameters.Count, 1);
+        }
+
+        [TestMethod]
+        public void AddAPIFromJSONAndAvoidDuplicateNodesTest()
+        {
+            JSONTemplateParser JsonTemplate = new JSONTemplateParser();
+            List<JsonExtended> jsonElements = new List<JsonExtended>();
+            List<AppModelParameter> AppModelParameters = new List<AppModelParameter>();
+
+            string JsonFilePath = TestResources.GetTestResourcesFile(@"JSON\Request JSON.TXT");
+            ObservableList<ApplicationAPIModel> AAMTempList = new ObservableList<ApplicationAPIModel>();
+
+            AAMTempList = JsonTemplate.ParseDocument(JsonFilePath, false);
+            //Test API Model Body
+            jsonElements = new JsonExtended(AAMTempList[0].RequestBody).GetAllNodes().Where(x => x.Name == "id").ToList();
+            Assert.AreEqual(jsonElements.Count, 499);
+            //Test API Model Parameters
+            AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "id").ToList();
+            Assert.AreEqual(AppModelParameters.Count, 499);
+
+
+            AAMTempList = JsonTemplate.ParseDocument(JsonFilePath, true);
+            //Test API Model Body
+            jsonElements = new JsonExtended(AAMTempList[0].RequestBody).GetAllNodes().Where(x => x.Name == "id").ToList();
+            Assert.AreEqual(jsonElements.Count, 1);
+            //Test API Model Parameters
+            AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "id").ToList();
+            Assert.AreEqual(AppModelParameters.Count, 1);
+        }
+
+
+
+        [TestMethod]
         public void ApplicationAPIModelVerifySavedFile()
         {
             // Arrange
@@ -101,7 +164,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void ApplicationAPIModelMixSoapAndRestSaveAndLoad()
         {
             // Arrange
@@ -128,7 +191,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         }
 
         
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void ApplicationAPIModelMultipleSoapAndRestSaveAndLoad()
         {
             // Arrange
@@ -161,7 +224,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(AAMBListSubFolder.Count,3, "Second Folder should have 3 files");
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void APIParsingSavingAndPulling()
         {
             // Arrange

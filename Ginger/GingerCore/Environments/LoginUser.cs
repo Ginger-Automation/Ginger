@@ -24,7 +24,7 @@ namespace GingerCore.Environments
     {
         public override bool UseNewRepositorySerializer { get { return true; } }
 
-        public new static class Fields
+        public  static class Fields
         {
             public static string UserProfileName = "UserProfileName";
             public static string Type = "Type";

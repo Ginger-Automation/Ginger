@@ -37,8 +37,8 @@ namespace UnitTests.NonUITests
         {
             
         }
-   
-        [TestMethod]
+   /*
+        [TestMethod,Timeout(60000)]
         public void TestOracleDBConnectionAndReadAllTables()
         {
             Database db = new Database();
@@ -61,12 +61,16 @@ namespace UnitTests.NonUITests
             Assert.IsNotNull(recs.Count);
         }
         
+    */
 
-        [TestMethod]
+
+        [TestMethod,Timeout(60000)]
+        [Ignore]
         public void TestMSAccessDB()
         {
             Database db = new Database();
-            db.DBType = Database.eDBTypes.MSAccess;            
+            db.DBType = Database.eDBTypes.MSAccess;
+            //    db.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\SVN\GingerSolutions\SCM\Documents\MassData\MAIN_DB.mdb";          
             db.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source="+ TestResources.GetTestResourcesFile(@"Database\GingerUnitTest.mdb");
             string dbstr = db.ConnectionString;
 
@@ -79,8 +83,8 @@ namespace UnitTests.NonUITests
             
            Assert.AreEqual(b, true);    
         }
-
-        [TestMethod]
+        /*
+        [TestMethod,Timeout(60000)]
         public void TestMSSQL()
         {
             Database db = new Database();
@@ -100,7 +104,7 @@ namespace UnitTests.NonUITests
         }
         
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void OracleFreeSQL()
         {
             Database db = new Database();
@@ -120,7 +124,7 @@ namespace UnitTests.NonUITests
             
         }
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void OracleUpdateDB1InsertQuery()
         {
             Database db = new Database();
@@ -139,13 +143,13 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(impactedlines, "1");
         }
 
-        [TestMethod]     
+        [TestMethod,Timeout(60000)]     
         public void OracleUpdateDBUpdateQuery()
         {
             Database db = new Database();
             db.DBType = Database.eDBTypes.Oracle;           
             db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
-            string impactedlines = null;
+            string impactedlines = "";
             Boolean b = db.Connect();
             if (b)
             {
@@ -159,13 +163,13 @@ namespace UnitTests.NonUITests
 
      
 
-        [TestMethod]
+        [TestMethod,Timeout(60000)]
         public void OracleUpdateDBDeleteQuery()
         {
             Database db = new Database();
             db.DBType = Database.eDBTypes.Oracle;            
             db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
-            string impactedlines = null;
+            string impactedlines = "";
             Boolean b = db.Connect();
             if (b)
             {
@@ -173,6 +177,6 @@ namespace UnitTests.NonUITests
                 db.CloseConnection();
             }
            Assert.IsNotNull(impactedlines);
-        }
+        }*/
     }
 }
