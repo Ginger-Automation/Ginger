@@ -1,0 +1,25 @@
+    <Page x:Class="GingerPACTPlugIn.ActionEditPages.Stop"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:GingerPACTPlugIn.ActionEditPages"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="Stop">
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="Row1" Height="30"/>
+            <RowDefinition x:Name="Row2" Height="25"/>
+            <RowDefinition x:Name="Row3" Height="25"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Stop a PACT Mock Service" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" FontFamily="Open Sans" FontSize="16" Foreground="#20334f"/>
+        <Label Content="Provider ID:" Grid.Row="1"  Grid.Column="0" HorizontalAlignment="Left" FontFamily="Open Sans" FontSize="14" Foreground="#20334f"/>
+        <TextBox x:Name="ProviderID" Grid.Row="2"  Grid.Column="0" Text="CustomerService"  BorderBrush="#20334f" FontSize="12"  />
+    </Grid>
+</Page>
