@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ComponentInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <AssemblyinfoPath>Ginger\Properties\AssemblyInfo.cs</AssemblyinfoPath>
-  <InnoSetupScriptPath>GingerAssemblyUpdater\scripts\GingerInstallerScript.iss</InnoSetupScriptPath>
-  <GetLatestCommandPath></GetLatestCommandPath>
+  <InnoSetupScriptPath>GingerInstallerScript.iss</InnoSetupScriptPath>
+  <GetLatestCommandPath> </GetLatestCommandPath>
   <CheckinCommandPath></CheckinCommandPath>
   <JavaClassFilePath>GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java</JavaClassFilePath>
 </ComponentInfo>
