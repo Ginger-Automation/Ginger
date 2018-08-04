@@ -46,7 +46,7 @@
 //        }
 
 
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void SeleniumChromeDriver()
 //        {
 //            ////Arrange            
@@ -79,7 +79,7 @@
 //        }
 
         
-//        [TestMethod,Timeout(60000)]
+//        [TestMethod]
 //        public void FireFoxDriver()
 //        {
 //            ////Arrange
