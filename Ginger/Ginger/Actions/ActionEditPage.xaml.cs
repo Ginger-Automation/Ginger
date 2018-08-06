@@ -800,6 +800,17 @@ namespace Ginger.Actions
                     winButtons.Add(saveBtnAnalyzer);
                     winButtons.Add(closeBtnAnalyzer);
                     break;
+                case General.RepositoryItemPageViewMode.Standalone:
+                    title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
+                    Button saveButton = new Button();
+                    saveButton.Content = "Save";
+                    saveButton.Click += new RoutedEventHandler(saveButton_Clicked);
+                    Button uncoButton = new Button();
+                    uncoButton.Content = "Undo & Close";
+                    uncoButton.Click += new RoutedEventHandler(undoBtn_Click);
+                    winButtons.Add(saveButton);
+                    winButtons.Add(uncoButton);
+                    break;
                 case General.RepositoryItemPageViewMode.View:
                     title = "View " + RemoveActionWord(mAction.ActionDescription) + " Action";
                     Button okBtnView = new Button();
@@ -813,6 +824,19 @@ namespace Ginger.Actions
             SwitchingInputValueBoxAndGrid(mAction);
             return saveWasDone;
         }
+
+        private void saveButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKeys.FindAndReplaceViewSureSaveChanges) == MessageBoxResult.Yes)
+            {
+                saveWasDone = true;
+                mActParentBusinessFlow.Save();
+                Reporter.CloseGingerHelper();
+            }
+            IsPageClosing = true;
+            _pageGenericWin.Close();
+        }
+
         private void SetViewMode()
         {
             RetryMechanismStackPanel.IsEnabled = false;

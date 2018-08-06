@@ -177,6 +177,17 @@ namespace Ginger.BusinessFlowWindows
                     winButtons.Add(undoBtnAnalyzer);
                     winButtons.Add(saveBtnAnalyzer);
                     break;
+                case General.RepositoryItemPageViewMode.Standalone:
+                    title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                    Button saveButton = new Button();
+                    saveButton.Content = "Save";
+                    saveButton.Click += new RoutedEventHandler(saveBtn_Click);
+                    Button undoButton = new Button();
+                    undoButton.Content = "Undo & Close";
+                    undoButton.Click += new RoutedEventHandler(undoBtn_Click);
+                    winButtons.Add(undoButton);
+                    winButtons.Add(saveButton);
+                    break;
                 case General.RepositoryItemPageViewMode.View:
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     Button okBtnView = new Button();
@@ -243,7 +254,13 @@ namespace Ginger.BusinessFlowWindows
 
         private void CheckIfUserWantToSave()
         {
-            if (LocalRepository.CheckIfSureDoingChange(mActivity, "change") == true)
+            bool saveChanges = false;
+            if (editMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+                saveChanges = LocalRepository.CheckIfSureDoingChange(mActivity, "change");
+            else
+                saveChanges = (Reporter.ToUser(eUserMsgKeys.FindAndReplaceViewSureSaveChanges) == MessageBoxResult.Yes);
+
+            if (saveChanges)
             {
                 saveWasDone = true;
                 mActivity.Save();

@@ -113,7 +113,7 @@ namespace GingerCore
         APIParametersListUpdated, APIMappedToActionIsMissing, NoAPIExistToMappedTo, CreateRunset, DeleteRunners, DeleteRunner,DeleteBusinessflow, DeleteBusinessflows, MissingErrorHandler,CantDeleteRunner, AllItemsSaved, APIModelAlreadyContainsReturnValues,
         InitializeBrowser,LoseChangesWarn, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
         VisualTestingFailedToDeleteOldBaselineImage,ApplitoolsLastExecutionResultsNotExists,ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
-        FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
+        FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, FindAndReplaceViewRunSetNotSupported, FindAndReplaceViewSureSaveChanges, OracleDllIsMissing, ReportsTemplatesSaveWarn,
         POMWizardFailedToLearnElement,
     }
 
@@ -601,7 +601,9 @@ namespace GingerCore
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndRepalceFieldIsEmpty, new UserMessage(eMessageType.WARN, "Field is Empty", "Field '{0}' cannot be empty", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceListIsEmpty, new UserMessage(eMessageType.WARN, "List is Empty", "No items were found hence nothing can be replaced", MessageBoxButton.OK, MessageBoxResult.None));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceNoItemsToRepalce, new UserMessage(eMessageType.WARN, "No Suiteable Items", "No suiteable items selected to replace.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceNoItemsToRepalce, new UserMessage(eMessageType.WARN, "No Suitable Items", "No suitable items selected to replace.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceViewRunSetNotSupported, new UserMessage(eMessageType.INFO, "View Run Set", "View RunSet is not supported.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceViewSureSaveChanges, new UserMessage(eMessageType.QUESTION, "Save Changes", "Are you sure you want to save all changes?", MessageBoxButton.YesNo, MessageBoxResult.No));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardFailedToLearnElement, new UserMessage(eMessageType.WARN, "Learn Elements Failed", "Error occured while learning the elements." + Environment.NewLine + "Error Details:" + Environment.NewLine + "'{0}'", MessageBoxButton.OK, MessageBoxResult.None));
             
