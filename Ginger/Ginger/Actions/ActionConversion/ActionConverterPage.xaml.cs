@@ -179,21 +179,19 @@ namespace Ginger.Actions.ActionConversion
         private bool DoExistingPlatformCheck(ObservableList<ActionConversionHandler> lstActionToBeConverted) 
         {
             // fetch list of existing platforms in the business flow
-            List<string> lstExistingPlatform = mBusinessFlow.TargetApplications.Where(x => mSolution.ApplicationPlatforms
-                                               .Any(a => a.AppName == x.AppName)).Select(x => x.AppName).ToList();
-            List<ePlatformType> lstExistingPlatformType = mSolution.ApplicationPlatforms.Where(x => mBusinessFlow.TargetApplications
+            List<ePlatformType> lstExistingPlatform = mSolution.ApplicationPlatforms.Where(x => mBusinessFlow.TargetApplications
                                                .Any(a => a.AppName == x.AppName)).Select(x => x.Platform).ToList();
             Dictionary<ePlatformType, string> lstMissingPlatform = new Dictionary<ePlatformType, string>();
             // create list of missing platforms
             foreach (ActionConversionHandler ACH in lstActionToBeConverted)
             {
-                if (ACH.Selected && !lstExistingPlatform.Contains(ACH.TargetPlatform.ToString()) 
+                if (ACH.Selected && !lstExistingPlatform.Contains(ACH.TargetPlatform) 
                     && !lstMissingPlatform.ContainsKey(ACH.TargetPlatform))
                 {
                     if ((ACH.SourceActionType == typeof(ActGenElement) && 
-                       ((ACH.TargetActionType == typeof(ActUIElement) || (ACH.TargetActionType == typeof(ActBrowserElement)) &&     //
-                       (lstExistingPlatformType.Contains(ePlatformType.Web))))))                                                    // this is special case will be explaned
-                            continue;
+                       ((ACH.TargetActionType == typeof(ActUIElement) || (ACH.TargetActionType == typeof(ActBrowserElement)) &&     // this is special case 
+                       (lstExistingPlatform.Contains(ePlatformType.Web))))))                                                        // ActUIElement and ActBrowserElement arenot Obsolute and have not GetTargetPlatform()
+                        continue;
 
                     lstMissingPlatform.Add(ACH.TargetPlatform, ACH.TargetActionTypeName);
                 }
@@ -347,7 +345,8 @@ namespace Ginger.Actions.ActionConversion
                 {
                     foreach (Act act in convertibleActivity.Acts)
                     {
-                        if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)))
+                        if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
+                            (act.Active))
                         {
                             ActionConversionHandler existingConvertibleActionType = lstActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
                             if (existingConvertibleActionType == null)

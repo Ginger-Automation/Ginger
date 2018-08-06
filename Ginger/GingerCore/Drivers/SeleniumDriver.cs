@@ -2065,11 +2065,11 @@ namespace GingerCore.Drivers
                     }
                     break;
 
-                case ActGenElement.eGenElementAction.Back: //TODO: FIXME: This action should not be part of GenElement
+                case ActGenElement.eGenElementAction.Back: 
                     Driver.Navigate().Back();
                     break;
 
-                case ActGenElement.eGenElementAction.Refresh: //TODO: FIXME: This action should not be part of GenElement
+                case ActGenElement.eGenElementAction.Refresh:
                     Driver.Navigate().Refresh();
                     break;
 
@@ -5243,6 +5243,9 @@ namespace GingerCore.Drivers
                 case ActBrowserElement.eControlAction.CloseAll:
                     Driver.Quit();
                     break;
+                case ActBrowserElement.eControlAction.NavigateBack:
+                    Driver.Navigate().Back();
+                    break;
 
                 case ActBrowserElement.eControlAction.AcceptMessageBox:
                     try
@@ -5680,7 +5683,9 @@ namespace GingerCore.Drivers
                     OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
                     action.MoveToElement(e).Build().Perform();
                     break;
-
+                case ActUIElement.eElementAction.GetTextLength:
+                    act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("value").Length).ToString());
+                    break;
                 default:
                     act.Error = "Error: Unknown Action: " + act.ElementAction;
                     break;
