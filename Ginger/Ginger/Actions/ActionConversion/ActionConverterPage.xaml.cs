@@ -188,11 +188,6 @@ namespace Ginger.Actions.ActionConversion
                 if (ACH.Selected && !lstExistingPlatform.Contains(ACH.TargetPlatform) 
                     && !lstMissingPlatform.ContainsKey(ACH.TargetPlatform))
                 {
-                    if ((ACH.SourceActionType == typeof(ActGenElement) && 
-                       ((ACH.TargetActionType == typeof(ActUIElement) || (ACH.TargetActionType == typeof(ActBrowserElement)) &&     // this is special case 
-                       (lstExistingPlatform.Contains(ePlatformType.Web))))))                                                        // ActUIElement and ActBrowserElement arenot Obsolute and have not GetTargetPlatform()
-                        continue;
-
                     lstMissingPlatform.Add(ACH.TargetPlatform, ACH.TargetActionTypeName);
                 }
             }
