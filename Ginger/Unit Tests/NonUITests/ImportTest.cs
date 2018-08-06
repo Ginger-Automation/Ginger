@@ -45,7 +45,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void ObjectCount_OR()
         //{
         //    //Arrange            
@@ -64,7 +64,7 @@ namespace UnitTests.NonUITests
         //}
 
         
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void BusAndAssociatedGUI()
         //{
         //    //Arrange   
@@ -100,7 +100,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void Import_ASAP_1()
         {
             //Arrange            

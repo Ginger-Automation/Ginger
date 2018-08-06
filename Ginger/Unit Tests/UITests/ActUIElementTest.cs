@@ -33,9 +33,8 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
 
 namespace UnitTests.UITests
-{    
+{
     [TestClass]
-    [Ignore]
     public class ActUIElementTest
     {
 
@@ -74,8 +73,7 @@ namespace UnitTests.UITests
             mGR.BusinessFlows.Add(mBF);
         }
 
-        [TestMethod,Timeout(60000)]
-      
+        [TestMethod]
         public void DragAndDropJS()
         {
             ResetBusinessFlow();
@@ -107,8 +105,7 @@ namespace UnitTests.UITests
 
         }
 
-        [TestMethod,Timeout(60000)]
-  
+        [TestMethod]
         public void DragAndDropSelenium()
         {
             ResetBusinessFlow();
@@ -142,8 +139,7 @@ namespace UnitTests.UITests
 
         }
 
-        [TestMethod,Timeout(60000)]
-  
+        [TestMethod]
         public void DrawObject()
         {
             ResetBusinessFlow();

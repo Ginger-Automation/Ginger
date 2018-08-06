@@ -27,12 +27,10 @@ using System.Data;
 using GingerCore;
 using GingerCore.Actions;
 using Amdocs.Ginger.Repository;
-using GingerTestHelper;
 
 namespace UnitTests.NonUITests
 {
-    [TestClass]
-    [Ignore]
+    [TestClass]    
     public class RESTTest 
     {
         
@@ -43,10 +41,14 @@ namespace UnitTests.NonUITests
 
         // Need to have our own REST server, so will not be dependent on David server
         
-        [TestMethod,Timeout(60000)]        
-        [Level3]
+        [TestMethod]        
         public void WebServices_RestAction()
         {
+
+            
+        
+
+
             ActREST a2 = new ActREST();
             a2.RequestType = ActREST.eRequestType.GET;
             a2.ReqHttpVersion = ActREST.eHttpVersion.HTTPV11;

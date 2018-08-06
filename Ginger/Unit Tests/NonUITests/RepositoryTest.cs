@@ -38,10 +38,8 @@ using System.Linq;
 
 namespace UnitTests.NonUITests
 {
-
     [TestClass]
-    [Level2]
-    public class RepositoryTest 
+    public class RepositoryTest
     {
         [ClassInitialize]
         [Level1]
@@ -53,13 +51,13 @@ namespace UnitTests.NonUITests
         [TestInitialize]
         public void TestInitialize()
         {
-                        
+
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void BizFlowSaveLoad()
         {
-            
+
             //Arrange
             int ActivitiesToCreate = 5;
 
@@ -107,69 +105,175 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(BF2.Description, BF.Description);
             Assert.AreEqual(BF2.Activities.Count, ActivitiesToCreate);
             Assert.AreEqual(BF2.Variables.Count, 1);
-            
+
             //Validations
-            
-            
+
+
         }
 
 
-      
-        //[TestMethod,Timeout(60000)]
-        //public void BizFlowCheckIsDirtyFalse()
-        //{
 
-        //    //Arrange
-        //    int ActivitiesToCreate = 2;
-            
-        //    BusinessFlow BF = new BusinessFlow();
-        //    BF.Name = "Biz flow 1";
-        //    BF.Description = "Desc 1";
-        //    //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
-        //    BF.Activities = new ObservableList<Activity>();
+        [TestMethod]
+        public void BizFlowCheckIsDirtyFalse()
+        {
 
-        //    for (int i = 1; i <= ActivitiesToCreate; i++)
-        //    {
-        //        Activity a = new Activity();
-        //        a.ActivityName = "Activity number " + i;
-        //        a.Description = "Desc - " + i;
-        //        BF.Activities.Add(a);
-        //        a.Status = eRunStatus.Passed;
-        //        for (int j = 1; j <= 2; j++)
-        //        {
-        //            ActTextBox t = new ActTextBox();
-        //            t.Description = "Set text box " + j;
-        //            t.LocateBy = eLocateBy.ByID;
-        //            t.LocateValue = "ID" + j;
-        //            a.Acts.Add(t);
+            //Arrange
+            int ActivitiesToCreate = 2;
 
-        //            ActGotoURL g = new ActGotoURL();
-        //            g.Description = "goto URL " + j;
-        //            g.LocateValue = "ID" + j;
-        //            a.Acts.Add(g);
-        //        }
-        //    }
-        //    VariableString v = new VariableString();
-        //    v.Name = "Var1";
-        //    v.Description = "VDesc 1";
-        //    BF.AddVariable(v);
+            BusinessFlow BF = new BusinessFlow();
+            BF.Name = "Biz flow 1";
+            BF.Description = "Desc 1";
+            //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
+            BF.Activities = new ObservableList<Activity>();
+
+            for (int i = 1; i <= ActivitiesToCreate; i++)
+            {
+                Activity a = new Activity();
+                a.ActivityName = "Activity number " + i;
+                a.Description = "Desc - " + i;
+                BF.Activities.Add(a);
+                a.Status = eRunStatus.Passed;
+                for (int j = 1; j <= 2; j++)
+                {
+                    ActTextBox t = new ActTextBox();
+                    t.Description = "Set text box " + j;
+                    t.LocateBy = eLocateBy.ByID;
+                    t.LocateValue = "ID" + j;
+                    a.Acts.Add(t);
+
+                    ActGotoURL g = new ActGotoURL();
+                    g.Description = "goto URL " + j;
+                    g.LocateValue = "ID" + j;
+                    a.Acts.Add(g);
+                }
+            }
+            VariableString v = new VariableString();
+            v.Name = "Var1";
+            v.Description = "VDesc 1";
+            BF.AddVariable(v);
 
 
-        //    //Act
-        //    BF.SaveToFile(@"c:\temp\bfIsDirty.xml");
-             
+            //Act
+            BF.SaveToFile(@"c:\temp\bfIsDirty.xml");
 
-        //    // Assert
-        //    BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\bfIsDirty.xml");
-        //    //BF2.isDirty();
 
-        //    Assert.IsFalse(BF2.IsDirty);
-            
+            // Assert
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\bfIsDirty.xml");
+            //BF2.isDirty();
 
-        //}
+            Assert.IsFalse(BF2.IsDirty);
 
-        [TestMethod,Timeout(60000)]
-        [Ignore]
+
+        }
+        
+        [TestMethod]
+        public void BizFlowClearBackup()
+        {
+            //Arrange
+            BusinessFlow BF = new BusinessFlow();
+            BF.Name = "Businessflow1";
+            BF.Description = "Test Clear Backup";
+            BF.Activities = new ObservableList<Activity>();
+            Activity a = new Activity();
+            a.ActivityName = "Activity 1";
+            a.Description = "Desciption -1";
+            BF.Activities.Add(a);
+            a.Status = eRunStatus.Passed;
+            BF.SaveBackup();
+            Activity b = new Activity();
+            b.ActivityName = "Activity 2";
+            b.Description = "Desciption -2";
+            BF.Activities.Add(b);
+            b.Status = eRunStatus.Passed;
+
+            //Act
+            BF.SaveToFile(@"c:\temp\bfClearBackup.xml");
+            BF.SaveBackup();
+            BF.RestoreFromBackup();           
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\bfClearBackup.xml");
+            BF2.SaveBackup();//dirty now just indicate if backup exist
+            BF2.Description = "aaa";
+
+            // Assert
+            Assert.AreEqual(BF2.Activities.Count,BF.Activities.Count);
+        }
+
+        [TestMethod]
+        public void ActivitiesClearBackup()
+        {
+            //Arrange
+            BusinessFlow BF = new BusinessFlow();
+            BF.Name = "Businessflow1";
+            BF.Description = "Test Clear Backup";
+            BF.Activities = new ObservableList<Activity>();
+            Activity a = new Activity();
+            a.ActivityName = "Activity 1";
+            a.Description = "Desciption -1";
+            BF.Activities.Add(a);
+            a.Status = eRunStatus.Passed;
+
+            ActTextBox t = new ActTextBox();
+            t.Description = "Set text box ";
+            t.LocateBy = eLocateBy.ByID;
+            t.LocateValue = "ID";
+            a.Acts.Add(t);
+
+            //Act
+            BF.SaveToFile(@"c:\temp\activityClearBackup.xml");   
+            a.SaveBackup();
+            ActGotoURL g = new ActGotoURL();
+            g.Description = "goto URL ";
+            g.LocateValue = "ID";
+            a.Acts.Add(g);
+            BF.SaveToFile(@"c:\temp\activityClearBackup.xml");
+            a.SaveBackup();            
+            a.RestoreFromBackup();
+           
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\activityClearBackup.xml");
+            BF2.SaveBackup();//dirty now just indicate if backup exist
+            BF2.Description = "aaa";
+
+            // Assert
+            Assert.AreEqual(BF2.Activities[0].Acts.Count, BF.Activities[0].Acts.Count);            
+        }
+
+        [TestMethod]
+        public void ActionClearBackup()
+        {
+            //Arrange
+            BusinessFlow BF = new BusinessFlow();
+            BF.Name = "Businessflow1";
+            BF.Description = "Test Clear Backup";
+            BF.Activities = new ObservableList<Activity>();
+            Activity a = new Activity();
+            a.ActivityName = "Activity 1";
+            a.Description = "Desciption -1";
+            BF.Activities.Add(a);
+            a.Status = eRunStatus.Passed;
+
+            ActGotoURL g = new ActGotoURL();
+            g.Description = "goto URL ";
+            g.LocateValue = "ID";
+            a.Acts.Add(g);     
+           
+            //Act
+            BF.SaveToFile(@"c:\temp\actionClearBackup.xml");
+            a.SaveBackup();
+            g.LocateValue = "ID1";
+            BF.SaveToFile(@"c:\temp\actionClearBackup.xml");
+            a.SaveBackup();
+            a.RestoreFromBackup();
+
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\actionClearBackup.xml");
+            BF2.SaveBackup();//dirty now just indicate if backup exist
+            BF2.Description = "aaa";
+
+            // Assert
+            Assert.AreEqual(BF2.Activities[0].Acts[0].LocateValue, BF.Activities[0].Acts[0].LocateValue);
+        }
+
+
+        [TestMethod]
         public void BizFlowCheckIsDirtyTrue()
         {
 
@@ -223,29 +327,29 @@ namespace UnitTests.NonUITests
 
         }
 
-        //[TestMethod,Timeout(60000)]
-        //public void RunSetConfigSaveLoad()
-        //{
-        //    //Arrange
+        [TestMethod]
+        public void RunSetConfigSaveLoad()
+        {
+            //Arrange
 
-        //    //Act
-        //    RunSetConfig RSC = new RunSetConfig();
-        //    RSC.Name = "UT RSC1";
-        //    GingerRunner ARC1= new GingerRunner();
-        //    ARC1.Name = " Agent 1";
-        //    BusinessFlowRun BFR = new BusinessFlowRun();
-        //    BFR.BusinessFlowName = "BF1";
-        //    ARC1.BusinessFlowsRunList.Add(BFR);
-        //    RSC.GingerRunners.Add(ARC1);
-        //    RSC.SaveToFile(@"c:\temp\UTRSC1.xml");
+            //Act
+            RunSetConfig RSC = new RunSetConfig();
+            RSC.Name = "UT RSC1";
+            GingerRunner ARC1= new GingerRunner();
+            ARC1.Name = " Agent 1";
+            BusinessFlowRun BFR = new BusinessFlowRun();
+            BFR.BusinessFlowName = "BF1";
+            ARC1.BusinessFlowsRunList.Add(BFR);
+            RSC.GingerRunners.Add(ARC1);
+            RSC.SaveToFile(@"c:\temp\UTRSC1.xml");
 
-        //    //Assert
+            //Assert
 
-        //    RunSetConfig RSC2 = (RunSetConfig)RepositoryItem.LoadFromFile(typeof(RunSetConfig), @"c:\temp\UTRSC1.xml");
-        //}
+            RunSetConfig RSC2 = (RunSetConfig)RepositoryItem.LoadFromFile(typeof(RunSetConfig), @"c:\temp\UTRSC1.xml");
+        }
 
         //[Ignore]
-        //[TestMethod,Timeout(60000)]       
+        //[TestMethod]       
         //public void SaveLoadRunSetWithRunSetActionSendFreeEmailX2()
         //{
         //    //Arrange
@@ -266,7 +370,7 @@ namespace UnitTests.NonUITests
         //}
 
         //[Ignore]
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void SaveLoadRunSetWithRunSetActionSendFreeEmailValidateEmail()
         //{
         //    //Arrange
@@ -290,7 +394,7 @@ namespace UnitTests.NonUITests
         //}
 
         //[Ignore]
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void LoadRunSetWith5Operations()
         //{
         //    //Arrange
@@ -305,8 +409,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod,Timeout(60000)]
-        [Ignore]
+        [TestMethod]
         public void BizFlowAddActivitiesFromSharedRepoSaveLoad()
         {
 
@@ -398,7 +501,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void BackUpRestore()
         {
             //Arrange
@@ -516,7 +619,7 @@ namespace UnitTests.NonUITests
        }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void BackUpRestoreBFWithVariableSelectionList()
         {
             //Arrange
@@ -548,7 +651,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count(), 3, "(VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count()");
         }
 
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void ActivitiesReadSpeedTest()
         //{
 
@@ -571,7 +674,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void TestObjectAttrofOneRepoItem()
         {
             //Check Save and Load of RunSetConfig with Send Email action - RunSetActionSendEmail have 'Email' field which is single object as field, if save load correctly test pass
@@ -608,7 +711,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void BizFlowWithTags()
         {
 
@@ -646,7 +749,7 @@ namespace UnitTests.NonUITests
 
 
         //[Ignore]
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void BizFlowSaveLoadSpeedTest()
         //{
 
@@ -710,7 +813,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void BigBizFlowLoadSpeedTest()
         //{
 
@@ -738,7 +841,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void CopyAction()
         {
 
@@ -755,7 +858,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void CreateDuplicationAction()
         {
 
@@ -774,8 +877,7 @@ namespace UnitTests.NonUITests
 
 
                
-        [TestMethod,Timeout(60000)]
-        [Ignore]
+        [TestMethod]
         public void FlowcontrolTest_WithBFCreateCopy()
         {
             //Arrange
@@ -837,7 +939,7 @@ namespace UnitTests.NonUITests
         }
         
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void FlowcontrolTest_WithActivityCreateInstance()
         {
             //Arrange
@@ -875,7 +977,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void ActionVariableDependancyTest_WithCreateInstance()
         {
             //Arrange
@@ -910,7 +1012,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void ActivityVariableDependancyTest_UnserializeFile()
         //{
         //    //Arrange
@@ -927,7 +1029,7 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void ActivityVariableDependancyTest_WithCreateInstance()
         {
             //Arrange

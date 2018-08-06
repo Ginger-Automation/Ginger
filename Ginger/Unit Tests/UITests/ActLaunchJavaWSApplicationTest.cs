@@ -32,7 +32,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.UITests
 {
     [TestClass]
-
     public class ActLaunchJavaWSApplicationTest
     {
 
@@ -48,7 +47,7 @@ namespace UnitTests.UITests
         //    mGR = new GingerRunner();
 
         //}
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void LaunchJNLPAndAttachJavaAgent()
         //{
         //    ActLaunchJavaWSApplication LJA = new ActLaunchJavaWSApplication();
@@ -71,7 +70,7 @@ namespace UnitTests.UITests
 
         //Launching and attaching to  jar
 
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void LaunchJARAndAttachJavaAgent()
         //{
         //    ActLaunchJavaWSApplication LJA = new ActLaunchJavaWSApplication();
@@ -114,7 +113,7 @@ namespace UnitTests.UITests
         //Launching and attaching  to exe
 
 
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void LaunchEXEAndAttachJavaAgent()
         //{
         //    ActLaunchJavaWSApplication LJA = new ActLaunchJavaWSApplication();

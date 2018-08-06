@@ -1,0 +1,106 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:2:1-42:12
+	package
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:3:5-40
+		INJECTED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:2:11-69
+	android:versionCode
+		INJECTED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:5:5-76
+	android:name
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:5:22-73
+uses-permission#android.permission.INTERNET
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:6:5-67
+	android:name
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:6:22-64
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:7:5-81
+	android:name
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:7:22-78
+uses-permission#android.permission.BATTERY_STATS
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:8:5-72
+	android:name
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:8:22-69
+uses-permission#android.permission.CAPTURE_AUDIO_OUTPUT
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:9:5-79
+	android:name
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:9:22-76
+uses-permission#android.permission.RECORD_AUDIO
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:10:5-71
+	android:name
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:10:22-68
+uses-permission#android.permission.CALL_PHONE
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:11:5-69
+	android:name
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:11:22-66
+uses-permission#android.permission.SEND_SMS
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:12:5-67
+	android:name
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:12:22-64
+application
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:15:5-40:19
+MERGED from [com.android.support.constraint:constraint-layout:1.0.0-alpha9] C:\Users\yaronwe\.android\build-cache\693b590c4209dd48c947a9aa3df0bf3a49641288\output\AndroidManifest.xml:9:5-20
+MERGED from [com.android.support:design:24.2.1] C:\Users\yaronwe\.android\build-cache\31c33410196083bf98b389ea89943ced03897512\output\AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:appcompat-v7:24.2.1] C:\Users\yaronwe\.android\build-cache\b6e067ca333b09797eb4263e0d6d2a52799d6e9e\output\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-v4:24.2.1] C:\Users\yaronwe\.android\build-cache\aa31b73794f5bf190d02af8fd67ee905e4304898\output\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-fragment:24.2.1] C:\Users\yaronwe\.android\build-cache\3f976cf60e434c0ce05c722f8a249121d1375e46\output\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-media-compat:24.2.1] C:\Users\yaronwe\.android\build-cache\2f21307080e2b8630bafff36ded7ce2f70e0c2ab\output\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-core-utils:24.2.1] C:\Users\yaronwe\.android\build-cache\a83dec9325ba7de55a524d123f7dbc1b5d3fb43b\output\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:animated-vector-drawable:24.2.1] C:\Users\yaronwe\.android\build-cache\1fe19313211d5db0eac79315ffdccfff9a51ee72\output\AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:support-vector-drawable:24.2.1] C:\Users\yaronwe\.android\build-cache\9c3718e9576c40ea2d4a3a46ca636480897eb56a\output\AndroidManifest.xml:23:5-20
+MERGED from [com.android.support:support-core-ui:24.2.1] C:\Users\yaronwe\.android\build-cache\dd84dca443693d9b46fdc3316300518f8234954e\output\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\yaronwe\.android\build-cache\d87c20cff96b09df613f2b1f85a7856753dbcb4f\output\AndroidManifest.xml:25:5-20
+	android:label
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:18:9-41
+	android:supportsRtl
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:19:9-35
+	android:allowBackup
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:16:9-35
+	android:icon
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:17:9-43
+	android:theme
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:20:9-40
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:26:9-30:25
+action#android.intent.action.MAIN
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:27:13-65
+	android:name
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:27:21-62
+category#android.intent.category.LAUNCHER
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:29:13-73
+	android:name
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:29:23-70
+service#com.amdocs.ginger.android.GingerService
+ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:32:9-34:19
+	android:name
+		ADDED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml:32:18-47
+uses-sdk
+INJECTED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+MERGED from [com.android.support.constraint:constraint-layout:1.0.0-alpha9] C:\Users\yaronwe\.android\build-cache\693b590c4209dd48c947a9aa3df0bf3a49641288\output\AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support:design:24.2.1] C:\Users\yaronwe\.android\build-cache\31c33410196083bf98b389ea89943ced03897512\output\AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:appcompat-v7:24.2.1] C:\Users\yaronwe\.android\build-cache\b6e067ca333b09797eb4263e0d6d2a52799d6e9e\output\AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:support-v4:24.2.1] C:\Users\yaronwe\.android\build-cache\aa31b73794f5bf190d02af8fd67ee905e4304898\output\AndroidManifest.xml:21:5-23:54
+MERGED from [com.android.support:support-fragment:24.2.1] C:\Users\yaronwe\.android\build-cache\3f976cf60e434c0ce05c722f8a249121d1375e46\output\AndroidManifest.xml:21:5-23:60
+MERGED from [com.android.support:support-media-compat:24.2.1] C:\Users\yaronwe\.android\build-cache\2f21307080e2b8630bafff36ded7ce2f70e0c2ab\output\AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-core-utils:24.2.1] C:\Users\yaronwe\.android\build-cache\a83dec9325ba7de55a524d123f7dbc1b5d3fb43b\output\AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:animated-vector-drawable:24.2.1] C:\Users\yaronwe\.android\build-cache\1fe19313211d5db0eac79315ffdccfff9a51ee72\output\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:24.2.1] C:\Users\yaronwe\.android\build-cache\9c3718e9576c40ea2d4a3a46ca636480897eb56a\output\AndroidManifest.xml:21:5-43
+MERGED from [com.android.support:recyclerview-v7:24.2.1] C:\Users\yaronwe\.android\build-cache\43ba2787537967621cf48d9371318c2efcd6f969\output\AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-core-ui:24.2.1] C:\Users\yaronwe\.android\build-cache\dd84dca443693d9b46fdc3316300518f8234954e\output\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\yaronwe\.android\build-cache\d87c20cff96b09df613f2b1f85a7856753dbcb4f\output\AndroidManifest.xml:21:5-23:58
+	tools:overrideLibrary
+		ADDED from [com.android.support:appcompat-v7:24.2.1] C:\Users\yaronwe\.android\build-cache\b6e067ca333b09797eb4263e0d6d2a52799d6e9e\output\AndroidManifest.xml:23:9-75
+	android:targetSdkVersion
+		INJECTED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerCore\Drivers\AndroidADB\Java\GingerService\app\src\main\AndroidManifest.xml

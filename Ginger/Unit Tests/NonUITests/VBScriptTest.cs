@@ -31,7 +31,6 @@ using UnitTests;
 namespace UnitTests.NonUITests
 {
     [TestClass]
-    [Ignore]
     public class VBScript 
     {
 
@@ -45,7 +44,7 @@ namespace UnitTests.NonUITests
         /// <summary>
         /// Running a free VBS command
         /// </summary>
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void FreeCommand()
         {
             ActScript v = new ActScript();
@@ -61,7 +60,7 @@ namespace UnitTests.NonUITests
 
 
         
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void RunScriptAPlusB()
         {
             // Arrange

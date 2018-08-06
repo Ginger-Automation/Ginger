@@ -28,7 +28,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.NonUITests
 {
     [TestClass]
-    [Ignore]
     public class SolutionTest 
     {
         [ClassInitialize]
@@ -46,7 +45,7 @@ namespace UnitTests.NonUITests
         /// <summary>
         /// Test the new solution been created successfully
         /// </summary>
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void CreateNewSolution()
         {
             // Arrange
@@ -67,7 +66,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(loadSol.Name, createSol.Name);
            Assert.AreEqual(loadSol.MainPlatform, createSol.MainPlatform);
         }
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void CreateNewSolutionWithMultiUnderscore()
         {
             // Arrange

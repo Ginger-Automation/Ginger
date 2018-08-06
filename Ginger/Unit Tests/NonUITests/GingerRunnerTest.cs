@@ -29,13 +29,10 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
-using GingerTestHelper;
 
 namespace UnitTests.NonUITests
 {
     [TestClass]
-    [Level3]
-    [Ignore]  // cannot run Chrome...
     public class GingerRunnerTest
     {
 
@@ -76,7 +73,7 @@ namespace UnitTests.NonUITests
             mGR.BusinessFlows.Add(mBF);
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void SCM_Login()
         {
 
@@ -124,7 +121,7 @@ namespace UnitTests.NonUITests
 
 
         // Test the time to enter data into text box
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void SpeedTest()
         {
             //Arrange
@@ -167,7 +164,7 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void TestVariableResetIssue()
         {
             //This was a tricky bug not repro every time.

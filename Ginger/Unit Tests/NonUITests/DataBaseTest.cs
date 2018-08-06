@@ -37,8 +37,9 @@ namespace UnitTests.NonUITests
         {
             
         }
-   /*
-        [TestMethod,Timeout(60000)]
+   
+        [Ignore]
+        [TestMethod]
         public void TestOracleDBConnectionAndReadAllTables()
         {
             Database db = new Database();
@@ -61,11 +62,8 @@ namespace UnitTests.NonUITests
             Assert.IsNotNull(recs.Count);
         }
         
-    */
 
-
-        [TestMethod,Timeout(60000)]
-        [Ignore]
+        [TestMethod]
         public void TestMSAccessDB()
         {
             Database db = new Database();
@@ -83,8 +81,8 @@ namespace UnitTests.NonUITests
             
            Assert.AreEqual(b, true);    
         }
-        /*
-        [TestMethod,Timeout(60000)]
+        [Ignore]
+        [TestMethod]
         public void TestMSSQL()
         {
             Database db = new Database();
@@ -102,9 +100,9 @@ namespace UnitTests.NonUITests
 
            Assert.AreEqual(b, true);    
         }
-        
 
-        [TestMethod,Timeout(60000)]
+        [Ignore]
+        [TestMethod]
         public void OracleFreeSQL()
         {
             Database db = new Database();
@@ -123,8 +121,8 @@ namespace UnitTests.NonUITests
            
             
         }
-
-        [TestMethod,Timeout(60000)]
+        [Ignore]
+        [TestMethod]
         public void OracleUpdateDB1InsertQuery()
         {
             Database db = new Database();
@@ -142,14 +140,14 @@ namespace UnitTests.NonUITests
             }
             Assert.AreEqual(impactedlines, "1");
         }
-
-        [TestMethod,Timeout(60000)]     
+        [Ignore]
+        [TestMethod]     
         public void OracleUpdateDBUpdateQuery()
         {
             Database db = new Database();
             db.DBType = Database.eDBTypes.Oracle;           
             db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
-            string impactedlines = "";
+            string impactedlines = null;
             Boolean b = db.Connect();
             if (b)
             {
@@ -161,15 +159,15 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(impactedlines, "1");
         }
 
-     
 
-        [TestMethod,Timeout(60000)]
+        [Ignore]
+        [TestMethod]
         public void OracleUpdateDBDeleteQuery()
         {
             Database db = new Database();
             db.DBType = Database.eDBTypes.Oracle;            
             db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
-            string impactedlines = "";
+            string impactedlines = null;
             Boolean b = db.Connect();
             if (b)
             {
@@ -177,6 +175,6 @@ namespace UnitTests.NonUITests
                 db.CloseConnection();
             }
            Assert.IsNotNull(impactedlines);
-        }*/
+        }
     }
 }

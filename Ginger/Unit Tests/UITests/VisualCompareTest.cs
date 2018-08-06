@@ -38,7 +38,6 @@ using GingerTestHelper;
 namespace UnitTests.NonUITests
 {
     [TestClass]
-    [Ignore]
     public class VisualCompareTest 
     {
 
@@ -80,7 +79,7 @@ namespace UnitTests.NonUITests
             mBF.RunStatus = eRunStatus.Pending;
         }
         //[Ignore]
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void CreateBaselineAndCompare()
         //{
           
