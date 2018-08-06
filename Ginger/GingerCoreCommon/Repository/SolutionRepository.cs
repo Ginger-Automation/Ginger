@@ -132,36 +132,10 @@ namespace Amdocs.Ginger.Repository
             rf.SaveRepositoryItem(filePath, txt);
             repositoryItem.FileName = filePath;
             repositoryItem.FilePath = filePath;
-            //RI.isDirty = false;  //TODO: make is dirty to work
-            SetDirtyStatusToNoChange(repositoryItem);
-        }
 
-        /// <summary>
-        /// This method is used to set the DirtyStatus to NoChange
-        /// </summary>
-        /// <param name="repositoryItem"></param>
-        private void SetDirtyStatusToNoChange(object repositoryItem)
-        {
-            foreach (System.Reflection.PropertyInfo propInfo in repositoryItem.GetType().GetProperties())
-            {
-                if ((propInfo.Name == "DirtyStatus"))
-                {
-                    propInfo.SetValue(repositoryItem, Common.Enums.eDirtyStatus.NoChange, null);                    
-                }
-            }
-
-            foreach (System.Reflection.FieldInfo flds in repositoryItem.GetType().GetFields())
-            {
-                dynamic objLst = flds.GetValue(repositoryItem);
-                if (objLst is IEnumerable<object>)
-                {
-                    foreach (var obj in objLst)
-                    {
-                        SetDirtyStatusToNoChange(obj);
-                    } 
-                }
-            }
-        }
+            if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
+                repositoryItem.SetDirtyStatusToNoChange();
+        }      
 
         public void Close()
         {
