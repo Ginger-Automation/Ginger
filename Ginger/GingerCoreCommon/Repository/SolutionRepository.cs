@@ -144,7 +144,7 @@ namespace Amdocs.Ginger.Repository
         {
             foreach (System.Reflection.PropertyInfo propInfo in repositoryItem.GetType().GetProperties())
             {
-                if ((propInfo.Name == "DirtyStatus"))
+                if ((propInfo.Name == nameof(RepositoryItemBase.DirtyStatus)))
                 {
                     propInfo.SetValue(repositoryItem, Common.Enums.eDirtyStatus.NoChange, null);                    
                 }
