@@ -14,7 +14,7 @@
 
 
     <StackPanel>
-        <Grid Name="MainGrid" Background="{StaticResource $BackgroundGray}">
+        <Grid Name="MainGrid" Background="{StaticResource $BackgroundColor_LightGray}">
 
             <Grid.Resources>
                 <DataTemplate x:Key="IsSelectedTemplate">

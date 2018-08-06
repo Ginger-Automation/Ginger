@@ -146,7 +146,7 @@ namespace Ginger.WindowExplorer
             SetDetailsExpanderDesign(false, null);
             SetActionsTabDesign(false);
 
-            ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$White");
+            ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");
         }
 
         private void RefreshControlProperties(object sender, RoutedEventArgs e)
@@ -304,16 +304,16 @@ namespace Ginger.WindowExplorer
             ControlsRefreshButton.IsEnabled = ControlsRefreshButtonFlag;
 
             if (ControlsRefreshButtonFlag)
-                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$White");            
+                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");            
             else
-                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$LightGray");
+                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
 
             RefreshWindowsButton.IsEnabled = RefreshWindowsButtonFlag;
                         
             if (RefreshWindowsButtonFlag)
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$DarkBlue");                            
+                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");                            
             else
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$LightGray");
+                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
 
 
             AddSwitchWindowActionButton.IsEnabled = AddSwitchWindowActionButtonFlag;
