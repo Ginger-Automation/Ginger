@@ -22,8 +22,10 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.BindingLib;
 using System.Drawing;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.ApplicationModelsLib.POMModels
@@ -40,6 +42,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             InitializeComponent();
             mPOM = POM;
+            ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
+            ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
+
+            xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
+            xTargetApplicationComboBox.Init(mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
+            xTagsViewer.Init(mPOM.TagsKeys);
+
+
+
+      
 
             ScreenShotViewPage p = new ScreenShotViewPage(mPOM.Name, mPOM.ScreenShot);
             xScreenShotFrame.Content = p;

@@ -31,7 +31,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public AddPOMIntroWizardPage()
         {
             InitializeComponent();
-
+             
             TextBlockHelper TBH = new TextBlockHelper(xNewPOMIntroTxtBlock);
 
             SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorA")).ToString());

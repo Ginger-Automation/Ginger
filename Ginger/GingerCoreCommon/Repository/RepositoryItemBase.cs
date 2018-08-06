@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -300,33 +300,47 @@ namespace Amdocs.Ginger.Repository
 
         public void ClearBackup(bool isLocalBackup = false)
         {
-            var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
-            foreach (MemberInfo mi in properties)
-            {               
-                if(!isLocalBackup)
+            try
+            {
+                if (this.GetType().GetMembers() == null)
                 {
-                    if (mi.Name == nameof(mBackupDic)) continue;             
+
                 }
-                if (mi.Name == nameof(mLocalBackupDic)) continue;
-                dynamic v = null;
-                v = this.GetType().GetField(mi.Name).GetValue(this);
-                if (v is IObservableList)
+                var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
+                foreach (MemberInfo mi in properties)
                 {
-                    foreach (object o in v)
+                    if (!isLocalBackup)
                     {
-                        if (o is RepositoryItemBase)
+                        if (mi.Name == nameof(mBackupDic)) continue;
+                    }
+                    if (mi.Name == nameof(mLocalBackupDic)) continue;
+                    dynamic v = null;
+                    v = this.GetType().GetField(mi.Name).GetValue(this);
+                    if (v is IObservableList)
+                    {
+                        foreach (object o in v)
                         {
-                            ((RepositoryItemBase)o).ClearBackup(isLocalBackup);
-                        }                        
+                            if (o is RepositoryItemBase)
+                            {
+                                ((RepositoryItemBase)o).ClearBackup(isLocalBackup);
+                            }
+                        }
                     }
                 }
+                if (!isLocalBackup)
+                {
+                    mBackupDic = null;
+                    OnPropertyChanged(nameof(IsDirty));
+                }
+                mLocalBackupDic = null;
+
             }
-            if (!isLocalBackup)
+            catch
             {
-                mBackupDic = null;
-                OnPropertyChanged(nameof(IsDirty));
-            }                        
-             mLocalBackupDic = null;                         
+
+            }
+             
+                                
         }
 
         private void RestoreBackup(bool isLocalBackup = false)
@@ -660,7 +674,15 @@ namespace Amdocs.Ginger.Repository
                 RepositoryItemHeader.Version++;
                 RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
                 RepositoryItemHeader.LastUpdateBy = Environment.UserName;
-                this.ClearBackup();
+                try
+                {
+                    this.ClearBackup();
+                }
+                catch
+                {
+
+                }
+
             }
         }
 
@@ -822,7 +844,7 @@ namespace Amdocs.Ginger.Repository
 
         private void DirtyCheck(string name)
         {
-            if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTrackingFields.Contains(name))
+            if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTrackingFields != null && DirtyTrackingFields.Contains(name))
             {
                 DirtyStatus = eDirtyStatus.Modified;
                 // RaiseDirtyChangedEvent();

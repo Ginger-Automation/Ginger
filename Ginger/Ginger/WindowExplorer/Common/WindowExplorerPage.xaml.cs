@@ -51,6 +51,8 @@ using System.Xml;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.UserControls;
+using Amdocs.Ginger.Repository;
+using System.Linq;
 
 namespace Ginger.WindowExplorer
 {
@@ -84,14 +86,15 @@ namespace Ginger.WindowExplorer
         }
 
         private eWindowExplorerPageContext mContext;
-
+        private ApplicationPOMModel mPOM;
         // We can open it from agents grid, or from Action Edit page with Action 
         // If we open from ActionEdit Page then we update the act with locator
-        public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
+        public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, ApplicationPOMModel POM = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
         {           
             InitializeComponent();
 
             mContext = Context;
+            mPOM = POM;
 
             if (mContext == eWindowExplorerPageContext.POMWizard)
             {
@@ -101,6 +104,8 @@ namespace Ginger.WindowExplorer
                 RecordingButton.Visibility = Visibility.Collapsed;
                 //xWindowGrid.Visibility = Visibility.Collapsed;
                 WindowComboboxRow.Height = new GridLength(0);
+                WindowControlsGridView.DataSourceList = mPOM.MappedUIElements;
+                WindowControlsGridView.AddToolbarTool("@Import_16x16.png", "Remove Items from mapped list", new RoutedEventHandler(RemoveButtonClicked));
             }
 
             //Instead of check make it disabled ?
@@ -147,6 +152,18 @@ namespace Ginger.WindowExplorer
             SetActionsTabDesign(false);
 
             ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$White");
+        }
+
+        private void RemoveButtonClicked(object sender, RoutedEventArgs e)
+        {
+            List<ElementInfo> ItemsToAddList = mPOM.MappedUIElements.Where(x => x.Selected).ToList();
+
+            foreach (ElementInfo EI in ItemsToAddList)
+            {
+                EI.Selected = false;
+                mPOM.MappedUIElements.Remove(EI);
+                mPOM.UnMappedUIElements.Add(EI);
+            }
         }
 
         private void RefreshControlProperties(object sender, RoutedEventArgs e)
@@ -810,7 +827,12 @@ namespace Ginger.WindowExplorer
             //Set the Data Grid columns            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            
+
+            if (mContext == eWindowExplorerPageContext.POMWizard)
+            {
+                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Selected), Header = "Selected", StyleType = GridColView.eGridColStyleType.CheckBox });
+            }
+
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60 });            

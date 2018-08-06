@@ -43,7 +43,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Selected), Header = "Element Title", WidthWeight = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Selected), Header = "", StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60 });
@@ -61,6 +61,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             foreach (ElementInfo EI in ItemsToAddList)
             {
+                EI.Selected = false;
                 mPOM.MappedUIElements.Add(EI);
                 mPOM.UnMappedUIElements.Remove(EI);
             }

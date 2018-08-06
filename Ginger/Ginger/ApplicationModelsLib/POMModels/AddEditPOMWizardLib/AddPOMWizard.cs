@@ -23,6 +23,12 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System;
+using System.Drawing;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -63,6 +69,21 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public override void Finish()
         {
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
+
+            //MemoryStream ms = new MemoryStream();
+            //XmlTextWriter xw = new XmlTextWriter(ms, Encoding.UTF8);
+            //xw.Formatting = Formatting.Indented;
+            //XmlSerializer ser = new XmlSerializer(typeof(Bitmap));
+            //ser.Serialize(xw, POM.ScreenShot);
+            //string s = Encoding.UTF8.GetString(ms.ToArray());
+
+            //DataContractSerializer dcs = new DataContractSerializer(typeof(Bitmap));
+
+            //dcs.WriteObject(File.Create("c:\\A\\test.xml"), POM.ScreenShot);
+            //dcs.WriteObject(File.Create("c:\\D\\test.xml"), POM.ScreenShot);
+            //object o = dcs.ReadObject(new FileStream("c:\\D\\test.xml", FileMode.Open));
+
+            //POM.ScreenShot = (Bitmap)o;
         }
     }
 }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -132,11 +132,15 @@ namespace Amdocs.Ginger.Common.UIElement
             return mValue;
         }
 
+        [IsSerializedForLocalRepository]
         public string Path { get; set; }
 
         //  AbsoluteXPath
-        private string mXPath = null;
 
+
+        private string mXPath;
+
+        [IsSerializedForLocalRepository]
         public string XPath
         {
             get

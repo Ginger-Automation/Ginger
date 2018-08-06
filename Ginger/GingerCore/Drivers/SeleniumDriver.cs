@@ -3377,7 +3377,7 @@ namespace GingerCore.Drivers
 
         List<AppWindow> IWindowExplorer.GetAppWindows()
         {
-            unhighlightLast();
+            UnhighlightLast();
             LastHighLightedElementInfo = null;
             List<AppWindow> list = new List<AppWindow>();
             ReadOnlyCollection<string> windows = Driver.WindowHandles;
@@ -3398,7 +3398,7 @@ namespace GingerCore.Drivers
             Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
             List<ElementInfo> list = new List<ElementInfo>();
 
-            unhighlightLast();
+            UnhighlightLast();
             Driver.SwitchTo().DefaultContent();
 
             Dictionary<string, List<string>> filteringCriteriasDict = GetFilteringCreteriaDict(filteringCriterias);
@@ -4021,7 +4021,7 @@ namespace GingerCore.Drivers
 
         void IWindowExplorer.SwitchWindow(string Title)
         {
-            unhighlightLast();
+            UnhighlightLast();
             String currentWindow;
             currentWindow = Driver.CurrentWindowHandle;
             bool windowfound = false;
@@ -4055,7 +4055,7 @@ namespace GingerCore.Drivers
 
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
         {
-            unhighlightLast();
+            UnhighlightLast();
 
             if (string.IsNullOrEmpty(ElementInfo.XPath))
             {
@@ -4082,7 +4082,7 @@ namespace GingerCore.Drivers
             LastHighLightedElementInfo = ElementInfo;
         }
 
-        private void unhighlightLast()
+        public void UnhighlightLast()
         {
             if (LastHighLightedElementInfo != null)
             {
@@ -4286,7 +4286,7 @@ namespace GingerCore.Drivers
             Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
             try
             {
-                unhighlightLast();
+                UnhighlightLast();
                 Driver.SwitchTo().DefaultContent();
                 IWebElement el;
                 InjectSpyIfNotIngected();

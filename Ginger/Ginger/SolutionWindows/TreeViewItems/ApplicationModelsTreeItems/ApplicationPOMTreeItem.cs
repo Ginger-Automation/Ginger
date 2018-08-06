@@ -119,18 +119,27 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         void ITreeViewItem.SetTools(ITreeView TV)
         {
+
+
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-            
-            TreeViewUtils.AddMenuItem(mContextMenu, "Save", SavePOM, null, "@Save_16x16.png");
-            mTreeView.AddToolbarTool("@Save_16x16.png", "Save", SavePOM);
 
-            if (IsGingerDefualtFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowRenameFolder: false, allowDeleteFolder: false);
-            else
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
+            AddItemNodeBasicManipulationsOptions(mContextMenu);
+
             AddSourceControlOptions(mContextMenu);
-            AddSourceControlOptions(mContextMenu, false, false);
+
+            //mTreeView = TV;
+            //mContextMenu = new ContextMenu();
+
+            //TreeViewUtils.AddMenuItem(mContextMenu, "Save", SavePOM, null, "@Save_16x16.png");
+            //mTreeView.AddToolbarTool("@Save_16x16.png", "Save", SavePOM);
+
+            //if (IsGingerDefualtFolder)
+            //    AddItemNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowRenameFolder: false, allowDeleteFolder: false);
+            //else
+            //    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
+            //AddSourceControlOptions(mContextMenu);
+            //AddSourceControlOptions(mContextMenu, false, false);
         }
 
         private void SavePOM(object sender, RoutedEventArgs e)

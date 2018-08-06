@@ -148,8 +148,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             applicationAgent.Agent = mWizard.mAgent;
             string targetApplicationName = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Key == mPOM.TargetApplicationKey).FirstOrDefault().AppName;
             applicationAgent.AppName = targetApplicationName;
-            mWindowExplorerPage = new WindowExplorerPage(applicationAgent,null, WindowExplorerPage.eWindowExplorerPageContext.POMWizard);
-            mWindowExplorerPage.WindowControlsGridView.DataSourceList = mPOM.MappedUIElements;
+            mWindowExplorerPage = new WindowExplorerPage(applicationAgent,null,mPOM, WindowExplorerPage.eWindowExplorerPageContext.POMWizard);
+            //mWindowExplorerPage.WindowControlsGridView.DataSourceList = mPOM.MappedUIElements;
             mWindowExplorerPage.HorizontalAlignment = HorizontalAlignment.Stretch;
             mWindowExplorerPage.Width = 700;
             xWindowExlorerFrame.Content = mWindowExplorerPage;
