@@ -115,6 +115,7 @@ namespace Amdocs.Ginger.Repository
         List<MethodInfo> mStandAloneMethods = null;
         List<MethodInfo> GetStandAloneMethods()
         {
+            ScanPackage();  // do once !!!!!!!!!!!!!!!!!!!!!!
             if (mStandAloneMethods == null)
             {
                 mStandAloneMethods = new List<MethodInfo>();
@@ -146,23 +147,23 @@ namespace Amdocs.Ginger.Repository
         {
             ObservableList<StandAloneAction> list = new ObservableList<StandAloneAction>();
 
-            //foreach (MethodInfo MI in GetStandAloneMethods())
-            //{
-            //    GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);
-            //    StandAloneAction DA = new StandAloneAction();
-            //    DA.ID = token.ID;
-            //    AssemblyName AN = MI.DeclaringType.Assembly.GetName();
-            //    DA.PluginID = AN.Name;
-            //    DA.Description = token.Description;
-            //    foreach (ParameterInfo PI in MI.GetParameters())
-            //    {
-            //        if (PI.ParameterType.Name != nameof(GingerAction))
-            //        {
-            //            DA.InputValues.Add(new ActInputValue() { Param = PI.Name, ParamType = PI.ParameterType });
-            //        }
-            //    }
-            //    list.Add(DA);
-            //}
+            foreach (MethodInfo MI in GetStandAloneMethods())
+            {
+                GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);                
+                StandAloneAction DA = new StandAloneAction();
+                DA.ID = token.ID;
+                AssemblyName AN = MI.DeclaringType.Assembly.GetName();
+                DA.PluginID = AN.Name;
+                DA.Description = token.Description;
+                foreach (ParameterInfo PI in MI.GetParameters())
+                {
+                    if (PI.ParameterType.Name != nameof(GingerAction))
+                    {
+                        DA.InputValues.Add(new ActInputValue() { Param = PI.Name, ParamType = PI.ParameterType });
+                    }
+                }
+                list.Add(DA);
+            }
             return list;
         }
 

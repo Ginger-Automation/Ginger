@@ -193,18 +193,18 @@ namespace Ginger.UserControlsLib.TextEditor
             }
 
             // Add all plugins TextEditors 
-            ObservableList<PlugInWrapper> PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+            //ObservableList<PlugInWrapper> PlugInsList = App.LocalRepository.GetSolutionPlugIns();
 
-            foreach (PlugInWrapper PW in PlugInsList)
-            {
-                foreach (PlugInTextFileEditorBase TE in PW.TextEditors())
-                {
-                    PlugInTextEditorWrapper w = new PlugInTextEditorWrapper(TE);
-                    PlugInTextEditorWrapper f = (PlugInTextEditorWrapper)TextEditors.Where(x => x is PlugInTextEditorWrapper ? ((PlugInTextEditorWrapper)x).GetEditorID() == w.GetEditorID() : false).FirstOrDefault();
-                    if (f == null)
-                        TextEditors.Add(w);
-                }
-            }
+            //foreach (PlugInWrapper PW in PlugInsList)
+            //{
+            //    foreach (PlugInTextFileEditorBase TE in PW.TextEditors())
+            //    {
+            //        PlugInTextEditorWrapper w = new PlugInTextEditorWrapper(TE);
+            //        PlugInTextEditorWrapper f = (PlugInTextEditorWrapper)TextEditors.Where(x => x is PlugInTextEditorWrapper ? ((PlugInTextEditorWrapper)x).GetEditorID() == w.GetEditorID() : false).FirstOrDefault();
+            //        if (f == null)
+            //            TextEditors.Add(w);
+            //    }
+            //}
 
             //TODO: if there is more than one let the user pick
             string ext = Path.GetExtension(FileName).ToLower();

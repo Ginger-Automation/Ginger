@@ -743,7 +743,7 @@ namespace Ginger
                         App.UserProfile.LoadRecentAppAgentMapping();
                         App.AutomateTabGingerRunner.SolutionFolder = SolutionFolder;
                         App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                        App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+                        // App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
                         App.UserProfile.Solution.SetReportsConfigurations();
                         App.AutomateTabGingerRunner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
                         App.AutomateTabGingerRunner.DSList = App.LocalRepository.GetSolutionDataSources();

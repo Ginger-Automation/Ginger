@@ -17,10 +17,15 @@ limitations under the License.
 #endregion
 
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+
 namespace Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common
 {
-    public class StandAloneAction // : Act
-    {
+    public class StandAloneAction
+    {                
+        public ObservableList<ActInputValue> InputValues = new ObservableList<ActInputValue>();
+                        
         //public override string ActionType => throw new NotImplementedException();
 
         //public override string ActionDescription => throw new NotImplementedException();
@@ -34,5 +39,8 @@ namespace Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.Actio
         //public override string ActionEditPage => throw new NotImplementedException();
 
         //public override string ActionUserDescription => throw new NotImplementedException();
+        public string ID { get; internal set; }
+        public string PluginID { get; internal set; }
+        public string Description { get; internal set; }
     }
 }

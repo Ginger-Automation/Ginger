@@ -98,14 +98,14 @@ namespace Ginger.PlugInsLib
         
         public static PlugInWrapper GetPlugInWrapperByID(string PlugInID)
         {
-            ObservableList<PlugInWrapper> PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+            //ObservableList<PlugInWrapper> PlugInsList = App.LocalRepository.GetSolutionPlugIns();
 
-            foreach (PlugInWrapper PIW in PlugInsList)
-            {
-                //Need to check if there is a better way to the PlugIn
-                if (PIW.ID == PlugInID)
-                    return PIW;
-            }
+            //foreach (PlugInWrapper PIW in PlugInsList)
+            //{
+            //    //Need to check if there is a better way to the PlugIn
+            //    if (PIW.ID == PlugInID)
+            //        return PIW;
+            //}
             return null;
         }
 
@@ -125,19 +125,19 @@ namespace Ginger.PlugInsLib
 
         public static string GetTamplateContentByPlugInExtension(string plugInExtension)
         {
-            ObservableList<PlugInWrapper> PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+            //ObservableList<PlugInWrapper> PlugInsList = App.LocalRepository.GetSolutionPlugIns();
 
-            foreach (PlugInWrapper PIW in PlugInsList)
-            {
-                foreach (PlugInTextFileEditorBase PITFEB in PIW.TextEditors())
-                {
-                    if (PITFEB.Extensions.Contains(plugInExtension))
-                    {
-                        return PITFEB.GetTemplatesByExtensions(plugInExtension);
-                    }
-                }
+            //foreach (PlugInWrapper PIW in PlugInsList)
+            //{
+            //    foreach (PlugInTextFileEditorBase PITFEB in PIW.TextEditors())
+            //    {
+            //        if (PITFEB.Extensions.Contains(plugInExtension))
+            //        {
+            //            return PITFEB.GetTemplatesByExtensions(plugInExtension);
+            //        }
+            //    }
 
-            }
+            //}
             return null;
         }
     }

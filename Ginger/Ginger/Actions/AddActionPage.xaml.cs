@@ -33,6 +33,9 @@ using GingerCore.Actions.PlugIns;
 using GingerPlugIns.ActionsLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 
 namespace Ginger.Actions
 {
@@ -43,7 +46,7 @@ namespace Ginger.Actions
     {
         GenericWindow _pageGenericWin = null;
         ObservableList<Act> mActionsList;
-        bool IsPlugInAvailable = false;
+        // bool IsPlugInAvailable = false;
 
         public AddActionPage()
         {
@@ -52,46 +55,48 @@ namespace Ginger.Actions
             LoadGridData();
             LoadPlugInsActions();
 
-            if (IsPlugInAvailable == false)
-            {
-                PlugInsActionsTab.Visibility = Visibility.Collapsed;
-                LegacyActionsTab.Margin = new Thickness(9,0,-18,0);
-            }
+            //if (IsPlugInAvailable == false)
+            //{
+            //    PlugInsActionsTab.Visibility = Visibility.Collapsed;
+            //    LegacyActionsTab.Margin = new Thickness(9,0,-18,0);
+            //}
         }
 
         private void LoadPlugInsActions()
         {
+            ObservableList<PluginPackage> plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
             ObservableList<Act> PlugInsActions = new ObservableList<Act>();
-            ObservableList<PlugInWrapper> PlugInsList = App.LocalRepository.GetSolutionPlugIns();
-            foreach (PlugInWrapper PW in PlugInsList)
+            // ObservableList<PlugInWrapper> PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+            foreach (PluginPackage PW in plugins)
             {
                 try
                 {
-                    if (PW.Actions != null && PW.Actions.Count > 0)
-                        foreach (PlugInAction PIA in PW.Actions)
+                    ObservableList<StandAloneAction> actions = PW.GetStandAloneActions();
+                    
+                        foreach (StandAloneAction SAA in actions)
                         {
                             ActPlugIn act = new ActPlugIn();
-                            act.Description = PIA.Description;
+                            // act.Description = PIA.Description;
                             act.Active = true;
-                            act.PlugInName = PW.Name;
-                            act.GetOrCreateInputParam(ActPlugIn.Fields.PluginID, PW.ID);
-                            act.GetOrCreateInputParam(ActPlugIn.Fields.PlugInActionID, PIA.ID);
-                            act.GetOrCreateInputParam(ActPlugIn.Fields.PluginDescription, PIA.Description);
-                            act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserDescription, PIA.UserDescription);
-                            act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserRecommendedUseCase, PIA.UserRecommendedUseCase);
+                            // act.PlugInName = PW.Name;
+                            //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginID, PW.ID);
+                            //act.GetOrCreateInputParam(ActPlugIn.Fields.PlugInActionID, PIA.ID);
+                            //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginDescription, PIA.Description);
+                            //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserDescription, PIA.UserDescription);
+                            //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserRecommendedUseCase, PIA.UserRecommendedUseCase);
 
                             PlugInsActions.Add(act);
                         }
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the Action of the Plugin '" + PW.Name + "'", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the Action of the Plugin '" + PW.PluginID + "'", ex);
                 }
             }
-            if (PlugInsActions.Count > 0)
-            {
-                IsPlugInAvailable = true;
-            }
+            //if (PlugInsActions.Count > 0)
+            //{
+            //    IsPlugInAvailable = true;
+            //}
             PlugInsActionsGrid.DataSourceList = PlugInsActions;
         }
 

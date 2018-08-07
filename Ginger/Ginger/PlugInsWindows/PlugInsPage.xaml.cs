@@ -63,7 +63,7 @@ namespace Ginger.PlugInsWindows
 
         private void RefreshGridDataHandler(object sender, RoutedEventArgs e)
         {
-            PlugInsGrid.DataSourceList = App.LocalRepository.GetSolutionPlugIns();
+            // PlugInsGrid.DataSourceList = App.LocalRepository.GetSolutionPlugIns();
         }
 
         public void ShowAsWindow()

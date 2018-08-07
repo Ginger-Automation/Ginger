@@ -16,12 +16,10 @@
 //*/
 //#endregion
 
-//using Amdocs.Ginger.CoreNET.PlugInsLib;
+//using Amdocs.Ginger.Repository;
 //using GingerPlugInsNET.ActionsLib;
 //using GingerTestHelper;
 //using Microsoft.VisualStudio.TestTools.UnitTesting;
-//using System.IO;
-//using UnitTestsCP.GeneralLib;
 
 //namespace GingerCoreNETUnitTest.PluginsLib
 //{
@@ -32,7 +30,7 @@
 //        [ClassInitialize]
 //        public static void ClassInit(TestContext TC)
 //        {
-            
+
 //        }
 
 //        [ClassCleanup]
@@ -44,39 +42,41 @@
 //        [TestInitialize]
 //        public void TestInitialize()
 //        {
-            
+
 //        }
 
 //        [TestCleanup]
 //        public void TestCleanUp()
 //        {
-            
+
 //        }
 
 
 
 //        [TestMethod]
 //        public void StandAloneExcelAction()
-//        {            
+//        {
 //            //Arrange            
 //            PluginPackage PP = new PluginPackage();
-//            PP.Folder = Path.Combine(Common.GetTestResourcesFolder(), @"PluginPackages\StandAlonePluginPackage.1.0.0");
-//            // PP.Folder = @"C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerConsole\bin\Release\PublishOutput\";
+//            // PP.Folder = TestResources.GetTestResourcesFolder(@"PluginPackages\StandAlonePluginPackage.1.0.0");            
+//            PP.Folder = @"C:\Users\yaronwe\Source\Repos\GingerOfficePlugin\GingerOfficePlugin\bin\Debug\netstandard2.0";
+
 //            PP.ScanPackage();
 
-//            ActionHandler AH = PP.GetStandAloneActionHandler("ReadExcel");
-//            GingerAction GA = new GingerAction("Excel");
-//            string ExcelFileName = Path.Combine(Common.GetTestResourcesFolder(), @"Excel\Names.xlsx");
+//            ActionHandler AH = PP.GetStandAloneActionHandler("ReadExcelCell");
+//            GingerAction GA = new GingerAction("ReadExcelCell");
+//            string ExcelFileName = TestResources.GetTestResourcesFile(@"Excel\Names.xlsx");
 //            GA.InputParams["FileName"].Value = ExcelFileName;
-//            GA.InputParams["column"].Value = "B";
-//            GA.InputParams["row"].Value = 2;
+//            GA.InputParams["sheetName"].Value = "Sheet1";
+//            GA.InputParams["row"].Value = "#2";
+//            GA.InputParams["column"].Value = "#B";            
 //            AH.GingerAction = GA;
 
 //            // Act            
 //            ActionRunner.RunAction(AH.Instance, AH.GingerAction, AH);
-            
+
 //            //Assert
-//            Assert.AreEqual("Mark", GA.Output.Values[0].ValueString);            
+//            Assert.AreEqual("Mark", GA.Output.Values[0].ValueString);
 //        }
 
 //        [TestMethod]
@@ -84,13 +84,13 @@
 //        {
 //            //Arrange            
 //            PluginPackage PP = new PluginPackage();
-//            PP.Folder = Path.Combine(Common.GetTestResourcesFolder(), @"PluginPackages\StandAlonePluginPackage.1.0.0");
+//            PP.Folder = TestResources.GetTestResourcesFolder(@"PluginPackages\StandAlonePluginPackage.1.0.0");
 //            // PP.Folder = @"C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerConsole\bin\Release\PublishOutput\";
 //            PP.ScanPackage();
 
 //            ActionHandler AH = PP.GetStandAloneActionHandler("ReadExcel");
 //            GingerAction GA = new GingerAction("Excel");
-//            GA.InputParams["FileName"].Value = Path.Combine(Common.GetTestResourcesFolder(), @"Excel\Names.xlsx");
+//            GA.InputParams["FileName"].Value = TestResources.GetTestResourcesFile(@"Excel\Names.xlsx");
 //            GA.InputParams["column"].Value = "B";
 //            GA.InputParams["row"].Value = 2;
 //            AH.GingerAction = GA;
