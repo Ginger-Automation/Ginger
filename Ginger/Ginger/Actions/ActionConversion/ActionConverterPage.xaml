@@ -49,15 +49,21 @@
         </DockPanel>
         <DockPanel x:Name="conversionConfigRadBtnPanel"  Grid.Row="5" HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0"  >
             <Border DockPanel.Dock="Top" Visibility="{Binding  ElementName=ToolsTray, Path=Visibility}" BorderThickness="1" BorderBrush="{StaticResource @Skin1_ColorA}"  >
-                <StackPanel x:Name="RowSelectorPanel"  >
+                <StackPanel x:Name="RowSelectorPanel">
                     <Label x:Name="lbl" Content="Add new action to :" FontSize="12" Margin="35,10,0,0" Style="{StaticResource @InputFieldLabelStyle}"/>
                     <RadioButton Name="radNewActivity" Content="New Activity" Tag="radDifferentActivity" Margin="40,10,0,0"/>
                     <RadioButton Name="radSameActivity" Content="Same Activity" Tag="radSameActivity" Margin="40,10,0,0" IsChecked="True"/>
-                    <CheckBox Name="chkDefaultTargetApp" Content="Set default target application to modified activities" Margin="40,20,0,0" Checked="chkDefaultTargetApp_Checked" Unchecked="chkDefaultTargetApp_Unchecked" IsChecked="True"/>
-                    <ComboBox Name="cmbTargetApp" Style="{StaticResource @InputComboBoxStyle}" Width="180"  Margin="300,-20,200,0" />
-                    <Button x:Name="btnRefresh" usercontrols:ImageMaker.Content="Refresh" ToolTip="Refresh" Click="btnRefresh_Click" Margin="510,-23,200,0" Width="22" Style="{StaticResource @InputImageButtonStyle_NoBorder}">                        
-                    </Button>
-                    
+                    <StackPanel x:Name="RowDefaultTargetApplication" MinWidth="498" Margin="40,20,0,0" Orientation="Horizontal">
+                        <StackPanel>
+                            <CheckBox Name="chkDefaultTargetApp" Content="Set default target application to modified activities" Checked="chkDefaultTargetApp_Checked" Unchecked="chkDefaultTargetApp_Unchecked" IsChecked="True"/>
+                        </StackPanel>
+                        <StackPanel Margin="5,-1,0,0">
+                            <ComboBox Name="cmbTargetApp" Style="{StaticResource @InputComboBoxStyle}" Width="180" />
+                        </StackPanel>
+                        <StackPanel Margin="5,-3,0,0">
+                            <Button x:Name="btnRefresh" usercontrols:ImageMaker.Content="Refresh" ToolTip="Refresh" Click="btnRefresh_Click" Width="22" Style="{StaticResource @InputImageButtonStyle_NoBorder}"></Button>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </DockPanel>
