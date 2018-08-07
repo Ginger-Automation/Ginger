@@ -76,7 +76,7 @@ namespace Ginger.Actions
                         foreach (StandAloneAction SAA in actions)
                         {
                             ActPlugIn act = new ActPlugIn();
-                            // act.Description = PIA.Description;
+                            act.Description = SAA.Description;
                             act.Active = true;
                             // act.PlugInName = PW.Name;
                             //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginID, PW.ID);

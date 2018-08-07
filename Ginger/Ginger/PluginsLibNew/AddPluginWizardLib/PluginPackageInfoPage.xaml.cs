@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using GingerWPF.WizardLib;
@@ -43,6 +45,8 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
         {
             if (WizardEventArgs.EventType == EventType.Active)
             {
+                ObservableList<StandAloneAction> actions =  mPluginPackage.GetStandAloneActions();
+                ActionsDataGrid.ItemsSource = actions;
             }
         }
 
