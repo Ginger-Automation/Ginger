@@ -244,8 +244,8 @@ namespace Ginger.BusinessFlowWindows
         {
             if (editMode == General.RepositoryItemPageViewMode.SharedReposiotry)
             {
-                saveWasDone = true;
                 mActivity.Save();
+                saveWasDone = true;
                 _pageGenericWin.Close();
             }
         }

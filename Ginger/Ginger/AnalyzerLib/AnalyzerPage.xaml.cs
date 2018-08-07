@@ -472,7 +472,7 @@ namespace Ginger.AnalyzerLib
             }
             // TODO: click/use the same code on solution which will save all changed items...
             // Meanwhile the below is good start 
-            if (Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning) == MessageBoxResult.Yes)
+            if (Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)) == MessageBoxResult.Yes)
             {
                 BusyInProcess = true;
                 SetStatus("Starting to Save Fixed Items...");

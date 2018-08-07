@@ -886,11 +886,11 @@ namespace Ginger.Actions
             if ((mActParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow),mActParentBusinessFlow.Name) == MessageBoxResult.Yes) 
                 || (mActParentActivity != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == MessageBoxResult.Yes))
             {
-                saveWasDone = true;
                 if(mActParentBusinessFlow != null)
                     mActParentBusinessFlow.Save();
                 else
                     mActParentActivity.Save();
+                saveWasDone = true;
             }
 
             IsPageClosing = true;
@@ -900,8 +900,8 @@ namespace Ginger.Actions
         {
             if (LocalRepository.CheckIfSureDoingChange(mAction, "change") == true)
             {
-                saveWasDone = true;
                 mAction.Save();
+                saveWasDone = true;
                 IsPageClosing = true;
                 _pageGenericWin.Close();
             }
