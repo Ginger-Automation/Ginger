@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace Amdocs.Ginger.CoreNET.PlugInsLib
+namespace Amdocs.Ginger.Repository
 {
     public class PluginAssemblyInfo
     {

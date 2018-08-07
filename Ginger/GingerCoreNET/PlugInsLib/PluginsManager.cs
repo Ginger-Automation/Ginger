@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,22 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using GingerCoreNET.GeneralLib;
-using GingerPlugInsNET.PlugInsLib;
-using System.Collections.Generic;
-using System.Reflection;
 using System;
-using System.Linq;
-using GingerPlugInsNET.DriversLib;
+using System.Collections.Generic;
 using System.IO;
-using Amdocs.Ginger.CoreNET.PlugInsLib;
-using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
-using GingerPlugInsNET.ActionsLib;
+using System.Linq;
+using System.Reflection;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
+using GingerPlugInsNET.ActionsLib;
+using GingerPlugInsNET.DriversLib;
 
-namespace GingerCoreNET.PlugInsLib
+namespace Amdocs.Ginger.Repository
 {
     public class PluginsManager
     {

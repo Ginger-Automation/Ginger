@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,20 +16,19 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
-using Amdocs.Ginger.Repository;
-using GingerPlugInsNET.ActionsLib;
-using GingerPlugInsNET.DriversLib;
-using GingerPlugInsNET.PlugInsLib;
-using GingerPlugInsNET.ServicesLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
+using GingerPlugInsNET.ActionsLib;
+using GingerPlugInsNET.DriversLib;
+using GingerPlugInsNET.PlugInsLib;
+using GingerPlugInsNET.ServicesLib;
 
-namespace Amdocs.Ginger.CoreNET.PlugInsLib
+namespace Amdocs.Ginger.Repository
 {
     public class PluginPackage : RepositoryItemBase
     {
@@ -47,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
 
         public bool Isloaded = false;
 
-        internal PluginDriverBase GetDriver(string driverName)
+        public PluginDriverBase GetDriver(string driverName)
         {
             if (!Isloaded)
             {
@@ -71,6 +70,7 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
                 }
             }
             throw new Exception("Driver not found in Plugin Package - " + driverName);
+
         }
 
         [IsSerializedForLocalRepository]
