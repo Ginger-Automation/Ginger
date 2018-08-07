@@ -198,7 +198,7 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AnalyzerFoundIssues, new UserMessage(eMessageType.WARN, "Issues Detected By Analyzer", "Critical/High Issues were detected, please handle them before execution.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AnalyzerSaveRunSet, new UserMessage(eMessageType.WARN, "Issues Detected By Analyzer", "Please save the " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " first", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.SaveItemParentWarning, new UserMessage(eMessageType.WARN, "Item Parent Save", "Save process will actually save the item {0} parent which called '{1}'." + System.Environment.NewLine + System.Environment.NewLine + "To continue with save?", MessageBoxButton.YesNo, MessageBoxResult.No));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.SaveAllItemsParentWarning, new UserMessage(eMessageType.WARN, "Items Parent Save", "Save process will actually save all items {0} parent." + System.Environment.NewLine + System.Environment.NewLine + "To continue with save?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.SaveAllItemsParentWarning, new UserMessage(eMessageType.WARN, "Items Parent Save", "Save process will actually save item\\s parent\\s (" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ")" + System.Environment.NewLine + System.Environment.NewLine + "To continue with save?", MessageBoxButton.YesNo, MessageBoxResult.No));
 
             #endregion Analyzer
 
