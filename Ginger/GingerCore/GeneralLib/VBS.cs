@@ -51,10 +51,20 @@ namespace GingerCore.GeneralLib
             //Delete the temp vbs file
             System.IO.File.Delete(fileName);
 
-            //Return the result
-            string result = scr.ReturnValues[0].Actual;
-            if (result != null) result = result.Trim();
-                
+            string result = string.Empty;
+            if (Expr.StartsWith("IsDate(CDate"))
+            {
+                //Return the result
+                result = scr.ReturnValues[0].Actual;
+                if (result != null) result = result.Trim() == "-1" ? "true" : "false";
+            }
+            else
+            {
+                //Return the result
+                result = scr.ReturnValues[0].Actual;
+                if (result != null) result = result.Trim();
+            }
+
             return result;
         }       
     }
