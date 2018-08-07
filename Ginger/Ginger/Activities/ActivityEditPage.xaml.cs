@@ -168,20 +168,9 @@ namespace Ginger.BusinessFlowWindows
 
                 case General.RepositoryItemPageViewMode.Child:
                     title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-                    Button saveBtnAnalyzer = new Button();
-                    saveBtnAnalyzer.Content = "Save";
-                    saveBtnAnalyzer.Click += new RoutedEventHandler(saveBtnAnalyzer_Click);
-                    Button undoBtnAnalyzer = new Button();
-                    undoBtnAnalyzer.Content = "Undo & Close";
-                    undoBtnAnalyzer.Click += new RoutedEventHandler(undoBtn_Click);
-                    winButtons.Add(undoBtnAnalyzer);
-                    winButtons.Add(saveBtnAnalyzer);
-                    break;
-                case General.RepositoryItemPageViewMode.Standalone:
-                    title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     Button saveButton = new Button();
                     saveButton.Content = "Save";
-                    saveButton.Click += new RoutedEventHandler(saveBtn_Click);
+                    saveButton.Click += new RoutedEventHandler(saveButton_Click);
                     Button undoButton = new Button();
                     undoButton.Content = "Undo & Close";
                     undoButton.Click += new RoutedEventHandler(undoBtn_Click);
@@ -205,14 +194,13 @@ namespace Ginger.BusinessFlowWindows
         {
             xActivityDetails.IsEnabled = xActivityInfo.IsEnabled = TagsViewer.IsEnabled = xActivityVariables.IsEnabled = false;
         }
-        private void saveBtnAnalyzer_Click(object sender, RoutedEventArgs e)
+
+        private void saveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.SaveAnalyzerItemWarning) == MessageBoxResult.Yes)
+            if (mActivityParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning) == MessageBoxResult.Yes)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.AnalyzerSavingFixedIssues, null, mActivity.ActivityName);
                 mActivityParentBusinessFlow.Save();
                 saveWasDone = true;
-                Reporter.CloseGingerHelper();
             }
             _pageGenericWin.Close();
         }
@@ -254,13 +242,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void CheckIfUserWantToSave()
         {
-            bool saveChanges = false;
             if (editMode == General.RepositoryItemPageViewMode.SharedReposiotry)
-                saveChanges = LocalRepository.CheckIfSureDoingChange(mActivity, "change");
-            else
-                saveChanges = (Reporter.ToUser(eUserMsgKeys.FindAndReplaceViewSureSaveChanges) == MessageBoxResult.Yes);
-
-            if (saveChanges)
             {
                 saveWasDone = true;
                 mActivity.Save();
