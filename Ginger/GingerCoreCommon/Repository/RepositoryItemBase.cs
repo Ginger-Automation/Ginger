@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -822,7 +822,7 @@ namespace Amdocs.Ginger.Repository
 
         private void DirtyCheck(string name)
         {
-            if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTrackingFields.Contains(name))
+            if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTrackingFields != null && DirtyTrackingFields.Contains(name))
             {
                 DirtyStatus = eDirtyStatus.Modified;
                 // RaiseDirtyChangedEvent();
@@ -936,6 +936,45 @@ namespace Amdocs.Ginger.Repository
                 {
                     ((RepositoryItemBase)sender).DirtyStatus = eDirtyStatus.Modified;
                     // ((RepositoryItemBase)sender).OnPropertyChanged(nameof(DirtyStatus));
+                }
+            }
+        }
+
+        /// <summary>
+        /// This method is used to set the DirtyStatus to NoChange to item and it's child items
+        /// </summary>
+        public void SetDirtyStatusToNoChange()
+        {
+            DirtyStatus = eDirtyStatus.NoChange;
+
+            // Properties
+            foreach (PropertyInfo PI in this.GetType().GetProperties())
+            {
+                var token = PI.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
+                if (token == null) continue;
+
+                if (typeof(IObservableList).IsAssignableFrom(PI.PropertyType))
+                {
+                    IObservableList obj = (IObservableList)PI.GetValue(this);
+                    if (obj == null) continue;
+                    foreach (object o in obj)
+                        if (o is RepositoryItemBase)
+                            ((RepositoryItemBase)o).SetDirtyStatusToNoChange();
+                }
+            }
+
+            // Fields
+            foreach (FieldInfo FI in this.GetType().GetFields())
+            {
+                var token = FI.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
+                if (token == null) continue;
+                if (typeof(IObservableList).IsAssignableFrom(FI.FieldType))
+                {
+                    IObservableList obj = (IObservableList)FI.GetValue(this);
+                    if (obj == null) return;
+                    foreach (object o in obj)
+                        if (o is RepositoryItemBase)
+                            ((RepositoryItemBase)o).SetDirtyStatusToNoChange();
                 }
             }
         }

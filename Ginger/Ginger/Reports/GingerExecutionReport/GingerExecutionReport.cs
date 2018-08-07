@@ -2587,6 +2587,8 @@ namespace Ginger.Reports.GingerExecutionReport
             StringBuilder mJSBundle = new StringBuilder();
             if (!currentTemplate.UseLocalStoredStyling)
             {
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/jquery.js'></script>");
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/bootstrap.js'></script>");
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/babel.js'></script>");
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/browser.js'></script>");
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/react-with-addons.min.js'></script>");
@@ -2596,6 +2598,8 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
+                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>");
+                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.js'></script>");
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js'></script>");
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-core/6.1.19/browser.js'></script>");
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0-alpha1/react-with-addons.js'></script>");
