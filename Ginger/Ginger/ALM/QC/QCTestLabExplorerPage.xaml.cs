@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using GingerCore.ALM.QCRestAPI;
 
 namespace Ginger.ALM.QC {
     public partial class QCTestLabExplorerPage : Page
@@ -66,7 +67,7 @@ namespace Ginger.ALM.QC {
             tvi.Path = @"Root";
             TestLabExplorerTreeView.Tree.AddItem(tvi);
 
-            TestLabExplorerTreeView.TreeTitle = "'" + QCConnect.CurrentDomain + " \\ " + QCConnect.CurrentProject + "' - Test Lab Explorer";
+            TestLabExplorerTreeView.TreeTitle = SetTreeTitle();
             TestLabExplorerTreeView.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
             TestLabExplorerTreeView.Tree.ItemSelected += TestLabExplorerTreeView_ItemSelected;
 
@@ -102,6 +103,14 @@ namespace Ginger.ALM.QC {
                 StatusName.Margin = new Thickness(0, 0, 0, 0);
                 TSExecDetails.Children.Add(StatusName);
             }
+        }
+
+        private string SetTreeTitle()
+        {
+            if (QCRestAPIConnect.CurrentDomain != null)
+                return "'" + QCRestAPIConnect.CurrentDomain + " \\ " + QCRestAPIConnect.CurrentProject + "' - Test Lab Explorer";
+            else
+                return "'" + QCConnect.CurrentDomain + " \\ " + QCConnect.CurrentProject + "' - Test Lab Explorer";
         }
 
         /// <summary>

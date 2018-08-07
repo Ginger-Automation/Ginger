@@ -47,6 +47,7 @@ namespace Ginger.ALM
             this.almConectStyle = almConnectStyle;
 
             App.ObjFieldBinding(ServerURLTextBox, TextBox.TextProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMServerURL));
+            App.ObjFieldBinding(RestAPICheckBox, CheckBox.IsCheckedProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.UseRest));
             App.ObjFieldBinding(UserNameTextBox, TextBox.TextProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMUserName));
             App.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMDomain));
             App.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMProjectName));
@@ -170,6 +171,7 @@ namespace Ginger.ALM
             ProjectComboBox.SelectedItem = null;
             ProjectComboBox.SelectedValue = null;
             ProjectComboBox.Items.Clear();
+            RestAPICheckBox.IsChecked = false;
 
            ALMIntegration.Instance.SyncConfigurations();
         }
@@ -520,6 +522,24 @@ namespace Ginger.ALM
         {
             System.Diagnostics.Process.Start(@"http://ginger/Downloads/Other");
             e.Handled = true;
+        }
+
+        private void RestAPICheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.QC)
+            {
+                App.UserProfile.Solution.UseRest = true;
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Rest connection refering only to QC");
+                RestAPICheckBox.IsChecked = false;
+            }
+        }
+
+        private void RestAPICheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            App.UserProfile.Solution.UseRest = false;
         }
     }
 }

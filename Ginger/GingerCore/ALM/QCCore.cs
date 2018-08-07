@@ -78,16 +78,9 @@ namespace GingerCore.ALM
             set { ImportFromQC.GingerActivitiesRepo = value; }
         }
 
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, bool useREST)
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
-            if (!useREST)
-            {
-                return ImportFromQC.GetALMItemFields();
-            }
-            else
-            {
-                return ImportFromQC.GetQCEntityFieldsREST(ALM_Common.DataContracts.ResourceType.DEFECT); // currently DEFECTS supported. May be extended if needed
-            }
+            return ImportFromQC.GetALMItemFields();
         }
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST)
@@ -105,7 +98,7 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            return ExportToQC.ExportExecutionDetailsToQC(bizFlow, ref result, publishToALMConfig );
+            return ExportToQC.ExportExecutionDetailsToQC(bizFlow, ref result, publishToALMConfig);
         }
 
         public bool ExportActivitiesGroupToALM(ActivitiesGroup activitiesGroup, Test mappedTest, string uploadPath, ObservableList<ExternalItemFieldBase> testCaseFields, ref string result)
