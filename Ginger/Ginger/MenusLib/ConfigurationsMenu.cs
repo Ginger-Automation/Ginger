@@ -5,6 +5,7 @@ using Ginger.Reports;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.TwoLevelMenuLib;
 using GingerCore.Environments;
+using GingerWPF.PluginsLib;
 using GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems;
 using GingerWPF.UserControlsLib;
 using System;
@@ -57,9 +58,14 @@ namespace Ginger.ConfigurationsLib
             // reportsMenu.Add("Templates", ReportsTemplates, ConsoleKey.T, "Edit and Create report templates", "AID");
             twoLevelMenu.Add(reportsMenu);
 
+
+            TopMenuItem PluginsMenu = new TopMenuItem("Plugins", ConsoleKey.P, "Plugins AID");
+            PluginsMenu.Add("Installed", PluginsList, ConsoleKey.L, "Installed Plugins", "Installed AID");                        
+            twoLevelMenu.Add(PluginsMenu);
+
             return twoLevelMenu;
         }
-
+        
         private static Page ReportsConfig()
         {
             return new HTMLReportsConfigurationPage();
@@ -85,9 +91,7 @@ namespace Ginger.ConfigurationsLib
         }
 
         private static Page ReportsList()
-        {
-          
-
+        {          
             HTMLGingerReportsTreeItem reportsRoot = new HTMLGingerReportsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<HTMLReportConfiguration>());
             reportsRoot.IsGingerDefualtFolder = true;
             SingleItemTreeViewExplorerPage reportsPage = new SingleItemTreeViewExplorerPage("Reports Templates", eImageType.Report, reportsRoot, reportsRoot.SaveAllTreeFolderItemsHandler, reportsRoot.AddItemHandler);
@@ -106,6 +110,10 @@ namespace Ginger.ConfigurationsLib
             return p;
         }
 
-        
+        private static Page PluginsList()
+        {
+            return new PluginPackagesPage();
+        }
+
     }
 }

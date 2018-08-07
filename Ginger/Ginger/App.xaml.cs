@@ -20,6 +20,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Ginger.Environments;
@@ -859,8 +860,8 @@ namespace Ginger
             SR.AddItemInfo<ReportTemplate>("*.Ginger.ReportTemplate.xml", @"~\HTMLReportConfigurations\ReportTemplates", true, "ReportTemplates", addToRootFolders: true, PropertyNameForFileName: nameof(ReportTemplate.Name));
 
             SR.AddItemInfo<DataSourceBase>("*.Ginger.DataSource.xml", @"~\DataSources", true, "DataSources", addToRootFolders: true, PropertyNameForFileName: nameof(DataSourceBase.Name));
-            
 
+            SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", addToRootFolders: true, PropertyNameForFileName: nameof(PluginPackage.PluginID));
 
             ////// Note the | which enable to define multiple pattern for same folder
             ////// Shared repository can contains Activities and Actions            
