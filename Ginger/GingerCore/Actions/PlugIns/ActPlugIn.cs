@@ -48,7 +48,8 @@ namespace GingerCore.Actions.PlugIns
         {
             get
             {
-                 return this.GetInputParamValue(Fields.PluginDescription); 
+                // return this.GetInputParamValue(Fields.PluginDescription); 
+                return "aaaaaa";  //TODO: Fix me
             }
         }
 
@@ -58,13 +59,14 @@ namespace GingerCore.Actions.PlugIns
         {
             get
             {
-                return this.GetInputParamValue(Fields.PluginUserDescription);
+                // return this.GetInputParamValue(Fields.PluginUserDescription);
+                return "zzzzz";   //TODO: Fix me
             }
         }
 
         public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
         {
-            TBH.AddText(this.GetInputParamValue(Fields.PluginUserRecommendedUseCase)); 
+            // TBH.AddText(this.GetInputParamValue(Fields.PluginUserRecommendedUseCase)); 
         }
 
         public override bool ObjectLocatorConfigsNeeded
