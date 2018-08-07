@@ -64,6 +64,8 @@ namespace Ginger.Actions
             //Read from sql file
             QueryFile.Init(mValidationDB.GetOrCreateInputParam(ActDBValidation.Fields.QueryFile), true, true, UCValueExpression.eBrowserType.File, "sql", BrowseQueryFile_Click);
 
+            QueryFile.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
+
             //Import SQL file in to solution folder
             GingerCore.General.ActInputValueBinding(ImportFile, CheckBox.IsCheckedProperty, mValidationDB.GetOrCreateInputParam(ActDBValidation.Fields.ImportFile, "True"));
 
@@ -88,6 +90,56 @@ namespace Ginger.Actions
             ColumnComboBox.Items.Add(mValidationDB.Column);
             ComboAutoSelectIfOneItemOnly(ColumnComboBox);
             SetVisibleControlsForAction();
+        }
+
+        private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+            bool ImportFileFlag = false;
+            string FileName = QueryFile.ValueTextBox.Text;
+            Boolean.TryParse(mValidationDB.GetInputParamValue(ActDBValidation.Fields.ImportFile), out ImportFileFlag);
+            if (ImportFileFlag)
+            {
+                //TODO import request File
+                string targetPath = SolutionFolder + @"Documents\SQL";
+                if (!System.IO.Directory.Exists(targetPath))
+                {
+                    System.IO.Directory.CreateDirectory(targetPath);
+                }
+                string destFile = System.IO.Path.Combine(targetPath, FileName.Remove(0, 3));
+                int fileNum = 1;
+                string copySufix = "_Copy";
+                while (System.IO.File.Exists(destFile))
+                {
+                    fileNum++;
+                    string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
+                    if (newFileName.IndexOf(copySufix) != -1)
+                        newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                    newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
+                    destFile = System.IO.Path.Combine(targetPath, newFileName);
+                }
+                System.IO.File.Copy(FileName, destFile, true);
+                QueryFile.ValueTextBox.Text = @"~\Documents\SQL\" + System.IO.Path.GetFileName(destFile);
+            }
+            if (FileName != "")
+            {
+                mValidationDB.ReturnValues.Clear();
+                mValidationDB.InputValues.Clear();
+
+                string[] script = File.ReadAllLines(FileName);
+                ScriptDescriptionLabel.Content = "";
+                parseScriptHeader(script);                
+            }
+        }
+        private void parseScriptHeader(string[] script)
+        {
+            foreach (string line in script)
+            {                
+                if (line.StartsWith("--GINGER_$"))
+                {
+                    mValidationDB.AddOrUpdateInputParamValue(line.Replace("--GINGER_$", ""), "");
+                }
+            }
         }
 
         private void ComboAutoSelectIfOneItemOnly(ComboBox comboBox)
@@ -390,33 +442,7 @@ namespace Ginger.Actions
                     FileName = FileName.Replace(SolutionFolder, @"~\");
                 }
 
-                QueryFile.ValueTextBox.Text = FileName;
-
-                bool ImportFileFlag = false;
-                Boolean.TryParse(mValidationDB.GetInputParamValue(ActDBValidation.Fields.ImportFile), out ImportFileFlag);
-                if (ImportFileFlag)
-                {
-                    //TODO import request File
-                    string targetPath = SolutionFolder + @"Documents\SQL";
-                    if (!System.IO.Directory.Exists(targetPath))
-                    {
-                        System.IO.Directory.CreateDirectory(targetPath);
-                    }
-                    string destFile = System.IO.Path.Combine(targetPath, FileName.Remove(0, 3));
-                    int fileNum = 1;
-                    string copySufix = "_Copy";
-                    while (System.IO.File.Exists(destFile))
-                    {
-                        fileNum++;
-                        string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
-                        if (newFileName.IndexOf(copySufix) != -1)
-                            newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
-                        newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
-                        destFile = System.IO.Path.Combine(targetPath, newFileName);
-                    }
-                    System.IO.File.Copy(FileName, destFile, true);
-                    QueryFile.ValueTextBox.Text = @"~\Documents\SQL\" + System.IO.Path.GetFileName(destFile);
-                }
+                QueryFile.ValueTextBox.Text = FileName;                
             }
         }
     }
