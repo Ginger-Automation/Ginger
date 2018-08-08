@@ -135,11 +135,12 @@ namespace Ginger
         /// <param name="SelectedValuePath">list item value to to return when selected</param>
         public static void BindControl<T>(this ComboBox ComboBox, Object obj, string Field, ObservableList<T> list, string DisplayMemberPath, string SelectedValuePath, BindingMode bindingMode = BindingMode.TwoWay)
         {
-            ControlsBinding.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);
-
             ComboBox.ItemsSource = list;
             ComboBox.DisplayMemberPath = DisplayMemberPath;
             ComboBox.SelectedValuePath = SelectedValuePath;
+
+            //ControlsBinding.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);   
+            GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);
         }
      
         // ------------------------------------------------------------

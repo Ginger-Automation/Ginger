@@ -59,11 +59,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xDescriptionTextBox.BindControl(mWizard.POM, nameof(ApplicationPOMModel.Description));
             xTagsViewer.Init(mWizard.POM.TagsKeys);
 
-
-            ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList());
-            xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
-            //xTargetApplicationComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);
-            //xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
+            ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList());                      
+            xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));            
+            xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
 
             if (xTargetApplicationComboBox.Items != null && xTargetApplicationComboBox.Items.Count > 0)
             {

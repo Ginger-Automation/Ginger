@@ -13,19 +13,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            //TODO: split to 2 rules name and uniqu
+            if (App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList().Count() == 0)
+            {
+                return new ValidationResult(false, "Web Platform Target Application is required");
+            }
+
             if (value == null || string.IsNullOrEmpty(value.ToString()))
             {
-                return new ValidationResult(false, "POM Target Application cannot be empty");
+                return new ValidationResult(false, "Target Application can not be empty");
             }
-            else if (App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList().Count() == 0)
-            {
-                return new ValidationResult(false, "Web Platform Target Application is mandatory to create POM");
-            }
-            else
-            {
-                return new ValidationResult(true, null);
-            }
+
+            return new ValidationResult(true, null);
+
         }
 
     }
