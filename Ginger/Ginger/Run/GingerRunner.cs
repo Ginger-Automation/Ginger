@@ -35,7 +35,6 @@ using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerPlugIns.ActionsLib;
 using GingerWPF.GeneralLib;
 using System;
 using System.Collections.Generic;
@@ -1798,39 +1797,54 @@ namespace Ginger.Run
             }
         }
 
-        public ObservableList<PlugInWrapper> PlugInsList;
+        //public ObservableList<PlugInWrapper> PlugInsList;
         private void ExecutePlugInAction(Act act)
         {
-            ActPlugIn API = (ActPlugIn)act;
-            PlugInWrapper PlugInWrapper = PlugInsList.Where(x=>x.ID == API.PlugInID).FirstOrDefault();
-            if (PlugInWrapper == null)
+            ActPlugIn pluginAction = (ActPlugIn)act;
+            GingerPlugInsNET.ActionsLib.GingerAction GA = new GingerPlugInsNET.ActionsLib.GingerAction(pluginAction.PlugInActionID);
+            foreach(ActInputValue input in act.InputValues)
             {
-                API.Error += "Failed to find the Action's PlugIn";
-                return;
+                GA.InputParams[input.Param].Value = input.Value;
             }
-            //Initilizing GingerAction fields
-            API.GingerAction.Error = string.Empty;
-            API.GingerAction.ExInfo = string.Empty;
+            amdocs.ginger.GingerCoreNET.WorkSpace.Instance.PlugInsManager.Execute(GA);
 
-            API.RunOnBusinessFlow = CurrentBusinessFlow;
-            API.RunOnEnvironment = ProjEnvironment;
-            API.SolutionFolder = SolutionFolder;
-            API.DSList = this.DSList;
-            try
+            act.Error += GA.Errors;
+            foreach (var o in GA.Output.Values)
             {
-                PlugInWrapper.RunAction(API.GingerAction);
-                foreach (ActionOutput s in API.GingerAction.ParamsOut)
-                {
-                    ((ActPlugIn)act).AddOrUpdateReturnParamActualWithPath(s.Param, s.Value, s.Path);
-                }
-                API.Error += API.GingerAction.Error;
-                API.ExInfo += API.GingerAction.ExInfo;
+                act.ReturnValues.Add(new ActReturnValue() { Param = o.Param, Actual = o.ValueString });
             }
-            catch (Exception ex)
-            {
-                if (string.IsNullOrEmpty(act.Error))
-                    act.Error = ex.Message;
-            }
+            // TODO copy output too
+            
+
+            //PlugInWrapper PlugInWrapper = PlugInsList.Where(x=>x.ID == API.PlugInID).FirstOrDefault();
+            //if (PlugInWrapper == null)
+            //{
+            //    API.Error += "Failed to find the Action's PlugIn";
+            //    return;
+            //}
+            ////Initilizing GingerAction fields
+            //API.GingerAction.Error = string.Empty;
+            //API.GingerAction.ExInfo = string.Empty;
+
+            //API.RunOnBusinessFlow = CurrentBusinessFlow;
+            //API.RunOnEnvironment = ProjEnvironment;
+            //API.SolutionFolder = SolutionFolder;
+            //API.DSList = this.DSList;
+            //try
+            //{
+            //    PlugInWrapper.RunAction(API.GingerAction);
+            //    foreach (ActionOutput s in API.GingerAction.ParamsOut)
+            //    {
+            //        ((ActPlugIn)act).AddOrUpdateReturnParamActualWithPath(s.Param, s.Value, s.Path);
+            //    }
+            //    API.Error += API.GingerAction.Error;
+            //    API.ExInfo += API.GingerAction.ExInfo;
+            //}
+            //catch (Exception ex)
+            //{
+            //    if (string.IsNullOrEmpty(act.Error))
+            //        act.Error = ex.Message;
+            //}
         }
 
         private void ResetAction(Act act)

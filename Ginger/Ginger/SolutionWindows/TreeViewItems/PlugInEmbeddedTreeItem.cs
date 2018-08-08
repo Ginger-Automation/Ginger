@@ -25,7 +25,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class PlugInEmbeddedTreeItem : TreeViewItemBase, ITreeViewItem
     {
-        public PlugInWrapper PlugInWrapper { get; set; }
+        //public PlugInWrapper PlugInWrapper { get; set; }
         private PlugInsWindows.PlugInWraperPage mPlugInPage;
         
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -37,14 +37,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mPlugInPage == null)
             {
-                mPlugInPage = new PlugInsWindows.PlugInWraperPage(PlugInWrapper);
+                // mPlugInPage = new PlugInsWindows.PlugInWraperPage(PlugInWrapper);
             }
             return mPlugInPage;
         }
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(PlugInWrapper.Name, "@Plugin_16x16.png");
+            return null; // TreeViewUtils.CreateItemHeader(PlugInWrapper.Name, "@Plugin_16x16.png");
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -59,7 +59,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         object ITreeViewItem.NodeObject()
         {
-            return PlugInWrapper;
+            return null; // PlugInWrapper;
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)
@@ -71,7 +71,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override void PostDeleteTreeItemHandler()
         {
-            string PathToDelete = PlugInWrapper.PlugInRootPath;
+            // string PathToDelete = PlugInWrapper.PlugInRootPath;
         }
     }
 }

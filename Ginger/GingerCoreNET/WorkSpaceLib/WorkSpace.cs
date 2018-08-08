@@ -44,7 +44,18 @@ namespace amdocs.ginger.GingerCoreNET
 
         public SourceControlBase SourceControl;
 
-        // public PluginsManager PlugInsManager;
+        PluginsManager mPluginsManager = null;
+        public PluginsManager PlugInsManager
+        {
+            get
+            {
+                if (mPluginsManager == null)
+                {
+                    mPluginsManager = new PluginsManager();
+                }
+                return mPluginsManager;
+            }
+        }
 
         // Here we will have knwon GingerGrids - !!!!!!!!!!!!!!!!!!! Design, think..........
         // public IObservable<GingerGrid> GingerGrids;
@@ -279,5 +290,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
             }
         }
+
+
     }
 }

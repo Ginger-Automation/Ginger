@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 using GingerPlugInsNET.ActionsLib;
@@ -30,7 +31,7 @@ namespace Amdocs.Ginger.Repository
 {
     public class PluginsManager
     {
-        private ObservableList<PluginPackage> mPluginPackages = new ObservableList<PluginPackage>();
+        private ObservableList<PluginPackage> mPluginPackages = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
 
         public class DriverInfo
         {
@@ -143,9 +144,10 @@ namespace Amdocs.Ginger.Repository
         }
 
         internal ActionHandler GetStandAloneActionHandler(string pluginID, string ID)
-        {
+        {            
             foreach (PluginPackage PP in mPluginPackages)
             {
+                PP.ScanPackage();
                 ActionHandler AH = PP.GetStandAloneActionHandler(ID);
                 if (AH != null)
                 {
@@ -193,6 +195,13 @@ namespace Amdocs.Ginger.Repository
                 mInstalledPluginPackages.Add(p);
             }
             return mInstalledPluginPackages;
+        }
+
+        public void Execute(GingerAction gA)
+        {
+            // FIXME Plug in ID
+            ActionHandler AH = GetStandAloneActionHandler("pp", gA.ID);            
+            ActionRunner.RunAction(AH.Instance, gA, AH);
         }
     }
 }

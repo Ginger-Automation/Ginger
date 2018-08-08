@@ -107,7 +107,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         override public Type NodeObjectType()
         {
-            return typeof(PlugInWrapper);
+            return null; // typeof(PlugInWrapper);
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)

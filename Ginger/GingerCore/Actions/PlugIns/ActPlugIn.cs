@@ -20,6 +20,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerPlugIns.ActionsLib;
+using GingerPlugInsNET.ActionsLib;
 using System.Collections.Generic;
 
 namespace GingerCore.Actions.PlugIns
@@ -103,25 +104,25 @@ namespace GingerCore.Actions.PlugIns
 
         public string PlugInActionID { get { return this.GetInputParamValue(Fields.PlugInActionID); } }
 
-        private GingerAction mGingerAction = null;
-        public GingerAction GingerAction
-        {
-            get
-            {
-                if (mGingerAction == null)
-                {
-                    mGingerAction = new GingerAction();
-                    mGingerAction.ID = PlugInActionID;
-                    mGingerAction.SolutionFolder = SolutionFolder;
-                    foreach (ActInputValue AIV in this.InputValues)
-                    {
-                        ActionParam AP = mGingerAction.GetOrCreateParam(AIV.Param);
-                        AP.Value = AIV.Value;
-                    }
-                }
-                return mGingerAction;
-            }
-        }
+        //private GingerAction mGingerAction = null;
+        //public GingerAction GingerAction
+        //{
+        //    get
+        //    {
+        //        if (mGingerAction == null)
+        //        {
+        //            mGingerAction = new GingerAction();
+        //            mGingerAction.ID = PlugInActionID;
+        //            mGingerAction.SolutionFolder = SolutionFolder;
+        //            foreach (ActInputValue AIV in this.InputValues)
+        //            {
+        //                ActionParam AP = mGingerAction.GetOrCreateParam(AIV.Param);
+        //                AP.Value = AIV.Value;
+        //            }
+        //        }
+        //        return mGingerAction;
+        //    }
+        //}
         
         public override void Execute() { }// Execute is being performed inside Ginger Runner
     }

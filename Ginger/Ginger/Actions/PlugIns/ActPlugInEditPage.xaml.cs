@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions.PlugIns;
@@ -50,11 +51,14 @@ namespace Ginger.Actions.PlugIns
 
         private void LoadEditPage()
         {
+            InputGrid.ItemsSource = mAct.InputValues;
+            
             //try
             //{
-            //    // Edit Page can be .xaml or a classname of a page, or empty if no config needed
-            //    PlugInWrapper PIW = App.LocalRepository.GetSolutionPlugIns().Where(x => x.ID == mAct.PlugInID).FirstOrDefault();
-            //    string editpage = string.Empty;
+            //    // Edit Page can be .xaml or a classname of a page, or empty if no config needed                
+            //    //WorkSpace.Instance.PluginsManager.GetPluginAction(mAct)
+            //    // Plugin PM.GetStandAloneActions()
+            //    //string editpage = string.Empty;
             //    if (PIW != null)
             //        editpage = PIW.GetEditPage(mAct.PlugInActionID);
 
@@ -98,14 +102,14 @@ namespace Ginger.Actions.PlugIns
 
             //        foreach (ActionParam AP in mAct.GingerAction.ParamsIn)
             //        {
-            //            mAct.AddOrUpdateInputParamValue(AP.Name, AP.Value == null? string.Empty : AP.Value.ToString());
+            //            mAct.AddOrUpdateInputParamValue(AP.Name, AP.Value == null ? string.Empty : AP.Value.ToString());
             //            AP.PropertyChanged -= GingerAction_PropertyChanged;
             //            AP.PropertyChanged += GingerAction_PropertyChanged;
             //        }
             //        EditFrame.Content = p;
             //    }
             //}
-            //catch(Exception ex)
+            //catch (Exception ex)
             //{
             //    LoadErrorLbl.Visibility = Visibility.Visible;
             //    EditFrame.Visibility = Visibility.Collapsed;

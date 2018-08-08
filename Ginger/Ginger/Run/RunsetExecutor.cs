@@ -226,13 +226,13 @@ namespace Ginger.Run
             }
         }
 
-        public void SetRunnersPlugIns(ObservableList<PlugInWrapper> PIWL)
-        {
-            foreach (GingerRunner GR in Runners)
-            {
-                GR.PlugInsList = PIWL;
-            }
-        }
+        //public void SetRunnersPlugIns(ObservableList<PlugInWrapper> PIWL)
+        //{
+        //    foreach (GingerRunner GR in Runners)
+        //    {
+        //        GR.PlugInsList = PIWL;
+        //    }
+        //}
 
         public void SetRunnersExecutionLoggerConfigs()
         {

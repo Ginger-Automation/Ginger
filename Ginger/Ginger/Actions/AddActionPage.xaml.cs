@@ -73,20 +73,26 @@ namespace Ginger.Actions
                 {
                     ObservableList<StandAloneAction> actions = PW.GetStandAloneActions();
                     
-                        foreach (StandAloneAction SAA in actions)
+                    foreach (StandAloneAction SAA in actions)
+                    {
+                        ActPlugIn act = new ActPlugIn();
+                        act.Description = SAA.Description;
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.PlugInActionID),SAA.ID);
+                        foreach (var v in SAA.InputValues)
                         {
-                            ActPlugIn act = new ActPlugIn();
-                            act.Description = SAA.Description;
-                            act.Active = true;
-                            // act.PlugInName = PW.Name;
-                            //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginID, PW.ID);
-                            //act.GetOrCreateInputParam(ActPlugIn.Fields.PlugInActionID, PIA.ID);
-                            //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginDescription, PIA.Description);
-                            //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserDescription, PIA.UserDescription);
-                            //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserRecommendedUseCase, PIA.UserRecommendedUseCase);
-
-                            PlugInsActions.Add(act);
+                            act.InputValues.Add(new ActInputValue() { Param = v.Param });
                         }
+                        // act.InputValues
+                        act.Active = true;
+                        // act.PlugInName = PW.Name;
+                        //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginID, PW.ID);
+                        //act.GetOrCreateInputParam(ActPlugIn.Fields.PlugInActionID, PIA.ID);
+                        //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginDescription, PIA.Description);
+                        //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserDescription, PIA.UserDescription);
+                        //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserRecommendedUseCase, PIA.UserRecommendedUseCase);
+
+                        PlugInsActions.Add(act);
+                    }
                 }
                 catch(Exception ex)
                 {

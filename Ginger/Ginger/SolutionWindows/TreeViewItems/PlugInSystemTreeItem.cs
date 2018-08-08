@@ -27,7 +27,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class PlugInSystemTreeItem : TreeViewItemBase, ITreeViewItem
     {
-        public PlugInWrapper PlugInWrapper { get; set; }
+        // public PlugInWrapper PlugInWrapper { get; set; }
         private PlugInsWindows.PlugInWraperPage mPlugInPage;
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -39,14 +39,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mPlugInPage == null)
             {
-                mPlugInPage = new PlugInsWindows.PlugInWraperPage(PlugInWrapper);
+                // mPlugInPage = new PlugInsWindows.PlugInWraperPage(PlugInWrapper);
             }
             return mPlugInPage;
         }
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(PlugInWrapper.Name, "@SystemPlugin_16x16.png");
+            return null; // TreeViewUtils.CreateItemHeader(PlugInWrapper.Name, "@SystemPlugin_16x16.png");
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -61,7 +61,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         object ITreeViewItem.NodeObject()
         {
-            return PlugInWrapper;
+            return null; // PlugInWrapper;
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)
@@ -74,16 +74,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override void PostDeleteTreeItemHandler()
         {
-            string name = PlugInWrapper.FileName;
-            string path  = Directory.GetParent(name).ToString();
-            Directory.Delete(path, true);
+            //string name = PlugInWrapper.FileName;
+            //string path  = Directory.GetParent(name).ToString();
+            //Directory.Delete(path, true);
         }
 
         private void ItemOpenContaining(object sender, System.Windows.RoutedEventArgs e)
         {
-            string path = PlugInWrapper.PlugInRootPath;
-            path = Directory.GetParent(path).ToString();
-            Process.Start(path);
+            //string path = PlugInWrapper.PlugInRootPath;
+            //path = Directory.GetParent(path).ToString();
+            //Process.Start(path);
         }
     }
 }

@@ -57,7 +57,7 @@
 
         </StackPanel>
 
-        <TabControl x:Name="PlugInTab" Grid.Row="1" SelectionChanged="TabControl_SelectionChanged">
+        <TabControl x:Name="PlugInTab" Grid.Row="1" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
