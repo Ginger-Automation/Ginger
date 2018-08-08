@@ -3377,20 +3377,25 @@ namespace GingerCore.Drivers
 
         List<AppWindow> IWindowExplorer.GetAppWindows()
         {
-            UnhighlightLast();
-            LastHighLightedElementInfo = null;
-            List<AppWindow> list = new List<AppWindow>();
-            ReadOnlyCollection<string> windows = Driver.WindowHandles;
-            //TODO: get current win and keep, later on set in combo
-            foreach (string window in windows)
+            if (Driver != null)
             {
-                Driver.SwitchTo().Window(window);
-                AppWindow AW = new AppWindow();
-                AW.Title = Driver.Title;
-                AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
-                list.Add(AW);
+                UnhighlightLast();
+                LastHighLightedElementInfo = null;
+                List<AppWindow> list = new List<AppWindow>();
+
+                ReadOnlyCollection<string> windows = Driver.WindowHandles;
+                //TODO: get current win and keep, later on set in combo
+                foreach (string window in windows)
+                {
+                    Driver.SwitchTo().Window(window);
+                    AppWindow AW = new AppWindow();
+                    AW.Title = Driver.Title;
+                    AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
+                    list.Add(AW);
+                }
+                return list;
             }
-            return list;
+            return null;
         }
 
         List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
@@ -4408,9 +4413,14 @@ namespace GingerCore.Drivers
 
         AppWindow IWindowExplorer.GetActiveWindow()
         {
-            AppWindow aw = new AppWindow();
-            aw.Title = Driver.Title;
-            return aw;
+            if (Driver != null)
+            {
+                AppWindow aw = new AppWindow();
+                aw.Title = Driver.Title;
+                return aw;
+            }
+            return null;
+
         }
 
         public void InjectGingerLiveSpy()

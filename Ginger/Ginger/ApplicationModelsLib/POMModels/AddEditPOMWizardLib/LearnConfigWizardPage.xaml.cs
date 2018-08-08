@@ -89,7 +89,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             xFilterElementsGridView.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Elements", new RoutedEventHandler(CheckUnCheckAllElements));
 
-            xFilterElementsGridView.SetTitleLightStyle = true;
+            xFilterElementsGridView.ShowTitle = Visibility.Collapsed;
 
             //Set the Data Grid columns            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -154,6 +154,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 mAgent.StartDriver();
                 mWindowExplorerDriver = (IWindowExplorer)mAgent.Driver;
+                UpdatePagesList();
             }
 
             Reporter.CloseGingerHelper();
@@ -187,13 +188,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     }
 
                 }
-                
+
                 mWindowExplorerDriver = (IWindowExplorer)mAgent.Driver;
                 mWizard.WinExplorer = mWindowExplorerDriver;
                 ObservableList<UIElementFilter> DriverFilteringCreteriaList = mWindowExplorerDriver.GetFilteringCreteriaDict();
                 foreach (UIElementFilter filter in DriverFilteringCreteriaList)
                     FilteringCreteriaList.Add(filter);
 
+                UpdatePagesList();
             }
 
         }
@@ -215,7 +217,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            AppWindow AW = (AppWindow)WindowsComboBox.SelectedItem;
+            AppWindow AW = (AppWindow)xAgentPageComboBox.SelectedItem;
             if (AW == null) return;
             mWindowExplorerDriver.SwitchWindow(AW.Title);
 
@@ -296,38 +298,43 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
-        private void RefreshWindowsButton_Click(object sender, RoutedEventArgs e)
+        private void RefreshPagesButton_Click(object sender, RoutedEventArgs e)
         {
-            UpdateWindowsList();
+            UpdatePagesList();
         }
 
 
-        private void UpdateWindowsList()
+        private void UpdatePagesList()
         {
             List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
-            WindowsComboBox.ItemsSource = list;
-            WindowsComboBox.DisplayMemberPath = "WinInfo";
+            xAgentPageComboBox.ItemsSource = list;
+            xAgentPageComboBox.DisplayMemberPath = "WinInfo";
 
             AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
 
-            if (ActiveWindow != null)
+            if (list != null && list.Count > 0)
             {
-                foreach (AppWindow w in list)
-                {
-                    if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
-                    {
-                        WindowsComboBox.SelectedValue = w;
-                        return;
-                    }
-                }
+                xAgentPageComboBox.SelectedValue = list[0];
             }
+
+            //if (ActiveWindow != null)
+            //{
+            //    foreach (AppWindow w in list)
+            //    {
+            //        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+            //        {
+            //            xAgentPageComboBox.SelectedValue = w;
+            //            return;
+            //        }
+            //    }
+            //}
 
             //TODO: If no selection then select the first if only one window exist in list
             if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
             {
-                if (WindowsComboBox.Items.Count == 1)
+                if (xAgentPageComboBox.Items.Count == 1)
                 {
-                    WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
+                    xAgentPageComboBox.SelectedValue = xAgentPageComboBox.Items[0];
                 }
             }
         }

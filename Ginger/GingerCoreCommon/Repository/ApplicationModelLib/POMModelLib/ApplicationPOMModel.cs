@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -38,10 +38,12 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements = new ObservableList<ElementInfo>();
 
-       
 
-        public Bitmap ScreenShot { get; set; }
+        //public  Bitmap ScreenShot { get; set; }
 
+        string mLogoBase64Image;
+        [IsSerializedForLocalRepository]
+        public string LogoBase64Image { get { return mLogoBase64Image; } set { if (mLogoBase64Image != value) { mLogoBase64Image = value; OnPropertyChanged(nameof(LogoBase64Image)); } } }
 
         //[IsSerializedForLocalRepository]
         //public ObservableList<Guid> Tags = new ObservableList<Guid>();

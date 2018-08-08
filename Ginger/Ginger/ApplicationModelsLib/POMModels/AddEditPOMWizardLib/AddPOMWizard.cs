@@ -41,6 +41,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public string POMFolder;
         public ObservableList<UIElementFilter> CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
         internal Agent mAgent;
+        public Bitmap ScreenShot { get; set; }
 
         public bool IsLearningWasDone { get; set; }
 
@@ -49,15 +50,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             POM = new ApplicationPOMModel();
 
-            AddPage(Name: "Intro", Title: "Intro", SubTitle: "Add new POM page for application", Page: new AddPOMIntroWizardPage());
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Add new POM page for application", Page: new AddPOMIntroWizardPage());
 
-            AddPage(Name: "Select App and folder", Title: "Select App and Folder", SubTitle: "Choose Target Application and Agent", Page: new SelectAppFolderWizardPage());
+            AddPage(Name: "General Details", Title: "General Details", SubTitle: "Choose Target Application and Agent", Page: new SelectAppFolderWizardPage());
 
-            AddPage(Name: "Scan Config", Title: "Scan Config", SubTitle: "Scan Config", Page: new LearnConfigWizardPage());
+            AddPage(Name: "Learning Configurations", Title: "Learning Configurations", SubTitle: "Scan Config", Page: new LearnConfigWizardPage());
 
             AddPage(Name: "Learn", Title: "Learn", SubTitle: "Learn Page Object Model", Page: new LearnWizardPage(this.POM));
 
-            AddPage(Name: "Map", Title: "Map", SubTitle: "Map each UI element", Page: new MapUIElementsWizardPage(this.POM));
+            AddPage(Name: "Screen Shot", Title: "Screen Shot", SubTitle: "Map each UI element", Page: new MapUIElementsWizardPage(this.POM));
 
             AddPage(Name: "Save", Title: "Save", SubTitle: "Save POM to file", Page: new SavePOMWizardPage());
             
@@ -68,7 +69,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override void Finish()
         {
+
+            //using (var ms = new MemoryStream())
+            //{
+            //    POM.LogoBase64Image = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(ScreenShot);
+            //}
+
+            
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
+
+
 
             //MemoryStream ms = new MemoryStream();
             //XmlTextWriter xw = new XmlTextWriter(ms, Encoding.UTF8);
@@ -85,5 +95,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             //POM.ScreenShot = (Bitmap)o;
         }
+
+
     }
 }

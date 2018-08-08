@@ -26,14 +26,21 @@ namespace Ginger.ApplicationModelsLib.POMModels
     {
 
         ApplicationPOMModel mPOM;
+        public ObservableList<ElementLocator> mLocators = new ObservableList<ElementLocator>();
         GenericWindow _GenWin;
 
         public MappedUIElementsPage(ApplicationPOMModel POM)
         {
             InitializeComponent();
             mPOM = POM;
+
+            
+
             SetControlsGridView();
             xMappedElementsGrid.DataSourceList = mPOM.MappedUIElements;
+
+            InitLocatorsGrid();
+
         }
 
         private void SetControlsGridView()
@@ -62,7 +69,46 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GingerCore.General.LoadGenericWindow(ref _GenWin, null, windowStyle, Title, this);
         }
 
+        private void InitLocatorsGrid()
+        {
+            //TODO: need to add Help text or convert to icon...
+            //xLocatorsGrid.AddButton("Test", TestSelectedLocator);
+            //xLocatorsGrid.AddButton("Test All", TestAllLocators);
+
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
+            defView.GridColsView = new ObservableList<GridColView>();
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), WidthWeight = 10 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), WidthWeight = 30 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 20 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Count), WidthWeight = 10 });
+
+            xLocatorsGrid.SetAllColumnsDefaultView(defView);
+            xLocatorsGrid.InitViewItems();
+            xLocatorsGrid.DataSourceList = mLocators;
+            xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
+        }
+
+        //private void TestSelectedLocator(object sender, RoutedEventArgs e)
+        //{
+        //    //ElementLocator EL = (ElementLocator)mLocators.CurrentItem;
+        //    //ObservableList<ElementInfo> list = mWindowExplorerDriver.GetElements(EL);
+        //    //EL.Count = list.Count;
+        //}
 
 
+        //private void TestAllLocators(object sender, RoutedEventArgs e)
+        //{
+        //    //foreach (ElementLocator EL in mLocators)
+        //    //{
+        //    //    ObservableList<ElementInfo> list = mWindowExplorerDriver.GetElements(EL);
+        //    //    EL.Count = list.Count;
+        //    //}
+        //}
+
+
+        private void MappedElementsGrid_RowChangedEvent(object sender, EventArgs e)
+        {
+            mLocators = ((ElementInfo)((DataGrid)sender).SelectedItem).Locators;
+        }
     }
 }

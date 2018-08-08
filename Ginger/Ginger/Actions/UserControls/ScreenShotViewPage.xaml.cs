@@ -134,15 +134,29 @@ namespace Ginger.Actions.UserControls
         {
             using (MemoryStream memory = new MemoryStream())
             {
-                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-                memory.Position = 0;
-                BitmapImage bitmapimage = new BitmapImage();
-                bitmapimage.BeginInit();
-                bitmapimage.StreamSource = memory;
-                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapimage.EndInit();
 
-                return bitmapimage;
+                try
+                {
+                    //Bitmap newBitmap = new Bitmap(bitmap);
+                    //bitmap.Dispose();
+                    //bitmap = null;
+                    //newBitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
+
+                    bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
+                    memory.Position = 0;
+                    BitmapImage bitmapimage = new BitmapImage();
+                    bitmapimage.BeginInit();
+                    bitmapimage.StreamSource = memory;
+                    bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapimage.EndInit();
+
+                    return bitmapimage;
+                }
+                catch
+                {
+                    return null;
+                }
+
             }
         }
 

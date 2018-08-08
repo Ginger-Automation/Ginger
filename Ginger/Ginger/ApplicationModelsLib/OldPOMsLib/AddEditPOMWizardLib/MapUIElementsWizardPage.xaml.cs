@@ -64,8 +64,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public void ShowScreenShot()
         {
             ((SeleniumDriver)mWizard.WinExplorer).UnhighlightLast();
-            mPOM.ScreenShot = ((SeleniumDriver)mWizard.WinExplorer).GetScreenShot();
-            mScreenshotPage = new ScreenShotViewPage(mPOM.Name, mPOM.ScreenShot);
+            mWizard.ScreenShot = ((SeleniumDriver)mWizard.WinExplorer).GetScreenShot();
+            //new Bitmap(bitmap);
+            mScreenshotPage = new ScreenShotViewPage(mPOM.Name,  mWizard.ScreenShot);
             MainFrame.Content = mScreenshotPage;
         }
 

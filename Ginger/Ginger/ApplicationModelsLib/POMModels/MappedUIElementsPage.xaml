@@ -10,6 +10,12 @@
       Title="MappedUIElementsPage">
 
     <Grid>
-        <Ginger:ucGrid x:Name="xMappedElementsGrid" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="300*"/>
+            <RowDefinition Height="300*"/>
+        </Grid.RowDefinitions>
+
+        <Ginger:ucGrid x:Name="xMappedElementsGrid" Grid.Row="0" RowChangedEvent="MappedElementsGrid_RowChangedEvent" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <Ginger:ucGrid x:Name="xLocatorsGrid" Grid.Row="1"  Title="Locators:" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"  />
     </Grid>
 </Page>

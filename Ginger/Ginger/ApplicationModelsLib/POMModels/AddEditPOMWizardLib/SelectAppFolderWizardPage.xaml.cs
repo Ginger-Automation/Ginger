@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using static Ginger.ExtensionMethods;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -51,9 +52,23 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void Init()
         {
+            xNameTextBox.BindControl(mWizard.POM, nameof(ApplicationPOMModel.Name));
+            xNameTextBox.AddValidationRule(new POMNameValidationRule());
+            xNameTextBox.Focus();
+
+            xDescriptionTextBox.BindControl(mWizard.POM, nameof(ApplicationPOMModel.Description));
+            xTagsViewer.Init(mWizard.POM.TagsKeys);
+
+
             ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList());
             xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
-            xEnvTagsViewer.Init(mWizard.POM.TagsKeys);
+            //xTargetApplicationComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);
+            //xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
+
+            if (xTargetApplicationComboBox.Items != null && xTargetApplicationComboBox.Items.Count > 0)
+            {
+                xTargetApplicationComboBox.SelectedIndex = 0;
+            }
 
         }
 
@@ -83,44 +98,44 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                 case EventType.LeavingForNextPage:
 
-                    string error = string.Empty;
-                    if (ValidateFields(ref error))
-                    {
-                        mWizard.POM.Name = xNameTextBox.Text;
-                        mWizard.POM.Description = xDescriptionTextBox.Text;
-                        //mWizard.POM.TargetApplicationKey = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == ((ApplicationPlatform)xTargetApplicationComboBox.SelectedItem).Guid).Select(x => x.Key).FirstOrDefault(); ;
-                        mWizard.POM.TargetApplicationKey = (RepositoryItemKey)xTargetApplicationComboBox.SelectedValue;
-                    }
-                    else
-                    {
-                        //WizardEventArgs.AddError(error);
-                    }
+                    //string error = string.Empty;
+                    //if (ValidateFields(ref error))
+                    //{
+                    //    mWizard.POM.Name = xNameTextBox.Text;
+                    //    mWizard.POM.Description = xDescriptionTextBox.Text;
+                    //    //mWizard.POM.TargetApplicationKey = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == ((ApplicationPlatform)xTargetApplicationComboBox.SelectedItem).Guid).Select(x => x.Key).FirstOrDefault(); ;
+                    //    mWizard.POM.TargetApplicationKey = (RepositoryItemKey)xTargetApplicationComboBox.SelectedValue;
+                    //}
+                    //else
+                    //{
+                    //    //WizardEventArgs.AddError(error);
+                    //}
 
                     break;
             }
         }
 
-        private bool ValidateFields(ref string error)
-        {
-            if (string.IsNullOrEmpty(xNameTextBox.Text))
-            {
-                error = "Name field cannot be empty";
-                return false;
-            }
-            else if (string.IsNullOrEmpty(xDescriptionTextBox.Text))
-            {
-                error = "Description field cannot be empty";
-                return false;
-            }
-            else if (string.IsNullOrEmpty(xTargetApplicationComboBox.Text))
-            {
-                error = "Target Application field cannot be empty";
-                return false;
-            }
+        //private bool ValidateFields(ref string error)
+        //{
+        //    if (string.IsNullOrEmpty(xNameTextBox.Text))
+        //    {
+        //        error = "Name field cannot be empty";
+        //        return false;
+        //    }
+        //    else if (string.IsNullOrEmpty(xDescriptionTextBox.Text))
+        //    {
+        //        error = "Description field cannot be empty";
+        //        return false;
+        //    }
+        //    else if (string.IsNullOrEmpty(xTargetApplicationComboBox.Text))
+        //    {
+        //        error = "Target Application field cannot be empty";
+        //        return false;
+        //    }
 
-            return true;
+        //    return true;
 
-        }
+        //}
 
         //private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         //{

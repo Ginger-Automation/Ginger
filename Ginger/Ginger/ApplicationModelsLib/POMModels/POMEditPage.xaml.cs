@@ -24,9 +24,11 @@ using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.BindingLib;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace Ginger.ApplicationModelsLib.POMModels
 {
@@ -49,12 +51,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTargetApplicationComboBox.Init(mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTagsViewer.Init(mPOM.TagsKeys);
 
+            //Bitmap ScreenShot = BitmapFromSource(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.LogoBase64Image.ToString())));
 
 
-      
-
-            ScreenShotViewPage p = new ScreenShotViewPage(mPOM.Name, mPOM.ScreenShot);
-            xScreenShotFrame.Content = p;
+            //ScreenShotViewPage p = new ScreenShotViewPage(mPOM.Name, ScreenShot);
+            //xScreenShotFrame.Content = p;
 
             MappedUIElementsPage mappedUIElementsPage = new MappedUIElementsPage(mPOM);
             xUIElementsFrame.Content = mappedUIElementsPage;
@@ -94,6 +95,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
             //DesignFrame.Content = pd;
 
             //InitControlPropertiesGrid();
+        }
+
+        public static Bitmap BitmapFromSource(BitmapSource bitmapsource)
+        {
+            Bitmap bitmap;
+            using (var outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(bitmapsource));
+                enc.Save(outStream);
+                bitmap = new Bitmap(outStream);
+            }
+            return bitmap;
         }
 
         //private void InitControlPropertiesGrid()
@@ -175,7 +189,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         //    //    l.Content = "Label";
         //    //    l.MouseDown += Label_MouseDown;                
         //    //    control = l;
-                
+
         //    //    //TODO: create at the end for all the same
         //    //    ElementInfo EI = new ElementInfo();
         //    //    EI.ElementName = "New Label";

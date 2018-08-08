@@ -5,6 +5,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="600"
       Title="Learn Config">
@@ -38,8 +39,8 @@
             <RowDefinition Height="292*"/>
         </Grid.RowDefinitions>
 
-        <Label Content="Agent:" Grid.Row="0" HorizontalAlignment="Left" />
-        <ComboBox x:Name="xAgentComboBox" Grid.Row="0" Grid.Column="1"  VerticalAlignment="Center" SelectionChanged="AgentComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"/>
+            <Label Content="Agent:" Grid.Row="0" HorizontalAlignment="Left"  Style="{StaticResource @LabelStyle}" />
+            <ComboBox x:Name="xAgentComboBox" Grid.Row="0" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" SelectionChanged="AgentComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"/>
 
        <!--<Button x:Name="xStartAgentButton" Grid.Row="0" Grid.Column="2" Click="xStartAgentButton_Click" Style="{StaticResource @InputButtonStyle}">Start/stop Agent</Button>-->
 
@@ -212,12 +213,31 @@
                 </Button.Style>
             </Button>
 
-            <Label Grid.Column="0" Grid.Row="1" Content="Window:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <ComboBox Grid.Column="1"  Grid.Row="1" x:Name="WindowsComboBox" SelectionChanged="WindowsComboBox_SelectionChanged"  FontWeight="Bold" Style="{StaticResource $FlatInputComboBoxStyle}" Foreground="{StaticResource @Skin1_ColorB}"/>
-            <Button Grid.Column="2" Grid.Row="1" x:Name="RefreshWindowsButton" Click="RefreshWindowsButton_Click" usercontrols:ImageMaker.Content="Refresh" Width="18" ToolTip="Refresh Windows List" Style="{StaticResource @InputImageButtonStyle_NoBorder}"></Button>
+            <Label Grid.Column="0" Grid.Row="1" Content="Page:"  Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <ComboBox Grid.Column="1"  Grid.Row="1" x:Name="xAgentPageComboBox" SelectionChanged="WindowsComboBox_SelectionChanged"  FontWeight="Bold" Style="{StaticResource $FlatInputComboBoxStyle}" />
+            <Button Grid.Column="2" Grid.Row="1" x:Name="xRefreshPagesButton" Click="RefreshPagesButton_Click" usercontrols:ImageMaker.Content="Refresh" Width="18" ToolTip="Refresh Windows List" Style="{StaticResource @InputImageButtonStyle_NoBorder}"></Button>
 
 
         </Grid>
-        <Ginger:ucGrid x:Name="xFilterElementsGridView" Title="Filter Elements"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowDelete="Collapsed"  />
+
+
+        <Expander x:Name="PropertiesExpander" Margin="15,10,0,0" Visibility="Visible" IsExpanded="False" >
+            <Expander.Header>
+                <Label x:Name="PropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                    <Label.Content>
+                        <GingerCore:ucTextDicResource Text="Elements Learning Filter"/>
+                    </Label.Content>
+                </Label>
+            </Expander.Header>
+            <Expander.Content>
+                <StackPanel Orientation="Vertical" Margin="10,0,25,0" >
+                    
+                    <Ginger:ucGrid x:Name="xFilterElementsGridView" Title="Filter Elements"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed"  />
+                    
+                </StackPanel>
+            </Expander.Content>
+        </Expander>
+
+       
     </StackPanel>
 </Page>
