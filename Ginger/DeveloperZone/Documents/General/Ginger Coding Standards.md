@@ -1,9 +1,9 @@
-#Coding Standards and Guidelines
+# Coding Standards and Guidelines
 
 
-##Naming Conventions
+## Naming Conventions
 
-####General Naming Conventions
+#### General Naming Conventions
 
 * Capitalize the first letter of each word in the identifier
 
@@ -20,7 +20,7 @@
     //Method
     public void StartDriver(){...};
 ```
-* Do chose readable identifier names e.g. Horizontal alignment is more English readable than alignment horizontal
+* Do choose readable identifier names e.g. Horizontal alignment is more English readable than alignment horizontal
  
 * Do favor readability over brevity e.g. CanScrollHorizontally is better than ScollableX
 
@@ -60,7 +60,7 @@ e.g. Use GetWindow instead of GetWin
 
 
 
-####Variables naming 
+#### Variables naming 
 * Use pascal casing with “m” prefix for global variables
 ```cs
     private RunsetOperations mRunserOperations {get; set;};
@@ -129,34 +129,79 @@ e.g. Use GetWindow instead of GetWin
 	}
 ```
 
-####XAML Naming conventions
+#### XAML Naming conventions
 * Use “x” prefix all XAML control names
-* Use use the type name as suffix for a xaml control names e.g. Btn for Button. 
- So name of reset button in xaml will be "xResetBtn" 
+* Use use the type name as suffix for a xaml control names
+
+```cs
+    x:Name="xResetButton"
+```
 
 #### Ginger namespace
 
-#####Amdocs.Ginger.CoreNET:
-- Amdocs.Ginger.Execution  
-- Amdocs.Ginger.Communication (socket related stuff)
-- Amdocs.Ginger.Plugins
-
-##### Amdocs.Ginger.Common:
-- Amdocs.Ginger.Repository (repository engine + cache + all objects saved to system file)
-- Amdocs.Ginger.Utils (general standalone methods)
-- Amdocs.Ginger.Report (HTML/mail report)
-- Amdocs.Ginger.Usage (auto log)
-- Amdocs.Ginger.SourceControl
-- Amdocs.Ginger.Workspace (cross dlls sharing cache objects/events)
+[Check Ginger namespaces document](https://github.com/Ginger-Automation/Ginger/blob/master/Ginger/DeveloperZone/Documents/General/Ginger%20Namespace.md)
 
 
-##Common Coding practices
+
+## Common Coding practices
 *	Declare all member variables at the top of a class with static variables at the very top. (Generally accepted practice that prevents the need to hunt for variable declaration)
-*	For iterating an observable list use for loop instead of foreach. Because if list collection is modified during foreach it throws an exception
-*	
+
+```cs
+
+    public class PayLoad
+    {       
+        //Static Members       
+        public static System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();        
+        public static System.Text.UnicodeEncoding UTF16 = new System.Text.UnicodeEncoding();
+        
+        //Constants
+        const byte StringType = 1;    // string
+        const byte IntType = 2;       // int  
+        const int cNULLStringLen = -1;    // if the string we write is null we write len = -1 - save space and parsing time
+
+        //private members
+        private byte[] mBuffer = new byte[1024];  // strat with initial buffer of 1024, will grow if needed
+        private int mBufferIndex = 4; // We strat to write data at position 4, the first 4 bytes will be the data length
+
+        //Public members
+        public string Name {get; set;}
+        
+        ///  constructor
+        public PayLoad(string Name)
+        {
+            this.Name = Name;
+            WriteString(Name);
+        }
+
+	   //Method
+	    private int GetDataLen()
+        {
+            int Len = ((mBuffer[0]) << 24) + (mBuffer[1] << 16) + (mBuffer[2] << 8) + mBuffer[3];
+            return Len;
+        }	
+   }
+```
+
+  
+*	Use for loop instead of foreach when working with list and add or remove from source collection is needed. Because the collection used in foreach is immutable
+and it can not be used to add or remove items from the source collection 
+
+```cs
+
+        for(int i=0; i< this.ReturnValues.Count;i++)
+        {
+          ActReturnValue value = this.ReturnValues[i];
+          
+          if(String.IsNullOrEmpty(value.Expected))
+          {
+              this.ReturnValues.RemoveAt(i);
+              i--;;
+          }
+        }
+```
 
 
-####Guidelines for Exception handling
+#### Guidelines for Exception handling
 *	Use the Reporter class to show any user message instead of a message box
 ```cs
  Reporter.ToUser(eUserMsgKeys.MissingActivityAppMapping);
