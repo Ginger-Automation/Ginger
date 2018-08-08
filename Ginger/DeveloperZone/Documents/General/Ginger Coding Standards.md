@@ -151,17 +151,17 @@ e.g. Use GetWindow instead of GetWin
     public class PayLoad
     {       
         //Static Members       
-        public static System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();        
-        public static System.Text.UnicodeEncoding UTF16 = new System.Text.UnicodeEncoding();
+        public static UTF8Encoding UTF8 = new UTF8Encoding();        
+        public static UnicodeEncoding UTF16 = new UnicodeEncoding();
         
         //Constants
         const byte StringType = 1;    // string
         const byte IntType = 2;       // int  
-        const int cNULLStringLen = -1;    // if the string we write is null we write len = -1 - save space and parsing time
+        const int cNULLStringLen = -1;    
 
         //private members
-        private byte[] mBuffer = new byte[1024];  // strat with initial buffer of 1024, will grow if needed
-        private int mBufferIndex = 4; // We strat to write data at position 4, the first 4 bytes will be the data length
+        private byte[] mBuffer = new byte[1024];  
+        private int mBufferIndex = 4; 
 
         //Public members
         public string Name {get; set;}
@@ -174,10 +174,10 @@ e.g. Use GetWindow instead of GetWin
         }
 
 	   //Method
-	    private int GetDataLen()
+	    private int GetDataLength()
         {
-            int Len = ((mBuffer[0]) << 24) + (mBuffer[1] << 16) + (mBuffer[2] << 8) + mBuffer[3];
-            return Len;
+            int length = mBuffer.Length;
+            return length;
         }	
    }
 ```
