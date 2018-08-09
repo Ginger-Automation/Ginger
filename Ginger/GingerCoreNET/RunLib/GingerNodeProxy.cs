@@ -32,6 +32,8 @@ namespace GingerCoreNET.RunLib
 {
     public class GingerNodeProxy
     {
+        public GingerGrid GingerGrid { get; set; }
+
         GingerNodeInfo mGingerNodeInfo;
 
         private bool mIsConnected = false;
@@ -67,7 +69,7 @@ namespace GingerCoreNET.RunLib
             }
         }
 
-        // public GingerGrid GingerGrid { get; set; }
+        
 
         public void Reserve()
         {
@@ -153,10 +155,11 @@ namespace GingerCoreNET.RunLib
 
         private NewPayLoad SendRequestPayLoad(NewPayLoad pL)
         {
-            //// if local grid use
-            //return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, pL);
-            //// else use remote grid
-            return null;
+            
+            // if local grid use
+            return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, pL);
+            // else use remote grid
+            
         }
 
         public void StartDriver()
