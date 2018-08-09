@@ -393,6 +393,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Download:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
                     break;
+                case eImageType.Hand_Pointer:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.HandPointerOutline);
+                    break;
                 #endregion
 
 

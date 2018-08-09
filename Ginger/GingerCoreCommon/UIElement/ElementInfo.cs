@@ -69,6 +69,7 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mElementTitle = value; }
         }  
 
+
         // Used for Lazy loading when possible
         public virtual string GetElementTitle()
         {
@@ -76,6 +77,10 @@ namespace Amdocs.Ginger.Common.UIElement
             // So we keep backword compatibility until all drivers do it correctly
             return mElementTitle;
         }
+
+
+        [IsSerializedForLocalRepository]
+        public string Description { get; set; }
 
         // elemnt name is given by the user when he maps UI elements and give them name to use in DOR
 

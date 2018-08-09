@@ -87,43 +87,43 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void SetControlsGridView()
         {
 
-            xFilterElementsGridView.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Elements", new RoutedEventHandler(CheckUnCheckAllElements));
+            xFilterElementsGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Elements", new RoutedEventHandler(CheckUnCheckAllElements));
 
-            xFilterElementsGridView.ShowTitle = Visibility.Collapsed;
+            xFilterElementsGrid.ShowTitle = Visibility.Collapsed;
 
             //Set the Data Grid columns            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            //view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["IsSelectedTemplate"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["IsSelectedTemplate"] });
+            //view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementType), Header = "Element Type", WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementExtraInfo), Header = "Element Extra Info", WidthWeight = 100 });
 
-            xFilterElementsGridView.SetAllColumnsDefaultView(view);
-            xFilterElementsGridView.InitViewItems();
+            xFilterElementsGrid.SetAllColumnsDefaultView(view);
+            xFilterElementsGrid.InitViewItems();
         }
 
         private void CheckUnCheckAllElements(object sender, RoutedEventArgs e)
         {
-            IObservableList filteringCriteriaList = xFilterElementsGridView.DataSourceList;
+            IObservableList filteringCriteriaList = xFilterElementsGrid.DataSourceList;
 
 
             int selectedItems = CountSelectedItems();
-            if (selectedItems < xFilterElementsGridView.DataSourceList.Count)
+            if (selectedItems < xFilterElementsGrid.DataSourceList.Count)
                 foreach (UIElementFilter UIEFActual in filteringCriteriaList)
                     UIEFActual.Selected = true;
-            else if (selectedItems == xFilterElementsGridView.DataSourceList.Count)
+            else if (selectedItems == xFilterElementsGrid.DataSourceList.Count)
                 foreach (UIElementFilter UIEFActual in filteringCriteriaList)
                     UIEFActual.Selected = false;
 
-            xFilterElementsGridView.DataSourceList = filteringCriteriaList;
+            xFilterElementsGrid.DataSourceList = filteringCriteriaList;
         }
 
         private int CountSelectedItems()
         {
             int counter = 0;
-            foreach (UIElementFilter UIEFActual in xFilterElementsGridView.DataSourceList)
+            foreach (UIElementFilter UIEFActual in xFilterElementsGrid.DataSourceList)
             {
                 if (UIEFActual.Selected)
                     counter++;
@@ -136,7 +136,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             SetControlsGridView();
             ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web select x).ToList());
             xAgentComboBox.BindControl<Agent>(mWizard.POM, nameof(ApplicationPOMModel.Guid), optionalAgentsList, nameof(mAgent.Name), nameof(mAgent.Key), BindingMode.OneWay);
-            xFilterElementsGridView.DataSourceList = FilteringCreteriaList;
+            //xUnMapNonfunctionalCheckBox.BindControl(mWizard, nameof(mWizard.UnMapNonfunctional));
+            xFilterElementsGrid.DataSourceList = FilteringCreteriaList;
         }
 
         private void StartAgentButton_Click(object sender, RoutedEventArgs e)
@@ -210,13 +211,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             mAgent.Close();
         }
 
-        private void IsSelected_FieldSelection_Click(object sender, RoutedEventArgs e)
-        {
-            mWizard.IsLearningWasDone = false;
-        }
+
 
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            mWizard.IsLearningWasDone = false;
             AppWindow AW = (AppWindow)xAgentPageComboBox.SelectedItem;
             if (AW == null) return;
             mWindowExplorerDriver.SwitchWindow(AW.Title);
@@ -337,6 +336,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xAgentPageComboBox.SelectedValue = xAgentPageComboBox.Items[0];
                 }
             }
+        }
+
+        private UIElementFilter mCurrentItem { get { return (UIElementFilter)xFilterElementsGrid.CurrentItem; } }
+
+        private void IsSelected_Checked(object sender, RoutedEventArgs e)
+        {
+            mCurrentItem.Selected = true;
+            mWizard.IsLearningWasDone = false;
+        }
+
+        private void IsSelected_Unchecked(object sender, RoutedEventArgs e)
+        {
+            mCurrentItem.Selected = false;
+            mWizard.IsLearningWasDone = false;
         }
     }
 }

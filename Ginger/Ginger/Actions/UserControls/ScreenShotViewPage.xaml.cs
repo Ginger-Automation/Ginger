@@ -53,6 +53,26 @@ namespace Ginger.Actions.UserControls
             HighLighterRectangle.Visibility = Visibility.Collapsed;
         }
         
+        public ScreenShotViewPage(string Name, BitmapSource bitmapSource)
+        {
+            InitializeComponent();
+
+            if (bitmapSource != null)
+            {
+                
+                SizeLabel.Content = bitmapSource.PixelHeight + "x" + bitmapSource.PixelWidth;
+
+                //Change the canvas to match bmp size
+                MainCanvas.Width = bitmapSource.PixelWidth;
+                MainCanvas.Height = bitmapSource.PixelHeight;
+                MainImage.Source = bitmapSource;
+            }
+
+            mName = Name;
+            NameLabel.Content = mName;
+            HighLighterRectangle.Visibility = Visibility.Collapsed;
+        }
+
         public ScreenShotViewPage(string Name, System.Drawing.Bitmap bitmap)
         {
             InitializeComponent();

@@ -143,6 +143,7 @@ namespace Amdocs.Ginger.Common.Enums
         Active,
         InActive,
         History,
+        Hand_Pointer,
 
 
         #endregion
