@@ -1049,5 +1049,10 @@ namespace GingerCore.Drivers.PBDriver
         {
             
         }
+
+        void IWindowExplorer.UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

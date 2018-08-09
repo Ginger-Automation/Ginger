@@ -39,7 +39,6 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Xml;
 
-
 namespace GingerCore.Drivers.AndroidADB
 {
     public class AndroidADBDriver : DriverBase, IWindowExplorer, IVisualTestingDriver
@@ -1613,6 +1612,11 @@ namespace GingerCore.Drivers.AndroidADB
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
             return true;
+        }
+
+        public void UnHighLightElements()
+        {
+            throw new NotImplementedException();
         }
 
         //TODO: Phone state

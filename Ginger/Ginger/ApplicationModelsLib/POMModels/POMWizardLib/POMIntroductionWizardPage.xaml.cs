@@ -26,9 +26,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     /// <summary>
     /// Interaction logic for AddPOMIntorPage.xaml
     /// </summary>
-    public partial class AddPOMIntroWizardPage : Page , IWizardPage
+    public partial class POMIntroductionWizardPage : Page , IWizardPage
     {
-        public AddPOMIntroWizardPage()
+        public POMIntroductionWizardPage()
         {
             InitializeComponent();
              

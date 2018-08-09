@@ -1417,5 +1417,10 @@ namespace GingerCore.Drivers.ASCF
         {
             return true;
         }
+
+        void IWindowExplorer.UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

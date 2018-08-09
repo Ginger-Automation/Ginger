@@ -943,5 +943,10 @@ namespace GingerCore.Drivers.WindowsLib
         {
 
         }
+
+        void IWindowExplorer.UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -24,6 +24,7 @@ using mshtml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
@@ -1351,6 +1352,11 @@ namespace GingerCore.Drivers.InternalBrowserLib
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
             return true;
+        }
+
+        void IWindowExplorer.UnHighLightElements()
+        {
+            throw new NotImplementedException();
         }
     }
 }

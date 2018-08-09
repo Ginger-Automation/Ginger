@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
+using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerWPF.WizardLib;
 using System;
@@ -31,17 +32,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     /// <summary>
     /// Interaction logic for MapUIElementsWizardPage.xaml
     /// </summary>
-    public partial class MapUIElementsWizardPage : Page, IWizardPage
-    {
-        IWindowExplorer mWinExplorer;
+    public partial class POMScreenShotWizardPage : Page, IWizardPage
+    {       
         AddPOMWizard mWizard;
-        //public ObservableList<ElementLocator> mLocators;
-        ApplicationPOMModel mPOM;
 
-        public MapUIElementsWizardPage(ApplicationPOMModel POM)
+        public POMScreenShotWizardPage()
         {
             InitializeComponent();
-            mPOM = POM;
         }
 
         ScreenShotViewPage mScreenshotPage;
@@ -51,22 +48,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
-                    mWinExplorer = mWizard.WinExplorer;                    
+                    mWizard = (AddPOMWizard)WizardEventArgs.Wizard;                   
                     break;
+
                 case EventType.Active:
                     ShowScreenShot();
-
                     break;
             }
         }
 
         public void ShowScreenShot()
         {
-            ((SeleniumDriver)mWizard.WinExplorer).UnhighlightLast();
-            mWizard.ScreenShot = ((SeleniumDriver)mWizard.WinExplorer).GetScreenShot();
-            //new Bitmap(bitmap);
-            mScreenshotPage = new ScreenShotViewPage(mPOM.Name,  mWizard.ScreenShot);
+            mWizard.IWindowExplorerDriver.UnHighLightElements();
+            mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
+            mScreenshotPage = new ScreenShotViewPage(mWizard.POM.Name, mWizard.ScreenShot);
             MainFrame.Content = mScreenshotPage;
         }
 

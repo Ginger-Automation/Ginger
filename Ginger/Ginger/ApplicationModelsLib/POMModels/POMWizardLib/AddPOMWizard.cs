@@ -33,14 +33,10 @@ using System.Xml.Serialization;
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
     public class AddPOMWizard : WizardBase
-    {
-
-        public IWindowExplorer WinExplorer;
-
+    {       
         public ApplicationPOMModel POM;
         public string POMFolder;
         public ObservableList<UIElementFilter> CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
-
         private Agent mAgent = null;
         public Agent Agent
         {
@@ -54,47 +50,45 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
+        public IWindowExplorer IWindowExplorerDriver
+        {
+            get
+            {
+                if (Agent != null)
+                    return ((IWindowExplorer)(Agent.Driver));
+                else
+                    return null;
+            }
+        }
 
         public Bitmap ScreenShot { get; set; }
-
         public bool IsLearningWasDone { get; set; }
 
         public AddPOMWizard()
         {
-
             POM = new ApplicationPOMModel();
 
-            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Add new POM page for application", Page: new AddPOMIntroWizardPage());
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new POMIntroductionWizardPage());
 
-            AddPage(Name: "General Details", Title: "General Details", SubTitle: "Choose Target Application and Agent", Page: new SelectAppFolderWizardPage());
+            AddPage(Name: "General Details", Title: "General Details", SubTitle: "New Page Objects Model General Details", Page: new POMGeneralDetailsWizardPage());
 
-            AddPage(Name: "Learning Configurations", Title: "Learning Configurations", SubTitle: "Scan Config", Page: new LearnConfigWizardPage());
+            AddPage(Name: "Learning Configurations", Title: "Learning Configurations", SubTitle: "Page Objects Learning Configurations", Page: new POMLearnConfigWizardPage());
 
-            AddPage(Name: "Learn", Title: "Learn", SubTitle: "Learn Page Object Model", Page: new LearnWizardPage(this.POM));
+            AddPage(Name: "Learned Objects Mapping", Title: "Learned Objects Mapping", SubTitle: "Map Learned Page Objects", Page: new POMObjectsMappingWizardPage());
 
-            AddPage(Name: "Screen Shot", Title: "Screen Shot", SubTitle: "Map each UI element", Page: new MapUIElementsWizardPage(this.POM));
-
-            AddPage(Name: "Save", Title: "Save", SubTitle: "Save POM to file", Page: new SavePOMWizardPage());
-            
-
+            AddPage(Name: "Page Screenshot", Title: "Page Screenshot", SubTitle: "Application Page Screenshot", Page: new POMScreenShotWizardPage());                       
         }
 
-        public override string Title { get { return "Add POM Wizard"; } }
-
-        public bool UnMapNonfunctional { get; set; }
+        public override string Title { get { return "Add POM Wizard"; } }   
 
         public override void Finish()
         {
-
             using (var ms = new MemoryStream())
             {
                 POM.LogoBase64Image = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(ScreenShot);
             }
 
-
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
-
-
 
             //MemoryStream ms = new MemoryStream();
             //XmlTextWriter xw = new XmlTextWriter(ms, Encoding.UTF8);

@@ -4087,6 +4087,11 @@ namespace GingerCore.Drivers
             LastHighLightedElementInfo = ElementInfo;
         }
 
+        void IWindowExplorer.UnHighLightElements()
+        {
+            UnhighlightLast();
+        }
+
         public void UnhighlightLast()
         {
             if (LastHighLightedElementInfo != null)

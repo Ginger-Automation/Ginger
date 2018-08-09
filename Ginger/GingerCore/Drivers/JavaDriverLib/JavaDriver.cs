@@ -2787,5 +2787,10 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             return true;
         }
+
+        void IWindowExplorer.UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

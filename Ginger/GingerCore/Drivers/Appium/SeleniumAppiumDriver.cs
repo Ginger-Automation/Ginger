@@ -1497,5 +1497,10 @@ namespace GingerCore.Drivers.Appium
         {
             return ((IWindowExplorer)mSeleniumDriver).IsElementObjectValid(obj);
         }
+
+        public void UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

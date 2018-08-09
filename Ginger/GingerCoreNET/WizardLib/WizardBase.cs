@@ -86,8 +86,7 @@ namespace GingerWPF.WizardLib
 
 
         public void ProcessStarted()
-        {
-            // mWizardWindow.xProcessingImage.Visibility = Visibility.Visible;          
+        {        
             mWizardWindow.ProcessStarted();
         }
 
