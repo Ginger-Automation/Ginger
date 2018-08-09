@@ -443,8 +443,11 @@
     <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">
       <DependentUpon>UnmappedElementsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\MappedUIElementsPage.xaml.cs">
-      <DependentUpon>MappedUIElementsPage.xaml</DependentUpon>
+    <Compile Include="ApplicationModelsLib\POMModels\PomAllElementsPage.xaml.cs">
+      <DependentUpon>PomAllElementsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\PomElementsMappingPage.xaml.cs">
+      <DependentUpon>PomElementsMappingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
@@ -2648,7 +2651,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\MappedUIElementsPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\PomAllElementsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\PomElementsMappingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

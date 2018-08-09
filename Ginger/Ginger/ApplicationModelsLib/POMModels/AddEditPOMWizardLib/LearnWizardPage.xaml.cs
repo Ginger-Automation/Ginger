@@ -46,7 +46,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         ApplicationPOMModel mPOM = new ApplicationPOMModel();
 
-        WindowExplorerPage mWindowExplorerPage;
+        //WindowExplorerPage mWindowExplorerPage;
         ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
         ObservableList<ElementInfo> mSelectedElementsList = new ObservableList<ElementInfo>();
         Dictionary<string, List<string>> mRequestedElementTypesDict = new Dictionary<string, List<string>>();
@@ -82,6 +82,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             EI.WindowExplorer = mWinExplorer;
 
+
+
             //TODO: Auto decide what is active
             if (!string.IsNullOrEmpty(EI.ElementName))
             {
@@ -100,6 +102,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     EI.Active = true;
                 }
             }
+
 
 
             string elementTagName = string.Empty;
@@ -142,18 +145,23 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         }
 
-        private void InitilizeWindowExplorer()
+        private void InitilizePomElementsMappingPage()
         {
-            ApplicationAgent applicationAgent = new ApplicationAgent();
-            applicationAgent.Agent = mWizard.Agent;
-            string targetApplicationName = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Key == mPOM.TargetApplicationKey).FirstOrDefault().AppName;
-            applicationAgent.AppName = targetApplicationName;
-            mWindowExplorerPage = new WindowExplorerPage(applicationAgent,null,mPOM, WindowExplorerPage.eWindowExplorerPageContext.POMWizard);
-            //mWindowExplorerPage.WindowControlsGridView.DataSourceList = mPOM.MappedUIElements;
-            mWindowExplorerPage.HorizontalAlignment = HorizontalAlignment.Stretch;
-            mWindowExplorerPage.Width = 700;
-            xWindowExlorerFrame.Content = mWindowExplorerPage;
-            
+            //ApplicationAgent applicationAgent = new ApplicationAgent();
+            //applicationAgent.Agent = mWizard.mAgent;
+            //string targetApplicationName = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Key == mPOM.TargetApplicationKey).FirstOrDefault().AppName;
+            //applicationAgent.AppName = targetApplicationName;
+            //mWindowExplorerPage = new WindowExplorerPage(applicationAgent,null,mPOM, WindowExplorerPage.eWindowExplorerPageContext.POMWizard);
+            ////mWindowExplorerPage.WindowControlsGridView.DataSourceList = mPOM.MappedUIElements;
+            //mWindowExplorerPage.HorizontalAlignment = HorizontalAlignment.Stretch;
+            //mWindowExplorerPage.Width = 700;
+            //xWindowExlorerFrame.Content = mWindowExplorerPage;
+
+            //PomElementsMappingPage mappedUIElementsPage = new PomElementsMappingPage(mPOM, mWizard.WinExplorer);
+            PomAllElementsPage pomAllElementsPage = new PomAllElementsPage(mPOM,mWizard.WinExplorer);
+            xPomElementsMappingPageFrame.Content = pomAllElementsPage;
+
+
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
@@ -207,8 +215,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     //xFoundElementsGrid.DataSourceList = mWizard.POM.UIElements;
                     break;
                 case EventType.Active:
-                    if (xWindowExlorerFrame.Content == null)
-                        InitilizeWindowExplorer();
+                    if (xPomElementsMappingPageFrame.Content == null)
+                        InitilizePomElementsMappingPage();
                     Learn();
                     break;
                 case EventType.LeavingForNextPage:
@@ -224,8 +232,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (!mWizard.IsLearningWasDone)
             {
                 mWizard.ProcessStarted();
+                xStopLoadButton.Visibility = Visibility.Visible;
+                xReLearnButton.Visibility = Visibility.Collapsed;
                 mWinExplorer = mWizard.WinExplorer;
-
+                mPOM.MappedUIElements.Clear();
+                mPOM.UnMappedUIElements.Clear();
 
                 //Dictionary<string, List<string>> filteringCriteriasDict = mWinExplorer.GetFilteringCreteriaDict();
 
@@ -235,6 +246,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 //mRequestedElementTypesList = mWizard.CheckedFilteringCreteriaList.Select(x => x.ElementType.ToString()).ToList();
 
                 mWizard.IsLearningWasDone = await GetElementsFromPage();
+                xStopLoadButton.Visibility = Visibility.Collapsed;
+                xReLearnButton.Visibility = Visibility.Visible;
                 mWizard.ProcessEnded();
             }
         }
@@ -264,7 +277,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void GetElementFromPageTask()
         {
             //ObservableList<UIElementFilter> filters = mWizard.CheckedFilteringCreteriaList;
-            mPOM.MappedUIElements.Clear();
+
 
             mWinExplorer.GetVisibleControls(new ObservableList<UIElementFilter>(), mElementsList);
 
@@ -348,6 +361,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mUnmappedElementsPage = new UnmappedElementsPage(mPOM);
             }
             mUnmappedElementsPage.ShowAsWindow();
+        }
+
+        private void ReLearnButtonClicked(object sender, RoutedEventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements) == MessageBoxResult.Yes)
+            {
+                Learn();
+            }
         }
     }
 }

@@ -20,8 +20,9 @@
         </Grid.RowDefinitions>
         <!--<Button x:Name="LearnButton" Click="LearnButton_Click" Content="Learn!" HorizontalAlignment="Left" Height="20" Margin="10,10,0,0" VerticalAlignment="Top" Width="105"/>-->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <UserControls:ucButton x:Name="xStopLoadButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="StopButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-            <UserControls:ucButton x:Name="xUnmappedElementsButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right" ButtonText="UNmapped Elements" ButtonImageType="Sitemap" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="UnmappedElementsButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+            <UserControls:ucButton x:Name="xStopLoadButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="StopButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
+            <UserControls:ucButton x:Name="xReLearnButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right" ButtonText="Re-Learn" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="ReLearnButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
+            <!--<UserControls:ucButton x:Name="xUnmappedElementsButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right" ButtonText="Unmapped Elements" ButtonImageType="Sitemap" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="UnmappedElementsButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>-->
         </StackPanel>
         <!--<ProgressBar x:Name="MainProgressBar" Value="100" Grid.Column="1" Margin="5"></ProgressBar>
         <Label x:Name="ProcessingLabel" Grid.Column="1">Processing</Label>
@@ -39,7 +40,7 @@
 
         <GridSplitter Grid.Column="1" Grid.Row="0" ResizeDirection="Columns" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="5" Style="{StaticResource @VerticalGridSplitterStyle}"/>-->
 
-        <Frame x:Name="xWindowExlorerFrame" Grid.Row="1" />
+        <Frame x:Name="xPomElementsMappingPageFrame" Grid.Row="1" />
         
         <!--<Ginger:ucGrid x:Name="xFoundElementsGrid"  Title="Found Elements"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowDelete="Collapsed"  />-->
     </Grid>

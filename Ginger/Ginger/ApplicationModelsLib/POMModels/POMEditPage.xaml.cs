@@ -52,13 +52,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTagsViewer.Init(mPOM.TagsKeys);
 
             //Bitmap ScreenShot = BitmapFromSource(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.LogoBase64Image.ToString())));
+            BitmapSource source = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.LogoBase64Image.ToString()));
 
+            ScreenShotViewPage p = new ScreenShotViewPage(mPOM.Name, source);
+            xScreenShotFrame.Content = p;
 
-            //ScreenShotViewPage p = new ScreenShotViewPage(mPOM.Name, ScreenShot);
-            //xScreenShotFrame.Content = p;
-
-            MappedUIElementsPage mappedUIElementsPage = new MappedUIElementsPage(mPOM);
-            xUIElementsFrame.Content = mappedUIElementsPage;
+            //PomElementsMappingPage mappedUIElementsPage = new PomElementsMappingPage(mPOM,null);
+            PomAllElementsPage pomAllElementsPage = new PomAllElementsPage(mPOM, null);
+            xUIElementsFrame.Content = pomAllElementsPage;
 
             //PageNameTextBox.BindControl(mApplicationPOM, nameof(ApplicationPOM.Name));
 

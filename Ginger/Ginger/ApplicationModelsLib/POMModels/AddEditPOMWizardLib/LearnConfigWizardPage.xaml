@@ -17,7 +17,7 @@
 
             <Grid.Resources>
                 <DataTemplate x:Key="IsSelectedTemplate">
-                    <CheckBox x:Name="IsSelected_FieldSelection" Checked="IsSelected_FieldSelection_Click" Unchecked="IsSelected_FieldSelection_Click" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                    <CheckBox x:Name="IsSelected_FieldSelection" Checked="IsSelected_Checked" Unchecked="IsSelected_Unchecked" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
                 </DataTemplate>
             </Grid.Resources>
 
@@ -207,9 +207,11 @@
             <ComboBox Grid.Column="1"  Grid.Row="1" x:Name="xAgentPageComboBox" SelectionChanged="WindowsComboBox_SelectionChanged"  FontWeight="Bold" Style="{StaticResource $FlatInputComboBoxStyle}" />
             <Button Grid.Column="2" Grid.Row="1" x:Name="xRefreshPagesButton" Click="RefreshPagesButton_Click" usercontrols:ImageMaker.Content="Refresh" Width="18" ToolTip="Refresh Windows List" Style="{StaticResource @InputImageButtonStyle_NoBorder}"></Button>
 
+           
 
         </Grid>-->
 
+        <!--<CheckBox x:Name="xUnMapNonfunctionalCheckBox" Content="Un map nonfunctional elements automatically" Grid.Column="1" Grid.Row="1" Margin="5"/>-->
 
         <Expander x:Name="PropertiesExpander" Margin="15,10,0,0" Visibility="Visible" IsExpanded="False" >
             <Expander.Header>
@@ -222,7 +224,7 @@
             <Expander.Content>
                 <StackPanel Orientation="Vertical" Margin="10,0,25,0" >
                     
-                    <Ginger:ucGrid x:Name="xFilterElementsGridView" Title="Filter Elements"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed"  />
+                    <Ginger:ucGrid x:Name="xFilterElementsGrid" Title="Filter Elements"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed"  />
                     
                 </StackPanel>
             </Expander.Content>

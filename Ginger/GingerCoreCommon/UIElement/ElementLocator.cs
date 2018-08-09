@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -24,13 +24,24 @@ namespace Amdocs.Ginger.Common.UIElement
 {
     public class ElementLocator : RepositoryItemBase
     {
-        private eLocateBy mLocateBy { get; set; }
+
+        private bool mActive { get; set; }
+        public bool Active { get { return mActive; } set { mActive = value; OnPropertyChanged(nameof(Active)); } }
+
+        private eLocateBy mLocateBy;
         [IsSerializedForLocalRepository]
-        public eLocateBy LocateBy { get { return mLocateBy; } set { mLocateBy = value; OnPropertyChanged(nameof(LocateBy)); } }
+        public eLocateBy LocateBy
+        {
+            get { return mLocateBy; }
+            set { mLocateBy = value; OnPropertyChanged(nameof(LocateBy)); }
+        }
 
         private string mLocateValue { get; set; }
         [IsSerializedForLocalRepository]
-        public string LocateValue { get { return mLocateValue; } set { mLocateValue = value; OnPropertyChanged(nameof(LocateValue)); } }
+        public string LocateValue
+        {
+            get { return mLocateValue; }
+            set { mLocateValue = value; OnPropertyChanged(nameof(LocateValue)); } }
 
         private string mHelp { get; set; }
         public string Help { get { return mHelp; } set { mHelp = value; OnPropertyChanged(nameof(Help)); } }
@@ -39,5 +50,8 @@ namespace Amdocs.Ginger.Common.UIElement
         public int? Count { get { return mCount; } set { mCount = value; OnPropertyChanged(nameof(Count)); } }
 
         public override string ItemName { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
+
+        private string mTestStatus { get; set; }
+        public string TestStatus { get { return mTestStatus; } set { mTestStatus = value; OnPropertyChanged(nameof(TestStatus)); } }
     }
 }

@@ -81,15 +81,17 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override string Title { get { return "Add POM Wizard"; } }
 
+        public bool UnMapNonfunctional { get; set; }
+
         public override void Finish()
         {
 
-            //using (var ms = new MemoryStream())
-            //{
-            //    POM.LogoBase64Image = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(ScreenShot);
-            //}
+            using (var ms = new MemoryStream())
+            {
+                POM.LogoBase64Image = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(ScreenShot);
+            }
 
-            
+
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
 
 
