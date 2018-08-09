@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.Locators.ASCF;
+using Ginger.Agents;
 using Ginger.Drivers.PowerBuilder;
 using Ginger.Drivers.Windows;
 using Ginger.UserControls;
@@ -57,9 +58,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     public partial class LearnConfigWizardPage : Page, IWizardPage
     {
         private AddPOMWizard mWizard;
-
-        
-
+       
         public LearnConfigWizardPage()
         {
             InitializeComponent();
@@ -78,7 +77,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     break;
                 case EventType.LeavingForNextPage:
                     mWizard.CheckedFilteringCreteriaList = GingerCore.General.ConvertListToObservableList(FilteringCreteriaList.Where(x=>x.Selected).ToList());
-                    mWizard.mAgent = mAgent;
+                    mWizard.Agent = mAgent;
                     mWizard.WinExplorer = mWindowExplorerDriver;
                     break;
             }
@@ -135,208 +134,210 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             SetControlsGridView();
             ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web select x).ToList());
-            xAgentComboBox.BindControl<Agent>(mWizard.POM, nameof(ApplicationPOMModel.Guid), optionalAgentsList, nameof(mAgent.Name), nameof(mAgent.Key), BindingMode.OneWay);
+            //xAgentComboBox.BindControl<Agent>(mWizard.POM, nameof(ApplicationPOMModel.Guid), optionalAgentsList, nameof(mAgent.Name), nameof(mAgent.Key), BindingMode.OneWay);
+            xAgentControlUC.Init(optionalAgentsList);
+            App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard, nameof(mWizard.Agent));
             xFilterElementsGridView.DataSourceList = FilteringCreteriaList;
         }
 
-        private void StartAgentButton_Click(object sender, RoutedEventArgs e)
-        {
+        //private void StartAgentButton_Click(object sender, RoutedEventArgs e)
+        //{
 
-            if (mAgent != null && mAgent.Status == Agent.eStatus.NotStarted)
-                StartAppAgent();
-        }
+        //    if (mAgent != null && mAgent.Status == Agent.eStatus.NotStarted)
+        //        StartAppAgent();
+        //}
 
-        private void StartAppAgent()
-        {
-            AutoLogProxy.UserOperationStart("StartAgentButton_Click");
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgent, null, mAgent.Name, "AppName"); //Yuval: change app name to be taken from current app
-            if (mAgent.Status != Agent.eStatus.Running)
-            {
-                mAgent.StartDriver();
-                mWindowExplorerDriver = (IWindowExplorer)mAgent.Driver;
-                UpdatePagesList();
-            }
+        //private void StartAppAgent()
+        //{
+        //    AutoLogProxy.UserOperationStart("StartAgentButton_Click");
+        //    Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgent, null, mAgent.Name, "AppName"); //Yuval: change app name to be taken from current app
+        //    if (mAgent.Status != Agent.eStatus.Running)
+        //    {
+        //        mAgent.StartDriver();
+        //        mWindowExplorerDriver = (IWindowExplorer)mAgent.Driver;
+        //        //UpdatePagesList();
+        //    }
 
-            Reporter.CloseGingerHelper();
-            AutoLogProxy.UserOperationEnd();
+        //    Reporter.CloseGingerHelper();
+        //    AutoLogProxy.UserOperationEnd();
             
-        }
+        //}
 
         ObservableList<UIElementFilter> FilteringCreteriaList = new ObservableList<UIElementFilter>();
         IWindowExplorer mWindowExplorerDriver;
 
         public Agent mAgent { get; set; }
 
-        private void AgentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            mWizard.IsLearningWasDone = false;
+        //private void AgentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    mWizard.IsLearningWasDone = false;
 
-            mAgent = (Agent)xAgentComboBox.SelectedItem;
-            //TODO: move to Init()
-            CloseAgentButton.DataContext = this;
-            LoadingAgentButton.DataContext = this;
-            xStartAgentButton.DataContext = this;
-            if (mAgent != null)
-            {
-                if (mAgent.Status == eStatus.NotStarted || mAgent.Status == eStatus.FailedToStart)
-                {
-                    switch (mAgent.DriverType)
-                    {
-                        case eDriverType.SeleniumChrome:
-                            mAgent.Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
-                            break;
-                    }
+        //    mAgent = (Agent)xAgentComboBox.SelectedItem;
+        //    //TODO: move to Init()
+        //    CloseAgentButton.DataContext = this;
+        //    LoadingAgentButton.DataContext = this;
+        //    xStartAgentButton.DataContext = this;
+        //    if (mAgent != null)
+        //    {
+        //        if (mAgent.Status == eStatus.NotStarted || mAgent.Status == eStatus.FailedToStart)
+        //        {
+        //            switch (mAgent.DriverType)
+        //            {
+        //                case eDriverType.SeleniumChrome:
+        //                    mAgent.Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
+        //                    break;
+        //            }
 
-                }
+        //        }
 
-                mWindowExplorerDriver = (IWindowExplorer)mAgent.Driver;
-                mWizard.WinExplorer = mWindowExplorerDriver;
-                ObservableList<UIElementFilter> DriverFilteringCreteriaList = mWindowExplorerDriver.GetFilteringCreteriaDict();
-                foreach (UIElementFilter filter in DriverFilteringCreteriaList)
-                    FilteringCreteriaList.Add(filter);
+        //        mWindowExplorerDriver = (IWindowExplorer)mAgent.Driver;
+        //        mWizard.WinExplorer = mWindowExplorerDriver;
+        //        ObservableList<UIElementFilter> DriverFilteringCreteriaList = mWindowExplorerDriver.GetFilteringCreteriaDict();
+        //        foreach (UIElementFilter filter in DriverFilteringCreteriaList)
+        //            FilteringCreteriaList.Add(filter);
 
-                UpdatePagesList();
-            }
+        //        UpdatePagesList();
+        //    }
 
-        }
+        //}
 
-        private void LoadingAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            mAgent.Driver.cancelAgentLoading = true;
-        }
+        //private void LoadingAgentButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    mAgent.Driver.cancelAgentLoading = true;
+        //}
 
-        private void CloseAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            mAgent.Close();
-        }
+        //private void CloseAgentButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    mAgent.Close();
+        //}
 
         private void IsSelected_FieldSelection_Click(object sender, RoutedEventArgs e)
         {
             mWizard.IsLearningWasDone = false;
         }
 
-        private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            AppWindow AW = (AppWindow)xAgentPageComboBox.SelectedItem;
-            if (AW == null) return;
-            mWindowExplorerDriver.SwitchWindow(AW.Title);
+        //private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    AppWindow AW = (AppWindow)xAgentPageComboBox.SelectedItem;
+        //    if (AW == null) return;
+        //    mWindowExplorerDriver.SwitchWindow(AW.Title);
 
-            switch (AW.WindowType)
-            {
-                case AppWindow.eWindowType.Windows:
-                    WindowsWindowTreeItem WWTI = new WindowsWindowTreeItem();
-                    UIAElementInfo WEI = (UIAElementInfo)AW.RefObject;
-                    WEI.WindowExplorer = mWindowExplorerDriver;
-                    WWTI.UIAElementInfo = WEI;
-                    WWTI.UIAElementInfo.ElementObject = WEI.ElementObject;
-                    break;
-                case AppWindow.eWindowType.PowerBuilder:
-                    PBWindowTreeItem WTI = new PBWindowTreeItem();
-                    UIAElementInfo PBEI = (UIAElementInfo)AW.RefObject;
-                    PBEI.WindowExplorer = mWindowExplorerDriver;
-                    WTI.UIAElementInfo = PBEI;
-                    break;
-                case AppWindow.eWindowType.ASCFForm:
-                    ASCFFormTreeItem AFTI = new ASCFFormTreeItem();
-                    AFTI.Name = AW.Title;
-                    AFTI.Path = AW.Path;
-                    break;
-                case AppWindow.eWindowType.SeleniumWebPage:
-                    HTMLPageTreeItem HPTI = new HTMLPageTreeItem();
-                    HTMLElementInfo EI = new HTMLElementInfo();
-                    EI.ElementTitle = AW.Title;
-                    EI.XPath = "html";
-                    EI.WindowExplorer = mWindowExplorerDriver;
-                    HPTI.ElementInfo = EI;
-                    break;
-                case AppWindow.eWindowType.JFrmae:
-                    JavaWindowTreeItem JWTI = new JavaWindowTreeItem();
-                    JavaElementInfo JEI = new JavaElementInfo();
-                    JEI.ElementTitle = AW.Title;
-                    JEI.Path = AW.Title;
-                    JEI.XPath = "/";
-                    JEI.IsExpandable = true;
-                    JWTI.JavaElementInfo = JEI;
-                    JEI.WindowExplorer = mWindowExplorerDriver;
-                    break;
-                case AppWindow.eWindowType.Appium:
-                    AppiumWindowTreeItem AWTI = new AppiumWindowTreeItem();
+        //    switch (AW.WindowType)
+        //    {
+        //        case AppWindow.eWindowType.Windows:
+        //            WindowsWindowTreeItem WWTI = new WindowsWindowTreeItem();
+        //            UIAElementInfo WEI = (UIAElementInfo)AW.RefObject;
+        //            WEI.WindowExplorer = mWindowExplorerDriver;
+        //            WWTI.UIAElementInfo = WEI;
+        //            WWTI.UIAElementInfo.ElementObject = WEI.ElementObject;
+        //            break;
+        //        case AppWindow.eWindowType.PowerBuilder:
+        //            PBWindowTreeItem WTI = new PBWindowTreeItem();
+        //            UIAElementInfo PBEI = (UIAElementInfo)AW.RefObject;
+        //            PBEI.WindowExplorer = mWindowExplorerDriver;
+        //            WTI.UIAElementInfo = PBEI;
+        //            break;
+        //        case AppWindow.eWindowType.ASCFForm:
+        //            ASCFFormTreeItem AFTI = new ASCFFormTreeItem();
+        //            AFTI.Name = AW.Title;
+        //            AFTI.Path = AW.Path;
+        //            break;
+        //        case AppWindow.eWindowType.SeleniumWebPage:
+        //            HTMLPageTreeItem HPTI = new HTMLPageTreeItem();
+        //            HTMLElementInfo EI = new HTMLElementInfo();
+        //            EI.ElementTitle = AW.Title;
+        //            EI.XPath = "html";
+        //            EI.WindowExplorer = mWindowExplorerDriver;
+        //            HPTI.ElementInfo = EI;
+        //            break;
+        //        case AppWindow.eWindowType.JFrmae:
+        //            JavaWindowTreeItem JWTI = new JavaWindowTreeItem();
+        //            JavaElementInfo JEI = new JavaElementInfo();
+        //            JEI.ElementTitle = AW.Title;
+        //            JEI.Path = AW.Title;
+        //            JEI.XPath = "/";
+        //            JEI.IsExpandable = true;
+        //            JWTI.JavaElementInfo = JEI;
+        //            JEI.WindowExplorer = mWindowExplorerDriver;
+        //            break;
+        //        case AppWindow.eWindowType.Appium:
+        //            AppiumWindowTreeItem AWTI = new AppiumWindowTreeItem();
 
-                    AppiumElementInfo AEI = new AppiumElementInfo();
-                    AEI.WindowExplorer = mWindowExplorerDriver;
-                    AEI.XPath = "/";
-                    string pageSourceString = ((SeleniumAppiumDriver)mWindowExplorerDriver).GetPageSource();
-                    XmlDocument pageSourceXml = new XmlDocument();
-                    pageSourceXml.LoadXml(pageSourceString);
-                    AEI.XmlDoc = pageSourceXml;
-                    AEI.XmlNode = pageSourceXml.SelectSingleNode("/");
+        //            AppiumElementInfo AEI = new AppiumElementInfo();
+        //            AEI.WindowExplorer = mWindowExplorerDriver;
+        //            AEI.XPath = "/";
+        //            string pageSourceString = ((SeleniumAppiumDriver)mWindowExplorerDriver).GetPageSource();
+        //            XmlDocument pageSourceXml = new XmlDocument();
+        //            pageSourceXml.LoadXml(pageSourceString);
+        //            AEI.XmlDoc = pageSourceXml;
+        //            AEI.XmlNode = pageSourceXml.SelectSingleNode("/");
 
-                    AWTI.AppiumElementInfo = AEI;
-                    break;
-                case AppWindow.eWindowType.AndroidDevice:
-                    AndroidWindowTreeItem ADTI = new AndroidWindowTreeItem();
+        //            AWTI.AppiumElementInfo = AEI;
+        //            break;
+        //        case AppWindow.eWindowType.AndroidDevice:
+        //            AndroidWindowTreeItem ADTI = new AndroidWindowTreeItem();
 
-                    AndroidElementInfo AWI = new AndroidElementInfo();
-                    AWI.WindowExplorer = mWindowExplorerDriver;
-                    AWI.XPath = "/";
-                    string pageSourceString2 = ((AndroidADBDriver)mWindowExplorerDriver).GetPageSource();
-                    XmlDocument pageSourceXml2 = new XmlDocument();
-                    pageSourceXml2.LoadXml(pageSourceString2);
-                    AWI.XmlDoc = pageSourceXml2;
-                    AWI.XmlNode = pageSourceXml2.SelectSingleNode("/hierarchy");
+        //            AndroidElementInfo AWI = new AndroidElementInfo();
+        //            AWI.WindowExplorer = mWindowExplorerDriver;
+        //            AWI.XPath = "/";
+        //            string pageSourceString2 = ((AndroidADBDriver)mWindowExplorerDriver).GetPageSource();
+        //            XmlDocument pageSourceXml2 = new XmlDocument();
+        //            pageSourceXml2.LoadXml(pageSourceString2);
+        //            AWI.XmlDoc = pageSourceXml2;
+        //            AWI.XmlNode = pageSourceXml2.SelectSingleNode("/hierarchy");
 
-                    ADTI.AndroidElementInfo = AWI;
-                    break;
-                case AppWindow.eWindowType.Mainframe:
-                    MainframeTreeItemBase MFTI = new MainframeTreeItemBase();
-                    MFTI.Name = AW.Title;
-                    MFTI.Path = AW.Path;
-                    break;
-                default:
-                    MessageBox.Show("Unknown Window type:" + AW.WindowType);
-                    break;
-            }
-        }
+        //            ADTI.AndroidElementInfo = AWI;
+        //            break;
+        //        case AppWindow.eWindowType.Mainframe:
+        //            MainframeTreeItemBase MFTI = new MainframeTreeItemBase();
+        //            MFTI.Name = AW.Title;
+        //            MFTI.Path = AW.Path;
+        //            break;
+        //        default:
+        //            MessageBox.Show("Unknown Window type:" + AW.WindowType);
+        //            break;
+        //    }
+        //}
 
-        private void RefreshPagesButton_Click(object sender, RoutedEventArgs e)
-        {
-            UpdatePagesList();
-        }
+        //private void RefreshPagesButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    UpdatePagesList();
+        //}
 
 
-        private void UpdatePagesList()
-        {
-            List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
-            xAgentPageComboBox.ItemsSource = list;
-            xAgentPageComboBox.DisplayMemberPath = "WinInfo";
+        //private void UpdatePagesList()
+        //{
+        //    List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
+        //    xAgentPageComboBox.ItemsSource = list;
+        //    xAgentPageComboBox.DisplayMemberPath = "WinInfo";
 
-            AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
+        //    AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
 
-            if (list != null && list.Count > 0)
-            {
-                xAgentPageComboBox.SelectedValue = list[0];
-            }
+        //    if (list != null && list.Count > 0)
+        //    {
+        //        xAgentPageComboBox.SelectedValue = list[0];
+        //    }
 
-            //if (ActiveWindow != null)
-            //{
-            //    foreach (AppWindow w in list)
-            //    {
-            //        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
-            //        {
-            //            xAgentPageComboBox.SelectedValue = w;
-            //            return;
-            //        }
-            //    }
-            //}
+        //    //if (ActiveWindow != null)
+        //    //{
+        //    //    foreach (AppWindow w in list)
+        //    //    {
+        //    //        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+        //    //        {
+        //    //            xAgentPageComboBox.SelectedValue = w;
+        //    //            return;
+        //    //        }
+        //    //    }
+        //    //}
 
-            //TODO: If no selection then select the first if only one window exist in list
-            if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
-            {
-                if (xAgentPageComboBox.Items.Count == 1)
-                {
-                    xAgentPageComboBox.SelectedValue = xAgentPageComboBox.Items[0];
-                }
-            }
-        }
+        //    //TODO: If no selection then select the first if only one window exist in list
+        //    if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+        //    {
+        //        if (xAgentPageComboBox.Items.Count == 1)
+        //        {
+        //            xAgentPageComboBox.SelectedValue = xAgentPageComboBox.Items[0];
+        //        }
+        //    }
+        //}
     }
 }

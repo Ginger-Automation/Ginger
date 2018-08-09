@@ -40,7 +40,21 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public ApplicationPOMModel POM;
         public string POMFolder;
         public ObservableList<UIElementFilter> CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
-        internal Agent mAgent;
+
+        private Agent mAgent = null;
+        public Agent Agent
+        {
+            get
+            {
+                return mAgent;
+            }
+            set
+            {
+                mAgent = value;
+            }
+        }
+
+
         public Bitmap ScreenShot { get; set; }
 
         public bool IsLearningWasDone { get; set; }

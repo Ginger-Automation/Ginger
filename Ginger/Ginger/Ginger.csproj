@@ -434,6 +434,9 @@
       <DependentUpon>AgentDriverConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\AgentNameValidationRule.cs" />
+    <Compile Include="Agents\ucAgentControl.xaml.cs">
+      <DependentUpon>ucAgentControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\POMNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\POMTAValidationRule.cs" />
@@ -2526,6 +2529,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Agents\AgentDriverConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Agents\ucAgentControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

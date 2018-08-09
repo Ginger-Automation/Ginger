@@ -145,7 +145,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void InitilizeWindowExplorer()
         {
             ApplicationAgent applicationAgent = new ApplicationAgent();
-            applicationAgent.Agent = mWizard.mAgent;
+            applicationAgent.Agent = mWizard.Agent;
             string targetApplicationName = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Key == mPOM.TargetApplicationKey).FirstOrDefault().AppName;
             applicationAgent.AppName = targetApplicationName;
             mWindowExplorerPage = new WindowExplorerPage(applicationAgent,null,mPOM, WindowExplorerPage.eWindowExplorerPageContext.POMWizard);

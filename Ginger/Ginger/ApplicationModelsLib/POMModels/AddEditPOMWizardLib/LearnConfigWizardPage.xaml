@@ -6,16 +6,14 @@
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:agents="clr-namespace:Ginger.Agents"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="600"
       Title="Learn Config">
 
-
-
-
-
-    <StackPanel>
-        <Grid Name="MainGrid" Background="{StaticResource $BackgroundGray}">
+    <StackPanel Background="{StaticResource $BackgroundGray}">
+        <agents:ucAgentControl x:Name="xAgentControlUC"></agents:ucAgentControl>
+        <!--<Grid Name="MainGrid" Background="{StaticResource $BackgroundGray}">
 
             <Grid.Resources>
                 <DataTemplate x:Key="IsSelectedTemplate">
@@ -30,19 +28,12 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <!--<RowDefinition Height="40"/>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="40"/>-->
-            <RowDefinition Height="292*"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="292*"/>
         </Grid.RowDefinitions>
 
             <Label Content="Agent:" Grid.Row="0" HorizontalAlignment="Left"  Style="{StaticResource @LabelStyle}" />
             <ComboBox x:Name="xAgentComboBox" Grid.Row="0" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" SelectionChanged="AgentComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"/>
-
-       <!--<Button x:Name="xStartAgentButton" Grid.Row="0" Grid.Column="2" Click="xStartAgentButton_Click" Style="{StaticResource @InputButtonStyle}">Start/stop Agent</Button>-->
 
             <Button x:Name="xStartAgentButton" Grid.Row="0" Grid.Column="2" Click="StartAgentButton_Click" ToolTip="Agent is OFF, Click to Start It">
                 <Image Source="{StaticResource @ToggleOFF_16x16}"></Image>
@@ -51,7 +42,6 @@
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}" />
                         <Setter Property="FontFamily" Value="Open Sans" />
-                        <!--<Setter Property="Height" Value="25" />-->
                         <Setter Property="FontSize" Value="12" />
                         <Setter Property="Template">
                             <Setter.Value>
@@ -163,7 +153,7 @@
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}" />
                         <Setter Property="FontFamily" Value="Open Sans" />
-                        <!--<Setter Property="Height" Value="25" />-->
+                        --><!--<Setter Property="Height" Value="25" />--><!--
                         <Setter Property="FontSize" Value="12" />
                         <Setter Property="Template">
                             <Setter.Value>
@@ -218,7 +208,7 @@
             <Button Grid.Column="2" Grid.Row="1" x:Name="xRefreshPagesButton" Click="RefreshPagesButton_Click" usercontrols:ImageMaker.Content="Refresh" Width="18" ToolTip="Refresh Windows List" Style="{StaticResource @InputImageButtonStyle_NoBorder}"></Button>
 
 
-        </Grid>
+        </Grid>-->
 
 
         <Expander x:Name="PropertiesExpander" Margin="15,10,0,0" Visibility="Visible" IsExpanded="False" >
