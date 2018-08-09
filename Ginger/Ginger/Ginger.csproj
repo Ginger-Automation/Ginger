@@ -755,9 +755,6 @@
     <Compile Include="GeneralWindows\Run Set Pages\StatusItem.xaml.cs">
       <DependentUpon>StatusItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageIntroPage.xaml.cs">
-      <DependentUpon>AddPluginPackageIntroPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageToSolutionPage.xaml.cs">
       <DependentUpon>AddPluginPackageToSolutionPage.xaml</DependentUpon>
     </Compile>
@@ -1944,6 +1941,7 @@
     <None Include="ALMRESTConfiguration\appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Resource Include="PluginsLibNew\AddPluginWizardLib\AddPluginIntro.md" />
     <None Include="Resources\VBSTemplate.bmp" />
     <None Include="Resources\VBSTemplate.vbs" />
     <Resource Include="Images\%40A_16x16.png" />
@@ -2785,10 +2783,6 @@
     <Page Include="Imports\CDL\ImportCDLWizardProcessPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageIntroPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageToSolutionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
