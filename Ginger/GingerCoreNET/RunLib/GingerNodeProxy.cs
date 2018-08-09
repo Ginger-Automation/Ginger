@@ -94,6 +94,7 @@ namespace GingerCoreNET.RunLib
             List<NewPayLoad> Params = new List<NewPayLoad>();
             foreach (ActionParam AP in GA.InputParams.Values)
             {
+                if (AP.Name == "GA" || AP.Name == "PluginID") continue;
                 // TODO: use const
                 NewPayLoad p = new NewPayLoad("P");   // To save network trafic we send just one letter
                 p.AddValue(AP.Name);
@@ -117,7 +118,7 @@ namespace GingerCoreNET.RunLib
                 string Error = RC.GetValueString();
                 if (!string.IsNullOrEmpty(Error))
                 {
-                    GA.AddError("Driver", RC.GetValueString());   // We need to get Error even if Payload is OK - since it might be in
+                    GA.AddError("Driver", Error);   // We need to get Error even if Payload is OK - since it might be in
                 }
 
                 List<NewPayLoad> OutpuValues = RC.GetListPayLoad();

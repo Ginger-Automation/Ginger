@@ -203,7 +203,7 @@ namespace Amdocs.Ginger.Repository
             return mInstalledPluginPackages;
         }
 
-        public void Execute(GingerAction gA)
+        public void Execute(GingerAction GA)
         {
             // FIXME Plug in ID
             //ActionHandler AH = GetStandAloneActionHandler("pp", gA.ID);            
@@ -214,15 +214,15 @@ namespace Amdocs.Ginger.Repository
             mGingerGrid = new GingerGrid(HubPort);
             mGingerGrid.Start();
 
+            string PID = "PACTService";  //temp!!!  GA.InputParams["PluginID"].GetValueAsString();
+            PluginPackage p = (from x in mPluginPackages where x.PluginID == PID select x).SingleOrDefault();
+
+            // !!!!!!!!!!!!!!!!
             string serviceID = "PACTService";
-
-            // Temp !!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            string PACKPluginPackageFolder = @"C:\Users\yaronwe\Source\Repos\Ginger-PACT-Plugin\Ginger-PACT-Plugin\bin\Debug\netstandard2.0"; //Path.Combine(Common.GetTestResourcesFolder(), @"PluginPackages\SeleniumPluginPackage.1.0.0");
-            string script = CommandProcessor.CreateLoadPluginScript(PACKPluginPackageFolder);
+            
+            string script = CommandProcessor.CreateLoadPluginScript(p.Folder);
             script += CommandProcessor.CreateStartServiceScript(serviceID, "PACT Service", SocketHelper.GetLocalHostIP(), mGingerGrid.Port);
 
-            //Act
             Task t = new Task(() => {
                 GingerConsoleHelper.Execute(script);
             });
@@ -241,9 +241,6 @@ namespace Amdocs.Ginger.Repository
             GNA.Reserve();
             GNA.GingerGrid = mGingerGrid;
 
-
-            GingerAction GA = new GingerAction("StartPACTServer");
-            GA.InputParams["port"].Value = 1234;
             GNA.RunAction(GA);
         }
     }
