@@ -21,9 +21,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
+using Amdocs.Ginger.CoreNET.GingerConsoleLib;
 using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
+using GingerCoreNET.CommandProcessorLib;
+using GingerCoreNET.RunLib;
 using GingerPlugInsNET.ActionsLib;
 using GingerPlugInsNET.DriversLib;
 
@@ -200,8 +206,45 @@ namespace Amdocs.Ginger.Repository
         public void Execute(GingerAction gA)
         {
             // FIXME Plug in ID
-            ActionHandler AH = GetStandAloneActionHandler("pp", gA.ID);            
-            ActionRunner.RunAction(AH.Instance, gA, AH);
+            //ActionHandler AH = GetStandAloneActionHandler("pp", gA.ID);            
+            //ActionRunner.RunAction(AH.Instance, gA, AH);
+            GingerGrid mGingerGrid;
+
+            int HubPort = SocketHelper.GetOpenPort();
+            mGingerGrid = new GingerGrid(HubPort);
+            mGingerGrid.Start();
+
+            string serviceID = "PACTService";
+
+            // Temp !!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            string PACKPluginPackageFolder = @"C:\Users\yaronwe\Source\Repos\Ginger-PACT-Plugin\Ginger-PACT-Plugin\bin\Debug\netstandard2.0"; //Path.Combine(Common.GetTestResourcesFolder(), @"PluginPackages\SeleniumPluginPackage.1.0.0");
+            string script = CommandProcessor.CreateLoadPluginScript(PACKPluginPackageFolder);
+            script += CommandProcessor.CreateStartServiceScript(serviceID, "PACT Service", SocketHelper.GetLocalHostIP(), mGingerGrid.Port);
+
+            //Act
+            Task t = new Task(() => {
+                GingerConsoleHelper.Execute(script);
+            });
+            t.Start();
+
+            GingerNodeInfo GNI = null;
+            int counter = 0;
+            while (GNI == null && counter < 30)
+            {
+                GNI = (from x in mGingerGrid.NodeList where x.Name == "PACT Service" select x).FirstOrDefault();
+                Thread.Sleep(1000);
+            }
+
+
+            GingerNodeProxy GNA = new GingerNodeProxy(GNI);
+            GNA.Reserve();
+            GNA.GingerGrid = mGingerGrid;
+
+
+            GingerAction GA = new GingerAction("StartPACTServer");
+            GA.InputParams["port"].Value = 1234;
+            GNA.RunAction(GA);
         }
     }
 }
