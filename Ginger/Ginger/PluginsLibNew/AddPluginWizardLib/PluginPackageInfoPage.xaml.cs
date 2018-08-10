@@ -36,22 +36,35 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
         {
             InitializeComponent();         
             
-            mPluginPackage = pluginPackage;
-            NameTextBox.BindControl(mPluginPackage, nameof(PluginPackage.PluginID));
-            FolderTextBox.BindControl(mPluginPackage, nameof(pluginPackage.Folder));
+            mPluginPackage = pluginPackage;            
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            if (WizardEventArgs.EventType == EventType.Active)
+            switch(WizardEventArgs.EventType)
             {
-                ObservableList<StandAloneAction> actions =  mPluginPackage.GetStandAloneActions();
-                ActionsDataGrid.ItemsSource = actions;
+                case EventType.Init:
+                    NameTextBox.BindControl(mPluginPackage, nameof(PluginPackage.PluginID));
+                    FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
+                    break;
+                case EventType.Active:
+                    ObservableList<StandAloneAction> actions = mPluginPackage.GetStandAloneActions();
+                    ActionsDataGrid.ItemsSource = actions;
+
+                    ServicesGrid.ItemsSource = 
+                    break;
+
             }
+            
         }
 
         private void PluginsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+        }
+
+        private void ServicesGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

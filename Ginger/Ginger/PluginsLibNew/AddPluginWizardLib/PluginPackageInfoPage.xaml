@@ -19,12 +19,12 @@
             <Label>Name</Label>
             <TextBox x:Name="NameTextBox"></TextBox>
             <Label>Folder</Label>
-            <TextBox x:Name="FolderTextBox"></TextBox>
+            <TextBox x:Name="FolderTextBox" IsReadOnly="True" IsEnabled="False"></TextBox>
 
 
         </StackPanel>
 
-        <DataGrid x:Name="PluginsDataGrid" Grid.Row="1" IsReadOnly="True" SelectionChanged="PluginsDataGrid_SelectionChanged"></DataGrid>
+        <DataGrid x:Name="ServicesGrid" Grid.Row="1" IsReadOnly="True" SelectionChanged="ServicesGrid_SelectionChanged" ></DataGrid>
 
         <TabControl Grid.Row="2">
 

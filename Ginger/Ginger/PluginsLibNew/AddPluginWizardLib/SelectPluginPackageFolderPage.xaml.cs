@@ -33,12 +33,17 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
         public SelectPlugPackageinFolderPage(PluginPackage pluginPackage)
         {
             InitializeComponent();
-            mPluginPackage = pluginPackage;
-            FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
+            mPluginPackage = pluginPackage;            
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
-        {            
+        {       
+            switch (WizardEventArgs.EventType)
+            {
+                case EventType.Init:
+                    FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
+                    break;
+            }
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)

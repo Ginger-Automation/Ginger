@@ -73,8 +73,9 @@ namespace Amdocs.Ginger.Repository
 
         }
 
-        [IsSerializedForLocalRepository]
-        public string Folder { get; set; }
+        string mFolder;
+        [IsSerializedForLocalRepository]        
+        public string Folder { get { return mFolder; } set { if (mFolder != value) { mFolder = value; OnPropertyChanged(nameof(Folder)); } } }
 
         List<PluginAssemblyInfo> mAssembliesInfo = new List<PluginAssemblyInfo>();
 
