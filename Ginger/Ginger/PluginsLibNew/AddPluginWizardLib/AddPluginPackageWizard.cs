@@ -25,7 +25,9 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
 {
     public class AddPluginPackageWizard : WizardBase
     {
-        PluginPackage mPluginPackage = new PluginPackage();
+        public PluginPackage PluginPackage;
+
+        public string Folder { get; set; }
         public AddPluginPackageWizard()
         {
             
@@ -33,18 +35,18 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
 
             AddPage(Name: "Select Plugin Type", Title: "Select Plugin Type", SubTitle: "Choose ...", Page: new SelectPluginPackageTypePage());
 
-            AddPage(Name: "SelectPluginFolderPage", Title: "SelectPluginFolderPage", SubTitle: "SelectPluginFolderPage ...", Page: new SelectPlugPackageinFolderPage(mPluginPackage));
+            AddPage(Name: "SelectPluginFolderPage", Title: "SelectPluginFolderPage", SubTitle: "SelectPluginFolderPage ...", Page: new SelectPlugPackageinFolderPage());
 
-            AddPage(Name: "PluginInfoPage", Title: "PluginInfoPage", SubTitle: "PluginInfoPage ...", Page: new PlugPackageinInfoPage(mPluginPackage));            
+            AddPage(Name: "PluginInfoPage", Title: "PluginInfoPage", SubTitle: "PluginInfoPage ...", Page: new PlugPackageinInfoPage());            
 
-            AddPage(Name: "AddPluginToSolutionPage", Title: "AddPluginToSolutionPage", SubTitle: "AddPluginToSolutionPage ...", Page: new AddPluginPackageToSolutionPage(mPluginPackage));
+            AddPage(Name: "AddPluginToSolutionPage", Title: "AddPluginToSolutionPage", SubTitle: "AddPluginToSolutionPage ...", Page: new AddPluginPackageToSolutionPage());
         }
 
         public override string Title { get { return "Add Plugin Package Wizard"; } }
 
         public override void Finish()
         {
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(mPluginPackage);
+            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(PluginPackage);
         }
     }
 }

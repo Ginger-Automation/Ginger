@@ -28,10 +28,9 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
     public partial class AddPluginPackageToSolutionPage : Page, IWizardPage
     {
         PluginPackage mPluginPackage;
-        public AddPluginPackageToSolutionPage(PluginPackage pluginPackage)
+        public AddPluginPackageToSolutionPage()
         {
-            InitializeComponent();
-            mPluginPackage = pluginPackage;
+            InitializeComponent();            
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)

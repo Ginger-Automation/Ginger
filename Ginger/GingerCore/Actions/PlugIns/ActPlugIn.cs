@@ -88,7 +88,7 @@ namespace GingerCore.Actions.PlugIns
 
         public string PluginID { get { return this.GetInputParamValue(nameof(PluginID)); } }
 
-        public string PlugInActionID { get { return this.GetInputParamValue(nameof(PlugInActionID)); } }
+        public string PluginActionID { get { return this.GetInputParamValue(nameof(PluginActionID)); } }
 
         
         

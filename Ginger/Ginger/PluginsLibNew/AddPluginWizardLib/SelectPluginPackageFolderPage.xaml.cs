@@ -29,11 +29,10 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
     /// </summary>
     public partial class SelectPlugPackageinFolderPage : Page, IWizardPage
     {
-        PluginPackage mPluginPackage;
-        public SelectPlugPackageinFolderPage(PluginPackage pluginPackage)
+        AddPluginPackageWizard wiz;
+        public SelectPlugPackageinFolderPage()
         {
-            InitializeComponent();
-            mPluginPackage = pluginPackage;            
+            InitializeComponent();     
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -41,7 +40,8 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
+                    wiz = (AddPluginPackageWizard)WizardEventArgs.Wizard;
+                    FolderTextBox.BindControl(wiz, nameof(AddPluginPackageWizard.Folder));
                     break;
             }
         }
@@ -53,6 +53,12 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
             {
                 FolderTextBox.Text = s;
             }
+        }
+
+        private void FolderTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // TODO: check folder exist and info file exist
+            wiz.PluginPackage = new PluginPackage(FolderTextBox.Text);
         }
     }
 }

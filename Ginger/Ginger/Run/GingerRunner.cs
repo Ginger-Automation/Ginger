@@ -1801,7 +1801,7 @@ namespace Ginger.Run
         private void ExecutePlugInAction(Act act)
         {
             ActPlugIn pluginAction = (ActPlugIn)act;
-            GingerPlugInsNET.ActionsLib.GingerAction GA = new GingerPlugInsNET.ActionsLib.GingerAction(pluginAction.PlugInActionID);
+            GingerPlugInsNET.ActionsLib.GingerAction GA = new GingerPlugInsNET.ActionsLib.GingerAction(pluginAction.PluginActionID);
             foreach(ActInputValue input in act.InputValues)
             {
                 GA.InputParams[input.Param].Value = input.Value;

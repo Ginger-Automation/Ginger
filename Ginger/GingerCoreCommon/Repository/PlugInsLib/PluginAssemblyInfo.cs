@@ -7,7 +7,7 @@ namespace Amdocs.Ginger.Repository
 {
     public class PluginAssemblyInfo
     {
-        public string Name {get; set;}
+        public string Name { get; set; }
         public string FilePath { get; set; }
 
         public bool IsLoaded { get; set; }
@@ -23,7 +23,7 @@ namespace Amdocs.Ginger.Repository
                     // mAssembly = Assembly.LoadFrom(FilePath);
                     AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
-                    mAssembly = Assembly.LoadFrom(FilePath);                    
+                    mAssembly = Assembly.LoadFrom(FilePath);
                 }
                 return mAssembly;
             }
@@ -41,11 +41,11 @@ namespace Amdocs.Ginger.Repository
         {
             Console.WriteLine("CheckRef for Assembly:" + mAssembly.FullName);
             AssemblyName[] list = this.Assembly.GetReferencedAssemblies();
-            foreach(AssemblyName an in list)
+            foreach (AssemblyName an in list)
             {
                 // Assembly.LoadFrom(an.Name);
                 Console.WriteLine("CheckRef:" + an.Name);
-                
+
             }
 
 

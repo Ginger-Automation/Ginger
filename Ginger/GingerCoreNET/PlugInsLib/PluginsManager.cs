@@ -16,13 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
@@ -32,12 +25,25 @@ using GingerCoreNET.CommandProcessorLib;
 using GingerCoreNET.RunLib;
 using GingerPlugInsNET.ActionsLib;
 using GingerPlugInsNET.DriversLib;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
 {
     public class PluginsManager
     {
-        private ObservableList<PluginPackage> mPluginPackages = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+        private ObservableList<PluginPackage> mPluginPackages;
+
+        public PluginsManager()
+        {
+            mPluginPackages = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+        }
 
         public class DriverInfo
         {
@@ -108,9 +114,14 @@ namespace Amdocs.Ginger.Repository
 
         public void AddPluginPackage(string folder)
         {
-            PluginPackage p = new PluginPackage();
-            p.Folder = folder;
-            p.PluginID = folder;
+            // Verify folder exist
+            if (!System.IO.Directory.Exists(folder))
+            {
+                throw new Exception("Plugin folder not found: " + folder);
+            }
+            
+
+            PluginPackage p = new PluginPackage(folder);            
             mPluginPackages.Add(p);
         }
 
@@ -150,7 +161,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         internal ActionHandler GetStandAloneActionHandler(string pluginID, string ID)
-        {            
+        {
             foreach (PluginPackage PP in mPluginPackages)
             {
                 PP.ScanPackage();
@@ -195,9 +206,7 @@ namespace Amdocs.Ginger.Repository
 
             foreach (string d in Directory.GetDirectories(pluginPackagesPath))
             {
-                PluginPackage p = new PluginPackage();
-                p.Folder = d;
-                p.PluginID = d;     // FIXME ?!            
+                PluginPackage p = new PluginPackage(d);
                 mInstalledPluginPackages.Add(p);
             }
             return mInstalledPluginPackages;
@@ -209,18 +218,19 @@ namespace Amdocs.Ginger.Repository
             //ActionHandler AH = GetStandAloneActionHandler("pp", gA.ID);            
             //ActionRunner.RunAction(AH.Instance, gA, AH);
             GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
-            
 
-            string PID = "PACTService";  //temp!!!  GA.InputParams["PluginID"].GetValueAsString();
+
+            string PID = GA.InputParams["PluginID"].GetValueAsString();
             PluginPackage p = (from x in mPluginPackages where x.PluginID == PID select x).SingleOrDefault();
             if (p == null)
             {
                 GA.AddError("Execute", "Plugin id not found: " + PID);
                 return;
             }
-            // !!!!!!!!!!!!!!!! FIXMe remove hard coded
-            string serviceID = "PACTService";
             
+            //TODO: use nameof after ActPlugin move to common
+            string serviceID = GA.InputParams["PluginActionID"].GetValueAsString();
+
             string script = CommandProcessor.CreateLoadPluginScript(p.Folder);
             script += CommandProcessor.CreateStartServiceScript(serviceID, "PACT Service", SocketHelper.GetLocalHostIP(), gingerGrid.Port);
 
@@ -243,6 +253,14 @@ namespace Amdocs.Ginger.Repository
             GNA.GingerGrid = gingerGrid;
 
             GNA.RunAction(GA);
+        }
+
+
+        public string CreatePluginPackageInfo(string id, string version)
+        {
+            PluginPackageInfo pluginPackageInfo = new PluginPackageInfo() { Id = id, Version = version };
+            string txt = JsonConvert.SerializeObject(pluginPackageInfo);
+            return txt;
         }
 
 

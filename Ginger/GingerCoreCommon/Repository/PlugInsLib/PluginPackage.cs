@@ -27,11 +27,27 @@ using GingerPlugInsNET.ActionsLib;
 using GingerPlugInsNET.DriversLib;
 using GingerPlugInsNET.PlugInsLib;
 using GingerPlugInsNET.ServicesLib;
+using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Repository
 {
     public class PluginPackage : RepositoryItemBase
     {
+        // Not serialized loaded from Ginger.PluginPackage.json in the root folder
+        PluginPackageInfo mPluginPackageInfo;
+
+        PluginPackageInfo PluginPackageInfo
+        {
+            get
+            {
+                if (mPluginPackageInfo == null)
+                {
+                    mPluginPackageInfo = new PluginPackageInfo();
+                }
+                return mPluginPackageInfo; 
+            }
+        }
+
         public enum eType
         {
             LocalFolder,
@@ -39,12 +55,41 @@ namespace Amdocs.Ginger.Repository
         }
 
         [IsSerializedForLocalRepository]
-        public string PluginID { get; set; }
+        public string PluginID { get; set;  }
+
+        [IsSerializedForLocalRepository]
+        public string PluginPackageVersion { get; set; }
 
         [IsSerializedForLocalRepository]
         public eType Type { get; set; }
 
         public bool Isloaded = false;
+
+        public PluginPackage()
+        {
+        }
+
+        public PluginPackage(string folder)
+        {            
+            mFolder = folder;
+            LoadInfo();            
+        }
+
+        private void LoadInfo()
+        {
+            //TODO: compare saved plugin id and version with the info file on folder
+
+            string pluginInfoFile = Path.Combine(mFolder, PluginPackageInfo.cInfoFile);
+
+            if (!System.IO.File.Exists(pluginInfoFile))
+            {
+                throw new Exception("Plugin info file not found: " + pluginInfoFile);
+            }
+
+            // load info
+            string txt = System.IO.File.ReadAllText(pluginInfoFile);
+            mPluginPackageInfo = (PluginPackageInfo)JsonConvert.DeserializeObject(txt, typeof(PluginPackageInfo));
+        }
 
         public PluginDriverBase GetDriver(string driverName)
         {
@@ -75,11 +120,23 @@ namespace Amdocs.Ginger.Repository
 
         string mFolder;
         [IsSerializedForLocalRepository]        
-        public string Folder { get { return mFolder; } set { if (mFolder != value) { mFolder = value; OnPropertyChanged(nameof(Folder)); } } }
+        public string Folder { get { return mFolder; }
+            set
+            {
+                if (mFolder != value)
+                {
+                    mFolder = value;
+                    LoadInfo();
+                    OnPropertyChanged(nameof(Folder));
+                }
+            }
+        }
 
         List<PluginAssemblyInfo> mAssembliesInfo = new List<PluginAssemblyInfo>();
 
-        public override string ItemName { get { return PluginID; } set { PluginID = value; } }
+        public override string ItemName { get { return PluginID; } set {  } }
+
+        
 
         public override string GetNameForFileName()
         {

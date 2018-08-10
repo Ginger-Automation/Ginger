@@ -30,13 +30,12 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
     /// </summary>
     public partial class PlugPackageinInfoPage : Page, IWizardPage
     {
+        AddPluginPackageWizard wiz;
         PluginPackage mPluginPackage;
 
-        public PlugPackageinInfoPage(PluginPackage pluginPackage)
+        public PlugPackageinInfoPage()
         {
-            InitializeComponent();         
-            
-            mPluginPackage = pluginPackage;            
+            InitializeComponent();                                 
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -44,15 +43,20 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
             switch(WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    NameTextBox.BindControl(mPluginPackage, nameof(PluginPackage.PluginID));
-                    FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
+                    wiz = (AddPluginPackageWizard)WizardEventArgs.Wizard;
                     break;
                 case EventType.Active:
-                    ObservableList<StandAloneAction> actions = mPluginPackage.GetStandAloneActions();
-                    ActionsDataGrid.ItemsSource = actions;
-
+                    mPluginPackage = wiz.PluginPackage;
+                    xIDTextBox.Text = mPluginPackage.PluginID;
+                    xVersionTextBox.Text = mPluginPackage.PluginPackageVersion;
+                    FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
 
                     ServicesGrid.ItemsSource = mPluginPackage.GetServices();
+
+                    // TODO: get selected service only
+                    ObservableList<StandAloneAction> actions = mPluginPackage.GetStandAloneActions();
+                    ActionsDataGrid.ItemsSource = actions;
+                    
                     break;
 
             }

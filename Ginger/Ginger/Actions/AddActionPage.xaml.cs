@@ -16,26 +16,25 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.PlugIns;
+using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using GingerCore;
-using GingerCore.Actions;
-using Ginger.UserControls;
-using System.Reflection;
-using GingerCore.Platforms;
-using GingerCore.Actions.PlugIns;
-using GingerPlugIns.ActionsLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.WizardLib;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 
 namespace Ginger.Actions
 {
@@ -53,7 +52,7 @@ namespace Ginger.Actions
             InitializeComponent();
             SetActionsGridsView();
             LoadGridData();
-            LoadPlugInsActions();
+            LoadPluginsActions();
 
             //if (IsPlugInAvailable == false)
             //{
@@ -62,46 +61,36 @@ namespace Ginger.Actions
             //}
         }
 
-        private void LoadPlugInsActions()
+        private void LoadPluginsActions()
         {
             ObservableList<PluginPackage> plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
             ObservableList<Act> PlugInsActions = new ObservableList<Act>();            
-            foreach (PluginPackage PW in plugins)
+            foreach (PluginPackage pluginPackage in plugins)
             {
                 try
                 {
-                    ObservableList<StandAloneAction> actions = PW.GetStandAloneActions();
+                    ObservableList<StandAloneAction> actions = pluginPackage.GetStandAloneActions();
                     
                     foreach (StandAloneAction SAA in actions)
                     {
-                        ActPlugIn act = new ActPlugIn();
+                        ActPlugIn act = new ActPlugIn();                        
                         act.Description = SAA.Description;
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.PlugInActionID),SAA.ID);
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.PluginID), pluginPackage.PluginID);
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.PluginActionID),SAA.ID);
                         foreach (var v in SAA.InputValues)
                         {
                             act.InputValues.Add(new ActInputValue() { Param = v.Param });
-                        }
-                        // act.InputValues
-                        act.Active = true;
-                        // act.PlugInName = PW.Name;
-                        //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginID, PW.ID);
-                        //act.GetOrCreateInputParam(ActPlugIn.Fields.PlugInActionID, PIA.ID);
-                        //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginDescription, PIA.Description);
-                        //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserDescription, PIA.UserDescription);
-                        //act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserRecommendedUseCase, PIA.UserRecommendedUseCase);
-
+                        }                        
+                        act.Active = true;                        
                         PlugInsActions.Add(act);
                     }
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the Action of the Plugin '" + PW.PluginID + "'", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginID + "'", ex);
                 }
             }
-            //if (PlugInsActions.Count > 0)
-            //{
-            //    IsPlugInAvailable = true;
-            //}
+          
             PlugInsActionsGrid.DataSourceList = PlugInsActions;
         }
 
