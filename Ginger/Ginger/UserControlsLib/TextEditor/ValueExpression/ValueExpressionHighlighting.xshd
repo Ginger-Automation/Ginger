@@ -67,6 +67,7 @@
       <Word>CDate</Word>
       <Word>Join</Word>
       <Word>Array</Word>
+      <Word>CStr</Word>
       <Word>WScript.CreateObject</Word>
     </Keywords>
 
