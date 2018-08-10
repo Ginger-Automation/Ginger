@@ -24,12 +24,12 @@
 
         </StackPanel>
 
-        <DataGrid x:Name="ServicesGrid" Grid.Row="1" IsReadOnly="True" SelectionChanged="ServicesGrid_SelectionChanged" ></DataGrid>
+        <StackPanel Grid.Row="1">
+            <Label>Services</Label>
+            <DataGrid x:Name="ServicesGrid" IsReadOnly="True" SelectionChanged="ServicesGrid_SelectionChanged" ></DataGrid>
+        </StackPanel>
 
         <TabControl Grid.Row="2">
-
-
-
             <TabItem Header="Actions">
                 <DataGrid x:Name="ActionsDataGrid" IsReadOnly="True"/>
             </TabItem>

@@ -51,7 +51,8 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                     ObservableList<StandAloneAction> actions = mPluginPackage.GetStandAloneActions();
                     ActionsDataGrid.ItemsSource = actions;
 
-                    ServicesGrid.ItemsSource = 
+
+                    ServicesGrid.ItemsSource = mPluginPackage.GetServices();
                     break;
 
             }

@@ -41,7 +41,10 @@ namespace Ginger.GingerGridLib
 
         private void NodeList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            ShowNodes();
+            this.Dispatcher.Invoke(()=> {
+                ShowNodes();
+            });
+
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)

@@ -208,20 +208,21 @@ namespace Amdocs.Ginger.Repository
             // FIXME Plug in ID
             //ActionHandler AH = GetStandAloneActionHandler("pp", gA.ID);            
             //ActionRunner.RunAction(AH.Instance, gA, AH);
-            GingerGrid mGingerGrid;
-
-            int HubPort = SocketHelper.GetOpenPort();
-            mGingerGrid = new GingerGrid(HubPort);
-            mGingerGrid.Start();
+            GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
+            
 
             string PID = "PACTService";  //temp!!!  GA.InputParams["PluginID"].GetValueAsString();
             PluginPackage p = (from x in mPluginPackages where x.PluginID == PID select x).SingleOrDefault();
-
-            // !!!!!!!!!!!!!!!!
+            if (p == null)
+            {
+                GA.AddError("Execute", "Plugin id not found: " + PID);
+                return;
+            }
+            // !!!!!!!!!!!!!!!! FIXMe remove hard coded
             string serviceID = "PACTService";
             
             string script = CommandProcessor.CreateLoadPluginScript(p.Folder);
-            script += CommandProcessor.CreateStartServiceScript(serviceID, "PACT Service", SocketHelper.GetLocalHostIP(), mGingerGrid.Port);
+            script += CommandProcessor.CreateStartServiceScript(serviceID, "PACT Service", SocketHelper.GetLocalHostIP(), gingerGrid.Port);
 
             Task t = new Task(() => {
                 GingerConsoleHelper.Execute(script);
@@ -232,14 +233,14 @@ namespace Amdocs.Ginger.Repository
             int counter = 0;
             while (GNI == null && counter < 30)
             {
-                GNI = (from x in mGingerGrid.NodeList where x.Name == "PACT Service" select x).FirstOrDefault();
+                GNI = (from x in gingerGrid.NodeList where x.Name == "PACT Service" select x).FirstOrDefault();
                 Thread.Sleep(1000);
             }
 
 
             GingerNodeProxy GNA = new GingerNodeProxy(GNI);
             GNA.Reserve();
-            GNA.GingerGrid = mGingerGrid;
+            GNA.GingerGrid = gingerGrid;
 
             GNA.RunAction(GA);
         }

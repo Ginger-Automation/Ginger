@@ -259,5 +259,30 @@ namespace Amdocs.Ginger.Repository
             }
             throw new Exception("Service not found in Plugin Package - " + serviceName);
         }
+
+        public List<PluginServiceBase> GetServices()
+        {
+            if (!Isloaded)
+            {
+                ScanPackage();
+            }
+
+            List<PluginServiceBase> services = new List<PluginServiceBase>();
+            // TODO: fix make more efficent and load only what needed
+            foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
+            {
+                var list = from type in PAI.Assembly.GetTypes()
+                           where typeof(PluginServiceBase).IsAssignableFrom(type) && type.IsAbstract == false
+                           select type;
+
+                foreach (Type t in list)
+                {
+                    PluginServiceBase service = (PluginServiceBase)PAI.Assembly.CreateInstance(t.FullName);   // TODO: fix me find the driver without creating instance
+                    services.Add(service);
+                }
+
+            }
+            return services;
+        }
     }
 }

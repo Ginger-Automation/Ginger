@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using GingerCoreNET.RunLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -122,19 +123,19 @@ namespace amdocs.ginger.GingerCoreNET
         //}
 
         // This is the local one 
-        //GingerGrid mLocalGingerGrid;
-        //public GingerGrid LocalGingerGrid
-        //{
-        //    get
-        //    {
-        //        if (mLocalGingerGrid == null)
-        //        {
-        //            mLocalGingerGrid = new GingerGrid(15001);   // TODO: config per user profile as many users can use the same machine
-        //            mLocalGingerGrid.Start();
-        //        }
-        //        return mLocalGingerGrid;
-        //    }
-        //}
+        GingerGrid mLocalGingerGrid;
+        public GingerGrid LocalGingerGrid
+        {
+            get
+            {
+                if (mLocalGingerGrid == null)
+                {
+                    mLocalGingerGrid = new GingerGrid(15001);   // TODO: config per user profile as many users can use the same machine
+                    mLocalGingerGrid.Start();
+                }
+                return mLocalGingerGrid;
+            }
+        }
 
         public BetaFeatures mBetaFeatures;
         public BetaFeatures BetaFeatures
