@@ -110,7 +110,7 @@ namespace Amdocs.Ginger.Common.Functionalities
             get
             {
                 string path = Path.GetDirectoryName(ParentItemToSave.FileName);
-                string s = path.Replace(SolutionFolder, string.Empty);
+                string s = path.Replace(SolutionFolder.TrimEnd(new char[] { '\\','/'}), string.Empty);
                 return s;
             }
             

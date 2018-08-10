@@ -86,6 +86,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Documents\AppVeyor\readme.md" />
+    <None Include="Documents\General\Ginger Coding Standards.md" />
     <None Include="Documents\General\Ginger Projects.md" />
     <None Include="Documents\Git\Git.md" />
     <None Include="Documents\Plugins\ExcelPlugin.md" />
