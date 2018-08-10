@@ -655,13 +655,6 @@ namespace GingerCore.Actions.WebAPI
 
         private void SetRequestContent( HttpMethod RequestMethod)
         {
-            ActInputValue ContetnTypeHeader = mAct.HttpHeaders.Where(x => x.Param == "Content-Type").FirstOrDefault();
-
-            if (ContetnTypeHeader != null)
-                ContentType = ContetnTypeHeader.ValueForDriver;
-            else
-                ContentType = "text/xml";
-
             List<KeyValuePair<string, string>> KeyValues = new List<KeyValuePair<string, string>>();
 
             if ((RequestMethod.ToString() == ApplicationAPIUtils.eRequestType.GET.ToString()))
