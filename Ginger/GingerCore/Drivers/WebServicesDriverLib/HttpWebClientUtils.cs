@@ -105,7 +105,12 @@ namespace GingerCore.Actions.WebAPI
                         string value = mAct.HttpHeaders[i].ValueForDriver;
                         Client.DefaultRequestHeaders.Add(key, value);
                     }
-
+                    if (mAct.HttpHeaders[i].Param == "Content-Type")
+                    {
+                        string key = mAct.HttpHeaders[i].ItemName.ToString();
+                        string value = mAct.HttpHeaders[i].ValueForDriver;
+                        ContentType = value;
+                    }
                 }
             }
         }
@@ -770,29 +775,32 @@ namespace GingerCore.Actions.WebAPI
 
         private void SetContentType()
         {
-            eContentType = (ApplicationAPIUtils.eContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eContentType>(ActWebAPIRest.Fields.ContentType);
-            switch (eContentType)
+            if (ContentType == null)
             {
-                case ApplicationAPIUtils.eContentType.JSon:
-                    Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    ContentType = "application/json";
-                    break;
-                case ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded:
-                    Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-                    ContentType = "application/x-www-form-urlencoded";
-                    break;
-                case ApplicationAPIUtils.eContentType.FormData:
-                    Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("multipart/form-data"));
-                    ContentType = "multipart/form-data"; //update to correct value
-                    break;
-                case ApplicationAPIUtils.eContentType.TextPlain:
-                    Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
-                    ContentType = "text/plain; charset=utf-8";
-                    break;
-                case ApplicationAPIUtils.eContentType.XML:
-                    Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
-                    ContentType = "text/xml";
-                    break;
+                eContentType = (ApplicationAPIUtils.eContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eContentType>(ActWebAPIRest.Fields.ContentType);
+                switch (eContentType)
+                {
+                    case ApplicationAPIUtils.eContentType.JSon:
+                        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        ContentType = "application/json";
+                        break;
+                    case ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded:
+                        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                        ContentType = "application/x-www-form-urlencoded";
+                        break;
+                    case ApplicationAPIUtils.eContentType.FormData:
+                        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("multipart/form-data"));
+                        ContentType = "multipart/form-data"; //update to correct value
+                        break;
+                    case ApplicationAPIUtils.eContentType.TextPlain:
+                        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
+                        ContentType = "text/plain; charset=utf-8";
+                        break;
+                    case ApplicationAPIUtils.eContentType.XML:
+                        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
+                        ContentType = "text/xml";
+                        break;
+                }
             }
         }
 
