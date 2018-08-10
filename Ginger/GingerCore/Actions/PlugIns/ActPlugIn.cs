@@ -16,27 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerPlugIns.ActionsLib;
-using GingerPlugInsNET.ActionsLib;
 using System.Collections.Generic;
 
 namespace GingerCore.Actions.PlugIns
 {
     public class ActPlugIn : ActWithoutDriver
     {
-        public new static class Fields
-        {
-            public static string PluginID = "PluginID";
-            public static string PlugInName = "PlugInName";
-            public static string PlugInActionID = "PlugInActionID";
-            public static string PluginDescription = "PluginDescription";
-            public static string PluginUserDescription = "PluginUserDescription";
-            public static string PluginUserRecommendedUseCase = "PluginUserRecommendedUseCase";
-        }
-
+      
         public override string ActionType
         {
             get
@@ -48,9 +36,8 @@ namespace GingerCore.Actions.PlugIns
         public override string ActionDescription
         {
             get
-            {
-                // return this.GetInputParamValue(Fields.PluginDescription); 
-                return "aaaaaa";  //TODO: Fix me
+            {                
+                return "Plugin Description";
             }
         }
 
@@ -59,15 +46,14 @@ namespace GingerCore.Actions.PlugIns
         public override string ActionUserDescription
         {
             get
-            {
-                // return this.GetInputParamValue(Fields.PluginUserDescription);
-                return "zzzzz";   //TODO: Fix me
+            {                
+                return "Plugin Action";   
             }
         }
 
         public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
         {
-            // TBH.AddText(this.GetInputParamValue(Fields.PluginUserRecommendedUseCase)); 
+            TBH.AddText("See Plugin Documentation");             
         }
 
         public override bool ObjectLocatorConfigsNeeded
@@ -100,29 +86,11 @@ namespace GingerCore.Actions.PlugIns
 
         public string PlugInName { get; set; }
 
-        public string PlugInID { get { return this.GetInputParamValue(Fields.PluginID); } }
+        public string PluginID { get { return this.GetInputParamValue(nameof(PluginID)); } }
 
-        public string PlugInActionID { get { return this.GetInputParamValue(Fields.PlugInActionID); } }
+        public string PlugInActionID { get { return this.GetInputParamValue(nameof(PlugInActionID)); } }
 
-        //private GingerAction mGingerAction = null;
-        //public GingerAction GingerAction
-        //{
-        //    get
-        //    {
-        //        if (mGingerAction == null)
-        //        {
-        //            mGingerAction = new GingerAction();
-        //            mGingerAction.ID = PlugInActionID;
-        //            mGingerAction.SolutionFolder = SolutionFolder;
-        //            foreach (ActInputValue AIV in this.InputValues)
-        //            {
-        //                ActionParam AP = mGingerAction.GetOrCreateParam(AIV.Param);
-        //                AP.Value = AIV.Value;
-        //            }
-        //        }
-        //        return mGingerAction;
-        //    }
-        //}
+        
         
         public override void Execute() { }// Execute is being performed inside Ginger Runner
     }
