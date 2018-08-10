@@ -25,6 +25,12 @@ using GingerCore.Environments;
 using GingerCore.Actions;
 using GingerCore.NoSqlBase;
 using amdocs.ginger.GingerCoreNET;
+using System.IO;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using Amdocs.Ginger.Common;
+using System.Windows.Data;
+using System.Text.RegularExpressions;
 
 namespace Ginger.Actions
 {
@@ -90,15 +96,16 @@ namespace Ginger.Actions
             ColumnComboBox.Items.Add(mValidationDB.Column);
             ComboAutoSelectIfOneItemOnly(ColumnComboBox);
             SetVisibleControlsForAction();
+            SetQueryParamsGrid();
         }
-
+                
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             string SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
             bool ImportFileFlag = false;
             string FileName = QueryFile.ValueTextBox.Text;
             Boolean.TryParse(mValidationDB.GetInputParamValue(ActDBValidation.Fields.ImportFile), out ImportFileFlag);
-            if (ImportFileFlag)
+            if (ImportFileFlag && !FileName.StartsWith(@"~\"))
             {
                 //TODO import request File
                 string targetPath = SolutionFolder + @"Documents\SQL";
@@ -106,7 +113,7 @@ namespace Ginger.Actions
                 {
                     System.IO.Directory.CreateDirectory(targetPath);
                 }
-                string destFile = System.IO.Path.Combine(targetPath, FileName.Remove(0, 3));
+                string destFile = System.IO.Path.Combine(targetPath, FileName.Remove(0, FileName.LastIndexOf(@"\")+1));
                 int fileNum = 1;
                 string copySufix = "_Copy";
                 while (System.IO.File.Exists(destFile))
@@ -121,25 +128,61 @@ namespace Ginger.Actions
                 System.IO.File.Copy(FileName, destFile, true);
                 QueryFile.ValueTextBox.Text = @"~\Documents\SQL\" + System.IO.Path.GetFileName(destFile);
             }
-            if (FileName != "")
-            {
-                mValidationDB.ReturnValues.Clear();
-                mValidationDB.InputValues.Clear();
-
-                string[] script = File.ReadAllLines(FileName);
-                ScriptDescriptionLabel.Content = "";
-                parseScriptHeader(script);                
+            if (FileName != "" && File.Exists(FileName.Replace(@"~\", SolutionFolder)))
+            {   
+                mValidationDB.QueryParams.Clear();                
+                string[] script = File.ReadAllLines(FileName.Replace(@"~\",SolutionFolder));                
+                parseScriptHeader(script);               
+                if (mValidationDB.QueryParams.Count > 0)
+                    QueryParamsPanel.Visibility = Visibility.Visible;
+                else
+                    QueryParamsPanel.Visibility = Visibility.Collapsed;
+                QueryParamsGrid.DataSourceList = mValidationDB.QueryParams;
+               
             }
         }
         private void parseScriptHeader(string[] script)
         {
             foreach (string line in script)
-            {                
-                if (line.StartsWith("--GINGER_$"))
+            {
+                var pattern = @"<<([^<^>].*?)>>"; // like div[1]
+                                                  // Parse the XPath to extract the nodes on the path
+                var matches = Regex.Matches(line, pattern);
+                foreach(Match match in matches)
                 {
-                    mValidationDB.AddOrUpdateInputParamValue(line.Replace("--GINGER_$", ""), "");
+                    ActInputValue AIV = (from aiv in mValidationDB.QueryParams where aiv.Param == match.Groups[1].Value select aiv).FirstOrDefault();
+                    if (AIV == null)
+                    {
+                        AIV = new ActInputValue();
+                        // AIV.Active = true;
+
+                        AIV.Param = match.Groups[1].Value;
+                        mValidationDB.QueryParams.Add(AIV);
+                        AIV.Value = "";                        
+                    }                    
                 }
             }
+        }
+        private void SetQueryParamsGrid()
+        {
+            //Show/hide if needed
+            //QueryParamsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddInputValue));//?? going to be hide in next line code
+
+            QueryParamsGrid.SetTitleLightStyle = true;
+            QueryParamsGrid.ClearTools();
+            QueryParamsGrid.ShowDelete = System.Windows.Visibility.Visible;
+
+            //List<GridColView> view = new List<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["QueryParamExpressionButton"] });
+            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.ValueForDriver, Header = "Value ForDriver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+
+            QueryParamsGrid.SetAllColumnsDefaultView(view);
+            QueryParamsGrid.InitViewItems();
         }
 
         private void ComboAutoSelectIfOneItemOnly(ComboBox comboBox)
@@ -302,6 +345,15 @@ namespace Ginger.Actions
                     {
                         SqlFile.Visibility = System.Windows.Visibility.Visible;
                         FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+
+                        if(mValidationDB.QueryParams != null)
+                        {
+                            if (mValidationDB.QueryParams.Count > 0)
+                                QueryParamsPanel.Visibility = Visibility.Visible;
+                            else
+                                QueryParamsPanel.Visibility = Visibility.Collapsed;
+                            QueryParamsGrid.DataSourceList = mValidationDB.QueryParams;
+                        }
                     }
                     DoCommit.Visibility = System.Windows.Visibility.Collapsed;
                     TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -331,6 +383,7 @@ namespace Ginger.Actions
                     RadioButtonsSection.Visibility = System.Windows.Visibility.Collapsed;
                     TableColWhereStackPanel.Visibility = System.Windows.Visibility.Visible;
                     DoCommit.Visibility = System.Windows.Visibility.Collapsed;
+                    SqlFile.Visibility = System.Windows.Visibility.Collapsed;                    
                     break;
                 case ActDBValidation.eDBValidationType.RecordCount:
                     checkQueryType();
@@ -355,6 +408,7 @@ namespace Ginger.Actions
                     FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
                     TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                     DoCommit.Visibility = System.Windows.Visibility.Collapsed;
+                    SqlFile.Visibility = System.Windows.Visibility.Collapsed;
                     FreeSQLLabel.Content = @"Record count - SELECT COUNT(1) FROM {Table} - Enter only Table name below (+optional WHERE clause)";
                     break;
 
@@ -444,6 +498,13 @@ namespace Ginger.Actions
 
                 QueryFile.ValueTextBox.Text = FileName;                
             }
+        }
+
+        private void QueryParamGridVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActInputValue AIV = (ActInputValue)QueryParamsGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
+            VEEW.ShowAsWindow();
         }
     }
 }
