@@ -41,9 +41,9 @@ namespace Ginger
         {
             Automation = 0, //Item opened from Automate tab and saved item should be App.BusiessFlow
             Standalone = 1, //Allow edit with Save
-            SharedReposiotry = 1,  //Item opened as standalone item like in Shared Repository in which the item iteself supposed to be saved to XML
-            Child = 2, //Item opened for edit but save need to be done for it parent which was provided for page
-            View = 3 //item should be open for read only
+            SharedReposiotry = 2,  //Item opened as standalone item like in Shared Repository in which the item iteself supposed to be saved to XML
+            Child = 3, //Item opened for edit but save need to be done for it parent which was provided for page
+            View = 4 //item should be open for read only
 
         }
 
