@@ -5713,44 +5713,64 @@ namespace GingerCore.Drivers
         private void DoDragAndDrop(ActUIElement act, IWebElement e)
         {
             var sourceElement = e;
-            string TargetElementLocator = act.TargetLocateBy.ToString();
+          
             string TargetElementLocatorValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.TargetLocateValue.ToString());
 
-            IWebElement targetElement = LocateElement(act, true, TargetElementLocator, TargetElementLocatorValue);
-            if (targetElement != null)
+            if (act.TargetLocateBy == eLocateBy.ByXY)
             {
-                ActUIElement.eElementDragDropType dragDropType;
-                if (act.GetInputParamValue(ActUIElement.Fields.DragDropType) == null || Enum.TryParse<ActUIElement.eElementDragDropType>(act.GetInputParamValue(ActUIElement.Fields.DragDropType).ToString(), out dragDropType) == false)
+                var xyLocator = TargetElementLocatorValue.Split(',');
+                if (xyLocator.Count() == 2)
                 {
-                    act.Error = "Failed to perform drag and drop, invalid drag and drop type";
+                    var xLocator = Convert.ToInt32(xyLocator[0]);
+                    var yLocator = Convert.ToInt32(xyLocator[1]);
+                    OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
+                    action.DragAndDropToOffset(sourceElement, xLocator, yLocator).Build().Perform();
                 }
                 else
                 {
-                    switch (dragDropType)
-                    {
-                        case ActUIElement.eElementDragDropType.DragDropSelenium:
-                            OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
-                            OpenQA.Selenium.Interactions.IAction dragdrop = action.ClickAndHold(sourceElement).MoveToElement(targetElement).Release(targetElement).Build();
-                            dragdrop.Perform();
-                            break;
-                        case ActUIElement.eElementDragDropType.DragDropJS:
-                            string script = Properties.Resources.Html5DragAndDrop;
-                            script += "simulateHTML5DragAndDrop(arguments[0], arguments[1])";
-                            IJavaScriptExecutor executor = (IJavaScriptExecutor)Driver;
-                            executor.ExecuteScript(script, sourceElement, targetElement);
-                            break;
-                        default:
-                            act.Error = "Failed to perform drag and drop, invalid drag and drop type";
-                            break;
-
-                    }
-                    //TODO: Add validation to verify if Drag and drop is perfromed or not and fail the action if needed
+                    act.Error = "Target XY co-oridante is not correct: " + TargetElementLocatorValue;
                 }
             }
             else
             {
-                act.Error = "Targent Element not found: " + TargetElementLocator + "=" + TargetElementLocatorValue;
+                string TargetElementLocator = act.TargetLocateBy.ToString();
+                IWebElement targetElement = LocateElement(act, true, TargetElementLocator, TargetElementLocatorValue);
+                if (targetElement != null)
+                {
+                    ActUIElement.eElementDragDropType dragDropType;
+                    if (act.GetInputParamValue(ActUIElement.Fields.DragDropType) == null || Enum.TryParse<ActUIElement.eElementDragDropType>(act.GetInputParamValue(ActUIElement.Fields.DragDropType).ToString(), out dragDropType) == false)
+                    {
+                        act.Error = "Failed to perform drag and drop, invalid drag and drop type";
+                    }
+                    else
+                    {
+                        switch (dragDropType)
+                        {
+                            case ActUIElement.eElementDragDropType.DragDropSelenium:
+                                OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
+                                OpenQA.Selenium.Interactions.IAction dragdrop = action.ClickAndHold(sourceElement).MoveToElement(targetElement).Release(targetElement).Build();
+                                dragdrop.Perform();
+                                break;
+                            case ActUIElement.eElementDragDropType.DragDropJS:
+                                string script = Properties.Resources.Html5DragAndDrop;
+                                script += "simulateHTML5DragAndDrop(arguments[0], arguments[1])";
+                                IJavaScriptExecutor executor = (IJavaScriptExecutor)Driver;
+                                executor.ExecuteScript(script, sourceElement, targetElement);
+                                break;
+                            default:
+                                act.Error = "Failed to perform drag and drop, invalid drag and drop type";
+                                break;
+
+                        }
+                        //TODO: Add validation to verify if Drag and drop is perfromed or not and fail the action if needed
+                    }
+                }
+                else
+                {
+                    act.Error = "Target Element not found: " + TargetElementLocator + "=" + TargetElementLocatorValue;
+                }
             }
+         
         }
 
         public void DoUIElementClick(ActUIElement.eElementAction clickType, IWebElement clickElement)
