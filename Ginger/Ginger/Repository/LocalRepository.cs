@@ -57,9 +57,7 @@ namespace Ginger.Repository
         private static ObservableList<Act> mRepoActionsCache = null;
         private static ObservableList<VariableBase> mRepoVariablesCache = null;
         private static ObservableList<RunSetConfig> mRunSetsCache = null;
-        private static ObservableList<BusinessFlowExecutionSummary> mExectionResultsCache = null;
-        
-        // private static ObservableList<PlugInWrapper> mPlugInsCache = null;
+        private static ObservableList<BusinessFlowExecutionSummary> mExectionResultsCache = null;        
 
         public bool UpdateAppProgressBar = true;
 
@@ -165,11 +163,7 @@ namespace Ginger.Repository
                     mExectionResultsCache.Add((BusinessFlowExecutionSummary)itemToAdd);
             }
           
-            //else if(itemToAdd is PlugInWrapper)
-            //{
-            //    if (mPlugInsCache.Where(x => x.Guid == itemToAdd.Guid).FirstOrDefault() == null)
-            //        mPlugInsCache.Add((PlugInWrapper)itemToAdd);
-            //}
+            
             
 
         }
@@ -199,8 +193,7 @@ namespace Ginger.Repository
                 mRunSetsCache.Remove((RunSetConfig)itemToRemove);
             else if (itemToRemove is BusinessFlowExecutionSummary)
                 mExectionResultsCache.Remove((BusinessFlowExecutionSummary)itemToRemove);                        
-            //else if (itemToRemove is PlugInWrapper)
-            //    mPlugInsCache.Remove((PlugInWrapper)itemToRemove);
+            
             
         }
 
@@ -228,8 +221,7 @@ namespace Ginger.Repository
                 item = mRepoActionsCache.Where(x => x.FileName == fileName).FirstOrDefault();
             else if (ItemType == typeof(VariableBase))
                 item = mRepoVariablesCache.Where(x => x.FileName == fileName).FirstOrDefault();            
-            //else if (ItemType == typeof(PlugInWrapper))
-            //    item = mPlugInsCache.Where(x => x.FileName == fileName).FirstOrDefault();
+            
 
             if (item == null)
             {
@@ -279,8 +271,7 @@ namespace Ginger.Repository
                 item = mRepoActionsCache.Where(x => x.Guid == ItemGuid).FirstOrDefault();
             else if (ItemType == typeof(VariableBase))
                 item = mRepoVariablesCache.Where(x => x.Guid == ItemGuid).FirstOrDefault();            
-            //else if (ItemType == typeof(PlugInWrapper))
-            //    item = mPlugInsCache.Where(x => x.Guid == ItemGuid).FirstOrDefault();
+            
 
             return (T)item;
         }
@@ -376,11 +367,7 @@ namespace Ginger.Repository
                     mExectionResultsCache.RemoveAt(itemToReplce.Key);
                     mExectionResultsCache.Insert(itemToReplce.Key, (BusinessFlowExecutionSummary)itemToReplce.Value);
                 }               
-                //else if (itemType == typeof(PlugInWrapper))
-                //{
-                //    mPlugInsCache.RemoveAt(itemToReplce.Key);
-                //    mPlugInsCache.Insert(itemToReplce.Key, (PlugInWrapper)itemToReplce.Value);
-                //}
+                
             }
 
             //add missing items to cache
@@ -439,8 +426,7 @@ namespace Ginger.Repository
                     mRunSetsCache.Remove((RunSetConfig)itemToRemove);
                 else if (itemType == typeof(BusinessFlowExecutionSummary))
                     mExectionResultsCache.Remove((BusinessFlowExecutionSummary)itemToRemove);               
-                //else if (itemType == typeof(PlugInWrapper))
-                //    mPlugInsCache.Remove((PlugInWrapper)itemToRemove);
+                
             }
 
             //notify on Duplicated items
@@ -497,13 +483,7 @@ namespace Ginger.Repository
         }
 
       
-        //public void RefreshSolutionPlugInConfigurationsCache(string specificFolderPath = "")
-        //{
-        //    if (mPlugInsCache == null) return;
-        //    ObservableList<object> cacheList = new ObservableList<object>(mPlugInsCache.ToList());
-        //    RefreshItemTypeCache(typeof(PlugInWrapper), cacheList, specificFolderPath);
-        //}
-
+        
       
 
         public void ClearItemCache(Type ItemTypeToClear)
@@ -529,8 +509,7 @@ namespace Ginger.Repository
                 mRepoVariablesCache = null;
             //else if (ItemTypeToClear == typeof(DataSourceBase))
             //    mDataSourcesCache = null;
-            //else if (ItemTypeToClear == typeof(PlugInWrapper))
-            //    mPlugInsCache = null;
+            
         }
 
         public void ClearAllCache()
@@ -1366,32 +1345,7 @@ namespace Ginger.Repository
         
         #endregion Data Sources
 
-        //#region PlugIns
-        //public ObservableList<PlugInWrapper> GetSolutionPlugIns(bool UseCache = true, string specificFolderPath = "", bool includeSubFolders = false)
-        //{
-        //    if(mPlugInsCache == null)
-        //    {
-        //        string plugInsDirectoryPath = Path.Combine(App.UserProfile.Solution.Folder.ToUpper(), "PlugIns");
-        //        System.IO.Directory.CreateDirectory(plugInsDirectoryPath);
-        //        mPlugInsCache = new ObservableList<PlugInWrapper>();
-        //        string[] plugInsFolders = Directory.GetDirectories(plugInsDirectoryPath);
-        //        foreach (string plugInFolder in plugInsFolders)
-        //        {
-        //            LoadObjectsToList(mPlugInsCache, typeof(PlugInWrapper), plugInFolder);
-        //        }
-
-        //    }
-        //    ObservableList<object> cacheList = new ObservableList<object>(mPlugInsCache.ToList());
-        //    return GetItemTypeObjects<PlugInWrapper>(typeof(PlugInWrapper), cacheList, UseCache, specificFolderPath, true);
-        //}
-
-        //public void RefreshSolutionPluginsCache(string specificFolderPath = "")
-        //{
-        //    if (mPlugInsCache == null) return;
-        //    ObservableList<object> cacheList = new ObservableList<object>(mPlugInsCache.ToList());
-        //    RefreshItemTypeCache(typeof(PlugInWrapper), cacheList, specificFolderPath);
-        //}
-        //#endregion
+       
 
         public static RunSetConfig CreateNewRunset(string runSetName, string runSetFolderPath=null)
         {        

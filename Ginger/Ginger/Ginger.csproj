@@ -780,7 +780,6 @@
     <Compile Include="RunLibNew\GingerSocketMonitorWindow.xaml.cs">
       <DependentUpon>GingerSocketMonitorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PluginsLib\PlugInsIntegration.cs" />
     <Compile Include="GeneralWindows\Run Set Pages\RunnerPage.xaml.cs">
       <DependentUpon>RunnerPage.xaml</DependentUpon>
     </Compile>

@@ -1816,35 +1816,7 @@ namespace Ginger.Run
             // TODO copy output too
             
 
-            //PlugInWrapper PlugInWrapper = PlugInsList.Where(x=>x.ID == API.PlugInID).FirstOrDefault();
-            //if (PlugInWrapper == null)
-            //{
-            //    API.Error += "Failed to find the Action's PlugIn";
-            //    return;
-            //}
-            ////Initilizing GingerAction fields
-            //API.GingerAction.Error = string.Empty;
-            //API.GingerAction.ExInfo = string.Empty;
-
-            //API.RunOnBusinessFlow = CurrentBusinessFlow;
-            //API.RunOnEnvironment = ProjEnvironment;
-            //API.SolutionFolder = SolutionFolder;
-            //API.DSList = this.DSList;
-            //try
-            //{
-            //    PlugInWrapper.RunAction(API.GingerAction);
-            //    foreach (ActionOutput s in API.GingerAction.ParamsOut)
-            //    {
-            //        ((ActPlugIn)act).AddOrUpdateReturnParamActualWithPath(s.Param, s.Value, s.Path);
-            //    }
-            //    API.Error += API.GingerAction.Error;
-            //    API.ExInfo += API.GingerAction.ExInfo;
-            //}
-            //catch (Exception ex)
-            //{
-            //    if (string.IsNullOrEmpty(act.Error))
-            //        act.Error = ex.Message;
-            //}
+            
         }
 
         private void ResetAction(Act act)

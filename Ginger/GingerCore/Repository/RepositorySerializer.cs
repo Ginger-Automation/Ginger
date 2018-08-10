@@ -909,8 +909,7 @@ namespace GingerCore.Repository
             if (t == typeof(BusinessFlow)) { return "BusinessFlow"; }
             if (t == typeof(ActivitiesGroup)) { return "ActivitiesGroup"; }
             if (t == typeof(Activity)) { return "Activity"; }
-            if (t == typeof(ErrorHandler)) { return "Activity"; }
-            // if (t == typeof(PlugInWrapper)) { return "PlugIn"; }
+            if (t == typeof(ErrorHandler)) { return "Activity"; }            
             if (typeof(Act).IsAssignableFrom(t)) { return "Action"; }
             if (typeof(VariableBase).IsAssignableFrom(t)) { return "Variable"; }
             if (typeof(DataSourceBase).IsAssignableFrom(t)) return "DataSource";

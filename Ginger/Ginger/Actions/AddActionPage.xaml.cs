@@ -65,8 +65,7 @@ namespace Ginger.Actions
         private void LoadPlugInsActions()
         {
             ObservableList<PluginPackage> plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-            ObservableList<Act> PlugInsActions = new ObservableList<Act>();
-            // ObservableList<PlugInWrapper> PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+            ObservableList<Act> PlugInsActions = new ObservableList<Act>();            
             foreach (PluginPackage PW in plugins)
             {
                 try

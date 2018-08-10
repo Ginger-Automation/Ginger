@@ -430,7 +430,6 @@
     <Compile Include="Actions\Common\ElementConfigControl.cs" />
     <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
     <Compile Include="Actions\PlugIns\ActPlugIn.cs" />
-    <Compile Include="Actions\PlugIns\PlugInWrapper.cs" />
     <Compile Include="Actions\VisualTesting\ApplitoolsAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\IVisualAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\IVisualTestingDriver.cs" />

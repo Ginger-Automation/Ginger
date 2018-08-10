@@ -211,8 +211,7 @@ namespace GingerCore
             if (T == typeof(BusinessFlow)) { return "BusinessFlow"; }
             if (T == typeof(ActivitiesGroup)) { return "ActivitiesGroup"; }
             if (T == typeof(Activity)) { return "Activity"; }
-            if (T == typeof(ErrorHandler)) { return "Activity"; }
-            // if (T == typeof(PlugInWrapper)) { return "PlugIn"; }
+            if (T == typeof(ErrorHandler)) { return "Activity"; }            
             if (typeof(Act).IsAssignableFrom(T)) { return "Action"; }
             if (typeof(VariableBase).IsAssignableFrom(T)) { return "Variable"; }
             if (typeof(DataSourceBase).IsAssignableFrom(T)) return "DataSource";        

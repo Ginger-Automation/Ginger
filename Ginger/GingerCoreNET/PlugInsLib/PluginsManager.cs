@@ -244,5 +244,60 @@ namespace Amdocs.Ginger.Repository
 
             GNA.RunAction(GA);
         }
+
+
+
+        // We search the plug in for all files it can edit if this plugin implemented capability of text editor
+        //        public List<PlugInTextFileEditorBase> TextEditors()
+        //        {
+        //            List<PlugInTextFileEditorBase> list = new List<PlugInTextFileEditorBase>();
+        //            //TODO:: Need to be handled once PACT implementation is done
+        //            //foreach (PlugInCapability c in PlugIn.Capabilities())
+        //            //{
+        //            //    if (c is PlugInTextFileEditorBase)
+        //            //    {
+        //            //        list.Add((PlugInTextFileEditorBase)c);
+        //            //    }
+        //            //}
+        //            return list;
+        //        }
+
+        //        public List<string> GetExtentionsByEditorID(string plugInEditorID)
+        //        {
+        //            foreach (PlugInTextFileEditorBase PITFEB in TextEditors())
+        //            {
+        //                if (PITFEB.EditorID == plugInEditorID)
+        //                {
+        //                    return PITFEB.Extensions;
+        //                }
+        //            }
+        //            return null;
+        //        }
+
+        //        public PlugInTextFileEditorBase GetPlugInTextFileEditorBaseByEditorID(string plugInEditorID)
+        //        {
+        //            foreach (PlugInTextFileEditorBase PITFEB in TextEditors())
+        //            {
+        //                if (PITFEB.EditorID == plugInEditorID)
+        //                {
+        //                    return PITFEB;
+        //                }
+        //            }
+        //            return null;
+        //        }
+
+        //        public string GetTemplateContentByEditorID(string plugInEditorID, string plugInExtension)
+        //        {
+        //            foreach (PlugInTextFileEditorBase PITFEB in TextEditors())
+        //            {
+        //                if (PITFEB.EditorID == plugInEditorID)
+        //                {
+        //                    return PITFEB.GetTemplatesByExtensions("." + plugInExtension);
+        //                }
+        //            }
+        //            return null;
+        //        }
+
+
     }
 }
