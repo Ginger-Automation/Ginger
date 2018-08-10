@@ -42,7 +42,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.NA)
+            if (platform == ePlatformType.Web || platform == ePlatformType.NA)
             {
                 return true;
             }
@@ -56,8 +56,9 @@ namespace GingerCore.Actions
 
         ePlatformType IObsoleteAction.GetTargetPlatform()
         {
-            return ePlatformType.NA;
+            return ePlatformType.Web;
         }
+
         Type IObsoleteAction.TargetAction()
         {
             return GetActionTypeByElementActionName(GenElementAction);

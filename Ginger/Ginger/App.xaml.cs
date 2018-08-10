@@ -330,14 +330,9 @@ namespace Ginger
 
             if (Environment.GetCommandLineArgs().Count() > 1)
             {
-                //Check that Ginger is not executed from GingerTest
-                if (!Environment.GetCommandLineArgs()[0].Contains("testhost"))
-                {
-                    // OK we run with command line args of run set to execute
-                    // RunningFromConfigFile = true;
-                    Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
-                    Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)
-                }
+                RunningFromConfigFile = true;
+                Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
+                Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)               
             }
 
             string phase = string.Empty;
