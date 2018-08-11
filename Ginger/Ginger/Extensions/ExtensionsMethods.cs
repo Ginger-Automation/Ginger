@@ -34,6 +34,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System.ComponentModel;
 using GingerCore.Actions.Common;
+using Ginger.Agents;
 
 namespace Ginger
 {
@@ -175,7 +176,7 @@ namespace Ginger
                 return;
             }
 
-            throw new Exception("trying to add rule to contole which is not binded - " + comboBox.Name);
+            throw new Exception("trying to add rule to control which is not binded - " + comboBox.Name);
         }
 
         public static void AddValidationRule(this ComboBox comboBox, eValidationRule validationRule)
@@ -224,7 +225,22 @@ namespace Ginger
             }
         }
 
+        // ------------------------------------------------------------
+        // ucAgentControl
+        // ------------------------------------------------------------
+        public static void AddValidationRule(this ucAgentControl agentControl, ValidationRule validationRule)
+        {
+            BindingExpression bd = null;
+            
+            bd = agentControl.GetBindingExpression(ucAgentControl.SelectedAgentProperty);
+            if (bd != null)
+            {
+                AddValidation(agentControl, ucAgentControl.SelectedAgentProperty, validationRule);
+                return;
+            }           
 
+            throw new Exception("trying to add rule to AgentControl user control which is not binded - " + agentControl.Name);
+        }
 
 
         // ------------------------------------------------------------

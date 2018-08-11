@@ -3,6 +3,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,8 +22,18 @@ namespace Ginger.Agents
     /// <summary>
     /// Interaction logic for ucAgentControl.xaml
     /// </summary>
-    public partial class ucAgentControl : UserControl
+    public partial class ucAgentControl : UserControl, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));                
+            }
+        }
+
         ObservableList<Agent> mOptionalAgentsList = null;
 
         public ucAgentControl()
@@ -31,6 +42,7 @@ namespace Ginger.Agents
         }
 
         public static readonly DependencyProperty SelectedAgentProperty = DependencyProperty.Register("SelectedAgent", typeof(Agent), typeof(ucAgentControl), new PropertyMetadata(null, new PropertyChangedCallback(OnSelectedAgentChanged)));
+      
 
         public Agent SelectedAgent
         {
@@ -40,7 +52,9 @@ namespace Ginger.Agents
             }
             set
             {
-                SetValue(SelectedAgentProperty, value);                 
+                SetValue(SelectedAgentProperty, value);
+                OnPropertyChanged(nameof(SelectedAgent));
+                OnPropertyChanged(nameof(AgentIsRunning));
             }
            
         }
@@ -50,7 +64,7 @@ namespace Ginger.Agents
             //ucAgentControl.xAgentsComboBox.SelectedItem = (Agent)e.NewValue;
         }
 
-        private IWindowExplorer mIWindowExplorerDriver
+        public IWindowExplorer IWindowExplorerDriver
         {
             get
             {
@@ -60,7 +74,17 @@ namespace Ginger.Agents
                     return null;
             }
         }
-
+        
+        public bool AgentIsRunning
+        {
+            get
+            {
+                if(SelectedAgent != null && SelectedAgent.Status == Agent.eStatus.Running)
+                    return true;
+                else
+                    return false;
+            }
+        }
 
         public void Init(ObservableList<Agent> optionalAgentsList)
         {
@@ -103,6 +127,8 @@ namespace Ginger.Agents
             {                
                 xAgentStatusBtn.ButtonImageForground = Brushes.Gray;
                 xAgentStatusBtn.ToolTip = "Please select Agent";
+                xAgentConfigsExpander.IsExpanded = false;
+                xAgentConfigsExpander.IsEnabled = false;
                 xAgentConfigurationsGrid.IsEnabled = false;
                 return;
             }         
@@ -114,13 +140,17 @@ namespace Ginger.Agents
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Power;
                     xAgentStatusBtn.ButtonImageForground = Brushes.Red;
                     xAgentStatusBtn.ToolTip = "Agent is Off, click to turn it On";
+                    xAgentConfigsExpander.IsExpanded = false;
+                    xAgentConfigsExpander.IsEnabled = false;
                     xAgentConfigurationsGrid.IsEnabled = false;
                     break;
 
                 case Agent.eStatus.Starting:
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
                     xAgentStatusBtn.ButtonImageForground = Brushes.Orange;                    
-                    xAgentStatusBtn.ToolTip = "Agent is starting...";                    
+                    xAgentStatusBtn.ToolTip = "Agent is starting...";
+                    xAgentConfigsExpander.IsExpanded = false;
+                    xAgentConfigsExpander.IsEnabled = false;
                     xAgentConfigurationsGrid.IsEnabled = false;
                     break;
 
@@ -130,6 +160,8 @@ namespace Ginger.Agents
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Power;
                     xAgentStatusBtn.ButtonImageForground = Brushes.Green;                   
                     xAgentStatusBtn.ToolTip = "Agent is On, click to turn it Off";
+                    xAgentConfigsExpander.IsExpanded = true;
+                    xAgentConfigsExpander.IsEnabled = true;
                     xAgentConfigurationsGrid.IsEnabled = true;
                     break;
             }
@@ -144,14 +176,14 @@ namespace Ginger.Agents
             switch (SelectedAgent.Status)
             {
                 case Agent.eStatus.FailedToStart:
-                case Agent.eStatus.NotStarted:                    
+                case Agent.eStatus.NotStarted:
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgent, null, SelectedAgent.Name, "");
                     if (SelectedAgent.Status == Agent.eStatus.Running) SelectedAgent.Close();
                     SelectedAgent.SolutionFolder = App.UserProfile.Solution.Folder;
                     SelectedAgent.ProjEnvironment = null;// App.AutomateTabEnvironment;
                     SelectedAgent.BusinessFlow = null; //App.BusinessFlow; ;                    
                     SelectedAgent.DSList = null; //App.LocalRepository.GetSolutionDataSources();
-                    SelectedAgent.StartDriver();                  
+                    SelectedAgent.StartDriver();
                     Reporter.CloseGingerHelper();
                     //If there is errorMessageFromDriver is populated then do not wait. 
                     if (SelectedAgent.Driver != null && String.IsNullOrEmpty(SelectedAgent.Driver.ErrorMessageFromDriver))
@@ -176,6 +208,21 @@ namespace Ginger.Agents
                     SelectedAgent.Close();
                     break;
             }
+
+            //SelectedAgent = SelectedAgent; //OnPropertyChanged(nameof(SelectedAgent));
+            UpdateBinding();
+            OnPropertyChanged(nameof(AgentIsRunning));
+        }
+
+        /// <summary>
+        /// Been used for updating validation rules which checks also Agent status 
+        /// </summary>
+        private void UpdateBinding()
+        {
+            BindingExpression bindingExpression = null;
+            bindingExpression = this.GetBindingExpression(Ginger.Agents.ucAgentControl.SelectedAgentProperty);
+            if (bindingExpression != null)
+                bindingExpression.UpdateSource();
         }
 
         private void xAgentWindowsRefreshBtn_Click(object sender, RoutedEventArgs e)
@@ -185,7 +232,7 @@ namespace Ginger.Agents
 
         private void UpdateAgentWindows()
         {
-            if (mIWindowExplorerDriver == null)
+            if (IWindowExplorerDriver == null)
             {
                 xAgentWindowsComboBox.ItemsSource = null;
                 xAgentWindowsRefreshBtn.ButtonImageForground = Brushes.Gray;
@@ -220,11 +267,11 @@ namespace Ginger.Agents
 
         private void xAgentWindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (mIWindowExplorerDriver == null) return;
+            if (IWindowExplorerDriver == null) return;
 
             AppWindow page = (AppWindow)xAgentWindowsComboBox.SelectedItem;
             if (page == null) return;
-            mIWindowExplorerDriver.SwitchWindow(page.Title);
+            IWindowExplorerDriver.SwitchWindow(page.Title);
         }
     }
 }

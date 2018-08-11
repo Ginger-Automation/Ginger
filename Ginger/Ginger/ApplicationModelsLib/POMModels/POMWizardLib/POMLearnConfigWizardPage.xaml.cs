@@ -57,8 +57,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     /// </summary>
     public partial class POMLearnConfigWizardPage : Page, IWizardPage
     {
-        private AddPOMWizard mWizard;
-        ObservableList<UIElementFilter> FilteringCreteriaList = new ObservableList<UIElementFilter>();
+        private AddPOMWizard mWizard;        
 
         public POMLearnConfigWizardPage()
         {
@@ -74,22 +73,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web select x).ToList());
                     xAgentControlUC.Init(optionalAgentsList);
                     App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard, nameof(mWizard.Agent));
+                    xAgentControlUC.AddValidationRule(new AgentControlValidationRule(AgentControlValidationRule.eAgentControlValidationRuleType.AgentIsMappedAndRunning));
+                    xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
-
-                    SetControlsGridView();
-                    xFilterElementsGrid.DataSourceList = FilteringCreteriaList;                                 
-                    break;
-
-                case EventType.LeavingForNextPage:
-                    mWizard.CheckedFilteringCreteriaList = GingerCore.General.ConvertListToObservableList(FilteringCreteriaList.Where(x=>x.Selected).ToList());                   
+                    ClearAutoMapElementTypesSection();
+                    SetAutoMapElementTypesGridView();                    
                     break;
             }
         }
 
-        private void SetControlsGridView()
+        private void SetAutoMapElementTypesGridView()
         {
-            xFilterElementsGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Elements", new RoutedEventHandler(CheckUnCheckAllElements));
-            xFilterElementsGrid.ShowTitle = Visibility.Collapsed;
+            //tool bar
+            xAutoMapElementTypesGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Elements", new RoutedEventHandler(CheckUnCheckAllElements));
 
             //Set the Data Grid columns            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -99,32 +95,45 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementType), Header = "Element Type", WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementExtraInfo), Header = "Element Extra Info", WidthWeight = 100 });
 
-            xFilterElementsGrid.SetAllColumnsDefaultView(view);
-            xFilterElementsGrid.InitViewItems();
+            xAutoMapElementTypesGrid.SetAllColumnsDefaultView(view);
+            xAutoMapElementTypesGrid.InitViewItems();
         }
 
         private void CheckUnCheckAllElements(object sender, RoutedEventArgs e)
         {
-            IObservableList filteringCriteriaList = xFilterElementsGrid.DataSourceList;
-            int selectedItems = CountSelectedItems();
-            if (selectedItems < xFilterElementsGrid.DataSourceList.Count)
-                foreach (UIElementFilter UIEFActual in filteringCriteriaList)
-                    UIEFActual.Selected = true;
-            else if (selectedItems == xFilterElementsGrid.DataSourceList.Count)
-                foreach (UIElementFilter UIEFActual in filteringCriteriaList)
-                    UIEFActual.Selected = false;
-            xFilterElementsGrid.DataSourceList = filteringCriteriaList;
+            if (mWizard.AutoMapElementTypesList.Count > 0)
+            {
+                bool valueToSet = !mWizard.AutoMapElementTypesList[0].Selected;
+                foreach (UIElementFilter elem in mWizard.AutoMapElementTypesList)
+                    elem.Selected = valueToSet;
+            }
         }
 
-        private int CountSelectedItems()
+        private void XAgentControlUC_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            int counter = 0;
-            foreach (UIElementFilter UIEFActual in xFilterElementsGrid.DataSourceList)
+            if (e.PropertyName == nameof(ucAgentControl.AgentIsRunning))
             {
-                if (UIEFActual.Selected)
-                    counter++;
+                if (xAgentControlUC.AgentIsRunning)
+                    SetAutoMapElementTypesSection();
+                else
+                    ClearAutoMapElementTypesSection();
             }
-            return counter;
+        }
+
+        private void ClearAutoMapElementTypesSection()
+        {
+            xAutoMapElementTypesExpander.IsExpanded = false;
+            xAutoMapElementTypesExpander.IsEnabled = false;
+            mWizard.AutoMapElementTypesList = new ObservableList<UIElementFilter>();
+            xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
+        }
+
+        private void SetAutoMapElementTypesSection()
+        {
+            xAutoMapElementTypesExpander.IsExpanded = true;
+            xAutoMapElementTypesExpander.IsEnabled = true;
+            mWizard.AutoMapElementTypesList = xAgentControlUC.IWindowExplorerDriver.GetFilteringCreteriaDict();
+            xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
         }
     }
 }

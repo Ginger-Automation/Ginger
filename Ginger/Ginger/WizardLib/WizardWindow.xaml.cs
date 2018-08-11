@@ -179,6 +179,11 @@ namespace GingerWPF.WizardLib
                             ComboBox comboBox = (ComboBox)child;
                             bindingExpression = comboBox.GetBindingExpression(ComboBox.SelectedValueProperty);
                         }
+                        else if (child is Ginger.Agents.ucAgentControl)
+                        {
+                            Ginger.Agents.ucAgentControl agentControl = (Ginger.Agents.ucAgentControl)child;
+                            bindingExpression = agentControl.GetBindingExpression(Ginger.Agents.ucAgentControl.SelectedAgentProperty);
+                        }
 
                         if (bindingExpression != null)
                         {

@@ -430,6 +430,7 @@
       <DependentUpon>AddAgentDriverConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\AddAgentWizardLib\AddAgentWizard.cs" />
+    <Compile Include="Agents\AgentControlValidationRule.cs" />
     <Compile Include="Agents\AgentDriverConfigPage.xaml.cs">
       <DependentUpon>AgentDriverConfigPage.xaml</DependentUpon>
     </Compile>

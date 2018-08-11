@@ -13,18 +13,18 @@
     <StackPanel Background="{StaticResource $BackgroundGray}">
         <agents:ucAgentControl x:Name="xAgentControlUC"></agents:ucAgentControl>
 
-        <Expander x:Name="PropertiesExpander" Margin="0,10,0,0" Visibility="Visible" IsExpanded="False" >
+        <Expander x:Name="xAutoMapElementTypesExpander" Margin="0,20,0,0" Visibility="Visible" IsExpanded="False" >
             <Expander.Header>
                 <Label x:Name="PropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
                     <Label.Content>
-                        <GingerCore:ucTextDicResource Text="Elements Learning Filters"/>
+                        <GingerCore:ucTextDicResource Text="Elements Types to Auto Map"/>
                     </Label.Content>
                 </Label>
             </Expander.Header>
             <Expander.Content>
-                <StackPanel Orientation="Vertical" Margin="10,0,25,0" >
-                    <Ginger:ucGrid x:Name="xFilterElementsGrid" Title="Filter Elements"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed"  />
-                </StackPanel>
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Ginger:ucGrid x:Name="xAutoMapElementTypesGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                </Grid>
             </Expander.Content>
         </Expander>
 

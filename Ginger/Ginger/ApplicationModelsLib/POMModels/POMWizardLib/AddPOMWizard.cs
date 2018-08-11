@@ -36,7 +36,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     {       
         public ApplicationPOMModel POM;
         public string POMFolder;
-        public ObservableList<UIElementFilter> CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
+        public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
+
         private Agent mAgent = null;
         public Agent Agent
         {
