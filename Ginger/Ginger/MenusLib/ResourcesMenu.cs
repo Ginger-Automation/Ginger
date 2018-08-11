@@ -121,8 +121,13 @@ namespace Ginger.MenusLib
         }
 
         private static Page PluginsList()
-        {
-            return new PluginPackagesPage();
+        {            
+            PlugInsFolderTreeItem pluginsFolderTreeItem = new PlugInsFolderTreeItem();
+            pluginsFolderTreeItem.IsGingerDefualtFolder = true;
+            pluginsFolderTreeItem.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Plugins");
+            pluginsFolderTreeItem.Folder = "Plugins";
+            SingleItemTreeViewExplorerPage PluginsRootPage = new SingleItemTreeViewExplorerPage("Plugins", eImageType.PluginPackage , pluginsFolderTreeItem, saveAllHandler: null, addHandler: null);
+            return PluginsRootPage;
         }
 
         private static Page GingerGrid()

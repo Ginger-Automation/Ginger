@@ -20,12 +20,15 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore.Actions.PlugIns;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using Amdocs.Ginger.Repository;
+using Ginger.PlugInsWindows;
+using GingerWPF.TreeViewItemsLib;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class PlugInEmbeddedTreeItem : TreeViewItemBase, ITreeViewItem
+    class PluginPackageTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        //public PlugInWrapper PlugInWrapper { get; set; }
+        public PluginPackage PluginPackage { get; set; }
         private PlugInsWindows.PlugInWraperPage mPlugInPage;
         
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -37,14 +40,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mPlugInPage == null)
             {
-                // mPlugInPage = new PlugInsWindows.PlugInWraperPage(PlugInWrapper);
+                 mPlugInPage = new PlugInWraperPage(PluginPackage);
             }
             return mPlugInPage;
         }
 
         StackPanel ITreeViewItem.Header()
         {
-            return null; // TreeViewUtils.CreateItemHeader(PlugInWrapper.Name, "@Plugin_16x16.png");
+            return NewTVItemStyle(PluginPackage, Amdocs.Ginger.Common.Enums.eImageType.PluginPackage, nameof(PluginPackage.PluginID));
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -59,7 +62,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         object ITreeViewItem.NodeObject()
         {
-            return null; // PlugInWrapper;
+            return PluginPackage;
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)
@@ -69,9 +72,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             AddItemNodeBasicManipulationsOptions(mContextMenu, allowSave: false, allowCopy: false, allowCut: false, allowDuplicate: false, allowDelete: true);
         }
 
-        public override void PostDeleteTreeItemHandler()
-        {
-            // string PathToDelete = PlugInWrapper.PlugInRootPath;
-        }
+        
     }
 }

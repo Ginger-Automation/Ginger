@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,8 +39,7 @@ namespace Ginger.PlugInsWindows
 
         public void SetGrids()
         {
-            SetPlugInsGridView();
-            RefreshGridDataHandler(null, null);
+            SetPlugInsGridView();            
         }
 
         private void SetPlugInsGridView()
@@ -57,19 +58,12 @@ namespace Ginger.PlugInsWindows
             view.GridColsView.Add(new GridColView() { Field = "PlugInVersion", Header = "Plugin Version", WidthWeight = 300, BindingMode = BindingMode.OneWay });
             
             PlugInsGrid.SetAllColumnsDefaultView(view);
-            PlugInsGrid.InitViewItems();
-            PlugInsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGridDataHandler));
+            PlugInsGrid.InitViewItems();            
+            PlugInsGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
         }
 
-        private void RefreshGridDataHandler(object sender, RoutedEventArgs e)
-        {
-            // PlugInsGrid.DataSourceList = App.LocalRepository.GetSolutionPlugIns();
-        }
+        
 
-        public void ShowAsWindow()
-        {
-            GenericWindow genWin = null;
-            GingerCore.General.LoadGenericWindow(ref genWin, null, Ginger.eWindowShowStyle.Free, "Plug Ins", this, null);
-        }
+        
     }
 }

@@ -16,16 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.PlugInsWindows;
+using GingerWPF.PluginsLib.AddPluginWizardLib;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore;
-using GingerCore.Actions.PlugIns;
-using GingerPlugIns;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Amdocs.Ginger.Common.Enums;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -43,25 +43,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
-            //Add Plugins
-            //ObservableList<PlugInWrapper> PlugIns = new ObservableList<PlugInWrapper>();
-            //PlugIns = App.LocalRepository.GetSolutionPlugIns(specificFolderPath: Path);
+            ObservableList<PluginPackage> PlugIns = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
             
-            //foreach (PlugInWrapper PIW in PlugIns)
-            //{
-            //    if (PIW.PlugInType == PlugInWrapper.ePluginType.Embedded)
-            //    {
-            //        PlugInEmbeddedTreeItem EmbeddedTreeItem = new PlugInEmbeddedTreeItem();
-            //        EmbeddedTreeItem.PlugInWrapper = PIW;
-            //        Childrens.Add(EmbeddedTreeItem);
-            //    }
-            //    if (PIW.PlugInType == PlugInWrapper.ePluginType.System)
-            //    {
-            //        PlugInSystemTreeItem SystemTreeItem = new PlugInSystemTreeItem();
-            //        SystemTreeItem.PlugInWrapper = PIW;
-            //        Childrens.Add(SystemTreeItem);
-            //    }
-            //}
+            foreach (PluginPackage PIW in PlugIns)
+            {                
+                PluginPackageTreeItem EmbeddedTreeItem = new PluginPackageTreeItem();
+                EmbeddedTreeItem.PluginPackage = PIW;
+                Childrens.Add(EmbeddedTreeItem);                                
+            }
             return Childrens;
         }
 
@@ -107,59 +96,24 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         override public Type NodeObjectType()
         {
-            return null; // typeof(PlugInWrapper);
+            return typeof(PluginPackage);
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             mTreeView = TV;
-            mContextMenu = new ContextMenu();
-            TreeViewUtils.AddMenuItem(mContextMenu, "Refresh", RefreshItems, null, eImageType.Refresh);
-            TreeViewUtils.AddMenuItem(mContextMenu, "Add Embedded Plugin", AddNewEmbeddedPlugIn, null, "@Plugin_16x16.png");
-            TreeViewUtils.AddMenuItem(mContextMenu, "Add System Plugin", AddNewSystemPlugIn, null, "@SystemPlugin_16x16.png");
+            mContextMenu = new ContextMenu();        
+            TreeViewUtils.AddMenuItem(mContextMenu, "Add Plugin", AddPlugIn, null, "@Plugin_16x16.png");            
             TreeViewUtils.AddMenuItem(mContextMenu, "Open Folder in File Explorer", OpenTreeFolderHandler, null, "@Folder_16x16.png");
             mTreeView.AddToolbarTool("@Folder_16x16.png", "Open Folder in File Explorer", OpenTreeFolderHandler);
         }
-        private void RefreshItems(object sender, System.Windows.RoutedEventArgs e)
+        
+
+        private void AddPlugIn(object sender, System.Windows.RoutedEventArgs e)
         {
-            //App.LocalRepository.RefreshSolutionPlugInConfigurationsCache(specificFolderPath: Path);
-            //mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+            WizardWindow.ShowWizard(new AddPluginPackageWizard());
         }
 
-        private void AddNewEmbeddedPlugIn(object sender, System.Windows.RoutedEventArgs e)
-        {
-            AddNewPlugIn(true);
-        }
-
-        private void AddNewSystemPlugIn(object sender, System.Windows.RoutedEventArgs e)
-        {
-            AddNewPlugIn(false);
-        }
-
-        private void AddNewPlugIn(bool IsEmbeddedPlugin)
-        {
-            //PlugInWrapper PW = Ginger.PlugInsLib.PlugInsIntegration.AddNewPlugIn(IsEmbeddedPlugin, App.UserProfile.Solution.Folder.ToUpper());
-
-            //if (PW != null)
-            //{
-            //    ITreeViewItem PTI;
-            //    if (IsEmbeddedPlugin)
-            //    {
-            //        PTI = new PlugInEmbeddedTreeItem();
-            //        ((PlugInEmbeddedTreeItem)PTI).PlugInWrapper = PW;
-
-            //    }
-            //    else
-            //    {
-            //        PTI = new PlugInSystemTreeItem();
-            //        ((PlugInSystemTreeItem)PTI).PlugInWrapper = PW;
-            //    }
-            //    ITreeViewItem addTreeViewItem = mTreeView.Tree.AddChildItemAndSelect(this, PTI);
-            //    App.LocalRepository.AddItemToCache(PW);
-            //    mTreeView.Tree.RefreshHeader(addTreeViewItem);
-            //}
-
-            //App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
-        }
+        
     }
 }
