@@ -720,7 +720,7 @@ namespace Ginger
             App.AutomateTabGingerRunner.SolutionFolder = App.UserProfile.Solution.Folder;
             App.AutomateTabGingerRunner.DSList = App.LocalRepository.GetSolutionDataSources();
             App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-            App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+            //App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
             App.AutomateTabGingerRunner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
 
             SetGingerRunnerSpeed();

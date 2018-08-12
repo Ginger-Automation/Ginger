@@ -38,11 +38,11 @@ namespace Amdocs.Ginger.CoreNET.GingerConsoleLib
                 return filename;
             }
 
-            // If we run from GingerWPF debug
-            if (filename.Contains("GingerWPF"))
+            // If we run from Ginger debug
+            if (filename.Contains(@"Ginger\bin\Debug"))
             {
-                filename = filename.Replace("GingerWPF", "GingerConsole");
-                filename = filename.Replace(@"\bin\Debug", @"\bin\Debug\netcoreapp2.0");
+                filename = filename.Replace(@"Ginger\bin\Debug", @"GingerConsole\bin\Debug");
+                filename = filename.Replace(@"\bin\Debug", @"\bin\Debug\netcoreapp2.1");
 
             }
             if (File.Exists(filename))

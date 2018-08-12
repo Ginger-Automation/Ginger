@@ -16,23 +16,25 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.PlugIns;
+using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using GingerCore;
-using GingerCore.Actions;
-using Ginger.UserControls;
-using System.Reflection;
-using GingerCore.Platforms;
-using GingerCore.Actions.PlugIns;
-using GingerPlugIns.ActionsLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.WizardLib;
 
 namespace Ginger.Actions
 {
@@ -43,55 +45,52 @@ namespace Ginger.Actions
     {
         GenericWindow _pageGenericWin = null;
         ObservableList<Act> mActionsList;
-        bool IsPlugInAvailable = false;
+        // bool IsPlugInAvailable = false;
 
         public AddActionPage()
         {
             InitializeComponent();
             SetActionsGridsView();
             LoadGridData();
-            LoadPlugInsActions();
+            LoadPluginsActions();
 
-            if (IsPlugInAvailable == false)
-            {
-                PlugInsActionsTab.Visibility = Visibility.Collapsed;
-                LegacyActionsTab.Margin = new Thickness(9,0,-18,0);
-            }
+            //if (IsPlugInAvailable == false)
+            //{
+            //    PlugInsActionsTab.Visibility = Visibility.Collapsed;
+            //    LegacyActionsTab.Margin = new Thickness(9,0,-18,0);
+            //}
         }
 
-        private void LoadPlugInsActions()
+        private void LoadPluginsActions()
         {
-            ObservableList<Act> PlugInsActions = new ObservableList<Act>();
-            ObservableList<PlugInWrapper> PlugInsList = App.LocalRepository.GetSolutionPlugIns();
-            foreach (PlugInWrapper PW in PlugInsList)
+            ObservableList<PluginPackage> plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            ObservableList<Act> PlugInsActions = new ObservableList<Act>();            
+            foreach (PluginPackage pluginPackage in plugins)
             {
                 try
                 {
-                    if (PW.Actions != null && PW.Actions.Count > 0)
-                        foreach (PlugInAction PIA in PW.Actions)
+                    ObservableList<StandAloneAction> actions = pluginPackage.GetStandAloneActions();
+                    
+                    foreach (StandAloneAction SAA in actions)
+                    {
+                        ActPlugIn act = new ActPlugIn();                        
+                        act.Description = SAA.Description;
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.PluginID), pluginPackage.PluginID);
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.PluginActionID),SAA.ID);
+                        foreach (var v in SAA.InputValues)
                         {
-                            ActPlugIn act = new ActPlugIn();
-                            act.Description = PIA.Description;
-                            act.Active = true;
-                            act.PlugInName = PW.Name;
-                            act.GetOrCreateInputParam(ActPlugIn.Fields.PluginID, PW.ID);
-                            act.GetOrCreateInputParam(ActPlugIn.Fields.PlugInActionID, PIA.ID);
-                            act.GetOrCreateInputParam(ActPlugIn.Fields.PluginDescription, PIA.Description);
-                            act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserDescription, PIA.UserDescription);
-                            act.GetOrCreateInputParam(ActPlugIn.Fields.PluginUserRecommendedUseCase, PIA.UserRecommendedUseCase);
-
-                            PlugInsActions.Add(act);
-                        }
+                            act.InputValues.Add(new ActInputValue() { Param = v.Param });
+                        }                        
+                        act.Active = true;                        
+                        PlugInsActions.Add(act);
+                    }
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the Action of the Plugin '" + PW.Name + "'", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginID + "'", ex);
                 }
             }
-            if (PlugInsActions.Count > 0)
-            {
-                IsPlugInAvailable = true;
-            }
+          
             PlugInsActionsGrid.DataSourceList = PlugInsActions;
         }
 

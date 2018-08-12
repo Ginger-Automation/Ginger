@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,26 +16,34 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using GingerCoreNET.GeneralLib;
-using GingerPlugInsNET.PlugInsLib;
-using System.Collections.Generic;
-using System.Reflection;
-using System;
-using System.Linq;
-using GingerPlugInsNET.DriversLib;
-using System.IO;
-using Amdocs.Ginger.CoreNET.PlugInsLib;
 using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
-using GingerPlugInsNET.ActionsLib;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
+using Amdocs.Ginger.CoreNET.GingerConsoleLib;
 using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
+using GingerCoreNET.CommandProcessorLib;
+using GingerCoreNET.RunLib;
+using GingerPlugInsNET.ActionsLib;
+using GingerPlugInsNET.DriversLib;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace GingerCoreNET.PlugInsLib
+namespace Amdocs.Ginger.Repository
 {
     public class PluginsManager
     {
-        private ObservableList<PluginPackage> mPluginPackages = new ObservableList<PluginPackage>();
+        private ObservableList<PluginPackage> mPluginPackages;
+
+        public PluginsManager()
+        {
+            mPluginPackages = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+        }
 
         public class DriverInfo
         {
@@ -106,9 +114,13 @@ namespace GingerCoreNET.PlugInsLib
 
         public void AddPluginPackage(string folder)
         {
-            PluginPackage p = new PluginPackage();
-            p.Folder = folder;
-            p.PluginID = folder;
+            // Verify folder exist
+            if (!System.IO.Directory.Exists(folder))
+            {
+                throw new Exception("Plugin folder not found: " + folder);
+            }            
+
+            PluginPackage p = new PluginPackage(folder);            
             mPluginPackages.Add(p);
         }
 
@@ -151,6 +163,7 @@ namespace GingerCoreNET.PlugInsLib
         {
             foreach (PluginPackage PP in mPluginPackages)
             {
+                PP.ScanPackage();
                 ActionHandler AH = PP.GetStandAloneActionHandler(ID);
                 if (AH != null)
                 {
@@ -192,12 +205,120 @@ namespace GingerCoreNET.PlugInsLib
 
             foreach (string d in Directory.GetDirectories(pluginPackagesPath))
             {
-                PluginPackage p = new PluginPackage();
-                p.Folder = d;
-                p.PluginID = d;     // FIXME ?!            
+                PluginPackage p = new PluginPackage(d);
                 mInstalledPluginPackages.Add(p);
             }
             return mInstalledPluginPackages;
         }
+
+        public void Execute(GingerAction GA)
+        {            
+            GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
+
+            string PID = GA.InputParams["PluginID"].GetValueAsString();
+            PluginPackage p = (from x in mPluginPackages where x.PluginID == PID select x).SingleOrDefault();
+            if (p == null)
+            {
+                GA.AddError("Execute", "Plugin id not found: " + PID);
+                return;
+            }
+            
+            //TODO: use nameof after ActPlugin move to common
+            string serviceID = GA.InputParams["PluginActionID"].GetValueAsString();
+
+            GingerNodeInfo GNI = (from x in gingerGrid.NodeList where x.Name == p.PluginID select x).FirstOrDefault();
+            //run script only if service is not up            
+            if (GNI == null)
+            {
+                string script = CommandProcessor.CreateLoadPluginScript(p.Folder);
+
+                // hard coded!!!!!!!!!!
+                script += CommandProcessor.CreateStartServiceScript("ExcelService", p.PluginID, SocketHelper.GetLocalHostIP(), gingerGrid.Port);
+
+                Task t = new Task(() =>
+                {
+                    GingerConsoleHelper.Execute(script);
+                });
+                t.Start();
+            }                
+             
+            int counter = 0;
+            while (GNI == null && counter < 30)
+            {
+                Thread.Sleep(1000);
+                GNI = (from x in gingerGrid.NodeList where x.Name == p.PluginID select x).FirstOrDefault();                
+                counter++;
+            }
+
+
+            GingerNodeProxy GNA = new GingerNodeProxy(GNI);
+            GNA.Reserve();
+            GNA.GingerGrid = gingerGrid;
+
+            GNA.RunAction(GA);
+        }
+
+
+        public string CreatePluginPackageInfo(string id, string version)
+        {
+            PluginPackageInfo pluginPackageInfo = new PluginPackageInfo() { Id = id, Version = version };
+            string txt = JsonConvert.SerializeObject(pluginPackageInfo);
+            return txt;
+        }
+
+
+
+        // We search the plug in for all files it can edit if this plugin implemented capability of text editor
+        //        public List<PlugInTextFileEditorBase> TextEditors()
+        //        {
+        //            List<PlugInTextFileEditorBase> list = new List<PlugInTextFileEditorBase>();
+        //            //TODO:: Need to be handled once PACT implementation is done
+        //            //foreach (PlugInCapability c in PlugIn.Capabilities())
+        //            //{
+        //            //    if (c is PlugInTextFileEditorBase)
+        //            //    {
+        //            //        list.Add((PlugInTextFileEditorBase)c);
+        //            //    }
+        //            //}
+        //            return list;
+        //        }
+
+        //        public List<string> GetExtentionsByEditorID(string plugInEditorID)
+        //        {
+        //            foreach (PlugInTextFileEditorBase PITFEB in TextEditors())
+        //            {
+        //                if (PITFEB.EditorID == plugInEditorID)
+        //                {
+        //                    return PITFEB.Extensions;
+        //                }
+        //            }
+        //            return null;
+        //        }
+
+        //        public PlugInTextFileEditorBase GetPlugInTextFileEditorBaseByEditorID(string plugInEditorID)
+        //        {
+        //            foreach (PlugInTextFileEditorBase PITFEB in TextEditors())
+        //            {
+        //                if (PITFEB.EditorID == plugInEditorID)
+        //                {
+        //                    return PITFEB;
+        //                }
+        //            }
+        //            return null;
+        //        }
+
+        //        public string GetTemplateContentByEditorID(string plugInEditorID, string plugInExtension)
+        //        {
+        //            foreach (PlugInTextFileEditorBase PITFEB in TextEditors())
+        //            {
+        //                if (PITFEB.EditorID == plugInEditorID)
+        //                {
+        //                    return PITFEB.GetTemplatesByExtensions("." + plugInExtension);
+        //                }
+        //            }
+        //            return null;
+        //        }
+
+
     }
 }
