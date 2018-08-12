@@ -2,11 +2,13 @@
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.GeneralWindows;
+using Ginger.GingerGridLib;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.TwoLevelMenuLib;
 using GingerCore.DataSource;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
+using GingerWPF.PluginsLib;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib;
 using System;
@@ -71,11 +73,16 @@ namespace Ginger.MenusLib
             TopMenuItem DocumentsMenu = new TopMenuItem("Documents", ConsoleKey.D, "Documents AID");
             DocumentsMenu.Add("List", Documents, ConsoleKey.L, "Solution documents like: text, excel, js scripts and any type of file", "AID");
             twoLevelMenu.Add(DocumentsMenu);
-            
+
+            TopMenuItem PluginsMenu = new TopMenuItem("Plugins", ConsoleKey.P, "Plugins AID");
+            PluginsMenu.Add("Installed", PluginsList, ConsoleKey.L, "Installed Plugins", "Installed AID");
+            PluginsMenu.Add("GingerGrid", GingerGrid, ConsoleKey.G, "Ginger Grid", "Ginger Grid AID");
+            twoLevelMenu.Add(PluginsMenu);
 
             return twoLevelMenu;
         }
 
+        
         private static Page Documents()
         {
             DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem();
@@ -111,8 +118,21 @@ namespace Ginger.MenusLib
             AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
             SingleItemTreeViewExplorerPage apiModelPage = new SingleItemTreeViewExplorerPage("API Models", eImageType.APIModel32, apiRoot, apiRoot.SaveAllTreeFolderItemsHandler, apiRoot.AddAPIModelFromDocument);
             return apiModelPage;
+        }
 
+        private static Page PluginsList()
+        {            
+            PlugInsFolderTreeItem pluginsFolderTreeItem = new PlugInsFolderTreeItem();
+            pluginsFolderTreeItem.IsGingerDefualtFolder = true;
+            pluginsFolderTreeItem.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Plugins");
+            pluginsFolderTreeItem.Folder = "Plugins";
+            SingleItemTreeViewExplorerPage PluginsRootPage = new SingleItemTreeViewExplorerPage("Plugins", eImageType.PluginPackage , pluginsFolderTreeItem, saveAllHandler: null, addHandler: pluginsFolderTreeItem.AddPlugIn);
+            return PluginsRootPage;
+        }
 
+        private static Page GingerGrid()
+        {
+            return new GingerGridPage(WorkSpace.Instance.LocalGingerGrid);
         }
     }
 }
