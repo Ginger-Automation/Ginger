@@ -231,7 +231,7 @@ namespace Ginger
             AddVBSEval(tviVars, "Current Month -1 (0# format)", "Right(\"0\" & CInt(Right(\"0\" & Month(Now), 2))-1, 2)");
             AddVBSEval(tviVars, "Current Day of Week (Name)","WeekdayName(DatePart(\"w\",Now))");
             AddVBSEval(tviVars, "Get # of days between 2 dates", "DateDiff(\"d\",\"5-16-2016\",\"6-16-2016\")");
-            AddVBSEval(tviVars, "Check if date is valid", "IsDate(CDate(\"5/18/2016\"))");
+            AddVBSEval(tviVars, "Check if date is valid", "CStr(IsDate(\"5/18/2016\"))");
             AddVBSEval(tviVars, "Sample Math 2+5*2", "2+5*2");
             AddVBSEval(tviVars, "Mid of String", "mid(\"hello\",1,2)");
             AddVBSEval(tviVars, "Choose 1st val from list", "Split(\"A,B,C,D\",\",\")(1)");
