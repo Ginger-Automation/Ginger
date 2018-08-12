@@ -3740,6 +3740,7 @@ namespace GingerCore.Drivers
             EI.Value = GenerateElementValue(el);
             EI.Name = GenerateElementName(el);
             EI.ElementType = GenerateElementType(el);
+            EI.ElementTypeEnum = GetElementTypeEnum(el);
             EI.Path = path;
             EI.XPath = xPath;
             EI.ElementObject = el;

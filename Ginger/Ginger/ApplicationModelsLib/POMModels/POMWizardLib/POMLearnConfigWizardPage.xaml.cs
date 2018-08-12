@@ -59,7 +59,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     /// </summary>
     public partial class POMLearnConfigWizardPage : Page, IWizardPage
     {
-        private AddPOMWizard mWizard;        
+        private AddPOMWizard mWizard;
+        private ePlatformType mAppPlatform;
 
         public POMLearnConfigWizardPage()
         {
@@ -72,12 +73,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
-                    mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web select x).ToList());
+                    mAppPlatform = GetTargetApplicationPlatform();
+                    mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
                     xAgentControlUC.Init(mWizard.OptionalAgentsList);
                     App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard, nameof(mWizard.Agent));
                     xAgentControlUC.AddValidationRule(new AgentControlValidationRule(AgentControlValidationRule.eAgentControlValidationRuleType.AgentIsMappedAndRunning));
                     xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
-                    xAgentControlUC.xAgentWindowsComboBox.SelectionChanged += XAgentWindowsComboBox_SelectionChanged;
+                    //xAgentControlUC.xAgentWindowsComboBox.SelectionChanged += XAgentWindowsComboBox_SelectionChanged; -- For what this is needed?
 
                     ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();                    
@@ -85,16 +87,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
-
-
         private void SetAutoMapElementTypes()
         {
-
             if (mWizard.AutoMapElementTypesList.Count == 0)
-            {
-                ePlatformType platformType = GetTargetApplicationPlatform();
+            {                
                 List<eElementType> UIElementsTypeList = null;
-                switch (platformType)
+                switch (mAppPlatform)
                 {
                     case ePlatformType.Web:
                         WebPlatform webPlatformInfo = new WebPlatform();
@@ -102,10 +100,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         break;
                 }
 
-                foreach (eElementType eET in UIElementsTypeList)
-                {
-                    mWizard.AutoMapElementTypesList.Add(new UIElementFilter(eET, string.Empty));
-                }
+                foreach (eElementType eET in UIElementsTypeList)                
+                    mWizard.AutoMapElementTypesList.Add(new UIElementFilter(eET, string.Empty));                
             }
         }
 
@@ -154,13 +150,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
-        private void XAgentWindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (xAgentControlUC.AgentIsRunning)
-                SetAutoMapElementTypesSection();
-            else
-                ClearAutoMapElementTypesSection();
-        }
+        //private void XAgentWindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) -- For what this is needed?
+        //{
+        //    if (xAgentControlUC.AgentIsRunning)
+        //        SetAutoMapElementTypesSection();
+        //    else
+        //        ClearAutoMapElementTypesSection();
+        //}
 
         private void ClearAutoMapElementTypesSection()
         {
@@ -175,10 +171,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAutoMapElementTypesExpander.IsExpanded = true;
             xAutoMapElementTypesExpander.IsEnabled = true;
             SetAutoMapElementTypes();
-            //mWizard.AutoMapElementTypesList = xAgentControlUC.IWindowExplorerDriver.GetFilteringCreteriaDict();
             xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
         }
-
 
     }
 }
