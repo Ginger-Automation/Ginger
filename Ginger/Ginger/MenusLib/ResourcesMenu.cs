@@ -126,7 +126,7 @@ namespace Ginger.MenusLib
             pluginsFolderTreeItem.IsGingerDefualtFolder = true;
             pluginsFolderTreeItem.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Plugins");
             pluginsFolderTreeItem.Folder = "Plugins";
-            SingleItemTreeViewExplorerPage PluginsRootPage = new SingleItemTreeViewExplorerPage("Plugins", eImageType.PluginPackage , pluginsFolderTreeItem, saveAllHandler: null, addHandler: null);
+            SingleItemTreeViewExplorerPage PluginsRootPage = new SingleItemTreeViewExplorerPage("Plugins", eImageType.PluginPackage , pluginsFolderTreeItem, saveAllHandler: null, addHandler: pluginsFolderTreeItem.AddPlugIn);
             return PluginsRootPage;
         }
 

@@ -109,7 +109,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
         
 
-        private void AddPlugIn(object sender, System.Windows.RoutedEventArgs e)
+        public void AddPlugIn(object sender, System.Windows.RoutedEventArgs e)
         {
             WizardWindow.ShowWizard(new AddPluginPackageWizard());
         }
