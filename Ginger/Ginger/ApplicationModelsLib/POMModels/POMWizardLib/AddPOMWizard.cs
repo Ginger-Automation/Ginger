@@ -23,8 +23,10 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
@@ -33,11 +35,11 @@ using System.Xml.Serialization;
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
     public class AddPOMWizard : WizardBase
-    {       
+    {
         public ApplicationPOMModel POM;
         public string POMFolder;
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
-
+        public ObservableList<Agent> OptionalAgentsList = null;
         private Agent mAgent = null;
         public Agent Agent
         {
@@ -77,10 +79,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             AddPage(Name: "Learned Objects Mapping", Title: "Learned Objects Mapping", SubTitle: "Map Learned Page Objects", Page: new POMObjectsMappingWizardPage());
 
-            AddPage(Name: "Page Screenshot", Title: "Page Screenshot", SubTitle: "Application Page Screenshot", Page: new POMScreenShotWizardPage());                       
+            AddPage(Name: "Page Screenshot", Title: "Page Screenshot", SubTitle: "Application Page Screenshot", Page: new POMScreenShotWizardPage());
         }
 
-        public override string Title { get { return "Add POM Wizard"; } }   
+        public override string Title { get { return "Add POM Wizard"; } }
 
         public override void Finish()
         {
@@ -91,22 +93,29 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
 
-            //MemoryStream ms = new MemoryStream();
-            //XmlTextWriter xw = new XmlTextWriter(ms, Encoding.UTF8);
-            //xw.Formatting = Formatting.Indented;
-            //XmlSerializer ser = new XmlSerializer(typeof(Bitmap));
-            //ser.Serialize(xw, POM.ScreenShot);
-            //string s = Encoding.UTF8.GetString(ms.ToArray());
+            //close all Agents raised in Wizard
+            CloseStartedAgents();
 
-            //DataContractSerializer dcs = new DataContractSerializer(typeof(Bitmap));
-
-            //dcs.WriteObject(File.Create("c:\\A\\test.xml"), POM.ScreenShot);
-            //dcs.WriteObject(File.Create("c:\\D\\test.xml"), POM.ScreenShot);
-            //object o = dcs.ReadObject(new FileStream("c:\\D\\test.xml", FileMode.Open));
-
-            //POM.ScreenShot = (Bitmap)o;
         }
 
+
+        public override void Cancel()
+        {
+            base.Cancel();
+
+            //close all Agents raised in Wizard
+            CloseStartedAgents();
+        }
+
+        private void CloseStartedAgents()
+        {
+            if (OptionalAgentsList != null)
+            {
+                foreach (Agent agent in OptionalAgentsList)
+                    if (agent != null && agent.Status == Agent.eStatus.Running && agent.Tag!=null && agent.Tag.ToString() == "Started with Agent Control")
+                        agent.Close();
+            }
+        }
 
     }
 }

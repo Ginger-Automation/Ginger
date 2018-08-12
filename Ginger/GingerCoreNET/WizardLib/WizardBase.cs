@@ -200,7 +200,7 @@ namespace GingerWPF.WizardLib
             GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));
         }
 
-        public void Cancel()
+        public virtual void Cancel()
         {
             WizardEventArgs WizardEventArgs = new WizardEventArgs(this, EventType.Cancel);
             foreach (WizardPage wp in Pages)

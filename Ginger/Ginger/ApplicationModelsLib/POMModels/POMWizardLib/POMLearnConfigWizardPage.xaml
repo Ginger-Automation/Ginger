@@ -10,10 +10,15 @@
       d:DesignHeight="300" d:DesignWidth="600"
       Title="Learn Config">
 
-    <StackPanel Background="{StaticResource $BackgroundGray}">
+    <Grid Background="{StaticResource $BackgroundGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        
         <agents:ucAgentControl x:Name="xAgentControlUC"></agents:ucAgentControl>
 
-        <Expander x:Name="xAutoMapElementTypesExpander" Margin="0,20,0,0" Visibility="Visible" IsExpanded="False" >
+        <Expander x:Name="xAutoMapElementTypesExpander" Margin="0,20,0,0" Grid.Row="1" Visibility="Visible" IsExpanded="False" >
             <Expander.Header>
                 <Label x:Name="PropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
                     <Label.Content>
@@ -22,12 +27,10 @@
                 </Label>
             </Expander.Header>
             <Expander.Content>
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <Ginger:ucGrid x:Name="xAutoMapElementTypesGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
-                </Grid>
+                <Ginger:ucGrid x:Name="xAutoMapElementTypesGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
             </Expander.Content>
         </Expander>
 
        
-    </StackPanel>
+    </Grid>
 </Page>

@@ -107,6 +107,8 @@ namespace Ginger.Agents
             SelectedAgent.PropertyChanged += SelectedAgent_PropertyChanged;
             SetAgentStatusView();
             UpdateAgentWindows();
+            OnPropertyChanged(nameof(SelectedAgent));
+            OnPropertyChanged(nameof(AgentIsRunning));
         }
 
         private void SelectedAgent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -196,6 +198,7 @@ namespace Ginger.Agents
                             errorMessage = "Failed to Connect the agent";
                         Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgentFailed, null, errorMessage);
                     }
+                    SelectedAgent.Tag = "Started with Agent Control";
                     break;
 
                 case Agent.eStatus.Starting:
@@ -235,11 +238,11 @@ namespace Ginger.Agents
             if (IWindowExplorerDriver == null)
             {
                 xAgentWindowsComboBox.ItemsSource = null;
-                xAgentWindowsRefreshBtn.ButtonImageForground = Brushes.Gray;
+                //xAgentWindowsRefreshBtn.ButtonImageForground = Brushes.Gray;
                 return;
             }
 
-            xAgentWindowsRefreshBtn.ButtonImageForground = (SolidColorBrush)FindResource("$DarkBlue"); 
+            //xAgentWindowsRefreshBtn.ButtonImageForground = (SolidColorBrush)FindResource("$DarkBlue"); 
 
             List<AppWindow> winsList = ((IWindowExplorer)(SelectedAgent.Driver)).GetAppWindows();
             xAgentWindowsComboBox.ItemsSource = winsList;
