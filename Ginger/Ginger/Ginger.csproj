@@ -434,6 +434,9 @@
       <DependentUpon>AgentDriverConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\AgentNameValidationRule.cs" />
+    <Compile Include="ApplicationModelsLib\APIModels\APIModelBodyNodeSyncPage.xaml.cs">
+      <DependentUpon>APIModelBodyNodeSyncPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">
       <DependentUpon>UnmappedElementsPage.xaml</DependentUpon>
@@ -2524,6 +2527,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Agents\AgentDriverConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\APIModels\APIModelBodyNodeSyncPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

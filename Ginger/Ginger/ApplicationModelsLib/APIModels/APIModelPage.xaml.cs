@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.ApplicationModelsLib.APIModels;
 using Ginger.Extensions;
 using Ginger.UserControls;
 using GingerCoreNET.ReporterLib;
@@ -35,6 +36,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using static GingerWPF.ApplicationModelsLib.APIModelWizard.ModelParamsPage;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels
 {
@@ -57,6 +59,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             WorkSpace.Instance.RefreshGlobalAppModelParams(mApplicationAPIModel);
             page = new ModelParamsPage(mApplicationAPIModel);
             xDynamicParamsFrame.Content = page;
+            page.ParamDeleteEvent += DeleteParamEvent;
+
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel);
             xOutputTemplateFrame.Content = outputTemplatePage;
 
@@ -65,6 +69,22 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             UpdateModelParametersTabHeader();
             mApplicationAPIModel.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             UpdateOutputTemplateTabHeader();
+        }
+
+        private void DeleteParamEvent(ParamEventArgs eventArgs)
+        {
+            bool paramContainPath = false;
+            foreach (AppModelParameter param in eventArgs.ModelParamsList)
+                if (!string.IsNullOrEmpty(param.Path))
+                    paramContainPath = true;
+
+            APIModelBodyNodeSyncPage bodyNodeSyncPage;
+            if (paramContainPath &&
+                System.Windows.MessageBox.Show("Do you want to delete also nodes from request body that contain those parameters?", "Delete Nodes from Request Body?", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No) == System.Windows.MessageBoxResult.Yes)
+            {
+                bodyNodeSyncPage = new APIModelBodyNodeSyncPage(mApplicationAPIModel, eventArgs.ModelParamsList);
+                bodyNodeSyncPage.ShowAsWindow();
+            }
         }
 
         private void InitializeUIByActionType()

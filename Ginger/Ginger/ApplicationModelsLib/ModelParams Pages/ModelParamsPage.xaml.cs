@@ -43,24 +43,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         public event ModelParamEventHandler ParamDeleteEvent;
         public delegate void ModelParamEventHandler(ParamEventArgs e);
 
-        public class ParamEventArgs
-       {
-           private List<AppModelParameter> mModelParamsList;
-           public ParamEventArgs(List<AppModelParameter> modelParamsList)
-           {
-               mModelParamsList = modelParamsList;
-           }
-
-           public List<AppModelParameter> ModelParamsList { get { return mModelParamsList; } }
-       }
-       public void OnParamDeleteEvent(List<AppModelParameter> paramsList)
-       {
-           ModelParamEventHandler handler = ParamDeleteEvent;
-           if (handler != null)
-           {
-               handler(new ParamEventArgs(paramsList));
-           }
-       }
+        public void OnParamDeleteEvent(List<AppModelParameter> paramsList)
+        {
+            ModelParamEventHandler handler = ParamDeleteEvent;
+            if (handler != null)
+            {
+                handler(new ParamEventArgs(paramsList));
+            }
+        }
 
         public ModelParamsPage(ApplicationAPIModel AAMB)
         {
@@ -120,9 +110,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             xGlobalModelParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddGlobalParam));
             xGlobalModelParametersGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGlobalParameters));
-
-           xGlobalModelParametersGrid.btnClearAll.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteParams));
-           xGlobalModelParametersGrid.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteParams));
         }
 
 
@@ -162,6 +149,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             ModelParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddParamsRow));
             ModelParametersGrid.AddToolbarTool("@Upgrade_16x16.png", "Upload to Global Parameters", new RoutedEventHandler(UploadToGlobalParam));
             ModelParametersGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForParameters));
+            ModelParametersGrid.btnClearAll.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteAllParams));
+            ModelParametersGrid.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteParams));
         }
         private void ImportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {            
@@ -202,9 +191,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 }
         }
 
-       private void DeleteParams(object sender, RoutedEventArgs e)
-       {
-       }
+        private void DeleteParams(object sender, RoutedEventArgs e)
+        {
+            OnParamDeleteEvent(new List<AppModelParameter>(ModelParametersGrid.Grid.SelectedItems.Cast<AppModelParameter>().ToList()));
+        }
+
+        private void DeleteAllParams(object sender, RoutedEventArgs e)
+        {
+            OnParamDeleteEvent(new List<AppModelParameter>(ParamsList));
+        }
 
         private void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)
         {
@@ -440,5 +435,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             Row2GlobalParams.Height = new GridLength(35);
         }
+    }
+    public class ParamEventArgs
+    {
+        private List<AppModelParameter> mModelParamsList;
+        public ParamEventArgs(List<AppModelParameter> modelParamsList)
+        {
+            mModelParamsList = modelParamsList;
+        }
+
+        public List<AppModelParameter> ModelParamsList { get { return mModelParamsList; } }
     }
 }
