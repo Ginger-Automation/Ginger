@@ -40,6 +40,28 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         public ObservableList<GlobalAppModelParameter> APIGlobalParamList = new ObservableList<GlobalAppModelParameter>();
         string GridPlaceholderHeader = "Place Holder";
 
+        public event ModelParamEventHandler ParamDeleteEvent;
+        public delegate void ModelParamEventHandler(ParamEventArgs e);
+
+        public class ParamEventArgs
+       {
+           private List<AppModelParameter> mModelParamsList;
+           public ParamEventArgs(List<AppModelParameter> modelParamsList)
+           {
+               mModelParamsList = modelParamsList;
+           }
+
+           public List<AppModelParameter> ModelParamsList { get { return mModelParamsList; } }
+       }
+       public void OnParamDeleteEvent(List<AppModelParameter> paramsList)
+       {
+           ModelParamEventHandler handler = ParamDeleteEvent;
+           if (handler != null)
+           {
+               handler(new ParamEventArgs(paramsList));
+           }
+       }
+
         public ModelParamsPage(ApplicationAPIModel AAMB)
         {
             InitializeComponent();
@@ -98,6 +120,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             xGlobalModelParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddGlobalParam));
             xGlobalModelParametersGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGlobalParameters));
+
+           xGlobalModelParametersGrid.btnClearAll.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteParams));
+           xGlobalModelParametersGrid.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteParams));
         }
 
 
@@ -176,6 +201,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     AddGlobalParametertoAPIGlobalParameterList(APIGlobalParamList, GAMP);
                 }
         }
+
+       private void DeleteParams(object sender, RoutedEventArgs e)
+       {
+       }
 
         private void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)
         {
