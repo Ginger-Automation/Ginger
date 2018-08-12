@@ -40,11 +40,32 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                 mElementsTypeList.Add(eElementType.Unknown);
                 mElementsTypeList.Add(eElementType.Button);
+                mElementsTypeList.Add(eElementType.CheckBox);
                 mElementsTypeList.Add(eElementType.ComboBox);
-                mElementsTypeList.Add(eElementType.TextBox);
+                mElementsTypeList.Add(eElementType.ComboBoxOption);
+                mElementsTypeList.Add(eElementType.Dialog);
+                mElementsTypeList.Add(eElementType.Div);
+                mElementsTypeList.Add(eElementType.EditorPane);
+                mElementsTypeList.Add(eElementType.Form);
                 mElementsTypeList.Add(eElementType.HyperLink);
+                mElementsTypeList.Add(eElementType.Iframe);
+                mElementsTypeList.Add(eElementType.Image);
+                mElementsTypeList.Add(eElementType.Label);
+                mElementsTypeList.Add(eElementType.List);
+                mElementsTypeList.Add(eElementType.ListItem);
+                mElementsTypeList.Add(eElementType.MenuBar);
+                mElementsTypeList.Add(eElementType.MenuItem);
+                mElementsTypeList.Add(eElementType.RadioButton);
+                mElementsTypeList.Add(eElementType.ScrollBar);
+                mElementsTypeList.Add(eElementType.Span);
+                mElementsTypeList.Add(eElementType.Tab);
+                mElementsTypeList.Add(eElementType.Table);
+                mElementsTypeList.Add(eElementType.TableItem);
+                mElementsTypeList.Add(eElementType.Text);
+                mElementsTypeList.Add(eElementType.TextBox);
+                mElementsTypeList.Add(eElementType.TreeView);
+                mElementsTypeList.Add(eElementType.Window);
 
-                // TODO: add all HTML elements
             }   
             return mElementsTypeList;
         }

@@ -110,6 +110,8 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mElementType = value; }
         }
 
+        public eElementType ElementTypeEnum { get; set; }
+
         // Used for Lazy loading when possible
         public virtual string GetElementType()
         {

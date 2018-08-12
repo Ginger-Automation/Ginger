@@ -22,9 +22,13 @@
                 </Label>
             </Expander.Header>
             <Expander.Content>
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <Ginger:ucGrid x:Name="xAutoMapElementTypesGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <ScrollViewer>
+                        <Ginger:ucGrid x:Name="xAutoMapElementTypesGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                    </ScrollViewer>
                 </Grid>
+                
             </Expander.Content>
         </Expander>
 

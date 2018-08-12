@@ -844,7 +844,7 @@ namespace GingerCore.Drivers.AndroidADB
         {
             return null;
         }
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             List<ElementInfo> list = new List<ElementInfo>();
 

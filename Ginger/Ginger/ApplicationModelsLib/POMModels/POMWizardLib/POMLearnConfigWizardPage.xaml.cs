@@ -40,6 +40,8 @@ using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Platforms;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -75,11 +77,43 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard, nameof(mWizard.Agent));
                     xAgentControlUC.AddValidationRule(new AgentControlValidationRule(AgentControlValidationRule.eAgentControlValidationRuleType.AgentIsMappedAndRunning));
                     xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
+                    xAgentControlUC.xAgentWindowsComboBox.SelectionChanged += XAgentWindowsComboBox_SelectionChanged;
 
                     ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();                    
                     break;
             }
+        }
+
+
+
+        private void SetAutoMapElementTypes()
+        {
+
+            if (mWizard.AutoMapElementTypesList.Count == 0)
+            {
+                ePlatformType platformType = GetTargetApplicationPlatform();
+                List<eElementType> UIElementsTypeList = null;
+                switch (platformType)
+                {
+                    case ePlatformType.Web:
+                        WebPlatform webPlatformInfo = new WebPlatform();
+                        UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
+                        break;
+                }
+
+                foreach (eElementType eET in UIElementsTypeList)
+                {
+                    mWizard.AutoMapElementTypesList.Add(new UIElementFilter(eET, string.Empty));
+                }
+            }
+        }
+
+        private ePlatformType GetTargetApplicationPlatform()
+        {
+            string targetapp = mWizard.POM.TargetApplicationKey.ItemName;
+            ePlatformType platform = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            return platform;
         }
 
         private void SetAutoMapElementTypesGridView()
@@ -91,7 +125,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox});           
+            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "", WidthWeight = 10, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox});           
             view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementType), Header = "Element Type", WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementExtraInfo), Header = "Element Extra Info", WidthWeight = 100 });
 
@@ -120,6 +154,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
+        private void XAgentWindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xAgentControlUC.AgentIsRunning)
+                SetAutoMapElementTypesSection();
+            else
+                ClearAutoMapElementTypesSection();
+        }
+
         private void ClearAutoMapElementTypesSection()
         {
             xAutoMapElementTypesExpander.IsExpanded = false;
@@ -132,8 +174,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             xAutoMapElementTypesExpander.IsExpanded = true;
             xAutoMapElementTypesExpander.IsEnabled = true;
-            mWizard.AutoMapElementTypesList = xAgentControlUC.IWindowExplorerDriver.GetFilteringCreteriaDict();
+            SetAutoMapElementTypes();
+            //mWizard.AutoMapElementTypesList = xAgentControlUC.IWindowExplorerDriver.GetFilteringCreteriaDict();
             xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
         }
+
+
     }
 }

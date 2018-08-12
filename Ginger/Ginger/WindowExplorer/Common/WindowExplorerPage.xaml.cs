@@ -53,6 +53,8 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.UserControls;
 using Amdocs.Ginger.Repository;
 using System.Linq;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore.Platforms.PlatformsInfo;
 
 namespace Ginger.WindowExplorer
 {
@@ -153,6 +155,35 @@ namespace Ginger.WindowExplorer
 
             ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$White");
         }
+
+
+        private void SetAutoMapElementTypes()
+        {
+
+            ePlatformType platformType = GetTargetApplicationPlatform();
+            List<eElementType> UIElementsTypeList = null;
+            switch (platformType)
+            {
+                case ePlatformType.Web:
+                    WebPlatform webPlatformInfo = new WebPlatform();
+                    UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
+                    break;
+            }
+
+            foreach (eElementType eET in UIElementsTypeList)
+            {
+                FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
+            }
+
+        }
+
+        private ePlatformType GetTargetApplicationPlatform()
+        {
+            string targetapp = mApplicationAgent.AppName;
+            ePlatformType platform = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            return platform;
+        }
+
 
         private void RemoveButtonClicked(object sender, RoutedEventArgs e)
         {
@@ -847,7 +878,7 @@ namespace Ginger.WindowExplorer
         {
             if (WindowsComboBox.SelectedValue != null && mWindowExplorerDriver != null)
             {
-                List<ElementInfo> list = mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList);
+                List<ElementInfo> list = mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList());
                                 
                 // Convert to obserable for the grid
                 VisibleElementsInfoList.Clear();
@@ -1156,7 +1187,7 @@ namespace Ginger.WindowExplorer
         private void ShowFilterElementsPage()
         {
             if (FilteringCreteriaList.Count == 0)
-                FilteringCreteriaList = mWindowExplorerDriver.GetFilteringCreteriaDict();
+                SetAutoMapElementTypes();
             if (FilteringCreteriaList.Count != 0)
             {
                 CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
@@ -1171,6 +1202,8 @@ namespace Ginger.WindowExplorer
                     }
             }
         }
+
+       
 
         bool POMOn = false;
 
