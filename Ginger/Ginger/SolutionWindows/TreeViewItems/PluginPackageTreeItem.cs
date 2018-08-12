@@ -29,7 +29,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     class PluginPackageTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         public PluginPackage PluginPackage { get; set; }
-        private PlugInsWindows.PlugInWraperPage mPlugInPage;
+        private PlugInsWindows.PluginPackagePage mPlugInPage;
         
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
@@ -40,7 +40,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mPlugInPage == null)
             {
-                 mPlugInPage = new PlugInWraperPage(PluginPackage);
+                 mPlugInPage = new PluginPackagePage(PluginPackage);
             }
             return mPlugInPage;
         }

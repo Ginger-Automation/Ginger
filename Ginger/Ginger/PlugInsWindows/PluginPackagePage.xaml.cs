@@ -19,31 +19,26 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
-using GingerCore;
 using GingerCore.Helpers;
-using GingerPlugIns.ActionsLib;
 using GingerPlugIns.TextEditorLib;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
 
 namespace Ginger.PlugInsWindows
 {
     /// <summary>
-    /// Interaction logic for PlugInWraperPage.xaml
+    /// Interaction logic for PluginPackagePage.xaml
     /// </summary>
-    public partial class PlugInWraperPage : Page
+    public partial class PluginPackagePage : Page
     {
-        PluginPackage mPlugInWrapper;
+        PluginPackage mPluginPackage;
 
-        public PlugInWraperPage(PluginPackage p)
+        public PluginPackagePage(PluginPackage p)
         {
             InitializeComponent();
-            mPlugInWrapper = p;
+            mPluginPackage = p;
          
             Init();
          
@@ -54,6 +49,7 @@ namespace Ginger.PlugInsWindows
             txtBlkDescritpion.Text = string.Empty;
             TextBlockHelper TBH = new TextBlockHelper(txtBlkDescritpion);
 
+            PlugInNamelbl.BindControl(mPluginPackage, nameof(PluginPackage.PluginID));
             //GingerCore.General.ObjFieldBinding(PlugInNamelbl, Label.ContentProperty, mPlugInWrapper, nameof(PluginPackage.Name), BindingMode.OneWay);
             //GingerCore.General.ObjFieldBinding(txtBlkDescritpion, TextBlock.TextProperty, mPlugInWrapper, nameof(PlugInWrapper.Description), BindingMode.OneWay);
             //GingerCore.General.ObjFieldBinding(PlugInTypelbl, Label.ContentProperty, mPlugInWrapper, nameof(PlugInWrapper.PlugInType), BindingMode.OneWay);
@@ -66,11 +62,11 @@ namespace Ginger.PlugInsWindows
 
         private void SetActionsGrid()
         {
-            //PlugInsActionsGrid.ShowEdit = Visibility.Collapsed;
-            //PlugInsActionsGrid.ShowUpDown = Visibility.Collapsed;
-            //PlugInsActionsGrid.ShowTitle = Visibility.Collapsed;
+            PlugInsActionsGrid.ShowEdit = Visibility.Collapsed;
+            PlugInsActionsGrid.ShowUpDown = Visibility.Collapsed;
+            PlugInsActionsGrid.ShowTitle = Visibility.Collapsed;
 
-            //if (mPlugInWrapper.TextEditors().Count() == 0)
+            //if (mPluginPackage.TextEditors().Count() == 0)
             //{
             //    TextEditorTab.Visibility = Visibility.Hidden;
             //    ActionsTab.Visibility = Visibility.Collapsed;
@@ -78,26 +74,16 @@ namespace Ginger.PlugInsWindows
             //    PlugInsActionsGrid.SetTitleLightStyle = true;
             //}
 
-            //GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            //view.GridColsView = new ObservableList<GridColView>();
-            //view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Action Type", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            //view.GridColsView.Add(new GridColView() { Field = "UserDescription", Header = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            //PlugInsActionsGrid.SetAllColumnsDefaultView(view);
-            //PlugInsActionsGrid.InitViewItems();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+            view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Action Type", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = "UserDescription", Header = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            PlugInsActionsGrid.SetAllColumnsDefaultView(view);
+            PlugInsActionsGrid.InitViewItems();
 
-            //ObservableList<PlugInAction> list = new ObservableList<PlugInAction>();
-            //if (mPlugInWrapper.Actions != null)
-            //{
-            //    foreach (PlugInAction Action in mPlugInWrapper.Actions)
-            //    {
-            //        list.Add(Action);
-            //    }
-            //    PlugInsActionsGrid.DataSourceList = list;
-            //}
-            //else
-            //{
-            //    //TODO : handle if no Actions Found
-            //}
+            
+            PlugInsActionsGrid.DataSourceList = mPluginPackage.GetStandAloneActions();
+            
         }
 
         private void SetTextEditorGrid()
@@ -127,30 +113,30 @@ namespace Ginger.PlugInsWindows
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            try
-            {
-                if (PlugInTab.SelectedItem != null)
-                {
-                    foreach (TabItem tab in PlugInTab.Items)
-                    {
-                        foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
+            //try
+            //{
+            //    if (PlugInTab.SelectedItem != null)
+            //    {
+            //        foreach (TabItem tab in PlugInTab.Items)
+            //        {
+            //            foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
 
-                            if (ctrl.GetType() == typeof(TextBlock))
-                            {
-                                if (PlugInTab.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
-                                else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+            //                if (ctrl.GetType() == typeof(TextBlock))
+            //                {
+            //                    if (PlugInTab.SelectedItem == tab)
+            //                        ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+            //                    else
+            //                        ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
 
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
-                            }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in PlugIn tabs style", ex);
-            }
+            //                    ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+            //                }
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Reporter.ToLog(eLogLevel.ERROR, "Error in PlugIn tabs style", ex);
+            //}
         }
     }
 }

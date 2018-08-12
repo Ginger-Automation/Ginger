@@ -1797,7 +1797,7 @@ namespace Ginger.Run
             }
         }
 
-        //public ObservableList<PlugInWrapper> PlugInsList;
+        
         private void ExecutePlugInAction(Act act)
         {
             ActPlugIn pluginAction = (ActPlugIn)act;

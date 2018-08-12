@@ -226,14 +226,7 @@ namespace Ginger.Run
             }
         }
 
-        //public void SetRunnersPlugIns(ObservableList<PlugInWrapper> PIWL)
-        //{
-        //    foreach (GingerRunner GR in Runners)
-        //    {
-        //        GR.PlugInsList = PIWL;
-        //    }
-        //}
-
+        
         public void SetRunnersExecutionLoggerConfigs()
         {
             _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();

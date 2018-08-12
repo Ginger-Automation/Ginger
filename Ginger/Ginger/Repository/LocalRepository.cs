@@ -395,9 +395,7 @@ namespace Ginger.Repository
                 else if (itemType == typeof(RunSetConfig))
                     mRunSetsCache.Add((RunSetConfig)itemToAdd);
                 else if (itemType == typeof(BusinessFlowExecutionSummary))
-                    mExectionResultsCache.Add((BusinessFlowExecutionSummary)itemToAdd);              
-                //else if (itemType == typeof(PlugInWrapper))
-                //    mPlugInsCache.Add((PlugInWrapper)itemToAdd);
+                    mExectionResultsCache.Add((BusinessFlowExecutionSummary)itemToAdd);                              
             }
 
             //delete old items from cache
