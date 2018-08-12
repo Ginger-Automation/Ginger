@@ -595,10 +595,19 @@ namespace GingerCore.ALM.QCRestAPI
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
-            string fieldInRestSyntax = QCRestAPIConnect.QcRestClient.ConvertResourceType(resourceType);
-            List<QCField> fieldsCollection = QCRestAPIConnect.QcRestClient.GetFields(fieldInRestSyntax);
+            if(QCRestAPIConnect.QcRestClient == null)
+            {
+                string qcbin = "qcbin";
+                QCRestAPIConnect.QcRestClient = new QCClient(ALMCore.AlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMDomain, ALMCore.AlmConfig.ALMProjectName, 12);
+            }
 
-            fields.Append(AddFieldsValues(fieldsCollection, fieldInRestSyntax));
+            if (QCRestAPIConnect.QcRestClient.Login())
+            {
+                string fieldInRestSyntax = QCRestAPIConnect.QcRestClient.ConvertResourceType(resourceType);
+                List<QCField> fieldsCollection = QCRestAPIConnect.QcRestClient.GetFields(fieldInRestSyntax);
+
+                fields.Append(AddFieldsValues(fieldsCollection, fieldInRestSyntax));
+            }
 
             return fields;
         }

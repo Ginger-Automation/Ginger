@@ -29,6 +29,7 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Repository;
 using GingerCore.ALM.QC;
+using GingerCore.ALM.QCRestAPI;
 
 namespace Ginger.ALM
 {
@@ -466,7 +467,7 @@ namespace Ginger.ALM
             ObservableList<ExternalItemFieldBase> latestALMFieldsREST = new ObservableList<ExternalItemFieldBase>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
-                latestALMFieldsREST = AlmCore.GetALMItemFields(bw, online, resourceType);
+                latestALMFieldsREST = ImportFromQCRest.GetALMItemFields(resourceType);
             }
             return latestALMFieldsREST;
         }
