@@ -24,6 +24,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
@@ -35,6 +36,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         static PowerBuilderPlatform mPowerBuilderPlatform = new PowerBuilderPlatform();
         static WindowsPlatform mWindowsPlatform = new WindowsPlatform();
         internal List<eElementType> mElementsTypeList = null;
+        internal List<ElementTypeOperations> mWebPlatformElementTypeOperations = null;
         internal List<eLocateBy> mElementLocatorsTypeList = null;
 
         public abstract ePlatformType PlatformType();
@@ -70,6 +72,13 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             PlatformInfoBase PB = GetPlatformImpl(Platform);
             return PB.GetPlatformUIElementsType();
+        }
+
+        public class ElementTypeOperations
+        {
+            public eElementType ElementType;
+            public Type ActionType;
+            public List<Enum> ElementOperationsList = new List<Enum>();
         }
 
         internal static List<eLocateBy> GetPlatformUIElementLocatorsList(ePlatformType Platform)
@@ -129,6 +138,12 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.Tab);
             }
             return mElementsTypeList;
+        }
+
+        public virtual ObservableList<Act> GetPlatformElementActions(ElementInfo elementInfo)
+        {
+            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
+            return UIElementsActionsList;
         }
 
         public virtual List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)

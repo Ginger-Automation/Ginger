@@ -46,7 +46,7 @@ function define_GingerRecorderLib() {
 
             if (!isActionFromTimeOut) {
                 element = event.currentTarget;
-                GingerRecorderLib.AddRecordingtoQ(element, "Click", element.value, element.type);
+                GingerRecorderLib.AddRecordingtoQ(element, "Submit", element.value, "Button");
 
                 setTimeout(function () { isActionFromTimeOut = true; element.click(); }, 1500);
                 return false;

@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
+using System.Linq;
 
 namespace GingerCore.Actions.Common
 {
@@ -80,7 +81,7 @@ namespace GingerCore.Actions.Common
                 return mPlatforms;
             }
         }
-               
+
         public new static partial class Fields
         {
             public static string ElementType = "ElementType";
@@ -149,7 +150,7 @@ namespace GingerCore.Actions.Common
         }
 
         // Fields Helper for specific action, will create AIV with param name based on enum
-        
+
         public enum CheckBoxSetValue
         {
             Checked,
@@ -174,7 +175,7 @@ namespace GingerCore.Actions.Common
         }
 
         public enum eElementProperty
-        { 
+        {
             [EnumValueDescription("Enabled")]
             Enabled,
             [EnumValueDescription("Visible")]
@@ -228,7 +229,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Mouse Press/Release")]
             MousePressRelease,                              // JAVA ?
             [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Double Click")]      
+            [EnumValueDescription("Double Click")]
             DoubleClick,                                     // JAVA ?
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Java Script Click")]
@@ -343,6 +344,7 @@ namespace GingerCore.Actions.Common
             SendKeyPressRelease,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Wait Until Display")]
+            [EnumValueExtDescriptionAttribute("Wait Until Display")]
             WaitUntilDisplay,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Wait")]
@@ -359,9 +361,6 @@ namespace GingerCore.Actions.Common
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Collapse")]
             Collapse,
-            [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Switch")]
-            Switch,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Close")]
             CloseWindow,
@@ -383,9 +382,6 @@ namespace GingerCore.Actions.Common
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("JEditor Pane Element Action")]
             JEditorPaneElementAction,
-            [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Switch To Default Frame")]
-            SwitchToDefaultFrame,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Refresh")]
             Refresh,
@@ -414,9 +410,6 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Get Style")]
             GetStyle,
             [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Switch To Parent Frame")]
-            SwitchToParentFrame,
-            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Async Select From Drop Down (By Index)")]
             AsyncSelectFromDropDownByIndex,
             [Description(EElementActionTypeGeneric)]
@@ -431,6 +424,8 @@ namespace GingerCore.Actions.Common
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Set As Disabled")]
             IsDisabled,
+            [EnumValueDescription("Switch")]
+            Switch,
             #endregion Generic Action Types
 
             #region TextBox Action Types
@@ -456,7 +451,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Get Selected Row")]
             GetSelectedRow,
             [EnumValueDescription("Draw Object")]
-            DrawObject,            
+            DrawObject,
             [EnumValueDescription("Win Double Click")]
             winDoubleClick,
             [EnumValueDescription("Async Select")]
@@ -507,22 +502,22 @@ namespace GingerCore.Actions.Common
 
         [IsSerializedForLocalRepository]
         public eElementAction ElementAction { get; set; }
-        
+
         [IsSerializedForLocalRepository]
         public eLocateBy ElementLocateBy { get; set; }
-        
+
         [IsSerializedForLocalRepository]
         public eLocateBy TargetLocateBy { get; set; }
-        
+
         [IsSerializedForLocalRepository]
         public eElementType TargetElementType { get; set; }
-        
+
         [IsSerializedForLocalRepository]
         public eElementType HandleElementType { get; set; }
-        
+
         [IsSerializedForLocalRepository]
         public eElementAction HandleActionType { get; set; }
-        
+
         #region TableElementConfigs
         public enum eTableElementRunColSelectorValue
         {
@@ -533,7 +528,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Column Number")]
             ColNum
         }
-        
+
         public enum eTableElementRunColPropertyValue
         {
             [EnumValueDescription("Value")]
@@ -629,7 +624,7 @@ namespace GingerCore.Actions.Common
                 GetOrCreateInputParam(Fields.ElementLocateValue).Value = value;
             }
         }
-        
+
         public enum eTableAction
         {
             [EnumValueDescription("Set Value")]
@@ -656,12 +651,12 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Set Focus")]
             SetFocus
         }
-        
+
         // TODO: move Locate Value to here and remove from Act.cs
-        
+
         // When recording we will collect some more info on the element to use as hint
         public string LocatorHint { get; set; }  // make it list of loc by loc value - which can find the elem or one string - will be used for auto fix
-        
+
         public override String ActionType
         {
             get
@@ -776,6 +771,12 @@ namespace GingerCore.Actions.Common
                     return false;
             }
         }
+        public ObservableList<Act> GetElementActionsByElementType(eElementType elementType)
+        {
+            ObservableList<Act> list = new ObservableList<Act>();
+
+            return list;
+        }
 
         internal Drivers.CommunicationProtocol.PayLoad GetPayLoad()
         {
@@ -790,7 +791,7 @@ namespace GingerCore.Actions.Common
             {
                 if (!string.IsNullOrEmpty(AIV.Value))
                 {
-                    PayLoad AIVPL = new PayLoad("AIV", AIV.Param, AIV.ValueForDriver);                                        
+                    PayLoad AIVPL = new PayLoad("AIV", AIV.Param, AIV.ValueForDriver);
                     PLParams.Add(AIVPL);
                 }
             }
@@ -836,7 +837,7 @@ namespace GingerCore.Actions.Common
                 return d;
             }
         }
-     
+
         public string ElementLocateValueForDriver
         {
             get
