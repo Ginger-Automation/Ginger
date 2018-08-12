@@ -176,6 +176,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     break;
                 }
             }
+
+            foreach (ElementInfo EI in mPOM.UnMappedUIElements)
+            {
+                mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
+
+                if (EI.XPath == mSpyElement.XPath && EI.Path == mSpyElement.Path)
+                {
+                    mPOM.UnMappedUIElements.CurrentItem = EI;
+                    xMainElementsGrid.ScrollToViewCurrentItem();
+                    break;
+                }
+            }
         }
 
 
@@ -292,9 +304,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
 
                 //ObservableList<ControlProperty> ElementsProperties = SelectedElement.GetElementProperties();
-                ObservableList<ControlProperty> ElementsProperties = mWinExplorer.GetElementProperties(SelectedElement);
-                foreach (ControlProperty CP in ElementsProperties)
-                    mProperties.Add(CP);
+                if (mWinExplorer != null)
+                {
+                    ObservableList<ControlProperty> ElementsProperties = mWinExplorer.GetElementProperties(SelectedElement);
+                    foreach (ControlProperty CP in ElementsProperties)
+                        mProperties.Add(CP);
+                }
+
 
             }
 

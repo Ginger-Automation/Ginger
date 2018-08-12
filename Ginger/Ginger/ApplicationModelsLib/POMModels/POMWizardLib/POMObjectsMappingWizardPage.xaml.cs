@@ -64,6 +64,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             EI.ElementName = GetBestElementName(EI);
             EI.WindowExplorer = mWizard.IWindowExplorerDriver;
 
+
+            if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
+            {
+                mWizard.POM.MappedUIElements.Add(EI);
+            }
+            else
+            {
+                mWizard.POM.UnMappedUIElements.Add(EI);
+            }
+        }
             ////TODO: Auto decide what is active
             //if (!string.IsNullOrEmpty(EI.ElementName))
             //{
@@ -83,43 +93,43 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             //    }
             //}
 
-            string elementTagName = string.Empty;
-            string elementType = string.Empty;
+        //    string elementTagName = string.Empty;
+        //    string elementType = string.Empty;
 
-            if (EI.ElementType.Contains("."))
-            {
-                elementTagName = EI.ElementType.Substring(0, EI.ElementType.IndexOf("."));
-                elementType = EI.ElementType.Substring(EI.ElementType.IndexOf(".") + 1);
-            }
-            else
-            {
-                elementTagName = EI.ElementType;
-            }
+        //    if (EI.ElementType.Contains("."))
+        //    {
+        //        elementTagName = EI.ElementType.Substring(0, EI.ElementType.IndexOf("."));
+        //        elementType = EI.ElementType.Substring(EI.ElementType.IndexOf(".") + 1);
+        //    }
+        //    else
+        //    {
+        //        elementTagName = EI.ElementType;
+        //    }
 
-            if (mRequestedElementTagList.Contains(elementTagName))
-            {
-                List<string> values = null;
-                if (mRequestedElementTypesDict.ContainsKey(elementTagName.ToLower()))
-                {
-                    values = mRequestedElementTypesDict[elementTagName.ToLower()];
-                }
+        //    if (mRequestedElementTagList.Contains(elementTagName))
+        //    {
+        //        List<string> values = null;
+        //        if (mRequestedElementTypesDict.ContainsKey(elementTagName.ToLower()))
+        //        {
+        //            values = mRequestedElementTypesDict[elementTagName.ToLower()];
+        //        }
 
-                if (values != null && !string.IsNullOrEmpty(elementType))
-                {
-                    List<string> upperList = values.Select(x => x.ToUpper()).ToList();
-                    if (upperList.Contains(elementType))
-                        mWizard.POM.MappedUIElements.Add(EI);
-                }
-                else
-                {
-                    mWizard.POM.MappedUIElements.Add(EI);
-                }
-            }
-            else
-            {
-                mWizard.POM.UnMappedUIElements.Add(EI);
-            }
-        }
+        //        if (values != null && !string.IsNullOrEmpty(elementType))
+        //        {
+        //            List<string> upperList = values.Select(x => x.ToUpper()).ToList();
+        //            if (upperList.Contains(elementType))
+        //                mWizard.POM.MappedUIElements.Add(EI);
+        //        }
+        //        else
+        //        {
+        //            mWizard.POM.MappedUIElements.Add(EI);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        mWizard.POM.UnMappedUIElements.Add(EI);
+        //    }
+        //}
 
         private void InitilizePomElementsMappingPage()
         {
@@ -139,11 +149,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.Active:
                     if (xPomElementsMappingPageFrame.Content == null)
                         InitilizePomElementsMappingPage();
+                    mSelectedElementTypesList = mWizard.AutoMapElementTypesList.Where(x => x.Selected == true).Select(x =>x.ElementType).ToList();
                     Learn();
                     break;
             }
         }
-
+        List<eElementType> mSelectedElementTypesList = new List<eElementType>();
 
         private async void Learn()
         {
@@ -156,8 +167,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mWizard.POM.MappedUIElements.Clear();
                 mWizard.POM.UnMappedUIElements.Clear();
 
-                mRequestedElementTypesDict = SeleniumDriver.GetFilteringCreteriaDict(mWizard.AutoMapElementTypesList);//TODO: need to be done diffrently- talk with Eliran
-                mRequestedElementTagList = mRequestedElementTypesDict.Keys.Select(x => x.ToUpper()).ToList();
+                //mRequestedElementTypesDict = SeleniumDriver.GetFilteringCreteriaDict(mWizard.AutoMapElementTypesList);//TODO: need to be done diffrently- talk with Eliran
+                //mRequestedElementTagList = mRequestedElementTypesDict.Keys.Select(x => x.ToUpper()).ToList();
 
                 mWizard.IsLearningWasDone = await GetElementsFromPage();
                 xStopLoadButton.Visibility = Visibility.Collapsed;
@@ -189,7 +200,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void GetElementFromPageTask()
         {
-            mWizard.IWindowExplorerDriver.GetVisibleControls(new ObservableList<UIElementFilter>(), mElementsList);
+            mWizard.IWindowExplorerDriver.GetVisibleControls(null, mElementsList);
         }
 
         string GetBestElementName(ElementInfo EI)
@@ -212,6 +223,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (Reporter.ToUser(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements) == MessageBoxResult.Yes)
             {
+                mWizard.IsLearningWasDone = false;
                 Learn();
             }
         }

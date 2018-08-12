@@ -88,6 +88,8 @@ namespace GingerCore.Drivers.Common
             set { mName = value; }
         }   // Developer Name
 
+        
+
         // Used for Lazy loading when possible
         public virtual string GetName()
         {

@@ -3398,7 +3398,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
             List<ElementInfo> list = new List<ElementInfo>();
@@ -3406,9 +3406,9 @@ namespace GingerCore.Drivers
             UnhighlightLast();
             Driver.SwitchTo().DefaultContent();
 
-            Dictionary<string, List<string>> filteringCriteriasDict = GetFilteringCreteriaDict(filteringCriterias);
+            Dictionary<string, List<string>> filteringCriteriasDict = GetFilteringCreteriaDict(filteredElementType);
 
-            if (filteringCriterias.Count != 0)
+            if (filteredElementType != null && filteringCriteriasDict != null && filteringCriteriasDict.Count != 0)
             {
                 foreach (KeyValuePair<string, List<string>> kvp in filteringCriteriasDict)
                 {
@@ -3424,12 +3424,7 @@ namespace GingerCore.Drivers
             {
                 List<ElementInfo> allElementlist = GetAllElementsFromPageWithoutXpath("", foundElementsList);
                 list = allElementlist;
-                ////Another way to pull all elements from page
             }
-
-            ////Another way to pull all elements from page
-            //ElementInfo RootEI = GetRootElement();
-            //list = GetAllElementsFromPage(RootEI);
 
             CurrentFrame = "";
             Driver.SwitchTo().DefaultContent();
@@ -3472,13 +3467,63 @@ namespace GingerCore.Drivers
             return allElementlist;
         }
 
-        public static Dictionary<string, List<string>> GetFilteringCreteriaDict(ObservableList<UIElementFilter> filteringCriterias)
+
+        public static eElementType GetElementTypeEnum(IWebElement el)
+        {
+            string elementTagName = el.TagName;
+            string elementType = el.GetAttribute("type");
+
+
+            if ((elementTagName == "input" && (elementType == "button" || elementType == "submit")) || elementTagName == "button")
+                return eElementType.Button;
+            else if (elementTagName == "input" && elementType == "checkbox")
+                return eElementType.CheckBox;
+            else if (elementTagName == "select" )
+                return eElementType.ComboBox;
+            else if (elementTagName == "optgroup" || elementTagName == "option")
+                return eElementType.ComboBoxOption;
+            else if (elementTagName == "div")
+                return eElementType.Div;
+            else if (elementTagName == "form")
+                return eElementType.Form;
+            else if (elementTagName == "link" || elementTagName == "a")
+                return eElementType.HyperLink;
+            else if (elementTagName == "img" || elementTagName == "map")
+                return eElementType.Image;
+            else if (elementTagName == "label" || elementTagName == "title")
+                return eElementType.Label;
+            else if (elementTagName == "ul" || elementTagName == "ol" || elementTagName == "dl")
+                return eElementType.List;
+            else if (elementTagName == "li" || elementTagName == "dt" || elementTagName == "dd")
+                return eElementType.ListItem;
+            else if (elementTagName == "menu")
+                return eElementType.MenuBar;
+            else if (elementTagName == "input" && elementType == "radio")
+                return eElementType.RadioButton;
+            else if (elementTagName == "span")
+                return eElementType.Span;
+            else if (elementTagName == "table" || elementTagName == "caption")
+                return eElementType.Table;
+            else if (elementTagName == "tr" || elementTagName == "th" || elementTagName == "td")
+                return eElementType.TableItem;
+            else if ((elementTagName == "input" && elementType == "text" )|| elementTagName == "textarea")
+                return eElementType.TextBox;
+            else if (elementTagName == "iframe")
+                return eElementType.Iframe;
+            else if (elementTagName == "h1" || elementTagName == "h2" || elementTagName == "h3" || elementTagName == "h4" || elementTagName == "h5" || elementTagName == "h6" || elementTagName == "p")
+                return eElementType.Text;
+            else
+                return eElementType.Unknown;
+        }
+
+        public static Dictionary<string, List<string>> GetFilteringCreteriaDict(List<eElementType> filteredElementType)
         {
             Dictionary<string, List<string>> FilteringCriteriaDict = new Dictionary<string, List<string>>();
 
-            foreach (UIElementFilter UIEF in filteringCriterias)
+            if (filteredElementType != null)
+            foreach (eElementType UIEF in filteredElementType)
             {
-                switch (UIEF.ElementType)
+                switch (UIEF)
                 {
                     case eElementType.Button:
                         if (FilteringCriteriaDict.ContainsKey("input"))
@@ -3678,6 +3723,7 @@ namespace GingerCore.Drivers
             EI.Value = GenerateElementValue(el);
             EI.Name = GenerateElementName(el);
             EI.ElementType = GenerateElementType(el);
+            EI.ElementTypeEnum = GetElementTypeEnum(el);
             EI.Path = path;
             EI.XPath = string.Empty;
             EI.ElementObject = el;

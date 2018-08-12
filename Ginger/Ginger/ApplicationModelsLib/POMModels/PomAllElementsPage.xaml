@@ -9,7 +9,7 @@
       Title="PomAllElementsPage">
 
     <Grid>
-        <TabControl x:Name="APIModelTabs" Grid.Row="1" Background="{StaticResource @Skin1_ColorC}"  HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" >
+        <TabControl x:Name="POMModelTabs" Grid.Row="1" Background="{StaticResource @Skin1_ColorC}"  HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
