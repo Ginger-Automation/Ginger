@@ -81,7 +81,7 @@ namespace Ginger.GingerGridLib
 
             foreach (GingerNodeInfo GNI in mGingerGrid.NodeList)
             {
-                GingerNodeProxy GNA = mGingerGrid.CreateGingerNodeAgent(GNI);
+                GingerNodeProxy GNA = new GingerNodeProxy(GNI);
                 GingerGridNodePage p = new GingerGridNodePage(GNA);
                 // Connect to LiveView Channel - this is not via Run act
                 Frame f = new Frame();
