@@ -39,39 +39,14 @@ namespace GingerCore.ALM
             return QCRestAPIConnect.GetQCDomainProjects(ALMCore.AlmConfig.ALMDomain);
         }
 
-        public QCTestSet ImportTestSetData(string tSId)
+        public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
         {
-            return ImportFromQCRest.ImportTestSetData(tSId);
+            return ImportFromQCRest.ImportTestSetData(testSet);
         }
 
-        public QCTestInstanceColl ImportTestSetInstanceData(QCTestSet TS)
+        public BusinessFlow ConvertQCTestSetToBF(QC.QCTestSet testSet)
         {
-            return ImportFromQCRest.ImportTestSetInstanceData(TS);
-        }
-
-        public QCTestCaseColl ImportTestSetTestCasesData(QCTestInstanceColl TStestInstances)
-        {
-            return ImportFromQCRest.ImportTestSetTestCasesData(TStestInstances);
-        }
-
-        public QCTestCaseStepsColl ImportTestCasesSteps(QCTestCaseColl testCases)
-        {
-            return ImportFromQCRest.ImportTestCasesSteps(testCases);
-        }
-
-        public QCTestCaseParamsColl ImportTestCasesParams(QCTestCaseColl testCases)
-        {
-            return ImportFromQCRest.ImportTestCasesParams(testCases);
-        }
-
-        public BusinessFlow ConvertQCTestSetToBF(QCTestSet testSet)
-        {
-            throw new NotImplementedException();
-        }
-
-        public BusinessFlow ConvertQCTestSetToBF(QCTestSet tS, QCTestInstanceColl testInstances, QCTestCaseColl tSTestCases, QCTestCaseStepsColl tSTestCaseSteps, QCTestCaseParamsColl tSTestCasesParams)
-        {
-            return ImportFromQCRest.ConvertQCTestSetToBF(tS, testInstances, tSTestCases, tSTestCaseSteps, tSTestCasesParams);
+            return ImportFromQCRest.ConvertQCTestSetToBF(testSet);
         }
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST = false)
@@ -89,9 +64,9 @@ namespace GingerCore.ALM
             return ExportToQCRestAPI.ExportActivitiesGroupToQC(activtiesGroup, matchingTC, uploadPath, testCaseFields, designStepsFields, designStepsParamsFields, ref res);
         }
 
-        public bool ExportBusinessFlowToALM(BusinessFlow businessFlow, QCTestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ref string result)
+        public bool ExportBusinessFlowToALM(BusinessFlow businessFlow, QCTestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ObservableList<ExternalItemFieldBase> testInstanceFields, ref string result)
         {
-            return ExportToQCRestAPI.ExportBusinessFlowToQC(businessFlow, mappedTestSet, uploadPath, testSetFields, ref result);
+            return ExportToQCRestAPI.ExportBusinessFlowToQC(businessFlow, mappedTestSet, uploadPath, testSetFields, testInstanceFields, ref result);
         }
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
@@ -304,11 +279,6 @@ namespace GingerCore.ALM
         {
             get { return ImportFromQCRest.GingerActivitiesRepo; }
             set { ImportFromQCRest.GingerActivitiesRepo = value; }
-        }
-
-        public static ObservableList<ExternalItemFieldBase> GetALMItemFields()
-        {
-            return ImportFromQCRest.GetALMItemFields();
         }
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)

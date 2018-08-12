@@ -500,6 +500,7 @@ namespace Ginger.ALM
                         existingField.Name = latestField.Name;
                         existingField.ItemType = latestField.ItemType;
                         existingField.Mandatory = latestField.Mandatory;
+                        existingField.ExternalID = latestField.ExternalID;
                        
                         if (latestField.Mandatory == true)
                             existingField.ToUpdate = true;

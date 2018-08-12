@@ -89,6 +89,7 @@ namespace Ginger.ALM
             if (isServerDetailsCorrect)
             {
                 QCRadioButton.IsEnabled = false;
+                RestAPICheckBox.IsEnabled = false;
                 RQMRadioButton.IsEnabled = false;
                 RallyRadioButton.IsEnabled = false;
                 RQMLoadConfigPackageButton.IsEnabled = false;
@@ -104,12 +105,17 @@ namespace Ginger.ALM
             else
             {
                 QCRadioButton.IsEnabled = true;
+                RestAPICheckBox.IsEnabled = true;
                 RQMRadioButton.IsEnabled = true;
                 RallyRadioButton.IsEnabled = true;
                 RQMLoadConfigPackageButton.IsEnabled = true;
                 if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RQM)
                     ServerURLTextBox.IsEnabled = false;
-                else ServerURLTextBox.IsEnabled = true;
+                else
+                {
+                    ServerURLTextBox.IsEnabled = true;
+                    ServerURLTextBox.IsReadOnly = false;
+                }
                 UserNameTextBox.IsEnabled = true;
                 PasswordTextBox.IsEnabled = true;
                 if (isConnWin)
@@ -529,6 +535,9 @@ namespace Ginger.ALM
             if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.QC)
             {
                 App.UserProfile.Solution.UseRest = true;
+                ExampleURLHint.Content = "Example: http://server:8080/";
+                if (ServerURLTextBox.Text.EndsWith("qcbin"))
+                    ServerURLTextBox.Text = ServerURLTextBox.Text.Replace("qcbin", "");
             }
             else
             {
@@ -540,6 +549,9 @@ namespace Ginger.ALM
         private void RestAPICheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             App.UserProfile.Solution.UseRest = false;
+            ExampleURLHint.Content = "Example: http://server:8080/almbin";
+            if (!ServerURLTextBox.Text.EndsWith("qcbin"))
+                ServerURLTextBox.Text = ServerURLTextBox.Text + "qcbin";
         }
     }
 }

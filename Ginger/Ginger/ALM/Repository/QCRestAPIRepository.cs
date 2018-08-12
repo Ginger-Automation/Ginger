@@ -27,12 +27,23 @@ namespace Ginger.ALM.Repository
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, "Connecting to QC server");
-                return ALMIntegration.Instance.AlmCore.ConnectALMServer();
+                if(ALMIntegration.Instance.AlmCore.ConnectALMServer())
+                    return true;
+                else
+                {
+                    if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
+                        Reporter.ToUser(eUserMsgKeys.QcConnectFailureRestAPI);
+                    else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
+                        Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings);
+
+                    Reporter.ToLog(eLogLevel.ERROR, "Error connecting to QC server");
+                    return false;
+                }
             }
             catch (Exception e)
             {
                 if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
-                    Reporter.ToUser(eUserMsgKeys.QcConnectFailure, e.Message);
+                    Reporter.ToUser(eUserMsgKeys.QcConnectFailureRestAPI, e.Message);
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
                     Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings, e.Message);
 
@@ -137,15 +148,14 @@ namespace Ginger.ALM.Repository
                     {
                         //import test set data
                         Reporter.ToGingerHelper(eGingerHelperMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
-
-                        QCRestClient.QCTestSet TS = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ImportTestSetData(testSetItemtoImport.TestSetID);
-                        QCTestInstanceColl TStestInstances = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ImportTestSetInstanceData(TS);
-                        QCTestCaseColl TSTestCases = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ImportTestSetTestCasesData(TStestInstances);
-                        QCTestCaseStepsColl TSTestCaseSteps = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ImportTestCasesSteps(TSTestCases);
-                        QCTestCaseParamsColl TSTestStepsParams = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ImportTestCasesParams(TSTestCases);
+                        GingerCore.ALM.QC.QCTestSet TS = new GingerCore.ALM.QC.QCTestSet();
+                        TS.TestSetID = testSetItemtoImport.TestSetID;
+                        TS.TestSetName = testSetItemtoImport.TestSetName;
+                        TS.TestSetPath = testSetItemtoImport.Path;
+                        TS = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ImportTestSetData(TS);
 
                         //convert test set into BF
-                        BusinessFlow tsBusFlow = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS, TStestInstances, TSTestCases, TSTestCaseSteps, TSTestStepsParams);
+                        BusinessFlow tsBusFlow = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
 
                         if (App.UserProfile.Solution.MainApplication != null)
                         {
@@ -342,12 +352,14 @@ namespace Ginger.ALM.Repository
             //upload the business flow
             Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItemToALM, null, businessFlow.Name);
             string res = string.Empty;
-            //TODO : need to update to retireve only Test Set Item Fields -->DONE
-            ObservableList<ExternalItemFieldBase> testSetFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
-            CleanUnrelvantFields(testSetFields, ALM_Common.DataContracts.ResourceType.TEST_SET);
 
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
+            ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
-            bool exportRes = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, testLabUploadPath, testSetFields, ref res);
+            ObservableList<ExternalItemFieldBase> testSetFieldsFields = CleanUnrelvantFields(allFields, ResourceType.TEST_SET);
+            ObservableList<ExternalItemFieldBase> testInstanceFields = CleanUnrelvantFields(allFields, ResourceType.TEST_CYCLE);
+
+            bool exportRes = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, testLabUploadPath, testSetFieldsFields, testInstanceFields, ref res);
             Reporter.CloseGingerHelper();
             if (exportRes)
             {

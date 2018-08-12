@@ -23,7 +23,7 @@ namespace GingerCore.ALM.QCRestAPI
 
         public static bool ConnectQCServer(string qcServerUrl, string qcUserName, string qcPassword)
         {
-            if (QcRestClient == null)
+            if (QcRestClient == null || qcServerUrl != ServerURL || qcUserName != UserName || qcPassword != Password)
                 QcRestClient = new QCClient(qcServerUrl, qcUserName, qcPassword);
 
             ServerURL = qcServerUrl;

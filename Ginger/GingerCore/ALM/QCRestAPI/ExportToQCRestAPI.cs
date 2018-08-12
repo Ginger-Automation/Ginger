@@ -56,7 +56,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
         }
 
-        public static bool ExportBusinessFlowToQC(BusinessFlow businessFlow, QCTestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ref string result)
+        public static bool ExportBusinessFlowToQC(BusinessFlow businessFlow, QCTestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ObservableList<ExternalItemFieldBase> testInstanceFields, ref string result)
         {
             QCTestSet testSet = null;
             ObservableList<ActivitiesGroup> existingActivitiesGroups = new ObservableList<ActivitiesGroup>();
@@ -66,12 +66,12 @@ namespace GingerCore.ALM.QCRestAPI
                 if (mappedTestSet == null) //##create new Test Set in QC
                 {
                     testSet = CreateNewTestSet(businessFlow, uploadPath, testSetFields);
-                    CreateNewTestInstances(businessFlow, existingActivitiesGroups, testSet, testSetFields);
+                    CreateNewTestInstances(businessFlow, existingActivitiesGroups, testSet, testInstanceFields);
                 }
                 else //##update existing test set
                 {
                     testSet = UpdateExistingTestSet(businessFlow, mappedTestSet, uploadPath, testSetFields);
-                    UpdateTestInstances(businessFlow, existingActivitiesGroups, testSet, testSetFields);
+                    UpdateTestInstances(businessFlow, existingActivitiesGroups, testSet, testInstanceFields);
                 }
 
                 businessFlow.ExternalID = testSet.Id.ToString();
@@ -266,7 +266,6 @@ namespace GingerCore.ALM.QCRestAPI
                         TestId = ag.ExternalID,
                         CycleId = testSet.Id,
                         TestOrder = counter++.ToString(),
-                        Name = ag.Name,
                     };
 
                     //set item fields for test instances
@@ -288,7 +287,7 @@ namespace GingerCore.ALM.QCRestAPI
 
                     if (response.IsSucceed) // # Currently bug in HPE failing the test instance creation despite it working.
                     {
-                        testInstanceColl.Add(QCRestAPIConnect.QcRestClient.GetTestInstanceDetails(response.IdCreated));
+                        //QCTestInstance testInstanceCreated = QCRestAPIConnect.QcRestClient.GetTestInstanceDetails(response.IdCreated);
                         ag.ExternalID2 = response.IdCreated;//the test case instance ID in the test set- used for exporting the execution details
                     }
                 }
