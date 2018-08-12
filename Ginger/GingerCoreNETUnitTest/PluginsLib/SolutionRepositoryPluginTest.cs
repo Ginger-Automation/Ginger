@@ -20,7 +20,9 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 using Amdocs.Ginger.Repository;
+using GingerCoreNET.RunLib;
 using GingerCoreNETUnitTest.RunTestslib;
+using GingerPlugInsNET.ActionsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -65,6 +67,17 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            foreach (GingerNodeInfo GNI in WorkSpace.Instance.LocalGingerGrid.NodeList)
+            {
+                GingerNodeProxy proxy = new GingerNodeProxy(GNI);                    
+                // proxy.Shutdown();
+            }
+            
+        }
+
 
         [TestInitialize]
         public void TestInitialize()
@@ -104,6 +117,55 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
             //Assert                        
             Assert.AreEqual(6, list.Count, "There are 6 stand alone actions");
+        }
+
+        [TestMethod]
+        public void GingerOfficePluginTestAction()
+        {
+            //Arrange            
+            ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            PluginPackage p = (from x in Plugins where x.PluginID == "GingerOfficePlugin" select x).SingleOrDefault();
+            ObservableList<StandAloneAction> list = p.GetStandAloneActions();
+            StandAloneAction standAloneAction = list[0];
+            GingerAction GA = new GingerAction(standAloneAction.ID);
+            GA.InputParams["PluginID"].Value = p.PluginID;
+            GA.InputParams["PluginActionID"].Value = standAloneAction.ID;
+            GA.InputParams["A"].Value = "hi";
+            GA.InputParams["B"].Value = "yo";
+
+            // Act                        
+            WorkSpace.Instance.PlugInsManager.Execute(GA);
+
+            //Assert                        
+            Assert.AreEqual("ab", GA.Output.Values[0].Param , "Test action output");
+        }
+
+
+        [TestMethod]
+        public void GingerOfficePluginTestActionx3()
+        {
+            //Arrange            
+            ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            PluginPackage p = (from x in Plugins where x.PluginID == "GingerOfficePlugin" select x).SingleOrDefault();
+            ObservableList<StandAloneAction> list = p.GetStandAloneActions();
+            StandAloneAction standAloneAction = list[0];
+            GingerAction GA = new GingerAction(standAloneAction.ID);
+            GA.InputParams["PluginID"].Value = p.PluginID;
+            GA.InputParams["PluginActionID"].Value = standAloneAction.ID;
+            GA.InputParams["A"].Value = "hi";
+            GA.InputParams["B"].Value = "yo";
+
+
+            // Act                        
+            for (int i = 0; i < 3; i++)
+            {
+                WorkSpace.Instance.PlugInsManager.Execute(GA);
+            }
+
+
+            //Assert                
+            Assert.AreEqual(1, WorkSpace.Instance.LocalGingerGrid.NodeList.Count, "GingerGrid nodes 1 - only one service is up - reuse");
+            
         }
 
     }       

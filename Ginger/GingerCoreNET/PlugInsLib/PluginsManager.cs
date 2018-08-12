@@ -118,8 +118,7 @@ namespace Amdocs.Ginger.Repository
             if (!System.IO.Directory.Exists(folder))
             {
                 throw new Exception("Plugin folder not found: " + folder);
-            }
-            
+            }            
 
             PluginPackage p = new PluginPackage(folder);            
             mPluginPackages.Add(p);
@@ -213,12 +212,8 @@ namespace Amdocs.Ginger.Repository
         }
 
         public void Execute(GingerAction GA)
-        {
-            // FIXME Plug in ID
-            //ActionHandler AH = GetStandAloneActionHandler("pp", gA.ID);            
-            //ActionRunner.RunAction(AH.Instance, gA, AH);
+        {            
             GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
-
 
             string PID = GA.InputParams["PluginID"].GetValueAsString();
             PluginPackage p = (from x in mPluginPackages where x.PluginID == PID select x).SingleOrDefault();
@@ -231,20 +226,28 @@ namespace Amdocs.Ginger.Repository
             //TODO: use nameof after ActPlugin move to common
             string serviceID = GA.InputParams["PluginActionID"].GetValueAsString();
 
-            string script = CommandProcessor.CreateLoadPluginScript(p.Folder);
-            script += CommandProcessor.CreateStartServiceScript(serviceID, "PACT Service", SocketHelper.GetLocalHostIP(), gingerGrid.Port);
+            GingerNodeInfo GNI = (from x in gingerGrid.NodeList where x.Name == p.PluginID select x).FirstOrDefault();
+            //run script only if service is not up            
+            if (GNI == null)
+            {
+                string script = CommandProcessor.CreateLoadPluginScript(p.Folder);
 
-            Task t = new Task(() => {
-                GingerConsoleHelper.Execute(script);
-            });
-            t.Start();
+                // hard coded!!!!!!!!!!
+                script += CommandProcessor.CreateStartServiceScript("ExcelService", p.PluginID, SocketHelper.GetLocalHostIP(), gingerGrid.Port);
 
-            GingerNodeInfo GNI = null;
+                Task t = new Task(() =>
+                {
+                    GingerConsoleHelper.Execute(script);
+                });
+                t.Start();
+            }                
+             
             int counter = 0;
             while (GNI == null && counter < 30)
             {
-                GNI = (from x in gingerGrid.NodeList where x.Name == "PACT Service" select x).FirstOrDefault();
                 Thread.Sleep(1000);
+                GNI = (from x in gingerGrid.NodeList where x.Name == p.PluginID select x).FirstOrDefault();                
+                counter++;
             }
 
 

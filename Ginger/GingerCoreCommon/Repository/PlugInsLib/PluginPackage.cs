@@ -72,7 +72,9 @@ namespace Amdocs.Ginger.Repository
         public PluginPackage(string folder)
         {            
             mFolder = folder;
-            LoadInfo();            
+            LoadInfo();
+            PluginID = PluginPackageInfo.Id;
+            PluginPackageVersion = PluginPackageInfo.Version;
         }
 
         private void LoadInfo()
