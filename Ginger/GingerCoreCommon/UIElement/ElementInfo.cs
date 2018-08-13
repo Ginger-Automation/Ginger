@@ -302,7 +302,6 @@ namespace Amdocs.Ginger.Common.UIElement
         //HTML Elements
         Div,
         Span,
-        Form,
-        Root
+        Form
     }
 }
