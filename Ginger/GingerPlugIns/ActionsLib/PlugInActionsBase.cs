@@ -27,6 +27,6 @@ namespace GingerPlugIns.ActionsLib
 
         public abstract List<PlugInAction> Actions();   // Plugin which impl need to return a list of actions
 
-        public abstract void RunAction(GingerAction GA);  // The plugin will have to handle the actual run
+        //public abstract void RunAction(GingerAction GA);  // The plugin will have to handle the actual run
     }
 }

@@ -122,6 +122,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\GingerExternal.dll</HintPath>
     </Reference>
+    <Reference Include="GingerPluginCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ginger.Plugin.Core.1.0.0\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
       <Private>True</Private>
@@ -427,7 +430,6 @@
     <Compile Include="Actions\Common\ElementConfigControl.cs" />
     <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
     <Compile Include="Actions\PlugIns\ActPlugIn.cs" />
-    <Compile Include="Actions\PlugIns\PlugInWrapper.cs" />
     <Compile Include="Actions\VisualTesting\ApplitoolsAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\IVisualAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\IVisualTestingDriver.cs" />
