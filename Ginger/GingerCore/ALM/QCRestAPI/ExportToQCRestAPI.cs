@@ -116,13 +116,13 @@ namespace GingerCore.ALM.QCRestAPI
             test.ElementsField["name"] = activitiesGroup.Name;
             test.ElementsField["description"] = activitiesGroup.Description;
             QCItem item = ConvertObjectValuesToQCItem(test, ResourceType.TEST_CASE);
-            ALMResponseData response = QCRestAPIConnect.QcRestClient.CreateNewEntity(ResourceType.TEST_CASE, item);
+            ALMResponseData response = QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CASE, item);
 
             test.Id = response.IdCreated;
             activitiesGroup.ExternalID = test.Id;
             activitiesGroup.ExternalID2 = test.Id;
 
-            return QCRestAPIConnect.QcRestClient.GetTestCases(new List<string> { test.Id })[0];
+            return QCRestAPIConnect.GetTestCases(new List<string> { test.Id })[0];
         }
 
         private static QCTestSet CreateNewTestSet(BusinessFlow businessFlow, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields)
@@ -151,8 +151,8 @@ namespace GingerCore.ALM.QCRestAPI
             try
             {
                 QCItem item = ConvertObjectValuesToQCItem(testSet, ResourceType.TEST_SET);
-                ALMResponseData response = QCRestAPIConnect.QcRestClient.CreateNewEntity(ResourceType.TEST_SET, item);
-                return QCRestAPIConnect.QcRestClient.GetTestSetDetails(response.IdCreated);
+                ALMResponseData response = QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_SET, item);
+                return QCRestAPIConnect.GetTestSetDetails(response.IdCreated);
             }
             catch (Exception ex)
             {
@@ -194,7 +194,7 @@ namespace GingerCore.ALM.QCRestAPI
             string descriptionTemplate =
                     "<html><body><div align=\"left\"><font face=\"Arial\"><span style=\"font-size:8pt\"><<&Description&&>><br /><<&Parameters&>><br /><<&Actions&>></span></font></div></body></html>";
             string description = descriptionTemplate.Replace("<<&Description&&>>", activity.Description);
-            QCTestCaseParamsColl testParams = QCRestAPIConnect.QcRestClient.GetTestCaseParams(test.Id);
+            QCTestCaseParamsColl testParams = QCRestAPIConnect.GetTestCaseParams(test.Id);
             string paramsSigns = string.Empty;
             if (activity.Variables.Count > 0)
             {
@@ -224,7 +224,7 @@ namespace GingerCore.ALM.QCRestAPI
                         newParam.TestId = test.Id;
 
                         QCItem itemTestCaseParam = ConvertObjectValuesToQCItem(newParam, ResourceType.TEST_CASE_PARAMETERS);
-                        QCRestAPIConnect.QcRestClient.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
+                        QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
                     }
                     catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
                 }
@@ -243,7 +243,7 @@ namespace GingerCore.ALM.QCRestAPI
             step.ElementsField["expected"] = activity.Expected;
 
             QCItem itemDesignStep = ConvertObjectValuesToQCItem(step, ResourceType.DESIGN_STEP);
-            ALMResponseData response = QCRestAPIConnect.QcRestClient.CreateNewEntity(ResourceType.DESIGN_STEP, itemDesignStep);
+            ALMResponseData response = QCRestAPIConnect.CreateNewEntity(ResourceType.DESIGN_STEP, itemDesignStep);
 
             activity.ExternalID = response.IdCreated;
 
@@ -255,7 +255,6 @@ namespace GingerCore.ALM.QCRestAPI
 
         private static void CreateNewTestInstances(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields)
         {
-            QCTestInstanceColl testInstanceColl = null;
             int counter = 1;
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
             {
@@ -283,7 +282,7 @@ namespace GingerCore.ALM.QCRestAPI
 
                     testInstance.ElementsField["subtype-id"] = "hp.qc.test-instance.MANUAL";
                     QCItem item = ConvertObjectValuesToQCItem(testInstance, ResourceType.TEST_CYCLE);
-                    ALMResponseData response = QCRestAPIConnect.QcRestClient.CreateNewEntity(ResourceType.TEST_CYCLE, item);
+                    ALMResponseData response = QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CYCLE, item);
 
                     if (response.IsSucceed) // # Currently bug in HPE failing the test instance creation despite it working.
                     {
@@ -296,23 +295,23 @@ namespace GingerCore.ALM.QCRestAPI
 
         private static void UpdateTestStep(QCTestCase test, ActivitiesGroup activitiesGroup, Activity identifiedActivity, ObservableList<ExternalItemFieldBase> designStepsFields, ObservableList<ExternalItemFieldBase> designStepsParamsFields)
         {
-            QCTestCaseStepsColl testCaseDesignStep = QCRestAPIConnect.QcRestClient.GetTestCasesSteps(new List<string> { test.Id });
+            QCTestCaseStepsColl testCaseDesignStep = QCRestAPIConnect.GetTestCasesSteps(new List<string> { test.Id });
 
             //delete the un-needed steps
             foreach (QCTestCaseStep step in testCaseDesignStep)
             {
                 if (activitiesGroup.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.ExternalID == step.Id.ToString()).FirstOrDefault() == null)
-                    QCRestAPIConnect.QcRestClient.DeleteEntity(ALM_Common.DataContracts.ResourceType.DESIGN_STEP, step.Id);
+                    QCRestAPIConnect.DeleteEntity(ALM_Common.DataContracts.ResourceType.DESIGN_STEP, step.Id);
             }
 
             //delete the existing parameters
-            QCTestCaseParamsColl testCaseParams = QCRestAPIConnect.QcRestClient.GetTestCaseParams(test.Id);
+            QCTestCaseParamsColl testCaseParams = QCRestAPIConnect.GetTestCaseParams(test.Id);
 
             if (testCaseParams.Count > 0)
             {
                 for (int indx = 0; indx < testCaseParams.Count; indx++)
                 {
-                    QCRestAPIConnect.QcRestClient.DeleteEntity(ALM_Common.DataContracts.ResourceType.DESIGN_STEP_PARAMETERS, testCaseParams[indx].Id);
+                    QCRestAPIConnect.DeleteEntity(ALM_Common.DataContracts.ResourceType.DESIGN_STEP_PARAMETERS, testCaseParams[indx].Id);
                 }
             }
 
@@ -336,7 +335,7 @@ namespace GingerCore.ALM.QCRestAPI
                     "<html><body><div align=\"left\"><font face=\"Arial\"><span style=\"font-size:8pt\"><<&Description&&>><br /><<&Parameters&>><br /><<&Actions&>></span></font></div></body></html>";
                 string description = descriptionTemplate.Replace("<<&Description&&>>", identifiedActivity.Description);
 
-                QCTestCaseParamsColl testParams = QCRestAPIConnect.QcRestClient.GetTestCaseParams(test.Id);
+                QCTestCaseParamsColl testParams = QCRestAPIConnect.GetTestCaseParams(test.Id);
                 string paramsSigns = string.Empty;
                 if (identifiedActivity.Variables.Count > 0)
                 {
@@ -366,7 +365,7 @@ namespace GingerCore.ALM.QCRestAPI
                             newParam.TestId = test.Id;
 
                             QCItem itemTestCaseParam = ConvertObjectValuesToQCItem(newParam, ResourceType.TEST_CASE_PARAMETERS);
-                            QCRestAPIConnect.QcRestClient.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
+                            QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
                         }
                         catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
                     }
@@ -386,7 +385,7 @@ namespace GingerCore.ALM.QCRestAPI
                 step.ElementsField["expected"] = identifiedActivity.Expected;
 
                 QCItem itemDesignStep = ConvertObjectValuesToQCItem(step, ResourceType.DESIGN_STEP, true);
-                ALMResponseData response = QCRestAPIConnect.QcRestClient.UpdateEntity(ResourceType.DESIGN_STEP, step.Id, itemDesignStep);
+                ALMResponseData response = QCRestAPIConnect.UpdateEntity(ResourceType.DESIGN_STEP, step.Id, itemDesignStep);
 
                 identifiedActivity.ExternalID = step.Id;
             }
@@ -418,7 +417,7 @@ namespace GingerCore.ALM.QCRestAPI
             test.ElementsField["name"] = activitiesGroup.Name;
             test.ElementsField["description"] = activitiesGroup.Description;
             QCItem item = ConvertObjectValuesToQCItem(test, ResourceType.TEST_CASE, true);
-            ALMResponseData response = QCRestAPIConnect.QcRestClient.UpdateEntity(ResourceType.TEST_CASE, test.Id, item);
+            ALMResponseData response = QCRestAPIConnect.UpdateEntity(ResourceType.TEST_CASE, test.Id, item);
 
             activitiesGroup.ExternalID = test.Id;
             activitiesGroup.ExternalID2 = test.Id;
@@ -448,8 +447,8 @@ namespace GingerCore.ALM.QCRestAPI
             try
             {
                 QCItem item = ConvertObjectValuesToQCItem(testSet, ResourceType.TEST_SET, true);
-                ALMResponseData response = QCRestAPIConnect.QcRestClient.UpdateEntity(ResourceType.TEST_SET, testSet.Id, item);
-                return QCRestAPIConnect.QcRestClient.GetTestSetDetails(testSet.Id);
+                ALMResponseData response = QCRestAPIConnect.UpdateEntity(ResourceType.TEST_SET, testSet.Id, item);
+                return QCRestAPIConnect.GetTestSetDetails(testSet.Id);
             }
             catch (Exception ex)
             {
@@ -466,7 +465,7 @@ namespace GingerCore.ALM.QCRestAPI
             {
                 ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString())).FirstOrDefault();
                 if (ag == null)
-                    QCRestAPIConnect.QcRestClient.DeleteEntity(ResourceType.TEST_CYCLE, testInstance.Id);
+                    QCRestAPIConnect.DeleteEntity(ResourceType.TEST_CYCLE, testInstance.Id);
                 else
                 {
                     existingActivitiesGroups.Add(ag);
@@ -488,11 +487,11 @@ namespace GingerCore.ALM.QCRestAPI
                     try
                     {
                         QCItem item = ConvertObjectValuesToQCItem(testInstance, ResourceType.TEST_CYCLE, true);
-                        ALMResponseData response = QCRestAPIConnect.QcRestClient.UpdateEntity(ResourceType.TEST_CYCLE, testInstance.Id, item);
+                        ALMResponseData response = QCRestAPIConnect.UpdateEntity(ResourceType.TEST_CYCLE, testInstance.Id, item);
 
                         if (response.IsSucceed)
                         {
-                            testInstances.Add(QCRestAPIConnect.QcRestClient.GetTestInstanceDetails(testInstance.Id));
+                            testInstances.Add(QCRestAPIConnect.GetTestInstanceDetails(testInstance.Id));
                             ag.ExternalID2 = response.IdCreated;//the test case instance ID in the test set- used for exporting the execution details
                         }
                     }

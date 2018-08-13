@@ -1,4 +1,5 @@
-﻿using ALMRestClient;
+﻿using ALM_Common.DataContracts;
+using ALMRestClient;
 using GingerCore.ALM.QC;
 using QCRestClient;
 using System;
@@ -15,7 +16,7 @@ namespace GingerCore.ALM.QCRestAPI
         public static string Password { get; set; }
         public static string CurrentDomain { get; set; }
         public static string CurrentProject { get; set; }
-        public static QCRestClient.QCClient QcRestClient { get; set; }
+        public static QCClient QcRestClient { get; set; }
 
         public static Dictionary<string, string> ExploredTestLabFolder = new Dictionary<string, string>();
         public static Dictionary<string, string> ExploredTestSets = new Dictionary<string, string>();
@@ -272,6 +273,192 @@ namespace GingerCore.ALM.QCRestAPI
                 return ExploredTestPlanFolder[separateAti];
             }
         }
+
+        #region QCRestclient manager functions
+
+        public static QCTestCaseColl GetTestCases(List<string> testCasesIds)
+        {
+            try
+            {
+                return QcRestClient.GetTestCases(testCasesIds);
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test cases with REST API", ex);
+                return null;
+            }
+        }
+
+        public static QCRestClient.QCTestSet GetTestSetDetails(string testSetID)
+        {
+            try
+            {
+                return QcRestClient.GetTestSetDetails(testSetID);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test set details with REST API", ex);
+                return null;
+            }
+        }
+
+        public static string ConvertResourceType(ResourceType resourceType)
+        {
+            try
+            {
+                return QcRestClient.ConvertResourceType(resourceType);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to convert resource type with REST API", ex);
+                return null;
+            }
+        }
+
+        public static List<QCField> GetFields(string testSetfieldInRestSyntax)
+        {
+            try
+            {
+                return QcRestClient.GetFields(testSetfieldInRestSyntax);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get fields with REST API", ex);
+                return null;
+            }
+        }
+
+        public static QCTestCaseStepsColl GetTestCaseSteps(string id)
+        {
+            try
+            {
+                return QcRestClient.GetTestCaseSteps(id);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test case steps with REST API", ex);
+                return null;
+            }
+        }
+
+        public static QCTestInstanceParamColl GetTestInstanceParams(string id)
+        {
+            try
+            {
+                return QcRestClient.GetTestInstanceParams(id);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test instances with REST API", ex);
+                return null;
+            }
+        }
+
+        public static QCTestInstanceColl GetTestInstancesOfTestSet(string testSetID)
+        {
+            try
+            {
+                return QcRestClient.GetTestInstancesOfTestSet(testSetID);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test instances of test set with REST API", ex);
+                return null;
+            }
+        }
+
+        public static QCTestCaseStepsColl GetTestCasesSteps(List<string> list)
+        {
+            try
+            {
+                return QcRestClient.GetTestCasesSteps(list);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test cases steps with REST API", ex);
+                return null;
+            }
+        }
+
+        public static QCRunColl GetRunsByTestId(string id)
+        {
+            try
+            {
+                return QcRestClient.GetRunsByTestId(id);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get runs by test id with REST API", ex);
+                return null;
+            }
+        }
+
+
+        public static QCTestCaseParamsColl GetTestCaseParams(string id)
+        {
+            try
+            {
+                return QcRestClient.GetTestCaseParams(id);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test cases parameters with REST API", ex);
+                return null;
+            }
+        }
+
+        public static QCTestInstance GetTestInstanceDetails(string id)
+        {
+            try
+            {
+                return QcRestClient.GetTestInstanceDetails(id);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test instance details with REST API", ex);
+                return null;
+            }
+        }
+
+        public static ALMResponseData CreateNewEntity(ResourceType resourceType, QCItem item)
+        {
+            try
+            {
+                return QcRestClient.CreateNewEntity(resourceType , item);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to create entity with REST API", ex);
+                return null;
+            }
+        }
+
+        public static void DeleteEntity(ResourceType resourceType, string id)
+        {
+            try
+            {
+                QcRestClient.DeleteEntity(resourceType, id);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to delete entity with REST API", ex);
+            }
+        }
+
+        public static ALMResponseData UpdateEntity(ResourceType resourceType, string id, QCItem itemDesignStep)
+        {
+            try
+            {
+                return QcRestClient.UpdateEntity(resourceType, id , itemDesignStep);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to update entity with REST API", ex);
+                return null;
+            }
+        }
+
+        #endregion QCRestclient manager functions
 
     }
 }

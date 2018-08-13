@@ -399,7 +399,7 @@ namespace Ginger.ALM.Repository
         {
             ObservableList<ExternalItemFieldBase> fieldsToReturn = new ObservableList<ExternalItemFieldBase>();
 
-            string currentResource = QCRestAPIConnect.QcRestClient.ConvertResourceType(resourceType);
+            string currentResource = QCRestAPIConnect.ConvertResourceType(resourceType);
             //Going through the fields to leave only Test Set fields
             for (int indx = 0; indx < fields.Count; indx++)
             {

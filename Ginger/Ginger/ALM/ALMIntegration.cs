@@ -382,7 +382,11 @@ namespace Ginger.ALM
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
                 string testPlanUploadPath = AlmRepo.SelectALMTestPlanPath();
+                if (testPlanUploadPath == null)
+                    return false;
                 string testLabUploadPath = AlmRepo.SelectALMTestLabPath();
+                if (testLabUploadPath == null)
+                    return false;
                 foreach (BusinessFlow bf in bfToExport)
                 {
                     if (!AlmRepo.ExportBusinessFlowToALM(bf, performSaveAfterExport, almConectStyle, testPlanUploadPath, testLabUploadPath))
