@@ -60,6 +60,14 @@ namespace Ginger.ALM
                     App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.QC;
             }
 
+            if (!WorkSpace.Instance.BetaFeatures.RestAPI)
+            {
+                RestAPICheckBox.Visibility = Visibility.Hidden;
+                App.UserProfile.Solution.UseRest = false;
+                RestAPICheckBox.IsChecked = false;
+                RestAPICheckBox.IsEnabled = false;
+            }
+
             if (almConnectStyle != ALMIntegration.eALMConnectType.Silence)
             {
                 if (GetProjectsDetails())

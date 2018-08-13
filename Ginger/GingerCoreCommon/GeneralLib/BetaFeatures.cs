@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -63,6 +63,7 @@ namespace Amdocs.Ginger.Common
 
         // ALM
         public bool Rally { get { return GetFeature(nameof(Rally)).Selected; } set { UpdateFeature(nameof(Rally), value); } }
+        public bool RestAPI { get { return GetFeature(nameof(RestAPI)).Selected; } set { UpdateFeature(nameof(RestAPI), value); } }
 
         //Gherkin
         public bool ImportGherkinFeatureWizrd { get { return GetFeature(nameof(ImportGherkinFeatureWizrd)).Selected; } set { UpdateFeature(nameof(ImportGherkinFeatureWizrd), value); } }
@@ -99,6 +100,7 @@ namespace Amdocs.Ginger.Common
 
             //ALM
             mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Rally", ID = nameof(Rally) });
+            mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show REST API", ID = nameof(RestAPI) });
 
             //Gherkin
             mFeatures.Add(new BetaFeature() { Group = "Gherkin", Description = "Import Gherkin feature wizard", ID = nameof(ImportGherkinFeatureWizrd)});
