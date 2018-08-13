@@ -3232,8 +3232,7 @@ namespace GingerCore.Drivers
                     ElementInfo elementInfo = GetElementInfoWithIWebElement(e, string.Empty);
 
                     string highlightJavascript = string.Empty;
-                    // if (elementInfo.ElementType == "INPUT.CHECKBOX" || elementInfo.ElementType == "TR" || elementInfo.ElementType == "TBODY")
-                    if (elementInfo.ElementTypeEnum == eElementType.CheckBox || elementInfo.ElementTypeEnum == eElementType.TableItem)
+                    if (elementInfo.ElementType == "INPUT.CHECKBOX" || elementInfo.ElementType == "TR" || elementInfo.ElementType == "TBODY")
                             highlightJavascript = "arguments[0].style.outline='3px dashed red'";
                     else
                         highlightJavascript = "arguments[0].style.border='3px dashed red'";
@@ -3690,6 +3689,7 @@ namespace GingerCore.Drivers
             EI.ID = GenerateElementID(el);
             EI.Value = GenerateElementValue(el);
             EI.Name = GenerateElementName(el);
+            EI.ElementType = GenerateElementType(el);
             EI.ElementTypeEnum = GetElementTypeEnum(el);
             EI.Path = path;
             EI.XPath = xPath;
@@ -3701,7 +3701,7 @@ namespace GingerCore.Drivers
         {
             ElementInfo RootEI = new ElementInfo();
             RootEI.ElementTitle = "html";
-            RootEI.ElementTypeEnum = eElementType.Root;
+            RootEI.ElementType = "root";
             RootEI.Value = string.Empty;
             RootEI.Path = string.Empty;
             RootEI.XPath = "html";
@@ -3854,6 +3854,7 @@ namespace GingerCore.Drivers
                 EI.Path = GenetratePath(path, xpath, EL.TagName);
                 EI.XPath = GenerateXpath(path, xpath, EL.TagName, ElementsIndexes[EL.TagName], ElementsCount[EL.TagName]); /*EI.GetAbsoluteXpath(); */
                 EI.RelXpath = GenerateRealXpath(EL);
+                EI.ElementType = GenerateElementType(EL);
                 EI.ElementTypeEnum = GetElementTypeEnum(EL);
                 list.Add(EI);
             }
@@ -4148,8 +4149,7 @@ namespace GingerCore.Drivers
             IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
 
             string highlightJavascript = string.Empty;
-            // if (ElementInfo.ElementType == "INPUT.CHECKBOX" || ElementInfo.ElementType == "TR" || ElementInfo.ElementType == "TBODY")
-            if (ElementInfo.ElementTypeEnum == eElementType.CheckBox || ElementInfo.ElementTypeEnum == eElementType.TableItem)
+            if (ElementInfo.ElementType == "INPUT.CHECKBOX" || ElementInfo.ElementType == "TR" || ElementInfo.ElementType == "TBODY")
                 highlightJavascript = "arguments[0].style.outline='3px dashed red'";
             else
                 highlightJavascript = "arguments[0].style.border='3px dashed red'";
@@ -4181,8 +4181,7 @@ namespace GingerCore.Drivers
                     try
                     {
                         // if there already is a highlighted element, unhighlight it
-                        // if (LastHighLightedElementInfo.ElementType == "INPUT.CHECKBOX" || LastHighLightedElementInfo.ElementType == "TR" || LastHighLightedElementInfo.ElementType == "TBODY")
-                        if (LastHighLightedElementInfo.ElementTypeEnum == eElementType.CheckBox || LastHighLightedElementInfo.ElementTypeEnum == eElementType.TableItem)
+                        if (LastHighLightedElementInfo.ElementType == "INPUT.CHECKBOX" || LastHighLightedElementInfo.ElementType == "TR" || LastHighLightedElementInfo.ElementType == "TBODY")
                                 javascriptDriver.ExecuteScript("arguments[0].style.outline=''", el);
                         else
                             javascriptDriver.ExecuteScript("arguments[0].style.border=''", el);
@@ -4454,6 +4453,7 @@ namespace GingerCore.Drivers
             EI.ID = GenerateElementID(EL);
             EI.Value = GenerateElementValue(EL);
             EI.Name = GenerateElementName(EL);
+            EI.ElementType = GenerateElementType(EL);
             EI.ElementTypeEnum = GetElementTypeEnum(EL);
             EI.Path = path;
             EI.XPath = xpath;
@@ -4811,34 +4811,22 @@ namespace GingerCore.Drivers
 
                             //if (ControlAction == "SetValue")
                             //    ControlAction = "SendKeys";
-                            if (ControlAction == "Click" && (Type.ToLower() == "a" || Type.ToLower() == "submit"))
+                            if (ControlAction.ToLower() == "click" && (Type.ToLower() == "a" || Type.ToLower() == "submit"))
                                 Thread.Sleep(2000);
 
-                            //TODO: switch to use ActUIElememnt
-                            //ActGenElement act = new ActGenElement();
-                            //act.Description = GetDescription(ControlAction, LocateValue, ElemValue, Type);
-                            //act.LocateBy = GetLocateBy(LocateBy);
-                            //act.LocateValue = LocateValue;
-                            //act.GenElementAction = GetElemAction(ControlAction);
-                            //act.Value = ElemValue;
                             ActUIElement actUI = new ActUIElement();
                             actUI.Description = GetDescription(ControlAction, LocateValue, ElemValue, Type);
                             actUI.ElementLocateBy = GetLocateBy(LocateBy);
                             actUI.ElementLocateValue = LocateValue;
                             actUI.ElementType = GetUIElementTypeByPayLoadType(Type);
-                            actUI.ElementAction = GetUIElementActionByElementTypeNPayLoadAction(ControlAction, actUI.ElementType, Type);
+                            if (Enum.IsDefined(typeof(ActUIElement.eElementAction), ControlAction))
+                                actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), ControlAction);
+                            else
+                                continue;
                             actUI.Value = ElemValue;
                             this.BusinessFlow.AddAct(actUI);
                             if (mActionRecorded != null)
                             {
-                                // With POM we use ActUIElement and send the event to WindowExplorer
-                                //ActUIElement actUI = new ActUIElement();
-                                //actUI.Description = GetDescription(ControlAction, LocateValue, ElemValue, Type);
-                                //actUI.LocateBy = GetLocateBy(LocateBy);
-                                //actUI.LocateValue = LocateValue;
-                                //actUI.ElementAction = GetUIElementAction(ControlAction);
-                                //actUI.Value = ElemValue;
-
                                 mActionRecorded.Invoke(this, new POMEventArgs(Driver.Title, actUI));
                             }
                         }
@@ -4897,7 +4885,7 @@ namespace GingerCore.Drivers
 
         public static eElementType GetUIElementTypeByPayLoadType(string Type)
         {
-            switch (Type)
+            switch (Type.ToLower())
             {
                 case "submit":
                 case "button":
@@ -4913,117 +4901,13 @@ namespace GingerCore.Drivers
                     return eElementType.CheckBox;
                 case "radio":
                     return eElementType.RadioButton;
-                case "SPAN":
+                case "span":
                     return eElementType.Span;
                 case "li":
                     return eElementType.List;
                 default:
                     return eElementType.Unknown;
             }
-        }
-
-        public static ActUIElement.eElementAction GetUIElementActionByElementTypeNPayLoadAction(string ControlAction, eElementType elementType, string payLoadType)
-        {
-            ActUIElement.eElementAction currentElementAction = ActUIElement.eElementAction.Wait;
-            switch (elementType)
-            {
-                case eElementType.Button:
-                    switch (ControlAction)
-                    {
-                        case "Click":
-                            if (payLoadType == "submit")
-                                currentElementAction = ActUIElement.eElementAction.Submit;
-                            else
-                                currentElementAction = ActUIElement.eElementAction.Click;
-                            break;
-                        case "SendKeys":
-                            currentElementAction = ActUIElement.eElementAction.GetValue;
-                            break;
-                    }
-                    break;
-
-                case eElementType.TextBox:
-                    switch (ControlAction)
-                    {
-                        case "SetValue":
-                            currentElementAction = ActUIElement.eElementAction.SetText;
-                            break;
-                        case "SendKeys":
-                            currentElementAction = ActUIElement.eElementAction.GetValue;
-                            break;
-                    }
-                    break;
-
-                case eElementType.ComboBox:
-                    switch (ControlAction)
-                    {
-                        case "Click":
-                            currentElementAction = ActUIElement.eElementAction.Click;
-                            break;
-                        case "SetValue":
-                            currentElementAction = ActUIElement.eElementAction.SelectByText;
-                            break;
-                        case "SendKeys":
-                            currentElementAction = ActUIElement.eElementAction.GetSelectedValue;
-                            break;
-                    }
-                    break;
-
-                case eElementType.CheckBox:
-                    switch (ControlAction)
-                    {
-                        case "Click":
-                            currentElementAction = ActUIElement.eElementAction.Click;
-                            break;
-                        case "SetValue":
-                            currentElementAction = ActUIElement.eElementAction.SetValue;
-                            break;
-                    }
-                    break;
-
-                case eElementType.RadioButton:
-                    switch (ControlAction)
-                    {
-                        case "Click":
-                            currentElementAction = ActUIElement.eElementAction.Click;
-                            break;
-                    }
-                    break;
-
-                case eElementType.Span:
-                    switch (ControlAction)
-                    {
-                        case "SendKeys":
-                            currentElementAction = ActUIElement.eElementAction.GetValue;
-                            break;
-                    }
-                    break;
-
-                case eElementType.List:
-                    switch (ControlAction)
-                    {
-                        case "SendKeys":
-                            currentElementAction = ActUIElement.eElementAction.GetValue;
-                            break;
-                    }
-                    break;
-
-                case eElementType.Unknown:
-                    switch (ControlAction)
-                    {
-                        case "Click":
-                            currentElementAction = ActUIElement.eElementAction.Click;
-                            break;
-                        case "SetValue":
-                            currentElementAction = ActUIElement.eElementAction.SetValue;
-                            break;
-                        case "SendKeys":
-                            currentElementAction = ActUIElement.eElementAction.SendKeys;
-                            break;
-                    }
-                    break;
-            }
-            return currentElementAction;
         }
 
         //Returns Action for HTML element on PL
@@ -6251,6 +6135,7 @@ namespace GingerCore.Drivers
             EI.ID = GenerateElementID(el);
             EI.Value = GenerateElementValue(el);
             EI.Name = GenerateElementName(el);
+            EI.ElementType = GenerateElementType(el);
             EI.ElementTypeEnum = GetElementTypeEnum(el);
             EI.Path = FatherElementInfo.Path;
             EI.XPath = FatherElementInfo.XPath + "/" + el.TagName;

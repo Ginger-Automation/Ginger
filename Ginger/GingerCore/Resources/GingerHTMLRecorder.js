@@ -88,7 +88,7 @@ function define_GingerRecorderLib() {
             var optionSelected = $(this).find("option:selected");
             var elemValue = optionSelected.text();
 
-            GingerRecorderLib.AddRecordingtoQ(element, "SetValue", elemValue, element.type);
+            GingerRecorderLib.AddRecordingtoQ(element, "SelectByText", elemValue, element.type);
 
         });
 
