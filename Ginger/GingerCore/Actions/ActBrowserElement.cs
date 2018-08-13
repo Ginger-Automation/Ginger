@@ -23,7 +23,6 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions
 {

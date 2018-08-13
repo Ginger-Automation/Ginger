@@ -4023,19 +4023,34 @@ namespace GingerCore.Drivers
             return elementType.ToUpper();
         }
 
-        private eElementType GetElementTypeEnum(IWebElement EL)
+        private eElementType GetElementTypeEnum(IWebElement EL = null, string JSType = null)
         {
             eElementType elementType = eElementType.Unknown;
-            string tagName = EL.TagName;
-            string type = EL.GetAttribute("type");
+            string tagName;
+            string type;
+
+            if ((EL == null) && (JSType != null))
+            {
+                tagName = JSType;
+                type = string.Empty;
+            }
+            else if ((EL != null) && (JSType == null))
+            {
+                tagName = EL.TagName;
+                type = EL.GetAttribute("type");
+            }
+            else
+            {
+                return elementType;
+            }
 
             if ((tagName.ToUpper() == "INPUT" && (type.ToUpper() == "UNDEFINED" || type.ToUpper() == "PASSWORD" || type.ToUpper() == "EMAIL"))  || 
-                 tagName.ToUpper() == "TEXTAREA")
+                 tagName.ToUpper() == "TEXTAREA" || tagName.ToUpper() == "TEXT")
             {
                 elementType = eElementType.TextBox;
             }
             else if ((tagName.ToUpper() == "INPUT" && ( type.ToUpper() == "IMAGE" || type.ToUpper() == "SUBMIT")) ||
-                    tagName.ToUpper() == "BUTTON")
+                    tagName.ToUpper() == "BUTTON" || tagName.ToUpper() == "SUBMIT")
             {
                 elementType = eElementType.Button;
             }
@@ -4051,7 +4066,7 @@ namespace GingerCore.Drivers
             {
                 elementType = eElementType.Label;
             }
-            else if (tagName.ToUpper() == "SELECT")
+            else if (tagName.ToUpper() == "SELECT" || tagName.ToUpper() == "SELECT-ONE")
             {
                 elementType = eElementType.ComboBox;
             }
@@ -4075,11 +4090,11 @@ namespace GingerCore.Drivers
             {
                 elementType = eElementType.Image;
             }
-            if (tagName.ToUpper() == "INPUT" && type.ToUpper() == "CHECKBOX")
+            else if(tagName.ToUpper() == "INPUT" && type.ToUpper() == "CHECKBOX")
             {
                 elementType = eElementType.CheckBox;
             }
-            if (tagName.ToUpper() == "INPUT" && type.ToUpper() == "RADIO") 
+            else if(tagName.ToUpper() == "INPUT" && type.ToUpper() == "RADIO") 
             {
                 elementType = eElementType.RadioButton;
             }
@@ -4809,8 +4824,6 @@ namespace GingerCore.Drivers
                             string ControlAction = PLR.GetValueString();
                             string Type = PLR.GetValueString();
 
-                            //if (ControlAction == "SetValue")
-                            //    ControlAction = "SendKeys";
                             if (ControlAction.ToLower() == "click" && (Type.ToLower() == "a" || Type.ToLower() == "submit"))
                                 Thread.Sleep(2000);
 
@@ -4818,7 +4831,7 @@ namespace GingerCore.Drivers
                             actUI.Description = GetDescription(ControlAction, LocateValue, ElemValue, Type);
                             actUI.ElementLocateBy = GetLocateBy(LocateBy);
                             actUI.ElementLocateValue = LocateValue;
-                            actUI.ElementType = GetUIElementTypeByPayLoadType(Type);
+                            actUI.ElementType = GetElementTypeEnum(null, Type);
                             if (Enum.IsDefined(typeof(ActUIElement.eElementAction), ControlAction))
                                 actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), ControlAction);
                             else
@@ -4881,33 +4894,6 @@ namespace GingerCore.Drivers
             }
 
             return "Set Web Element '" + LocateValue + "'";
-        }
-
-        public static eElementType GetUIElementTypeByPayLoadType(string Type)
-        {
-            switch (Type.ToLower())
-            {
-                case "submit":
-                case "button":
-                    return eElementType.Button;
-                case "text":
-                    return eElementType.TextBox;
-                    // return eElementType.Text; // ???
-                case "textarea":
-                    return eElementType.TextBox;
-                case "select-one":
-                    return eElementType.ComboBox;
-                case "checkbox":
-                    return eElementType.CheckBox;
-                case "radio":
-                    return eElementType.RadioButton;
-                case "span":
-                    return eElementType.Span;
-                case "li":
-                    return eElementType.List;
-                default:
-                    return eElementType.Unknown;
-            }
         }
 
         //Returns Action for HTML element on PL

@@ -215,7 +215,7 @@ namespace GingerCore.Actions.Common
             Click,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Custom Attribute")]
-            GetCustomAttribute,
+            GetCustomAttribute,//keeping for backward support
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Async Click")]
             AsyncClick,
@@ -770,12 +770,6 @@ namespace GingerCore.Actions.Common
                 default:
                     return false;
             }
-        }
-        public ObservableList<Act> GetElementActionsByElementType(eElementType elementType)
-        {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            return list;
         }
 
         internal Drivers.CommunicationProtocol.PayLoad GetPayLoad()

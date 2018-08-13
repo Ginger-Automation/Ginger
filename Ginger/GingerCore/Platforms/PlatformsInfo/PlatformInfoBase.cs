@@ -36,7 +36,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         static PowerBuilderPlatform mPowerBuilderPlatform = new PowerBuilderPlatform();
         static WindowsPlatform mWindowsPlatform = new WindowsPlatform();
         internal List<eElementType> mElementsTypeList = null;
-        internal List<ElementTypeOperations> mWebPlatformElementTypeOperations = null;
+        internal List<ElementTypeOperations> mPlatformElementTypeOperations = null;
         internal List<eLocateBy> mElementLocatorsTypeList = null;
 
         public abstract ePlatformType PlatformType();
