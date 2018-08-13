@@ -791,14 +791,14 @@ namespace Ginger.Actions
 
                 case General.RepositoryItemPageViewMode.Child:
                     title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    Button saveBtnAnalyzer = new Button();
-                    saveBtnAnalyzer.Content = "Save";
-                    saveBtnAnalyzer.Click += new RoutedEventHandler(saveBtnAnalyzer_Click);
-                    Button closeBtnAnalyzer = new Button();
-                    closeBtnAnalyzer.Content = "Undo & Close";
-                    closeBtnAnalyzer.Click += new RoutedEventHandler(undoBtn_Click);
-                    winButtons.Add(saveBtnAnalyzer);
-                    winButtons.Add(closeBtnAnalyzer);
+                    Button saveButton = new Button();
+                    saveButton.Content = "Save";
+                    saveButton.Click += new RoutedEventHandler(saveButton_Click);
+                    Button closeButton = new Button();
+                    closeButton.Content = "Undo & Close";
+                    closeButton.Click += new RoutedEventHandler(undoBtn_Click);
+                    winButtons.Add(saveButton);
+                    winButtons.Add(closeButton);
                     break;
                 case General.RepositoryItemPageViewMode.View:
                     title = "View " + RemoveActionWord(mAction.ActionDescription) + " Action";
@@ -813,6 +813,7 @@ namespace Ginger.Actions
             SwitchingInputValueBoxAndGrid(mAction);
             return saveWasDone;
         }
+
         private void SetViewMode()
         {
             RetryMechanismStackPanel.IsEnabled = false;
@@ -880,14 +881,16 @@ namespace Ginger.Actions
             CheckIfUserWantToSave();
         }
 
-        private void saveBtnAnalyzer_Click(object sender, RoutedEventArgs e)
+        private void saveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.SaveAnalyzerItemWarning) == MessageBoxResult.Yes)
+            if ((mActParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow),mActParentBusinessFlow.Name) == MessageBoxResult.Yes) 
+                || (mActParentActivity != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == MessageBoxResult.Yes))
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.AnalyzerSavingFixedIssues, null, mAction.Description);
+                if(mActParentBusinessFlow != null)
+                    mActParentBusinessFlow.Save();
+                else
+                    mActParentActivity.Save();
                 saveWasDone = true;
-                mActParentBusinessFlow.Save();
-                Reporter.CloseGingerHelper();
             }
 
             IsPageClosing = true;
@@ -897,8 +900,8 @@ namespace Ginger.Actions
         {
             if (LocalRepository.CheckIfSureDoingChange(mAction, "change") == true)
             {
-                saveWasDone = true;
                 mAction.Save();
+                saveWasDone = true;
                 IsPageClosing = true;
                 _pageGenericWin.Close();
             }

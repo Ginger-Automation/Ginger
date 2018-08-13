@@ -42,6 +42,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
     {
         ApplicationAPIModel mApplicationAPIModel;
         ModelParamsPage page;
+        private bool saveWasDone = false;
         public APIModelPage(ApplicationAPIModel applicationAPIModelBase)
         {
             mApplicationAPIModel = applicationAPIModelBase;
@@ -705,11 +706,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         public eEditMode editMode { get; set; }
 
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free, bool startupLocationWithOffset = false, eEditMode e = eEditMode.Design)
+        public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false, eEditMode e = eEditMode.Design)
         {
+            mApplicationAPIModel.StartDirtyTracking();
             //changed the style to be free - since many other windows get stuck and doesn't show
             // Need to find a solution if 2 windows show as Dialog...
-            string title = "Edit " + mApplicationAPIModel.Description + " API Model";
+            string title = "";
             this.Width = 1100;
             this.Height = 800;
 
@@ -729,14 +731,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     break;
 
                 case eEditMode.View:
-                    title = "View " + mApplicationAPIModel.Description + " API Model";
+                    title = "View " + mApplicationAPIModel.Name + " API Model";
                     Button okBtnView = new Button();
                     okBtnView.Content = "Ok";
                     okBtnView.Click += new RoutedEventHandler(okBtn_Click);
                     winButtons.Add(okBtnView);
                     break;
                 case eEditMode.FindAndReplace:
-                    title = "Edit " + mApplicationAPIModel.Description + " API Model";
+                    title = "Edit " + mApplicationAPIModel.Name + " API Model";
                     mApplicationAPIModel.SaveBackup();
                     Button saveBtnAnalyzer = new Button();
                     saveBtnAnalyzer.Content = "Save";
@@ -749,11 +751,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     break;
             }
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            return saveWasDone;
         }
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mApplicationAPIModel);
+            saveWasDone = true;
             _pageGenericWin.Close();
         }
 
