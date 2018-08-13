@@ -35,75 +35,75 @@ namespace UnitTests.NonUITests.AutoPilot
     public class ParserTest
     {
 
-        //[TestMethod]
-        //public void WSDLParserRechargeServices()
-        //{
-        //    //Arrange                        
-        //    WSDLParser wSDLParser = new WSDLParser();
-        //    string RechargeServicesFileName = TestResources.GetTestResourcesFile(@"AutoPilot\WSDLs\RechargeServices.xml");
+        [TestMethod]
+        public void WSDLParserRechargeServices()
+        {
+            //Arrange                        
+            WSDLParser wSDLParser = new WSDLParser();
+            string RechargeServicesFileName = TestResources.GetTestResourcesFile(@"AutoPilot\WSDLs\RechargeServices.xml");
 
-        //    //Act            
-        //    ObservableList<ApplicationAPIModel> RechargeServicesAPIModels = wSDLParser.ParseDocument(RechargeServicesFileName);
+            //Act            
+            ObservableList<ApplicationAPIModel> RechargeServicesAPIModels = wSDLParser.ParseDocument(RechargeServicesFileName);
 
-        //    //Assert
-        //    Assert.AreEqual(RechargeServicesAPIModels.Count, 8, "APIModels count");
-        //    Assert.AreEqual(RechargeServicesAPIModels[0].EndpointURL, "http://mwhlvsp319:42013/axis/services/RechargeServices", "EndpointURL validation");
-        //    Assert.AreEqual(RechargeServicesAPIModels[0].AppModelParameters.Count, 41, "AppModelParameters count");
-        //    Assert.AreEqual(RechargeServicesAPIModels[1].AppModelParameters.Count, 56, "AppModelParameters count");
-        //    Assert.AreEqual(RechargeServicesAPIModels[2].AppModelParameters.Count, 59, "AppModelParameters count");
-        //    Assert.AreEqual(RechargeServicesAPIModels[3].AppModelParameters.Count, 59, "AppModelParameters count");
-        //    Assert.AreEqual(RechargeServicesAPIModels[4].AppModelParameters.Count, 53, "AppModelParameters count");
-        //    Assert.AreEqual(RechargeServicesAPIModels[5].AppModelParameters.Count, 84, "AppModelParameters count");
-        //    Assert.AreEqual(RechargeServicesAPIModels[6].AppModelParameters.Count, 61, "AppModelParameters count");
-        //    Assert.AreEqual(RechargeServicesAPIModels[7].AppModelParameters.Count, 37, "AppModelParameters count");
-        //}
+            //Assert
+            Assert.AreEqual(RechargeServicesAPIModels.Count, 8, "APIModels count");
+            Assert.AreEqual(RechargeServicesAPIModels[0].EndpointURL, "http://mwhlvsp319:42013/axis/services/RechargeServices", "EndpointURL validation");
+            Assert.AreEqual(RechargeServicesAPIModels[0].AppModelParameters.Count, 41, "AppModelParameters count");
+            Assert.AreEqual(RechargeServicesAPIModels[1].AppModelParameters.Count, 56, "AppModelParameters count");
+            Assert.AreEqual(RechargeServicesAPIModels[2].AppModelParameters.Count, 59, "AppModelParameters count");
+            Assert.AreEqual(RechargeServicesAPIModels[3].AppModelParameters.Count, 59, "AppModelParameters count");
+            Assert.AreEqual(RechargeServicesAPIModels[4].AppModelParameters.Count, 53, "AppModelParameters count");
+            Assert.AreEqual(RechargeServicesAPIModels[5].AppModelParameters.Count, 84, "AppModelParameters count");
+            Assert.AreEqual(RechargeServicesAPIModels[6].AppModelParameters.Count, 61, "AppModelParameters count");
+            Assert.AreEqual(RechargeServicesAPIModels[7].AppModelParameters.Count, 37, "AppModelParameters count");
+        }
 
 
 
-        //[TestMethod]
-        //public void XMLTemplateParesrCreatePaymentProfile()
-        //{
-        //    //Arrange                        
-        //    XMLTemplateParser xMLTemplateParser = new XMLTemplateParser();            
-        //    string createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"AutoPilot\XMLTemplates\createPaymentProfile_request_2.xml");
+        [TestMethod]
+        public void XMLTemplateParesrCreatePaymentProfile()
+        {
+            //Arrange                        
+            XMLTemplateParser xMLTemplateParser = new XMLTemplateParser();
+            string createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"AutoPilot\XMLTemplates\createPaymentProfile_request_2.xml");
 
-        //    //Act   
-        //    ObservableList<ApplicationAPIModel> createPaymentProfileModels = xMLTemplateParser.ParseDocument(createPaymentProfileFileName);
-        //    TemplateFile TempleteFile = new TemplateFile() { FilePath = createPaymentProfileFileName };
-        //    createPaymentProfileModels[0].OptionalValuesTemplates.Add(TempleteFile);
-        //    Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = new Dictionary<Tuple<string, string>, List<string>>();
-        //    ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
-        //    ImportOptionalValues.ShowMessage = false;
-        //    ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(createPaymentProfileModels[0], OptionalValuesPerParameterDict);
-        //    ImportOptionalValues.PopulateOptionalValuesForAPIParameters(createPaymentProfileModels[0], OptionalValuesPerParameterDict);
+            //Act   
+            ObservableList<ApplicationAPIModel> createPaymentProfileModels = xMLTemplateParser.ParseDocument(createPaymentProfileFileName);
+            TemplateFile TempleteFile = new TemplateFile() { FilePath = createPaymentProfileFileName };
+            createPaymentProfileModels[0].OptionalValuesTemplates.Add(TempleteFile);
+            Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = new Dictionary<Tuple<string, string>, List<string>>();
+            ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
+            ImportOptionalValues.ShowMessage = false;
+            ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(createPaymentProfileModels[0], OptionalValuesPerParameterDict);
+            ImportOptionalValues.PopulateOptionalValuesForAPIParameters(createPaymentProfileModels[0], OptionalValuesPerParameterDict);
 
-        //    //Assert
-        //    Assert.AreEqual(createPaymentProfileModels.Count, 1, "APIModels count");
-        //    Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters.Count, 26, "AppModelParameters count");
-        //    Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[1].OptionalValuesList.Count, 1, "AppModelParameters count");
-        //}
+            //Assert
+            Assert.AreEqual(createPaymentProfileModels.Count, 1, "APIModels count");
+            Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters.Count, 26, "AppModelParameters count");
+            Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[1].OptionalValuesList.Count, 1, "AppModelParameters count");
+        }
 
-        //[TestMethod]
-        //public void JSONTemplateCREATE_BILLING_ARRANGEMENT()
-        //{
-        //    //Arrange                        
-        //    JSONTemplateParser jSONTemplateParser = new JSONTemplateParser();
-        //    string createBillingArrangementFileName = TestResources.GetTestResourcesFile(@"AutoPilot\JSONTemplates\CREATE_BILLING_ARRANGEMENT_3_12_2015_15_33_47.txt");
+        [TestMethod]
+        public void JSONTemplateCREATE_BILLING_ARRANGEMENT()
+        {
+            //Arrange                        
+            JSONTemplateParser jSONTemplateParser = new JSONTemplateParser();
+            string createBillingArrangementFileName = TestResources.GetTestResourcesFile(@"AutoPilot\JSONTemplates\CREATE_BILLING_ARRANGEMENT_3_12_2015_15_33_47.txt");
 
-        //    //Act   
-        //    ObservableList<ApplicationAPIModel> createPaymentProfileModels = jSONTemplateParser.ParseDocument(createBillingArrangementFileName);
-        //    TemplateFile TempleteFile = new TemplateFile() { FilePath = createBillingArrangementFileName };
-        //    createPaymentProfileModels[0].OptionalValuesTemplates.Add(TempleteFile);
-        //    Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = new Dictionary<Tuple<string, string>, List<string>>();
-        //    ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
-        //    ImportOptionalValues.ShowMessage = false;
-        //    ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(createPaymentProfileModels[0], OptionalValuesPerParameterDict);
-        //    ImportOptionalValues.PopulateOptionalValuesForAPIParameters(createPaymentProfileModels[0], OptionalValuesPerParameterDict);
+            //Act   
+            ObservableList<ApplicationAPIModel> createPaymentProfileModels = jSONTemplateParser.ParseDocument(createBillingArrangementFileName);
+            TemplateFile TempleteFile = new TemplateFile() { FilePath = createBillingArrangementFileName };
+            createPaymentProfileModels[0].OptionalValuesTemplates.Add(TempleteFile);
+            Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = new Dictionary<Tuple<string, string>, List<string>>();
+            ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
+            ImportOptionalValues.ShowMessage = false;
+            ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(createPaymentProfileModels[0], OptionalValuesPerParameterDict);
+            ImportOptionalValues.PopulateOptionalValuesForAPIParameters(createPaymentProfileModels[0], OptionalValuesPerParameterDict);
 
-        //    //Assert
-        //    Assert.AreEqual(createPaymentProfileModels.Count, 1, "APIModels count");
-        //    Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters.Count, 7, "AppModelParameters count");
-        //    Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[5].OptionalValuesList.Count, 1, "AppModelParameters count");
-        //}
+            //Assert
+            Assert.AreEqual(createPaymentProfileModels.Count, 1, "APIModels count");
+            Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters.Count, 7, "AppModelParameters count");
+            Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[5].OptionalValuesList.Count, 1, "AppModelParameters count");
+        }
     }
 }
