@@ -17,12 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using System;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
-    public class ElementLocator : RepositoryItemBase
+    public class ElementLocator : RepositoryItemBase 
     {
 
         private bool mActive { get; set; }
@@ -51,7 +52,100 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public override string ItemName { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
 
-        private string mTestStatus { get; set; }
-        public string TestStatus { get { return mTestStatus; } set { mTestStatus = value; OnPropertyChanged(nameof(TestStatus)); } }
+        //private string mTestStatus { get; set; }
+        //public string TestStatus { get { return mTestStatus; } set { mTestStatus = value; OnPropertyChanged(nameof(TestStatus)); } }
+
+
+
+        public enum eTestStatus
+        {
+            Pending,
+            Passed,
+            Failed
+        }
+
+        eTestStatus mTestStatus;
+        public eTestStatus TestStatus
+        {
+            get
+            {
+                return mTestStatus;
+            }
+            set
+            {
+                mTestStatus = value;
+                OnPropertyChanged(nameof(TestStatusIcon));
+                OnPropertyChanged(nameof(TestStatusError));
+            }
+
+        }
+
+        public eImageType TestStatusIcon
+        {
+            get
+            {
+                switch (TestStatus)
+                {
+                    case eTestStatus.Passed:
+                        return eImageType.Passed;
+                    case eTestStatus.Failed:
+                        return eImageType.Failed;
+                    case eTestStatus.Pending:
+                        return eImageType.Pending;
+                    default:
+                        return eImageType.Pending;
+                }
+            }
+        }
+
+        public string TestStatusIconForeground
+        {
+            get
+            {
+                switch (TestStatus)
+                {
+                    case eTestStatus.Passed:
+                        return "$Green";
+                    case eTestStatus.Failed:
+                        return "$Red";
+                    default:
+                        return "$Orange";
+                }
+
+            }
+        }
+
+        private string mTestStatusError;
+        public string TestStatusError
+        {
+            get
+            {
+              return  mTestStatusError;
+            }
+
+            set
+            {
+                mTestStatusError = value;
+            }
+        }
+
+
+        //public string TestStatusToolTip
+        //{
+        //    get
+        //    {
+        //        switch (TestStatus)
+        //        {
+        //            case eTestStatus.Failed:
+        //                return "$Red";
+        //            default:
+        //                return "$Orange";
+        //        }
+
+        //    }
+        //}
+
+        
+
     }
 }

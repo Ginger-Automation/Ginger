@@ -1619,6 +1619,16 @@ namespace GingerCore.Drivers.AndroidADB
             throw new NotImplementedException();
         }
 
+        public bool TestElementLocator(ElementLocator mLocatorsGridCurrentItem)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TestAllElementsLocators(ObservableList<ElementLocator> mLocators)
+        {
+            throw new NotImplementedException();
+        }
+
         //TODO: Phone state
         // Wait for incoming call
         // http://stackoverflow.com/questions/15563921/how-to-detect-incoming-calls-in-an-android-device

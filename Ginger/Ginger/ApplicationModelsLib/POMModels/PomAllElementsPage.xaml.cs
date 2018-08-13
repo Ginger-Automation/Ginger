@@ -42,33 +42,31 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             mWinExplorer = winExplorer;
 
-            PomElementsMappingPage mappedUIElementsPage = new PomElementsMappingPage(mPOM, eElementsContext.Mapped, mWinExplorer);
+            PomElementsPage mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, mWinExplorer);
             xMappedElementsFrame.Content = mappedUIElementsPage;
 
-            PomElementsMappingPage unmappedUIElementsPage = new PomElementsMappingPage(mPOM, eElementsContext.Unmapped, mWinExplorer);
+            PomElementsPage unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, mWinExplorer);
             xUnMappedElementsFrame.Content = unmappedUIElementsPage;
 
         }
 
         private void UnMappedUIElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UpdateUnMappedUIElementsTabHeader();
+            Dispatcher.Invoke(() =>
+            {
+                xUnMappedElementsTextBlock.Text = string.Format("Unmapped Elements ({0})", mPOM.UnMappedUIElements.Count);
+            });
         }
 
-        private void UpdateUnMappedUIElementsTabHeader()
-        {
-            //xMappedElementsTextBlock.Text = string.Format("Unmapped Elements ({0})", mPOM.UnMappedUIElements.Count);
-        }
 
         private void MappedUIElements_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            UpdateMappedUIElementsTabHeader();
+            Dispatcher.Invoke(() =>
+            {
+                xMappedElementsTextBlock.Text = string.Format("Mapped Elements ({0})", mPOM.MappedUIElements.Count);
+            });
         }
 
-        private void UpdateMappedUIElementsTabHeader()
-        {
-            //xMappedElementsTextBlock.Text = string.Format("Mapped Elements ({0})", mPOM.MappedUIElements.Count);
-        }
 
         private void ActionTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

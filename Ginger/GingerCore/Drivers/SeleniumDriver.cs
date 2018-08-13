@@ -4179,20 +4179,26 @@ namespace GingerCore.Drivers
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
         {
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
-            IWebElement el = Driver.FindElement(By.XPath(ElementInfo.XPath));
+            IWebElement el = null;
+            if (ElementInfo.XPath != null)
+              el = Driver.FindElement(By.XPath(ElementInfo.XPath));
             IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
-            Dictionary<string, object> attributes = javascriptDriver.ExecuteScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", el) as Dictionary<string, object>;
-            if (!(attributes == null))
-                foreach (KeyValuePair<string, object> kvp in attributes)
-                {
-                    if (kvp.Key != "style" && (kvp.Value.ToString() != "border: 3px dashed red;" || kvp.Value.ToString() != "outline: 3px dashed red;"))
+            if (el != null)
+            {
+                Dictionary<string, object> attributes = javascriptDriver.ExecuteScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", el) as Dictionary<string, object>;
+                if (!(attributes == null))
+                    foreach (KeyValuePair<string, object> kvp in attributes)
                     {
-                        string PName = kvp.Key;
-                        string PValue = kvp.Value.ToString();
-                        list.Add(new ControlProperty() { Name = PName, Value = PValue });
-                    }
+                        if (kvp.Key != "style" && (kvp.Value.ToString() != "border: 3px dashed red;" || kvp.Value.ToString() != "outline: 3px dashed red;"))
+                        {
+                            string PName = kvp.Key;
+                            string PValue = kvp.Value.ToString();
+                            list.Add(new ControlProperty() { Name = PName, Value = PValue });
+                        }
 
-                }
+                    }
+            }
+            list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
             return list;
         }
 
@@ -6332,6 +6338,56 @@ namespace GingerCore.Drivers
 
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
+            return true;
+        }
+
+        public bool TestElementLocator(ElementLocator mLocatorsGridCurrentItem)
+        {
+            return TestOneElementLocator(mLocatorsGridCurrentItem);
+        }
+
+        private bool TestOneElementLocator(ElementLocator mLocatorsGridCurrentItem)
+        {
+            try
+            {
+                List<IWebElement> ElementsList = LocateElements(mLocatorsGridCurrentItem.LocateBy, mLocatorsGridCurrentItem.LocateValue);
+                if (ElementsList != null && ElementsList.Count == 1)
+                {
+                    mLocatorsGridCurrentItem.TestStatusError = string.Empty;
+                    mLocatorsGridCurrentItem.TestStatus = ElementLocator.eTestStatus.Passed;
+                    return true;
+                }
+                else
+                {
+                    mLocatorsGridCurrentItem.TestStatusError = "Element not found: " + mLocatorsGridCurrentItem.LocateBy + "=" + mLocatorsGridCurrentItem.LocateValue;
+                    mLocatorsGridCurrentItem.TestStatus = ElementLocator.eTestStatus.Failed;
+                    return false;
+                }
+
+            }
+            catch
+            {
+                mLocatorsGridCurrentItem.TestStatus = ElementLocator.eTestStatus.Failed;
+                return false;
+            }
+
+        }
+
+
+
+        public bool TestAllElementsLocators(ObservableList<ElementLocator> mLocators)
+        {
+            try
+            {
+                foreach (ElementLocator EL in mLocators)
+                {
+                    TestOneElementLocator(EL);
+                }
+            }
+            catch
+            {
+                return false;
+            }
             return true;
         }
     }

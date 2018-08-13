@@ -48,7 +48,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (AddPOMWizard)WizardEventArgs.Wizard;                   
+                    mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
                     break;
 
                 case EventType.Active:

@@ -49,5 +49,7 @@ namespace Amdocs.Ginger.Common.UIElement
         ObservableList<UIElementFilter> GetFilteringCreteriaDict();
 
         bool IsElementObjectValid(object obj);
+        bool TestElementLocator(ElementLocator mLocatorsGridCurrentItem);
+        bool TestAllElementsLocators(ObservableList<ElementLocator> mLocators);
     }
 }

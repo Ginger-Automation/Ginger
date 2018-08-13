@@ -4,6 +4,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
     /// <summary>
     /// Interaction logic for MappedUIElementsPage.xaml
     /// </summary>
-    public partial class PomElementsMappingPage : Page
+    public partial class PomElementsPage : Page
     {
 
         ApplicationPOMModel mPOM;
@@ -34,17 +35,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         public PomAllElementsPage.eElementsContext mContext;
 
-        public PomElementsMappingPage(ApplicationPOMModel POM, PomAllElementsPage.eElementsContext context, IWindowExplorer winExplorer)
+        public PomElementsPage(ApplicationPOMModel POM, PomAllElementsPage.eElementsContext context, IWindowExplorer winExplorer)
         {
             InitializeComponent();
             mPOM = POM;
             mWinExplorer = winExplorer;
             mContext = context;
 
+            mLocators.CollectionChanged += Locators_CollectionChanged;
+            mProperties.CollectionChanged += Properties_CollectionChanged;
 
             SetControlsGridView();
 
-            if(mContext == PomAllElementsPage.eElementsContext.Mapped) 
+            if (mContext == PomAllElementsPage.eElementsContext.Mapped)
                 xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
             else
                 xMainElementsGrid.DataSourceList = mPOM.UnMappedUIElements;
@@ -54,8 +57,21 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         }
 
+        private void Properties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xPropertiesTextBlock.Text = string.Format("Properties ({0})", mProperties.Count);
+            });
+        }
 
-
+        private void Locators_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xLocatorsTextBlock.Text = string.Format("Locators ({0})", mLocators.Count);
+            });
+        }
 
         private void AddButtonClicked(object sender, RoutedEventArgs e)
         {
@@ -85,27 +101,28 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
 
             xMainElementsGrid.SetTitleLightStyle = true;
-            
+
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 60, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 100, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = "View Details", WidthWeight = 8, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["HighlightButton"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Element Type", WidthWeight = 60, AllowSorting = true });
+            //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100, AllowSorting = true });
+            //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100, AllowSorting = true });
+            //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 8, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate "] });
 
             if (mContext == PomAllElementsPage.eElementsContext.Mapped)
             {
-                xMainElementsGrid.AddToolbarTool("@Import_16x16.png", "Remove Items from mapped list", new RoutedEventHandler(RemoveButtonClicked));
+                xMainElementsGrid.AddToolbarTool("@RoadSign_16x16.png", "Remove Items from mapped list", new RoutedEventHandler(RemoveButtonClicked));
                 xMainElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddMappedElementRow));
+                xMainElementsGrid.ShowDelete = Visibility.Collapsed;
             }
             else
             {
-                xMainElementsGrid.AddToolbarTool("@Import_16x16.png", "Add Items to mapped list", new RoutedEventHandler(AddButtonClicked));
+                xMainElementsGrid.AddToolbarTool("@RoadSign_16x16.png", "Add Items to mapped list", new RoutedEventHandler(AddButtonClicked));
                 xMainElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddUnMappedElementRow));
             }
 
@@ -122,7 +139,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (LiveSpyButton.IsChecked == true)
             {
-
+                xStatusLable.Content = "Spying on";
                 if (dispatcherTimer == null)
                 {
                     dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
@@ -134,6 +151,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             else
             {
+                xCreateNewElement.Visibility = Visibility.Collapsed;
+                xStatusLable.Content = "Spying off";
                 dispatcherTimer.IsEnabled = false;
             }
         }
@@ -146,11 +165,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 xStatusLable.Content = "Spying Element, Please Wait...";
+                xCreateNewElement.Visibility = Visibility.Collapsed;
                 GingerCore.General.DoEvents();
                 mSpyElement = mWinExplorer.GetControlFromMousePosition();
                 if (mSpyElement != null)
                 {
-                    xStatusLable.Content = mSpyElement.XPath;
+                    xStatusLable.Content = "Element found";
                     FocusSpyItemOnElementsGrid();
                     mWinExplorer.HighLightElement(mSpyElement);
                 }
@@ -164,6 +184,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void FocusSpyItemOnElementsGrid()
         {
+            bool elementfocused = false;
             if (mSpyElement == null) return;
             foreach (ElementInfo EI in mPOM.MappedUIElements)
             {
@@ -171,6 +192,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 if (EI.XPath == mSpyElement.XPath && EI.Path == mSpyElement.Path)
                 {
+                    elementfocused = true;
                     mPOM.MappedUIElements.CurrentItem = EI;
                     xMainElementsGrid.ScrollToViewCurrentItem();
                     break;
@@ -183,10 +205,29 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 if (EI.XPath == mSpyElement.XPath && EI.Path == mSpyElement.Path)
                 {
+                    elementfocused = true;
                     mPOM.UnMappedUIElements.CurrentItem = EI;
                     xMainElementsGrid.ScrollToViewCurrentItem();
                     break;
                 }
+            }
+
+            if (!elementfocused)
+            {
+                //Button btn = new Button();
+                //btn.Content = "Create New Element";
+                //xSpyPanel.Children.Add(btn);
+
+                xStatusLable.Content = "Element has not been found on the list, Click here to create new Element ";
+
+                xCreateNewElement.Visibility = Visibility.Visible;
+
+                //Hyperlink solLink = new Hyperlink();
+                //solLink.Tag = sol.Name;
+                //solLink.ToolTip = sol.Folder;
+                //recentSolutionsLinksList.Add(solLink);
+
+
             }
         }
 
@@ -222,11 +263,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList });
 
             //defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), WidthWeight = 10 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), WidthWeight = 30 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 20 ,ReadOnly = true});
-            defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 8, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["TestElementButton"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.TestStatus), WidthWeight = 20 });
-
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 30 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 20, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 8, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.TestStatus), Header = "Test Status", WidthWeight = 20 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.TestStatusIcon), Header = " ", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
 
             xLocatorsGrid.AddToolbarTool("@Play_16x16.png", "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
             xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorHandler));
@@ -238,7 +279,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddLocatorHandler(object sender, RoutedEventArgs e)
         {
-            mLocators.Add(new ElementLocator());
+            ElementLocator newElementLocator = new ElementLocator();
+            mMainElementsGridCurrentItem.Locators.Add(newElementLocator);
+            mLocators.Add(newElementLocator);
         }
 
 
@@ -292,13 +335,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 IsFirstSelection = false;
             }
 
-            
+
             mLocators.Clear();
             mProperties.Clear();
             if (((DataGrid)sender).SelectedItem != null)
             {
                 ElementInfo SelectedElement = (ElementInfo)((DataGrid)sender).SelectedItem;
-                xDetailsExpanderLabel.Content = SelectedElement.ElementTitle + " Details";
+                if (SelectedElement.ElementTitle != null)
+                {
+                    xDetailsExpanderLabel.Content = SelectedElement.ElementTitle + " Details";
+                }
                 foreach (ElementLocator EL in SelectedElement.Locators)
                     mLocators.Add(EL);
 
@@ -311,19 +357,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
                         mProperties.Add(CP);
                 }
 
-
             }
-
-
-
-
         }
 
-        private ElementInfo mCurrentItem { get { return (ElementInfo)xMainElementsGrid.CurrentItem; } }
+        private ElementInfo mMainElementsGridCurrentItem { get { return (ElementInfo)xMainElementsGrid.CurrentItem; } }
+
+        private ElementLocator mLocatorsGridCurrentItem { get { return (ElementLocator)xLocatorsGrid.CurrentItem; } }
 
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
-            mWinExplorer.HighLightElement(mCurrentItem);
+            mWinExplorer.HighLightElement(mMainElementsGridCurrentItem);
         }
 
         private void DetailsGrid_Expanded(object sender, RoutedEventArgs e)
@@ -338,12 +381,28 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void TestElementButtonClicked(object sender, RoutedEventArgs e)
         {
-            
+            mWinExplorer.TestElementLocator(mLocatorsGridCurrentItem);
+
         }
 
         private void TestAllElementsLocators(object sender, RoutedEventArgs e)
         {
-            
+            mWinExplorer.TestAllElementsLocators(mLocators);
+        }
+
+        private void CreateNewElemetClicked(object sender, RoutedEventArgs e)
+        {
+            if (mContext == PomAllElementsPage.eElementsContext.Mapped)
+            {
+                mPOM.MappedUIElements.Add(mSpyElement);
+            }
+            else
+            {
+                mPOM.UnMappedUIElements.Add(mSpyElement);
+            }
+
+            xCreateNewElement.Visibility = Visibility.Collapsed;
+            xStatusLable.Content = "Element added to the list";
         }
     }
 }

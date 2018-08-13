@@ -447,8 +447,8 @@
     <Compile Include="ApplicationModelsLib\POMModels\PomAllElementsPage.xaml.cs">
       <DependentUpon>PomAllElementsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\PomElementsMappingPage.xaml.cs">
-      <DependentUpon>PomElementsMappingPage.xaml</DependentUpon>
+    <Compile Include="ApplicationModelsLib\POMModels\PomElementsPage.xaml.cs">
+      <DependentUpon>PomElementsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
@@ -2649,7 +2649,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\PomElementsMappingPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\PomElementsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
