@@ -110,7 +110,9 @@ namespace Ginger.Actions
                     {
                         LegacyActions.Add(cA);
                     }
-                    else if (cA.LegacyActionPlatformsList.Intersect(cA.Platforms).Any()) // App.BusinessFlow.CurrentActivity ??
+                    else if (cA.LegacyActionPlatformsList.Intersect(App.UserProfile.Solution.ApplicationPlatforms
+                                                                    .Where(x => App.BusinessFlow.CurrentActivity.TargetApplication == x.AppName)
+                                                                    .Select(x => x.Platform).ToList()).Any())
                     {
                         LegacyActions.Add(cA);
                     }
