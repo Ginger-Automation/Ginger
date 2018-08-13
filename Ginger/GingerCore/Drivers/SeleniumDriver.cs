@@ -5723,8 +5723,7 @@ namespace GingerCore.Drivers
                 {
                     var xLocator = Convert.ToInt32(xyLocator[0]);
                     var yLocator = Convert.ToInt32(xyLocator[1]);
-                    OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
-                    action.DragAndDropToOffset(sourceElement, xLocator, yLocator).Build().Perform();
+                    DoDragandDropByOffSet(sourceElement, xLocator, yLocator);
                 }
                 else
                 {
@@ -5771,6 +5770,12 @@ namespace GingerCore.Drivers
                 }
             }
          
+        }
+
+        private void DoDragandDropByOffSet(IWebElement sourceElement, int xLocator, int yLocator)
+        {
+            OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
+            action.DragAndDropToOffset(sourceElement, xLocator, yLocator).Build().Perform();
         }
 
         public void DoUIElementClick(ActUIElement.eElementAction clickType, IWebElement clickElement)
