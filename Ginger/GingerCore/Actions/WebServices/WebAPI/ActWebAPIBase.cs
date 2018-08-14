@@ -33,7 +33,7 @@ namespace GingerCore.Actions.WebServices
         public override bool ValueConfigsNeeded { get { return false; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool IsSelectableAction { get { return false; } }
-        public override bool IsLegacyAction { get { return false; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>(); } }
 
         public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
         {
