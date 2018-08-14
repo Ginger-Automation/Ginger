@@ -304,7 +304,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     ElementType = eElementType.Canvas,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.ClickXY }
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.ClickXY}
                 });
 
                 // adding generic/common actions per each ElementType
@@ -318,7 +318,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                                                                             ActUIElement.eElementAction.SetFocus };
 
                 mPlatformElementTypeOperations.Where( y => y.ActionType == typeof(ActUIElement)).ToList()
-                                                 .ForEach(z => z.ElementOperationsList.Union(ElementCommonActionsList));
+                                                 .ForEach(z => z.ElementOperationsList = z.ElementOperationsList.Union(ElementCommonActionsList).ToList());
             }
 
             return mPlatformElementTypeOperations;
