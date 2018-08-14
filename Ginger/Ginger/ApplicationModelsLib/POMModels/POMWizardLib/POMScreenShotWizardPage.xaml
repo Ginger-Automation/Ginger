@@ -18,8 +18,15 @@
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
 
-        <UserControls:ucButton x:Name="xTakeScreenShotLoadButton" Grid.Column="1" Grid.Row="0" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right" ButtonText="Take Screen Shot" ButtonImageType="Reply" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TakeScreenShotButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-        <Frame x:Name="MainFrame" Grid.Column="1" Grid.Row="1"/>
+        <StackPanel Orientation="Horizontal"  Grid.Row="0" HorizontalAlignment="Right" >
+            
+        <UserControls:ucButton x:Name="xBrowseImageLoadButton"  ButtonType="RoundTextAndImageButton"  ButtonText="Browse Image" ButtonImageType="Reply" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="BrowseImageButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+            
+        <UserControls:ucButton x:Name="xTakeScreenShotLoadButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" ButtonText="Take Screen Shot" ButtonImageType="Camera" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TakeScreenShotButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+
+        
+        </StackPanel>
+        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" Grid.Column="1" Grid.Row="1" />
 
     </Grid>
 </Page>

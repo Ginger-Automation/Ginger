@@ -393,8 +393,11 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Download:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
                     break;
-                case eImageType.Hand_Pointer:
+                case eImageType.HandPointer:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.HandPointerOutline);
+                    break;
+                case eImageType.Camera:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Camera);
                     break;
                 #endregion
 
@@ -552,6 +555,31 @@ namespace Amdocs.Ginger.UserControls
                 ImageMakerBorder.BorderThickness = new Thickness(0);
             }
         }
+
+        private string mToolTipProperty;
+
+        public string ToolTipProperty
+        {
+            get
+            {
+                return xFAImage.ToolTip.ToString();
+            }
+            set
+            {
+                xFAImage.ToolTip = value;
+            }
+        }
+
+
+        //public void ImageToolTip(string toolTip)
+        //{
+        //    if (!string.IsNullOrEmpty(toolTip))
+        //    {
+        //        xFAImage.ToolTip = toolTip;
+        //        xFAFont.ToolTip = toolTip;
+        //    }
+
+        //}
 
         private BitmapImage GetImageBitMap(string imageName)
         {

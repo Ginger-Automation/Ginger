@@ -33,6 +33,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         }
 
+        public PomElementsPage mappedUIElementsPage;
+        public PomElementsPage unmappedUIElementsPage;
+
         public PomAllElementsPage(ApplicationPOMModel POM, IWindowExplorer winExplorer)
         {
             InitializeComponent();
@@ -42,15 +45,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             mWinExplorer = winExplorer;
 
-            PomElementsPage mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, mWinExplorer);
+            mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, mWinExplorer);
             xMappedElementsFrame.Content = mappedUIElementsPage;
 
-            PomElementsPage unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, mWinExplorer);
+            unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, mWinExplorer);
             xUnMappedElementsFrame.Content = unmappedUIElementsPage;
 
+            UnMappedUIElementsUpdate();
+            MappedUIElementsUpdate();
         }
 
         private void UnMappedUIElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UnMappedUIElementsUpdate();
+        }
+
+        private void UnMappedUIElementsUpdate()
         {
             Dispatcher.Invoke(() =>
             {
@@ -61,12 +71,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void MappedUIElements_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            MappedUIElementsUpdate();
+        }
+
+        private void MappedUIElementsUpdate()
+        {
             Dispatcher.Invoke(() =>
             {
                 xMappedElementsTextBlock.Text = string.Format("Mapped Elements ({0})", mPOM.MappedUIElements.Count);
             });
         }
-
 
         private void ActionTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

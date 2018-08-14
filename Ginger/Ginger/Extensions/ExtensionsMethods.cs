@@ -242,6 +242,14 @@ namespace Ginger
             throw new Exception("trying to add rule to AgentControl user control which is not binded - " + agentControl.Name);
         }
 
+        // ------------------------------------------------------------
+        // ucAgentControl
+        // ------------------------------------------------------------
+
+        public static void AddValidationRule(this Frame frame, ValidationRule validationRule)
+        {
+            AddValidation(frame, Frame.ContentProperty, validationRule);
+        }
 
         // ------------------------------------------------------------
         // UCValue Expression

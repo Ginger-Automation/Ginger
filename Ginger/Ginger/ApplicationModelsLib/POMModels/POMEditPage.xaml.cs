@@ -59,6 +59,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             //PomElementsMappingPage mappedUIElementsPage = new PomElementsMappingPage(mPOM,null);
             PomAllElementsPage pomAllElementsPage = new PomAllElementsPage(mPOM, null);
+            //pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
+            //pomAllElementsPage.unmappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
             xUIElementsFrame.Content = pomAllElementsPage;
 
             //PageNameTextBox.BindControl(mApplicationPOM, nameof(ApplicationPOM.Name));

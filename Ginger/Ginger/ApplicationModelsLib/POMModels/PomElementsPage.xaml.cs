@@ -234,11 +234,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddMappedElementRow(object sender, RoutedEventArgs e)
         {
-            mPOM.MappedUIElements.Add(new ElementInfo());
+            ElementInfo EI = new ElementInfo();
+            mPOM.MappedUIElements.Add(EI);
+            mPOM.MappedUIElements.CurrentItem = EI;
+            xMainElementsGrid.ScrollToViewCurrentItem();
         }
+
         private void AddUnMappedElementRow(object sender, RoutedEventArgs e)
         {
-            mPOM.UnMappedUIElements.Add(new ElementInfo());
+            ElementInfo EI = new ElementInfo();
+            mPOM.UnMappedUIElements.Add(EI);
+            mPOM.UnMappedUIElements.CurrentItem = EI;
+            xMainElementsGrid.ScrollToViewCurrentItem();
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
@@ -343,22 +350,34 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 ElementInfo SelectedElement = (ElementInfo)((DataGrid)sender).SelectedItem;
                 if (SelectedElement.ElementTitle != null)
                 {
-                    xDetailsExpanderLabel.Content = SelectedElement.ElementTitle + " Details";
+                    xDetailsExpanderLabel.Content ="'" + SelectedElement.ElementTitle + "' Details";
                 }
                 foreach (ElementLocator EL in SelectedElement.Locators)
                     mLocators.Add(EL);
 
+                foreach (ControlProperty CP in SelectedElement.Properties)
+                    mProperties.Add(CP);
 
                 //ObservableList<ControlProperty> ElementsProperties = SelectedElement.GetElementProperties();
-                if (mWinExplorer != null)
-                {
-                    ObservableList<ControlProperty> ElementsProperties = mWinExplorer.GetElementProperties(SelectedElement);
-                    foreach (ControlProperty CP in ElementsProperties)
-                        mProperties.Add(CP);
-                }
+                //if (mWinExplorer != null)
+                //{
+                //    ObservableList<ControlProperty> ElementsProperties = mWinExplorer.GetElementProperties(SelectedElement);
+                //    foreach (ControlProperty CP in ElementsProperties)
+                //        mProperties.Add(CP);
+                //}
 
             }
         }
+
+        public ucGrid MainElementsGrid
+        {
+            get
+            {
+                return xMainElementsGrid;
+            }
+
+        }
+
 
         private ElementInfo mMainElementsGridCurrentItem { get { return (ElementInfo)xMainElementsGrid.CurrentItem; } }
 

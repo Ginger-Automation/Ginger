@@ -19,13 +19,18 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.ValidationRules;
 using Ginger.Actions.UserControls;
+using Ginger.ApplicationModelsLib.POMModels.POMWizardLib;
+using GingerCore;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerWPF.WizardLib;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -42,6 +47,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         }
 
         ScreenShotViewPage mScreenshotPage;
+        //string FrameWorkContent 
+        //System.Windows.Visibility FrameVisible = System.Windows.Visibility.Collapsed;
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
@@ -49,6 +56,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
+                    //GingerCore.General.ObjFieldBinding(MainFrame, Frame.ContentProperty, this, nameof(mScreenshotPage));
+                    //MainFrame.AddValidationRule(new EmptyValidationRule());
+                    
                     break;
 
                 case EventType.Active:
@@ -63,12 +73,52 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
             mScreenshotPage = new ScreenShotViewPage(mWizard.POM.Name, mWizard.ScreenShot);
             MainFrame.Content = mScreenshotPage;
+            //FrameVisible = System.Windows.Visibility.Visible;
         }
 
 
         private void TakeScreenShotButtonClicked(object sender, System.Windows.RoutedEventArgs e)
         {
             ShowScreenShot();
+        }
+
+
+        //BitmapSource bitmapSource = null;
+
+        private void BrowseImageButtonClicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
+            op.Title = "Select a picture";
+            op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
+            op.ShowDialog();
+            var fileLength = new FileInfo(op.FileName).Length;
+            if (fileLength <= 30000)
+            {
+                //bitmapSource = new BitmapImage(new Uri(op.FileName));
+                if ((op.FileName != null) && (op.FileName != string.Empty))
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        BitmapImage bi = new BitmapImage(new Uri(op.FileName));
+                        Tuple<int, int> sizes = Ginger.Reports.GingerExecutionReport.ExtensionMethods.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
+
+                        BitmapImage bi_resized = new BitmapImage();
+                        bi_resized.BeginInit();
+                        bi_resized.UriSource = new Uri(op.FileName);
+                        bi_resized.DecodePixelHeight = sizes.Item2;
+                        bi_resized.DecodePixelWidth = sizes.Item1;
+                        bi_resized.EndInit();
+                        mWizard.ScreenShot = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(bi_resized);
+                        mWizard.POM.LogoBase64Image = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(mWizard.ScreenShot);
+                        mScreenshotPage = new ScreenShotViewPage(mWizard.POM.Name, mWizard.ScreenShot);
+                        MainFrame.Content = mScreenshotPage;
+                    }
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKeys.ImageSize);
+            }
         }
     }
 }

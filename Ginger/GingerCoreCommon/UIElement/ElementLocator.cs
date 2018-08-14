@@ -98,22 +98,22 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
-        public string TestStatusIconForeground
-        {
-            get
-            {
-                switch (TestStatus)
-                {
-                    case eTestStatus.Passed:
-                        return "$Green";
-                    case eTestStatus.Failed:
-                        return "$Red";
-                    default:
-                        return "$Orange";
-                }
+        //public SolidColorBrush TestStatusIconForeground
+        //{
+        //    get
+        //    {
+        //        switch (TestStatus)
+        //        {
+        //            case eTestStatus.Passed:
+        //                return (SolidColorBrush)FindResource("$Green");
+        //            case eTestStatus.Failed:
+        //                return (SolidColorBrush)FindResource("$Red");
+        //            default:
+        //                return (SolidColorBrush)FindResource("$Orange");
+        //        }
 
-            }
-        }
+        //    }
+        //}
 
         private string mTestStatusError;
         public string TestStatusError
@@ -122,7 +122,6 @@ namespace Amdocs.Ginger.Common.UIElement
             {
               return  mTestStatusError;
             }
-
             set
             {
                 mTestStatusError = value;

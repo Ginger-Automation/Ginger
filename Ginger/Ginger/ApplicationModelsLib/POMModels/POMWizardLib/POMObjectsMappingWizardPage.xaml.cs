@@ -61,6 +61,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             mWizard.IWindowExplorerDriver.UpdateElementInfoFields(EI);
             EI.Locators = mWizard.IWindowExplorerDriver.GetElementLocators(EI);
+            EI.Properties = mWizard.IWindowExplorerDriver.GetElementProperties(EI);
             EI.ElementName = GetBestElementName(EI);
             EI.WindowExplorer = mWizard.IWindowExplorerDriver;
 
@@ -74,24 +75,24 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mWizard.POM.UnMappedUIElements.Add(EI);
             }
         }
-            ////TODO: Auto decide what is active
-            //if (!string.IsNullOrEmpty(EI.ElementName))
-            //{
-            //    //TODO: fix me temp, need to be in IWindowExplorer, or return from eleminfo
-            //    if (EI.ElementType != "BODY" && EI.ElementType != "HTML" && EI.ElementType != "DIV")
-            //    {
-            //        EI.Active = true;
-            //    }
-            //}
-            //else
-            //{
-            //    //TODO: fix me temp code !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //    if (EI.ElementType == "INPUT.TEXT")
-            //    {
-            //        EI.ElementName = EI.Value + " TextBox";
-            //        EI.Active = true;
-            //    }
-            //}
+        ////TODO: Auto decide what is active
+        //if (!string.IsNullOrEmpty(EI.ElementName))
+        //{
+        //    //TODO: fix me temp, need to be in IWindowExplorer, or return from eleminfo
+        //    if (EI.ElementType != "BODY" && EI.ElementType != "HTML" && EI.ElementType != "DIV")
+        //    {
+        //        EI.Active = true;
+        //    }
+        //}
+        //else
+        //{
+        //    //TODO: fix me temp code !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //    if (EI.ElementType == "INPUT.TEXT")
+        //    {
+        //        EI.ElementName = EI.Value + " TextBox";
+        //        EI.Active = true;
+        //    }
+        //}
 
         //    string elementTagName = string.Empty;
         //    string elementType = string.Empty;
@@ -131,9 +132,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         //    }
         //}
 
+        PomAllElementsPage pomAllElementsPage = null;
+
         private void InitilizePomElementsMappingPage()
         {
-            PomAllElementsPage pomAllElementsPage = new PomAllElementsPage(mWizard.POM, mWizard.IWindowExplorerDriver);
+            pomAllElementsPage = new PomAllElementsPage(mWizard.POM, mWizard.IWindowExplorerDriver);
+            pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
             xPomElementsMappingPageFrame.Content = pomAllElementsPage;
         }
 
@@ -144,6 +148,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
                     mElementsList.CollectionChanged += ElementsListCollectionChanged;
+                    //InitilizePomElementsMappingPage();
+                    
                     break;
 
                 case EventType.Active:
@@ -161,6 +167,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (!mWizard.IsLearningWasDone)
             {
                 mWizard.ProcessStarted();
+                pomAllElementsPage.unmappedUIElementsPage.MainElementsGrid.ShowDelete = Visibility.Collapsed;
                 xStopLoadButton.Visibility = Visibility.Visible;
                 xReLearnButton.Visibility = Visibility.Collapsed;
                
@@ -173,6 +180,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mWizard.IsLearningWasDone = await GetElementsFromPage();
                 xStopLoadButton.Visibility = Visibility.Collapsed;
                 xReLearnButton.Visibility = Visibility.Visible;
+                pomAllElementsPage.unmappedUIElementsPage.MainElementsGrid.ShowDelete = Visibility.Visible;
                 mWizard.ProcessEnded();
             }
         }

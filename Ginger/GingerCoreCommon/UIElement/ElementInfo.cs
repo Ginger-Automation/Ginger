@@ -34,6 +34,9 @@ namespace Amdocs.Ginger.Common.UIElement
         public ObservableList<ElementLocator> Locators = new ObservableList<ElementLocator>();
 
         [IsSerializedForLocalRepository]
+        public ObservableList<ControlProperty> Properties = new ObservableList<ControlProperty>();
+
+        [IsSerializedForLocalRepository]
         public int X { get; set; }
 
         [IsSerializedForLocalRepository]
