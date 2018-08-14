@@ -36,7 +36,7 @@ namespace GingerCore.Actions.REST
 {
     public class ActREST : ActWithoutDriver
     {
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>(Enum.GetValues(typeof(ePlatformType)).Cast<ePlatformType>()); } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
         // We keep a dictionary of each host and cookies
         // this is in order to avoid creating a special rest driver
         // Since we can have more than one host to send/get rest services

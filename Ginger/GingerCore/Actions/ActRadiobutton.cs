@@ -40,7 +40,7 @@ namespace GingerCore.Actions
         }        
 
         public override string ActionEditPage { get { return null; } }
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 

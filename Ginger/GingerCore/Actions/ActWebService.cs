@@ -32,7 +32,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Web Service Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>(Enum.GetValues(typeof(ePlatformType)).Cast<ePlatformType>()); } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
         public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
         {

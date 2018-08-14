@@ -38,7 +38,7 @@ namespace GingerCore.Actions
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>(Enum.GetValues(typeof(ePlatformType)).Cast<ePlatformType>()); } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
         {
