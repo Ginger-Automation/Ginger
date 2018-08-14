@@ -60,6 +60,7 @@ namespace Amdocs.Ginger.GingerConsole
             ActionHandler AH =  p.GetStandAloneActionHandler(list[int.Parse(actnum)].ID);
             
             // FIXME need lazy load of params
+            // FIXME params not loaded
             foreach(ActionParam v in AH.GingerAction.InputParams.Values)
             {                
                 Console.WriteLine(v.Name + "?");
