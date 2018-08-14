@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.PlugInsLib;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
+using Amdocs.Ginger.Repository;
 using Ginger;
 using GingerWPF.WizardLib;
 using System.Windows.Controls;
@@ -28,26 +30,46 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
     /// </summary>
     public partial class PlugPackageinInfoPage : Page, IWizardPage
     {
+        AddPluginPackageWizard wiz;
         PluginPackage mPluginPackage;
 
-        public PlugPackageinInfoPage(PluginPackage pluginPackage)
+        public PlugPackageinInfoPage()
         {
-            InitializeComponent();         
-            
-            mPluginPackage = pluginPackage;
-            NameTextBox.BindControl(mPluginPackage, nameof(PluginPackage.PluginID));
-            FolderTextBox.BindControl(mPluginPackage, nameof(pluginPackage.Folder));
+            InitializeComponent();                                 
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            if (WizardEventArgs.EventType == EventType.Active)
+            switch(WizardEventArgs.EventType)
             {
+                case EventType.Init:
+                    wiz = (AddPluginPackageWizard)WizardEventArgs.Wizard;
+                    break;
+                case EventType.Active:
+                    mPluginPackage = wiz.PluginPackage;
+                    xIDTextBox.Text = mPluginPackage.PluginID;
+                    xVersionTextBox.Text = mPluginPackage.PluginPackageVersion;
+                    FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
+
+                    ServicesGrid.ItemsSource = mPluginPackage.GetServices();
+
+                    // TODO: get selected service only
+                    ObservableList<StandAloneAction> actions = mPluginPackage.GetStandAloneActions();
+                    ActionsDataGrid.ItemsSource = actions;
+                    
+                    break;
+
             }
+            
         }
 
         private void PluginsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+        }
+
+        private void ServicesGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
