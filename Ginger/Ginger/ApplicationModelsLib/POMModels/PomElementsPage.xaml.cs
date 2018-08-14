@@ -112,7 +112,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100, AllowSorting = true });
             //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100, AllowSorting = true });
             //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 8, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate "] });
+            view.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 8, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
 
             if (mContext == PomAllElementsPage.eElementsContext.Mapped)
             {
@@ -266,8 +266,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 30 });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 20, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 8, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.TestStatus), Header = "Test Status", WidthWeight = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.TestStatusIcon), Header = " ", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
+            //defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.TestStatus), Header = "Test Status", WidthWeight = 20 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.TestStatusIcon), Header = "Test Status", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
 
             xLocatorsGrid.AddToolbarTool("@Play_16x16.png", "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
             xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorHandler));
@@ -382,7 +382,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void TestElementButtonClicked(object sender, RoutedEventArgs e)
         {
             mWinExplorer.TestElementLocator(mLocatorsGridCurrentItem);
-
+            
         }
 
         private void TestAllElementsLocators(object sender, RoutedEventArgs e)
