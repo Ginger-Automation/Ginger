@@ -146,6 +146,8 @@ namespace Ginger.Run.RunSetActions
             //Make sure we clear in case use open the edit page twice
             Email.Attachments.Clear();
             Email.alternateView = null;
+            if (!System.IO.Directory.Exists(App.TempFolder))
+                System.IO.Directory.CreateDirectory(App.TempFolder);
             tempFolder = App.TempFolder;
             TemplatesFolder = (Ginger.Reports.GingerExecutionReport.ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
             string runSetFolder = string.Empty;
