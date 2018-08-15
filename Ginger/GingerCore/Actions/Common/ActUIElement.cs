@@ -475,6 +475,8 @@ namespace GingerCore.Actions.Common
 
             [EnumValueDescription("Submit")]
             Submit,
+            [EnumValueDescription("Set Attribute Using JavaScript")]
+            SetAttributeUsingJs,
 
             //Below should NOT be used- only kept for old action types support
             #region NOT TO USE Action Types

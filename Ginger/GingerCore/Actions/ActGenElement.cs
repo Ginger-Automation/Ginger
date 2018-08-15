@@ -52,7 +52,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web }; } }
 
         ePlatformType IObsoleteAction.GetTargetPlatform()
         {
@@ -102,9 +102,6 @@ namespace GingerCore.Actions
                         break;
                     case eGenElementAction.CloseBrowser:
                         NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.Close;
-                        break;
-                    case eGenElementAction.RunJavaScript:
-                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.InjectJS;
                         break;
                     default:
                         NewActBrowserElement.ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), GenElementAction.ToString());
@@ -248,6 +245,7 @@ namespace GingerCore.Actions
                 case eGenElementAction.Enabled:
                 case eGenElementAction.XYClick:
                 case eGenElementAction.Focus:
+                case eGenElementAction.SetAttributeUsingJs:
                     currentType =  typeof(ActUIElement);
                     break;
 

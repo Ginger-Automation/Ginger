@@ -2108,7 +2108,7 @@ namespace GingerCore.Drivers
                     }
                     break;
 
-                case ActGenElement.eGenElementAction.RunJavaScript: //TODO: FIXME: This action should not be part of GenElement
+                case ActGenElement.eGenElementAction.RunJavaScript: 
                     string script = act.GetInputParamCalculatedValue("Value");
                     try
                     {
@@ -2149,8 +2149,6 @@ namespace GingerCore.Drivers
                         if (vals.Count() != 2)
                             throw new Exception(@"Inot string should be in the format : attribute=value");
                         ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
-
-
                     }
                     break;
                 default:
@@ -5302,6 +5300,24 @@ namespace GingerCore.Drivers
                 case ActBrowserElement.eControlAction.InjectJS:
                     AddJavaScriptToPage(act.ActInputValues[0].Value);
                     break;
+                case ActBrowserElement.eControlAction.RunJavaScript:
+                    string script = act.GetInputParamCalculatedValue("Value");
+                    try
+                    {
+                        object a = null;
+                        if (!script.ToUpper().StartsWith("RETURN"))
+                        {
+                            script = "return " + script;
+                        }
+                        a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
+                        if (a != null)
+                            act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "'";
+                    }
+                    break;
                 case ActBrowserElement.eControlAction.CheckPageLoaded:
                     CheckifPageLoaded();
                     break;
@@ -5567,6 +5583,16 @@ namespace GingerCore.Drivers
                     {
                         act.Error = "Error: Failed to scroll to element - " + act.LocateBy + " " + act.LocateValue;
                     }
+                    break;
+
+                case ActUIElement.eElementAction.SetAttributeUsingJs:
+                    e = LocateElement(act);
+                    char[] delimit = new char[] { '=' };
+                    string insertval = act.GetInputParamCalculatedValue("Value");
+                    string[] vals = insertval.Split(delimit, 2);
+                    if (vals.Count() != 2)
+                        throw new Exception(@"Inot string should be in the format : attribute=value");
+                    ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
                     break;
 
                 case ActUIElement.eElementAction.DoubleClick:

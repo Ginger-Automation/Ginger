@@ -289,7 +289,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             if (new ActUIElement.eElementAction[] {     ActUIElement.eElementAction.SetValue, ActUIElement.eElementAction.SendKeys, ActUIElement.eElementAction.SetDate,
                                                         ActUIElement.eElementAction.SendKeyPressRelease, ActUIElement.eElementAction.SetText,
-                                                        ActUIElement.eElementAction.SetSelectedValueByIndex, ActUIElement.eElementAction.Select, ActUIElement.eElementAction.SelectByText}.Contains(mAction.ElementAction))
+                                                        ActUIElement.eElementAction.SetSelectedValueByIndex, ActUIElement.eElementAction.Select, ActUIElement.eElementAction.SelectByText,
+                                                        ActUIElement.eElementAction.SetAttributeUsingJs}.Contains(mAction.ElementAction))
             {
                 if (mAction.ElementType == eElementType.TextBox || mAction.ElementType == eElementType.ComboBox || mAction.ElementType == eElementType.CheckBox ||
                     mAction.ElementType == eElementType.Unknown)
