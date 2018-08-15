@@ -54,6 +54,38 @@ namespace Amdocs.Ginger.UserControls
             }
         }
 
+
+
+         public static readonly DependencyProperty ImageToolTipProperty = DependencyProperty.Register("ImageToolTip", typeof(string), typeof(ImageMakerControl),
+                        new FrameworkPropertyMetadata(string.Empty, OnToolTipPropertyChanged));
+               
+        private static void OnToolTipPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ImageMakerControl IMC = (ImageMakerControl)d;
+            IMC.SetImageToolTip();
+      
+        }
+                
+        public string ImageToolTip
+        {
+            get { return (string)GetValue(ImageToolTipProperty); }
+            set
+            {
+                SetValue(ImageToolTipProperty, value);
+                SetImageToolTip();
+            }
+        }
+
+        public void SetImageToolTip()
+        {
+            if (!string.IsNullOrEmpty(ImageToolTip))
+            {
+                xFAImage.ToolTip = ImageToolTip;
+                xFAFont.ToolTip = ImageToolTip;
+            }
+
+        }
+
         public static ImageSource GetImage(eImageType imageType,double SetAsFontImageWithSize=0.0,double width=0.0,bool SetBorder=false)
         {
             ImageSource Source = null;
@@ -539,7 +571,7 @@ namespace Amdocs.Ginger.UserControls
                 xFAFont.SpinDuration = spinDuration;
             }
 
-            if(!string.IsNullOrEmpty(toolTip))
+            if(!string.IsNullOrEmpty(toolTip) && string.IsNullOrEmpty(ImageToolTip))
             {
                 xFAImage.ToolTip = toolTip;                
                 xFAFont.ToolTip = toolTip;
@@ -555,31 +587,6 @@ namespace Amdocs.Ginger.UserControls
                 ImageMakerBorder.BorderThickness = new Thickness(0);
             }
         }
-
-        private string mToolTipProperty;
-
-        public string ToolTipProperty
-        {
-            get
-            {
-                return xFAImage.ToolTip.ToString();
-            }
-            set
-            {
-                xFAImage.ToolTip = value;
-            }
-        }
-
-
-        //public void ImageToolTip(string toolTip)
-        //{
-        //    if (!string.IsNullOrEmpty(toolTip))
-        //    {
-        //        xFAImage.ToolTip = toolTip;
-        //        xFAFont.ToolTip = toolTip;
-        //    }
-
-        //}
 
         private BitmapImage GetImageBitMap(string imageName)
         {

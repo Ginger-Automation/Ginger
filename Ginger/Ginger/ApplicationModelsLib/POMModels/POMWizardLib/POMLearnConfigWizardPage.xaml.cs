@@ -81,7 +81,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard, nameof(mWizard.Agent));
                     xAgentControlUC.AddValidationRule(new AgentControlValidationRule(AgentControlValidationRule.eAgentControlValidationRuleType.AgentIsMappedAndRunning));
                     xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
-                    //xAgentControlUC.xAgentWindowsComboBox.SelectionChanged += XAgentWindowsComboBox_SelectionChanged; -- For what this is needed?
 
                     ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();                    
@@ -153,13 +152,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
-        //private void XAgentWindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) -- For what this is needed?
-        //{
-        //    if (xAgentControlUC.AgentIsRunning)
-        //        SetAutoMapElementTypesSection();
-        //    else
-        //        ClearAutoMapElementTypesSection();
-        //}
 
         private void ClearAutoMapElementTypesSection()
         {

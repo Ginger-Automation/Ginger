@@ -52,7 +52,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTagsViewer.Init(mPOM.TagsKeys);
 
             //Bitmap ScreenShot = BitmapFromSource(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.LogoBase64Image.ToString())));
-            BitmapSource source = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.LogoBase64Image.ToString()));
+            BitmapSource source = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.ScreenShotImage.ToString()));
 
             ScreenShotViewPage p = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.Content = p;

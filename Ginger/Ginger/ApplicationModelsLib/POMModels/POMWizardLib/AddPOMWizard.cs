@@ -88,7 +88,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             using (var ms = new MemoryStream())
             {
-                POM.LogoBase64Image = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(ScreenShot);
+                POM.ScreenShotImage = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(ScreenShot);
             }
 
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);

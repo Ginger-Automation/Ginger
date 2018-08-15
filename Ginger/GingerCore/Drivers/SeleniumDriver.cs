@@ -4198,6 +4198,8 @@ namespace GingerCore.Drivers
 
                     }
             }
+
+            list.Add(new ControlProperty() { Name = nameof(ElementInfo.XPath), Value = ElementInfo.XPath });
             list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
             return list;
         }
@@ -4277,18 +4279,18 @@ namespace GingerCore.Drivers
             string id = e.GetAttribute("id");
             if (!string.IsNullOrEmpty(id))
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByID, LocateValue = id, Help = "Very Recommended - ID is Very good locater and probably unique" });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByID, LocateValue = id, Help = "Very Recommended - ID is Very good locater and probably unique", Active = true });
             }
             string name = e.GetAttribute("name");
             if (!string.IsNullOrEmpty(name))
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended - Name is Very good locater and probably unique" });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended - Name is Very good locater and probably unique", Active = true });
             }
-            list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended - Xpath is relative path to element, but sensitive if screen change" });
+            list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended - Xpath is relative path to element, but sensitive if screen change", Active = true });
             string eClass = e.GetAttribute("class");
             if (!string.IsNullOrEmpty(eClass) && eClass != "GingerHighlight")
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByClassName, LocateValue = eClass, Help = "No Recommended - Same Class can be used for many element" });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByClassName, LocateValue = eClass, Help = "No Recommended - Same Class can be used for many element", Active = true });
             }
             if (e.TagName == "input")
             {
@@ -4298,7 +4300,7 @@ namespace GingerCore.Drivers
                 {
                     multivals += ";" + "Type=" + InputType;
                     multivals += ";text=" + e.GetAttribute("value"); ;
-                    list.Add(new ElementLocator() { LocateBy = eLocateBy.ByMulitpleProperties, LocateValue = multivals, Help = "Good but slow - Add as many properties as needed" });
+                    list.Add(new ElementLocator() { LocateBy = eLocateBy.ByMulitpleProperties, LocateValue = multivals, Help = "Good but slow - Add as many properties as needed", Active = true });
                 }
             }
             return list;

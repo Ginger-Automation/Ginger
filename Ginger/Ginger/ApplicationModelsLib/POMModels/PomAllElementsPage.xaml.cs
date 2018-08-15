@@ -86,5 +86,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
 
         }
+
+        public void SetWindowExplorer(IWindowExplorer windowExplorerDriver)
+        {
+            mWinExplorer = windowExplorerDriver;
+            mappedUIElementsPage.SetWindowExplorer(windowExplorerDriver);
+            unmappedUIElementsPage.SetWindowExplorer(windowExplorerDriver);
+        }
     }
 }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -233,6 +233,16 @@ namespace Amdocs.Ginger.Repository
 
             string[] fileEntries = FileSystem.GetDirectoryFiles(FullPath, mSolutionRepositoryItemInfo.Pattern);
 
+            //foreach (string FileName in fileEntries)
+            //{
+            //    T item = (T)mFolderItemsCache[FileName];
+            //    if (item == null)
+            //    {
+            //        item = LoadItemfromFile<T>(FileName, ContainingFolder);
+            //        AddItemtoCache(FileName, item);
+            //    }
+            //    list.Add(item);
+            //}
 
             Parallel.ForEach(fileEntries, FileName =>
             {

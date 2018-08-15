@@ -42,7 +42,7 @@ namespace GingerWPF.WizardLib
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Width = width;
-            wizardWindow.ShowDialog();
+           wizardWindow.ShowDialog();
         }
 
         public WizardWindow(WizardBase wizard)
