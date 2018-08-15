@@ -80,7 +80,7 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public eCheckboxAction CheckboxAction { get; set; }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
         public override String ActionType
         {

@@ -383,11 +383,6 @@ namespace GingerCore.Actions
         /// </summary>
         public virtual bool IsSelectableAction { get { return true; } }
 
-        /// <summary>
-        /// Define if the Action will appear under the Legacy (non supported) Actions  
-        /// </summary>
-        public virtual bool IsLegacyAction { get { return false; } }
-
         public virtual List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>(); } }
 
         //Required to know if to show Locator Configuration fields in Action Edit window
