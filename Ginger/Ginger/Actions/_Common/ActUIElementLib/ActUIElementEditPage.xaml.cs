@@ -248,7 +248,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     comboBox = new UserControlsLib.UCComboBox()
                     {
                         Name = element.Title,
-                        Width = 245,
+                        Width = 590,
                         Margin = new Thickness(99, 20, 20, 10)
                     };
 
@@ -269,7 +269,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     Ginger.Actions.UCValueExpression txtBox = new Ginger.Actions.UCValueExpression()
                     {
                         Name = element.Title.ToString().Replace(" ", ""),
-                        Width = 245,
+                        Width = 590,
                         Margin = new Thickness(99, 20, 20, 10)
                     };
 
@@ -290,11 +290,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (new ActUIElement.eElementAction[] {     ActUIElement.eElementAction.SetValue, ActUIElement.eElementAction.SendKeys, ActUIElement.eElementAction.SetDate,
                                                         ActUIElement.eElementAction.SendKeyPressRelease, ActUIElement.eElementAction.SetText,
                                                         ActUIElement.eElementAction.SetSelectedValueByIndex, ActUIElement.eElementAction.Select, ActUIElement.eElementAction.SelectByText,
-                                                        ActUIElement.eElementAction.SetAttributeUsingJs}.Contains(mAction.ElementAction))
+                                                        ActUIElement.eElementAction.RunJavaScript}.Contains(mAction.ElementAction))
             {
-                if (mAction.ElementType == eElementType.TextBox || mAction.ElementType == eElementType.ComboBox || mAction.ElementType == eElementType.CheckBox ||
-                    mAction.ElementType == eElementType.Unknown)
-                {
+                //if (mAction.ElementType == eElementType.TextBox || mAction.ElementType == eElementType.ComboBox || mAction.ElementType == eElementType.CheckBox ||
+                //    mAction.ElementType == eElementType.Unknown)
+                //{
                     elementList.Add(new ElementConfigControl()
                     {
                         Title = "Value", 
@@ -303,7 +303,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
                         mAction.GetInputParamValue(ActUIElement.Fields.Value).Split(',').ToList()
                     });
-                }
+                //}
             }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.Select))
             {

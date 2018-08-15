@@ -5585,15 +5585,29 @@ namespace GingerCore.Drivers
                     }
                     break;
 
-                case ActUIElement.eElementAction.SetAttributeUsingJs:
+                case ActUIElement.eElementAction.RunJavaScript:
                     e = LocateElement(act);
-                    char[] delimit = new char[] { '=' };
-                    string insertval = act.GetInputParamCalculatedValue("Value");
-                    string[] vals = insertval.Split(delimit, 2);
-                    if (vals.Count() != 2)
-                        throw new Exception(@"Inot string should be in the format : attribute=value");
-                    ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                    string script = act.GetInputParamCalculatedValue("Value");
+                    try
+                    {
+                        object a = null;
+                        if (!script.ToUpper().StartsWith("RETURN"))
+                        {
+                            script = "return " + script;
+                        }
+                        if (script.ToLower().Contains("arguments[0]") && e != null)
+                            a = ((IJavaScriptExecutor)Driver).ExecuteScript(script, e);
+                        else
+                            a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
+                        if (a != null)
+                            act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "'";
+                    }
                     break;
+                    
 
                 case ActUIElement.eElementAction.DoubleClick:
                     OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);

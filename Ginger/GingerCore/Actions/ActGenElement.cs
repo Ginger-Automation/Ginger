@@ -166,6 +166,9 @@ namespace GingerCore.Actions
                     case eGenElementAction.Focus:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SetFocus;
                         break;
+                    case eGenElementAction.RunJavaScript:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.RunJavaScript;
+                        break;
                     default:
                         NewActUIElement.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), GenElementAction.ToString());
                         break;
@@ -207,8 +210,7 @@ namespace GingerCore.Actions
                 case eGenElementAction.SwitchWindow:
                 case eGenElementAction.DeleteAllCookies:
                 case eGenElementAction.SwitchToDefaultFrame:
-                case eGenElementAction.Refresh:
-                case eGenElementAction.RunJavaScript:
+                case eGenElementAction.Refresh:                
                 case eGenElementAction.SwitchToParentFrame:
                 case eGenElementAction.AcceptMessageBox:
                 case eGenElementAction.GetWindowTitle:
@@ -246,6 +248,7 @@ namespace GingerCore.Actions
                 case eGenElementAction.XYClick:
                 case eGenElementAction.Focus:
                 case eGenElementAction.SetAttributeUsingJs:
+                case eGenElementAction.RunJavaScript:
                     currentType =  typeof(ActUIElement);
                     break;
 

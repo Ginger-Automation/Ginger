@@ -315,7 +315,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                                                                             ActUIElement.eElementAction.GetWidth,
                                                                             // ActUIElement.eElementAction.NotExist,   //
                                                                             // ActUIElement.eElementAction.IsExist,    // currently not implemented in Web
-                                                                            ActUIElement.eElementAction.SetFocus };
+                                                                            ActUIElement.eElementAction.SetFocus,
+                                                                            ActUIElement.eElementAction.RunJavaScript};
 
                 mPlatformElementTypeOperations.Where( y => y.ActionType == typeof(ActUIElement)).ToList()
                                                  .ForEach(z => z.ElementOperationsList = z.ElementOperationsList.Union(ElementCommonActionsList).ToList());
