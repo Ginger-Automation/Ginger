@@ -187,7 +187,7 @@ namespace Ginger.ALM
             ProjectComboBox.Items.Clear();
             RestAPICheckBox.IsChecked = false;
 
-           ALMIntegration.Instance.SyncConfigurations();
+            ALMIntegration.Instance.SyncConfigurations();
         }
 
         private bool GetProjectsDetails()
@@ -350,7 +350,8 @@ namespace Ginger.ALM
                     {
                         ServerURLTextBox.IsEnabled = true;
                         ServerURLTextBox.IsReadOnly = false;
-                    }else
+                    }
+                    else
                     {
                         ServerURLTextBox.IsEnabled = false;
                         ServerURLTextBox.IsReadOnly = true;
@@ -362,6 +363,7 @@ namespace Ginger.ALM
                     RallyRadioButton.FontWeight = FontWeights.Regular;
                     RallyRadioButton.Foreground = Brushes.Black;
                     RallyRadioButton.IsChecked = false;
+                    RestAPICheckBox.Visibility = Visibility.Visible;
                     break;
                 case ALMIntegration.eALMType.RQM:
                     RQMRadioButton.IsChecked = true;
@@ -380,8 +382,9 @@ namespace Ginger.ALM
                     RallyRadioButton.FontWeight = FontWeights.Regular;
                     RallyRadioButton.Foreground = Brushes.Black;
                     RallyRadioButton.IsChecked = false;
+                    RestAPICheckBox.Visibility = Visibility.Hidden;
                     break;
-                case ALMIntegration.eALMType.RALLY:     
+                case ALMIntegration.eALMType.RALLY:
                     RallyRadioButton.IsChecked = true;
                     RallyRadioButton.FontWeight = FontWeights.ExtraBold;
                     RallyRadioButton.Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
@@ -406,6 +409,7 @@ namespace Ginger.ALM
                     RQMRadioButton.FontWeight = FontWeights.Regular;
                     RQMRadioButton.Foreground = Brushes.Black;
                     RQMRadioButton.IsChecked = false;
+                    RestAPICheckBox.Visibility = Visibility.Hidden;
                     break;
             }
         }
@@ -452,13 +456,13 @@ namespace Ginger.ALM
                             SetLoadPackageButtonContent();
                         }
                         break;
-                    case "RallyRadioButton":            
+                    case "RallyRadioButton":
                         if (App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RALLY)
                         {
                             App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.RALLY;
                             ClearALMConfigs();
                         }
-                        break;                        
+                        break;
                 }
                 ALMIntegration.Instance.UpdateALMType(App.UserProfile.Solution.AlmType);
                 StyleRadioButtons();
@@ -472,7 +476,7 @@ namespace Ginger.ALM
             {
                 RQMLoadConfigPackageButton.Content = "Replace";
                 ExampleURLHint.Content = "and click Replace to change RQM Configuration Package";
-                
+
             }
             else
             {
@@ -540,26 +544,14 @@ namespace Ginger.ALM
 
         private void RestAPICheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.QC)
-            {
-                App.UserProfile.Solution.UseRest = true;
-                ExampleURLHint.Content = "Example: http://server:8080/";
-                if (ServerURLTextBox.Text.EndsWith("qcbin"))
-                    ServerURLTextBox.Text = ServerURLTextBox.Text.Replace("qcbin", "");
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Rest connection refering only to QC");
-                RestAPICheckBox.IsChecked = false;
-            }
+            App.UserProfile.Solution.UseRest = true;
+            ExampleURLHint.Content = "Example: http://server:8080/";
         }
 
         private void RestAPICheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             App.UserProfile.Solution.UseRest = false;
             ExampleURLHint.Content = "Example: http://server:8080/almbin";
-            if (!ServerURLTextBox.Text.EndsWith("qcbin"))
-                ServerURLTextBox.Text = ServerURLTextBox.Text + "qcbin";
         }
     }
 }

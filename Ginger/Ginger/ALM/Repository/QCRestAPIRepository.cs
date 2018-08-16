@@ -403,9 +403,6 @@ namespace Ginger.ALM.Repository
             //Going through the fields to leave only Test Set fields
             for (int indx = 0; indx < fields.Count; indx++)
             {
-                if (fields[indx].Name == "Version")
-                {
-                }
                 if (fields[indx].ItemType == currentResource)
                 {
                     fieldsToReturn.Add(fields[indx]);

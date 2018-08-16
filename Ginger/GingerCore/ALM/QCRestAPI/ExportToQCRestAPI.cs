@@ -273,9 +273,9 @@ namespace GingerCore.ALM.QCRestAPI
                                     else if (stepsStatuses.Where(x => x == "No Run").Count() == runSteps.Count || stepsStatuses.Where(x => x == "N/A").Count() == runSteps.Count)
                                         currentRun.Status = "No Run";
                                     else if (stepsStatuses.Where(x => x == "Passed").Count() == runSteps.Count || (stepsStatuses.Where(x => x == "Passed").Count() + stepsStatuses.Where(x => x == "N/A").Count()) == runSteps.Count)
-                                        currentRun.Status = "Passed";
+                                        currentRun.ElementsField["status"] = "Passed";
                                     else
-                                        currentRun.Status = "Not Completed";
+                                        currentRun.ElementsField["status"] = "Not Completed";
 
                                     QCItem runToUpdate = ConvertObjectValuesToQCItem(currentRun, ResourceType.TEST_RUN);
                                     ALMResponseData runDataForUpdate = QCRestAPIConnect.UpdateEntity(ResourceType.TEST_RUN, currentRun.Id, runToUpdate);

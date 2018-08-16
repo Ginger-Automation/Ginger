@@ -24,6 +24,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using Ginger.ALM.QC.TreeViewItems;
 using GingerCore.ALM.QC;
 using GingerCore.ALM.QCRestAPI;
+using GingerCore.ALM;
 
 namespace Ginger.ALM.QC
 {
@@ -37,7 +38,7 @@ namespace Ginger.ALM.QC
         {
             InitializeComponent();
 
-            TestPlanExplorerTreeView.TreeTitle = SetTreeTitle();
+            TestPlanExplorerTreeView.TreeTitle = "'" + ALMCore.AlmConfig.ALMDomain + " \\ " + ALMCore.AlmConfig.ALMProjectName + "' - Test Plan Explorer";
             TestPlanExplorerTreeView.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
 
             //set root item
@@ -78,14 +79,6 @@ namespace Ginger.ALM.QC
         {
             SelectedPath = null;
             genWin.Close();
-        }
-
-        private string SetTreeTitle()
-        {
-            if (QCRestAPIConnect.CurrentDomain != null)
-                return "'" + QCRestAPIConnect.CurrentDomain + " \\ " + QCRestAPIConnect.CurrentProject + "' - Test Plan Explorer";
-            else
-                return "'" + QCConnect.CurrentDomain + " \\ " + QCConnect.CurrentProject + "' - Test Plan Explorer";
         }
     }
 }
