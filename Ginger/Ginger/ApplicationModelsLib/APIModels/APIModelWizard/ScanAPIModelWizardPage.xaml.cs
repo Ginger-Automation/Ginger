@@ -157,20 +157,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             ObservableList<ApplicationAPIModel> AAMCompletedList = new ObservableList<ApplicationAPIModel>();
 
 
-            foreach (TemplateFile XTF in AddAPIModelWizard.XTFList)
-            {
+           
                 try
                 {
-                    AAMTempList = await Task.Run(() => SwaggerPar.ParseDocument(XTF.FilePath));
+                    AAMTempList = await Task.Run(() => SwaggerPar.ParseDocument(AddAPIModelWizard.URL));
                     AAMCompletedList=AAMTempList;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "Failed to Parse the Swagger File" + XTF.FilePath, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
-                    GingerCoreNET.ReporterLib.Reporter.ToLog(GingerCoreNET.ReporterLib.eLogLevel.ERROR, "Error Details: " + ex.Message + " Failed to Parse the Swagger file " + XTF.FilePath);
+                    MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "Failed to Parse the Swagger File" + AddAPIModelWizard.URL, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
+                    GingerCoreNET.ReporterLib.Reporter.ToLog(GingerCoreNET.ReporterLib.eLogLevel.ERROR, "Error Details: " + ex.Message + " Failed to Parse the Swagger file " + AddAPIModelWizard.URL);
                     parseSuccess = false;
                 }
-            }
+            
 
             AddAPIModelWizard.AAMList = AAMCompletedList;
             xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMList;

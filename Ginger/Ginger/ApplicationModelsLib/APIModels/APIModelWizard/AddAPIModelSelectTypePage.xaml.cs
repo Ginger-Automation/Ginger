@@ -112,6 +112,10 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     AddAPIModelWizard.APIType = eAPIType.JsonTemplate;
                 }
+                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+                {
+                    AddAPIModelWizard.APIType = eAPIType.Swagger;
+                }
             }
             //else if (WizardEventArgs.EventType == EventType.Active)
             //{
