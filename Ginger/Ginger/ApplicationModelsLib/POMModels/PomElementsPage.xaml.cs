@@ -442,7 +442,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            mWinExplorer.TestElementLocator(mLocatorsGridCurrentItem);
+            mWinExplorer.TestAllElementsLocators(new ObservableList<ElementLocator>() { mLocatorsGridCurrentItem });
             
         }
 

@@ -2861,6 +2861,11 @@ namespace GingerCore.Drivers
             action.MoveToElement(e).Build().Perform();
         }
 
+
+
+        
+
+
         private IWebElement FindElementReg(eLocateBy LocatorType, string LocValue)
         {
             Regex reg = new Regex(LocValue.Replace("{RE:", "").Replace("}", ""), RegexOptions.Compiled);
@@ -2945,7 +2950,41 @@ namespace GingerCore.Drivers
             IWebElement elem = null; //TODO: Not found
                                      //TODO: switch case By.. - order by most common first
 
+            elem = LocateElementByLocator(LocatorType, LocValue, AlwaysReturn);
+
+            return elem;
             //Use retry mechanism and not hard coded
+           
+        }
+
+
+        private IWebElement LocateElementByLocators(ObservableList<ElementLocator> Locators)
+        {
+            IWebElement elem = null;
+            foreach (ElementLocator EL in Locators)
+            {
+                elem = LocateElementByLocator(EL.LocateBy, EL.LocateValue);
+
+                if (elem != null)
+                {
+                    EL.TestStatusError = string.Empty;
+                    EL.TestStatus = ElementLocator.eTestStatus.Passed;
+                    return elem;
+                }
+                else
+                {
+                    EL.TestStatusError = "Element not found: " + EL.LocateBy + "=" + EL.LocateValue;
+                    EL.TestStatus = ElementLocator.eTestStatus.Failed;
+                }
+            }
+            return null;
+
+        }
+
+
+        private IWebElement LocateElementByLocator(eLocateBy LocatorType, string LocValue, bool AlwaysReturn = true)
+        {
+            IWebElement elem = null;
             try
             {
                 try
@@ -4109,19 +4148,25 @@ namespace GingerCore.Drivers
         {
             UnhighlightLast();
 
-            if (string.IsNullOrEmpty(ElementInfo.XPath))
+            Driver.SwitchTo().DefaultContent();
+            SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
+
+            ElementLocator elementXpathLocator = ElementInfo.Locators.Where(x => x.LocateBy == eLocateBy.ByXPath).FirstOrDefault();
+            if (elementXpathLocator == null || string.IsNullOrEmpty(elementXpathLocator.LocateValue))
             {
-                Driver.SwitchTo().DefaultContent();
-                SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
-                ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
-            }
-            else
-            {
-                Driver.SwitchTo().DefaultContent();
-                SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
+                if (string.IsNullOrEmpty(ElementInfo.XPath))
+                {
+                    ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                }
+                elementXpathLocator = new ElementLocator() { LocateBy = eLocateBy.ByXPath,LocateValue = ElementInfo.XPath};
+                // Add Generate function
+                ElementInfo.Locators.Add(elementXpathLocator);
             }
 
-            IWebElement el = Driver.FindElement(By.XPath(ElementInfo.XPath));
+
+            //IWebElement el = Driver.FindElement(By.XPath(ElementInfo.XPath));
+            IWebElement el = LocateElementByLocators(ElementInfo.Locators);
+
             IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
 
             string highlightJavascript = string.Empty;
@@ -4144,16 +4189,8 @@ namespace GingerCore.Drivers
             if (LastHighLightedElementInfo != null)
             {
                 IWebElement el = null;
-                if (!string.IsNullOrEmpty(LastHighLightedElementInfo.XPath))
-                {
-                    try
-                    {
-                        el = Driver.FindElement(By.XPath(LastHighLightedElementInfo.XPath));
-                    }
-                    catch
-                    {
-                    }
-                }
+
+                el = LocateElementByLocators(LastHighLightedElementInfo.Locators);
 
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
 
@@ -4180,8 +4217,12 @@ namespace GingerCore.Drivers
         {
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
             IWebElement el = null;
-            if (ElementInfo.XPath != null)
-              el = Driver.FindElement(By.XPath(ElementInfo.XPath));
+
+
+            //if (ElementInfo.XPath != null)
+            //  el = Driver.FindElement(By.XPath(ElementInfo.XPath));
+
+            el = LocateElementByLocators(ElementInfo.Locators);
             IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
             if (el != null)
             {
@@ -6343,10 +6384,6 @@ namespace GingerCore.Drivers
             return true;
         }
 
-        public bool TestElementLocator(ElementLocator mLocatorsGridCurrentItem)
-        {
-            return TestOneElementLocator(mLocatorsGridCurrentItem);
-        }
 
         private bool TestOneElementLocator(ElementLocator mLocatorsGridCurrentItem)
         {

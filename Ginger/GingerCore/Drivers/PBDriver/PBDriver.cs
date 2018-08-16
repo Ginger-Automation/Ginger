@@ -1055,10 +1055,6 @@ namespace GingerCore.Drivers.PBDriver
             throw new NotImplementedException();
         }
 
-        public bool TestElementLocator(ElementLocator mLocatorsGridCurrentItem)
-        {
-            throw new NotImplementedException();
-        }
 
         public bool TestAllElementsLocators(ObservableList<ElementLocator> mLocators)
         {
