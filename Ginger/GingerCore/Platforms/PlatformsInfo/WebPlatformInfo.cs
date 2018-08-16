@@ -20,7 +20,10 @@ using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
+using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Linq;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
@@ -36,36 +39,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             // We cache the results
             if (mElementsTypeList == null)
             {
-                mElementsTypeList = new List<eElementType>();
-
-                mElementsTypeList.Add(eElementType.Unknown);
-                mElementsTypeList.Add(eElementType.Button);
-                mElementsTypeList.Add(eElementType.CheckBox);
-                mElementsTypeList.Add(eElementType.ComboBox);
-                mElementsTypeList.Add(eElementType.ComboBoxOption);
-                mElementsTypeList.Add(eElementType.Dialog);
-                mElementsTypeList.Add(eElementType.Div);
-                mElementsTypeList.Add(eElementType.EditorPane);
-                mElementsTypeList.Add(eElementType.Form);
-                mElementsTypeList.Add(eElementType.HyperLink);
-                mElementsTypeList.Add(eElementType.Iframe);
-                mElementsTypeList.Add(eElementType.Image);
-                mElementsTypeList.Add(eElementType.Label);
-                mElementsTypeList.Add(eElementType.List);
-                mElementsTypeList.Add(eElementType.ListItem);
-                mElementsTypeList.Add(eElementType.MenuBar);
-                mElementsTypeList.Add(eElementType.MenuItem);
-                mElementsTypeList.Add(eElementType.RadioButton);
-                mElementsTypeList.Add(eElementType.ScrollBar);
-                mElementsTypeList.Add(eElementType.Span);
-                mElementsTypeList.Add(eElementType.Tab);
-                mElementsTypeList.Add(eElementType.Table);
-                mElementsTypeList.Add(eElementType.TableItem);
-                mElementsTypeList.Add(eElementType.Text);
-                mElementsTypeList.Add(eElementType.TextBox);
-                mElementsTypeList.Add(eElementType.TreeView);
-                mElementsTypeList.Add(eElementType.Window);
-
+                mElementsTypeList = GetElementTypesWithOperations().Where(y => y.ActionType == typeof(ActUIElement)).Select(z => z.ElementType).ToList();
             }   
             return mElementsTypeList;
         }
@@ -109,102 +83,246 @@ namespace GingerCore.Platforms.PlatformsInfo
             List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();
             switch (ElementType)
             {
-
-                case eElementType.Unknown:
-                    foreach (ActUIElement.eElementAction item in Enum.GetValues(typeof(ActUIElement.eElementAction)))
+                default:
+                    ElementTypeOperations elementTypeOperations = GetElementTypesWithOperations().Where(x => x.ElementType == ElementType).FirstOrDefault();
+                    if (elementTypeOperations != null)
                     {
-                        list.Add(item);
+                        if (elementTypeOperations.ActionType == typeof(ActUIElement))
+                        {
+                            elementTypeOperations.ElementOperationsList.ForEach(z => list.Add((ActUIElement.eElementAction)(object)z));
+                        }
                     }
-                    break;
-                case eElementType.Button:
-                    list.Add(ActUIElement.eElementAction.Click);
-                    list.Add(ActUIElement.eElementAction.JavaScriptClick);
-                    list.Add(ActUIElement.eElementAction.MouseClick);
-                    list.Add(ActUIElement.eElementAction.MousePressRelease);
-                    list.Add(ActUIElement.eElementAction.ClickAndValidate);
-                    list.Add(ActUIElement.eElementAction.Submit);
-
-                    list.Add(ActUIElement.eElementAction.GetValue);
-                    list.Add(ActUIElement.eElementAction.IsDisabled);
-                    list.Add(ActUIElement.eElementAction.GetFont);
-                    list.Add(ActUIElement.eElementAction.IsVisible);
-                    list.Add(ActUIElement.eElementAction.GetWidth);
-                    list.Add(ActUIElement.eElementAction.GetHeight);
-                    list.Add(ActUIElement.eElementAction.GetStyle);
-                    break;
-                case eElementType.CheckBox:
-                    list.Add(ActUIElement.eElementAction.SetValue);
-                    list.Add(ActUIElement.eElementAction.Click);
-                    list.Add(ActUIElement.eElementAction.JavaScriptClick);
-                    list.Add(ActUIElement.eElementAction.MouseClick);
-                    list.Add(ActUIElement.eElementAction.MousePressRelease);
-                    list.Add(ActUIElement.eElementAction.ClickAndValidate);
-
-                    list.Add(ActUIElement.eElementAction.GetValue);
-                    list.Add(ActUIElement.eElementAction.IsDisabled);
-                    list.Add(ActUIElement.eElementAction.IsVisible);
-                    list.Add(ActUIElement.eElementAction.GetWidth);
-                    list.Add(ActUIElement.eElementAction.GetHeight);
-                    list.Add(ActUIElement.eElementAction.GetStyle);
-                    break;
-                case eElementType.TextBox:
-                    list.Add(ActUIElement.eElementAction.SetText);
-                    list.Add(ActUIElement.eElementAction.SendKeys);
-                    list.Add(ActUIElement.eElementAction.ClearValue);
-                    list.Add(ActUIElement.eElementAction.IsValuePopulated);
-                    list.Add(ActUIElement.eElementAction.GetTextLength);
-
-                    list.Add(ActUIElement.eElementAction.GetValue);
-                    list.Add(ActUIElement.eElementAction.IsDisabled);
-                    list.Add(ActUIElement.eElementAction.GetFont);
-                    list.Add(ActUIElement.eElementAction.IsVisible);
-                    list.Add(ActUIElement.eElementAction.GetWidth);
-                    list.Add(ActUIElement.eElementAction.GetHeight);
-                    list.Add(ActUIElement.eElementAction.GetStyle);
-                    list.Add(ActUIElement.eElementAction.GetSize);
-                    break;
-                case eElementType.ComboBox:
-                    list.Add(ActUIElement.eElementAction.SelectByIndex);
-                    list.Add(ActUIElement.eElementAction.Select);
-                    list.Add(ActUIElement.eElementAction.SelectByText);
-                    list.Add(ActUIElement.eElementAction.SetFocus);
-                    list.Add(ActUIElement.eElementAction.GetValidValues);
-                    list.Add(ActUIElement.eElementAction.GetSelectedValue);
-                    list.Add(ActUIElement.eElementAction.IsValuePopulated);
-                    list.Add(ActUIElement.eElementAction.GetFont);
-                    list.Add(ActUIElement.eElementAction.GetWidth);
-                    list.Add(ActUIElement.eElementAction.GetHeight);
-                    list.Add(ActUIElement.eElementAction.GetStyle);
-                    list.Add(ActUIElement.eElementAction.GetValue);
-                    list.Add(ActUIElement.eElementAction.GetAllValues);
-                    break;
-                case eElementType.Table:
-                    list.Add(ActUIElement.eElementAction.TableAction);
-                    list.Add(ActUIElement.eElementAction.TableCellAction);
-                    list.Add(ActUIElement.eElementAction.TableRowAction);
-                    break;
-                case eElementType.ScrollBar:
-                    list.Add(ActUIElement.eElementAction.ScrollUp);
-                    list.Add(ActUIElement.eElementAction.ScrollDown);
-                    list.Add(ActUIElement.eElementAction.ScrollLeft);
-                    list.Add(ActUIElement.eElementAction.ScrollRight);
-                    break;
-                case eElementType.HyperLink:
-                    list.Add(ActUIElement.eElementAction.Click);
-                    list.Add(ActUIElement.eElementAction.JavaScriptClick);
-                    list.Add(ActUIElement.eElementAction.MouseClick);
-                    list.Add(ActUIElement.eElementAction.MousePressRelease);
-                    list.Add(ActUIElement.eElementAction.ClickAndValidate);
-
-                    list.Add(ActUIElement.eElementAction.GetWidth);
-                    list.Add(ActUIElement.eElementAction.GetHeight);
-                    list.Add(ActUIElement.eElementAction.GetStyle);
-                    list.Add(ActUIElement.eElementAction.GetValue);
-                    list.Add(ActUIElement.eElementAction.IsVisible);
-                    list.Add(ActUIElement.eElementAction.Hover);
                     break;
             }
             return list;
+        }
+
+        public override ObservableList<Act> GetPlatformElementActions(ElementInfo elementInfo)
+        {
+            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
+
+            ElementTypeOperations elementTypeOperations = GetElementTypesWithOperations().Where(x => x.ElementType == elementInfo.ElementTypeEnum).FirstOrDefault();
+            if ((elementTypeOperations != null) && ((elementTypeOperations.ElementOperationsList != null)) && (elementTypeOperations.ElementOperationsList.Count > 0))
+            {
+                if (elementTypeOperations.ActionType == typeof(ActBrowserElement))
+                {
+                    elementTypeOperations.ElementOperationsList.ForEach(z => UIElementsActionsList.Add
+                        (new ActBrowserElement()
+                        {
+                            Description = ((EnumValueDescriptionAttribute[])typeof(ActBrowserElement.eControlAction).GetField(z.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false)).ToString() + elementInfo.ElementTitle,
+                            ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), z.ToString()),
+                            Value = "true"
+                        }));
+                }
+                else
+                {
+                    if (elementTypeOperations.ActionType == typeof(ActUIElement))
+                    {
+                        elementTypeOperations.ElementOperationsList.ForEach(z => UIElementsActionsList.Add
+                            (new ActUIElement()
+                            {
+                                Description = ((EnumValueDescriptionAttribute[])typeof(ActUIElement.eElementAction).GetField(z.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription + " : " + elementInfo.ElementTitle,
+                                ElementAction = (ActUIElement.eElementAction)z,
+                                ElementType = elementTypeOperations.ElementType,
+                                // ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), z.ToString()),
+                                // Value = "true"   // to check what to do with this
+                            }));
+                    }
+                }
+            }
+            return UIElementsActionsList;
+        }
+
+        public List<ElementTypeOperations> GetElementTypesWithOperations()
+        {
+            if (mPlatformElementTypeOperations == null)
+            {
+                mPlatformElementTypeOperations = new List<ElementTypeOperations>();
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.Unknown,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>(Enum.GetValues(typeof(ActUIElement.eElementAction)).Cast<Enum>())
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.Button,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>(){   ActUIElement.eElementAction.Click,
+                                                                ActUIElement.eElementAction.JavaScriptClick,
+                                                                ActUIElement.eElementAction.MouseClick,
+                                                                ActUIElement.eElementAction.MousePressRelease,
+                                                                ActUIElement.eElementAction.ClickAndValidate,
+                                                                ActUIElement.eElementAction.Submit,
+                                                                ActUIElement.eElementAction.GetValue,
+                                                                ActUIElement.eElementAction.IsDisabled,
+                                                                ActUIElement.eElementAction.GetFont }
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.CheckBox,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SetValue,
+                                                                ActUIElement.eElementAction.Click,
+                                                                ActUIElement.eElementAction.JavaScriptClick,
+                                                                ActUIElement.eElementAction.MouseClick,
+                                                                ActUIElement.eElementAction.MousePressRelease,
+                                                                ActUIElement.eElementAction.ClickAndValidate,
+                                                                ActUIElement.eElementAction.GetValue,
+                                                                ActUIElement.eElementAction.IsDisabled }
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.TextBox,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SetText,
+                                                                ActUIElement.eElementAction.SendKeys,
+                                                                ActUIElement.eElementAction.ClearValue,
+                                                                ActUIElement.eElementAction.IsValuePopulated,
+                                                                ActUIElement.eElementAction.GetTextLength,
+                                                                ActUIElement.eElementAction.GetValue,
+                                                                ActUIElement.eElementAction.IsDisabled,
+                                                                ActUIElement.eElementAction.IsEnabled,
+                                                                ActUIElement.eElementAction.GetFont,
+                                                                ActUIElement.eElementAction.GetSize }
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.ComboBox,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SelectByIndex,
+                                                                ActUIElement.eElementAction.Select,
+                                                                ActUIElement.eElementAction.SelectByText,
+                                                                ActUIElement.eElementAction.GetValidValues,
+                                                                ActUIElement.eElementAction.GetSelectedValue,
+                                                                ActUIElement.eElementAction.IsValuePopulated,
+                                                                ActUIElement.eElementAction.GetFont,
+                                                                ActUIElement.eElementAction.GetValue,
+                                                                ActUIElement.eElementAction.GetAllValues }
+                    });
+
+                //mWebPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                //{
+                //    ElementType = eElementType.Table,
+                //    ActionType = typeof(ActUIElement),
+                //    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.TableAction,
+                //                                                ActUIElement.eElementAction.TableCellAction,
+                //                                                ActUIElement.eElementAction.TableRowAction }
+                //});
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.ScrollBar,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.ScrollUp,
+                                                                ActUIElement.eElementAction.ScrollDown,
+                                                                ActUIElement.eElementAction.ScrollLeft,
+                                                                ActUIElement.eElementAction.ScrollRight }
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.HyperLink,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
+                                                                ActUIElement.eElementAction.JavaScriptClick,
+                                                                ActUIElement.eElementAction.MouseClick,
+                                                                ActUIElement.eElementAction.MousePressRelease,
+                                                                ActUIElement.eElementAction.ClickAndValidate,
+                                                                ActUIElement.eElementAction.GetValue }
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.Label,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetValue }
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.List,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetAllValues,
+                                                               ActUIElement.eElementAction.GetValue}
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.TableItem,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
+                                                                ActUIElement.eElementAction.GetValue,
+                                                                ActUIElement.eElementAction.IsEnabled }
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.Div,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>()
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.Span,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SetValue,
+                                                                ActUIElement.eElementAction.GetValue }
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.RadioButton,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
+                                                                ActUIElement.eElementAction.GetValue }
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.Image,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>()
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.Iframe,
+                    ActionType = typeof(ActBrowserElement),
+                    ElementOperationsList = new List<Enum>() {  ActBrowserElement.eControlAction.SwitchFrame,
+                                                                ActBrowserElement.eControlAction.SwitchToDefaultFrame,
+                                                                ActBrowserElement.eControlAction.SwitchToParentFrame }
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeOperations()
+                {
+                    ElementType = eElementType.Canvas,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.ClickXY}
+                });
+
+                // adding generic/common actions per each ElementType
+                List<Enum> ElementCommonActionsList = new List<Enum>() {    ActUIElement.eElementAction.Hover,
+                                                                            ActUIElement.eElementAction.IsVisible,
+                                                                            ActUIElement.eElementAction.GetHeight,
+                                                                            ActUIElement.eElementAction.GetStyle,
+                                                                            ActUIElement.eElementAction.GetWidth,
+                                                                            // ActUIElement.eElementAction.NotExist,   //
+                                                                            // ActUIElement.eElementAction.IsExist,    // currently not implemented in Web
+                                                                            ActUIElement.eElementAction.SetFocus,
+                                                                            ActUIElement.eElementAction.RunJavaScript};
+
+                mPlatformElementTypeOperations.Where( y => y.ActionType == typeof(ActUIElement)).ToList()
+                                                 .ForEach(z => z.ElementOperationsList = z.ElementOperationsList.Union(ElementCommonActionsList).ToList());
+            }
+
+            return mPlatformElementTypeOperations;
         }
 
         public override List<eLocateBy> GetPlatformUIElementLocatorsList()

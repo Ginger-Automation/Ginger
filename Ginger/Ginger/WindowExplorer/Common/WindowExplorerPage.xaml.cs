@@ -55,6 +55,8 @@ using Amdocs.Ginger.Repository;
 using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCore.Actions.Common;
+using GingerCore.Platforms.PlatformsInfo;
 
 namespace Ginger.WindowExplorer
 {
@@ -71,6 +73,8 @@ namespace Ginger.WindowExplorer
         ITreeViewItem mRootItem;
         ElementInfo mSpyElement;
         ApplicationAgent mApplicationAgent;
+
+        PlatformInfoBase mPlatform;
 
         //If we come from ActionEditPage keep the Action
         private Act mAction;
@@ -97,6 +101,7 @@ namespace Ginger.WindowExplorer
 
             mContext = Context;
             mPOM = POM;
+            mPlatform = PlatformInfoBase.GetPlatformImpl(ApplicationAgent.Agent.Platform);
 
             if (mContext == eWindowExplorerPageContext.POMWizard)
             {
@@ -671,7 +676,15 @@ namespace Ginger.WindowExplorer
                     }
                     else
                     {
-                        ObservableList<Act> list = ((IWindowExplorerTreeItem)iv).GetElementActions();
+                        ObservableList<Act> list = new ObservableList<Act>();
+                        if (mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
+                        {
+                            list = mPlatform.GetPlatformElementActions(EI);
+                        }
+                        else
+                        {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
+                            list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platformes will be overrided
+                        }                                                               //
 
                         //If no element actions returned then no need to get locators. 
                         if (list == null || list.Count == 0)
