@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.CoreNET.RosLynLib;
+using Amdocs.Ginger.Repository;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;

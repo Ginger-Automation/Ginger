@@ -52,7 +52,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+        // public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } } // TEMP - to return this row at next release !!!!
 
         ePlatformType IObsoleteAction.GetTargetPlatform()
         {

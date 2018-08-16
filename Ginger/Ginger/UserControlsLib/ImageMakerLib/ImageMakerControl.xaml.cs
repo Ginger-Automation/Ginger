@@ -474,6 +474,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.DataSource:
                     SetAsStaticImage("DataSource_16x16.png");
                     break;
+                case eImageType.PluginPackage:
+                    SetAsStaticImage("Plugin_32x32.png");
+                    break;
                 #endregion
 
 

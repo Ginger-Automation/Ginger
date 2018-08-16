@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.PlugInsLib;
+using Amdocs.Ginger.Repository;
 using Ginger.Environments;
 using GingerWPF.WizardLib;
 using System.Collections.Generic;
