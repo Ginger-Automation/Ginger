@@ -125,6 +125,9 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mElementTypeEnum = value; }
         }
 
+        [IsSerializedForLocalRepository]
+        public ObservableList<ComboBoxOptionalValue> ComboBoxOptionalValues = new ObservableList<ComboBoxOptionalValue>();
+
         // Used for Lazy loading when possible
         public virtual string GetElementType()
         {

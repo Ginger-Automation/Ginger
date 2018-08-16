@@ -3484,6 +3484,7 @@ namespace GingerCore.Drivers
                     if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0) continue;
 
                     ElementInfo ElementInfo = GetElementInfoWithIWebElement(el, path);
+                    PopulateComboBoxOptionalValues(ElementInfo, el);
                     allElementlist.Add(ElementInfo);
                     if (foundElementsList != null)
                         foundElementsList.Add(ElementInfo);
@@ -4254,6 +4255,8 @@ namespace GingerCore.Drivers
             //IWebElement el = Driver.FindElement(By.XPath(ElementInfo.XPath));
             IWebElement el = LocateElementByLocators(ElementInfo.Locators);
 
+            PopulateComboBoxOptionalValues(ElementInfo,el);
+
             IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
 
             string highlightJavascript = string.Empty;
@@ -4264,6 +4267,21 @@ namespace GingerCore.Drivers
             javascriptDriver.ExecuteScript(highlightJavascript, new object[] { el });
 
             LastHighLightedElementInfo = ElementInfo;
+        }
+
+
+        private void PopulateComboBoxOptionalValues(ElementInfo ElementInfo, IWebElement ComboBoxElement = null)
+        {
+            if (ElementInfo.ElementTypeEnum == eElementType.ComboBox)
+            {
+                if (ComboBoxElement == null)
+                    ComboBoxElement = LocateElementByLocators(ElementInfo.Locators);
+                ReadOnlyCollection<IWebElement> childrenElements = ComboBoxElement.FindElements(By.XPath("*"));
+                foreach (IWebElement el in childrenElements)
+                {
+                    ElementInfo.ComboBoxOptionalValues.Add(new ComboBoxOptionalValue() { TagName = el.TagName, Value = el.Text});
+                }
+            }
         }
 
         void IWindowExplorer.UnHighLightElements()
