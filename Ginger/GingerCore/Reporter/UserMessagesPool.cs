@@ -109,7 +109,7 @@ namespace GingerCore
         AskIfSureWantToUndoChange,
         MissingTargetPlatformForConversion, NoConvertibleActionsFound, NoConvertibleActionSelected, SuccessfulConversionDone, NoActivitySelectedForConversion,
         CurrentActionNotSaved,
-        FileExtensionNotSupported, NotifyFileSelectedFromTheSolution, FileImportedSuccessfully, CompilationErrorOccured, CompilationSucceed, Failedtosaveitems, SaveAnalyzerItemWarning,
+        FileExtensionNotSupported, NotifyFileSelectedFromTheSolution, FileImportedSuccessfully, CompilationErrorOccured, CompilationSucceed, Failedtosaveitems, SaveItemParentWarning, SaveAllItemsParentWarning,
         APIParametersListUpdated, APIMappedToActionIsMissing, NoAPIExistToMappedTo, CreateRunset, DeleteRunners, DeleteRunner,DeleteBusinessflow, DeleteBusinessflows, MissingErrorHandler,CantDeleteRunner, AllItemsSaved, APIModelAlreadyContainsReturnValues,
         InitializeBrowser,LoseChangesWarn, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
         VisualTestingFailedToDeleteOldBaselineImage,ApplitoolsLastExecutionResultsNotExists,ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
@@ -197,8 +197,9 @@ namespace GingerCore
             #region Analyzer
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AnalyzerFoundIssues, new UserMessage(eMessageType.WARN, "Issues Detected By Analyzer", "Critical/High Issues were detected, please handle them before execution.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AnalyzerSaveRunSet, new UserMessage(eMessageType.WARN, "Issues Detected By Analyzer", "Please save the " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " first", MessageBoxButton.OK, MessageBoxResult.None));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.SaveAnalyzerItemWarning, new UserMessage(eMessageType.WARN, "Analyzer Item/s Fix Save", "Save process will save the all fixed item/s parent " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "." + System.Environment.NewLine + System.Environment.NewLine + "To continue with save?", MessageBoxButton.YesNo, MessageBoxResult.No));
-            
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.SaveItemParentWarning, new UserMessage(eMessageType.WARN, "Item Parent Save", "Save process will actually save the item {0} parent which called '{1}'." + System.Environment.NewLine + System.Environment.NewLine + "To continue with save?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.SaveAllItemsParentWarning, new UserMessage(eMessageType.WARN, "Items Parent Save", "Save process will actually save item\\s parent\\s (" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ")" + System.Environment.NewLine + System.Environment.NewLine + "To continue with save?", MessageBoxButton.YesNo, MessageBoxResult.No));
+
             #endregion Analyzer
 
             #region Registry Values Check Messages
@@ -601,7 +602,8 @@ namespace GingerCore
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndRepalceFieldIsEmpty, new UserMessage(eMessageType.WARN, "Field is Empty", "Field '{0}' cannot be empty", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceListIsEmpty, new UserMessage(eMessageType.WARN, "List is Empty", "No items were found hence nothing can be replaced", MessageBoxButton.OK, MessageBoxResult.None));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceNoItemsToRepalce, new UserMessage(eMessageType.WARN, "No Suiteable Items", "No suiteable items selected to replace.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceNoItemsToRepalce, new UserMessage(eMessageType.WARN, "No Suitable Items", "No suitable items selected to replace.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceViewRunSetNotSupported, new UserMessage(eMessageType.INFO, "View Run Set", "View RunSet is not supported.", MessageBoxButton.OK, MessageBoxResult.None));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardFailedToLearnElement, new UserMessage(eMessageType.WARN, "Learn Elements Failed", "Error occured while learning the elements." + Environment.NewLine + "Error Details:" + Environment.NewLine + "'{0}'", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements, new UserMessage(eMessageType.WARN, "Re-Learn Elements", "Re-Learn Elements will delete all existing elements" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.YesNo, MessageBoxResult.No));

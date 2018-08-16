@@ -16,19 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Ginger.GherkinLib;
-using Ginger.PlugInsLib;
 using Ginger.UserControlsLib.TextEditor;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using GingerWPF.TreeViewItemsLib;
-using Amdocs.Ginger.Common.Enums;
-using GingerCore.GeneralLib;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -219,10 +217,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 FileContent = Properties.Resources.VBSTemplate;
             }
-            else
-            {
-                FileContent = PlugInsIntegration.GetTamplateContentByPlugInExtension(FileExtension);
-            }
+            // else
+            //{
+            //     FileContent = PlugInsIntegration.GetTamplateContentByPlugInExtension(FileExtension);
+            //}
 
             string NewFileName = string.Empty;
             string FullFilePath = string.Empty;

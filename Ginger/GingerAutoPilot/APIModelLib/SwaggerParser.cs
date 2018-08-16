@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
              orignaljson=   System.IO.File.ReadAllText(FileName);
             }
             {
-                orignaljson= GeneralLib.HttpUtilities.DownloadFileAsync(url).Result;
+                orignaljson = GeneralLib.HttpUtilities.Download(url);
 
             }
            try

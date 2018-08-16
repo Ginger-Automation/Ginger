@@ -171,7 +171,7 @@ namespace Ginger.Variables
                     winButtons.Add(saveBtn);
                     break;
                 case VariableEditPage.eEditMode.FindAndReplace:
-                    title = "Edit Shared Repository " + RemoveVariableWord(mVariable.VariableUIType) + " " + GingerDicser.GetTermResValue(eTermResKey.Variable);
+                    title = "Edit " + RemoveVariableWord(mVariable.VariableUIType) + " " + GingerDicser.GetTermResValue(eTermResKey.Variable);
                     Button FindAndRepalceSaveBtn = new Button();
                     FindAndRepalceSaveBtn.Content = "Save";
                     FindAndRepalceSaveBtn.Click += new RoutedEventHandler(FindAndRepalceSaveBtn_Click);

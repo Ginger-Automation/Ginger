@@ -65,7 +65,7 @@ namespace Ginger.Run
                 App.RunsetExecutor.RunsetExecutionEnvironment = env;
                 App.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
 
-                App.RunsetExecutor.SetRunnersPlugIns(App.LocalRepository.GetSolutionPlugIns()); 
+                // App.RunsetExecutor.SetRunnersPlugIns(App.LocalRepository.GetSolutionPlugIns()); 
                 App.RunsetExecutor.SetRunnersLocalRepository(App.LocalRepository);
             }
             catch (Exception ex)

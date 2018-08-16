@@ -515,6 +515,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Power:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PowerOff);
                     break;
+                case eImageType.PluginPackage:
+                    SetAsStaticImage("Plugin_32x32.png");
+                    break;
                 #endregion
 
 

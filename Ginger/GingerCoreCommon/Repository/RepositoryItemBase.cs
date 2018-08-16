@@ -962,6 +962,45 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        /// <summary>
+        /// This method is used to set the DirtyStatus to NoChange to item and it's child items
+        /// </summary>
+        public void SetDirtyStatusToNoChange()
+        {
+            DirtyStatus = eDirtyStatus.NoChange;
+
+            // Properties
+            foreach (PropertyInfo PI in this.GetType().GetProperties())
+            {
+                var token = PI.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
+                if (token == null) continue;
+
+                if (typeof(IObservableList).IsAssignableFrom(PI.PropertyType))
+                {
+                    IObservableList obj = (IObservableList)PI.GetValue(this);
+                    if (obj == null) continue;
+                    foreach (object o in obj)
+                        if (o is RepositoryItemBase)
+                            ((RepositoryItemBase)o).SetDirtyStatusToNoChange();
+                }
+            }
+
+            // Fields
+            foreach (FieldInfo FI in this.GetType().GetFields())
+            {
+                var token = FI.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
+                if (token == null) continue;
+                if (typeof(IObservableList).IsAssignableFrom(FI.FieldType))
+                {
+                    IObservableList obj = (IObservableList)FI.GetValue(this);
+                    if (obj == null) return;
+                    foreach (object o in obj)
+                        if (o is RepositoryItemBase)
+                            ((RepositoryItemBase)o).SetDirtyStatusToNoChange();
+                }
+            }
+        }
+
         // test after save dirt should be reset to no change
         // undo shoudl reset to - restpre from bak
 

@@ -116,6 +116,9 @@
       <HintPath>..\packages\Gherkin.4.0.0\lib\net45\Gherkin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="GingerPluginCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ginger.Plugin.Core.1.0.0\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
+    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.6.13.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.6.13\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
@@ -759,9 +762,6 @@
     <Compile Include="GeneralWindows\Run Set Pages\StatusItem.xaml.cs">
       <DependentUpon>StatusItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageIntroPage.xaml.cs">
-      <DependentUpon>AddPluginPackageIntroPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageToSolutionPage.xaml.cs">
       <DependentUpon>AddPluginPackageToSolutionPage.xaml</DependentUpon>
     </Compile>
@@ -775,9 +775,6 @@
     <Compile Include="PluginsLibNew\AddPluginWizardLib\SelectPluginPackageTypePage.xaml.cs">
       <DependentUpon>SelectPluginPackageTypePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PluginsLibNew\PluginPackagesPage.xaml.cs">
-      <DependentUpon>PluginPackagesPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="RunLibNew\GingerRunnerControlsMiniWindow.xaml.cs">
       <DependentUpon>GingerRunnerControlsMiniWindow.xaml</DependentUpon>
     </Compile>
@@ -787,7 +784,6 @@
     <Compile Include="RunLibNew\GingerSocketMonitorWindow.xaml.cs">
       <DependentUpon>GingerSocketMonitorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PluginsLib\PlugInsIntegration.cs" />
     <Compile Include="GeneralWindows\Run Set Pages\RunnerPage.xaml.cs">
       <DependentUpon>RunnerPage.xaml</DependentUpon>
     </Compile>
@@ -873,14 +869,13 @@
     <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvironmentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\NewTreeViewItemBase.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\PlugInsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\PlugInEmbeddedTreeItem.cs" />
-    <Compile Include="PlugInsWindows\PlugInWraperPage.xaml.cs">
-      <DependentUpon>PlugInWraperPage.xaml</DependentUpon>
+    <Compile Include="SolutionWindows\TreeViewItems\PluginPackageTreeItem.cs" />
+    <Compile Include="PlugInsWindows\PluginPackagePage.xaml.cs">
+      <DependentUpon>PluginPackagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\SetAppLogLevelPage.xaml.cs">
       <DependentUpon>SetAppLogLevelPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\TreeViewItems\PlugInSystemTreeItem.cs" />
     <Compile Include="TestLib\ListsPage.xaml.cs">
       <DependentUpon>ListsPage.xaml</DependentUpon>
     </Compile>
@@ -1948,6 +1943,7 @@
     <None Include="ALMRESTConfiguration\appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Resource Include="PluginsLibNew\AddPluginWizardLib\AddPluginIntro.md" />
     <None Include="Resources\VBSTemplate.bmp" />
     <None Include="Resources\VBSTemplate.vbs" />
     <Resource Include="Images\%40A_16x16.png" />
@@ -2794,10 +2790,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageIntroPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageToSolutionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2811,10 +2803,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="PluginsLibNew\AddPluginWizardLib\SelectPluginPackageTypePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="PluginsLibNew\PluginPackagesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2959,6 +2947,8 @@
     <Content Include="Reports\GingerExecutionReport\assets\js\Recharts.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_16x16.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_32x32.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -3222,7 +3212,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PlugInsWindows\PlugInWraperPage.xaml">
+    <Page Include="PlugInsWindows\PluginPackagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

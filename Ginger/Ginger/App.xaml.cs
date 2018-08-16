@@ -28,7 +28,6 @@ using Ginger.Reports;
 using Ginger.Repository;
 using Ginger.Run;
 using Ginger.SolutionWindows;
-using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.DataSource;
@@ -45,7 +44,6 @@ using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -332,14 +330,9 @@ namespace Ginger
 
             if (Environment.GetCommandLineArgs().Count() > 1)
             {
-                //Check that Ginger is not executed from GingerTest
-                if (!Environment.GetCommandLineArgs()[0].Contains("testhost"))
-                {
-                    // OK we run with command line args of run set to execute
-                    // RunningFromConfigFile = true;
-                    Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
-                    Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)
-                }
+                RunningFromConfigFile = true;
+                Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
+                Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)               
             }
 
             string phase = string.Empty;
@@ -745,7 +738,7 @@ namespace Ginger
                         App.UserProfile.LoadRecentAppAgentMapping();
                         App.AutomateTabGingerRunner.SolutionFolder = SolutionFolder;
                         App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                        App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+                        // App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
                         App.UserProfile.Solution.SetReportsConfigurations();
                         App.AutomateTabGingerRunner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
                         App.AutomateTabGingerRunner.DSList = App.LocalRepository.GetSolutionDataSources();
@@ -859,8 +852,8 @@ namespace Ginger
             SR.AddItemInfo<ReportTemplate>("*.Ginger.ReportTemplate.xml", @"~\HTMLReportConfigurations\ReportTemplates", true, "ReportTemplates", addToRootFolders: true, PropertyNameForFileName: nameof(ReportTemplate.Name));
 
             SR.AddItemInfo<DataSourceBase>("*.Ginger.DataSource.xml", @"~\DataSources", true, "DataSources", addToRootFolders: true, PropertyNameForFileName: nameof(DataSourceBase.Name));
-            
 
+            SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", addToRootFolders: true, PropertyNameForFileName: nameof(PluginPackage.PluginID));
 
             ////// Note the | which enable to define multiple pattern for same folder
             ////// Shared repository can contains Activities and Actions            
