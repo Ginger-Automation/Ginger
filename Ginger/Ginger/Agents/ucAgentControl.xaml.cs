@@ -20,7 +20,7 @@ using System.Windows.Shapes;
 namespace Ginger.Agents
 {
     /// <summary>
-    /// Interaction logic for ucAgentControl.xaml
+    /// Interaction logic for ucAgentControl.xaml //test
     /// </summary>
     public partial class ucAgentControl : UserControl, INotifyPropertyChanged
     {
