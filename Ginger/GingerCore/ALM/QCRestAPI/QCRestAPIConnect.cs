@@ -173,6 +173,11 @@ namespace GingerCore.ALM.QCRestAPI
             return testPlanPathList;
         }
 
+        public static QCRun GetRunDetail(string id)
+        {
+            return QcRestClient.GetRun(id);
+        }
+
         public static List<string> GetTestLabExplorer(string PathNode)
         {
             string[] separatePath = PathNode.Split('\\');
@@ -456,6 +461,11 @@ namespace GingerCore.ALM.QCRestAPI
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to update entity with REST API", ex);
                 return null;
             }
+        }
+
+        public static QCRunStepColl GetRunSteps(string runId)
+        {
+            return QcRestClient.GetRunSteps(runId);
         }
 
         #endregion QCRestclient manager functions

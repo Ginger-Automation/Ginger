@@ -10,6 +10,8 @@ using GingerCore.Variables;
 using System.Reflection;
 using GingerCore.Actions;
 using ALMRestClient;
+using Amdocs.Ginger.IO;
+using System.IO.Compression;
 
 namespace GingerCore.ALM.QCRestAPI
 {
@@ -85,10 +87,237 @@ namespace GingerCore.ALM.QCRestAPI
             }
         }
 
-        public static bool ExportExecutionDetailsToQC(BusinessFlow bizFlow, ref string result, PublishToALMConfig publishToALMConfig)
+        public static bool ExportExceutionDetailsToALM(BusinessFlow bizFlow, ref string result, ObservableList<ExternalItemFieldBase> runFields, bool exectutedFromAutomateTab, PublishToALMConfig publishToALMConfig = null)
         {
-            throw new NotImplementedException();
+            result = string.Empty;
+            if (bizFlow.ExternalID == "0" || String.IsNullOrEmpty(bizFlow.ExternalID))
+            {
+                result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + bizFlow.Name + " is missing ExternalID, cannot locate QC TestSet without External ID";
+                return false;
+            }
+
+            try
+            {
+                //get the BF matching test set
+                QCTestSet testSet = ImportFromQCRest.GetQCTestSet(bizFlow.ExternalID);//bf.externalID holds the TestSet TSTests collection id
+                if (testSet != null)
+                {
+                    //get the Test set TC's
+                    QCTestInstanceColl qcTSTests = QCRestAPIConnect.GetTestInstancesOfTestSet(testSet.Id); //list of TSTest's on main TestSet in TestLab 
+
+                    //get all BF Activities groups
+                    ObservableList<ActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
+                    if (activGroups.Count > 0)
+                    {
+                        foreach (ActivitiesGroup activGroup in activGroups)
+                        {
+                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Passed)
+                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Failed)
+                            || publishToALMConfig.FilterStatus == FilterByStatus.All)
+                            {
+                                QCTestInstance tsTest = null;
+                                //go by TC ID = TC Instancs ID
+                                tsTest = qcTSTests.Find(x => x.TestId == activGroup.ExternalID && x.Id == activGroup.ExternalID2);
+                                if (tsTest == null)
+                                {
+                                    //go by Linked TC ID + TC Instancs ID
+                                    tsTest = qcTSTests.Find(x => ImportFromQCRest.GetTSTestLinkedID(x) == activGroup.ExternalID && x.Id == activGroup.ExternalID2);
+                                }
+                                if (tsTest == null)
+                                {
+                                    //go by TC ID 
+                                    tsTest = qcTSTests.Find(x => x.TestId == activGroup.ExternalID);
+                                }
+                                if (tsTest != null)
+                                {
+                                    //get activities in group
+                                    List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
+                                    string TestCaseName = PathHelper.CleanInValidPathChars(tsTest.Name);
+                                    if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
+                                    {
+                                        String timeStamp = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                                        publishToALMConfig.VariableForTCRunName = "GingerRun_" + timeStamp;
+                                    }
+
+                                    QCRun runToExport = new QCRun();
+
+                                    foreach (ExternalItemFieldBase field in runFields)
+                                    {
+                                        if (field.ToUpdate || field.Mandatory)
+                                        {
+                                            if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+                                                runToExport.ElementsField.Add(field.ExternalID, field.SelectedValue);
+                                            else
+                                                try { runToExport.ElementsField.Add(field.ExternalID, "NA"); }
+                                                catch { }
+                                        }
+                                    }
+
+                                    runToExport.ElementsField["name"] = publishToALMConfig.VariableForTCRunNameCalculated;
+                                    runToExport.ElementsField["test-id"] = tsTest.TestId;
+                                    runToExport.ElementsField["testcycl-id"] = tsTest.Id;
+                                    runToExport.ElementsField["cycle-id"] = tsTest.CycleId;
+                                    runToExport.ElementsField["duration"] = "0";
+                                    runToExport.ElementsField["subtype-id"] = "hp.qc.run.MANUAL";
+                                    runToExport.ElementsField["owner"] = ALMCore.AlmConfig.ALMUserName;
+
+                                    QCItem itemToExport = ConvertObjectValuesToQCItem(runToExport, ResourceType.TEST_RUN);
+                                    ALMResponseData responseData = QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_RUN, itemToExport);
+                                    if (!responseData.IsSucceed)
+                                    {
+                                        result = "Failed to create run using rest API";
+                                        return false;
+                                    }
+                                    QCRun currentRun = QCRestAPIConnect.GetRunDetail(responseData.IdCreated);
+
+                                    // Attach ActivityGroup Report if needed
+                                    if (publishToALMConfig.ToAttachActivitiesGroupReport)
+                                    {
+                                        if ((activGroup.TempReportFolder != null) && (activGroup.TempReportFolder != string.Empty) &&
+                                            (System.IO.Directory.Exists(activGroup.TempReportFolder)))
+                                        {
+                                            //Creating the Zip file - start
+                                            string targetZipPath = System.IO.Directory.GetParent(activGroup.TempReportFolder).ToString();
+                                            string zipFileName = targetZipPath + "\\" + TestCaseName.ToString() + "_GingerHTMLReport.zip";
+
+                                            if (!System.IO.File.Exists(zipFileName))
+                                            {
+                                                ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
+                                            }
+                                            else
+                                            {
+                                                System.IO.File.Delete(zipFileName);
+                                                ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
+                                            }
+                                            System.IO.Directory.Delete(activGroup.TempReportFolder, true);
+                                            //Creating the Zip file - finish
+                                            //Attaching Zip file - start
+                                            //AttachmentFactory attachmentFactory = (AttachmentFactory)run.Attachments;
+                                            //TDAPIOLELib.Attachment attachment = (TDAPIOLELib.Attachment)attachmentFactory.AddItem(System.DBNull.Value);
+                                            //attachment.Description = "TC Ginger Execution HTML Report";
+                                            //attachment.Type = 1;
+                                            //attachment.FileName = zipFileName;
+                                            //attachment.Post();
+
+                                            //Attaching Zip file - finish
+                                            System.IO.File.Delete(zipFileName);
+                                        }
+                                    }
+
+
+                                    //create run with activities as steps
+                                    QCRunStepColl runSteps = ImportFromQCRest.GetRunSteps(currentRun.Id);
+
+                                    int index = 1;
+                                    foreach (QCRunStep runStep in runSteps)
+                                    {
+                                        //search for matching activity based on ID and not order, un matching steps need to be left as No Run
+                                        string stepName = runStep.Name;
+                                        Activity matchingActivity = activities.Where(x => x.ExternalID == runStep.ElementsField["desstep-id"].ToString()).FirstOrDefault();
+                                        if (matchingActivity != null)
+                                        {
+                                            switch (matchingActivity.Status)
+                                            {
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
+                                                    runStep.Status = "Failed";
+                                                    List<Act> failedActs = matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
+                                                    string errors = string.Empty;
+                                                    foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
+                                                    runStep.Actual = errors;
+                                                    break;
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.NA:
+                                                    runStep.ElementsField["status"] = "N/A";
+                                                    runStep.ElementsField["actual"] = "NA";
+                                                    break;
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed:
+                                                    runStep.ElementsField["status"] = "Passed";
+                                                    runStep.ElementsField["actual"] = "Passed as expected";
+                                                    break;
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped:
+                                                    runStep.ElementsField["status"] = "N/A";
+                                                    runStep.ElementsField["actual"] = "Skipped";
+                                                    break;
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending:
+                                                    runStep.ElementsField["status"] = "No Run";
+                                                    runStep.ElementsField["actual"] = "Was not executed";
+                                                    break;
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running:
+                                                    runStep.ElementsField["status"] = "Not Completed";
+                                                    runStep.ElementsField["actual"] = "Not Completed";
+                                                    break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            //Step not exist in Ginger so left as "No Run" unless it is step data
+                                            if (runStep.Name.ToUpper() == "STEP DATA")
+                                                runStep.ElementsField["status"] = "Passed";
+                                            else
+                                                runStep.ElementsField["status"] = "No Run";
+                                        }
+
+                                        QCItem stepToUpdate = ConvertObjectValuesToQCItem(runStep, ResourceType.RUN_STEP);
+                                        ALMResponseData stepDataForUpdate = QCRestAPIConnect.UpdateEntity(ResourceType.RUN_STEP, runStep.Id, stepToUpdate);
+
+                                        index++;
+                                    }
+
+                                    //get all execution status for all steps
+                                    ObservableList<string> stepsStatuses = new ObservableList<string>();
+                                    foreach (QCRunStep runStep in runSteps)
+                                        stepsStatuses.Add(runStep.Status);
+
+                                    //update the TC general status based on the activities status collection.                                
+                                    if (stepsStatuses.Where(x => x == "Failed").Count() > 0)
+                                        currentRun.Status = "Failed";
+                                    else if (stepsStatuses.Where(x => x == "No Run").Count() == runSteps.Count || stepsStatuses.Where(x => x == "N/A").Count() == runSteps.Count)
+                                        currentRun.Status = "No Run";
+                                    else if (stepsStatuses.Where(x => x == "Passed").Count() == runSteps.Count || (stepsStatuses.Where(x => x == "Passed").Count() + stepsStatuses.Where(x => x == "N/A").Count()) == runSteps.Count)
+                                        currentRun.Status = "Passed";
+                                    else
+                                        currentRun.Status = "Not Completed";
+
+                                    QCItem runToUpdate = ConvertObjectValuesToQCItem(currentRun, ResourceType.TEST_RUN);
+                                    ALMResponseData runDataForUpdate = QCRestAPIConnect.UpdateEntity(ResourceType.TEST_RUN, currentRun.Id, runToUpdate);
+                                }
+                                else
+                                {
+                                    //No matching TC was found for the ActivitiesGroup in QC
+                                    result = "Matching TC's were not found for all " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " in QC/ALM.";
+                                }
+                            }
+                            if (result != string.Empty)
+                                return false;
+                        }
+                    }
+                    else
+                    {
+                        //No matching Test Set was found for the BF in QC
+                        result = "No matching Test Set was found in QC/ALM.";
+                    }
+
+                    if (result == string.Empty)
+                    {
+                        result = "Export performed successfully.";
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Unexpected error occurred- " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
+                return false;
+            }
+
+            return false; // Remove it at the end
+
         }
+
         #endregion Public Methods
 
         #region private methods

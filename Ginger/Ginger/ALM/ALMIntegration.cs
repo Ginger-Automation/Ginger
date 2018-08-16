@@ -52,7 +52,7 @@ namespace Ginger.ALM
             switch (AlmType)
             {
                 case eALMType.QC:
-                    if (!ALMCore.AlmConfig.UseRest)
+                    if (!App.UserProfile.Solution.UseRest)
                     {
                         AlmCore = new QCCore();
                         AlmRepo = new QCRepository();

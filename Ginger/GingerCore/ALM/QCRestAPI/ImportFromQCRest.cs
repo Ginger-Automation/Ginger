@@ -471,6 +471,11 @@ namespace GingerCore.ALM.QCRestAPI
             }
         }
 
+        public static QCRunStepColl GetRunSteps(string runId)
+        {
+            return QCRestAPIConnect.GetRunSteps(runId);
+        }
+
         public static BusinessFlow ConvertQCTestSetToBF(QCTestSet tS, QCTestInstanceColl testInstances, QCTestCaseColl tSTestCases, QCTestCaseStepsColl tSTestCaseSteps, QCTestCaseParamsColl tSTestCasesParams)
         {
             try
@@ -555,7 +560,11 @@ namespace GingerCore.ALM.QCRestAPI
 
         public static QCTestCase GetQCTest(string testID)
         {
-            return QCRestAPIConnect.GetTestCases(new List<string> { testID })[0];
+            QCTestCaseColl toReturn = QCRestAPIConnect.GetTestCases(new List<string> { testID });
+            if (toReturn.Count >= 1)
+                return toReturn[0];
+            else
+                return null;
         }
 
         public static QCTestSet GetQCTestSet(string testSetID)
@@ -582,11 +591,15 @@ namespace GingerCore.ALM.QCRestAPI
             string designStepParamsfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP_PARAMETERS);
             List<QCField> designStepParamsfieldsCollection = QCRestAPIConnect.GetFields(designStepParamsfieldInRestSyntax);
 
+            string runfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_RUN);
+            List<QCField> runfieldsCollection = QCRestAPIConnect.GetFields(runfieldInRestSyntax);
+
             fields.Append(AddFieldsValues(testSetfieldsCollection, testSetfieldInRestSyntax));
             fields.Append(AddFieldsValues(testCasefieldsCollection, testCasefieldInRestSyntax));
             fields.Append(AddFieldsValues(designStepfieldsCollection, designStepfieldInRestSyntax));
             fields.Append(AddFieldsValues(testInstancefieldsCollection, testInstancefieldInRestSyntax));
             fields.Append(AddFieldsValues(designStepParamsfieldsCollection, designStepParamsfieldInRestSyntax));
+            fields.Append(AddFieldsValues(runfieldsCollection, runfieldInRestSyntax));
 
             return fields;
         }
@@ -1047,6 +1060,22 @@ namespace GingerCore.ALM.QCRestAPI
             }
 
             return testCaseSteps;
+        }
+
+        public static string GetTSTestLinkedID(QCTestInstance testInstance)
+        {
+            QCTestCaseColl testCase = QCRestAPIConnect.GetTestCases(new List<string>() { testInstance.TestId });
+
+            if (testCase.Count >= 0)
+            {
+                QCTestCaseStepsColl testCaseSteps = GetListTSTestSteps(testCase[0]);
+
+                if (testCaseSteps.Count >= 0)
+                    return testCaseSteps[0].ElementsField["link-test"].ToString();
+                return "";
+            }
+
+            return "";
         }
 
         private static QCRunColl GetListTSTestRuns(QCTestCase testCase)
