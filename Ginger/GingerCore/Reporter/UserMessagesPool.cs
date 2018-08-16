@@ -114,7 +114,7 @@ namespace GingerCore
         InitializeBrowser,LoseChangesWarn, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
         VisualTestingFailedToDeleteOldBaselineImage,ApplitoolsLastExecutionResultsNotExists,ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
         FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
-        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, POMDriverIsBusy
+        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported
     }
 
     public static class UserMessagesPool
