@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
 using GingerCore.Platforms.PlatformsInfo;
 
@@ -39,7 +40,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             TargetLocateByComboBox.BindControl(mAction, ActUIElement.Fields.TargetLocateBy, mPlatform.GetPlatformUIElementLocatorsList());
             TargetLocatorValue.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.TargetLocateValue), true, false, UCValueExpression.eBrowserType.Folder);
             SourceDragXY.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.SourceDragXY), true, false);
-            TargetDropXY.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.TargetDropXY), true, false);            
+            TargetDropXY.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.TargetDropXY), true, false);
+            ElementSpecificControl();
+            InitTargetLocateValue();
         }
 
         private void DragDropType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -56,6 +59,32 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 DragXY.Visibility = Visibility.Collapsed;
                 DropXY.Visibility = Visibility.Collapsed;
             }
+        }
+        private void ElementSpecificControl()
+        {
+            if(TargetLocateByComboBox.SelectedValue.ToString() == eLocateBy.ByXY.ToString())
+            {
+                TargetXYGrid.Visibility = Visibility.Visible;
+                TargetLocatorValue.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                TargetXYGrid.Visibility = Visibility.Collapsed;
+                TargetLocatorValue.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void TargetLocateByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TargetLocateByComboBox.SelectedValue == null)
+                return;
+            ElementSpecificControl();
+        }
+
+        private void InitTargetLocateValue()
+        {
+            txtLocateValueX.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate), true, false, UCValueExpression.eBrowserType.Folder);
+            txtLocateValueY.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate), true, false, UCValueExpression.eBrowserType.Folder);
         }
     }
 }
