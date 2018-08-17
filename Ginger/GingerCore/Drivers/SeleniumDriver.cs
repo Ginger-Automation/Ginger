@@ -5716,21 +5716,7 @@ namespace GingerCore.Drivers
           
             string TargetElementLocatorValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.TargetLocateValue.ToString());
 
-            if (act.TargetLocateBy == eLocateBy.ByXY)
-            {
-                var xyLocator = TargetElementLocatorValue.Split(',');
-                if (xyLocator.Count() == 2)
-                {
-                    var xLocator = Convert.ToInt32(xyLocator[0]);
-                    var yLocator = Convert.ToInt32(xyLocator[1]);
-                    DoDragandDropByOffSet(sourceElement, xLocator, yLocator);
-                }
-                else
-                {
-                    act.Error = "Target XY co-oridante is not correct: " + TargetElementLocatorValue;
-                }
-            }
-            else
+            if (act.TargetLocateBy != eLocateBy.ByXY)
             {
                 string TargetElementLocator = act.TargetLocateBy.ToString();
                 IWebElement targetElement = LocateElement(act, true, TargetElementLocator, TargetElementLocatorValue);
@@ -5769,7 +5755,21 @@ namespace GingerCore.Drivers
                     act.Error = "Target Element not found: " + TargetElementLocator + "=" + TargetElementLocatorValue;
                 }
             }
-         
+            else
+            {
+                var xLocator = Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
+                var yLocator = Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
+
+                if (xLocator > -1 && yLocator  > -1)
+                {
+                    DoDragandDropByOffSet(sourceElement, xLocator, yLocator);
+                }
+                else
+                {
+                    act.Error = "target xy co-oridante is not correct: " + "X:"+ xLocator + "and Y:"+ yLocator;
+                }
+            }
+
         }
 
         private void DoDragandDropByOffSet(IWebElement sourceElement, int xLocator, int yLocator)

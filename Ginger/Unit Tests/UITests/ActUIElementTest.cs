@@ -158,7 +158,9 @@ namespace UnitTests.UITests
             act3.ElementAction = ActUIElement.eElementAction.DragDrop;
   
             act3.TargetLocateBy = eLocateBy.ByXY;
-            act3.GetOrCreateInputParam(ActUIElement.Fields.TargetLocateValue, "1102,463");
+            // act3.GetOrCreateInputParam(ActUIElement.Fields.TargetLocateValue, "1102,463");
+            act3.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, "1102");
+            act3.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, "463");
             act3.Active = true;
             a1.Acts.Add(act3);
 
