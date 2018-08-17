@@ -29,6 +29,11 @@ namespace Amdocs.Ginger.GingerConsole
 {
     class Program
     {
+
+        //
+        /// <summary>
+        /// 
+        /// </summary>
         static SolutionMenu mSolutionMenu;
         
         static ManualResetEvent mCloseGingerConsoleEvent = new ManualResetEvent(false);
