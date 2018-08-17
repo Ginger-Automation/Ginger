@@ -140,6 +140,38 @@ namespace UnitTests.UITests
         }
 
         [TestMethod]
+        public  void DoDragAndDropByOffSet()
+        {
+            ResetBusinessFlow();
+
+            Activity a1 = new Activity();
+            a1.Active = true;
+            a1.TargetApplication = "WebApp";
+            mBF.Activities.Add(a1);
+
+            ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://demos.telerik.com/kendo-ui/dragdrop/index", Active = true };
+            a1.Acts.Add(act1);
+
+            ActUIElement act3 = new ActUIElement();
+            act3.ElementLocateBy = eLocateBy.ByXPath;
+            act3.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='draggable']");
+            act3.ElementAction = ActUIElement.eElementAction.DragDrop;
+  
+            act3.TargetLocateBy = eLocateBy.ByXY;
+            // act3.GetOrCreateInputParam(ActUIElement.Fields.TargetLocateValue, "1102,463");
+            act3.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, "1102");
+            act3.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, "463");
+            act3.Active = true;
+            a1.Acts.Add(act3);
+
+            mGR.RunRunner();
+            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
+            Assert.AreEqual(a1.Status, eRunStatus.Passed);
+            Assert.AreEqual(act1.Status, eRunStatus.Passed);
+            Assert.AreEqual(act3.Status, eRunStatus.Passed);
+        }
+
+        [TestMethod]
         public void DrawObject()
         {
             ResetBusinessFlow();
