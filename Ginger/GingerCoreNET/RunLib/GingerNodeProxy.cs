@@ -32,6 +32,8 @@ namespace GingerCoreNET.RunLib
 {
     public class GingerNodeProxy
     {
+        public GingerGrid GingerGrid { get; set; }
+
         GingerNodeInfo mGingerNodeInfo;
 
         private bool mIsConnected = false;
@@ -67,7 +69,7 @@ namespace GingerCoreNET.RunLib
             }
         }
 
-        // public GingerGrid GingerGrid { get; set; }
+        
 
         public void Reserve()
         {
@@ -92,6 +94,7 @@ namespace GingerCoreNET.RunLib
             List<NewPayLoad> Params = new List<NewPayLoad>();
             foreach (ActionParam AP in GA.InputParams.Values)
             {
+                if (AP.Name == "GA" || AP.Name == "PluginID") continue;
                 // TODO: use const
                 NewPayLoad p = new NewPayLoad("P");   // To save network trafic we send just one letter
                 p.AddValue(AP.Name);
@@ -115,7 +118,7 @@ namespace GingerCoreNET.RunLib
                 string Error = RC.GetValueString();
                 if (!string.IsNullOrEmpty(Error))
                 {
-                    GA.AddError("Driver", RC.GetValueString());   // We need to get Error even if Payload is OK - since it might be in
+                    GA.AddError("Driver", Error);   // We need to get Error even if Payload is OK - since it might be in
                 }
 
                 List<NewPayLoad> OutpuValues = RC.GetListPayLoad();
@@ -153,10 +156,11 @@ namespace GingerCoreNET.RunLib
 
         private NewPayLoad SendRequestPayLoad(NewPayLoad pL)
         {
-            //// if local grid use
-            //return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, pL);
-            //// else use remote grid
-            return null;
+            
+            // if local grid use
+            return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, pL);
+            // else use remote grid
+            
         }
 
         public void StartDriver()

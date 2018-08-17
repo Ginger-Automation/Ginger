@@ -4797,7 +4797,7 @@ namespace GingerCore.Drivers
                         }                        
                         break;                        
                 }
-
+                
                 if(targetAE==null)
                 {
                     AEColl = GetColumnCollection(actGrid.ColSelectorValue, actGrid.LocateColTitle, AE);
@@ -4971,22 +4971,25 @@ namespace GingerCore.Drivers
         public void getRowOnScreen(AutomationElement AE, AutomationElement targetAE, int RowNumber, int MinRowOnScreen)
         {
             AutomationElement ScrollButton = AE.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.OrientationProperty, OrientationType.Vertical));
-            if (MinRowOnScreen > RowNumber)
-            {
-                ScrollButton = ScrollButton.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page up"));
-            }
-            else
-            {
-                ScrollButton = ScrollButton.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
-            }
-            do
-            {
-                if (!targetAE.Current.IsOffscreen)
+            if (targetAE.Current.IsOffscreen && ScrollButton != null)
+            {                
+                if (MinRowOnScreen > RowNumber)
                 {
-                    break;
+                    ScrollButton = ScrollButton.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page up"));
                 }
-                ClickElement(ScrollButton);
-            } while (!ScrollButton.Current.IsOffscreen);
+                else
+                {
+                    ScrollButton = ScrollButton.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
+                }
+                do
+                {
+                    if (!targetAE.Current.IsOffscreen)
+                    {
+                        break;
+                    }
+                    ClickElement(ScrollButton);
+                } while (!ScrollButton.Current.IsOffscreen);
+            }
         }
 
 
@@ -5012,7 +5015,7 @@ namespace GingerCore.Drivers
             {
                 return minRowOnScreen;
             }
-            while ((pageRight != null) && ((!pageRight.Current.IsOffscreen) || minRowOnScreen == -1))
+            while ((pageRight != null) && ((!pageRight.Current.IsOffscreen) && minRowOnScreen < 0))
             {
                 ClickElement(pageRight);
                 minRowOnScreen = getMinRowOnscreen(AEColl);
@@ -5026,7 +5029,7 @@ namespace GingerCore.Drivers
             {
                 if (!AEColl[i].Current.IsOffscreen)
                 {
-                    return i;
+                    return i+1;
                 }
             }
             return -1;
