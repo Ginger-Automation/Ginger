@@ -52,7 +52,7 @@ namespace GingerCore.Actions
             }
         }
 
-        // public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } } // TEMP - to return this row at next release !!!!
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web }; } }
 
         ePlatformType IObsoleteAction.GetTargetPlatform()
         {
@@ -102,9 +102,6 @@ namespace GingerCore.Actions
                         break;
                     case eGenElementAction.CloseBrowser:
                         NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.Close;
-                        break;
-                    case eGenElementAction.RunJavaScript:
-                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.InjectJS;
                         break;
                     default:
                         NewActBrowserElement.ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), GenElementAction.ToString());
@@ -169,6 +166,9 @@ namespace GingerCore.Actions
                     case eGenElementAction.Focus:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SetFocus;
                         break;
+                    case eGenElementAction.RunJavaScript:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.RunJavaScript;
+                        break;
                     default:
                         NewActUIElement.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), GenElementAction.ToString());
                         break;
@@ -210,8 +210,7 @@ namespace GingerCore.Actions
                 case eGenElementAction.SwitchWindow:
                 case eGenElementAction.DeleteAllCookies:
                 case eGenElementAction.SwitchToDefaultFrame:
-                case eGenElementAction.Refresh:
-                case eGenElementAction.RunJavaScript:
+                case eGenElementAction.Refresh:                
                 case eGenElementAction.SwitchToParentFrame:
                 case eGenElementAction.AcceptMessageBox:
                 case eGenElementAction.GetWindowTitle:
@@ -248,6 +247,8 @@ namespace GingerCore.Actions
                 case eGenElementAction.Enabled:
                 case eGenElementAction.XYClick:
                 case eGenElementAction.Focus:
+                case eGenElementAction.SetAttributeUsingJs:
+                case eGenElementAction.RunJavaScript:
                     currentType =  typeof(ActUIElement);
                     break;
 
