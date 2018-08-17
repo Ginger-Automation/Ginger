@@ -80,6 +80,7 @@ namespace GingerCore.Actions
             public static string QueryTypeRadioButton = "QueryTypeRadioButton";
             public static string QueryFile = "QueryFile";
             public static string ImportFile = "ImportFile";
+            public static string QueryParams = "QueryParams";
         }
 
         [IsSerializedForLocalRepository]
@@ -120,6 +121,10 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue("SQL", value);
             }
         }
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
+
         public enum eDatabaseTye
         {
             Relational=0,
@@ -317,7 +322,7 @@ namespace GingerCore.Actions
             string SQL = string.Empty;
             try
             {
-                if (!string.IsNullOrEmpty(GetInputParamValue(ActDBValidation.Fields.QueryFile)))
+                if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
                     string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
                     FileInfo scriptFile = new FileInfo(filePath);
@@ -357,7 +362,7 @@ namespace GingerCore.Actions
             string ErrorString = string.Empty;
             try
             {
-                if (!string.IsNullOrEmpty(GetInputParamValue(ActDBValidation.Fields.QueryFile)))
+                if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
                     string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
                     FileInfo scriptFile = new FileInfo(filePath);
@@ -369,6 +374,10 @@ namespace GingerCore.Actions
                 }
                 if (string.IsNullOrEmpty(SQL))
                     this.Error = "Fail to run Free SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error= Missing SQL Query.";
+
+                updateQueryParams();
+                foreach (ActInputValue param in QueryParams)
+                    SQL = SQL.Replace("<<" + param.ItemName + ">>", param.ValueForDriver);
 
                 List<object> DBResponse = DB.FreeSQL(SQL, queryTimeout); 
                 
@@ -430,6 +439,18 @@ namespace GingerCore.Actions
                 d.Params.Add(new ActionParamInfo() { Param = "App", Value = AppName });
                 d.Params.Add(new ActionParamInfo() { Param = "DB", Value = DBName });
                 return d;
+            }
+        }
+        private void updateQueryParams()
+        {
+            ValueExpression Ve = new ValueExpression(this.RunOnEnvironment, this.RunOnBusinessFlow, this.DSList);
+            foreach (ActInputValue AIV in QueryParams)
+            {
+                if (!String.IsNullOrEmpty(AIV.Value))
+                {
+                    Ve.Value = AIV.Value;
+                    AIV.ValueForDriver = Ve.ValueCalculated;
+                }
             }
         }
     }

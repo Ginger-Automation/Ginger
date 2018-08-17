@@ -23,6 +23,7 @@ using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Ginger.Actions
 {
