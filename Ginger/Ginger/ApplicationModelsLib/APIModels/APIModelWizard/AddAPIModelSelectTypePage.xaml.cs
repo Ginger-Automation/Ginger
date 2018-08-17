@@ -112,6 +112,10 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     AddAPIModelWizard.APIType = eAPIType.JsonTemplate;
                 }
+                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+                {
+                    AddAPIModelWizard.APIType = eAPIType.Swagger;
+                }
             }
             //else if (WizardEventArgs.EventType == EventType.Active)
             //{
@@ -180,7 +184,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 ThirdRow.Height = new GridLength(40);
                 XMLTemplatesGrid.Visibility = Visibility.Collapsed;
                 xURLTextBox.IsEnabled = true;
-                if (string.IsNullOrEmpty(xURLTextBox.Text))
+                if (string.IsNullOrEmpty(xURLTextBox.Text) || APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
                     xBrowseLoadButton.Visibility = Visibility.Collapsed;
                 else
                     xBrowseLoadButton.Visibility = Visibility.Visible;
@@ -267,7 +271,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void URLTextBoxTextChange(object sender, TextChangedEventArgs e)
         {
-            
             xPreviewButton.Visibility = Visibility.Collapsed;
             SourceRviewLable.Visibility = Visibility.Collapsed;
             XMLViewer.Visibility = Visibility.Collapsed;
@@ -275,13 +278,12 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             XMLViewer.xmlDocument = new XmlDocument();
             if (URLRadioButton.IsChecked == true)
             {
-                if (!string.IsNullOrEmpty(xURLTextBox.Text))
+                if (!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() != eAPIType.Swagger.ToString())
                 {
                     xBrowseLoadButton.Visibility = Visibility.Visible;
                 }
                 else
                 {
-
                     xBrowseLoadButton.Visibility = Visibility.Collapsed;
                     // AddAPIModelWizard.NextEnabled = false;
                 }
@@ -354,7 +356,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 else
                 {
                     string tempfile = System.IO.Path.GetTempFileName();
-                    string filecontent = Amdocs.Ginger.Common.GeneralLib.HttpUtilities.DownloadFileAsync(new System.Uri(xURLTextBox.Text)).Result;
+                    string filecontent = Amdocs.Ginger.Common.GeneralLib.HttpUtilities.Download(new System.Uri(xURLTextBox.Text));
                     System.IO.File.WriteAllText(tempfile, filecontent);
                     AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = tempfile });
                     // AddAPIModelWizard.NextEnabled = true;

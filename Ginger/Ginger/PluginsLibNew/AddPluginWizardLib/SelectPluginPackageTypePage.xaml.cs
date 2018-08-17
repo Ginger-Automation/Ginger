@@ -33,7 +33,21 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            
+
         }
+
+        // TODO:
+         // if (IsEmbeddedPlugin)
+        //            {
+        //                GingerCore.General.DirectoryCopy(PlugInSourcePath, solutionPlugInsPath, true);
+        //                PlugInRootPath = solutionPlugInsPath;
+        //                PlugInType = ePluginType.Embedded;
+        //            }
+        //            else
+        //            {
+        //                Directory.CreateDirectory(solutionPlugInsPath);
+        //                PlugInRootPath = PlugInSourcePath;
+        //                PlugInType = ePluginType.System;
+        //            }
     }
 }

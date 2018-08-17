@@ -56,10 +56,10 @@ namespace Ginger.ConfigurationsLib
             
             // reportsMenu.Add("Templates", ReportsTemplates, ConsoleKey.T, "Edit and Create report templates", "AID");
             twoLevelMenu.Add(reportsMenu);
-
+            
             return twoLevelMenu;
         }
-
+        
         private static Page ReportsConfig()
         {
             return new HTMLReportsConfigurationPage();
@@ -85,9 +85,7 @@ namespace Ginger.ConfigurationsLib
         }
 
         private static Page ReportsList()
-        {
-          
-
+        {          
             HTMLGingerReportsTreeItem reportsRoot = new HTMLGingerReportsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<HTMLReportConfiguration>());
             reportsRoot.IsGingerDefualtFolder = true;
             SingleItemTreeViewExplorerPage reportsPage = new SingleItemTreeViewExplorerPage("Reports Templates", eImageType.Report, reportsRoot, reportsRoot.SaveAllTreeFolderItemsHandler, reportsRoot.AddItemHandler);
@@ -107,5 +105,6 @@ namespace Ginger.ConfigurationsLib
         }
 
         
+
     }
 }
