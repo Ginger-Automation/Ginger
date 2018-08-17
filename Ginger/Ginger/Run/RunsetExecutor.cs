@@ -123,7 +123,7 @@ namespace Ginger.Run
             runner.SolutionLocalRepository = App.LocalRepository;            
             runner.CurrentSolution = App.UserProfile.Solution;
             runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-            runner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+            // runner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
             runner.DSList = App.LocalRepository.GetSolutionDataSources();
             runner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
             runner.SolutionFolder = App.UserProfile.Solution.Folder;
@@ -226,14 +226,7 @@ namespace Ginger.Run
             }
         }
 
-        public void SetRunnersPlugIns(ObservableList<PlugInWrapper> PIWL)
-        {
-            foreach (GingerRunner GR in Runners)
-            {
-                GR.PlugInsList = PIWL;
-            }
-        }
-
+        
         public void SetRunnersExecutionLoggerConfigs()
         {
             _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
