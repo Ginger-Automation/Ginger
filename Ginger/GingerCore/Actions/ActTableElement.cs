@@ -113,6 +113,7 @@ namespace GingerCore.Actions
             SendKeys,
             [EnumValueDescription("Is Checked")]
             IsChecked,
+            [EnumValueDescription("Set Text")]
             SetText
         }
 

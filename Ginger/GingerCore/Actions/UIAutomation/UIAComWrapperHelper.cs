@@ -4785,7 +4785,7 @@ namespace GingerCore.Drivers
                         break;
 
                     case "Where":
-                        AutomationElement WhereColumnAE;
+                        AutomationElement whereColumnElement;
                         if (!actGrid.ControlAction.Equals(ActTableElement.eTableAction.SetText))
                         {
                             if (!isElementsFromPoints)
@@ -4795,8 +4795,8 @@ namespace GingerCore.Drivers
                             }
                             else
                             {
-                                WhereColumnAE = GetColumnElementByPoint(AE, actGrid.WhereColumnTitle, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));
-                                targetAE = GetColOnScreenByPoint(AE, WhereColumnAE, actGrid.LocateColTitle);
+                                whereColumnElement = GetColumnElementByPoint(AE, actGrid.WhereColumnTitle, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));
+                                targetAE = GetColOnScreenByPoint(AE, whereColumnElement, actGrid.LocateColTitle);
                             }
                         }
                         break;
@@ -4829,25 +4829,25 @@ namespace GingerCore.Drivers
         /// <summary>
         /// finding grid element by GetText and performing Click and Sendkeys on it
         /// </summary>
-        public void SetTextByElementGetText(AutomationElement tableAE, string TargetColTitle, string WhereColTitle, string WhereColValue, string value)
+        public void SetTextByElementGetText(AutomationElement tableElement, string targetColumnTitle, string whereColumnTitle, string whereColumnValue, string value)
         {
-            int TargetXPoint;
+            int targetXPoint;
             List<string> keys = MainDict.Keys.ToList();
-            if (!keys.Contains(WhereColTitle))
+            if (!keys.Contains(whereColumnTitle))
             {
-                throw new Exception("Input Column Name " + WhereColTitle + " not present in Grid");
+                throw new Exception("Input Column Name " + whereColumnTitle + " not present in Grid");
             }
-            if (!keys.Contains(TargetColTitle))
+            if (!keys.Contains(targetColumnTitle))
             {
-                throw new Exception("Input Column Name " + TargetColTitle + " not present in Grid");
+                throw new Exception("Input Column Name " + targetColumnTitle + " not present in Grid");
             }
 
-            AutomationElement element = (MainDict[WhereColTitle])[0];
-            getColumnOnScreen(tableAE, WhereColTitle);
+            AutomationElement element = (MainDict[whereColumnTitle])[0];
+            getColumnOnScreen(tableElement, whereColumnTitle);
 
-            int SourceYPoint = (int)element.Current.BoundingRectangle.Height + 7;
-            int tableHeight = (int)tableAE.Current.BoundingRectangle.Height;
-            AutomationElement Scroll = tableAE.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.OrientationProperty, OrientationType.Vertical));
+            int sourceYPoint = (int)element.Current.BoundingRectangle.Height + 7;
+            int tableHeight = (int)tableElement.Current.BoundingRectangle.Height;
+            AutomationElement Scroll = tableElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.OrientationProperty, OrientationType.Vertical));
             AutomationElement pageDown = null, pageUp = null;
 
             if (Scroll != null)
@@ -4863,27 +4863,27 @@ namespace GingerCore.Drivers
 
             do
             {
-                while (SourceYPoint < tableHeight)
+                while (sourceYPoint < tableHeight)
                 {
-                    string XY = "" + 10 + "," + SourceYPoint;
+                    string XY = "" + 10 + "," + sourceYPoint;
                     string val = GetControlText(element, XY);
-                    if (val.Equals(WhereColValue))
+                    if (val.Equals(whereColumnValue))
                     {
-                        SourceYPoint = SourceYPoint + (int)element.Current.BoundingRectangle.Y;
-                        getColumnOnScreen(tableAE, TargetColTitle);
-                        TargetXPoint = (int)MainDict[TargetColTitle][0].Current.BoundingRectangle.X + 5;
+                        sourceYPoint = sourceYPoint + (int)element.Current.BoundingRectangle.Y;
+                        getColumnOnScreen(tableElement, targetColumnTitle);
+                        targetXPoint = (int)MainDict[targetColumnTitle][0].Current.BoundingRectangle.X + 5;
 
-                        winAPI.SendClickOnXYPoint(tableAE, TargetXPoint, SourceYPoint);
+                        winAPI.SendClickOnXYPoint(tableElement, targetXPoint, sourceYPoint);
                         WinAPIAutomation.SendInputKeys(value);
                         WinAPIAutomation.SendTabKey();
                         return;
                     }
-                    SourceYPoint = SourceYPoint + 5;
+                    sourceYPoint = sourceYPoint + 5;
                 }
                 if (pageDown != null && (!pageDown.Current.IsOffscreen))
                     ClickElement(pageDown);
             } while (pageDown != null);
-            throw new Exception("Given Value " + WhereColValue + " is not present in column " + WhereColTitle);
+            throw new Exception("Given Value " + whereColumnValue + " is not present in column " + whereColumnTitle);
         }
 
         /// <summary>
