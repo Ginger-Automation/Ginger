@@ -80,60 +80,58 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         [TestMethod]
         public void AddAPIFromXMLAndAvoidDuplicateNodesTest()
         {
-            XMLTemplateParser WSDLP = new XMLTemplateParser();
-            XmlDocument doc = new XmlDocument();
-            List<XMLDocExtended> xmlElements = new List<XMLDocExtended>();
-            List<AppModelParameter> AppModelParameters = new List<AppModelParameter>();
-
+            //Arrange
             string XmlfFilePath = TestResources.GetTestResourcesFile(@"XML\createPaymentRequest2.xml");
             ObservableList<ApplicationAPIModel> AAMTempList = new ObservableList<ApplicationAPIModel>();
+            XmlDocument doc = new XmlDocument();
+            List<XMLDocExtended> xmlElements = new List<XMLDocExtended>();
+            List<XMLDocExtended> xmlElementsAvoidDuplicatesNodes = new List<XMLDocExtended>();
+            List<AppModelParameter> AppModelParameters = new List<AppModelParameter>();
+            List<AppModelParameter> AppModelParametersAvoidNodes = new List<AppModelParameter>();
 
-            AAMTempList = WSDLP.ParseDocument(XmlfFilePath, false);
-            //Test API Model Body
+            //Act
+            AAMTempList = new XMLTemplateParser().ParseDocument(XmlfFilePath, false);
             doc.LoadXml(AAMTempList[0].RequestBody);
             xmlElements = new XMLDocExtended(doc).GetAllNodes().Where(x => x.Name == "tag").ToList();
+            AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "tag").ToList();
+
+            AAMTempList = new XMLTemplateParser().ParseDocument(XmlfFilePath, true);
+            doc.LoadXml(AAMTempList[0].RequestBody);
+            xmlElementsAvoidDuplicatesNodes = new XMLDocExtended(doc).GetAllNodes().Where(x => x.Name == "tag").ToList();
+            AppModelParametersAvoidNodes = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "tag").ToList();
+
+            //Assert
             Assert.AreEqual(xmlElements.Count, 4);
-            //Test API Model Parameters
-            AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "tag").ToList();
+            Assert.AreEqual(xmlElementsAvoidDuplicatesNodes.Count, 1);
             Assert.AreEqual(AppModelParameters.Count, 4);
-
-
-            AAMTempList = WSDLP.ParseDocument(XmlfFilePath, true);
-            //Test API Model Body
-            doc.LoadXml(AAMTempList[0].RequestBody);
-            xmlElements = new XMLDocExtended(doc).GetAllNodes().Where(x => x.Name == "tag").ToList();
-            Assert.AreEqual(xmlElements.Count, 1);
-            //Test API Model Parameters
-            AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "tag").ToList();
-            Assert.AreEqual(AppModelParameters.Count, 1);
+            Assert.AreEqual(AppModelParametersAvoidNodes.Count, 1);
         }
 
         [TestMethod]
         public void AddAPIFromJSONAndAvoidDuplicateNodesTest()
         {
-            JSONTemplateParser JsonTemplate = new JSONTemplateParser();
-            List<JsonExtended> jsonElements = new List<JsonExtended>();
-            List<AppModelParameter> AppModelParameters = new List<AppModelParameter>();
-
+            //Arrange
             string JsonFilePath = TestResources.GetTestResourcesFile(@"JSON\Request JSON.TXT");
             ObservableList<ApplicationAPIModel> AAMTempList = new ObservableList<ApplicationAPIModel>();
+            List<JsonExtended> jsonElements = new List<JsonExtended>();
+            List<JsonExtended> jsonElementsAvoidDuplicatesNodes = new List<JsonExtended>();
+            List<AppModelParameter> AppModelParameters = new List<AppModelParameter>();
+            List<AppModelParameter> AppModelParametersAvoidDuplicatesNodes = new List<AppModelParameter>();
 
-            AAMTempList = JsonTemplate.ParseDocument(JsonFilePath, false);
-            //Test API Model Body
+            //Act
+            AAMTempList = new JSONTemplateParser().ParseDocument(JsonFilePath, false);
             jsonElements = new JsonExtended(AAMTempList[0].RequestBody).GetAllNodes().Where(x => x.Name == "id").ToList();
+            AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "id").ToList();
+
+            AAMTempList = new JSONTemplateParser().ParseDocument(JsonFilePath, true);
+            jsonElementsAvoidDuplicatesNodes = new JsonExtended(AAMTempList[0].RequestBody).GetAllNodes().Where(x => x.Name == "id").ToList();
+            AppModelParametersAvoidDuplicatesNodes = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "id").ToList();
+
+            //Assert
             Assert.AreEqual(jsonElements.Count, 499);
-            //Test API Model Parameters
-            AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "id").ToList();
+            Assert.AreEqual(jsonElementsAvoidDuplicatesNodes.Count, 1);
             Assert.AreEqual(AppModelParameters.Count, 499);
-
-
-            AAMTempList = JsonTemplate.ParseDocument(JsonFilePath, true);
-            //Test API Model Body
-            jsonElements = new JsonExtended(AAMTempList[0].RequestBody).GetAllNodes().Where(x => x.Name == "id").ToList();
-            Assert.AreEqual(jsonElements.Count, 1);
-            //Test API Model Parameters
-            AppModelParameters = AAMTempList[0].AppModelParameters.Where(x => x.TagName == "id").ToList();
-            Assert.AreEqual(AppModelParameters.Count, 1);
+            Assert.AreEqual(AppModelParametersAvoidDuplicatesNodes.Count, 1);
         }
 
 

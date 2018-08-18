@@ -76,7 +76,8 @@ namespace Ginger.Actions
                 ImplicitWait.Visibility = System.Windows.Visibility.Collapsed;
                 ImplicitWaitVE.Visibility = System.Windows.Visibility.Collapsed;
             }
-            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL || mAct.ControlAction == ActBrowserElement.eControlAction.OpenURLNewTab || mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS)
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL || mAct.ControlAction == ActBrowserElement.eControlAction.OpenURLNewTab || 
+                     mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS || mAct.ControlAction == ActBrowserElement.eControlAction.RunJavaScript)
             {
                 if(mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL || mAct.ControlAction == ActBrowserElement.eControlAction.OpenURLNewTab)
                 {
@@ -84,7 +85,7 @@ namespace Ginger.Actions
                     Lable.Visibility = System.Windows.Visibility.Visible;
                     Value.Content = "URL";
                 }
-                else if (mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS)
+                else if (mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS || mAct.ControlAction == ActBrowserElement.eControlAction.RunJavaScript)
                 {
                     Value.Content = "Script";
                 }

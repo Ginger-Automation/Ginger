@@ -19,6 +19,8 @@ limitations under the License.
 //---------
 using Amdocs.Ginger.Repository;
 using System;
+using System.Collections.Generic;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -29,7 +31,6 @@ namespace Amdocs.Ginger.Common.UIElement
     // We can persist ElementInfo - for example when saving DOR Page UIElements, but when used in Window Explorer there is no save
     public class ElementInfo : RepositoryItemBase
     {
-
         [IsSerializedForLocalRepository]
         public ObservableList<ElementLocator> Locators = new ObservableList<ElementLocator>();
 
@@ -70,7 +71,7 @@ namespace Amdocs.Ginger.Common.UIElement
                 return mElementTitle;
             }
             set { mElementTitle = value; }
-        }  
+        }
 
 
         // Used for Lazy loading when possible
@@ -113,7 +114,19 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mElementType = value; }
         }
 
-        public eElementType ElementTypeEnum { get; set; }
+        private eElementType mElementTypeEnum = eElementType.Unknown;
+        [IsSerializedForLocalRepository]
+        public eElementType ElementTypeEnum
+        {
+            get
+            {
+                return mElementTypeEnum;
+            }
+            set { mElementTypeEnum = value; }
+        }
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<ComboBoxOptionalValue> ComboBoxOptionalValues = new ObservableList<ComboBoxOptionalValue>();
 
         // Used for Lazy loading when possible
         public virtual string GetElementType()
@@ -296,6 +309,7 @@ namespace Amdocs.Ginger.Common.UIElement
         HyperLink,
         ScrollBar,
         Iframe,
+        Canvas,
         Text,
         Tab,
         [EnumValueDescription("Editor Pane")]
@@ -303,6 +317,6 @@ namespace Amdocs.Ginger.Common.UIElement
         //HTML Elements
         Div,
         Span,
-        Form,
+        Form
     }
 }

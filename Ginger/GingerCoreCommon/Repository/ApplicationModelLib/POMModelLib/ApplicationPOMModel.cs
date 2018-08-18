@@ -41,9 +41,9 @@ namespace Amdocs.Ginger.Repository
 
         //public  Bitmap ScreenShot { get; set; }
 
-        string mLogoBase64Image;
+        string mScreenShotImage;
         [IsSerializedForLocalRepository]
-        public string LogoBase64Image { get { return mLogoBase64Image; } set { if (mLogoBase64Image != value) { mLogoBase64Image = value; OnPropertyChanged(nameof(LogoBase64Image)); } } }
+        public string ScreenShotImage { get { return mScreenShotImage; } set { if (mScreenShotImage != value) { mScreenShotImage = value; OnPropertyChanged(nameof(ScreenShotImage)); } } }
 
         //[IsSerializedForLocalRepository]
         //public ObservableList<Guid> Tags = new ObservableList<Guid>();

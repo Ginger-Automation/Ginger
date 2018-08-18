@@ -1,20 +1,31 @@
-    <Page x:Class="Ginger.Actions.PlugIns.ActPlugInEditPage"
+<Page
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.Actions.PlugIns"
+      xmlns:UserControls="clr-namespace:Ginger.UserControls" x:Class="Ginger.Actions.PlugIns.ActPlugInEditPage"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="ActPlugInEditPage">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="43*"/>
+            <RowDefinition Height="59*"/>
+            <RowDefinition Height="37*"/>
+            <RowDefinition Height="204*"/>
         </Grid.RowDefinitions>
-        <Label x:Name="NoConfigLabel" Content="This action doesn't require any configuration" />
-        <Label x:Name="LoadErrorLbl" HorizontalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Foreground="Red" Content="Failed To Load The PlugIn Action Edit Page"  Visibility="Collapsed"/>
-        <Frame x:Name="EditFrame" VerticalAlignment="Top" Content="Plugin Edit action Frame" Grid.Row="0" HorizontalAlignment="Stretch"/>
+        <!--<Label x:Name="NoConfigLabel" Content="This action doesn't require any configuration" />-->
+        <Label x:Name="LoadErrorLbl" HorizontalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Foreground="Red" Content="Failed To Load The PlugIn Action Edit Page"  Visibility="Collapsed" Margin="150,0" Grid.RowSpan="3" Width="0"/>
+        <Frame x:Name="EditFrame" VerticalAlignment="Top" Content="Plugin Edit action Frame" Grid.Row="0" HorizontalAlignment="Stretch" Height="16"/>
+
+        <UserControls:UCDataColGrid HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Grid.RowSpan="3"/>
+        <DataGrid x:Name="InputGrid" Grid.Row="2" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Param" Binding="{Binding Param}" Width="80"></DataGridTextColumn>
+                <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="80"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
 
     </Grid>
 </Page>

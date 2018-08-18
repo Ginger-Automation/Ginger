@@ -138,16 +138,7 @@ namespace GingerCoreNET.RunLib
         {
 
         }
-
-        public GingerNodeProxy CreateGingerNodeAgent(GingerNodeInfo GNI)
-        {
-            ////TODO: cache?
-            //GingerNodeProxy GNA = new GingerNodeProxy(GNI);
-            //GNA.GingerGrid = this;
-            //return GNA;
-
-            return null;
-        }
+        
 
         internal NewPayLoad SendRequestPayLoad(Guid sessionID, NewPayLoad pL)
         {

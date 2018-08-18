@@ -37,23 +37,23 @@ namespace Ginger.SourceControl
         public static bool TestConnection(SourceControlBase SourceControl, SourceControlConnDetailsPage.eSourceControlContext context,  bool ignoreSuccessMessage)
         {
             string error = string.Empty;
-            bool res = false; 
+            bool res = false;
 
-                res = SourceControl.TestConnection(ref error);
-                if (res)
-                {
-                    if (!ignoreSuccessMessage)
-                          Reporter.ToUser(eUserMsgKeys.SourceControlConnSucss);
-                    return true;
-                }
+            res = SourceControl.TestConnection(ref error);
+            if (res)
+            {
+                if (!ignoreSuccessMessage)
+                    Reporter.ToUser(eUserMsgKeys.SourceControlConnSucss);
+                return true;
+            }
+            else
+            {
+                if (error.Contains("remote has never connected"))
+                    Reporter.ToUser(eUserMsgKeys.SourceControlRemoteCannotBeAccessed, error);
                 else
-                {
-                    if (error.Contains("remote has never connected"))
-                         Reporter.ToUser(eUserMsgKeys.SourceControlRemoteCannotBeAccessed, error);
-                    else
-                         Reporter.ToUser(eUserMsgKeys.SourceControlConnFaild, error);
-                    return false;
-                }
+                    Reporter.ToUser(eUserMsgKeys.SourceControlConnFaild, error);
+                return false;
+            }
         }
 
 
@@ -92,7 +92,7 @@ namespace Ginger.SourceControl
             }
             return true;
         }
-        
+
         public static bool CommitChanges(SourceControlBase SourceControl, ICollection<string> pathsToCommit, string Comments, bool includeLocks, ref bool conflictHandled)
         {
             string error = string.Empty;
@@ -101,25 +101,27 @@ namespace Ginger.SourceControl
             List<string> conflictsPaths = new List<string>();
             if (!SourceControl.CommitChanges(pathsToCommit, Comments, ref error, ref conflictsPaths, includeLocks))
             {
-                    App.MainWindow.Dispatcher.Invoke(() => {
-                foreach (string cPath in conflictsPaths)
-                {
-                    ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
-                    if(App.RunningFromConfigFile == true)
+                App.MainWindow.Dispatcher.Invoke(() => {
+                    foreach (string cPath in conflictsPaths)
+                    {
+                        ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
+                        if(App.RunningFromConfigFile == true)
                             SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl, cPath, eResolveConflictsSide.Server);
-                    else
-                        resConfPage.ShowAsWindow();
-                    result = resConfPage.IsResolved;
-                    conflict = true;
-                            conflictFlag= conflict;
-                }
-                if (SourceControl.GetSourceControlmConflict != null)
-                    SourceControl.GetSourceControlmConflict.Clear();
+                        else
+                            resConfPage.ShowAsWindow();
+                        result = resConfPage.IsResolved;
+                        conflict = true;
+                        conflictFlag= conflict;
+                    }
+                    if (SourceControl.GetSourceControlmConflict != null)
+                        SourceControl.GetSourceControlmConflict.Clear();
                 });
                 if (!conflict)
                 {
                     if (error.Contains("too many redirects or authentication replays"))
                         error = "Commit failed because of wrong credentials error, please enter valid Username and Password and try again";
+                    if (error.Contains("is locked in another working copy"))
+                        error = "This file has been locked by other user. Please remove lock and then try to Check in.";
                     App.MainWindow.Dispatcher.Invoke(() => {
                         Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, error);
                     });
@@ -128,7 +130,7 @@ namespace Ginger.SourceControl
             }
             return result;
         }
-       
+
 
         public static bool CleanUp(SourceControlBase SourceControl, string folder)
         {
@@ -151,7 +153,7 @@ namespace Ginger.SourceControl
         {
             return SourceControl.GetSourceControlType.ToString();
         }
-
+        
         public static string GetRepositoryURL(SourceControlBase SourceControl)
         {
             string error = string.Empty;
@@ -307,7 +309,7 @@ namespace Ginger.SourceControl
             string error = string.Empty;
             return sourceControl.GetRepositoryInfo(ref error);
         }
-       
+
         internal static BitmapImage GetItemSourceControlImage(string FileName,ref SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus)
         {
 

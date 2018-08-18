@@ -74,8 +74,9 @@ namespace Amdocs.Ginger.Common.UIElement
             set
             {
                 mTestStatus = value;
-                OnPropertyChanged(nameof(TestStatusIcon));
                 OnPropertyChanged(nameof(TestStatusError));
+                OnPropertyChanged(nameof(TestStatusIcon));
+
             }
 
         }

@@ -1619,11 +1619,6 @@ namespace GingerCore.Drivers.AndroidADB
             throw new NotImplementedException();
         }
 
-        public bool TestElementLocator(ElementLocator mLocatorsGridCurrentItem)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool TestAllElementsLocators(ObservableList<ElementLocator> mLocators)
         {
             throw new NotImplementedException();
