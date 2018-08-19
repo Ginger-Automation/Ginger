@@ -723,9 +723,18 @@ namespace GingerCore.Actions.Common
             else
             {
                 string[] xy = ElementLocateValueForDriver.Split(',');
-
-                X = int.Parse(xy[0].Replace("X=", ""));
-                Y = int.Parse(xy[1].Replace("Y=", ""));
+                if ((xy != null) && (xy.Count() > 1))
+                {
+                    if (!double.TryParse(xy[0].Split('=')[1], out X))
+                        X = 0;
+                    if (!double.TryParse(xy[1].Split('=')[1], out Y))
+                        Y = 0;
+                }
+                else
+                {
+                    X = 0;
+                    Y = 0;
+                }
             }
         }
 
@@ -742,9 +751,18 @@ namespace GingerCore.Actions.Common
             else
             {
                 string[] xy = ElementLocateValue.Split(',');
-
-                X = int.Parse(xy[0].Split('=')[1]);
-                Y = int.Parse(xy[1].Split('=')[1]);
+                if ((xy != null) && (xy.Count() > 1))
+                {
+                    if (!double.TryParse(xy[0].Split('=')[1], out X))
+                        X = 0;
+                    if (!double.TryParse(xy[1].Split('=')[1], out Y))
+                        Y = 0;
+                }
+                else
+                {
+                    X = 0;
+                    Y = 0;
+                }
             }
         }
 
