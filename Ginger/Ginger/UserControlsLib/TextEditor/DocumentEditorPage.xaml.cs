@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.TextEditor.Common;
 using Ginger.UserControlsLib.TextEditor.Office;
 using Ginger.UserControlsLib.TextEditor.VBS;
-using GingerCore;
-using GingerCore.Actions.PlugIns;
-using GingerPlugIns;
-using GingerPlugIns.TextEditorLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -110,7 +109,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 {
                     if (content[i] == 0x00 && content[i - 1] == 0x00)
                     {
-                    return false;
+                        return false;
                     }
                 }            
             return true;
@@ -184,7 +183,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
                 foreach (Type t in list)
                 {
-                    if (t != typeof(PlugInTextEditorWrapper))
+                    if (t != typeof(ITextEditor))
                     {
                         TextEditorBase TE = (TextEditorBase)Activator.CreateInstance(t);
                         TextEditors.Add(TE);
@@ -193,18 +192,20 @@ namespace Ginger.UserControlsLib.TextEditor
             }
 
             // Add all plugins TextEditors 
-            //ObservableList<PlugInWrapper> PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+            ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
 
-            //foreach (PlugInWrapper PW in PlugInsList)
-            //{
-            //    foreach (PlugInTextFileEditorBase TE in PW.TextEditors())
-            //    {
-            //        PlugInTextEditorWrapper w = new PlugInTextEditorWrapper(TE);
-            //        PlugInTextEditorWrapper f = (PlugInTextEditorWrapper)TextEditors.Where(x => x is PlugInTextEditorWrapper ? ((PlugInTextEditorWrapper)x).GetEditorID() == w.GetEditorID() : false).FirstOrDefault();
-            //        if (f == null)
-            //            TextEditors.Add(w);
-            //    }
-            //}
+            foreach (PluginPackage PP in Plugins)
+            {
+                foreach (ITextEditor TE in PP.GetTextFileEditors())
+                {
+                      PlugInTextEditorWrapper w = new PlugInTextEditorWrapper(TE);
+                      PlugInTextEditorWrapper f = (PlugInTextEditorWrapper)TextEditors.Where(x => x is PlugInTextEditorWrapper ? ((PlugInTextEditorWrapper)x).GetEditorID() == w.GetEditorID() : false).FirstOrDefault();
+                    
+                        
+                    TextEditors.Add(f);
+
+                }
+            }
 
             //TODO: if there is more than one let the user pick
             string ext = Path.GetExtension(FileName).ToLower();

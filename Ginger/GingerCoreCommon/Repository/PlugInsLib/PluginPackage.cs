@@ -23,10 +23,8 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
-using GingerPlugInsNET.ActionsLib;
-using GingerPlugInsNET.DriversLib;
-using GingerPlugInsNET.PlugInsLib;
-using GingerPlugInsNET.ServicesLib;
+using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Repository
@@ -93,32 +91,32 @@ namespace Amdocs.Ginger.Repository
             mPluginPackageInfo = (PluginPackageInfo)JsonConvert.DeserializeObject(txt, typeof(PluginPackageInfo));
         }
 
-        public PluginDriverBase GetDriver(string driverName)
-        {
-            if (!Isloaded)
-            {
-                ScanPackage();
-            }
+        //public PluginDriverBase GetDriver(string driverName)
+        //{
+        //    if (!Isloaded)
+        //    {
+        //        ScanPackage();
+        //    }
 
-            // TODO: fix make more efficent and load only what needed
-            foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
-            {
-                var list = from type in PAI.Assembly.GetTypes()
-                           where typeof(PluginDriverBase).IsAssignableFrom(type) && type.IsAbstract == false
-                           select type;
+        //    // TODO: fix make more efficent and load only what needed
+        //    foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
+        //    {
+        //        var list = from type in PAI.Assembly.GetTypes()
+        //                   where typeof(PluginDriverBase).IsAssignableFrom(type) && type.IsAbstract == false
+        //                   select type;
 
-                foreach (Type t in list)
-                {
-                    PluginDriverBase driver = (PluginDriverBase)PAI.Assembly.CreateInstance(t.FullName);   // TODO: fix me find the driver without creating instance
-                    if (driver.Name == driverName)
-                    {
-                        return driver;
-                    }
-                }
-            }
-            throw new Exception("Driver not found in Plugin Package - " + driverName);
+        //        foreach (Type t in list)
+        //        {
+        //            PluginDriverBase driver = (PluginDriverBase)PAI.Assembly.CreateInstance(t.FullName);   // TODO: fix me find the driver without creating instance
+        //            if (driver.Name == driverName)
+        //            {
+        //                return driver;
+        //            }
+        //        }
+        //    }
+        //    throw new Exception("Driver not found in Plugin Package - " + driverName);
 
-        }
+        //}
 
         string mFolder;
         [IsSerializedForLocalRepository]        
@@ -181,10 +179,10 @@ namespace Amdocs.Ginger.Repository
                 mStandAloneMethods = new List<MethodInfo>();
                 foreach (PluginAssemblyInfo asssembly in mAssembliesInfo)
                 {
-                    IEnumerable<Type> types = from x in asssembly.Assembly.GetTypes() where typeof(IStandAloneAction).IsAssignableFrom(x) select x;
+                    IEnumerable<Type> types = from x in asssembly.Assembly.GetTypes() where typeof(IGingerService).IsAssignableFrom(x) select x;
                     foreach (Type t in types)
                     {
-                        if (t == typeof(IStandAloneAction)) continue;  // we ignore the interface itself
+                        // if (t == typeof(IStandAloneAction)) continue;  // we ignore the interface itself
 
                         // expecting to get ExcelAction, FileAction, DatabaseAction...
                         MethodInfo[] methods = t.GetMethods();
@@ -211,7 +209,7 @@ namespace Amdocs.Ginger.Repository
             {
                 GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);                
                 StandAloneAction DA = new StandAloneAction();
-                DA.ID = token.ID;
+                DA.ID = token.Id;
                 AssemblyName AN = MI.DeclaringType.Assembly.GetName();
                 DA.PluginID = AN.Name;
                 DA.Description = token.Description;
@@ -227,33 +225,36 @@ namespace Amdocs.Ginger.Repository
             return list;
         }
 
-        public ActionHandler GetStandAloneActionHandler(string id)
-        {
-            if (!Isloaded)
-            {
-                ScanPackage();
-            }
-            foreach (MethodInfo MI in GetStandAloneMethods())
-            {
-                GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);
-                if (token.ID == id)
-                {
-                    ActionHandler AH = new ActionHandler();
-                    AH.ID = id;
-                    AH.MethodInfo = MI;
+        //public ActionHandler GetStandAloneActionHandler(string id)
+        //{
+        //    if (!Isloaded)
+        //    {
+        //        ScanPackage();
+        //    }
+        //    foreach (MethodInfo MI in GetStandAloneMethods())
+        //    {
+        //        GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);
+        //        if (token.ID == id)
+        //        {
+        //            ActionHandler AH = new ActionHandler();
+        //            AH.ID = id;
+        //            AH.MethodInfo = MI;
 
-                    //TODO: create on demand nad cache to 1
-                    AH.Instance = MI.DeclaringType.Assembly.CreateInstance(MI.DeclaringType.FullName); // !!!!!!!!!!!!
-                    AH.GingerAction = new GingerAction(id);
-                    // do we need the params?
-                    return AH;
-                }
-            }
-            return null;
-        }
+        //            //TODO: create on demand nad cache to 1
+        //            AH.Instance = MI.DeclaringType.Assembly.CreateInstance(MI.DeclaringType.FullName); // !!!!!!!!!!!!
+        //            AH.GingerAction = new GingerAction(id);
+        //            // do we need the params?
+        //            return AH;
+        //        }
+        //    }
+        //    return null;
+        //}
 
         private void LoadGingerPluginsDLL()
         {
+
+            //??
+
             // We make sure our latest in Ginger is the one to load GingerPlugin DLL so it will not be loaded from the folder of the plugin in case some one copied it too, or we point to debug folder
 
             // Just dummy does nothing except making sure we load the DLL first from inside Ginger
@@ -262,38 +263,38 @@ namespace Amdocs.Ginger.Repository
 
         //TODO: return DriverInfo
 
-        List<string> drivers = null;
-        public List<string> GetDrivers()
-        {
-            if (!Isloaded)
-            {
-                ScanPackage();
-            }
-            if (drivers == null)
-            {
-                drivers = new List<string>();
-                foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
-                {
-                    var list = from type in PAI.Assembly.GetTypes()
-                               where typeof(PluginDriverBase).IsAssignableFrom(type) && type.IsAbstract == false
-                               select type;
+        //List<string> drivers = null;
+        //public List<string> GetDrivers()
+        //{
+        //    if (!Isloaded)
+        //    {
+        //        ScanPackage();
+        //    }
+        //    if (drivers == null)
+        //    {
+        //        drivers = new List<string>();
+        //        foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
+        //        {
+        //            var list = from type in PAI.Assembly.GetTypes()
+        //                       where typeof(PluginDriverBase).IsAssignableFrom(type) && type.IsAbstract == false
+        //                       select type;
 
-                    foreach (Type t in list)
-                    {
-                        PluginDriverBase driver = (PluginDriverBase)PAI.Assembly.CreateInstance(t.FullName);
+        //            foreach (Type t in list)
+        //            {
+        //                PluginDriverBase driver = (PluginDriverBase)PAI.Assembly.CreateInstance(t.FullName);
 
-                        //TODO: get driver info from annotation on the class
+        //                //TODO: get driver info from annotation on the class
 
-                        drivers.Add(driver.Name);
-                    }
+        //                drivers.Add(driver.Name);
+        //            }
 
-                }
-            }
-            return drivers;
-        }
+        //        }
+        //    }
+        //    return drivers;
+        //}
 
         // Services are used for standalone action/ ActWithoutDriver
-        public PluginServiceBase GetService(string serviceName)
+        public IGingerService GetService(string serviceName)
         {
             if (!Isloaded)
             {
@@ -303,45 +304,70 @@ namespace Amdocs.Ginger.Repository
             foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
             {
                 var list = from type in PAI.Assembly.GetTypes()
-                           where typeof(PluginServiceBase).IsAssignableFrom(type) && type.IsAbstract == false
+                           where typeof(IGingerService).IsAssignableFrom(type) && type.IsAbstract == false
                            select type;
 
                 foreach (Type t in list)
                 {
-                    PluginServiceBase service = (PluginServiceBase)PAI.Assembly.CreateInstance(t.FullName);   // TODO: fix me find the driver without creating instance
-                    if (service.Name == serviceName)
-                    {
-                        return service;
-                    }
+                    IGingerService service = (IGingerService)PAI.Assembly.CreateInstance(t.FullName);   // TODO: fix me find the driver without creating instance
+                    //TODO: read the attr of service
+                    //if (service.Name == serviceName)
+                    //{
+                    //    return service;
+                    //}
                 }
 
             }
             throw new Exception("Service not found in Plugin Package - " + serviceName);
         }
 
-        public List<PluginServiceBase> GetServices()
+        public List<IGingerService> GetServices()
         {
             if (!Isloaded)
             {
                 ScanPackage();
             }
 
-            List<PluginServiceBase> services = new List<PluginServiceBase>();
+            List<IGingerService> services = new List<IGingerService>();
             // TODO: fix make more efficent and load only what needed
             foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
             {
                 var list = from type in PAI.Assembly.GetTypes()
-                           where typeof(PluginServiceBase).IsAssignableFrom(type) && type.IsAbstract == false
+                           where typeof(IGingerService).IsAssignableFrom(type) && type.IsAbstract == false
                            select type;
 
                 foreach (Type t in list)
                 {
-                    PluginServiceBase service = (PluginServiceBase)PAI.Assembly.CreateInstance(t.FullName);   // TODO: fix me find the driver without creating instance
+                    IGingerService service = (IGingerService)PAI.Assembly.CreateInstance(t.FullName);   // TODO: fix me find the driver without creating instance
                     services.Add(service);
                 }
 
             }
             return services;
+        }
+
+
+        public List<ITextEditor> GetTextFileEditors()
+        {
+            if (!Isloaded)
+            {
+                ScanPackage();
+            }
+
+            List<ITextEditor> textEditors = new List<ITextEditor>();
+            foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
+            {
+                var list = from type in PAI.Assembly.GetTypes()
+                           where typeof(ITextEditor).IsAssignableFrom(type) && type.IsAbstract == false
+                           select type;
+
+                foreach (Type t in list)
+                {
+                    ITextEditor textEditor = (ITextEditor)PAI.Assembly.CreateInstance(t.FullName);
+                    textEditors.Add(textEditor);
+                }
+            }
+            return textEditors;
         }
     }
 }

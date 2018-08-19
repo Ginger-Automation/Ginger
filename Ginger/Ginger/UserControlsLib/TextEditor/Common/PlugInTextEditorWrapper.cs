@@ -16,30 +16,28 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
-using System.Windows.Controls;
-using ICSharpCode.AvalonEdit.Highlighting;
-using System.IO;
-using System.Xml;
-using GingerPlugIns.TextEditorLib;
+using Amdocs.Ginger.Plugin.Core;
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using System.Collections.ObjectModel;
-using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.AvalonEdit.Highlighting;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Controls;
+using System.Xml;
 
 namespace Ginger.UserControlsLib.TextEditor.Common
 {
     public class PlugInTextEditorWrapper : TextEditorBase
     {
-        PlugInTextFileEditorBase mPlugInTextFileEditor;
+        ITextEditor mPlugInTextFileEditor;
 
-        public PlugInTextEditorWrapper(PlugInTextFileEditorBase PugInTextFileEditor)
+        public PlugInTextEditorWrapper(ITextEditor PugInTextFileEditor)
         {
             mPlugInTextFileEditor = PugInTextFileEditor;
         }
 
         public string GetEditorID()
         {
-            return mPlugInTextFileEditor.EditorID;
+            return "mPlugInTextFileEditor.EditorID";   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
         public override List<string> Extensions
@@ -62,76 +60,90 @@ namespace Ginger.UserControlsLib.TextEditor.Common
                     return HighlightingDefinition;
                 }                             
             }
-        }        
-
-        public override IFoldingStrategy FoldingStrategy
-        {
-            get
-            {
-                return new PlugInFoldingStrategy(mPlugInTextFileEditor.EditorStrategy);
-            }
         }
 
-        public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
-        {
-            List<ICompletionData> list = new List<ICompletionData>();
+        public override IFoldingStrategy FoldingStrategy => throw new System.NotImplementedException();
 
-            string CurrentLine = SelectedContentArgs.CaretLineText().TrimStart();
-            bool IsAtStartOfLine = CurrentLine.Length == 1;
-            List<string> KeyWords = mPlugInTextFileEditor.CompletionDataKeyWords;
+        public override List<GingerPlugIns.TextEditorLib.TextEditorToolBarItem> Tools => throw new System.NotImplementedException();
 
-            if (SelectedContentArgs.IsAtStartOfLine() || IsAtStartOfLine)
-            {
-                foreach (string KeyWord in KeyWords)
-                {
-                    if (txt.ToUpper() == KeyWord.Substring(0,1).ToUpper())
-                        list.Add(new PlugInTextCompletionData(KeyWord,mPlugInTextFileEditor.CompletionDataKeyWords));
-                }
-            }
-            return list;
-        }
+        //public override IFoldingStrategy FoldingStrategy
+        //{
+        //    get
+        //    {
+        //        return new PlugInFoldingStrategy(mPlugInTextFileEditor.EditorStrategy);
+        //    }
+        //}
 
-        public override Page GetSelectedContentPageEditor(SelectedContentArgs SelectedContentArgs)
-        {
-            ReadOnlyCollection<FoldingSection> list = SelectedContentArgs.GetFoldingsAtCaretPosition();
-            if (list == null) return null;
-            if (list.Count > 0)
-            {
-                string txt = list[0].TextContent;
-                string StartKeyWord = mPlugInTextFileEditor.TableEditorPageDict["StartKeyWord"];
-                string EndKeyWord = mPlugInTextFileEditor.TableEditorPageDict["EndKeyWord"];
-                string KeyWordForTableLocationIndication = mPlugInTextFileEditor.TableEditorPageDict["KeyWordForTableLocationIndication"];
-                int CaretPosition = SelectedContentArgs.CaretPosition - SelectedContentArgs.GetFoldingOffSet();
+        //public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
+        //{
+        //    List<ICompletionData> list = new List<ICompletionData>();
 
-                int StartKeyWordPosition = txt.IndexOf(StartKeyWord);
-                int EndKeyWordPosition = txt.IndexOf(EndKeyWord);
-                int KeyWordForTableLocationIndicationPosition = txt.IndexOf(KeyWordForTableLocationIndication);
+        //    string CurrentLine = SelectedContentArgs.CaretLineText().TrimStart();
+        //    bool IsAtStartOfLine = CurrentLine.Length == 1;
+        //    List<string> KeyWords = mPlugInTextFileEditor.CompletionDataKeyWords;
 
-                string TextAfterKeyWordForTableLocationIndication = string.Empty;
-                if (KeyWordForTableLocationIndicationPosition != -1)
-                    TextAfterKeyWordForTableLocationIndication = txt.Substring(KeyWordForTableLocationIndicationPosition);
+        //    if (SelectedContentArgs.IsAtStartOfLine() || IsAtStartOfLine)
+        //    {
+        //        foreach (string KeyWord in KeyWords)
+        //        {
+        //            if (txt.ToUpper() == KeyWord.Substring(0,1).ToUpper())
+        //                list.Add(new PlugInTextCompletionData(KeyWord,mPlugInTextFileEditor.CompletionDataKeyWords));
+        //        }
+        //    }
+        //    return list;
+        //}
 
-                int AfterKeyWordStartKeyWordPosition = KeyWordForTableLocationIndicationPosition + TextAfterKeyWordForTableLocationIndication.IndexOf(StartKeyWord);
-                int AfterKeyWordEndKeyWordPosition = KeyWordForTableLocationIndicationPosition + TextAfterKeyWordForTableLocationIndication.IndexOf(EndKeyWord);
-                
-                if ((CaretPosition > StartKeyWordPosition && CaretPosition < EndKeyWordPosition)|| (CaretPosition > AfterKeyWordStartKeyWordPosition && CaretPosition < AfterKeyWordEndKeyWordPosition))
-                {
-                    TableEditorPage p = new TableEditorPage(SelectedContentArgs, StartKeyWord, EndKeyWord, KeyWordForTableLocationIndication);
-                    return p;
-                }
-            }
-            return null;
-        }
+        //public override Page GetSelectedContentPageEditor(SelectedContentArgs SelectedContentArgs)
+        //{
+        //    ReadOnlyCollection<FoldingSection> list = SelectedContentArgs.GetFoldingsAtCaretPosition();
+        //    if (list == null) return null;
+        //    if (list.Count > 0)
+        //    {
+        //        string txt = list[0].TextContent;
+        //        string StartKeyWord = mPlugInTextFileEditor.TableEditorPageDict["StartKeyWord"];
+        //        string EndKeyWord = mPlugInTextFileEditor.TableEditorPageDict["EndKeyWord"];
+        //        string KeyWordForTableLocationIndication = mPlugInTextFileEditor.TableEditorPageDict["KeyWordForTableLocationIndication"];
+        //        int CaretPosition = SelectedContentArgs.CaretPosition - SelectedContentArgs.GetFoldingOffSet();
+
+        //        int StartKeyWordPosition = txt.IndexOf(StartKeyWord);
+        //        int EndKeyWordPosition = txt.IndexOf(EndKeyWord);
+        //        int KeyWordForTableLocationIndicationPosition = txt.IndexOf(KeyWordForTableLocationIndication);
+
+        //        string TextAfterKeyWordForTableLocationIndication = string.Empty;
+        //        if (KeyWordForTableLocationIndicationPosition != -1)
+        //            TextAfterKeyWordForTableLocationIndication = txt.Substring(KeyWordForTableLocationIndicationPosition);
+
+        //        int AfterKeyWordStartKeyWordPosition = KeyWordForTableLocationIndicationPosition + TextAfterKeyWordForTableLocationIndication.IndexOf(StartKeyWord);
+        //        int AfterKeyWordEndKeyWordPosition = KeyWordForTableLocationIndicationPosition + TextAfterKeyWordForTableLocationIndication.IndexOf(EndKeyWord);
+
+        //        if ((CaretPosition > StartKeyWordPosition && CaretPosition < EndKeyWordPosition)|| (CaretPosition > AfterKeyWordStartKeyWordPosition && CaretPosition < AfterKeyWordEndKeyWordPosition))
+        //        {
+        //            TableEditorPage p = new TableEditorPage(SelectedContentArgs, StartKeyWord, EndKeyWord, KeyWordForTableLocationIndication);
+        //            return p;
+        //        }
+        //    }
+        //    return null;
+        //}
 
         public override void UpdateSelectedContent()
         {            
         }
 
-        public override string Title()
+        public override Page GetSelectedContentPageEditor(SelectedContentArgs SelectedContentArgs)
         {
-            return mPlugInTextFileEditor.Title();
+            throw new System.NotImplementedException();
         }
 
-       public override List<TextEditorToolBarItem> Tools { get { return mPlugInTextFileEditor.Tools; } }
+        public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        // public override string Title()
+        // {
+        //     return mPlugInTextFileEditor.Title();
+        // }
+
+        //public override List<TextEditorToolBarItem> Tools { get { return mPlugInTextFileEditor.Tools; } }
     }
 }

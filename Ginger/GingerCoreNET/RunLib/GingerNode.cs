@@ -17,11 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
+using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using GingerCoreNET.Drivers;
 using GingerCoreNET.Drivers.CommunicationProtocol;
-using GingerPlugInsNET.ActionsLib;
-using GingerPlugInsNET.DriversLib;
-using GingerPlugInsNET.ServicesLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,8 +35,8 @@ namespace GingerCoreNET.DriversLib
     {
         public string ConnectionString { get; set; }
 
-        private PluginDriverBase mDriver;
-        private PluginServiceBase mService;
+        // private PluginDriverBase mDriver;
+        private IGingerService mService;   // Can be more than one!?
 
         // We use Hub client to send Register/UnRegister message - to GingerGrid manager
         GingerSocketClient2 mHubClient;
@@ -44,12 +44,12 @@ namespace GingerCoreNET.DriversLib
 
         //TODO: check what we can hide from here and move to GingerCore  -- all the communcation Payload stuff move from here
 
-        public GingerNode(DriverCapabilities DriverCapabilities, PluginDriverBase driver)
+        public GingerNode(DriverCapabilities DriverCapabilities, IGingerService service)
         {
-            this.mDriver = driver;
+            mService = service;
         }
 
-        public GingerNode(PluginServiceBase service)
+        public GingerNode(IGingerService service)
         {
             this.mService = service;            
         }
@@ -172,22 +172,23 @@ namespace GingerCoreNET.DriversLib
        
         private NewPayLoad AttachDisplay(NewPayLoad pl)
         {
-            string host = pl.GetValueString();
-            int port = pl.GetValueInt();
-            RemoteObjectsClient c = new RemoteObjectsClient();            
-            c.Connect(host, port);
-            
-            //TODO: fix hard coded !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            Assembly driverAssembly = Assembly.LoadFrom(@"C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerWebServicesPlugin\bin\Debug\netstandard2.0\WebServices.GingerPlugin.dll");
-            Type t = driverAssembly.GetType("Amdocs.Ginger.WebServices.IWebServicesDriverDisplay");
+            //string host = pl.GetValueString();
+            //int port = pl.GetValueInt();
+            //RemoteObjectsClient c = new RemoteObjectsClient();            
+            //c.Connect(host, port);
 
-            // We do all using reflection, since we don't have ref to the driver dll, it will load at run time
-            
-            MethodInfo mi = typeof(RemoteObjectsClient).GetMethod("GetObject").MakeGenericMethod(new Type[] { t });
-            object driverDisplayRemoteObject = mi.Invoke(c, new object[] { "ID aas as !!!" });
-            
-            mDriver.GetType().GetMethod("AttachDisplay").Invoke(mDriver, new object[] { driverDisplayRemoteObject });
-            return new NewPayLoad("OK", "Done");
+            ////TODO: fix hard coded !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //Assembly driverAssembly = Assembly.LoadFrom(@"C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerWebServicesPlugin\bin\Debug\netstandard2.0\WebServices.GingerPlugin.dll");
+            //Type t = driverAssembly.GetType("Amdocs.Ginger.WebServices.IWebServicesDriverDisplay");
+
+            //// We do all using reflection, since we don't have ref to the driver dll, it will load at run time
+
+            //MethodInfo mi = typeof(RemoteObjectsClient).GetMethod("GetObject").MakeGenericMethod(new Type[] { t });
+            //object driverDisplayRemoteObject = mi.Invoke(c, new object[] { "ID aas as !!!" });
+
+            //mDriver.GetType().GetMethod("AttachDisplay").Invoke(mDriver, new object[] { driverDisplayRemoteObject });
+            //return new NewPayLoad("OK", "Done");
+            return null;
         }
 
         private NewPayLoad Ping()
@@ -201,19 +202,23 @@ namespace GingerCoreNET.DriversLib
 
         private NewPayLoad RunAction(NewPayLoad pl)
         {
-            Console.WriteLine("Payload - Run Ginger Action");
+            ScanService();
+
+            Console.WriteLine(">>> Payload - Run Ginger Action");
             string ActionID = pl.GetValueString();
-            Console.WriteLine("ActionID - " + ActionID);
+            Console.WriteLine("Received RunAction, ActionID - " + ActionID);
+
 
             ActionHandler AH = null;
-            if (mDriver != null)
-            {
-                AH = (from x in this.mDriver.ActionHandlers where x.ID == ActionID select x).FirstOrDefault();
-            }
-            else if (mService != null)
-            {
-                AH = (from x in this.mService.ActionHandlers where x.ID == ActionID select x).FirstOrDefault();
-            }
+            //if (mDriver != null)
+            //{
+            //    AH = (from x in this.mDriver.ActionHandlers where x.ID == ActionID select x).FirstOrDefault();
+            //}
+            //else if (mService != null)
+            //{
+                AH = (from x in mServiceActions where x.ServiceActionId == ActionID select x).FirstOrDefault();
+            //}
+            
 
             if (AH == null)
             {
@@ -221,23 +226,28 @@ namespace GingerCoreNET.DriversLib
                 throw new Exception("Unknown ActionID to handle - " + ActionID);
             }
 
-            AH.GingerAction = new GingerAction(ActionID);
-            AH.GingerAction.ID = ActionID;   // !!!!!!!!!!!!!!!!!!!!! why do we need to keep the ID twice !!
+            //Conver the Payload to GingerAction
+
+            AH.GingerAction = new GingerAction();
+            //AH.GingerAction.ID = ActionID;   // !!!!!!!!!!!!!!!!!!!!! why do we need to keep the ID twice !!
 
             Console.WriteLine("Found Action Handler, setting parameters");
             List<NewPayLoad> Params = pl.GetListPayLoad();
 
             Console.WriteLine("Found " + Params.Count + " parameters");
+
+            ActionInputParams actionInputParams = new ActionInputParams();
+
             foreach (NewPayLoad PLP in Params)
             {
                 // we get Param name and value
                 string Name = PLP.GetValueString();
                 string Value = PLP.GetValueString();
                 Console.WriteLine("Param " + Name + " = " + Value);
-                ActionParam AP = AH.GingerAction.InputParams[Name];
+                ActionParam AP = actionInputParams[Name];
                 if (AP != null)
                 {
-                    AH.GingerAction.InputParams[Name].Value = Value;
+                    actionInputParams[Name].Value = Value;
                 }
                 else
                 {
@@ -245,33 +255,155 @@ namespace GingerCoreNET.DriversLib
                 }
             }
 
-            Console.WriteLine("Setting params done");
+            //Console.WriteLine("Setting params done");
 
             //TODO: print to console:  Running Action: GotoURL(URL="aaa");  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             // TODO: cache  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            if (mDriver != null)
-            {
-                mDriver.BeforeRunAction(AH.GingerAction);
-                mDriver.RunAction(AH.GingerAction);
-                mDriver.AfterRunAction(AH.GingerAction);
-            }
-            else if (mService != null)
-            {
-                mService.BeforeRunAction(AH.GingerAction);
-                mService.RunAction(AH.GingerAction);
-                mService.AfterRunAction(AH.GingerAction);
-            }
+            //if (mDriver != null)
+            //{
+            //    mDriver.BeforeRunAction(AH.GingerAction);
+            //    mDriver.RunAction(AH.GingerAction);
+            //    mDriver.AfterRunAction(AH.GingerAction);
+            //}
+            //else if (mService != null)
+            //{
+            //    mService.BeforeRunAction(AH.GingerAction);
+            // mService.RunAction(AH.GingerAction);
+
+            NodeGingerAction GA = new NodeGingerAction();
+            GA.Output = new ActionOutput();
+            RunServiceAction(AH, actionInputParams, GA);
+            //    mService.AfterRunAction(AH.GingerAction);
+            //}
 
             // We send back only item which can change - ExInfo and Output values
             NewPayLoad PLRC = new NewPayLoad("ActionResult");   //TODO: use const
-            PLRC.AddValue(AH.GingerAction.ExInfo);
-            PLRC.AddValue(AH.GingerAction.Errors);
-            PLRC.AddListPayLoad(GetOutpuValuesPayLoad(AH.GingerAction.Output.Values));
+            PLRC.AddValue(GA.ExInfo);
+            PLRC.AddValue(GA.Errors);
+            // PLRC.AddValue("ExInfo???");
+            // PLRC.AddValue("Errors???");
+            PLRC.AddListPayLoad(GetOutpuValuesPayLoad(GA.Output.Values));
+            // List<ActionOutputValue> AOVs = new List<ActionOutputValue>();
+            // AOVs.Add(new ActionOutputValue() { Param = "aaa", ValueString = "koko" });
+            // PLRC.AddListPayLoad(GetOutpuValuesPayLoad(AOVs));
+
             PLRC.ClosePackage();
             return PLRC;
+
+            
         }
+
+        private List<NewPayLoad> GetOutpuValuesPayLoad(object values)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void RunServiceAction(ActionHandler AH, ActionInputParams p, NodeGingerAction GA)  
+        {
+            
+
+            try
+            {                    
+                ParameterInfo[] PIs = AH.MethodInfo.GetParameters();
+
+                object[] parameters = new object[PIs.Count()];
+
+                int paramnum = 0;
+                foreach (ParameterInfo PI in PIs)
+                {
+                    if (paramnum == 0)
+                    {
+                        // verify param 0 is GA
+                        parameters[0] = GA;
+                    }
+                    else
+                    {
+                        object ActionParam = p[PI.Name];
+                        if (ActionParam != null)
+                        {
+                            object val = null;
+                            // For each type we need to get the val correctly so the function will get it right
+                            if (PI.ParameterType.IsEnum)
+                            {
+                                if (p[PI.Name].Value != null)
+                                {
+                                    val = Enum.Parse(PI.ParameterType, p[PI.Name].Value.ToString());
+                                }
+                                else
+                                {
+                                    // TODO: err or check if it is nullable enum
+                                }
+                            }
+                            else if (PI.ParameterType == typeof(Int32))
+                            {
+                                //val = p[PI.Name].GetValueAsInt();
+                                val = 123;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! temp
+                            }
+                            //TODO: handle all types
+                            else
+                            {
+                                val = p[PI.Name].Value;
+                            }
+
+                            parameters[paramnum] = val;
+                        }
+                        else
+                        {
+                            //check if param is optional then ignore
+                            if (!PI.HasDefaultValue)
+                            {
+                                throw new Exception("GingerAction is Missing Param/Value for ActionParam - " + PI.Name);
+                            }
+                            else
+                            {
+                                // from here on all params are optional...
+                            }
+                        }
+                    }
+                    paramnum++;
+                }
+                AH.MethodInfo.Invoke(AH.Instance, parameters);   // here is where we call the action directly with the relevant parameters                                
+            }
+            catch (Exception ex)
+            {
+                GA.AddError("Error when trying to invoke: " + AH.ServiceActionId + " - " + ex.Message);
+            }
+        }
+
+
+        // Maybe use later check if faster than reflection
+        List<ActionHandler> mServiceActions = null;
+        private void ScanService()
+        {
+            // Scan once and cache
+
+            if (mServiceActions != null) return;
+
+            Console.WriteLine("Scanning Service: " + mService.GetType().FullName) ;
+
+            mServiceActions = new List<ActionHandler>();
+
+            // Register all actions which have 'GingerAction' attribute
+            Type t = mService.GetType();
+            var v = t.GetMethods(); //BindingFlags.Public  BindingFlags.DeclaredOnly);
+            foreach (MethodInfo MI in v)
+            {
+                GingerActionAttribute GAA = (GingerActionAttribute)MI.GetCustomAttribute(typeof(GingerActionAttribute));
+                if (GAA != null)
+                {
+                    ActionHandler AH = new ActionHandler();
+                    AH.ServiceActionId = GAA.Id;                    
+                    AH.MethodInfo = MI;
+                    AH.Instance = mService;
+                    mServiceActions.Add(AH);
+
+                    Console.WriteLine("Found Action: " + AH.ServiceActionId);
+                }
+            }
+        }
+    
 
         private NewPayLoad ShutdownNode()
         {
@@ -284,20 +416,22 @@ namespace GingerCoreNET.DriversLib
 
         private NewPayLoad CloseDriver()
         {
-            Console.WriteLine("Payload - Close Driver");
-            mDriver.CloseDriver();
-            NewPayLoad PLRC = new NewPayLoad("OK");
-            PLRC.ClosePackage();
-            return PLRC;
+            //Console.WriteLine("Payload - Close Driver");
+            //mDriver.CloseDriver();
+            //NewPayLoad PLRC = new NewPayLoad("OK");
+            //PLRC.ClosePackage();
+            //return PLRC;
+            return null;
         }
 
         private NewPayLoad StartDriver()
         {
-            Console.WriteLine("Payload - Start Driver");
-            mDriver.StartDriver();
-            NewPayLoad PLRC = new NewPayLoad("OK");
-            PLRC.ClosePackage();
-            return PLRC;
+            //Console.WriteLine("Payload - Start Driver");
+            //mDriver.StartDriver();
+            //NewPayLoad PLRC = new NewPayLoad("OK");
+            //PLRC.ClosePackage();
+            //return PLRC;
+            return null;
         }
 
         internal List<NewPayLoad> GetOutpuValuesPayLoad(List<ActionOutputValue> AOVs)

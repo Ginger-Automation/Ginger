@@ -16,52 +16,62 @@ limitations under the License.
 */
 #endregion
 
-using GingerPlugInsNET.ActionsLib;
-using GingerPlugInsNET.DriversLib;
-using GingerPlugInsNET.PlugInsLib;
+using Amdocs.Ginger.Plugin.Core;
 using System;
 using System.Collections.Generic;
 
 namespace GingerCoreNETUnitTests.RunTestslib
 {
-    public class DummyDriver : PluginDriverBase
+    public class DummyDriver : IGingerDriver
     {
-        public override string Name { get { return "DummyDriver"; } }
+        public List<string> Platforms => throw new NotImplementedException();
 
-        public override void CloseDriver()
+        // public override string Name { get { return "DummyDriver"; } }
+
+        //public override void Stop()
+        //{
+        //    Console.WriteLine("CloseDriver");
+        //}
+
+        //public override void Start()
+        //{
+        //    Console.WriteLine("StartDriver");
+        //}
+
+
+
+        //[GingerAction("A1", "A1 desc")]
+        //public void A1(GingerAction act)
+        //{
+        //    Console.WriteLine("A1");
+        //    act.ExInfo = "A1 Result";
+        //}
+
+
+        //[GingerAction("A2", "A2 desc")]
+        //public void A2(GingerAction act)
+        //{
+        //    Console.WriteLine("A2");
+        //    act.ExInfo = "A2 Result";
+        //}
+
+        public void Start()
         {
-            Console.WriteLine("CloseDriver");
+            throw new NotImplementedException();
         }
 
-        public override void StartDriver()
+        public void Stop()
         {
-            Console.WriteLine("StartDriver");
+            throw new NotImplementedException();
         }
 
-
-
-        [GingerAction("A1", "A1 desc")]
-        public void A1(GingerAction act)
-        {
-            Console.WriteLine("A1");
-            act.ExInfo = "A1 Result";
-        }
-
-
-        [GingerAction("A2", "A2 desc")]
-        public void A2(GingerAction act)
-        {
-            Console.WriteLine("A2");
-            act.ExInfo = "A2 Result";
-        }
-
-        [GingerAction("Time", "Get current driver time")]
-        public void Time(GingerAction act)
-        {
-            Console.WriteLine("Echo");
-            act.Output.Values.Add(new ActionOutputValue() { Param = "CurrentTime", ValueString = DateTime.Now.ToString() });
-            act.ExInfo = "Echo Result";
-        }
+        //[GingerAction("Time", "Get current driver time")]
+        //public void Time(GingerAction act)
+        //{
+        //    Console.WriteLine("Echo");
+        //    act.Output.Values.Add(new ActionOutputValue() { Param = "CurrentTime", ValueString = DateTime.Now.ToString() });
+        //    act.ExInfo = "Echo Result";
+        //}
 
 
 

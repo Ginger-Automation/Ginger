@@ -155,5 +155,10 @@ namespace Ginger.GingerGridLib
                 GNA.Disconnect();
             }
         }
+
+        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            mGingerGrid.NodeList.Clear();
+        }
     }
 }

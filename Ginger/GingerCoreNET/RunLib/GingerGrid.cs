@@ -75,7 +75,7 @@ namespace GingerCoreNET.RunLib
                         gingerSocketInfo.Response = RC;
 
                         // add the info of the new node to the grid list
-                        mGingerNodeInfo.Add(new GingerNodeInfo() { Name = NodeName, OS = NodeOS, Host = NodeHost, IP = NodeIP, SessionID = gingerSocketInfo.SessionID });
+                        mGingerNodeInfo.Add(new GingerNodeInfo() { Name = NodeName, OS = NodeOS, Host = NodeHost, IP = NodeIP, SessionID = gingerSocketInfo.SessionID});
                         break;
                     }
 
@@ -144,6 +144,17 @@ namespace GingerCoreNET.RunLib
         {
             NewPayLoad rc = mGingerSocketServer.SendPayLoad(sessionID, pL);
             return rc;
+        }
+
+        public void Reset()
+        {
+            // TODO: send ShutDown to each node
+            //foreach (GingerNodeInfo GNI in NodeList)
+            //{
+            //    GNI.
+            //}
+
+            NodeList.Clear();
         }
     }
 }
