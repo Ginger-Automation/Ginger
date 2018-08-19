@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -249,6 +249,8 @@ namespace Amdocs.Ginger.Common.UIElement
         ByModelName,
         [EnumValueDescription("By CSS Selector")]
         ByCSSSelector,
+        [EnumValueDescription("POM")]
+        POM,
     }
 
     public enum eElementType
