@@ -51,8 +51,9 @@ using System.Xml;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.UserControls;
-using GingerCore.Actions.Common;
 using GingerCore.Platforms.PlatformsInfo;
+using System.Linq;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace Ginger.WindowExplorer
 {
@@ -83,12 +84,10 @@ namespace Ginger.WindowExplorer
         public enum eWindowExplorerPageContext
         {
             WindowExplorerPage,
-            POMWizard
-
         }
 
         private eWindowExplorerPageContext mContext;
-
+        
         // We can open it from agents grid, or from Action Edit page with Action 
         // If we open from ActionEdit Page then we update the act with locator
         public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
@@ -96,17 +95,8 @@ namespace Ginger.WindowExplorer
             InitializeComponent();
 
             mContext = Context;
+            
             mPlatform = PlatformInfoBase.GetPlatformImpl(ApplicationAgent.Agent.Platform);
-
-            if (mContext == eWindowExplorerPageContext.POMWizard)
-            {
-                WindowControlsTreeView.Visibility = System.Windows.Visibility.Collapsed;
-                WindowControlsGridView.Visibility = System.Windows.Visibility.Visible;
-                GridTreeViewButton.Visibility = Visibility.Collapsed;
-                RecordingButton.Visibility = Visibility.Collapsed;
-                //xWindowGrid.Visibility = Visibility.Collapsed;
-                WindowComboboxRow.Height = new GridLength(0);
-            }
 
             //Instead of check make it disabled ?
             if ((ApplicationAgent.Agent.Driver is IWindowExplorer) == false)
@@ -823,7 +813,7 @@ namespace Ginger.WindowExplorer
             //Set the Data Grid columns            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            
+
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60 });            
@@ -838,7 +828,7 @@ namespace Ginger.WindowExplorer
         {
             if (WindowsComboBox.SelectedValue != null && mWindowExplorerDriver != null)
             {
-                List<ElementInfo> list = mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList);
+                List<ElementInfo> list = mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList());
                                 
                 // Convert to obserable for the grid
                 VisibleElementsInfoList.Clear();
@@ -1144,10 +1134,27 @@ namespace Ginger.WindowExplorer
             return isSearched;
         }
 
+        private void SetAutoMapElementTypes()
+        {
+            List<eElementType> UIElementsTypeList = null;
+            switch (mApplicationAgent.Agent.Platform)
+            {
+                case ePlatformType.Web:
+                    WebPlatform webPlatformInfo = new WebPlatform();
+                    UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
+                    break;
+            }
+
+            foreach (eElementType eET in UIElementsTypeList)
+            {
+                FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
+            }
+        }
+
         private void ShowFilterElementsPage()
         {
             if (FilteringCreteriaList.Count == 0)
-                FilteringCreteriaList = mWindowExplorerDriver.GetFilteringCreteriaDict();
+                SetAutoMapElementTypes();
             if (FilteringCreteriaList.Count != 0)
             {
                 CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
@@ -1162,6 +1169,8 @@ namespace Ginger.WindowExplorer
                     }
             }
         }
+
+       
 
         bool POMOn = false;
 

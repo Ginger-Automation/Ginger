@@ -105,8 +105,9 @@
 
 
     <Style TargetType="Button" x:Key="$ImageButtonStyle_Disabled">
-        <Setter Property="Background" Value="LightGray" />
-        <Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />
+        <!--<Setter Property="Background" Value="LightGray" />-->
+        <!--<Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />-->
+        <Setter Property="Foreground" Value="Gray" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -189,8 +190,9 @@
     </Style>
 
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_Disabled">
-        <Setter Property="Background" Value="WhiteSmoke" />
-        <Setter Property="Foreground" Value="{DynamicResource $BlackOpacity}" />
+        <!--<Setter Property="Background" Value="WhiteSmoke" />-->
+        <!--<Setter Property="Foreground" Value="{DynamicResource $BlackOpacity}" />-->
+        <Setter Property="Foreground" Value="Gray" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="20" />
         <Setter Property="FontSize" Value="12" />
@@ -200,7 +202,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{DynamicResource $VeryLightGray}" BorderThickness="1" CornerRadius="15">
+                                BorderBrush="Gray" BorderThickness="1" CornerRadius="15">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"
@@ -253,8 +255,9 @@
     </Style>
 
     <Style TargetType="Button" x:Key="$CircleImageButtonStyle_Disabled">
-        <Setter Property="Background" Value="LightGray" />
-        <Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />
+        <!--<Setter Property="Background" Value="LightGray" />-->
+        <!--<Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />-->
+        <Setter Property="Foreground" Value="Gray" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
