@@ -25,7 +25,6 @@ namespace Amdocs.Ginger.Common.UIElement
 {
     public class ElementLocator : RepositoryItemBase 
     {
-
         private bool mActive { get; set; }
         public bool Active { get { return mActive; } set { mActive = value; OnPropertyChanged(nameof(Active)); } }
 
@@ -50,48 +49,42 @@ namespace Amdocs.Ginger.Common.UIElement
         private int? mCount { get; set; }
         public int? Count { get { return mCount; } set { mCount = value; OnPropertyChanged(nameof(Count)); } }
 
-        public override string ItemName { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
+        public override string ItemName { get { return this.LocateBy.ToString() + "-" + this.LocateValue.ToString(); } set { } }
 
-        //private string mTestStatus { get; set; }
-        //public string TestStatus { get { return mTestStatus; } set { mTestStatus = value; OnPropertyChanged(nameof(TestStatus)); } }
-
-
-
-        public enum eTestStatus
+        public enum eLocateStatus
         {
             Pending,
             Passed,
             Failed
         }
 
-        eTestStatus mTestStatus;
-        public eTestStatus TestStatus
+        eLocateStatus mLocateStatus;
+        public eLocateStatus LocateStatus
         {
             get
             {
-                return mTestStatus;
+                return mLocateStatus;
             }
             set
             {
-                mTestStatus = value;
-                OnPropertyChanged(nameof(TestStatusError));
-                OnPropertyChanged(nameof(TestStatusIcon));
+                mLocateStatus = value;
+                OnPropertyChanged(nameof(LocateStatusError));
+                OnPropertyChanged(nameof(LocateStatusIcon));
 
             }
-
         }
 
-        public eImageType TestStatusIcon
+        public eImageType LocateStatusIcon
         {
             get
             {
-                switch (TestStatus)
+                switch (LocateStatus)
                 {
-                    case eTestStatus.Passed:
+                    case eLocateStatus.Passed:
                         return eImageType.Passed;
-                    case eTestStatus.Failed:
+                    case eLocateStatus.Failed:
                         return eImageType.Failed;
-                    case eTestStatus.Pending:
+                    case eLocateStatus.Pending:
                         return eImageType.Pending;
                     default:
                         return eImageType.Pending;
@@ -99,53 +92,18 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
-        //public SolidColorBrush TestStatusIconForeground
-        //{
-        //    get
-        //    {
-        //        switch (TestStatus)
-        //        {
-        //            case eTestStatus.Passed:
-        //                return (SolidColorBrush)FindResource("$Green");
-        //            case eTestStatus.Failed:
-        //                return (SolidColorBrush)FindResource("$Red");
-        //            default:
-        //                return (SolidColorBrush)FindResource("$Orange");
-        //        }
-
-        //    }
-        //}
-
-        private string mTestStatusError;
-        public string TestStatusError
+        private string mLocateStatusError;
+        public string LocateStatusError
         {
             get
             {
-              return  mTestStatusError;
+              return mLocateStatusError;
             }
             set
             {
-                mTestStatusError = value;
+                mLocateStatusError = value;
             }
         }
-
-
-        //public string TestStatusToolTip
-        //{
-        //    get
-        //    {
-        //        switch (TestStatus)
-        //        {
-        //            case eTestStatus.Failed:
-        //                return "$Red";
-        //            default:
-        //                return "$Orange";
-        //        }
-
-        //    }
-        //}
-
-        
 
     }
 }

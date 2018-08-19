@@ -123,11 +123,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 60, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 60, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 100, AllowSorting = true });
 
             List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Element Type", WidthWeight = 60, AllowSorting = true , StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 60, AllowSorting = true , StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100, AllowSorting = true });
             //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100, AllowSorting = true });
@@ -321,7 +321,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 70, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 15, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
             //defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.TestStatus), Header = "Test Status", WidthWeight = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.TestStatusIcon), Header = "Test Status", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateStatusIcon), Header = "Status", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
 
             xLocatorsGrid.AddToolbarTool("@Play_16x16.png", "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
             xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorHandler));
@@ -421,7 +421,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            mWinExplorer.HighLightElement(mMainElementsGridCurrentItem);
+            mWinExplorer.HighLightElement(mMainElementsGridCurrentItem, true);
         }
 
         private void DetailsGrid_Expanded(object sender, RoutedEventArgs e)
@@ -442,7 +442,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            mWinExplorer.TestAllElementsLocators(new ObservableList<ElementLocator>() { mLocatorsGridCurrentItem });
+            mWinExplorer.TestElementLocators(new ObservableList<ElementLocator>() { mLocatorsGridCurrentItem });
             
         }
 
@@ -454,7 +454,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            mWinExplorer.TestAllElementsLocators(mLocators);
+            mWinExplorer.TestElementLocators(mLocators);
         }
 
         private void CreateNewElemetClicked(object sender, RoutedEventArgs e)

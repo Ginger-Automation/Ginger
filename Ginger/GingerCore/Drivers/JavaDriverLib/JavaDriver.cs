@@ -1971,7 +1971,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return true;
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             if(ElementInfo.GetType() == typeof(JavaElementInfo))
             {
@@ -2743,12 +2743,6 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         //copy from the act handler temp beacuse I didn't want to mess with the above, TODO: fix both to use shared method
         Bitmap GetWindowScreenShot()
         {
@@ -2793,8 +2787,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             throw new NotImplementedException();
         }
 
-
-        public bool TestAllElementsLocators(ObservableList<ElementLocator> mLocators)
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
         {
             throw new NotImplementedException();
         }

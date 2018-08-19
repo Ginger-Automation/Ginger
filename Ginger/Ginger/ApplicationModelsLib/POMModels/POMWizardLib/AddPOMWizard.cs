@@ -36,6 +36,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
     public class AddPOMWizard : WizardBase
     {
+        RepositoryFolder<ApplicationPOMModel> mPomModelsFolder;
         public ApplicationPOMModel POM;
         public string POMFolder;
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
@@ -67,8 +68,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public Bitmap ScreenShot { get; set; }
         public bool IsLearningWasDone { get; set; }
 
-        public AddPOMWizard()
+        public AddPOMWizard(RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
+            mPomModelsFolder = pomModelsFolder;
+
             POM = new ApplicationPOMModel();
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new POMIntroductionWizardPage());
@@ -94,8 +97,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
             }
 
-
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
+            if (mPomModelsFolder !=null)
+                mPomModelsFolder.AddRepositoryItem(POM);   
+            else
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
 
             //close all Agents raised in Wizard
             CloseStartedAgents();

@@ -48,6 +48,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
 
             xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
+            FillTargetAppsComboBox();
             xTargetApplicationComboBox.Init(mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTagsViewer.Init(mPOM.TagsKeys);
 
@@ -103,6 +104,27 @@ namespace Ginger.ApplicationModelsLib.POMModels
             //DesignFrame.Content = pd;
 
             //InitControlPropertiesGrid();
+        }
+
+        private void FillTargetAppsComboBox()
+        {
+            //get key object 
+            if (mPOM.TargetApplicationKey != null)
+            {
+                RepositoryItemKey key = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mPOM.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                if (key != null)
+                {
+                    mPOM.TargetApplicationKey = key;
+                }
+                else
+                {
+                    //TODO: Fix with New Reporter (on GingerWPF)
+                    System.Windows.MessageBox.Show(string.Format("The mapped '{0}' Target Application was not found, please select new Target Application", mPOM.Key.ItemName), "Missing Target Application", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                }
+            }
+            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms;
+            xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
+            xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
         }
 
         public static Bitmap BitmapFromSource(BitmapSource bitmapsource)

@@ -185,7 +185,7 @@ namespace GingerCore.Drivers
 
         private bool IsRecording = false;
 
-        ElementInfo LastHighLightedElementInfo;
+        IWebElement LastHighLightedElement;
         private string CurrentFrame;
 
         public SeleniumDriver()
@@ -2859,11 +2859,6 @@ namespace GingerCore.Drivers
             action.MoveToElement(e).Build().Perform();
         }
 
-
-
-        
-
-
         private IWebElement FindElementReg(eLocateBy LocatorType, string LocValue)
         {
             Regex reg = new Regex(LocValue.Replace("{RE:", "").Replace("}", ""), RegexOptions.Compiled);
@@ -2922,7 +2917,6 @@ namespace GingerCore.Drivers
             eLocateBy LocatorType = act.LocateBy;
             string LocValue = act.LocateValueCalculated;
 
-
             if (ValidationElementLocateBy != null)
             {
                 Enum.TryParse<eLocateBy>(ValidationElementLocateBy, true, out LocatorType);
@@ -2945,69 +2939,70 @@ namespace GingerCore.Drivers
                     LocValue = ((ActUIElement)act).ElementLocateValueForDriver;
                 }
             }
-            IWebElement elem = null; //TODO: Not found
-                                     //TODO: switch case By.. - order by most common first
-
-            elem = LocateElementByLocator(LocatorType, LocValue, AlwaysReturn);
-
-            return elem;
-            //Use retry mechanism and not hard coded
-           
+            
+            return LocateElementByLocator(new ElementLocator() { LocateBy = LocatorType, LocateValue = LocValue }, AlwaysReturn);
         }
 
 
         private IWebElement LocateElementByLocators(ObservableList<ElementLocator> Locators)
         {
             IWebElement elem = null;
-            foreach (ElementLocator EL in Locators)
+            foreach (ElementLocator locator in Locators)
             {
-                elem = LocateElementByLocator(EL.LocateBy, EL.LocateValue);
+                locator.LocateStatusError = string.Empty;
+                locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
+            }
 
+            foreach (ElementLocator locator in Locators.Where(x => x.Active == true).ToList())
+            {
+                elem = LocateElementByLocator(locator, true);
                 if (elem != null)
                 {
-                    EL.TestStatusError = string.Empty;
-                    EL.TestStatus = ElementLocator.eTestStatus.Passed;
+                    locator.LocateStatusError = string.Empty;
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
                     return elem;
                 }
                 else
                 {
-                    EL.TestStatusError = "Element not found: " + EL.LocateBy + "=" + EL.LocateValue;
-                    EL.TestStatus = ElementLocator.eTestStatus.Failed;
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
                 }
             }
-            return null;
 
+            return null;
         }
 
 
-        private IWebElement LocateElementByLocator(eLocateBy LocatorType, string LocValue, bool AlwaysReturn = true)
+        private IWebElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
         {
             IWebElement elem = null;
+            locator.LocateStatusError = "";
+            locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
+
             try
             {
                 try
                 {
                     Protractor.NgWebDriver ngDriver = null;
-                    if (LocatorType == eLocateBy.ByngRepeat || LocatorType == eLocateBy.ByngSelectedOption || LocatorType == eLocateBy.ByngBind || LocatorType == eLocateBy.ByngModel)
+                    if (locator.LocateBy == eLocateBy.ByngRepeat || locator.LocateBy == eLocateBy.ByngSelectedOption || locator.LocateBy == eLocateBy.ByngBind || locator.LocateBy == eLocateBy.ByngModel)
                     {
                         ngDriver = new Protractor.NgWebDriver(Driver);
                         ngDriver.WaitForAngular();
                     }
-                    if (LocatorType == eLocateBy.ByngRepeat)
+                    if (locator.LocateBy == eLocateBy.ByngRepeat)
                     {
-                        elem = ngDriver.FindElement(Protractor.NgBy.Repeater(LocValue));
+                        elem = ngDriver.FindElement(Protractor.NgBy.Repeater(locator.LocateValue));
                     }
-                    if (LocatorType == eLocateBy.ByngSelectedOption)
+                    if (locator.LocateBy == eLocateBy.ByngSelectedOption)
                     {
-                        elem = ngDriver.FindElement(Protractor.NgBy.SelectedOption(LocValue));
+                        elem = ngDriver.FindElement(Protractor.NgBy.SelectedOption(locator.LocateValue));
                     }
-                    if (LocatorType == eLocateBy.ByngBind)
+                    if (locator.LocateBy == eLocateBy.ByngBind)
                     {
-                        elem = ngDriver.FindElement(Protractor.NgBy.Binding(LocValue));
+                        elem = ngDriver.FindElement(Protractor.NgBy.Binding(locator.LocateValue));
                     }
-                    if (LocatorType == eLocateBy.ByngModel)
+                    if (locator.LocateBy == eLocateBy.ByngModel)
                     {
-                        elem = ngDriver.FindElement(Protractor.NgBy.Model(LocValue));
+                        elem = ngDriver.FindElement(Protractor.NgBy.Model(locator.LocateValue));
                     }
                 }
                 catch (Exception ex)
@@ -3016,37 +3011,39 @@ namespace GingerCore.Drivers
                     if (AlwaysReturn)
                     {
                         elem = null;
+                        locator.LocateStatusError = ex.Message;
+                        locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
                         return elem;
                     }
                     else
                         throw;
                 }
 
-                if (LocatorType == eLocateBy.ByID)
+                if (locator.LocateBy == eLocateBy.ByID)
                 {
-                    if (LocValue.IndexOf("{RE:") >= 0)
-                        elem = FindElementReg(LocatorType, LocValue);
+                    if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                        elem = FindElementReg(locator.LocateBy, locator.LocateValue);
                     else
-                        elem = Driver.FindElement(By.Id(LocValue));
+                        elem = Driver.FindElement(By.Id(locator.LocateValue));
                 }
 
-                if (LocatorType == eLocateBy.ByName)
+                if (locator.LocateBy == eLocateBy.ByName)
                 {
-                    if (LocValue.IndexOf("{RE:") >= 0)
-                        elem = FindElementReg(LocatorType, LocValue);
+                    if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                        elem = FindElementReg(locator.LocateBy, locator.LocateValue);
                     else
-                        elem = Driver.FindElement(By.Name(LocValue));
+                        elem = Driver.FindElement(By.Name(locator.LocateValue));
                 }
 
-                if (LocatorType == eLocateBy.ByHref)
+                if (locator.LocateBy == eLocateBy.ByHref)
                 {
                     string pattern = @".+:\/\/[^\/]+";
                     string sel = "//a[contains(@href, '@RREEPP')]";
-                    sel = sel.Replace("@RREEPP", new Regex(pattern).Replace(LocValue, ""));
+                    sel = sel.Replace("@RREEPP", new Regex(pattern).Replace(locator.LocateValue, ""));
                     try
                     {
-                        if (LocValue.IndexOf("{RE:") >= 0)
-                            elem = FindElementReg(LocatorType, LocValue);
+                        if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                            elem = FindElementReg(locator.LocateBy, locator.LocateValue);
                         else
                             elem = Driver.FindElement(By.XPath(sel));
                     }
@@ -3055,7 +3052,7 @@ namespace GingerCore.Drivers
                         try
                         {
                             sel = "//a[href='@']";
-                            sel = sel.Replace("@", LocValue);
+                            sel = sel.Replace("@", locator.LocateValue);
                             elem = Driver.FindElement(By.XPath(sel));
                         }
                         catch (Exception)
@@ -3065,18 +3062,18 @@ namespace GingerCore.Drivers
                     { }
                 }
 
-                if (LocatorType == eLocateBy.ByLinkText)
+                if (locator.LocateBy == eLocateBy.ByLinkText)
                 {
-                    LocValue = LocValue.Trim();
+                    locator.LocateValue = locator.LocateValue.Trim();
                     try
                     {
-                        if (LocValue.IndexOf("{RE:") >= 0)
-                            elem = FindElementReg(LocatorType, LocValue);
+                        if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                            elem = FindElementReg(locator.LocateBy, locator.LocateValue);
                         else
                         {
-                            elem = Driver.FindElement(By.LinkText(LocValue));
+                            elem = Driver.FindElement(By.LinkText(locator.LocateValue));
                             if (elem == null)
-                                elem = Driver.FindElement(By.XPath("//*[text()='" + LocValue + "']"));
+                                elem = Driver.FindElement(By.XPath("//*[text()='" + locator.LocateValue + "']"));
                         }
                     }
                     catch (Exception ex)
@@ -3085,7 +3082,7 @@ namespace GingerCore.Drivers
                         {
                             if (ex.GetType() == typeof(NoSuchElementException))
                             {
-                                elem = Driver.FindElement(By.XPath("//*[text()='" + LocValue + "']"));
+                                elem = Driver.FindElement(By.XPath("//*[text()='" + locator.LocateValue + "']"));
 
                             }
                         }
@@ -3093,39 +3090,41 @@ namespace GingerCore.Drivers
                     }
 
                 }
-                if (LocatorType == eLocateBy.ByXPath)
+                if (locator.LocateBy == eLocateBy.ByXPath)
                 {
-                    elem = Driver.FindElement(By.XPath(LocValue));
+                    elem = Driver.FindElement(By.XPath(locator.LocateValue));
                 }
 
-                if (LocatorType == eLocateBy.ByValue)
+                if (locator.LocateBy == eLocateBy.ByValue)
                 {
-                    if (LocValue.IndexOf("{RE:") >= 0)
-                        elem = FindElementReg(LocatorType, LocValue);
+                    if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                        elem = FindElementReg(locator.LocateBy, locator.LocateValue);
                     else
-                        elem = Driver.FindElement(By.XPath("//*[@value=\"" + LocValue + "\"]"));
+                        elem = Driver.FindElement(By.XPath("//*[@value=\"" + locator.LocateValue + "\"]"));
                 }
 
-                if (LocatorType == eLocateBy.ByCSS)
+                if (locator.LocateBy == eLocateBy.ByCSS)
                 {
-                    elem = Driver.FindElement(By.CssSelector(LocValue));
+                    elem = Driver.FindElement(By.CssSelector(locator.LocateValue));
                 }
 
-                if (LocatorType == eLocateBy.ByClassName)
+                if (locator.LocateBy == eLocateBy.ByClassName)
                 {
-                    elem = Driver.FindElement(By.ClassName(LocValue));
+                    elem = Driver.FindElement(By.ClassName(locator.LocateValue));
                 }
 
-                if (LocatorType == eLocateBy.ByMulitpleProperties)
+                if (locator.LocateBy == eLocateBy.ByMulitpleProperties)
                 {
-                    elem = GetElementByMutlipleAttributes(LocValue);
+                    elem = GetElementByMutlipleAttributes(locator.LocateValue);
                 }
             }
-            catch (System.Net.Sockets.SocketException)
+            catch (System.Net.Sockets.SocketException ex)
             {
                 if (AlwaysReturn == true)
                 {
                     elem = null;
+                    locator.LocateStatusError = ex.Message;
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
                     return elem;
                 }
                 else
@@ -3136,12 +3135,16 @@ namespace GingerCore.Drivers
                 if (AlwaysReturn == true)
                 {
                     elem = null;
+                    locator.LocateStatusError = ex.Message;
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
                     return elem;
                 }
                 else
                     throw ex;
             }
 
+            if (elem != null)
+                locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
             return elem;
         }
 
@@ -3268,13 +3271,14 @@ namespace GingerCore.Drivers
                 {
                     ElementInfo elementInfo = GetElementInfoWithIWebElement(e, string.Empty);
 
-                    string highlightJavascript = string.Empty;
-                    if (elementInfo.ElementType == "INPUT.CHECKBOX" || elementInfo.ElementType == "TR" || elementInfo.ElementType == "TBODY")
-                            highlightJavascript = "arguments[0].style.outline='3px dashed red'";
-                    else
-                        highlightJavascript = "arguments[0].style.border='3px dashed red'";
-                    ((IJavaScriptExecutor)Driver).ExecuteScript(highlightJavascript, new object[] { e });
-                    LastHighLightedElementInfo = elementInfo;
+                    //string highlightJavascript = string.Empty;
+                    //if (elementInfo.ElementType == "INPUT.CHECKBOX" || elementInfo.ElementType == "TR" || elementInfo.ElementType == "TBODY")
+                    //        highlightJavascript = "arguments[0].style.outline='3px dashed red'";
+                    //else
+                    //    highlightJavascript = "arguments[0].style.border='3px dashed red'";
+                    //((IJavaScriptExecutor)Driver).ExecuteScript(highlightJavascript, new object[] { e });
+                    //LastHighLightedElementInfo = elementInfo;
+                    HighlightElement(elementInfo, e);
                 }
             }
         }
@@ -3417,7 +3421,7 @@ namespace GingerCore.Drivers
             if (Driver != null)
             {
                 UnhighlightLast();
-                LastHighLightedElementInfo = null;
+                LastHighLightedElement = null;
                 List<AppWindow> list = new List<AppWindow>();
 
                 ReadOnlyCollection<string> windows = Driver.WindowHandles;
@@ -3437,31 +3441,13 @@ namespace GingerCore.Drivers
 
         List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
-            List<ElementInfo> list = new List<ElementInfo>();
-
             UnhighlightLast();
+
+            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+            List<ElementInfo> list = new List<ElementInfo>();            
             Driver.SwitchTo().DefaultContent();
 
-            Dictionary<string, List<string>> filteringCriteriasDict = GetFilteringCreteriaDict(filteredElementType);
-
-            if (filteredElementType != null && filteringCriteriasDict != null && filteringCriteriasDict.Count != 0)
-            {
-                foreach (KeyValuePair<string, List<string>> kvp in filteringCriteriasDict)
-                {
-                    if (mStopProcess)
-                        return list;
-
-                    CurrentFrame = string.Empty;
-                    list.AddRange(GetAllFilteredElementsFromPage(string.Empty, kvp));
-                    Driver.SwitchTo().DefaultContent(); 
-                }
-            }
-            else
-            {
-                List<ElementInfo> allElementlist = GetAllElementsFromPageWithoutXpath("", foundElementsList);
-                list = allElementlist;
-            }
+            list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList)));
 
             CurrentFrame = "";
             Driver.SwitchTo().DefaultContent();
@@ -3469,25 +3455,36 @@ namespace GingerCore.Drivers
             return list;
         }
 
-        private List<ElementInfo> GetAllElementsFromPageWithoutXpath(string path, ObservableList<ElementInfo> foundElementsList = null)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
+            if (foundElementsList == null)
+                foundElementsList = new ObservableList<ElementInfo>();
+
             ReadOnlyCollection<IWebElement> ElementsList = Driver.FindElements(By.CssSelector("*"));
-            List<ElementInfo> allElementlist = new List<ElementInfo>();
+
             if (ElementsList.Count != 0)
             {
                 foreach (IWebElement el in ElementsList)
-                {
-                    // grab only visible elements
+                {                    
                     if (mStopProcess)
-                        return allElementlist;
+                        return foundElementsList;
 
+                    // grab only visible elements
                     if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0) continue;
 
-                    ElementInfo ElementInfo = GetElementInfoWithIWebElement(el, path);
-                    PopulateComboBoxOptionalValues(ElementInfo, el);
-                    allElementlist.Add(ElementInfo);
-                    if (foundElementsList != null)
-                        foundElementsList.Add(ElementInfo);
+                    ElementInfo foundElemntInfo = GetElementInfoWithIWebElement(el, path);  
+                    
+                    //filter element if needed
+                    if (filteredElementType != null && filteredElementType.Count > 0)
+                    {
+                        if (filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                            foundElementsList.Add(foundElemntInfo);
+                    }
+                    else
+                    {
+                        foundElementsList.Add(foundElemntInfo);
+                    }                                     
+
                     if (el.TagName == "iframe")
                     {
                         string xpath = GenerateXpathForIWebElement(el, "");
@@ -3497,260 +3494,126 @@ namespace GingerCore.Drivers
                             newPath = xpath;
                         else
                             newPath = path + "," + xpath;
-                        allElementlist.AddRange(GetAllElementsFromPageWithoutXpath(newPath, foundElementsList));
+                        GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
                         Driver.SwitchTo().DefaultContent();
                     }
                 }
             }
-            return allElementlist;
+            return foundElementsList;
         }
-
-
-        public static eElementType GetElementTypeEnum(IWebElement el)
+        
+        public static eElementType GetElementTypeEnum(IWebElement EL = null, string JSType = null)
         {
-            string elementTagName = el.TagName;
-            string elementType = el.GetAttribute("type");
+            eElementType elementType = eElementType.Unknown;
+            string tagName;
+            string type;
 
-
-            if ((elementTagName == "input" && (elementType == "button" || elementType == "submit")) || elementTagName == "button")
-                return eElementType.Button;
-            else if (elementTagName == "input" && elementType == "checkbox")
-                return eElementType.CheckBox;
-            else if (elementTagName == "select" )
-                return eElementType.ComboBox;
-            else if (elementTagName == "optgroup" || elementTagName == "option")
-                return eElementType.ComboBoxOption;
-            else if (elementTagName == "div")
-                return eElementType.Div;
-            else if (elementTagName == "form")
-                return eElementType.Form;
-            else if (elementTagName == "link" || elementTagName == "a")
-                return eElementType.HyperLink;
-            else if (elementTagName == "img" || elementTagName == "map")
-                return eElementType.Image;
-            else if (elementTagName == "label" || elementTagName == "title")
-                return eElementType.Label;
-            else if (elementTagName == "ul" || elementTagName == "ol" || elementTagName == "dl")
-                return eElementType.List;
-            else if (elementTagName == "li" || elementTagName == "dt" || elementTagName == "dd")
-                return eElementType.ListItem;
-            else if (elementTagName == "menu")
-                return eElementType.MenuBar;
-            else if (elementTagName == "input" && elementType == "radio")
-                return eElementType.RadioButton;
-            else if (elementTagName == "span")
-                return eElementType.Span;
-            else if (elementTagName == "table" || elementTagName == "caption")
-                return eElementType.Table;
-            else if (elementTagName == "tr" || elementTagName == "th" || elementTagName == "td")
-                return eElementType.TableItem;
-            else if ((elementTagName == "input" && elementType == "text" )|| elementTagName == "textarea")
-                return eElementType.TextBox;
-            else if (elementTagName == "iframe")
-                return eElementType.Iframe;
-            else if (elementTagName == "h1" || elementTagName == "h2" || elementTagName == "h3" || elementTagName == "h4" || elementTagName == "h5" || elementTagName == "h6" || elementTagName == "p")
-                return eElementType.Text;
+            if ((EL == null) && (JSType != null))
+            {
+                tagName = JSType;
+                type = string.Empty;
+            }
+            else if ((EL != null) && (JSType == null))
+            {
+                tagName = EL.TagName;
+                type = EL.GetAttribute("type");
+            }
             else
-                return eElementType.Unknown;
-        }
-
-        public static Dictionary<string, List<string>> GetFilteringCreteriaDict(List<eElementType> filteredElementType)
-        {
-            Dictionary<string, List<string>> FilteringCriteriaDict = new Dictionary<string, List<string>>();
-
-            if (filteredElementType != null)
-            foreach (eElementType UIEF in filteredElementType)
             {
-                switch (UIEF)
-                {
-                    case eElementType.Button:
-                        if (FilteringCriteriaDict.ContainsKey("input"))
-                        {
-                            FilteringCriteriaDict["input"].Add("button");
-                            FilteringCriteriaDict["input"].Add("submit");
-                        }
-                        else
-                            FilteringCriteriaDict.Add("input", new List<string> { "button", "submit" });
-
-                        FilteringCriteriaDict.Add("button", new List<string>());
-                        break;
-                    case eElementType.CheckBox:
-                        if (FilteringCriteriaDict.ContainsKey("input"))
-                            FilteringCriteriaDict["input"].Add("checkbox");
-                        else
-                            FilteringCriteriaDict.Add("input", new List<string> { "checkbox" });
-                        break;
-                    case eElementType.ComboBox:
-                        FilteringCriteriaDict.Add("select", new List<string>());
-                        break;
-                    case eElementType.ComboBoxOption:
-                        FilteringCriteriaDict.Add("optgroup", new List<string>());
-                        FilteringCriteriaDict.Add("option", new List<string>());
-                        break;
-                    case eElementType.Div:
-                        FilteringCriteriaDict.Add("div", new List<string>());
-                        break;
-                    case eElementType.Form:
-                        FilteringCriteriaDict.Add("form", new List<string>());
-                        break;
-                    case eElementType.HyperLink:
-                        FilteringCriteriaDict.Add("link", new List<string>());
-                        FilteringCriteriaDict.Add("a", new List<string>());
-                        break;
-                    case eElementType.Image:
-                        FilteringCriteriaDict.Add("img", new List<string>());
-                        FilteringCriteriaDict.Add("map", new List<string>());
-                        break;
-                    case eElementType.Label:
-                        FilteringCriteriaDict.Add("label", new List<string>());
-                        FilteringCriteriaDict.Add("title", new List<string>());
-                        break;
-                    case eElementType.List:
-                        FilteringCriteriaDict.Add("ul", new List<string>());
-                        FilteringCriteriaDict.Add("ol", new List<string>());
-                        FilteringCriteriaDict.Add("dl", new List<string>());
-                        break;
-                    case eElementType.ListItem:
-                        FilteringCriteriaDict.Add("li", new List<string>());
-                        FilteringCriteriaDict.Add("dt", new List<string>());
-                        FilteringCriteriaDict.Add("dd", new List<string>());
-                        break;
-                    case eElementType.MenuBar:
-                        FilteringCriteriaDict.Add("menu", new List<string>());
-                        break;
-                    case eElementType.RadioButton:
-                        if (FilteringCriteriaDict.ContainsKey("input"))
-                            FilteringCriteriaDict["input"].Add("radio");
-                        else
-                            FilteringCriteriaDict.Add("input", new List<string> { "radio" });
-                        break;
-                    case eElementType.Span:
-                        FilteringCriteriaDict.Add("span", new List<string>());
-                        break;
-                    case eElementType.Table:
-                        FilteringCriteriaDict.Add("table", new List<string>());
-                        FilteringCriteriaDict.Add("caption", new List<string>());
-                        break;
-                    case eElementType.TableItem:
-                        FilteringCriteriaDict.Add("tr", new List<string>());
-                        FilteringCriteriaDict.Add("th", new List<string>());
-                        FilteringCriteriaDict.Add("td", new List<string>());
-                        break;
-                    case eElementType.TextBox:
-                        if (FilteringCriteriaDict.ContainsKey("input"))
-                            FilteringCriteriaDict["input"].Add("text");
-                        else
-                            FilteringCriteriaDict.Add("input", new List<string> { "text" });
-                        FilteringCriteriaDict.Add("textarea", new List<string>());
-                        break;
-                    case eElementType.TreeView:
-                        break;
-                    case eElementType.Iframe:
-                        FilteringCriteriaDict.Add("iframe", new List<string>());
-                        break;
-                    case eElementType.Text:
-                        FilteringCriteriaDict.Add("h1", new List<string>());
-                        FilteringCriteriaDict.Add("h2", new List<string>());
-                        FilteringCriteriaDict.Add("h3", new List<string>());
-                        FilteringCriteriaDict.Add("h4", new List<string>());
-                        FilteringCriteriaDict.Add("h5", new List<string>());
-                        FilteringCriteriaDict.Add("h6", new List<string>());
-                        FilteringCriteriaDict.Add("p", new List<string>());
-                        break;
-                }
-            }
-            return FilteringCriteriaDict;
-        }
-
-        private List<ElementInfo> GetAllFilteredElementsFromPage(string path, KeyValuePair<string, List<string>> kvp, ObservableList<ElementInfo> foundElementsList = null)
-        {
-            List<ElementInfo> list = new List<ElementInfo>();
-            ReadOnlyCollection<IWebElement> ElementsList = Driver.FindElements(By.TagName(kvp.Key));
-            ReadOnlyCollection<IWebElement> IframeList = Driver.FindElements(By.TagName("iframe"));
-            ReadOnlyCollection<IWebElement> FrameList = Driver.FindElements(By.TagName("frame"));
-
-            foreach (IWebElement el in ElementsList)
-            {
-                if (mStopProcess)
-                    return list;
-                if ((kvp.Value.Count != 0))
-                {
-                    string type = el.GetAttribute("type");
-                    if (kvp.Value.Contains(type))
-                    {
-                        ElementInfo elementInfo = GetElementInfoWithIWebElement(el, path);
-                        list.Add(elementInfo);
-                        if (foundElementsList != null)
-                            foundElementsList.Add(elementInfo);
-                    }
-
-                }
-                else
-                {
-                    ElementInfo elementInfo = GetElementInfoWithIWebElement(el, path);
-                    list.Add(elementInfo);
-                    if (foundElementsList != null)
-                        foundElementsList.Add(elementInfo);
-                }
-                    
+                return elementType;
             }
 
-            if (IframeList.Count == 0 && FrameList.Count == 0)
-                return list;
-
-            ElementInfo lastElementInfoHandled = null;
-            foreach (IWebElement iframe in IframeList)
+            if ((tagName.ToUpper() == "INPUT" && (type.ToUpper() == "UNDEFINED" || type.ToUpper() == "PASSWORD" || type.ToUpper() == "EMAIL")) ||
+                 tagName.ToUpper() == "TEXTAREA" || tagName.ToUpper() == "TEXT")
             {
-                if (mStopProcess)
-                    return list;
-                if (lastElementInfoHandled != null)
-                    if (CurrentFrame != lastElementInfoHandled.Path)
-                        SwitchAllFramePathes(lastElementInfoHandled);
-
-                ElementInfo IframeElementInfo = GetHTMLElementInfoFromIWebElement(iframe, path);
-                string iframePath = GenerateXpathForIWebElement(iframe, path);
-                string iframeElementInfoPath;
-                if (string.IsNullOrEmpty(path))
-                {
-                    iframeElementInfoPath = IframeElementInfo.XPath;
-                }
-                else
-                {
-                    iframeElementInfoPath = path + "," + IframeElementInfo.XPath;
-                }
-                SwitchFrameFromCurrent(IframeElementInfo);
-                list.AddRange(GetAllFilteredElementsFromPage(iframeElementInfoPath,kvp));
-                lastElementInfoHandled = IframeElementInfo;
-                Driver.SwitchTo().DefaultContent();
-                CurrentFrame = "";
+                elementType = eElementType.TextBox;
             }
-
-            foreach (IWebElement frame in FrameList)
+            else if ((tagName.ToUpper() == "INPUT" && (type.ToUpper() == "IMAGE" || type.ToUpper() == "SUBMIT")) ||
+                    tagName.ToUpper() == "BUTTON" || tagName.ToUpper() == "SUBMIT")
             {
-                if (lastElementInfoHandled != null)
-                    if (CurrentFrame != lastElementInfoHandled.Path)
-                        SwitchAllFramePathes(lastElementInfoHandled);
-
-                ElementInfo IframeElementInfo = GetHTMLElementInfoFromIWebElement(frame, path);
-                string iframePath = GenerateXpathForIWebElement(frame, path);
-                string iframeElementInfoPath;
-                if (string.IsNullOrEmpty(path))
-                {
-                    iframeElementInfoPath = IframeElementInfo.XPath;
-                }
-                else
-                {
-                    iframeElementInfoPath = path + "," + IframeElementInfo.XPath;
-                }
-                SwitchFrameFromCurrent(IframeElementInfo);
-                list.AddRange(GetAllFilteredElementsFromPage(iframeElementInfoPath, kvp, foundElementsList));
-                lastElementInfoHandled = IframeElementInfo;
-                Driver.SwitchTo().DefaultContent();
-                CurrentFrame = "";
+                elementType = eElementType.Button;
             }
+            else if (tagName.ToUpper() == "TD" || tagName.ToUpper() == "TH" || tagName.ToUpper() == "TR")
+            {
+                elementType = eElementType.TableItem;
+            }
+            else if (tagName.ToUpper() == "LINK" || tagName.ToUpper() == "A" || tagName.ToUpper() == "LI")
+            {
+                elementType = eElementType.HyperLink;
+            }
+            else if (tagName.ToUpper() == "LABEL" || tagName.ToUpper() == "TITLE")
+            {
+                elementType = eElementType.Label;
+            }
+            else if (tagName.ToUpper() == "SELECT" || tagName.ToUpper() == "SELECT-ONE")
+            {
+                elementType = eElementType.ComboBox;
+            }
+            else if (tagName.ToUpper() == "TABLE" || tagName.ToUpper() == "CAPTION")
+            {
+                elementType = eElementType.Table;
+            }
+            else if (tagName.ToUpper() == "JEDITOR.TABLE")
+            {
+                elementType = eElementType.EditorPane;
+            }
+            else if (tagName.ToUpper() == "DIV")
+            {
+                elementType = eElementType.Div;
+            }
+            else if (tagName.ToUpper() == "SPAN")
+            {
+                elementType = eElementType.Span;
+            }
+            else if (tagName.ToUpper() == "IMG" || tagName.ToUpper() == "MAP")
+            {
+                elementType = eElementType.Image;
+            }
+            else if (tagName.ToUpper() == "INPUT" && type.ToUpper() == "CHECKBOX")
+            {
+                elementType = eElementType.CheckBox;
+            }
+            else if (tagName.ToUpper() == "OPTGROUP" || tagName.ToUpper() == "OPTION")
+            {
+                return eElementType.ComboBoxOption;
+            }
+            else if (tagName.ToUpper() == "INPUT" && type.ToUpper() == "RADIO")
+            {
+                elementType = eElementType.RadioButton;
+            }
+            else if (tagName.ToUpper() == "IFRAME")
+            {
+                elementType = eElementType.Iframe;
+            }
+            else if (tagName.ToUpper() == "CANVAS")
+            {
+                elementType = eElementType.Canvas;
+            }
+            else if (tagName.ToUpper() == "FORM")
+            {
+                elementType = eElementType.Form;
+            }
+            else if (tagName.ToUpper() == "UL" || tagName.ToUpper() == "OL" || tagName.ToUpper() == "DL")
+            {
+                elementType = eElementType.List;
+            }
+            else if (tagName.ToUpper() == "LI" || tagName.ToUpper() == "DT" || tagName.ToUpper() == "DD")
+            {
+                elementType = eElementType.ListItem;
+            }
+            else if (tagName.ToUpper() == "MENU")
+            {
+                elementType = eElementType.MenuBar;
+            }
+            else if (tagName.ToUpper() == "H1" || tagName.ToUpper() == "H2" || tagName.ToUpper() == "H3" || tagName.ToUpper() == "H4" || tagName.ToUpper() == "H5" || tagName.ToUpper() == "H6" || tagName.ToUpper() == "P")
+            {
+                elementType = eElementType.Text;
+            }
+            else
+                elementType = eElementType.Unknown;
 
-            return list;
-        }
+            return elementType;
+        }       
 
         private ElementInfo GetElementInfoWithIWebElement(IWebElement el, string path)
         {
@@ -4034,14 +3897,19 @@ namespace GingerCore.Drivers
             string name = EL.GetAttribute("name");
             string id = EL.GetAttribute("id");
             string value = EL.GetAttribute("value");
-            if (tagName == "TABLE")
+
+            if (tagName.ToUpper() == "TABLE")
                 return "Table";
-            if (!string.IsNullOrEmpty(id))
-                return tagName + " ID=" + id;
+
             if (!string.IsNullOrEmpty(name))
-                return tagName + " Name=" + name;
+                return name + " " + tagName;
+
+            if (!string.IsNullOrEmpty(id))
+                return id + " " + tagName;
+
             if (!string.IsNullOrEmpty(value))
-                return tagName + " " + GetShortName(value);
+                return GetShortName(value) + " " + tagName;
+
             return tagName;
         }
 
@@ -4111,92 +3979,7 @@ namespace GingerCore.Drivers
             return elementType.ToUpper();
         }
 
-        private eElementType GetElementTypeEnum(IWebElement EL = null, string JSType = null)
-        {
-            eElementType elementType = eElementType.Unknown;
-            string tagName;
-            string type;
-
-            if ((EL == null) && (JSType != null))
-            {
-                tagName = JSType;
-                type = string.Empty;
-            }
-            else if ((EL != null) && (JSType == null))
-            {
-                tagName = EL.TagName;
-                type = EL.GetAttribute("type");
-            }
-            else
-            {
-                return elementType;
-            }
-
-            if ((tagName.ToUpper() == "INPUT" && (type.ToUpper() == "UNDEFINED" || type.ToUpper() == "PASSWORD" || type.ToUpper() == "EMAIL"))  || 
-                 tagName.ToUpper() == "TEXTAREA" || tagName.ToUpper() == "TEXT")
-            {
-                elementType = eElementType.TextBox;
-            }
-            else if ((tagName.ToUpper() == "INPUT" && ( type.ToUpper() == "IMAGE" || type.ToUpper() == "SUBMIT")) ||
-                    tagName.ToUpper() == "BUTTON" || tagName.ToUpper() == "SUBMIT")
-            {
-                elementType = eElementType.Button;
-            }
-            else if (tagName.ToUpper() == "TD" || tagName.ToUpper() == "TH")
-            {
-                elementType = eElementType.TableItem;
-            }
-            else if (tagName.ToUpper() == "LINK" || tagName.ToUpper() == "A" || tagName.ToUpper() == "LI")
-            {
-                elementType = eElementType.HyperLink;
-            }
-            else if (tagName.ToUpper() == "LABEL")
-            {
-                elementType = eElementType.Label;
-            }
-            else if (tagName.ToUpper() == "SELECT" || tagName.ToUpper() == "SELECT-ONE")
-            {
-                elementType = eElementType.ComboBox;
-            }
-            else if (tagName.ToUpper() == "TABLE")
-            {
-                elementType = eElementType.Table;
-            }
-            else if (tagName.ToUpper() == "JEDITOR.TABLE")
-            {
-                elementType = eElementType.EditorPane;
-            }
-            else if (tagName.ToUpper() == "DIV")  
-            {
-                elementType = eElementType.Div;
-            }
-            else if (tagName.ToUpper() == "SPAN")  
-            {
-                elementType = eElementType.Span;
-            }
-            else if (tagName.ToUpper() == "IMG")  
-            {
-                elementType = eElementType.Image;
-            }
-            else if(tagName.ToUpper() == "INPUT" && type.ToUpper() == "CHECKBOX")
-            {
-                elementType = eElementType.CheckBox;
-            }
-            else if(tagName.ToUpper() == "INPUT" && type.ToUpper() == "RADIO") 
-            {
-                elementType = eElementType.RadioButton;
-            }
-            else if (tagName.ToUpper() == "IFRAME")  
-            {
-                elementType = eElementType.Iframe;
-            }
-            else if (tagName.ToUpper() == "CANVAS")  
-            {
-                elementType = eElementType.Canvas;
-            }
-
-            return elementType;
-        }
+       
 
         void IWindowExplorer.SwitchWindow(string Title)
         {
@@ -4232,57 +4015,50 @@ namespace GingerCore.Drivers
             return true;
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        {
+            HighlightElement(ElementInfo, null, locateElementByItLocators);
+        }
+
+        private void HighlightElement(ElementInfo ElementInfo, IWebElement el=null,  bool locateElementByItLocators = false)
         {
             UnhighlightLast();
 
             Driver.SwitchTo().DefaultContent();
             SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
 
-            ElementLocator elementXpathLocator = ElementInfo.Locators.Where(x => x.LocateBy == eLocateBy.ByXPath).FirstOrDefault();
-            if (elementXpathLocator == null || string.IsNullOrEmpty(elementXpathLocator.LocateValue))
+            //Find element 
+            if (el == null)
             {
-                if (string.IsNullOrEmpty(ElementInfo.XPath))
+                if (locateElementByItLocators)
                 {
-                    ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                    el = LocateElementByLocators(ElementInfo.Locators);
                 }
-                elementXpathLocator = new ElementLocator() { LocateBy = eLocateBy.ByXPath,LocateValue = ElementInfo.XPath};
-                // Add Generate function
-                ElementInfo.Locators.Add(elementXpathLocator);
+                else
+                {
+                    if (string.IsNullOrEmpty(ElementInfo.XPath))
+                        ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                    el = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                }
             }
+            if (el == null) return;
 
-
-            //IWebElement el = Driver.FindElement(By.XPath(ElementInfo.XPath));
-            IWebElement el = LocateElementByLocators(ElementInfo.Locators);
-
-            PopulateComboBoxOptionalValues(ElementInfo,el);
-
+            //Highlight element
             IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
-
             string highlightJavascript = string.Empty;
-            if (ElementInfo.ElementType == "INPUT.CHECKBOX" || ElementInfo.ElementType == "TR" || ElementInfo.ElementType == "TBODY")
+
+            //if (ElementInfo.ElementType == "INPUT.CHECKBOX" || ElementInfo.ElementType == "TR" || ElementInfo.ElementType == "TBODY")
+            if (ElementInfo.ElementTypeEnum == eElementType.CheckBox || ElementInfo.ElementTypeEnum == eElementType.TableItem || ElementInfo.ElementType == "TBODY")
                 highlightJavascript = "arguments[0].style.outline='3px dashed red'";
             else
                 highlightJavascript = "arguments[0].style.border='3px dashed red'";
             javascriptDriver.ExecuteScript(highlightJavascript, new object[] { el });
 
-            LastHighLightedElementInfo = ElementInfo;
+            LastHighLightedElement = el;
         }
 
 
-        private void PopulateComboBoxOptionalValues(ElementInfo ElementInfo, IWebElement ComboBoxElement = null)
-        {
-            if (ElementInfo.ElementTypeEnum == eElementType.ComboBox)
-            {
-                if (ComboBoxElement == null)
-                    ComboBoxElement = LocateElementByLocators(ElementInfo.Locators);
-                ReadOnlyCollection<IWebElement> childrenElements = ComboBoxElement.FindElements(By.XPath("*"));
-                foreach (IWebElement el in childrenElements)
-                {
-                    ElementInfo.ComboBoxOptionalValues.Add(new ComboBoxOptionalValue() { TagName = el.TagName, Value = el.Text});
-                }
-            }
-        }
+        
 
         void IWindowExplorer.UnHighLightElements()
         {
@@ -4291,46 +4067,54 @@ namespace GingerCore.Drivers
 
         public void UnhighlightLast()
         {
-            if (LastHighLightedElementInfo != null)
+            try
             {
-                IWebElement el = null;
-
-                el = LocateElementByLocators(LastHighLightedElementInfo.Locators);
-
-                IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
-
-                if (el != null)
+                if (LastHighLightedElement != null)
                 {
-                    try
-                    {
-                        // if there already is a highlighted element, unhighlight it
-                        if (LastHighLightedElementInfo.ElementType == "INPUT.CHECKBOX" || LastHighLightedElementInfo.ElementType == "TR" || LastHighLightedElementInfo.ElementType == "TBODY")
-                                javascriptDriver.ExecuteScript("arguments[0].style.outline=''", el);
-                        else
-                            javascriptDriver.ExecuteScript("arguments[0].style.border=''", el);
-                    }
-                    catch (StaleElementReferenceException ignored)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ignored.Message}");
-                        // the page got reloaded, the element isn't there
-                    }
+                    ElementInfo elementInfo = GetElementInfoWithIWebElement(LastHighLightedElement, string.Empty);
+
+                    //Un Highlight
+                    IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
+                    if (elementInfo.ElementTypeEnum == eElementType.CheckBox || elementInfo.ElementTypeEnum == eElementType.TableItem || elementInfo.ElementType == "TBODY")
+                        javascriptDriver.ExecuteScript("arguments[0].style.outline=''", LastHighLightedElement);
+                    else
+                        javascriptDriver.ExecuteScript("arguments[0].style.border=''", LastHighLightedElement);
                 }
             }
+            catch (Exception ex)
+            { }
         }
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
         {
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+
+            //Base properties 
+            list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
+            list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
+            list.Add(new ControlProperty() { Name = "Height", Value = ElementInfo.Height.ToString() });
+            list.Add(new ControlProperty() { Name = "Width", Value = ElementInfo.Width.ToString() });
+            list.Add(new ControlProperty() { Name = "X", Value = ElementInfo.X.ToString() });
+            list.Add(new ControlProperty() { Name = "Y", Value = ElementInfo.Y.ToString() });
+            if (!String.IsNullOrEmpty(ElementInfo.Value))
+                list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
+
+            //Learn more properties
             IWebElement el = null;
-
-
-            //if (ElementInfo.XPath != null)
-            //  el = Driver.FindElement(By.XPath(ElementInfo.XPath));
-
-            el = LocateElementByLocators(ElementInfo.Locators);
-            IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
+            if (string.IsNullOrEmpty(ElementInfo.XPath))
+                ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+            el = Driver.FindElement(By.XPath(ElementInfo.XPath));
             if (el != null)
             {
+                //Learn optional values
+                if (ElementInfo.ElementTypeEnum == eElementType.ComboBox || ElementInfo.ElementTypeEnum == eElementType.List)
+                {                   
+                    foreach (IWebElement value in el.FindElements(By.XPath("*")))
+                        ElementInfo.OptionalValues.Add(value.Text);
+                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
+                }
+
+                IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;                
                 Dictionary<string, object> attributes = javascriptDriver.ExecuteScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", el) as Dictionary<string, object>;
                 if (!(attributes == null))
                     foreach (KeyValuePair<string, object> kvp in attributes)
@@ -4341,14 +4125,10 @@ namespace GingerCore.Drivers
                             string PValue = kvp.Value.ToString();
                             list.Add(new ControlProperty() { Name = PName, Value = PValue });
                         }
-
                     }
             }
-
-            list.Add(new ControlProperty() { Name = nameof(ElementInfo.XPath), Value = ElementInfo.XPath });
-            list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
             return list;
-        }
+        }        
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
@@ -4425,30 +4205,30 @@ namespace GingerCore.Drivers
             string id = e.GetAttribute("id");
             if (!string.IsNullOrEmpty(id))
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByID, LocateValue = id, Help = "Very Recommended - ID is Very good locater and probably unique", Active = true });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByID, LocateValue = id, Help = "Very Recommended (usually unique)", Active = true });
             }
             string name = e.GetAttribute("name");
             if (!string.IsNullOrEmpty(name))
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended - Name is Very good locater and probably unique", Active = true });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended (usually unique)", Active = true });
             }
-            list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended - Xpath is relative path to element, but sensitive if screen change", Active = true });
+            list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended (sensitive to page design changes)", Active = true });
             string eClass = e.GetAttribute("class");
             if (!string.IsNullOrEmpty(eClass) && eClass != "GingerHighlight")
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByClassName, LocateValue = eClass, Help = "No Recommended - Same Class can be used for many element", Active = true });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByClassName, LocateValue = eClass, Help = "Not Recommended (usually not unique)", Active = true });
             }
-            if (e.TagName == "input")
-            {
-                string multivals = "TagName=" + e.TagName;
-                string InputType = e.GetAttribute("type");
-                if (InputType == "button")
-                {
-                    multivals += ";" + "Type=" + InputType;
-                    multivals += ";text=" + e.GetAttribute("value"); ;
-                    list.Add(new ElementLocator() { LocateBy = eLocateBy.ByMulitpleProperties, LocateValue = multivals, Help = "Good but slow - Add as many properties as needed", Active = true });
-                }
-            }
+            //if (e.TagName == "input")
+            //{
+            //    string multivals = "TagName=" + e.TagName;
+            //    string InputType = e.GetAttribute("type");
+            //    if (InputType == "button")
+            //    {
+            //        multivals += ";" + "Type=" + InputType;
+            //        multivals += ";text=" + e.GetAttribute("value"); ;
+            //        list.Add(new ElementLocator() { LocateBy = eLocateBy.ByMulitpleProperties, LocateValue = multivals, Help = "Good but slow - Add as many properties as needed", Active = true });
+            //    }
+            //}
             return list;
         }
 
@@ -6218,32 +5998,32 @@ namespace GingerCore.Drivers
             Driver.SwitchTo().DefaultContent();
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            ObservableList<UIElementFilter> FilteringCriteriaList = new ObservableList<UIElementFilter>();
+        //ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
+        //{
+        //    ObservableList<UIElementFilter> FilteringCriteriaList = new ObservableList<UIElementFilter>();
 
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.Button, "Tags: Input.Button, Button"));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.CheckBox, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.ComboBox, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.ComboBoxOption, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.Div, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.Form, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.HyperLink, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.Image, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.Label, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.List, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.ListItem, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.MenuBar, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.RadioButton, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.Span, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.Table, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.TableItem, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.TextBox, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.TreeView, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.Iframe, ""));
-            FilteringCriteriaList.Add(new UIElementFilter(eElementType.Text, ""));
-            return FilteringCriteriaList;
-        }
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Button, "Tags: Input.Button, Button"));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.CheckBox, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.ComboBox, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.ComboBoxOption, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Div, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Form, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.HyperLink, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Image, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Label, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.List, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.ListItem, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.MenuBar, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.RadioButton, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Span, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Table, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.TableItem, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.TextBox, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.TreeView, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Iframe, ""));
+        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Text, ""));
+        //    return FilteringCriteriaList;
+        //}
 
         XPathHelper IXPath.GetXPathHelper(ElementInfo info)
         {
@@ -6514,52 +6294,23 @@ namespace GingerCore.Drivers
             return true;
         }
 
-
-        private bool TestOneElementLocator(ElementLocator mLocatorsGridCurrentItem)
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
         {
-            try
-            {
-                List<IWebElement> ElementsList = LocateElements(mLocatorsGridCurrentItem.LocateBy, mLocatorsGridCurrentItem.LocateValue);
-                if (ElementsList != null && ElementsList.Count == 1)
+            foreach (ElementLocator el in elementLocators)
+                el.LocateStatus = ElementLocator.eLocateStatus.Pending;
+
+            foreach (ElementLocator el in elementLocators.Where(x=>x.Active==true).ToList())
+            {                
+                if (LocateElementByLocator(el, true) != null)
                 {
-                    mLocatorsGridCurrentItem.TestStatusError = string.Empty;
-                    mLocatorsGridCurrentItem.TestStatus = ElementLocator.eTestStatus.Passed;
-                    return true;
+                    el.LocateStatusError = string.Empty;
+                    el.LocateStatus = ElementLocator.eLocateStatus.Passed;                   
                 }
                 else
                 {
-                    mLocatorsGridCurrentItem.TestStatusError = "Element not found: " + mLocatorsGridCurrentItem.LocateBy + "=" + mLocatorsGridCurrentItem.LocateValue;
-                    mLocatorsGridCurrentItem.TestStatus = ElementLocator.eTestStatus.Failed;
-                    return false;
-                }
-
-            }
-            catch
-            {
-                mLocatorsGridCurrentItem.TestStatus = ElementLocator.eTestStatus.Failed;
-                return false;
-            }
-
-        }
-
-
-
-        public bool TestAllElementsLocators(ObservableList<ElementLocator> mLocators)
-        {
-            try
-            {
-                foreach (ElementLocator EL in mLocators)
-                {
-                    TestOneElementLocator(EL);
+                    el.LocateStatus = ElementLocator.eLocateStatus.Failed;
                 }
             }
-            catch
-            {
-                return false;
-            }
-            return true;
         }
     }
-
-
 }

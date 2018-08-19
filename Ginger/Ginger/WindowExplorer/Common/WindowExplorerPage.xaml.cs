@@ -51,12 +51,9 @@ using System.Xml;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.UserControls;
-using Amdocs.Ginger.Repository;
+using GingerCore.Platforms.PlatformsInfo;
 using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCore.Platforms.PlatformsInfo;
-using GingerCore.Actions.Common;
-using GingerCore.Platforms.PlatformsInfo;
 
 namespace Ginger.WindowExplorer
 {
@@ -87,33 +84,19 @@ namespace Ginger.WindowExplorer
         public enum eWindowExplorerPageContext
         {
             WindowExplorerPage,
-            POMWizard
-
         }
 
         private eWindowExplorerPageContext mContext;
-        private ApplicationPOMModel mPOM;
+        
         // We can open it from agents grid, or from Action Edit page with Action 
         // If we open from ActionEdit Page then we update the act with locator
-        public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, ApplicationPOMModel POM = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
+        public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
         {           
             InitializeComponent();
 
             mContext = Context;
-            mPOM = POM;
+            
             mPlatform = PlatformInfoBase.GetPlatformImpl(ApplicationAgent.Agent.Platform);
-
-            if (mContext == eWindowExplorerPageContext.POMWizard)
-            {
-                WindowControlsTreeView.Visibility = System.Windows.Visibility.Collapsed;
-                WindowControlsGridView.Visibility = System.Windows.Visibility.Visible;
-                GridTreeViewButton.Visibility = Visibility.Collapsed;
-                RecordingButton.Visibility = Visibility.Collapsed;
-                //xWindowGrid.Visibility = Visibility.Collapsed;
-                WindowComboboxRow.Height = new GridLength(0);
-                WindowControlsGridView.DataSourceList = mPOM.MappedUIElements;
-                WindowControlsGridView.AddToolbarTool("@Import_16x16.png", "Remove Items from mapped list", new RoutedEventHandler(RemoveButtonClicked));
-            }
 
             //Instead of check make it disabled ?
             if ((ApplicationAgent.Agent.Driver is IWindowExplorer) == false)
@@ -159,47 +142,6 @@ namespace Ginger.WindowExplorer
             SetActionsTabDesign(false);
 
             ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$White");
-        }
-
-
-        private void SetAutoMapElementTypes()
-        {
-
-            ePlatformType platformType = GetTargetApplicationPlatform();
-            List<eElementType> UIElementsTypeList = null;
-            switch (platformType)
-            {
-                case ePlatformType.Web:
-                    WebPlatform webPlatformInfo = new WebPlatform();
-                    UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
-                    break;
-            }
-
-            foreach (eElementType eET in UIElementsTypeList)
-            {
-                FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
-            }
-
-        }
-
-        private ePlatformType GetTargetApplicationPlatform()
-        {
-            string targetapp = mApplicationAgent.AppName;
-            ePlatformType platform = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
-            return platform;
-        }
-
-
-        private void RemoveButtonClicked(object sender, RoutedEventArgs e)
-        {
-            List<ElementInfo> ItemsToAddList = mPOM.MappedUIElements.Where(x => x.Selected).ToList();
-
-            foreach (ElementInfo EI in ItemsToAddList)
-            {
-                EI.Selected = false;
-                mPOM.MappedUIElements.Remove(EI);
-                mPOM.UnMappedUIElements.Add(EI);
-            }
         }
 
         private void RefreshControlProperties(object sender, RoutedEventArgs e)
@@ -872,11 +814,6 @@ namespace Ginger.WindowExplorer
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            if (mContext == eWindowExplorerPageContext.POMWizard)
-            {
-                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Selected), Header = "Selected", StyleType = GridColView.eGridColStyleType.CheckBox });
-            }
-
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60 });            
@@ -1195,6 +1132,23 @@ namespace Ginger.WindowExplorer
             isSearched = RefreshFilteredElements();
             StatusTextBlock.Text = "Ready";
             return isSearched;
+        }
+
+        private void SetAutoMapElementTypes()
+        {
+            List<eElementType> UIElementsTypeList = null;
+            switch (mApplicationAgent.Agent.Platform)
+            {
+                case ePlatformType.Web:
+                    WebPlatform webPlatformInfo = new WebPlatform();
+                    UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
+                    break;
+            }
+
+            foreach (eElementType eET in UIElementsTypeList)
+            {
+                FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
+            }
         }
 
         private void ShowFilterElementsPage()

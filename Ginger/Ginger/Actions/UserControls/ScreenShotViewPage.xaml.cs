@@ -157,11 +157,6 @@ namespace Ginger.Actions.UserControls
 
                 try
                 {
-                    //Bitmap newBitmap = new Bitmap(bitmap);
-                    //bitmap.Dispose();
-                    //bitmap = null;
-                    //newBitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-
                     bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
                     memory.Position = 0;
                     BitmapImage bitmapimage = new BitmapImage();

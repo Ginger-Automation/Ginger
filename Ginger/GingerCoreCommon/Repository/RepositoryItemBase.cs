@@ -221,7 +221,8 @@ namespace Amdocs.Ginger.Repository
             
             var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
-            {               
+            {
+                Console.WriteLine(mi.Name);
                 if (!isLocalBackup)
                 {                    
                     if (mi.Name == nameof(mBackupDic)) continue; // since we are running on repo item which contain the dic we need to ignore trying to save it...
@@ -300,12 +301,6 @@ namespace Amdocs.Ginger.Repository
 
         public void ClearBackup(bool isLocalBackup = false)
         {
-            try
-            {
-                if (this.GetType().GetMembers() == null)
-                {
-
-                }
                 var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
                 foreach (MemberInfo mi in properties)
                 {
@@ -332,15 +327,7 @@ namespace Amdocs.Ginger.Repository
                     mBackupDic = null;
                     OnPropertyChanged(nameof(IsDirty));
                 }
-                mLocalBackupDic = null;
-
-            }
-            catch
-            {
-
-            }
-             
-                                
+                mLocalBackupDic = null;                     
         }
 
         private void RestoreBackup(bool isLocalBackup = false)
@@ -674,15 +661,7 @@ namespace Amdocs.Ginger.Repository
                 RepositoryItemHeader.Version++;
                 RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
                 RepositoryItemHeader.LastUpdateBy = Environment.UserName;
-                try
-                {
-                    this.ClearBackup();
-                }
-                catch
-                {
-
-                }
-
+                this.ClearBackup();
             }
         }
 

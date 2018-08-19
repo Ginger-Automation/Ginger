@@ -1270,7 +1270,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return false;
         }
         
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             //TODO: keep old elemnent border and restore it
             //string scriptRemoveBorder = "arguments[0].style.border='0px'";
@@ -1343,12 +1343,6 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
             return true;
@@ -1359,7 +1353,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             throw new NotImplementedException();
         }
 
-        public bool TestAllElementsLocators(ObservableList<ElementLocator> mLocators)
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
         {
             throw new NotImplementedException();
         }

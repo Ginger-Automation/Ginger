@@ -814,7 +814,7 @@ namespace GingerCore.Drivers.AndroidADB
             //NA
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             Dispatcher.Invoke(() =>
             {
@@ -1603,12 +1603,6 @@ namespace GingerCore.Drivers.AndroidADB
             
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
             return true;
@@ -1619,7 +1613,7 @@ namespace GingerCore.Drivers.AndroidADB
             throw new NotImplementedException();
         }
 
-        public bool TestAllElementsLocators(ObservableList<ElementLocator> mLocators)
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
         {
             throw new NotImplementedException();
         }

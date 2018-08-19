@@ -24,7 +24,7 @@ namespace Amdocs.Ginger.Common.UIElement
     {
         List<AppWindow> GetAppWindows();        
         void SwitchWindow(string Title);     
-        void HighLightElement(ElementInfo ElementInfo);
+        void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators=false);
         void UnHighLightElements();
         string GetFocusedControl();
         ElementInfo GetControlFromMousePosition();       
@@ -45,11 +45,11 @@ namespace Amdocs.Ginger.Common.UIElement
         bool AddSwitchWindowAction(string Title);
 
         ObservableList<ElementInfo> GetElements(ElementLocator EL);
+
         void UpdateElementInfoFields(ElementInfo eI);
-        ObservableList<UIElementFilter> GetFilteringCreteriaDict();
 
         bool IsElementObjectValid(object obj);
 
-        bool TestAllElementsLocators(ObservableList<ElementLocator> mLocators);
+        void TestElementLocators(ObservableList<ElementLocator> elementLocators);
     }
 }

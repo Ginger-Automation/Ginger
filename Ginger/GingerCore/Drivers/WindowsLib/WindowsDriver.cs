@@ -694,7 +694,7 @@ namespace GingerCore.Drivers.WindowsLib
             return aw;
         }
         
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             HighLightElement(ElementInfo);           
         }
@@ -907,12 +907,6 @@ namespace GingerCore.Drivers.WindowsLib
         {
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         public VisualElementsInfo GetVisualElementsInfo()
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
@@ -949,8 +943,7 @@ namespace GingerCore.Drivers.WindowsLib
             throw new NotImplementedException();
         }
 
-
-        public bool TestAllElementsLocators(ObservableList<ElementLocator> mLocators)
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
         {
             throw new NotImplementedException();
         }

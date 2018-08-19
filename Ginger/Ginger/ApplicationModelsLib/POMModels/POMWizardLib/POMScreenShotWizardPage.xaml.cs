@@ -16,18 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.ValidationRules;
 using Ginger.Actions.UserControls;
-using Ginger.ApplicationModelsLib.POMModels.POMWizardLib;
 using GingerCore;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers;
 using GingerWPF.WizardLib;
 using System;
-using System.Drawing;
 using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -47,8 +40,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         }
 
         ScreenShotViewPage mScreenshotPage;
-        //string FrameWorkContent 
-        //System.Windows.Visibility FrameVisible = System.Windows.Visibility.Collapsed;
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
@@ -56,9 +47,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
-                    //GingerCore.General.ObjFieldBinding(MainFrame, Frame.ContentProperty, this, nameof(mScreenshotPage));
-                    //MainFrame.AddValidationRule(new EmptyValidationRule());
-                    
                     break;
 
                 case EventType.Active:
@@ -73,7 +61,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
             mScreenshotPage = new ScreenShotViewPage(mWizard.POM.Name, mWizard.ScreenShot);
             MainFrame.Content = mScreenshotPage;
-            //FrameVisible = System.Windows.Visibility.Visible;
         }
 
 
@@ -81,9 +68,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             ShowScreenShot();
         }
-
-
-        //BitmapSource bitmapSource = null;
 
         private void BrowseImageButtonClicked(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -94,7 +78,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             var fileLength = new FileInfo(op.FileName).Length;
             if (fileLength <= 30000)
             {
-                //bitmapSource = new BitmapImage(new Uri(op.FileName));
                 if ((op.FileName != null) && (op.FileName != string.Empty))
                 {
                     using (var ms = new MemoryStream())

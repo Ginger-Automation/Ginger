@@ -229,6 +229,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.HtmlReport:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Html5);
                     break;
+                case eImageType.ApplicationPOM:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
+                    break;
                 #endregion
 
 
@@ -424,13 +427,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Download:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
-                    break;
-                case eImageType.HandPointer:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.HandPointerOutline);
-                    break;
-                case eImageType.Camera:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Camera);
-                    break;
+                    break;              
                 #endregion
 
 
@@ -517,6 +514,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.PluginPackage:
                     SetAsStaticImage("Plugin_32x32.png");
+                    break;
+                case eImageType.Pointer:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.HandPointerOutline);
+                    break;
+                case eImageType.Camera:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Camera);
                     break;
                 #endregion
 
