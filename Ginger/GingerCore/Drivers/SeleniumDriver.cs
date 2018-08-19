@@ -4218,17 +4218,7 @@ namespace GingerCore.Drivers
             {
                 list.Add(new ElementLocator() { LocateBy = eLocateBy.ByClassName, LocateValue = eClass, Help = "Not Recommended (usually not unique)", Active = true });
             }
-            //if (e.TagName == "input")
-            //{
-            //    string multivals = "TagName=" + e.TagName;
-            //    string InputType = e.GetAttribute("type");
-            //    if (InputType == "button")
-            //    {
-            //        multivals += ";" + "Type=" + InputType;
-            //        multivals += ";text=" + e.GetAttribute("value"); ;
-            //        list.Add(new ElementLocator() { LocateBy = eLocateBy.ByMulitpleProperties, LocateValue = multivals, Help = "Good but slow - Add as many properties as needed", Active = true });
-            //    }
-            //}
+
             return list;
         }
 
@@ -6022,33 +6012,6 @@ namespace GingerCore.Drivers
 
             Driver.SwitchTo().DefaultContent();
         }
-
-        //ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        //{
-        //    ObservableList<UIElementFilter> FilteringCriteriaList = new ObservableList<UIElementFilter>();
-
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Button, "Tags: Input.Button, Button"));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.CheckBox, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.ComboBox, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.ComboBoxOption, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Div, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Form, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.HyperLink, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Image, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Label, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.List, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.ListItem, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.MenuBar, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.RadioButton, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Span, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Table, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.TableItem, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.TextBox, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.TreeView, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Iframe, ""));
-        //    FilteringCriteriaList.Add(new UIElementFilter(eElementType.Text, ""));
-        //    return FilteringCriteriaList;
-        //}
 
         XPathHelper IXPath.GetXPathHelper(ElementInfo info)
         {

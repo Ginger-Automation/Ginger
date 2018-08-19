@@ -221,8 +221,7 @@ namespace Amdocs.Ginger.Repository
             
             var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
-            {
-                Console.WriteLine(mi.Name);
+            {               
                 if (!isLocalBackup)
                 {                    
                     if (mi.Name == nameof(mBackupDic)) continue; // since we are running on repo item which contain the dic we need to ignore trying to save it...

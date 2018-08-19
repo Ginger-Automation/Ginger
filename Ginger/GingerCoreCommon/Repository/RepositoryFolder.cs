@@ -233,6 +233,7 @@ namespace Amdocs.Ginger.Repository
 
             string[] fileEntries = FileSystem.GetDirectoryFiles(FullPath, mSolutionRepositoryItemInfo.Pattern);
 
+
             Parallel.ForEach(fileEntries, FileName =>
             {
                 // Check if item exist in cache if yes use it, no need to load from file, yay!
