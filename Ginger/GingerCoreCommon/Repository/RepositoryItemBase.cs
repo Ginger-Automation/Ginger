@@ -390,7 +390,7 @@ namespace Amdocs.Ginger.Repository
                     // Do set only if we can really do set, some attrs are get only
                     // FieldInfo fi = this.GetType().GetField(mi.Name, BindingFlags.SetProperty);
                     FieldInfo fi = this.GetType().GetField(mi.Name);
-                    if (fi != null)
+                    if (fi != null && fi.IsStatic == false)
                     {
                         fi.SetValue(this, v);
                     }
