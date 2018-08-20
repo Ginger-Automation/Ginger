@@ -106,11 +106,9 @@ namespace Ginger.Actions
                 IEnumerable<Act> OrderedActions = allActions.OrderBy(x => x.Description);
                 foreach (Act cA in OrderedActions)
                 {
-                    if (cA.IsLegacyAction)
-                    {
-                        LegacyActions.Add(cA);
-                    }
-                    else if (cA.LegacyActionPlatformsList.Intersect(cA.Platforms).Any()) // App.BusinessFlow.CurrentActivity ??
+                    if (cA.LegacyActionPlatformsList.Intersect(App.UserProfile.Solution.ApplicationPlatforms
+                                                                    .Where(x => App.BusinessFlow.CurrentActivity.TargetApplication == x.AppName)
+                                                                    .Select(x => x.Platform).ToList()).Any())
                     {
                         LegacyActions.Add(cA);
                     }

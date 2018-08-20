@@ -158,8 +158,11 @@ namespace GingerCore
             RepositoryItem copiedItem = (RepositoryItem)this.CreateCopy();
             copiedItem.ParentGuid = this.Guid;
             if (originFromShredRepo)
+            {
                 copiedItem.IsSharedRepositoryInstance = true;
-            return copiedItem;
+                copiedItem.ExternalID = this.ExternalID;
+            }
+                return copiedItem;
         }
 
         //// Temp solution for backup restore until we have the obj ref tree copy
