@@ -34,7 +34,7 @@
                     <ColumnDefinition Width="194" />
                 </Grid.ColumnDefinitions>
                 <Label Content="Locate By:"  Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}" Grid.Row="0" Grid.Column="0"/>
-                <ComboBox  x:Name="ElementLocateByComboBox" SelectionChanged="ElementLocateByComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" 
+                <ComboBox  x:Name="ElementLocateByComboBox" SelectionChanged="ElementLocateByComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" 
                                                   ToolTip="How to Locate the Element on the screen"  Grid.Row="0" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
 
 
@@ -47,9 +47,9 @@
                     <Image x:Name="ElementTypeImage" Source="{StaticResource @Run_16x16}" Width="16" />
                 </StackPanel>
 
-                <ComboBox x:Name="ElementTypeComboBox"  SelectionChanged="ElementTypeComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" Grid.Row="2" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
+                <ComboBox x:Name="ElementTypeComboBox"  SelectionChanged="ElementTypeComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Row="2" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
                 <Label Content="Element Action:"  Name="ElementActionLabel" Grid.Row="3" Grid.Column="0" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}"/>
-                <ComboBox x:Name="ElementActionComboBox" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="ElementActionComboBox_SelectionChanged" IsSynchronizedWithCurrentItem="True" Grid.Row="3" Grid.Column="1" Height="Auto" Margin="0,4,-48,13">
+                <ComboBox x:Name="ElementActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementActionComboBox_SelectionChanged" IsSynchronizedWithCurrentItem="True" Grid.Row="3" Grid.Column="1" Height="Auto" Margin="0,4,-48,13">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding text}"/>
