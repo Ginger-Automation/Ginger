@@ -22,9 +22,13 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.BindingLib;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace Ginger.ApplicationModelsLib.POMModels
 {
@@ -40,12 +44,30 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             InitializeComponent();
             mPOM = POM;
+            ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
+            ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
 
-            ScreenShotViewPage p = new ScreenShotViewPage(mPOM.Name, mPOM.ScreenShot);
+            xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
+            FillTargetAppsComboBox();
+            xTargetApplicationComboBox.Init(mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
+            xTagsViewer.Init(mPOM.TagsKeys);
+
+            BitmapSource source = null;
+            if (mPOM.ScreenShotImage != null)
+            {
+                source = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.ScreenShotImage.ToString()));
+            }
+
+            //Bitmap ScreenShot = BitmapFromSource(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.LogoBase64Image.ToString())));
+
+            ScreenShotViewPage p = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.Content = p;
 
-            MappedUIElementsPage mappedUIElementsPage = new MappedUIElementsPage(mPOM);
-            xUIElementsFrame.Content = mappedUIElementsPage;
+            //PomElementsMappingPage mappedUIElementsPage = new PomElementsMappingPage(mPOM,null);
+            PomAllElementsPage pomAllElementsPage = new PomAllElementsPage(mPOM, null);
+            //pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
+            //pomAllElementsPage.unmappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
+            xUIElementsFrame.Content = pomAllElementsPage;
 
             //PageNameTextBox.BindControl(mApplicationPOM, nameof(ApplicationPOM.Name));
 
@@ -82,6 +104,40 @@ namespace Ginger.ApplicationModelsLib.POMModels
             //DesignFrame.Content = pd;
 
             //InitControlPropertiesGrid();
+        }
+
+        private void FillTargetAppsComboBox()
+        {
+            //get key object 
+            if (mPOM.TargetApplicationKey != null)
+            {
+                RepositoryItemKey key = App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Guid == mPOM.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                if (key != null)
+                {
+                    mPOM.TargetApplicationKey = key;
+                }
+                else
+                {
+                    //TODO: Fix with New Reporter (on GingerWPF)
+                    System.Windows.MessageBox.Show(string.Format("The mapped '{0}' Target Application was not found, please select new Target Application", mPOM.Key.ItemName), "Missing Target Application", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                }
+            }
+            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms;
+            xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
+            xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
+        }
+
+        public static Bitmap BitmapFromSource(BitmapSource bitmapsource)
+        {
+            Bitmap bitmap;
+            using (var outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(bitmapsource));
+                enc.Save(outStream);
+                bitmap = new Bitmap(outStream);
+            }
+            return bitmap;
         }
 
         //private void InitControlPropertiesGrid()
@@ -163,7 +219,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         //    //    l.Content = "Label";
         //    //    l.MouseDown += Label_MouseDown;                
         //    //    control = l;
-                
+
         //    //    //TODO: create at the end for all the same
         //    //    ElementInfo EI = new ElementInfo();
         //    //    EI.ElementName = "New Label";

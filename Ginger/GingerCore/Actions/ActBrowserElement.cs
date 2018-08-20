@@ -137,7 +137,7 @@ namespace GingerCore.Actions
             CloseTabExcept,
             [EnumValueDescription("Close All")]
             CloseAll,
-            [EnumValueDescription("Close All")]
+            [EnumValueDescription("Refresh")]
             Refresh,
             [EnumValueDescription("Navigate Back")]
             NavigateBack,

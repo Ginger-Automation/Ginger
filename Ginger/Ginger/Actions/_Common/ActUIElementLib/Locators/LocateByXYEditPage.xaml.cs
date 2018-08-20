@@ -44,7 +44,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             txtLocateValueY.ValueTextBox.Text = Y + "";
         }
 
-        private void txtLocateValueX_LostFocus(object sender, RoutedEventArgs e)
+        private void txtLocateValueXY_LostFocus(object sender, RoutedEventArgs e)
         {
             double X;
             bool b = double.TryParse(txtLocateValueX.ValueTextBox.Text, out X);

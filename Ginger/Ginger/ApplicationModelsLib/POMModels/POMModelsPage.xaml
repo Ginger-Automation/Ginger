@@ -10,6 +10,6 @@
       Title="POMModelsPage">
 
     <Grid>
-        <ginger:ucGrid x:Name="xPOMModelsGrid" Title="Folder POM Models" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Visible"/>
+        <ginger:ucGrid x:Name="xPOMModelsGrid" Title="Folder Page Objects Model" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Visible"/>
     </Grid>
 </Page>

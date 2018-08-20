@@ -17,47 +17,59 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Ginger.ApplicationModelsLib.POMModels
+namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
     /// <summary>
-    /// Interaction logic for MappedUIElementsPage.xaml
+    /// Interaction logic for UnmappedElementsPage.xaml
     /// </summary>
-    public partial class MappedUIElementsPage : Page
+    public partial class UnmappedElementsPage : Page
     {
-
         ApplicationPOMModel mPOM;
         GenericWindow _GenWin;
 
-        public MappedUIElementsPage(ApplicationPOMModel POM)
+        public UnmappedElementsPage(ApplicationPOMModel POM)
         {
             InitializeComponent();
             mPOM = POM;
             SetControlsGridView();
-            xMappedElementsGrid.DataSourceList = mPOM.MappedUIElements;
+            xUnmappedElementsGrid.DataSourceList = mPOM.UnMappedUIElements;
         }
 
         private void SetControlsGridView()
         {
 
-            xMappedElementsGrid.SetTitleLightStyle = true;
+            xUnmappedElementsGrid.SetTitleLightStyle = true;
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Selected), Header = "Element Title", WidthWeight = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Selected), Header = "", StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150 });
 
-            xMappedElementsGrid.SetAllColumnsDefaultView(view);
-            xMappedElementsGrid.InitViewItems();
+            xUnmappedElementsGrid.AddToolbarTool("@Import_16x16.png", "Add Items to mapped list", new RoutedEventHandler(AddButtonClicked));
+            xUnmappedElementsGrid.SetAllColumnsDefaultView(view);
+            xUnmappedElementsGrid.InitViewItems();
+        }
+
+        private void AddButtonClicked(object sender, RoutedEventArgs e)
+        {
+            List<ElementInfo> ItemsToAddList =  mPOM.UnMappedUIElements.Where(x => x.Selected).ToList();
+
+            foreach (ElementInfo EI in ItemsToAddList)
+            {
+                EI.Selected = false;
+                mPOM.MappedUIElements.Add(EI);
+                mPOM.UnMappedUIElements.Remove(EI);
+            }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
-            string Title = "Mappaed Elements Page";
+            string Title = "Unmappaed Elements Page";
 
             GingerCore.General.LoadGenericWindow(ref _GenWin, null, windowStyle, Title, this);
         }
