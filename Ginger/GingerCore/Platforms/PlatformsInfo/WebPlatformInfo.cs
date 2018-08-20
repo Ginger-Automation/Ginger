@@ -199,7 +199,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByXY);
                 mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);
-                mElementLocatorsTypeList.Add(eLocateBy.POM);
+                mElementLocatorsTypeList.Add(eLocateBy.POMElement);
                 mElementLocatorsTypeList.Add(eLocateBy.NA);
                 mElementLocatorsTypeList.Add(eLocateBy.Unknown);
                 mElementLocatorsTypeList.Add(eLocateBy.ByName);

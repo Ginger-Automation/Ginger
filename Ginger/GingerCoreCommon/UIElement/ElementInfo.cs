@@ -249,8 +249,8 @@ namespace Amdocs.Ginger.Common.UIElement
         ByModelName,
         [EnumValueDescription("By CSS Selector")]
         ByCSSSelector,
-        [EnumValueDescription("POM")]
-        POM,
+        [EnumValueDescription("POM Element")]
+        POMElement,
     }
 
     public enum eElementType

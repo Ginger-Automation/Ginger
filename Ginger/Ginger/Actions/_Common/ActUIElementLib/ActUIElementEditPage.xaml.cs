@@ -411,9 +411,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             switch (SelectedLocType)
             {
+                case eLocateBy.POMElement:
+                    LocateValueLable.Visibility = Visibility.Collapsed;
+                    LocateValueEditFramePanel.Width = 1000;
+                    return new LocateByPOMElement(mAction);
                 case eLocateBy.ByXY:
+                    LocateValueLable.Visibility = Visibility.Visible;
+                    LocateValueEditFramePanel.Width = 254;
                     return new LocateByXYEditPage(mAction);
                 default:
+                    LocateValueLable.Visibility = Visibility.Visible;
+                    LocateValueEditFramePanel.Width = 254;
                     return new LocateValueEditPage(mAction);
             }
         }

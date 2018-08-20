@@ -390,6 +390,9 @@
     <Compile Include="Actions\ActDataSourcePage.xaml.cs">
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml.cs">
+      <DependentUpon>LocateByPOMElement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\_Common\ActUIElementLib\UIElementSendKeysAndValidate.xaml.cs">
       <DependentUpon>UIElementSendKeysAndValidate.xaml</DependentUpon>
     </Compile>
@@ -2492,6 +2495,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ActionsNew\NewAddActionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
