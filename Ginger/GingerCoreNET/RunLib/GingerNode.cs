@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
-using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using GingerCoreNET.Drivers;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
@@ -228,7 +227,8 @@ namespace GingerCoreNET.DriversLib
 
             //Conver the Payload to GingerAction
 
-            AH.GingerAction = new GingerAction();
+            NodeGingerAction NGA = new NodeGingerAction();
+            AH.NodeGingerAction = NGA;
             //AH.GingerAction.ID = ActionID;   // !!!!!!!!!!!!!!!!!!!!! why do we need to keep the ID twice !!
 
             Console.WriteLine("Found Action Handler, setting parameters");
@@ -271,23 +271,20 @@ namespace GingerCoreNET.DriversLib
             //{
             //    mService.BeforeRunAction(AH.GingerAction);
             // mService.RunAction(AH.GingerAction);
-
-            NodeGingerAction GA = new NodeGingerAction();
-            GA.Output = new ActionOutput();
-            RunServiceAction(AH, actionInputParams, GA);
+            
+            // GA.Output = new ActionOutput();
+            RunServiceAction(AH, actionInputParams, NGA);
             //    mService.AfterRunAction(AH.GingerAction);
             //}
 
             // We send back only item which can change - ExInfo and Output values
             NewPayLoad PLRC = new NewPayLoad("ActionResult");   //TODO: use const
-            PLRC.AddValue(GA.ExInfo);
-            PLRC.AddValue(GA.Errors);
-            // PLRC.AddValue("ExInfo???");
-            // PLRC.AddValue("Errors???");
-            PLRC.AddListPayLoad(GetOutpuValuesPayLoad(GA.Output.Values));
-            // List<ActionOutputValue> AOVs = new List<ActionOutputValue>();
-            // AOVs.Add(new ActionOutputValue() { Param = "aaa", ValueString = "koko" });
-            // PLRC.AddListPayLoad(GetOutpuValuesPayLoad(AOVs));
+            PLRC.AddValue(NGA.ExInfo);
+            PLRC.AddValue(NGA.Errors);
+            
+
+            PLRC.AddListPayLoad(GetOutpuValuesPayLoad(NGA.Output.Values));
+
 
             PLRC.ClosePackage();
             return PLRC;
@@ -338,8 +335,7 @@ namespace GingerCoreNET.DriversLib
                             }
                             else if (PI.ParameterType == typeof(Int32))
                             {
-                                //val = p[PI.Name].GetValueAsInt();
-                                val = 123;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! temp
+                                val = p[PI.Name].GetValueAsInt();                                
                             }
                             //TODO: handle all types
                             else
@@ -434,23 +430,24 @@ namespace GingerCoreNET.DriversLib
             return null;
         }
 
-        internal List<NewPayLoad> GetOutpuValuesPayLoad(List<ActionOutputValue> AOVs)
+        internal List<NewPayLoad> GetOutpuValuesPayLoad(List<NodeActionOutputValue> AOVs)
         {
             List<NewPayLoad> OutputValuesPayLoad = new List<NewPayLoad>();
-            foreach (ActionOutputValue AOV in AOVs)
+            foreach (NodeActionOutputValue AOV in AOVs)
             {
 
-                NewPayLoad PLO = new NewPayLoad(SocketMessages.ActionOutputValue);  // Just keep it small size, TODO: use const
+                NewPayLoad PLO = new NewPayLoad(SocketMessages.ActionOutputValue);  
                 PLO.AddValue(AOV.Param);
                 PLO.AddEnumValue(AOV.GetParamType());
                 switch (AOV.GetParamType())
                 {
-                    case ActionOutputValue.OutputValueType.String:
+                    case NodeActionOutputValue.OutputValueType.String:
                         PLO.AddValue(AOV.ValueString);
                         break;
-                    case ActionOutputValue.OutputValueType.ByteArray:
+                    case NodeActionOutputValue.OutputValueType.ByteArray:
                         PLO.AddBytes(AOV.ValueByteArray);
                         break;
+                        // TODO: add other types
                     default:
                         throw new Exception("Unknown output Value Type - " + AOV.GetParamType());
                 }

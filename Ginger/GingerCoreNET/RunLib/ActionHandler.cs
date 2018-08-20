@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     public class ActionHandler
     {
         public string ServiceActionId { get; set; }
-        public IGingerAction GingerAction { get; set; }
+        public IGingerAction NodeGingerAction { get; set; }
 
         //TODO: remove - not used
         public Action<GingerAction> Action { get; set; }

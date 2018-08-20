@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Environments;
 using Ginger.Repository;
@@ -30,7 +29,6 @@ using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
-using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
@@ -50,6 +48,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
 
 //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
@@ -1839,29 +1838,31 @@ namespace Ginger.Run
                     actPlugIn.Error += error;
                 }
 
-                //List<NewPayLoad> OutpuValues = RC.GetListPayLoad();
-                //foreach (NewPayLoad OPL in OutpuValues)
-                //{
+                List<NewPayLoad> OutpuValues = RC.GetListPayLoad();
+                foreach (NewPayLoad OPL in OutpuValues)
+                {
                 //    //TODO: change to use PL AddValueByObjectType
 
                 //    // it is param name, type and value
-                //    string PName = OPL.GetValueString();
-                //    string mOutputValueType = OPL.GetValueEnum();
-
-                //    switch (mOutputValueType)
-                //    {
-                //        case nameof(OutputValueType.String):
-                //            string v = OPL.GetValueString();
-                //            GA.Output.Values.Add(new ActionOutputValue() { Param = PName, ValueString = v });
-                //            break;
-                //        case nameof(OutputValueType.ByteArray):
-                //            byte[] b = OPL.GetBytes();
-                //            GA.Output.Values.Add(new ActionOutputValue() { Param = PName, ValueByteArray = b });
-                //            break;
-                //        default:
-                //            throw new Exception("Unknown param type: " + mOutputValueType);
-                //    }
-                //}
+                    string PName = OPL.GetValueString();
+                    string mOutputValueType = OPL.GetValueEnum();
+                    
+                    switch (mOutputValueType)
+                    {
+                        case nameof(OutputValueType.String):
+                            string v = OPL.GetValueString();
+                            //GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueString = v });
+                            actPlugIn.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = v});
+                            break;
+                        case nameof(OutputValueType.ByteArray):
+                            byte[] b = OPL.GetBytes();
+                            // GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueByteArray = b });
+                            actPlugIn.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types
+                            break;
+                        default:
+                            throw new Exception("Unknown param type: " + mOutputValueType);
+                    }
+                }
             }
             else
             {

@@ -7,29 +7,35 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 {
     public class NodeGingerAction : IGingerAction
     {
+        private string mErrors = null;
+        private string mExInfo = null;
+
+        public NodeActionOutput Output = null;
+
         public string Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string ExInfo { get { return "xexexec"; } }  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        public string ExInfo { get { return mExInfo; } }  
 
-        public string Errors { get { return "errrrrrrrr"; } } //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        // List<ActionInput>
+        public string Errors { get { return mErrors; } } 
+                
 
         public void AddError(string error)
-        {
-            throw new NotImplementedException();
+        {            
+            if (mErrors != null) mErrors += Environment.NewLine;
+            mErrors += error; 
         }
 
         public void AddExInfo(string info)
         {
-            throw new NotImplementedException();
+            if (mExInfo != null) mExInfo += Environment.NewLine;
+            mExInfo += info;
         }
 
         public void AddOutput(string param, object value, string path = null)
         {
-            //throw new NotImplementedException();
-            // Output.Ad
+            if (Output == null) Output = new NodeActionOutput();
+            // temp to string!!! - FIXME enable all type output
+            Output.Add(param, value.ToString(), path);  
         }
-
-        // public ActionOutput Output { get; set; }
+        
     }
 }
