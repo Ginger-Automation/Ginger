@@ -178,7 +178,10 @@ namespace GingerCore.Actions
             if (currentType == typeof(ActUIElement))
             {
                 NewActUIElement.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
-                NewActUIElement.ElementLocateValue = String.Copy(this.LocateValue);
+                if (!string.IsNullOrEmpty(this.LocateValue))
+                    NewActUIElement.ElementLocateValue = String.Copy(this.LocateValue);
+               
+                    
                 if (!uIElementTypeAssigned)
                     NewActUIElement.ElementType = eElementType.Unknown;
                 if (!NewActUIElement.Platforms.Contains(this.Platform))
