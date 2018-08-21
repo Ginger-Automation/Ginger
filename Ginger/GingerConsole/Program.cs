@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.GingerConsole
 
         static MenuManager mMenuManager;
 
-        // static GingerGridMenu gingerGridMenu;
+        static GingerGridMenu gingerGridMenu;
         
         static void Main(string[] args)
         {
@@ -104,8 +104,8 @@ namespace Amdocs.Ginger.GingerConsole
             CodeProcessorMenu codeProcessorMenu = new CodeProcessorMenu();
             mMenuManager.MenuItems.Add(codeProcessorMenu.GetMenu());
 
-            // gingerGridMenu = new GingerGridMenu();
-            // mMenuManager.MenuItems.Add(gingerGridMenu.GetMenu());
+            gingerGridMenu = new GingerGridMenu();
+            mMenuManager.MenuItems.Add(gingerGridMenu.GetMenu());
 
             PluginMenu pluginMenu = new PluginMenu();
             mMenuManager.MenuItems.Add(pluginMenu.GetMenu());
