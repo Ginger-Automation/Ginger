@@ -471,7 +471,7 @@ namespace Ginger.ALM
             ObservableList<ExternalItemFieldBase> latestALMFieldsREST = new ObservableList<ExternalItemFieldBase>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
-                latestALMFieldsREST = ImportFromQCRest.GetALMItemFields(resourceType);
+                latestALMFieldsREST = AlmCore.GetALMItemFields(null ,online, resourceType);
             }
             return latestALMFieldsREST;
         }

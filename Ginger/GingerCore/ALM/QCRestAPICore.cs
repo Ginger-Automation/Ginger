@@ -92,8 +92,6 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
-            if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
-                return ImportFromQCRest.GetALMItemFields();
             return ImportFromQCRest.GetALMItemFields(resourceType);
         }
 

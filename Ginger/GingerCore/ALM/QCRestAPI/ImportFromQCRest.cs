@@ -572,7 +572,7 @@ namespace GingerCore.ALM.QCRestAPI
             return QCRestAPIConnect.GetTestSetDetails(testSetID);
         }
 
-        public static ObservableList<ExternalItemFieldBase> GetALMItemFields()
+        private static ObservableList<ExternalItemFieldBase> GetALMItemFields()
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
@@ -616,10 +616,15 @@ namespace GingerCore.ALM.QCRestAPI
 
             if (QCRestAPIConnect.QcRestClient.Login())
             {
-                string fieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(resourceType);
-                List<QCField> fieldsCollection = QCRestAPIConnect.GetFields(fieldInRestSyntax);
+                if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
+                    return GetALMItemFields();
+                else
+                {
+                    string fieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(resourceType);
+                    List<QCField> fieldsCollection = QCRestAPIConnect.GetFields(fieldInRestSyntax);
 
-                fields.Append(AddFieldsValues(fieldsCollection, fieldInRestSyntax));
+                    fields.Append(AddFieldsValues(fieldsCollection, fieldInRestSyntax));
+                }
             }
 
             return fields;
