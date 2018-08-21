@@ -61,7 +61,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile, ePlatformType.ASCF }; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
         public new static partial class Fields
         {

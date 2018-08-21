@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Linq;
 
 namespace GingerCore.Actions
 {
@@ -37,7 +38,7 @@ namespace GingerCore.Actions
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
-        public override bool IsLegacyAction { get { return true; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
         {

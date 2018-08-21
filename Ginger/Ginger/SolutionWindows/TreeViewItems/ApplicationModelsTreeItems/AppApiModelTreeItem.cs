@@ -54,7 +54,6 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         public StackPanel Header()
         {
-            //return TreeViewUtils.CreateItemHeader(mApiModel, nameof(ApplicationAPIModel.Name), eImageType.APIModel16, eImageType.Null, true, nameof(ApplicationAPIModel.IsDirty));
             return NewTVItemStyle(mApiModel, eImageType.APIModel16, nameof(ApplicationAPIModel.Name));
         }
 

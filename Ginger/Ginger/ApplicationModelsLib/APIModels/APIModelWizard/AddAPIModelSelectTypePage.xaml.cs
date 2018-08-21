@@ -112,6 +112,10 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     AddAPIModelWizard.APIType = eAPIType.JsonTemplate;
                 }
+                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+                {
+                    AddAPIModelWizard.APIType = eAPIType.Swagger;
+                }
             }
             //else if (WizardEventArgs.EventType == EventType.Active)
             //{
@@ -352,7 +356,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 else
                 {
                     string tempfile = System.IO.Path.GetTempFileName();
-                    string filecontent = Amdocs.Ginger.Common.GeneralLib.HttpUtilities.DownloadFileAsync(new System.Uri(xURLTextBox.Text)).Result;
+                    string filecontent = Amdocs.Ginger.Common.GeneralLib.HttpUtilities.Download(new System.Uri(xURLTextBox.Text));
                     System.IO.File.WriteAllText(tempfile, filecontent);
                     AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = tempfile });
                     // AddAPIModelWizard.NextEnabled = true;

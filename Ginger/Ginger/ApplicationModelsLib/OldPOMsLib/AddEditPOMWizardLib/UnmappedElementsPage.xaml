@@ -10,6 +10,6 @@
       Title="UnmappedElementsPage">
 
     <Grid>
-        <Ginger:ucGrid x:Name="xUnmappedElementsGrid" Title="Unmapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <Ginger:ucGrid x:Name="xUnmappedElementsGrid" Title="Unmapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowDelete="Collapsed"  />
     </Grid>
 </Page>

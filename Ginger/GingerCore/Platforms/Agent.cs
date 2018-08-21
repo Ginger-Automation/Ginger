@@ -949,5 +949,7 @@ namespace GingerCore
             }
         }
 
+        public object Tag;
+
     }
 }

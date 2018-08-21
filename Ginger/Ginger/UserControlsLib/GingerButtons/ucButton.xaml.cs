@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Core;
 
@@ -94,6 +95,12 @@ namespace Amdocs.Ginger.UserControls
         {
             get { return xButtonImage.Width; }
             set { xButtonImage.Width = value; }
+        }
+
+        public SolidColorBrush ButtonImageForground
+        {
+            get { return xButtonImage.ImageForeground; }
+            set { xButtonImage.ImageForeground = value; }
         }
 
         private void SetButtonLook()

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -17,20 +17,31 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using System;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
-    public class ElementLocator : RepositoryItemBase
+    public class ElementLocator : RepositoryItemBase 
     {
-        private eLocateBy mLocateBy { get; set; }
+        private bool mActive { get; set; }
+        public bool Active { get { return mActive; } set { mActive = value; OnPropertyChanged(nameof(Active)); } }
+
+        private eLocateBy mLocateBy;
         [IsSerializedForLocalRepository]
-        public eLocateBy LocateBy { get { return mLocateBy; } set { mLocateBy = value; OnPropertyChanged(nameof(LocateBy)); } }
+        public eLocateBy LocateBy
+        {
+            get { return mLocateBy; }
+            set { mLocateBy = value; OnPropertyChanged(nameof(LocateBy)); }
+        }
 
         private string mLocateValue { get; set; }
         [IsSerializedForLocalRepository]
-        public string LocateValue { get { return mLocateValue; } set { mLocateValue = value; OnPropertyChanged(nameof(LocateValue)); } }
+        public string LocateValue
+        {
+            get { return mLocateValue; }
+            set { mLocateValue = value; OnPropertyChanged(nameof(LocateValue)); } }
 
         private string mHelp { get; set; }
         public string Help { get { return mHelp; } set { mHelp = value; OnPropertyChanged(nameof(Help)); } }
@@ -38,6 +49,61 @@ namespace Amdocs.Ginger.Common.UIElement
         private int? mCount { get; set; }
         public int? Count { get { return mCount; } set { mCount = value; OnPropertyChanged(nameof(Count)); } }
 
-        public override string ItemName { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
+        public override string ItemName { get { return this.LocateBy.ToString() + "-" + this.LocateValue.ToString(); } set { } }
+
+        public enum eLocateStatus
+        {
+            Pending,
+            Passed,
+            Failed
+        }
+
+        eLocateStatus mLocateStatus;
+        public eLocateStatus LocateStatus
+        {
+            get
+            {
+                return mLocateStatus;
+            }
+            set
+            {
+                mLocateStatus = value;
+                OnPropertyChanged(nameof(LocateStatusError));
+                OnPropertyChanged(nameof(LocateStatusIcon));
+
+            }
+        }
+
+        public eImageType LocateStatusIcon
+        {
+            get
+            {
+                switch (LocateStatus)
+                {
+                    case eLocateStatus.Passed:
+                        return eImageType.Passed;
+                    case eLocateStatus.Failed:
+                        return eImageType.Failed;
+                    case eLocateStatus.Pending:
+                        return eImageType.Pending;
+                    default:
+                        return eImageType.Pending;
+                }
+            }
+        }
+
+        private string mLocateStatusError;
+        public string LocateStatusError
+        {
+            get
+            {
+              return mLocateStatusError;
+            }
+            set
+            {
+                mLocateStatusError = value;
+            }
+        }
+
     }
 }

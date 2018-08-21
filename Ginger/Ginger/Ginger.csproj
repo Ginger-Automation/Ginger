@@ -441,17 +441,26 @@
       <DependentUpon>AddAgentDriverConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\AddAgentWizardLib\AddAgentWizard.cs" />
+    <Compile Include="Agents\AgentControlValidationRule.cs" />
     <Compile Include="Agents\AgentDriverConfigPage.xaml.cs">
       <DependentUpon>AgentDriverConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\AgentNameValidationRule.cs" />
     <Compile Include="ALM\Repository\QCRestAPIRepository.cs" />
+    <Compile Include="Agents\ucAgentControl.xaml.cs">
+      <DependentUpon>ucAgentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMTAValidationRule.cs" />
+    <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">
       <DependentUpon>UnmappedElementsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\MappedUIElementsPage.xaml.cs">
-      <DependentUpon>MappedUIElementsPage.xaml</DependentUpon>
+    <Compile Include="ApplicationModelsLib\POMModels\PomAllElementsPage.xaml.cs">
+      <DependentUpon>PomAllElementsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\PomElementsPage.xaml.cs">
+      <DependentUpon>PomElementsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
@@ -551,29 +560,26 @@
     <Compile Include="ApplicationModelsLib\ModelParams Pages\ModelsGlobalParamsPage.xaml.cs">
       <DependentUpon>ModelsGlobalParamsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\AddPOMIntroWizardPage.xaml.cs">
-      <DependentUpon>AddPOMIntroWizardPage.xaml</DependentUpon>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMIntroductionWizardPage.xaml.cs">
+      <DependentUpon>POMIntroductionWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\AddPOMWizard.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\LearnConfigWizardPage.xaml.cs">
-      <DependentUpon>LearnConfigWizardPage.xaml</DependentUpon>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\AddPOMWizard.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml.cs">
+      <DependentUpon>POMLearnConfigWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\LearnWizardPage.xaml.cs">
-      <DependentUpon>LearnWizardPage.xaml</DependentUpon>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml.cs">
+      <DependentUpon>POMObjectsMappingWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\MapUIElementsWizardPage.xaml.cs">
-      <DependentUpon>MapUIElementsWizardPage.xaml</DependentUpon>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMScreenShotWizardPage.xaml.cs">
+      <DependentUpon>POMScreenShotWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\SavePOMWizardPage.xaml.cs">
-      <DependentUpon>SavePOMWizardPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\ScanPageWizardPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\ScanPageWizardPage.xaml.cs">
       <DependentUpon>ScanPageWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\SelectAppFolderWizardPage.xaml.cs">
-      <DependentUpon>SelectAppFolderWizardPage.xaml</DependentUpon>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMGeneralDetailsWizardPage.xaml.cs">
+      <DependentUpon>POMGeneralDetailsWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\NavigationsPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\NavigationsPage.xaml.cs">
       <DependentUpon>NavigationsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMEditPage.xaml.cs">
@@ -582,7 +588,7 @@
     <Compile Include="ApplicationModelsLib\OldPOMsLib\POMSimulatorPage.xaml.cs">
       <DependentUpon>POMSimulatorPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMsManagerPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\OldPOMsLib\POMsManagerPage.xaml.cs">
       <DependentUpon>POMsManagerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationPlatformsLib\AddApplicationPage.xaml.cs">
@@ -2532,6 +2538,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Agents\ucAgentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ApplicationModelsLib\APIModels\APIModelPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2608,43 +2618,43 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\AddPOMIntroWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMIntroductionWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\LearnConfigWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\LearnWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\MapUIElementsWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMScreenShotWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\SavePOMWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\ScanPageWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\ScanPageWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMGeneralDetailsWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\SelectAppFolderWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\NavigationsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\NavigationsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\UnmappedElementsPage.xaml">
+    <Page Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\UnmappedElementsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\MappedUIElementsPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\PomAllElementsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\PomElementsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2660,7 +2670,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMsManagerPage.xaml">
+    <Page Include="ApplicationModelsLib\OldPOMsLib\POMsManagerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

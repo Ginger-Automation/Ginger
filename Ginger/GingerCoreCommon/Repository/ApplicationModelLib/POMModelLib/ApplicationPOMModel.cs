@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -38,32 +38,10 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements = new ObservableList<ElementInfo>();
 
-       
+        string mScreenShotImage;
+        [IsSerializedForLocalRepository]
+        public string ScreenShotImage { get { return mScreenShotImage; } set { if (mScreenShotImage != value) { mScreenShotImage = value; OnPropertyChanged(nameof(ScreenShotImage)); } } }
 
-        public Bitmap ScreenShot { get; set; }
-
-
-        //[IsSerializedForLocalRepository]
-        //public ObservableList<Guid> Tags = new ObservableList<Guid>();
-
-        //[IsSerializedForLocalRepository]
-        //public ObservableList<ElementInfo> MappedUIElements
-        //{
-        //    get
-        //    {
-        //        // TODO: temp fix me to be connected and not get new all time
-        //        //return new ObservableList<ElementInfo>(from x in UIElements where x.Active == true select x);
-        //    }
-        //}
-
-
-        // ******************************************************************************
-        //DO NOT  DELETE Temp commented for moving to GingerCoreCommon
-        // ******************************************************************************
-        //public Bitmap ScreenShot { get; set; }
-
-
-        //TODO: add how to auto detect this POM: from Title = 'login', from Title= "Hello - * - zz system", or...
-        //TODO: add activitiesPArams - 
+        
     }
 }
