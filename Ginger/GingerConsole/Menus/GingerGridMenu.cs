@@ -21,6 +21,7 @@ using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Amdocs.Ginger.GingerConsole
@@ -52,9 +53,17 @@ namespace Amdocs.Ginger.GingerConsole
 
         private void TestPlugin()
         {
-            GingerNodeProxy GNP = new GingerNodeProxy(mGingerGrid.NodeList[0]);
-            NewPayLoad pl = GetPL();
-            GNP.RunAction(pl);
+            Stopwatch st = Stopwatch.StartNew();
+            for (int i = 0; i < 1000; i++)
+            {
+                GingerNodeProxy GNP = new GingerNodeProxy(mGingerGrid.NodeList[0]);
+                GNP.GingerGrid = mGingerGrid;
+                NewPayLoad pl = GetPL();
+                GNP.RunAction(pl);
+            }
+            st.Stop();
+            Console.WriteLine("Elapsed: " + (long)st.ElapsedMilliseconds);
+            Console.WriteLine("AVG: " + (long)st.ElapsedMilliseconds / 1000);
         }
 
         NewPayLoad GetPL()
@@ -62,20 +71,14 @@ namespace Amdocs.Ginger.GingerConsole
             //TODO: reuse from GingerRunner
             NewPayLoad PL = new NewPayLoad("RunAction");
             PL.AddValue("Sum");
+
             List<NewPayLoad> Params = new List<NewPayLoad>();
             
-            NewPayLoad p = new NewPayLoad("P");   
-            p.AddValue("a");
-            p.AddValue(1);
-            p.ClosePackage();
-            Params.Add(p);
+            NewPayLoad p1 = new NewPayLoad("P", "a", "1");               
+            Params.Add(p1);
 
-            NewPayLoad p2 = new NewPayLoad("P");   
-            p2.AddValue("b");
-            p2.AddValue(2);
-            p2.ClosePackage();
+            NewPayLoad p2 = new NewPayLoad("P", "b", "2");               
             Params.Add(p2);
-
 
             PL.AddListPayLoad(Params);
             PL.ClosePackage();
