@@ -54,8 +54,28 @@ namespace Ginger.PlugInsWindows
             //GingerCore.General.ObjFieldBinding(PlugInVersionlbl, Label.ContentProperty, mPlugInWrapper, nameof(PlugInWrapper.PlugInVersion), BindingMode.OneWay);
             //PlugInFolderlbl.Content = mPlugInWrapper.FullPlugInRootPath.ToLower().Replace(App.UserProfile.Solution.Folder.ToLower(), "~");
 
+
+            SetServicesGrid();
             SetActionsGrid();
-            SetTextEditorGrid();
+            // SetTextEditorGrid();
+        }
+
+
+        private void SetServicesGrid()
+        {
+            ServicesGrid.ShowEdit = Visibility.Collapsed;
+            ServicesGrid.ShowUpDown = Visibility.Collapsed;
+         
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+            view.GridColsView.Add(new GridColView() { Field = "ServiceId", Header = "Action Type", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            ServicesGrid.SetAllColumnsDefaultView(view);
+            ServicesGrid.InitViewItems();
+
+            var services = mPluginPackage.GetServices();
+            PlugInsActionsGrid.Grid.ItemsSource = services;
+
         }
 
         private void SetActionsGrid()
@@ -98,7 +118,8 @@ namespace Ginger.PlugInsWindows
             PlugInsEditorActionsGrid.SetAllColumnsDefaultView(view1);
             PlugInsEditorActionsGrid.InitViewItems();
 
-            PlugInsEditorActionsGrid.Grid.ItemsSource = mPluginPackage.GetTextFileEditors();
+            var textEditors = mPluginPackage.GetTextFileEditors();
+            PlugInsEditorActionsGrid.Grid.ItemsSource = textEditors;
         }
 
         //private ObservableList<PlugInTextFileEditorBase> ConvertToObservalbe(List<PlugInTextFileEditorBase> T)

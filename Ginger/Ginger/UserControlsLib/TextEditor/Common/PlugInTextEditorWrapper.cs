@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Plugin.Core;
+using GingerPlugIns.TextEditorLib;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System.Collections.Generic;
@@ -62,17 +63,20 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             }
         }
 
-        public override IFoldingStrategy FoldingStrategy => throw new System.NotImplementedException();
 
-        public override List<GingerPlugIns.TextEditorLib.TextEditorToolBarItem> Tools => throw new System.NotImplementedException();
 
-        //public override IFoldingStrategy FoldingStrategy
-        //{
-        //    get
-        //    {
-        //        return new PlugInFoldingStrategy(mPlugInTextFileEditor.EditorStrategy);
-        //    }
-        //}
+        public override List<TextEditorToolBarItem> Tools { get { return null; } }
+            //{ return mPlugInTextFileEditor.Tools; }
+            
+
+        public override IFoldingStrategy FoldingStrategy
+        {
+            get
+            {
+                // return new PlugInFoldingStrategy(mPlugInTextFileEditor.FoldingStrategy );
+                return null;
+            }
+        }
 
         //public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
         //{
@@ -131,12 +135,14 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 
         public override Page GetSelectedContentPageEditor(SelectedContentArgs SelectedContentArgs)
         {
-            throw new System.NotImplementedException();
+            // throw new System.NotImplementedException();
+            return null;
         }
 
         public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
         {
-            throw new System.NotImplementedException();
+            // throw new System.NotImplementedException();
+            return null;
         }
 
         // public override string Title()

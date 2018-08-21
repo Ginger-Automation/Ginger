@@ -1801,28 +1801,25 @@ namespace Ginger.Run
         }
 
 
-        private void ExecutePlugInAction(ActPlugIn actPlugIn)     
+        private void ExecutePlugInAction(ActPlugIn actPlugin)     
         {
             // first verify we have service ready or start service
-            GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
-            //TODO: Add and not reserved as we can run same service several times
-            GingerNodeInfo GNI = (from x in gingerGrid.NodeList where x.ServiceId == actPlugIn.ServiceId 
-                                                                       // && x.ServiceId == actPlugIn.ServiceId
-                                                                select x).FirstOrDefault();
-
-            // !!!!!!!!!!!!!!!!!!!! FIXME
-            GNI = gingerGrid.NodeList[0]; // TEMP!!!
             
+            GingerNodeInfo GNI = GetGingerNode(actPlugin);
+
             if (GNI == null)
             {
                 // call plugin to start service and wait for ready
             }
 
+            GNI.Status = "Reserved";
+
             // Pack the action to payload
-            NewPayLoad p = CreateActionPayload(actPlugIn);
+            NewPayLoad p = CreateActionPayload(actPlugin);
 
             GingerNodeProxy GNP = new GingerNodeProxy(GNI);
-            GNP.GingerGrid = gingerGrid;
+            
+            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
 
             NewPayLoad RC = GNP.RunAction(p);
 
@@ -1831,11 +1828,11 @@ namespace Ginger.Run
             if (RC.Name == "ActionResult")
             {
                 // We read the ExInfo, Err and output params
-                actPlugIn.ExInfo = RC.GetValueString();
+                actPlugin.ExInfo = RC.GetValueString();
                 string error = RC.GetValueString();
                 if (!string.IsNullOrEmpty(error))
                 {
-                    actPlugIn.Error += error;
+                    actPlugin.Error += error;
                 }
 
                 List<NewPayLoad> OutpuValues = RC.GetListPayLoad();
@@ -1852,12 +1849,12 @@ namespace Ginger.Run
                         case nameof(OutputValueType.String):
                             string v = OPL.GetValueString();
                             //GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueString = v });
-                            actPlugIn.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = v});
+                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = v});
                             break;
                         case nameof(OutputValueType.ByteArray):
                             byte[] b = OPL.GetBytes();
                             // GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueByteArray = b });
-                            actPlugIn.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types
+                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types
                             break;
                         default:
                             throw new Exception("Unknown param type: " + mOutputValueType);
@@ -1869,31 +1866,27 @@ namespace Ginger.Run
                 // The RC is not OK when we faced some unexpected exception 
                 //TODO: 
                 string Err = RC.GetValueString();
-                actPlugIn.Error += Err;
+                actPlugin.Error += Err;
             }
 
-
-
-            // Send to node
-
-            //Parse result: output, exinfo, error
-
-            // GingerPlugInsNET.ActionsLib.GingerAction GA = new GingerPlugInsNET.ActionsLib.GingerAction(pluginAction.PluginActionID);
-            //foreach (ActInputValue input in act.InputValues)
-            //{
-            //    GA.InputParams[input.Param].Value = input.Value;
-            //}
-
-            //act.Error += GA.Errors;
-            //foreach (var o in GA.Output.Values)
-            //{
-            //    act.ReturnValues.Add(new ActReturnValue() { Param = o.Param, Actual = o.ValueString });
-            //}
-            //// TODO copy output too
-
-            //amdocs.ginger.GingerCoreNET.WorkSpace.Instance.PlugInsManager.Execute(pluginAction);                        
+            GNI.IncreaseActionCount();
+            GNI.Status = "Ready";
+             
         }
 
+        private GingerNodeInfo GetGingerNode(ActPlugIn actPlugin)
+        {
+            GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
+
+            GingerNodeInfo GNI = (from x in gingerGrid.NodeList
+                                    where x.ServiceId == actPlugin.ServiceId
+                                         && x.Status == "Ready"
+                                    select x).FirstOrDefault();
+
+            return GNI;
+        }
+
+        // temp public
         private NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
         {
             // Here we decompose the GA and create Payload to transfer it to the agent

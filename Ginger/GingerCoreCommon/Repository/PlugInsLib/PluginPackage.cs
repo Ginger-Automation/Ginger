@@ -323,6 +323,7 @@ namespace Amdocs.Ginger.Repository
 
         public List<IGingerService> GetServices()
         {
+            // TODO: cache
             if (!Isloaded)
             {
                 ScanPackage();
@@ -347,14 +348,15 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public List<ITextEditor> GetTextFileEditors()
+        public ObservableList<ITextEditor> GetTextFileEditors()
         {
+            //TODO: cache
             if (!Isloaded)
             {
                 ScanPackage();
             }
 
-            List<ITextEditor> textEditors = new List<ITextEditor>();
+            ObservableList<ITextEditor> textEditors = new ObservableList<ITextEditor>();
             foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
             {
                 var list = from type in PAI.Assembly.GetTypes()
