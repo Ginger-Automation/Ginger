@@ -18,6 +18,7 @@ limitations under the License.
 
 using GingerCoreNET.RunLib;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -68,8 +69,8 @@ namespace Ginger.GingerGridLib
         private void ShowNodeList()
         {
             DataGrid DG = new DataGrid();
-            DG.IsReadOnly = true;
-            DG.ItemsSource = mGingerGrid.NodeList;
+            DG.IsReadOnly = true;            
+            DG.ItemsSource = mGingerGrid.NodeList.ToList();
             GingersGrid.Children.Add(DG);
         }
 
