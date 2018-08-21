@@ -2164,7 +2164,7 @@ namespace Ginger.Run
                     for (int i = 0; i < act.ReturnValues.Count; i++)
                     {
                         ActReturnValue item = act.ReturnValues[i];
-                        if (item.Param.ToUpper() == "ACT.ERROR".ToUpper())
+                        if (item.Param != null && item.Param.ToUpper() == "ACT.ERROR".ToUpper())
                         {
                             item.Actual = act.Error;
                         }
