@@ -1202,7 +1202,7 @@ namespace GingerCore.Drivers.Appium
             //NA
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             Dispatcher.Invoke(() =>
             {
@@ -1236,7 +1236,7 @@ namespace GingerCore.Drivers.Appium
         {
             return null;
         }
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             List<ElementInfo> list = new List<ElementInfo>();
 
@@ -1487,15 +1487,19 @@ namespace GingerCore.Drivers.Appium
         {
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         public bool IsElementObjectValid(object obj)
         {
             return ((IWindowExplorer)mSeleniumDriver).IsElementObjectValid(obj);
+        }
+
+        public void UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        {
+            throw new NotImplementedException();
         }
     }
 }

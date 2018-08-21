@@ -19,8 +19,8 @@
             <ColumnDefinition Width="69*"/>
         </Grid.ColumnDefinitions>
         <Label Grid.Row="1" Grid.Column="0" >X</Label>
-        <Actions:UCValueExpression Grid.Row="1" HorizontalAlignment="Stretch" x:Name="txtLocateValueX" Grid.Column="1" LostFocus="txtLocateValueX_LostFocus"/>
+        <Actions:UCValueExpression Grid.Row="1" HorizontalAlignment="Stretch" x:Name="txtLocateValueX" Grid.Column="1" LostFocus="txtLocateValueXY_LostFocus"/>
         <Label Grid.Row="1" Grid.Column="2">Y</Label>
-        <Actions:UCValueExpression HorizontalAlignment="Stretch" x:Name="txtLocateValueY" Grid.Column="3" Grid.Row="1" Margin="5,0,10,0" />
+        <Actions:UCValueExpression HorizontalAlignment="Stretch" x:Name="txtLocateValueY" Grid.Column="3" Grid.Row="1" LostFocus="txtLocateValueXY_LostFocus" Margin="5,0,10,0" />
     </Grid>
 </Page>
