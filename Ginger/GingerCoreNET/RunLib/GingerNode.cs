@@ -35,7 +35,8 @@ namespace GingerCoreNET.DriversLib
         public string ConnectionString { get; set; }
 
         // private PluginDriverBase mDriver;
-        private IGingerService mService;   // Can be more than one!?
+        private IGingerService mService;   // one service per GingerNode
+        private string mServiceID;
 
         // We use Hub client to send Register/UnRegister message - to GingerGrid manager
         GingerSocketClient2 mHubClient;
@@ -45,12 +46,18 @@ namespace GingerCoreNET.DriversLib
 
         public GingerNode(DriverCapabilities DriverCapabilities, IGingerService service)
         {
+
+            //TODO: remove me!?
             mService = service;
+            
         }
 
         public GingerNode(IGingerService service)
         {
-            this.mService = service;            
+            mService = service;
+
+            GingerServiceAttribute attr = (GingerServiceAttribute)Attribute.GetCustomAttribute(mService.GetType(), typeof(GingerServiceAttribute), false);
+            mServiceID = attr.Id;
         }
 
         public enum eGingerNodeEventType
@@ -65,7 +72,8 @@ namespace GingerCoreNET.DriversLib
         public void StartGingerNode(string Name, string HubIP, int HubPort)
         {
             Console.WriteLine("Starting Ginger Node");
-            
+            Console.WriteLine("ServiceID: " + mServiceID); 
+
             string Domain = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName;
             string IP = SocketHelper.GetLocalHostIP(); 
             string MachineName = System.Environment.MachineName;
@@ -100,8 +108,10 @@ namespace GingerCoreNET.DriversLib
                 }
             }
             
+            //Register the service in GG
             NewPayLoad PLRegister = new NewPayLoad(SocketMessages.Register);
             PLRegister.AddValue(Name);
+            PLRegister.AddValue(mServiceID);
             PLRegister.AddValue(OSVersion);  // TODO: translate to normal name?
             PLRegister.AddValue(MachineName);  // TODO: if local host write local host
             PLRegister.AddValue(IP);

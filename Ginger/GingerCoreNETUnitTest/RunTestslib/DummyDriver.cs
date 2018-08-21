@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace GingerCoreNETUnitTests.RunTestslib
 {
-    public class DummyDriver : IGingerDriver
+    public class DummyDriver : IGingerService, IGingerDriver
     {
         public List<string> Platforms => throw new NotImplementedException();
 

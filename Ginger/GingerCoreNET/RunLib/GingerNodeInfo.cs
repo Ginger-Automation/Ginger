@@ -25,8 +25,9 @@ namespace GingerCoreNET.RunLib
     {
         public Guid SessionID { get; set; }
         public string Name { get; set; }
+        // public string PluginId { get; set; }
+        // DO we want version?
 
-        public string PluginId { get; set; }
         public string ServiceId { get; set; }
         public string IP { get; set; }
         public string Host { get; set; }
