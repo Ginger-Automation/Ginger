@@ -48,7 +48,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 DoStartServer(port);
             }) ;            
             mTask.Start();
-            while (!isReady)
+            Stopwatch st = Stopwatch.StartNew();
+            while (!isReady && st.ElapsedMilliseconds < 3000)  // shouldn't take more than 3 seconds to bind a port
             {
                 Thread.Sleep(100);
             }

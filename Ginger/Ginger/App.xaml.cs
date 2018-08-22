@@ -609,7 +609,7 @@ namespace Ginger
             try
             {
                 // Cleanup last loaded solution 
-                WorkSpace.Instance.LocalGingerGrid.Reset();
+                //WorkSpace.Instance.LocalGingerGrid.Reset();  //Temp
                 AppSolutionAutoSave.SolutionAutoSaveEnd();
                 App.UserProfile.Solution = null;
                 //clear exsiting solution data- TODO: catch the solution value change event and if null then clear all below in relevant class/places
