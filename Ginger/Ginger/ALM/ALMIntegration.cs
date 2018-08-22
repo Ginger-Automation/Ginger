@@ -598,14 +598,14 @@ namespace Ginger.ALM
             return AlmRepo.GetTestLabExplorer(path);
         }
 
-        public List<QCTestSetSummary> GetTestSetExplorer(string path)
+        public IEnumerable<Object> GetTestSetExplorer(string path)
         {
             return AlmRepo.GetTestSetExplorer(path);
         }
 
         public QCTestSetSummary GetTSRunStatus(QCTestSetSummary tsItem)
         {
-            return AlmRepo.GetTSRunStatus(tsItem);
+            return (QCTestSetSummary)AlmRepo.GetTSRunStatus(tsItem);
         }
 
         public List<string> GetTestPlanExplorer(string path)

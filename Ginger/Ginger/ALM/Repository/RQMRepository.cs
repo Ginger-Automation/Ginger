@@ -337,12 +337,12 @@ namespace Ginger.ALM.Repository
             throw new NotImplementedException();
         }
 
-        public override List<QCTestSetSummary> GetTestSetExplorer(string path)
+        public override IEnumerable<Object> GetTestSetExplorer(string path)
         {
             throw new NotImplementedException();
         }
 
-        public override QCTestSetSummary GetTSRunStatus(QCTestSetSummary tsItem)
+        public override Object GetTSRunStatus(Object tsItem)
         {
             throw new NotImplementedException();
         }

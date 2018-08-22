@@ -84,12 +84,12 @@ namespace Ginger.ALM.Repository
             return QCConnect.GetTestLabExplorer(path);
         }
 
-        public override List<QCTestSetSummary> GetTestSetExplorer(string path)
+        public override IEnumerable<Object> GetTestSetExplorer(string path)
         {
             return QCConnect.GetTestSetExplorer(path);
         }
 
-        public override QCTestSetSummary GetTSRunStatus(QCTestSetSummary tsItem)
+        public override Object GetTSRunStatus(Object tsItem)
         {
             return QCConnect.GetTSRunStatus(tsItem);
         }

@@ -75,7 +75,7 @@ namespace Ginger.ALM.QC.TreeViewItems
             }
 
             // Step #2 add folder Test Set list
-            List<QCTestSetSummary> sTestSets = ALMIntegration.Instance.GetTestSetExplorer(Path);
+            List<QCTestSetSummary> sTestSets = (List<QCTestSetSummary>)ALMIntegration.Instance.GetTestSetExplorer(Path);
 
             foreach (QCTestSetSummary tsItem in sTestSets)
             {
