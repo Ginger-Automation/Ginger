@@ -1,54 +1,49 @@
-#region License
-/*
-Copyright © 2014-2018 European Support Limited
-
-Licensed under the Apache License, Version 2.0 (the "License")
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-
-http://www.apache.org/licenses/LICENSE-2.0 
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, 
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-See the License for the specific language governing permissions and 
-limitations under the License. 
-*/
-#endregion
-
-using Ginger.ALM.QC;
-using Ginger.ALM.QC.TreeViewItems;
-using GingerCore;
-using GingerCore.ALM;
-using GingerCore.Activities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GingerCore.ALM.QC;
+using QCRestClient;
+using Amdocs.Ginger.Common;
+using GingerCore;
+using GingerCore.Activities;
+using Ginger.ALM.QC;
+using Ginger.ALM.QC.TreeViewItems;
 using System.Windows;
 using System.IO;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Platforms;
 using Ginger.Repository;
-using TDAPIOLELib;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore.ALM.QC;
+using GingerCore.ALM.QCRestAPI;
+using ALM_Common.DataContracts;
+using GingerCore.ALM;
 
 namespace Ginger.ALM.Repository
 {
-    class QCRepository : ALMRepository
+    class QCRestAPIRepository : ALMRepository
     {
         public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
         {
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, "Connecting to QC server");
-                return ALMIntegration.Instance.AlmCore.ConnectALMServer();
+                if(ALMIntegration.Instance.AlmCore.ConnectALMServer())
+                    return true;
+                else
+                {
+                    if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
+                        Reporter.ToUser(eUserMsgKeys.QcConnectFailureRestAPI);
+                    else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
+                        Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings);
+
+                    Reporter.ToLog(eLogLevel.ERROR, "Error connecting to QC server");
+                    return false;
+                }
             }
             catch (Exception e)
             {
                 if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
-                    Reporter.ToUser(eUserMsgKeys.QcConnectFailure, e.Message);
+                    Reporter.ToUser(eUserMsgKeys.QcConnectFailureRestAPI, e.Message);
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
                     Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings, e.Message);
 
@@ -58,11 +53,9 @@ namespace Ginger.ALM.Repository
         }
 
         #region General
-        public override IEnumerable<Object> SelectALMTestSets()
+        public override IEnumerable<object> SelectALMTestSets()
         {
-            //show Test Lab browser for selecting the Test Set/s
-            QCTestLabExplorerPage win = new QCTestLabExplorerPage(QCTestLabExplorerPage.eExplorerTestLabPageUsageType.Select);
-            return (ObservableList<QCTestSetTreeItem>)win.ShowAsWindow(eWindowShowStyle.Dialog);
+            throw new NotImplementedException();
         }
 
         public override string SelectALMTestPlanPath()
@@ -81,22 +74,22 @@ namespace Ginger.ALM.Repository
 
         public override List<string> GetTestLabExplorer(string path)
         {
-            return QCConnect.GetTestLabExplorer(path);
+            return QCRestAPIConnect.GetTestLabExplorer(path);
         }
 
         public override IEnumerable<Object> GetTestSetExplorer(string path)
         {
-            return QCConnect.GetTestSetExplorer(path);
+            return QCRestAPIConnect.GetTestSetExplorer(path);
         }
 
         public override Object GetTSRunStatus(Object tsItem)
         {
-            return QCConnect.GetTSRunStatus(tsItem);
+            return QCRestAPIConnect.GetTSRunStatus(tsItem);
         }
 
         public override List<string> GetTestPlanExplorer(string path)
         {
-            return QCConnect.GetTestPlanExplorer(path);
+            return QCRestAPIConnect.GetTestPlanExplorer(path);
         }
 
         #endregion General
@@ -145,7 +138,6 @@ namespace Ginger.ALM.Repository
                 if (testSetsItemsToImport.Count == 0) return false; //noting to import
 
                 //Refresh Ginger repository and allow GingerQC to use it
-
                 ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
                 ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
                 ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = App.LocalRepository.GetSolutionRepoActivities(false);
@@ -156,26 +148,15 @@ namespace Ginger.ALM.Repository
                     {
                         //import test set data
                         Reporter.ToGingerHelper(eGingerHelperMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
-                        QCTestSet TS = new QCTestSet();
+                        GingerCore.ALM.QC.QCTestSet TS = new GingerCore.ALM.QC.QCTestSet();
                         TS.TestSetID = testSetItemtoImport.TestSetID;
                         TS.TestSetName = testSetItemtoImport.TestSetName;
                         TS.TestSetPath = testSetItemtoImport.Path;
-                        TS = ((QCCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(TS);
+                        TS = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ImportTestSetData(TS);
 
                         //convert test set into BF
-                        BusinessFlow tsBusFlow = ((QCCore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
+                        BusinessFlow tsBusFlow = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
 
-                        //Set BF/Activities target application
-                        //if (App.UserProfile.Solution.MainApplication != null)
-                        //{
-                        //    if (tsBusFlow.TargetApplications.Count == 0)
-                        //    {
-                        //        tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
-                        //        if (tsBusFlow.TargetApplications.Count > 0)
-                        //            foreach (Activity activ in tsBusFlow.Activities)
-                        //                activ.TargetApplication = tsBusFlow.TargetApplications[0].AppName;
-                        //    }
-                        //}
                         if (App.UserProfile.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
@@ -228,51 +209,34 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
-            List<QCTSTest> TCOfTestSetList = ((QCCore)ALMIntegration.Instance.AlmCore).GetTSQCTestsList(businessFlow.ExternalID.ToString(), TCsIDs.Select(x => x.Item2.ToString()).ToList());
-            ((QCCore)ALMIntegration.Instance.AlmCore).UpdatedQCTestInBF(ref businessFlow, TCOfTestSetList);
+            throw new NotImplementedException();
         }
 
         public override void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
-            List<QCTSTest> TCOfTestSetList = ((QCCore)ALMIntegration.Instance.AlmCore).GetTSQCTestsList(businessFlow.ExternalID.ToString());
-            ((QCCore)ALMIntegration.Instance.AlmCore).UpdateBusinessFlow(ref businessFlow, TCOfTestSetList);
+            throw new NotImplementedException();
+        }
+
+        public override void ImportALMTestsById(string importDestinationFolderPath)
+        {
+            throw new NotImplementedException();
         }
         #endregion Import From QC
 
-
         #region Export To QC
-        public override void ExportBfActivitiesGroupsToALM(GingerCore.BusinessFlow businessFlow, ObservableList<GingerCore.Activities.ActivitiesGroup> grdActivitiesGroups)
-        {
-            bool askToSaveBF = false;
-            foreach (ActivitiesGroup group in grdActivitiesGroups)
-            {
-                if (ExportActivitiesGroupToALM(group))
-                    askToSaveBF = true;
-            }
-
-            if (askToSaveBF)
-                if (Reporter.ToUser(eUserMsgKeys.AskIfToSaveBFAfterExport, businessFlow.Name) == MessageBoxResult.Yes)
-                {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name,
-                      GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    businessFlow.Save();
-                    Reporter.CloseGingerHelper();
-                }
-        }
-
         public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false)
         {
             if (activtiesGroup == null) return false;
-            Test matchingTC = null;
+            QCTestCase matchingTC = null;
 
             //check if the ActivitiesGroup already mapped to QC Test Case
             if (String.IsNullOrEmpty(activtiesGroup.ExternalID) == false)
             {
-                matchingTC = ((QCCore)ALMIntegration.Instance.AlmCore).GetQCTest(activtiesGroup.ExternalID);
+                matchingTC = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).GetQCTest(activtiesGroup.ExternalID);
                 if (matchingTC != null)
                 {
                     //ask user if want to continute
-                    MessageBoxResult userSelec = Reporter.ToUser(eUserMsgKeys.ActivitiesGroupAlreadyMappedToTC, activtiesGroup.Name, matchingTC["TS_SUBJECT"].Path + "\\" + matchingTC.Name);
+                    MessageBoxResult userSelec = Reporter.ToUser(eUserMsgKeys.ActivitiesGroupAlreadyMappedToTC, activtiesGroup.Name, matchingTC.Name);
                     if (userSelec == MessageBoxResult.Cancel)
                         return false;
                     else if (userSelec == MessageBoxResult.No)
@@ -294,24 +258,16 @@ namespace Ginger.ALM.Repository
             //upload the Activities Group
             Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
-            //TODO: retireve test case fields -->DONE
-            ObservableList<ExternalItemFieldBase> testCaseFields = App.UserProfile.Solution.ExternalItemsFields;
-            ALMIntegration.Instance.RefreshALMItemFields(testCaseFields, true, null);
 
-            //Going through the fields to leave only Test Case fields
-            for (int indx = 0; indx < testCaseFields.Count; indx++)
-            {
-                if(testCaseFields[indx].Name == "Version")
-                {
-                }
-                if (testCaseFields[indx].ItemType != eQCItemType.TestCase.ToString())
-                {
-                    testCaseFields.RemoveAt(indx);
-                    indx--;
-                }
-            }
-            
-            bool exportRes = ((QCCore)ALMIntegration.Instance.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, matchingTC, uploadPath, testCaseFields, ref res);
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
+            ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
+
+            ObservableList<ExternalItemFieldBase> testCaseFields = CleanUnrelvantFields(allFields, ResourceType.TEST_CASE);
+            ObservableList<ExternalItemFieldBase> designStepsFields = CleanUnrelvantFields(allFields, ResourceType.DESIGN_STEP);
+            ObservableList<ExternalItemFieldBase> designStepsParamsFields = CleanUnrelvantFields(allFields, ResourceType.DESIGN_STEP_PARAMETERS);
+
+            bool exportRes = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, matchingTC, uploadPath, testCaseFields, designStepsFields, designStepsParamsFields, ref res);
+
             Reporter.CloseGingerHelper();
             if (exportRes)
             {
@@ -325,13 +281,19 @@ namespace Ginger.ALM.Repository
             }
             else
                 Reporter.ToUser(eUserMsgKeys.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activtiesGroup.Name, res);
- 
+
             return false;
         }
 
-        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
+        public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
-            if (businessFlow == null) return false;
+            throw new NotImplementedException();
+        }
+
+        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
+        {
+            if (businessFlow == null)
+                return false;
 
             if (businessFlow.ActivitiesGroups.Count == 0)
             {
@@ -339,17 +301,17 @@ namespace Ginger.ALM.Repository
                 return false;
             }
 
-            TestSet matchingTS = null;
+            QCRestClient.QCTestSet matchingTS = null;
 
             MessageBoxResult userSelec = MessageBoxResult.None;
             //check if the businessFlow already mapped to QC Test Set
             if (String.IsNullOrEmpty(businessFlow.ExternalID) == false)
             {
-                matchingTS = ((QCCore)ALMIntegration.Instance.AlmCore).GetQCTestSet(businessFlow.ExternalID);
+                matchingTS = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).GetQCTestSet(businessFlow.ExternalID);
                 if (matchingTS != null)
                 {
                     //ask user if want to continute
-                    userSelec = Reporter.ToUser(eUserMsgKeys.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.TestSetFolder.Path + "\\" + matchingTS.Name);
+                    userSelec = Reporter.ToUser(eUserMsgKeys.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
                     if (userSelec == MessageBoxResult.Cancel)
                         return false;
                     else if (userSelec == MessageBoxResult.No)
@@ -360,18 +322,22 @@ namespace Ginger.ALM.Repository
             //check if all of the business flow activities groups already exported to QC and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
             {
-                if (string.IsNullOrEmpty(ag.ExternalID) == true || ((QCCore)ALMIntegration.Instance.AlmCore).GetQCTest(ag.ExternalID) == null)
+                if (string.IsNullOrEmpty(ag.ExternalID) == true || ((QCRestAPICore)ALMIntegration.Instance.AlmCore).GetQCTest(ag.ExternalID) == null)
                 {
                     if (testPlanUploadPath == null)
                         testPlanUploadPath = SelectALMTestPlanPath();
                     if (string.IsNullOrEmpty(testPlanUploadPath) == false)
                         ExportActivitiesGroupToALM(ag, testPlanUploadPath);
+                    else
+                        return false;
                 }
+                else
+                    ExportActivitiesGroupToALM(ag, testPlanUploadPath);
             }
 
             if (matchingTS == null && string.IsNullOrEmpty(testLabUploadPath))
             {
-                if(userSelec == MessageBoxResult.No)
+                if (userSelec == MessageBoxResult.No)
                     Reporter.ToUser(eUserMsgKeys.ExportQCNewTestSetSelectDiffFolder);
 
                 //get the QC Test Plan path to upload the activties group to
@@ -386,24 +352,14 @@ namespace Ginger.ALM.Repository
             //upload the business flow
             Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItemToALM, null, businessFlow.Name);
             string res = string.Empty;
-            //TODO : need to update to retireve only Test Set Item Fields -->DONE
-            ObservableList<ExternalItemFieldBase> testSetFields = App.UserProfile.Solution.ExternalItemsFields;
-            ALMIntegration.Instance.RefreshALMItemFields(testSetFields, true, null);
 
-            for (int indx = 0; indx < testSetFields.Count; indx++)
-            {
-                if (testSetFields[indx].Name == "Version")
-                {                    
-                }
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(App.UserProfile.Solution.ExternalItemsFields);
+            ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
-                if (testSetFields[indx].ItemType != eQCItemType.TestSet.ToString())
-                {
-                    testSetFields.RemoveAt(indx);
-                    indx--;
-                }
-            }
+            ObservableList<ExternalItemFieldBase> testSetFieldsFields = CleanUnrelvantFields(allFields, ResourceType.TEST_SET);
+            ObservableList<ExternalItemFieldBase> testInstanceFields = CleanUnrelvantFields(allFields, ResourceType.TEST_CYCLE);
 
-            bool exportRes = ((QCCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, testLabUploadPath, testSetFields, ref res);
+            bool exportRes = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, testLabUploadPath, testSetFieldsFields, testInstanceFields, ref res);
             Reporter.CloseGingerHelper();
             if (exportRes)
             {
@@ -420,13 +376,11 @@ namespace Ginger.ALM.Repository
             else
                 if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
                 Reporter.ToUser(eUserMsgKeys.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
-            //}
 
             return false;
         }
-        #endregion Export To QC
 
-        public override bool ShowImportReviewPage(string importDestinationPath, object selectedTestPlan = null)
+        public override eUserMsgKeys GetDownloadPossibleValuesMessage()
         {
             throw new NotImplementedException();
         }
@@ -436,14 +390,28 @@ namespace Ginger.ALM.Repository
             throw new NotImplementedException();
         }
 
-        public override eUserMsgKeys GetDownloadPossibleValuesMessage()
-        {
-            return eUserMsgKeys.AskIfToDownloadPossibleValuesShortProcesss;
-        }
-
-        public override void ImportALMTestsById(string importDestinationFolderPath)
+        public override bool ShowImportReviewPage(string importDestinationPath, object selectedTestPlan = null)
         {
             throw new NotImplementedException();
         }
+
+        private ObservableList<ExternalItemFieldBase> CleanUnrelvantFields(ObservableList<ExternalItemFieldBase> fields, ResourceType resourceType)
+        {
+            ObservableList<ExternalItemFieldBase> fieldsToReturn = new ObservableList<ExternalItemFieldBase>();
+
+            string currentResource = QCRestAPIConnect.ConvertResourceType(resourceType);
+            //Going through the fields to leave only Test Set fields
+            for (int indx = 0; indx < fields.Count; indx++)
+            {
+                if (fields[indx].ItemType == currentResource)
+                {
+                    fieldsToReturn.Add(fields[indx]);
+                }
+            }
+
+            return fieldsToReturn;
+        }
+
+        #endregion Export To QC
     }
 }

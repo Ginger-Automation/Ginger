@@ -544,6 +544,10 @@
     <Compile Include="ALM\ALMConfig.cs" />
     <Compile Include="ALM\ALMCore.cs" />
     <Compile Include="ALM\PublishToALMConfig.cs" />
+    <Compile Include="ALM\QCRestAPICore.cs" />
+    <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
+    <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
+    <Compile Include="ALM\QCRestAPI\QCRestAPIConnect.cs" />
     <Compile Include="ALM\QC\ExportToQC.cs" />
     <Compile Include="ALM\QCCore.cs" />
     <Compile Include="ALM\QC\ImportFromQC.cs" />
@@ -843,7 +847,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\ALMRestClient.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\ALM_Common.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -855,7 +859,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\QCRestClient.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\RQMExport.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

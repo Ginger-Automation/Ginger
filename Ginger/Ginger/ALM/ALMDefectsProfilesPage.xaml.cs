@@ -59,7 +59,7 @@ namespace Ginger.ALM
             InitializeComponent();
 
             mALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
-            mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, null);
+            mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
             mALMDefectProfileFields.Where(z => z.Mandatory != true).ToList().ForEach(x => x.SelectedValue = string.Empty);
 
             // pouplated values list (the not saved), validate selected values/fields current existing in QC
