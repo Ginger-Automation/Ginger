@@ -17,20 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
-using Amdocs.Ginger.CoreNET.GingerConsoleLib;
-using Amdocs.Ginger.CoreNET.RosLynLib;
-using Amdocs.Ginger.GingerConsole;
-using GingerCoreNET.CommandProcessorLib;
 // using GingerCoreNET.CommandProcessorLib;
-using GingerCoreNET.RosLynLib;
 using GingerCoreNET.RunLib;
-using GingerPlugInsNET.ActionsLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace GingerConsoleUnitTest
 {
