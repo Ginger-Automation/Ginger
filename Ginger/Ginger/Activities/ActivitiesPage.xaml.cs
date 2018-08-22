@@ -33,6 +33,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.BusinessFlowFolder
 {
@@ -304,7 +305,7 @@ namespace Ginger.BusinessFlowFolder
         private void AddToRepository(object sender, RoutedEventArgs e)
 
         {
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdActivities.Grid.SelectedItems.Cast<RepositoryItem>().ToList());
+            Repository.SharedRepositoryOperations.AddItemsToRepository(grdActivities.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
           
         }
 

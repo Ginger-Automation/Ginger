@@ -31,7 +31,7 @@ using Amdocs.Ginger.Common.Repository;
 
 namespace GingerCore
 {
-    public class BusinessFlow : RepositoryItem
+    public class BusinessFlow : RepositoryItemBase
     {
         //  This class is container for AAA
         //This class is being serialized and saved to XML when working local

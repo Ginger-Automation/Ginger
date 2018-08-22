@@ -112,12 +112,12 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
         public static bool CheckForItemWithDuplicateName(UploadItemSelection selectedItem)
         {
-            List<RepositoryItem> existingRepoItems = new List<RepositoryItem>();
+            List<RepositoryItemBase> existingRepoItems = new List<RepositoryItemBase>();
 
-            if (selectedItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Cast<RepositoryItem>().ToList();
-            else if (selectedItem.UsageItem is Activity) existingRepoItems = App.LocalRepository.GetSolutionRepoActivities().Cast<RepositoryItem>().ToList();
-            else if (selectedItem.UsageItem is Act) existingRepoItems =App.LocalRepository.GetSolutionRepoActions().Cast<RepositoryItem>().ToList();
-            else if (selectedItem.UsageItem is VariableBase) existingRepoItems = App.LocalRepository.GetSolutionRepoVariables().Cast<RepositoryItem>().ToList();
+            if (selectedItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Cast<RepositoryItemBase>().ToList();
+            else if (selectedItem.UsageItem is Activity) existingRepoItems = App.LocalRepository.GetSolutionRepoActivities().Cast<RepositoryItemBase>().ToList();
+            else if (selectedItem.UsageItem is Act) existingRepoItems =App.LocalRepository.GetSolutionRepoActions().Cast<RepositoryItemBase>().ToList();
+            else if (selectedItem.UsageItem is VariableBase) existingRepoItems = App.LocalRepository.GetSolutionRepoVariables().Cast<RepositoryItemBase>().ToList();
             
             if (selectedItem.ItemUploadType == UploadItemSelection.eItemUploadType.Overwrite)
             {

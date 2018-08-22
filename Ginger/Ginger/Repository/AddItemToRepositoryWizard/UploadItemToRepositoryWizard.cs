@@ -16,9 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
 using GingerCore.Actions;
@@ -45,14 +47,14 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             AddPage(Name: "Items Upload Status", Title: "Upload Item/s Status", SubTitle: "Upload Item Status", Page: new UploadStatusPage());
         }
 
-        private UploadItemSelection CreateUploadItem(RepositoryItem item)
+        private UploadItemSelection CreateUploadItem(RepositoryItemBase item)
         {
             string strComment = "";
             UploadItemSelection uploadItem = new UploadItemSelection();
             uploadItem.Selected = true;
           
             UploadItemSelection.eExistingItemType existingItemType = UploadItemSelection.eExistingItemType.NA;
-            RepositoryItem existingItem = ExistingItemCheck(item, ref strComment, ref existingItemType);
+            RepositoryItemBase existingItem = ExistingItemCheck(item, ref strComment, ref existingItemType);
             if (existingItem != null)
             {
                 uploadItem.ItemUploadType = UploadItemSelection.eItemUploadType.Overwrite;
@@ -85,13 +87,31 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 
             uploadItem.ItemName = item.ItemName;
             uploadItem.ItemGUID = item.Guid;
-            uploadItem.SetItemPartesFromEnum(item.GetTypeOfItemParts());
+            uploadItem.SetItemPartesFromEnum(GetTypeOfItemParts(uploadItem));
             uploadItem.UsageItem = item;
 
             return uploadItem;
         }
 
-        public RepositoryItem ExistingItemCheck(object item, ref string strComment, ref UploadItemSelection.eExistingItemType existingItemType)
+        public virtual Type GetTypeOfItemParts(RepositoryItemBase item)
+        {
+            if (item is Activity)
+                return typeof(Activity.eItemParts);
+
+            else if (item is Act)
+                return typeof(Act.eItemParts);
+
+            else if (item is ActivitiesGroup)
+                return typeof(ActivitiesGroup.eItemParts);
+
+            else if (item is VariableBase)
+                return typeof(VariableBase.eItemParts);
+
+            else
+                return null;
+        }
+
+        public RepositoryItemBase ExistingItemCheck(object item, ref string strComment, ref UploadItemSelection.eExistingItemType existingItemType)
         {
             IEnumerable<object> existingRepoItems = new ObservableList<RepositoryItem>();
             bool existingItemIsExternalID = false;
@@ -103,7 +123,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             else if (item is Act) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActions();
             else if (item is VariableBase) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoVariables();
 
-            RepositoryItem exsitingItem = App.LocalRepository.GetMatchingRepoItem((RepositoryItem)item, existingRepoItems, ref existingItemIsExternalID, ref existingItemIsParent);
+            RepositoryItemBase exsitingItem = App.LocalRepository.GetMatchingRepoItem((RepositoryItemBase)item, existingRepoItems, ref existingItemIsExternalID, ref existingItemIsParent);
           
             if (exsitingItem != null)
             {

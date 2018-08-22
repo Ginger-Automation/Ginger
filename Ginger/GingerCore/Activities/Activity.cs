@@ -655,7 +655,7 @@ namespace GingerCore
             }
         }
 
-        public override void UpdateInstance(RepositoryItem instance, string partToUpdate, RepositoryItem hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
         {
             Activity activityInstance = (Activity)instance;
             //Create new instance of source

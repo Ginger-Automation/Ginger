@@ -30,7 +30,7 @@ namespace GingerCore.Activities
     /// <summary>
     /// ActivitiesGroup used to store the ID's and execution order of few Activities
     /// </summary>
-    public class ActivitiesGroup : RepositoryItem
+    public class ActivitiesGroup : RepositoryItemBase
     {
         public enum eItemParts
         {
@@ -222,7 +222,7 @@ namespace GingerCore.Activities
             }
         }
 
-        public override void UpdateInstance(RepositoryItem instance, string partToUpdate, RepositoryItem hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
         {
             ActivitiesGroup activitiesGroupInstance = (ActivitiesGroup)instance;
 
@@ -262,7 +262,7 @@ namespace GingerCore.Activities
         }
 
 
-        public override RepositoryItem GetUpdatedRepoItem(RepositoryItem itemToUpload, RepositoryItem existingRepoItem, string itemPartToUpdate)
+        public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase existingRepoItem, string itemPartToUpdate)
         {
             ActivitiesGroup updatedGroup = null;
                    

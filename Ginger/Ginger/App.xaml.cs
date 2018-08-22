@@ -155,7 +155,7 @@ namespace Ginger
         public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
         
         //TODO: whenever changed check if isDirty - and ask the user if to save
-        public static RepositoryItem CurrentRepositoryItem { get; set; }
+        public static RepositoryItemBase CurrentRepositoryItem { get; set; }
 
         public static ITreeViewItem CurrentSelectedTreeItem { get; set; }
 
@@ -835,11 +835,12 @@ namespace Ginger
         {
             SolutionRepository SR = new SolutionRepository();
             //SR.AddItemInfo<ApplicationPlatform>("*.Ginger.TargetApplication.xml", @"~\TargetApplications", true, "Target Applications", addToRootFolders: true, PropertyNameForFileName: nameof(ApplicationPlatform.AppName));
+            SR.AddItemInfo<BusinessFlow>("*.Ginger.BusinessFlow.xml", @"~\BusinessFlows", true, "Business Flows", addToRootFolders: true, PropertyNameForFileName: nameof(BusinessFlow.Name));
 
             SR.AddItemInfo<ApplicationAPIModel>("*.Ginger.ApplicationAPIModel.xml", @"~\Applications Models\API Models", true, "API Models", addToRootFolders: true, PropertyNameForFileName: nameof(ApplicationAPIModel.Name));
             SR.AddItemInfo<GlobalAppModelParameter>("*.Ginger.GlobalAppModelParameter.xml", @"~\Applications Models\Global Models Parameters", true, "Global Model Parameters", addToRootFolders: true, PropertyNameForFileName: nameof(GlobalAppModelParameter.PlaceHolder));
             SR.AddItemInfo<ApplicationPOMModel>("*.Ginger.ApplicationPOMModel.xml", @"~\Applications Models\POM Models", true, "POM Models", addToRootFolders: false, PropertyNameForFileName: nameof(ApplicationPOMModel.Name));
-            //SR.AddItemInfo<BusinessFlow>("*.Ginger.BusinessFlow.xml", @"~\BusinessFlows", true, "Business Flows", addToRootFolders: true, PropertyNameForFileName: nameof(BusinessFlow.Name));
+            
 
             SR.AddItemInfo<ProjEnvironment>("*.Ginger.Environment.xml", @"~\Environments", true, "Environments", addToRootFolders: true, PropertyNameForFileName: nameof(ProjEnvironment.Name));
             SR.AddItemInfo<ALMDefectProfile>("*.Ginger.ALMDefectProfile.xml", @"~\ALMDefectProfiles", true, "ALM Defect Profiles", addToRootFolders: true, PropertyNameForFileName: nameof(ALMDefectProfile.Name));
@@ -991,10 +992,8 @@ namespace Ginger
 
         public static BusinessFlow LoadDefaultBusinessFlow()
         {
-            BusinessFlow biz = LocalRepository.CreateNewBizFlow( GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) +" 1");
-            biz.FileName = LocalRepository.GetRepoItemFileName(biz);
-            biz.Save();
-            App.LocalRepository.AddItemToCache(biz);
+            BusinessFlow biz = LocalRepository.CreateNewBizFlow( GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) +" 1");            
+            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(biz);            
             return biz;
         }
 
@@ -1104,11 +1103,11 @@ namespace Ginger
 
         private static void BetaFeatureChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(BetaFeatures.BFUseSolutionRepositry))
-            {
-                // is this the only item to refresh?
-                MainWindow.RefreshSolutionPage();
-            }
+            //if (e.PropertyName == nameof(BetaFeatures.BFUseSolutionRepositry))
+            //{
+            //    // is this the only item to refresh?
+            //    MainWindow.RefreshSolutionPage();
+            //}
            
         }
 

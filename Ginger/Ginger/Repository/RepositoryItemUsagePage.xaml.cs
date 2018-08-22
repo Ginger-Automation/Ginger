@@ -29,6 +29,8 @@ using GingerCore.Actions;
 using Ginger.Activities;
 using GingerCore.Activities;
 using GingerCore.Variables;
+using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Repository
 {
@@ -39,12 +41,12 @@ namespace Ginger.Repository
     {
         GenericWindow _pageGenericWin = null;
 
-        private RepositoryItem mRepoItem;
+        private RepositoryItemBase mRepoItem;
         public ObservableList<RepositoryItemUsage> RepoItemUsages = new ObservableList<RepositoryItemUsage>();
         private bool mIncludeOriginal = false;
-        private RepositoryItem mOriginalItem;
+        private RepositoryItemBase mOriginalItem;
 
-        public RepositoryItemUsagePage(RepositoryItem repoItem, bool includeOriginal=true, RepositoryItem originalItem=null)
+        public RepositoryItemUsagePage(RepositoryItemBase repoItem, bool includeOriginal=true, RepositoryItemBase originalItem =null)
         {
             InitializeComponent();
 
@@ -322,7 +324,7 @@ namespace Ginger.Repository
                        try
                        {
                            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, usage.HostBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                           usage.HostBusinessFlow.Save();
+                           WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
                            usage.Status = RepositoryItemUsage.eStatus.UpdatedAndSaved;
                            Reporter.CloseGingerHelper();
                        }

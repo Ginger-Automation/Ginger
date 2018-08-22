@@ -984,5 +984,85 @@ namespace Amdocs.Ginger.Repository
 
         #endregion Dirty
 
+
+        public RepositoryItemBase CreateInstance(bool originFromShredRepo = false)
+        {
+            RepositoryItemBase copiedItem = (RepositoryItemBase)this.CreateCopy();
+            copiedItem.ParentGuid = this.Guid;
+            if (originFromShredRepo)
+            {
+                copiedItem.IsSharedRepositoryInstance = true;
+                copiedItem.ExternalID = this.ExternalID;
+            }
+            return copiedItem;
+        }
+
+        bool mIsSharedRepositoryInstance = false;
+        public bool IsSharedRepositoryInstance
+        {
+            get
+            {
+                return mIsSharedRepositoryInstance;
+            }
+            set
+            {
+                if (mIsSharedRepositoryInstance != value)
+                {
+                    mIsSharedRepositoryInstance = value;
+
+                    //FIXME!! no image in STD 2.0 convert to ImageMaker enum
+                    // OnPropertyChanged(Fields.SharedRepoInstanceImage);
+                }
+            }
+        }
+
+        public virtual RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase selectedItem, RepositoryItemBase existingItem, string itemPartToUpdate)
+        {
+            throw new Exception("GetUpdatedRepoItem() was not implemented for this Item type");
+        }
+
+        public virtual void UpdateInstance(RepositoryItemBase instanceItem, string itemPartToUpdate, RepositoryItemBase hostItem = null)
+        {
+            throw new Exception("UpdateInstance() was not implemented for this Item type");
+        }
+
+        public static void ObjectsDeepCopy(RepositoryItemBase sourceObj, RepositoryItemBase targetObj)
+        {
+            NewRepositorySerializer repoSer = new NewRepositorySerializer();
+            string sourceObjXml = repoSer.SerializeToString(sourceObj);
+
+            NewRepositorySerializer RS = new NewRepositorySerializer();
+
+            //TODO: FIXME !!!
+            throw new NotImplementedException();
+            //RS.DeserializeFromTextWithTargetObj(sourceObj.GetType(), sourceObjXml, targetObj);
+        }
+
+        public virtual void UpdateItemFieldForReposiotryUse()
+        {
+            UpdateControlFields();
+        }
+
+        public void UpdateControlFields()
+        {
+            // from old RI
+
+            //if (Guid == null || Guid == Guid.Empty)
+            //{
+            //    Guid = Guid.NewGuid();
+            //}
+
+            
+            //if (CreatedBy == null || CreatedBy == string.Empty)
+            //{
+            //    CreatedBy = Environment.UserName;
+            //    Created = DateTime.UtcNow;
+            //}
+
+            //Deleted = false;
+        }
+
+      
+
     }
 }

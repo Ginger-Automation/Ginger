@@ -30,6 +30,7 @@ using Ginger.Actions;
 using Ginger.Repository;
 using Ginger.Activities;
 using Amdocs.Ginger;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -198,8 +199,8 @@ namespace Ginger.BusinessFlowWindows
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
             if (mActivityParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning) == MessageBoxResult.Yes)
-            {
-                mActivityParentBusinessFlow.Save();
+            {                
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivityParentBusinessFlow);
                 saveWasDone = true;
             }
             _pageGenericWin.Close();

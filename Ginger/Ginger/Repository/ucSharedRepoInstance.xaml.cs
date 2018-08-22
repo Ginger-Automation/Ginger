@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.Variables;
 using GingerCore;
@@ -33,8 +34,8 @@ namespace Ginger
     /// </summary>
     public partial class ucSharedRepoInstance : UserControl
     {
-        RepositoryItem mItem = null;
-        RepositoryItem mLinkedRepoItem=null;
+        RepositoryItemBase mItem = null;
+        RepositoryItemBase mLinkedRepoItem=null;
         BusinessFlow mBusinessFlow = null;
         bool mLinkIsByExternalID = false;
         bool mLinkIsByParentID = false;
@@ -47,7 +48,7 @@ namespace Ginger
             UpdateRepoBtn.Visibility = Visibility.Collapsed;
         }
 
-        public void Init(RepositoryItem item, BusinessFlow containingBusinessFlow)
+        public void Init(RepositoryItemBase item, BusinessFlow containingBusinessFlow)
         {
             mItem = item;
             mBusinessFlow = containingBusinessFlow;

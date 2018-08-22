@@ -1625,14 +1625,9 @@ namespace Ginger.Run
             if (CheckCurrentRunnerIsNotRuning()) return;
 
             BusinessFlowsFolderTreeItem bfsFolder;
-            if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-            {
-                bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
-            }
-            else
-            {
-                bfsFolder = new BusinessFlowsFolderTreeItem();//create new tree each time for now to allow refresh
-            }
+            
+            bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
+            
             bfsFolder.Folder = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
             bfsFolder.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
             bfsFolder.IsGingerDefualtFolder = true;

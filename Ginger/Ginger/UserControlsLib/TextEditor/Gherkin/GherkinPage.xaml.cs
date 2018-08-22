@@ -39,6 +39,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Amdocs.Ginger.Common;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.GherkinLib
 {
@@ -447,8 +448,8 @@ namespace Ginger.GherkinLib
             }
             mBizFlow = LocalRepository.CreateNewBizFlow(BFName);
             mBizFlow.Source = BusinessFlow.eSource.Gherkin;
-            mBizFlow.ExternalID = GherkinTextEditor.FileName.Replace(App.UserProfile.Solution.Folder, @"~\") ;            
-            mBizFlow.Save();
+            mBizFlow.ExternalID = GherkinTextEditor.FileName.Replace(App.UserProfile.Solution.Folder, @"~\") ;                        
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBizFlow);
             App.LocalRepository.AddItemToCache(mBizFlow);
 
             mBizFlow.Name = BizFlowName;
@@ -516,7 +517,7 @@ namespace Ginger.GherkinLib
             {
                 CreateNewBF(FeatureName);
                 CreateActivities();
-                mBizFlow.Save();
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBizFlow);
                 if (genWin != null)
                 {
                     genWin.Close();
@@ -603,8 +604,8 @@ namespace Ginger.GherkinLib
                 Activity a1 = (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
                 if (AG.CheckActivityInGroup(a1))
                     AG.RemoveActivityFromGroup(a1);
-            }            
-            mBizFlow.Save();
+            }
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBizFlow);
         }
 
 

@@ -30,6 +30,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Linq;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Activities
 {
@@ -206,7 +207,7 @@ namespace Ginger.Activities
 
         private void AddToRepository(object sender, RoutedEventArgs e)
         {
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdGroups.Grid.SelectedItems.Cast<RepositoryItem>().ToList());
+            Repository.SharedRepositoryOperations.AddItemsToRepository(grdGroups.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
             //if (grdGroups.Grid.SelectedItems != null)
             //{
 

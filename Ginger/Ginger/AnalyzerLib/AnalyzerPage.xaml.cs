@@ -34,6 +34,7 @@ using GingerCore.Helpers;
 using GingerCore.DataSource;
 using Ginger.Actions;
 using Ginger.BusinessFlowWindows;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.AnalyzerLib
 {
@@ -526,7 +527,8 @@ namespace Ginger.AnalyzerLib
                 if (bfToSave.Key != null)
                 {
                     SetStatus("Saving " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":")  + bfToSave.Key.Name);
-                    bfToSave.Key.Save();
+                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bfToSave.Key);
                     foreach (AnalyzerItemBase ai in bfToSave.Value)
                         ai.Status = AnalyzerItemBase.eStatus.FixedSaved;
                 }

@@ -273,8 +273,8 @@ namespace Ginger.Variables
         {
             if (LocalRepository.CheckIfSureDoingChange(mVariable, "change") == true)
             {
-                saveWasDone = true;
-                mVariable.Save();
+                saveWasDone = true;                
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mVariable);
                 _pageGenericWin.Close();
             }
         }

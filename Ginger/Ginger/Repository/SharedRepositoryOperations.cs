@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Amdocs.Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
@@ -29,7 +30,7 @@ namespace Ginger.Repository
 {
     public class SharedRepositoryOperations
     {
-        public static void AddItemsToRepository(List<RepositoryItem> listSelectedRepoItems)
+        public static void AddItemsToRepository(List<RepositoryItemBase> listSelectedRepoItems)
         {
             if (listSelectedRepoItems != null && listSelectedRepoItems.Count>0)
             {
@@ -41,9 +42,9 @@ namespace Ginger.Repository
             }
         }
 
-        public static void AddItemToRepository(RepositoryItem item)
+        public static void AddItemToRepository(RepositoryItemBase item)
         {
-            List<RepositoryItem> itemList = new List<RepositoryItem>();
+            List<RepositoryItemBase> itemList = new List<RepositoryItemBase>();
             itemList.Add(item);
             AddItemsToRepository(itemList);
         }
@@ -52,9 +53,9 @@ namespace Ginger.Repository
         {
             try
             {
-                RepositoryItem item = itemToUpload.UsageItem;
+                RepositoryItemBase item = itemToUpload.UsageItem;
                 string itemFileName = string.Empty;
-                RepositoryItem itemCopy = null;
+                RepositoryItemBase itemCopy = null;
                 bool isOverwrite = false;
                 if (itemToUpload.ItemUploadType == UploadItemSelection.eItemUploadType.Overwrite)
                 {
@@ -108,9 +109,9 @@ namespace Ginger.Repository
             }
         }
       
-        private static RepositoryItem GetItemToOverrite(UploadItemSelection itemToUpload)
+        private static RepositoryItemBase GetItemToOverrite(UploadItemSelection itemToUpload)
         {
-           RepositoryItem itemCopy = itemToUpload.UsageItem.GetUpdatedRepoItem( itemToUpload.UsageItem, itemToUpload.ExistingItem,itemToUpload.SelectedItemPart);
+           RepositoryItemBase itemCopy = itemToUpload.UsageItem.GetUpdatedRepoItem(itemToUpload.UsageItem, itemToUpload.ExistingItem,itemToUpload.SelectedItemPart);
 
             switch (itemToUpload.ExistingItemType)
             {
@@ -133,7 +134,7 @@ namespace Ginger.Repository
             return itemCopy;
         }
 
-        private static bool HandleItemValidationIssues(UploadItemSelection selectedItem, RepositoryItem itemCopy, ref bool isOverwrite)
+        private static bool HandleItemValidationIssues(UploadItemSelection selectedItem, RepositoryItemBase itemCopy, ref bool isOverwrite)
         {
             bool blockingIssuesHandled = true;
             List<ItemValidationBase> itemIssues = ItemValidationBase.GetAllIssuesForItem(selectedItem);

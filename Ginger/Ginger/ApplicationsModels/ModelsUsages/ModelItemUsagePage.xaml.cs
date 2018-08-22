@@ -282,8 +282,8 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                         if (usage.Status == ModelItemUsage.eStatus.Updated || usage.Status == ModelItemUsage.eStatus.SaveFailed)
                         {
                             try
-                            {
-                                usage.HostBusinessFlow.Save();
+                            {                                
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
                                 usage.Status = ModelItemUsage.eStatus.UpdatedAndSaved;
                             }
                             catch (Exception ex)

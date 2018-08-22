@@ -322,7 +322,8 @@ namespace Ginger.BusinessFlowFolder
                 if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
                     UndoChanges();
                 else
-                    mBusinessFlow.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
+                
             }
             _pageGenericWin.Close();
         }
@@ -331,8 +332,8 @@ namespace Ginger.BusinessFlowFolder
         {
             if (LocalRepository.CheckIfSureDoingChange(mBusinessFlow, "change") == true)
             {
-                saveWasDone = true;
-                mBusinessFlow.Save();
+                saveWasDone = true;                
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
                 _pageGenericWin.Close();
             }
         }

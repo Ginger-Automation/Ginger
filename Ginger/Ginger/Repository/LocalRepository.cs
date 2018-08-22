@@ -24,7 +24,6 @@ using Ginger.Run;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.Environments;
@@ -43,14 +42,14 @@ using System.Windows;
 
 namespace Ginger.Repository
 {
+
+    // Moving all to use new Solutionrepository
+
     public class LocalRepository
     {
         //This class will  be used to read and write data to repository
         // Can be Files folder local or on shared drive, can be real DB like Oracle or SQLServer.
         
-        //TODO: remove after we move to new SR !!!
-        private static ObservableList<BusinessFlow> mBusinessFlowsCache = null;
-      
 
         private static ObservableList<ActivitiesGroup> mRepoActivitiesGroupsCache = null;
         private static ObservableList<Activity> mRepoActivitiesCache = null;
@@ -120,19 +119,8 @@ namespace Ginger.Repository
         {
             //TODO: find a better way than if elses...
 
-            if (itemToAdd is BusinessFlow)
-            {
-                if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                {
-                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemToAdd);
-                }
-                else
-                {
-                    if (mBusinessFlowsCache.Where(x => x.Guid == itemToAdd.Guid).FirstOrDefault() == null)
-                        mBusinessFlowsCache.Add((BusinessFlow)itemToAdd);
-                }
-            }            
-            else if (itemToAdd is ActivitiesGroup)
+            
+            if (itemToAdd is ActivitiesGroup)
             {
                 if (mRepoActivitiesGroupsCache.Where(x => x.Guid == itemToAdd.Guid).FirstOrDefault() == null)
                     mRepoActivitiesGroupsCache.Add((ActivitiesGroup)itemToAdd);
@@ -170,18 +158,7 @@ namespace Ginger.Repository
 
         public void RemoveItemFromCache(RepositoryItemBase itemToRemove)
         {
-            if (itemToRemove is BusinessFlow)
-            {
-                if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                {
-                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(itemToRemove);
-                }
-                else
-                {
-                    mBusinessFlowsCache.Remove((BusinessFlow)itemToRemove);
-                }
-            }            
-            else if (itemToRemove is ActivitiesGroup)
+            if (itemToRemove is ActivitiesGroup)
                 mRepoActivitiesGroupsCache.Remove((ActivitiesGroup)itemToRemove);
             else if (itemToRemove is Activity)
                 mRepoActivitiesCache.Remove((Activity)itemToRemove);
@@ -201,19 +178,8 @@ namespace Ginger.Repository
         {
             object item = null;
 
-            if (ItemType == typeof(BusinessFlow))
-            {
-                // Need to remove at all - should not get item by file name
-                if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                {
-                    item = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.FileName == fileName).SingleOrDefault();
-                }
-                else
-                {
-                    item = mBusinessFlowsCache.Where(x => x.FileName == fileName).FirstOrDefault();
-                }
-            }            
-            else if (ItemType == typeof(ActivitiesGroup))
+                   
+            if (ItemType == typeof(ActivitiesGroup))
                 item = mRepoActivitiesGroupsCache.Where(x => x.FileName == fileName).FirstOrDefault();
             else if (ItemType == typeof(Activity))
                 item = mRepoActivitiesCache.Where(x => x.FileName == fileName).FirstOrDefault();
@@ -252,18 +218,8 @@ namespace Ginger.Repository
         {
             object item = null;
 
-            if (ItemType == typeof(BusinessFlow))
-            {
-                if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                {
-                    item = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(ItemGuid);
-                }
-                else
-                {
-                    item = mBusinessFlowsCache.Where(x => x.Guid == ItemGuid).FirstOrDefault();
-                }
-            }            
-            else if (ItemType == typeof(ActivitiesGroup))
+          
+            if (ItemType == typeof(ActivitiesGroup))
                 item = mRepoActivitiesGroupsCache.Where(x => x.Guid == ItemGuid).FirstOrDefault();
             else if (ItemType == typeof(Activity))
                 item = mRepoActivitiesCache.Where(x => x.Guid == ItemGuid).FirstOrDefault();
@@ -325,19 +281,8 @@ namespace Ginger.Repository
             //replace existing items
             foreach (KeyValuePair<int, object> itemToReplce in itemsToReplace)
             {
-                if (itemType == typeof(BusinessFlow))
-                {
-                    if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                    {
-                        // where do we use it?
-                    }
-                    else
-                    {
-                        mBusinessFlowsCache.RemoveAt(itemToReplce.Key);
-                        mBusinessFlowsCache.Insert(itemToReplce.Key, (BusinessFlow)itemToReplce.Value);
-                    }
-                }                
-                else if (itemType == typeof(ActivitiesGroup))
+                       
+                if (itemType == typeof(ActivitiesGroup))
                 {
                     mRepoActivitiesGroupsCache.RemoveAt(itemToReplce.Key);
                     mRepoActivitiesGroupsCache.Insert(itemToReplce.Key, (ActivitiesGroup)itemToReplce.Value);
@@ -373,18 +318,7 @@ namespace Ginger.Repository
             //add missing items to cache
             foreach (object itemToAdd in itemsToAdd)
             {
-                if (itemType == typeof(BusinessFlow))
-                {
-                    if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                    {
-                        // not needed anymore
-                    }
-                    else
-                    {
-                        mBusinessFlowsCache.Add((BusinessFlow)itemToAdd);
-                    }
-                }                
-                else if (itemType == typeof(ActivitiesGroup))
+              if (itemType == typeof(ActivitiesGroup))
                     mRepoActivitiesGroupsCache.Add((ActivitiesGroup)itemToAdd);
                 else if (itemType == typeof(Activity))
                     mRepoActivitiesCache.Add((Activity)itemToAdd);
@@ -401,18 +335,7 @@ namespace Ginger.Repository
             //delete old items from cache
             foreach (object itemToRemove in itemsToRemove)
             {
-                if (itemType == typeof(BusinessFlow))
-                {
-                    if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                    {
-                        //not needed anymore
-                    }
-                    else
-                    {
-                        mBusinessFlowsCache.Remove((BusinessFlow)itemToRemove);
-                    }
-                }                
-                else if (itemType == typeof(ActivitiesGroup))
+                if (itemType == typeof(ActivitiesGroup))
                     mRepoActivitiesGroupsCache.Remove((ActivitiesGroup)itemToRemove);
                 else if (itemType == typeof(Activity))
                     mRepoActivitiesCache.Remove((Activity)itemToRemove);
@@ -445,7 +368,7 @@ namespace Ginger.Repository
 
         public void RefreshAllCache()
         {
-            RefreshSolutionBusinessFlowsCache();            
+            
             RefreshSolutionRepoActivitiesGroups();
             RefreshSolutionRepoActivities();
             RefreshSolutionRepoActions();
@@ -457,9 +380,8 @@ namespace Ginger.Repository
 
         public void RefreshCacheByItemType(Type itemType, string specificFolderPath = "")
         {
-            if (itemType == typeof(BusinessFlow))
-                RefreshSolutionBusinessFlowsCache(specificFolderPath);            
-            else if (itemType == typeof(ActivitiesGroup))
+            
+            if (itemType == typeof(ActivitiesGroup))
                 RefreshSolutionRepoActivitiesGroups(specificFolderPath);
             else if (itemType == typeof(Activity))
                 RefreshSolutionRepoActivities(specificFolderPath);
@@ -486,18 +408,7 @@ namespace Ginger.Repository
 
         public void ClearItemCache(Type ItemTypeToClear)
         {            
-            if (ItemTypeToClear == typeof(BusinessFlow))
-            {
-                if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                {
-                    // do we want to allow add it?
-                }
-                else
-                {
-                    mBusinessFlowsCache = null;
-                }
-            }            
-            else if (ItemTypeToClear == typeof(ActivitiesGroup))
+           if (ItemTypeToClear == typeof(ActivitiesGroup))
                 mRepoActivitiesGroupsCache = null;
             else if (ItemTypeToClear == typeof(Activity))
                 mRepoActivitiesCache = null;
@@ -512,14 +423,7 @@ namespace Ginger.Repository
 
         public void ClearAllCache()
         {                        
-            if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-            {
-                // do we want to allow add it?
-            }
-            else
-            {
-                mBusinessFlowsCache = null;
-            }                                            
+            
             mRepoActivitiesGroupsCache = null;
             mRepoActivitiesCache = null;
             mRepoActionsCache = null;
@@ -535,53 +439,13 @@ namespace Ginger.Repository
         #region Business Flows
         public ObservableList<BusinessFlow> GetSolutionBusinessFlows(bool UseCache = true, string specificFolderPath = "", bool includeSubFolders = false)
         {
-            ObservableList<BusinessFlow> BFs;
-            Stopwatch st = Stopwatch.StartNew();
-            if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-            {
-                Console.WriteLine("Using SolutionRepositry");                
+            ObservableList<BusinessFlow> BFs;            
                 // need to do by folder!!!!!!!!!!!!!!!!!! is it used??? not for RepositoryFolder
-                BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>(); 
-            }
-            else
-            {
-                Console.WriteLine("Using LocalRepository");
-                if (mBusinessFlowsCache == null)
-                {
-                    mBusinessFlowsCache = new ObservableList<BusinessFlow>();
-                    LoadObjectsToListIncludingSubFolders(mBusinessFlowsCache, typeof(BusinessFlow));//load cache for first time
-                }
-                ObservableList<object> cacheList = new ObservableList<object>(mBusinessFlowsCache.ToList());
-                BFs = GetItemTypeObjects<BusinessFlow>(typeof(BusinessFlow), cacheList, UseCache, specificFolderPath, includeSubFolders);
-            }
-            st.Stop();
-            Console.WriteLine("Get childrens elapsed ms: " + st.ElapsedMilliseconds);
+             BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();                                     
             return BFs;
         }
 
-        public void RefreshSolutionBusinessFlowsCache(string specificFolderPath = "")
-        {
-            Console.WriteLine("Local Repositry RefreshSolutionBusinessFlowsCache");
-            if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-            {
-                //not needed ?
-            }
-            else
-            {
-                if (mBusinessFlowsCache == null) return;
-                ObservableList<object> cacheList = new ObservableList<object>(mBusinessFlowsCache.ToList());
-                RefreshItemTypeCache(typeof(BusinessFlow), cacheList, specificFolderPath);
-
-                //dirty solution to keep Automate tab Business Flow synced with cache after refresh
-                if (App.BusinessFlow != null)
-                {
-                    BusinessFlow lastAppBf = App.BusinessFlow;
-                    App.BusinessFlow = mBusinessFlowsCache.Where(x => x.Guid == lastAppBf.Guid).FirstOrDefault();
-                    if (App.BusinessFlow == null && mBusinessFlowsCache.Count > 0)//in case it was deleted
-                        App.BusinessFlow = mBusinessFlowsCache[0];
-                }
-            }
-        }
+       
         
         #endregion Business Flows
 
@@ -872,7 +736,7 @@ namespace Ginger.Repository
         //    }
         //}
 
-        public static bool CheckIfSureDoingChange(RepositoryItem item, string changeType)
+        public static bool CheckIfSureDoingChange(RepositoryItemBase item, string changeType)
         {
             RepositoryItemUsagePage usagePage = null;
             usagePage = new RepositoryItemUsagePage(item, true);
@@ -1110,7 +974,7 @@ namespace Ginger.Repository
         }
 
 
-        public void AddRepoItemToCache(RepositoryItem itemCopy)
+        public void AddRepoItemToCache(RepositoryItemBase itemCopy)
         {
             if (itemCopy is ActivitiesGroup && mRepoActivitiesGroupsCache != null) mRepoActivitiesGroupsCache.Add((ActivitiesGroup)itemCopy);
             else if (itemCopy is Activity && mRepoActivitiesCache != null) mRepoActivitiesCache.Add((Activity)itemCopy);
@@ -1387,7 +1251,7 @@ namespace Ginger.Repository
 
       
 
-        public RepositoryItem GetMatchingRepoItem(RepositoryItem item, IEnumerable<object> existingRepoItems, ref bool linkIsByExternalID, ref bool linkIsByParentID)
+        public RepositoryItemBase GetMatchingRepoItem(RepositoryItemBase item, IEnumerable<object> existingRepoItems, ref bool linkIsByExternalID, ref bool linkIsByParentID)
         {
             if (existingRepoItems == null)
             {
@@ -1423,7 +1287,7 @@ namespace Ginger.Repository
             bool linkIsByParentID = false;
             if (items != null && items.Count() > 0)
             {
-                foreach (RepositoryItem item in items)
+                foreach (RepositoryItemBase item in items)
                     if (GetMatchingRepoItem(item, existingRepoItems, ref linkIsByExternalID, ref linkIsByParentID) != null)
                         item.IsSharedRepositoryInstance = true;
                     else

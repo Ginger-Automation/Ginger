@@ -35,7 +35,7 @@ namespace GingerCore.Variables
         Solution = 2
     }
     
-    public abstract class VariableBase : RepositoryItem
+    public abstract class VariableBase : RepositoryItemBase
     {
         public enum eItemParts
         {
@@ -394,7 +394,7 @@ namespace GingerCore.Variables
             return false;
         }
 
-        public override void UpdateInstance(RepositoryItem instance, string partToUpdate, RepositoryItem hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
         {
             VariableBase variableBaseInstance = (VariableBase)instance;
 
@@ -435,7 +435,7 @@ namespace GingerCore.Variables
             }           
         }
 
-        public override RepositoryItem GetUpdatedRepoItem(RepositoryItem itemToUpload, RepositoryItem existingRepoItem, string itemPartToUpdate)
+        public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase existingRepoItem, string itemPartToUpdate)
         {
 
             VariableBase updatedVariable = null;       

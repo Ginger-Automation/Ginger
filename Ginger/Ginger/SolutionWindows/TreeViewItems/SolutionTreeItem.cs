@@ -98,17 +98,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             //Add Business Flows            
             BusinessFlowsFolderTreeItem BFTVI;
-            if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-            {
-                BFTVI = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
+            
+            BFTVI = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
                 // need to get dicser for header?
-            }
-            else
-            {
-                BFTVI = new BusinessFlowsFolderTreeItem();
-                BFTVI.Folder = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
-                BFTVI.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
-            }
+            
             
             BFTVI.IsGingerDefualtFolder = true;
             Childrens.Add(BFTVI);

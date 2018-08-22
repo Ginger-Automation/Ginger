@@ -38,6 +38,7 @@ using Ginger.AnalyzerLib;
 using GingerCoreNET.SourceControl;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Run
 {
@@ -175,7 +176,7 @@ namespace Ginger.Run
                             VariableBase runVar = bf.BusinessFlowCustomizedRunVariables.Where(v => v.ParentGuid == varb.ParentGuid && v.ParentName == varb.ParentName && v.Name == varb.Name).FirstOrDefault();
                             if (runVar != null)
                             {
-                                RepositoryItem.ObjectsDeepCopy(runVar, varb);
+                                RepositoryItemBase.ObjectsDeepCopy(runVar, varb);
                                 varb.DiffrentFromOrigin = runVar.DiffrentFromOrigin;
                                 varb.MappedOutputVariable = runVar.MappedOutputVariable;
                             }

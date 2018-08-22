@@ -169,10 +169,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Export.GingerToCSV.BusinessFlowToCSV(BusinessFlow);
         }
 
-        private void RefreshParentFolderChildrens()
-        {
-            App.LocalRepository.RefreshSolutionBusinessFlowsCache(specificFolderPath: BusinessFlow.ContainingFolderFullPath);
-            mTreeView.Tree.RefreshSelectedTreeNodeParent();
-        }
+        //private void RefreshParentFolderChildrens()
+        //{
+        //    App.LocalRepository.RefreshSolutionBusinessFlowsCache(specificFolderPath: BusinessFlow.ContainingFolderFullPath);
+        //    mTreeView.Tree.RefreshSelectedTreeNodeParent();
+        //}
     }
 }

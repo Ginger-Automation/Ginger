@@ -30,6 +30,7 @@ using System.Windows.Data;
 using Ginger.BusinessFlowFolder;
 using Amdocs.Ginger.Common;
 using System.Linq;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Variables
 {
@@ -329,7 +330,7 @@ namespace Ginger.Variables
 
         private void AddToRepository(object sender, RoutedEventArgs e)
         {          
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdVariables.Grid.SelectedItems.Cast<RepositoryItem>().ToList());
+            Repository.SharedRepositoryOperations.AddItemsToRepository(grdVariables.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
          
         }
 

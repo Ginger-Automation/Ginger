@@ -30,6 +30,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Ginger.Repository;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Activities
 {
@@ -230,8 +231,8 @@ namespace Ginger.Activities
         {
             List<RepositoryItem> listOfGroups = grdActivitiesGroups.Grid.SelectedItems.Cast<RepositoryItem>().ToList();// as List<RepositoryItem>;
 
-            List<RepositoryItem> itemsToUpload = new List<RepositoryItem>();
-            foreach (RepositoryItem group in listOfGroups)
+            List<RepositoryItemBase> itemsToUpload = new List<RepositoryItemBase>();
+            foreach (RepositoryItemBase group in listOfGroups)
             {
                 foreach (ActivityIdentifiers AI in ((ActivitiesGroup)group).ActivitiesIdentifiers)
                 {
@@ -241,9 +242,6 @@ namespace Ginger.Activities
             itemsToUpload.AddRange(listOfGroups);
 
             SharedRepositoryOperations.AddItemsToRepository(itemsToUpload);
-
-          
-          
         }
 
         private void RefereshFromALM(object sender, RoutedEventArgs e)

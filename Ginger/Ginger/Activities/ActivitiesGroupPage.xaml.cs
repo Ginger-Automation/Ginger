@@ -30,6 +30,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using Ginger.BusinessFlowWindows;
 using Ginger.BusinessFlowFolder;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Activities
 {
@@ -207,8 +208,8 @@ namespace Ginger.Activities
         private void CheckIfUserWantToSave()
         {
             if (LocalRepository.CheckIfSureDoingChange(mActivitiesGroup, "change") == true)
-            {
-                mActivitiesGroup.Save();
+            {                
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivitiesGroup);
                 _pageGenericWin.Close();
             }
         }

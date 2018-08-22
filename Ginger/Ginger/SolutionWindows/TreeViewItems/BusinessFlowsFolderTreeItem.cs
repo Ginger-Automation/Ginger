@@ -92,25 +92,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (IsGingerDefualtFolder)
             {
-                if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                {
-                    return TreeViewUtils.CreateItemHeader(mRepositoryFolder.FolderName, "@WorkFlow_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
-                }
-                else
-                {
-                    return TreeViewUtils.CreateItemHeader(Folder, "@WorkFlow_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
-                }
+                
+                return TreeViewUtils.CreateItemHeader(mRepositoryFolder.FolderName, "@WorkFlow_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+                
             }
             else
             {
-                if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                {
-                    return TreeViewUtils.CreateItemHeader(mRepositoryFolder.FolderName, "@Folder2_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
-                }
-                else
-                {
-                    return TreeViewUtils.CreateItemHeader(Folder, "@Folder2_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
-                }
+                
+                return TreeViewUtils.CreateItemHeader(mRepositoryFolder.FolderName, "@Folder2_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));                
             }
         }
 
@@ -137,16 +126,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {                
-                if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                {                    
-                    BFs = mRepositoryFolder.GetFolderItems();
-                    AddsubFolders(mRepositoryFolder, Childrens);                    
-                }
-                else
-                {                    
-                    BFs = App.LocalRepository.GetSolutionBusinessFlows(specificFolderPath: Path);
-                    AddsubFolders(Path, Childrens);
-                }                                
+                BFs = mRepositoryFolder.GetFolderItems();
+                AddsubFolders(mRepositoryFolder, Childrens);                                                    
             }
 
             //Add Business Flows to tree children             
@@ -296,7 +277,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                         importedBF.TargetApplications.Add(ta);
                     }
 
-                    importedBF.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(importedBF);
 
                     //add it to cache & tree
                     App.LocalRepository.AddItemToCache(importedBF);
@@ -334,7 +315,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 ITreeViewItem addTreeViewItem = mTreeView.Tree.AddChildItemAndSelect(this, BFTI);
 
                 //Must do the action after the node was added to tree!
-                BizFlow.Save();
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BizFlow);
 
                 //add BF to cach
                 App.LocalRepository.AddItemToCache(BizFlow);

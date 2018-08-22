@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -51,8 +51,7 @@ namespace Amdocs.Ginger.Common
 
         // public bool SaveEnvironmentUsingSR2 { get { return GetFeature(nameof(SaveEnvironmentUsingSR2)).Selected; } set { UpdateFeature(nameof(SaveEnvironmentUsingSR2), value); } }
 
-        //BFs
-        public bool BFUseSolutionRepositry { get { return GetFeature(nameof(BFUseSolutionRepositry)).Selected; } set { UpdateFeature(nameof(BFUseSolutionRepositry), value); } }                
+        //BFs        
         public bool BFExportToJava { get { return GetFeature(nameof(BFExportToJava)).Selected; } set { UpdateFeature(nameof(BFExportToJava), value); } }
         public bool BFPageActivitiesHookOnlyNewActivities { get { return GetFeature(nameof(BFPageActivitiesHookOnlyNewActivities)).Selected; } set { UpdateFeature(nameof(BFPageActivitiesHookOnlyNewActivities), value); } }
 
@@ -89,7 +88,7 @@ namespace Amdocs.Ginger.Common
             // mFeatures.Add(new BetaFeature() { Group = "Environments",Description = "Save Environment Using SR2",   ID = nameof(SaveEnvironmentUsingSR2), Warning = "zzz" });            
             
             //BFs
-            mFeatures.Add(new BetaFeature() { Group = "Business Flows", Description = "BFs using Solution Repository", ID = nameof(BFUseSolutionRepositry), Warning = "Will reload solution" });
+            
             mFeatures.Add(new BetaFeature() { Group = "Business Flows", Description = "Export BF to Java menu item", ID = nameof(BFExportToJava)});
             mFeatures.Add(new BetaFeature() { Group = "Business Flows", Description = "BF Activities page hook only new activities - speed", ID = nameof(BFPageActivitiesHookOnlyNewActivities) });
 

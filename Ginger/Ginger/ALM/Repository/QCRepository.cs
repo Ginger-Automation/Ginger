@@ -33,6 +33,7 @@ using TDAPIOLELib;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM.Repository
 {
@@ -235,7 +236,7 @@ namespace Ginger.ALM.Repository
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name,
                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    businessFlow.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.CloseGingerHelper();
                 }
         }
@@ -297,8 +298,8 @@ namespace Ginger.ALM.Repository
             {
                 if (performSaveAfterExport)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, activtiesGroup.Name, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
-                    activtiesGroup.Save();
+                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, activtiesGroup.Name, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(activtiesGroup);
                     Reporter.CloseGingerHelper();
                 }
                 return true;
@@ -390,7 +391,7 @@ namespace Ginger.ALM.Repository
                 if (performSaveAfterExport)
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    businessFlow.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.CloseGingerHelper();
                 }
                 if (almConectStyle != ALMIntegration.eALMConnectType.Auto)

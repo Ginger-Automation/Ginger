@@ -69,6 +69,7 @@ using Ginger.ConfigurationsLib;
 using Ginger.MenusLib;
 using GingerWPF.BusinessFlowsLib;
 using Amdocs.Ginger;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger
 {
@@ -1009,7 +1010,7 @@ namespace Ginger
         public void SaveAppCurrentItem()
         {
 
-            RepositoryItem RIS = null;
+            RepositoryItemBase RIS = null;
             bool OnRunPage = false;
 
 
@@ -1023,7 +1024,7 @@ namespace Ginger
                     RIS = App.CurrentRepositoryItem;
                     break;
                 case "Automate":
-                    RIS = (RepositoryItem)App.BusinessFlow;
+                    RIS = App.BusinessFlow;
                     break;
                 default:
                     Reporter.ToUser(eUserMsgKeys.CtrlSMissingItemToSave);
@@ -1183,8 +1184,8 @@ namespace Ginger
 
             Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.BusinessFlow.Name,
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-
-            App.BusinessFlow.Save();
+            
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(App.BusinessFlow);
 
             Reporter.CloseGingerHelper();
         }
@@ -1386,8 +1387,8 @@ namespace Ginger
             {
                 if (Reporter.ToUser(eUserMsgKeys.AskIfToSaveBFAfterExport, App.BusinessFlow.Name) == MessageBoxResult.Yes)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    App.BusinessFlow.Save();
+                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(App.BusinessFlow);
                     Reporter.CloseGingerHelper();
                 }
             }
@@ -1561,7 +1562,7 @@ namespace Ginger
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.BusinessFlow.Name,
                                   GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    App.BusinessFlow.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(App.BusinessFlow);
                     Reporter.CloseGingerHelper();
                 }
             }

@@ -20,10 +20,11 @@ using Amdocs.Ginger.Common;
 using System;
 using System.ComponentModel;
 using GingerCore;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
-    public class UploadItemSelection : RepositoryItem, INotifyPropertyChanged
+    public class UploadItemSelection : RepositoryItemBase, INotifyPropertyChanged
     {
         public static new class Fields
         {
@@ -92,8 +93,8 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
         }
 
-        public RepositoryItem UsageItem { get; set; }
-        public RepositoryItem ExistingItem { get; set; }
+        public RepositoryItemBase UsageItem { get; set; }
+        public RepositoryItemBase ExistingItem { get; set; }
     
         public enum eExistingItemType
         {
