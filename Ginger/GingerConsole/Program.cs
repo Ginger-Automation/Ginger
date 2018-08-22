@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using GingerCoreNET.CommandProcessorLib;
 // using GingerCoreNET.CommandProcessorLib;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace Amdocs.Ginger.GingerConsole
 
         static MenuManager mMenuManager;
 
-        // static GingerGridMenu gingerGridMenu;
+        static GingerGridMenu gingerGridMenu;
         
         static void Main(string[] args)
         {
@@ -103,8 +104,8 @@ namespace Amdocs.Ginger.GingerConsole
             CodeProcessorMenu codeProcessorMenu = new CodeProcessorMenu();
             mMenuManager.MenuItems.Add(codeProcessorMenu.GetMenu());
 
-            // gingerGridMenu = new GingerGridMenu();
-            // mMenuManager.MenuItems.Add(gingerGridMenu.GetMenu());
+            gingerGridMenu = new GingerGridMenu();
+            mMenuManager.MenuItems.Add(gingerGridMenu.GetMenu());
 
             PluginMenu pluginMenu = new PluginMenu();
             mMenuManager.MenuItems.Add(pluginMenu.GetMenu());
@@ -130,8 +131,8 @@ namespace Amdocs.Ginger.GingerConsole
 
         private static void ProcessArgs(string[] args)
         {            
-            //CommandProcessor CP = new CommandProcessor();
-            //CP.RunCommand(args[0]);
+            CommandProcessor CP = new CommandProcessor();
+            CP.RunCommand(args[0]);
         }
 
         private static Module A_ModuleResolve1(object sender, ResolveEventArgs e)

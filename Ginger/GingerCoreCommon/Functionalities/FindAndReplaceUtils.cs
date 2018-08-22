@@ -52,8 +52,10 @@ namespace Amdocs.Ginger.Common.Functionalities
                 try
                 {
                     if (mi.Name == nameof(ActInputValue.StoreToVariable) || mi.Name == /*nameof(RepositoryItemBase.mBackupDic)*/ "mBackupDic" || mi.Name == nameof(RepositoryItemBase.FileName) || mi.Name == nameof(RepositoryItemBase.Guid) ||
-                    mi.Name == nameof(RepositoryItemBase.ObjFolderName) || mi.Name == nameof(RepositoryItemBase.ObjFileExt) || mi.Name ==  "ScreenShots" ||
-                    mi.Name == nameof(RepositoryItemBase.ContainingFolder) || mi.Name == nameof(RepositoryItemBase.ContainingFolderFullPath) || mi.Name == nameof(RepositoryItemBase.Guid) || mi.Name == nameof(RepositoryItemBase.ParentGuid) || mi.Name == "Created" || mi.Name == "LastUpdate" || mi.Name == "Version") continue;
+                    mi.Name == nameof(RepositoryItemBase.ObjFolderName) || mi.Name == nameof(RepositoryItemBase.ObjFileExt) || mi.Name == "ScreenShots" ||
+                    mi.Name == nameof(RepositoryItemBase.ContainingFolder) || mi.Name == nameof(RepositoryItemBase.ContainingFolderFullPath) || mi.Name == nameof(RepositoryItemBase.Guid) || mi.Name == nameof(RepositoryItemBase.ParentGuid) || mi.Name == "Created" || mi.Name == "Version" || mi.Name == "CreatedBy" || mi.Name == "LastUpdate" || mi.Name == "LastUpdateBy") 
+                    continue;
+
 
                     //Get the attr value
                     PropertyInfo PI = item.GetType().GetProperty(mi.Name);

@@ -59,7 +59,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Mobile }; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
         public override String ActionType
         {
@@ -97,7 +97,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.NA)
+            if (platform == ePlatformType.Web ||  platform == ePlatformType.NA || platform == ePlatformType.Mobile)
             {
                 return true;
             }

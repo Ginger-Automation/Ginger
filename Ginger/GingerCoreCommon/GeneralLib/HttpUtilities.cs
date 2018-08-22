@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -27,17 +27,11 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
     public class HttpUtilities
     {
-        public static async Task<string> DownloadFileAsync(Uri url)
+        public static string Download(Uri url)
         {
             WebClient wbClient = new WebClient();
-            /* wbClient.Proxy = new WebProxy()
-              {
-
-                  UseDefaultCredentials = true,
-              };*/
-            return await wbClient.DownloadStringTaskAsync(url);
-
-
+            wbClient.Proxy = WebRequest.GetSystemWebProxy();
+            return wbClient.DownloadString(url);
         }
     }
 }
