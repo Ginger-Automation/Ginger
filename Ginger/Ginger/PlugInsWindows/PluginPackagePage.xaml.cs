@@ -20,8 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore.Helpers;
-using GingerPlugIns.TextEditorLib;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -56,8 +54,28 @@ namespace Ginger.PlugInsWindows
             //GingerCore.General.ObjFieldBinding(PlugInVersionlbl, Label.ContentProperty, mPlugInWrapper, nameof(PlugInWrapper.PlugInVersion), BindingMode.OneWay);
             //PlugInFolderlbl.Content = mPlugInWrapper.FullPlugInRootPath.ToLower().Replace(App.UserProfile.Solution.Folder.ToLower(), "~");
 
+
+            SetServicesGrid();
             SetActionsGrid();
-            SetTextEditorGrid();
+            // SetTextEditorGrid();
+        }
+
+
+        private void SetServicesGrid()
+        {
+            ServicesGrid.ShowEdit = Visibility.Collapsed;
+            ServicesGrid.ShowUpDown = Visibility.Collapsed;
+         
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+            view.GridColsView.Add(new GridColView() { Field = "ServiceId", Header = "Action Type", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            ServicesGrid.SetAllColumnsDefaultView(view);
+            ServicesGrid.InitViewItems();
+
+            var services = mPluginPackage.GetServices();
+            PlugInsActionsGrid.Grid.ItemsSource = services;
+
         }
 
         private void SetActionsGrid()
@@ -88,28 +106,29 @@ namespace Ginger.PlugInsWindows
 
         private void SetTextEditorGrid()
         {
-            //PlugInsEditorActionsGrid.ShowEdit = Visibility.Collapsed;
-            //PlugInsEditorActionsGrid.ShowUpDown = Visibility.Collapsed;
-            //PlugInsEditorActionsGrid.ShowTitle = Visibility.Collapsed;
+            PlugInsEditorActionsGrid.ShowEdit = Visibility.Collapsed;
+            PlugInsEditorActionsGrid.ShowUpDown = Visibility.Collapsed;
+            PlugInsEditorActionsGrid.ShowTitle = Visibility.Collapsed;
 
-            //GridViewDef view1 = new GridViewDef(GridViewDef.DefaultViewName);
-            //view1.GridColsView = new ObservableList<GridColView>();
-            //view1.GridColsView.Add(new GridColView() { Field = "EditorName", Header = "Editor Name", WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            //view1.GridColsView.Add(new GridColView() { Field = "ExtensionsAsString", Header = "Supported File Extensions", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            GridViewDef view1 = new GridViewDef(GridViewDef.DefaultViewName);
+            view1.GridColsView = new ObservableList<GridColView>();
+            view1.GridColsView.Add(new GridColView() { Field = "EditorName", Header = "Editor Name", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view1.GridColsView.Add(new GridColView() { Field = "ExtensionsAsString", Header = "Supported File Extensions", WidthWeight = 300, BindingMode = BindingMode.OneWay });
 
-            //PlugInsEditorActionsGrid.SetAllColumnsDefaultView(view1);
-            //PlugInsEditorActionsGrid.InitViewItems();
+            PlugInsEditorActionsGrid.SetAllColumnsDefaultView(view1);
+            PlugInsEditorActionsGrid.InitViewItems();
 
-            //PlugInsEditorActionsGrid.DataSourceList = ConvertToObservalbe(mPlugInWrapper.TextEditors());
+            var textEditors = mPluginPackage.GetTextFileEditors();
+            PlugInsEditorActionsGrid.Grid.ItemsSource = textEditors;
         }
 
-        private ObservableList<PlugInTextFileEditorBase> ConvertToObservalbe(List<PlugInTextFileEditorBase> T)
-        {
-            ObservableList<PlugInTextFileEditorBase> OL = new ObservableList<PlugInTextFileEditorBase>();
-            foreach (PlugInTextFileEditorBase PTE in T)
-                OL.Add(PTE);
-            return OL;
-        }
+        //private ObservableList<PlugInTextFileEditorBase> ConvertToObservalbe(List<PlugInTextFileEditorBase> T)
+        //{
+        //    ObservableList<PlugInTextFileEditorBase> OL = new ObservableList<PlugInTextFileEditorBase>();
+        //    foreach (PlugInTextFileEditorBase PTE in T)
+        //        OL.Add(PTE);
+        //    return OL;
+        //}
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

@@ -75,8 +75,8 @@ namespace Ginger.Actions
                     {
                         ActPlugIn act = new ActPlugIn();                        
                         act.Description = SAA.Description;
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.PluginID), pluginPackage.PluginID);
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.PluginActionID),SAA.ID);
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.ServiceId), pluginPackage.PluginID);
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.GingerActionID),SAA.ID);
                         foreach (var v in SAA.InputValues)
                         {
                             act.InputValues.Add(new ActInputValue() { Param = v.Param });
@@ -195,7 +195,7 @@ namespace Ginger.Actions
 
             if (actionsGrid == PlugInsActionsGrid)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof (ActPlugIn.PlugInName), Header = "Owner PlugIn", WidthWeight = 6, ReadOnly = true , BindingMode = BindingMode.OneWay});
+                view.GridColsView.Add(new GridColView() { Field = nameof (ActPlugIn.ServiceId), Header = "Service ID", WidthWeight = 6, ReadOnly = true , BindingMode = BindingMode.OneWay});
             }
             else
             {
