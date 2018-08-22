@@ -28,6 +28,8 @@ using System.Windows.Input;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Repository;
+using GingerCore.ALM.QC;
+using GingerCore.ALM.QCRestAPI;
 
 namespace Ginger.ALM
 {
@@ -50,8 +52,16 @@ namespace Ginger.ALM
             switch (AlmType)
             {
                 case eALMType.QC:
-                    AlmCore = new QCCore();
-                    AlmRepo = new QCRepository();
+                    if (!App.UserProfile.Solution.UseRest)
+                    {
+                        AlmCore = new QCCore();
+                        AlmRepo = new QCRepository();
+                    }
+                    else
+                    {
+                        AlmCore = new QCRestAPICore();
+                        AlmRepo = new QCRestAPIRepository();
+                    }
                     break;
 
                 case eALMType.RQM:
@@ -71,13 +81,14 @@ namespace Ginger.ALM
         public void SetALMCoreConfigurations()
         {
             ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
-            AlmCore.SetALMConfigurations(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMDomain, App.UserProfile.Solution.ALMProject);
+            AlmCore.SetALMConfigurations(App.UserProfile.Solution.ALMServerURL, App.UserProfile.Solution.UseRest,  App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMDomain, App.UserProfile.Solution.ALMProject);
             SyncConfigurations();
         }
 
         public void SyncConfigurations()
         {
             App.UserProfile.Solution.ALMServerURL = ALMCore.AlmConfig.ALMServerURL;
+            App.UserProfile.Solution.UseRest = ALMCore.AlmConfig.UseRest;
             App.UserProfile.ALMUserName = ALMCore.AlmConfig.ALMUserName;
             App.UserProfile.ALMPassword = ALMCore.AlmConfig.ALMPassword;
             App.UserProfile.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
@@ -371,7 +382,11 @@ namespace Ginger.ALM
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
                 string testPlanUploadPath = AlmRepo.SelectALMTestPlanPath();
+                if (testPlanUploadPath == null)
+                    return false;
                 string testLabUploadPath = AlmRepo.SelectALMTestLabPath();
+                if (testLabUploadPath == null)
+                    return false;
                 foreach (BusinessFlow bf in bfToExport)
                 {
                     if (!AlmRepo.ExportBusinessFlowToALM(bf, performSaveAfterExport, almConectStyle, testPlanUploadPath, testLabUploadPath))
@@ -451,12 +466,12 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = null;
         }
 
-        public ObservableList<ExternalItemFieldBase> GetALMItemFieldsREST(bool online, BackgroundWorker bw = null)
+        public ObservableList<ExternalItemFieldBase> GetALMItemFieldsREST(bool online, ALM_Common.DataContracts.ResourceType resourceType, BackgroundWorker bw = null)
         {
             ObservableList<ExternalItemFieldBase> latestALMFieldsREST = new ObservableList<ExternalItemFieldBase>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
-                latestALMFieldsREST = AlmCore.GetALMItemFields(bw, online, true);
+                latestALMFieldsREST = AlmCore.GetALMItemFields(null ,online, resourceType);
             }
             return latestALMFieldsREST;
         }
@@ -490,6 +505,7 @@ namespace Ginger.ALM
                         existingField.Name = latestField.Name;
                         existingField.ItemType = latestField.ItemType;
                         existingField.Mandatory = latestField.Mandatory;
+                        existingField.ExternalID = latestField.ExternalID;
                        
                         if (latestField.Mandatory == true)
                             existingField.ToUpdate = true;
@@ -575,6 +591,26 @@ namespace Ginger.ALM
         public eUserMsgKeys GetDownloadPossibleValuesMessage()
         {
             return AlmRepo.GetDownloadPossibleValuesMessage();
+        }
+
+        public List<string> GetTestLabExplorer(string path)
+        {
+            return AlmRepo.GetTestLabExplorer(path);
+        }
+
+        public IEnumerable<Object> GetTestSetExplorer(string path)
+        {
+            return AlmRepo.GetTestSetExplorer(path);
+        }
+
+        public QCTestSetSummary GetTSRunStatus(QCTestSetSummary tsItem)
+        {
+            return (QCTestSetSummary)AlmRepo.GetTSRunStatus(tsItem);
+        }
+
+        public List<string> GetTestPlanExplorer(string path)
+        {
+            return AlmRepo.GetTestPlanExplorer(path);
         }
     }
 }
