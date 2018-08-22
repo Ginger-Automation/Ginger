@@ -394,7 +394,10 @@ namespace GingerCore.Environments
 
                     case eDBTypes.Cassandra:
                         GingerCassandra CassandraDriver = new GingerCassandra(this);
-                        CassandraDriver.Connect();
+                        bool cassandraConnection;
+                        cassandraConnection= CassandraDriver.Connect();
+                        if (cassandraConnection == true)
+                            return true;
                         break;
 
                     case eDBTypes.MySQL:
@@ -408,6 +411,7 @@ namespace GingerCore.Environments
                     LastConnectionUsedTime = DateTime.Now;
                     return true;
                 }
+                
                 
             }
             catch (Exception e)
@@ -510,7 +514,7 @@ namespace GingerCore.Environments
         {
             DbDataReader reader = null;
             List<string> rc = new List<string>() { "" };
-            if (oConn == null || string.IsNullOrEmpty(table))
+            if ((oConn == null || string.IsNullOrEmpty(table))&& (DBType != Database.eDBTypes.Cassandra))
             {
                 return rc;
             }
