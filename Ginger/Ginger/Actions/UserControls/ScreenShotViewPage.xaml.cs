@@ -53,6 +53,26 @@ namespace Ginger.Actions.UserControls
             HighLighterRectangle.Visibility = Visibility.Collapsed;
         }
         
+        public ScreenShotViewPage(string Name, BitmapSource bitmapSource)
+        {
+            InitializeComponent();
+
+            if (bitmapSource != null)
+            {
+                
+                SizeLabel.Content = bitmapSource.PixelHeight + "x" + bitmapSource.PixelWidth;
+
+                //Change the canvas to match bmp size
+                MainCanvas.Width = bitmapSource.PixelWidth;
+                MainCanvas.Height = bitmapSource.PixelHeight;
+                MainImage.Source = bitmapSource;
+            }
+
+            mName = Name;
+            NameLabel.Content = mName;
+            HighLighterRectangle.Visibility = Visibility.Collapsed;
+        }
+
         public ScreenShotViewPage(string Name, System.Drawing.Bitmap bitmap)
         {
             InitializeComponent();
@@ -134,15 +154,24 @@ namespace Ginger.Actions.UserControls
         {
             using (MemoryStream memory = new MemoryStream())
             {
-                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-                memory.Position = 0;
-                BitmapImage bitmapimage = new BitmapImage();
-                bitmapimage.BeginInit();
-                bitmapimage.StreamSource = memory;
-                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapimage.EndInit();
 
-                return bitmapimage;
+                try
+                {
+                    bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
+                    memory.Position = 0;
+                    BitmapImage bitmapimage = new BitmapImage();
+                    bitmapimage.BeginInit();
+                    bitmapimage.StreamSource = memory;
+                    bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapimage.EndInit();
+
+                    return bitmapimage;
+                }
+                catch
+                {
+                    return null;
+                }
+
             }
         }
 

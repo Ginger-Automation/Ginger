@@ -32,7 +32,10 @@ namespace Amdocs.Ginger.Common.UIElement
     public class ElementInfo : RepositoryItemBase
     {
         [IsSerializedForLocalRepository]
-        public ObservableList<ElementLocator> Locators;
+        public ObservableList<ElementLocator> Locators = new ObservableList<ElementLocator>();
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<ControlProperty> Properties = new ObservableList<ControlProperty>();
 
         [IsSerializedForLocalRepository]
         public int X { get; set; }
@@ -55,8 +58,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public object ElementObject { get; set; }
         public Boolean IsExpandable { get; set; }
 
-        public IWindowExplorer WindowExplorer { get; set; }
-        public override string ItemName { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
+        public IWindowExplorer WindowExplorer { get; set; }        
 
         private string mElementTitle = null;
         [IsSerializedForLocalRepository]
@@ -70,6 +72,7 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mElementTitle = value; }
         }
 
+
         // Used for Lazy loading when possible
         public virtual string GetElementTitle()
         {
@@ -78,14 +81,21 @@ namespace Amdocs.Ginger.Common.UIElement
             return mElementTitle;
         }
 
-        // elemnt name is given by the user when he maps UI elements and give them name to use in DOR
+
+        [IsSerializedForLocalRepository]
+        public string Description { get; set; }
+
+        
+        public override string ItemName { get { return this.ElementName; } set { this.ElementName = value; } }
 
         private string mElementName = null;
         [IsSerializedForLocalRepository]
-        public string ElementName
+        public string ElementName // elemnt name is given by the user when he maps UI elements and give them name to use in DOR
         {
             get
             {
+                if (string.IsNullOrEmpty(mElementName))
+                    mElementName = mElementTitle;
                 return mElementName;
             }
             set
@@ -117,6 +127,20 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mElementTypeEnum = value; }
         }
 
+        [IsSerializedForLocalRepository]
+        public List<String> OptionalValues = new List<String>();
+
+        public string OptionalValuesAsString
+        {
+            get
+            {
+                string listString = string.Empty;
+                foreach (string value in OptionalValues) listString += value + ",";
+                listString.TrimEnd(',');
+                return listString;
+            }
+        }
+
         // Used for Lazy loading when possible
         public virtual string GetElementType()
         {
@@ -144,11 +168,15 @@ namespace Amdocs.Ginger.Common.UIElement
             return mValue;
         }
 
+        [IsSerializedForLocalRepository]
         public string Path { get; set; }
 
         //  AbsoluteXPath
-        private string mXPath = null;
 
+
+        private string mXPath;
+
+        [IsSerializedForLocalRepository]
         public string XPath
         {
             get

@@ -23,6 +23,7 @@ using Ginger.Repository;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
+using GingerCore.ALM.QC;
 using GingerCore.ALM.RQM;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -329,6 +330,26 @@ namespace Ginger.ALM.Repository
         public override string SelectALMTestLabPath()
         {
             return "";
+        }
+
+        public override List<string> GetTestLabExplorer(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<Object> GetTestSetExplorer(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Object GetTSRunStatus(Object tsItem)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<string> GetTestPlanExplorer(string path)
+        {
+            throw new NotImplementedException();
         }
     }
 }

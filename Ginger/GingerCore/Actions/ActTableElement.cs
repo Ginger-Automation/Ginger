@@ -112,7 +112,9 @@ namespace GingerCore.Actions
             MousePressAndRelease,
             SendKeys,
             [EnumValueDescription("Is Checked")]
-            IsChecked
+            IsChecked,
+            [EnumValueDescription("Set Text")]
+            SetText
         }
 
         public enum eRunColSelectorValue
