@@ -3475,7 +3475,7 @@ namespace GingerCore.Drivers
                 {
                     ClearClipboardText();
                     DoRightClick(obj,XY);
-
+                    Thread.Sleep(200);
                     CurrentWindow.SetFocus();
                     System.Windows.Forms.SendKeys.SendWait("c");
                     val = GetClipboardText();
@@ -4785,20 +4785,24 @@ namespace GingerCore.Drivers
                         break;
 
                     case "Where":
-                        if (!isElementsFromPoints)
+                        AutomationElement whereColumnElement;
+                        if (!actGrid.ControlAction.Equals(ActTableElement.eTableAction.SetText))
                         {
-                            AEWhereColl = GetColumnCollection(actGrid.WhereColSelector, actGrid.WhereColumnTitle, AE);
-                            RowNumber = GetRowNumFromCollection(AEWhereColl,actGrid.WhereProperty, actGrid.WhereOperator, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));                            
+                            if (!isElementsFromPoints)
+                            {
+                                AEWhereColl = GetColumnCollection(actGrid.WhereColSelector, actGrid.WhereColumnTitle, AE);
+                                RowNumber = GetRowNumFromCollection(AEWhereColl, actGrid.WhereProperty, actGrid.WhereOperator, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));
+                            }
+                            else
+                            {
+                                whereColumnElement = GetColumnElementByPoint(AE, actGrid.WhereColumnTitle, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));
+                                targetAE = GetColOnScreenByPoint(AE, whereColumnElement, actGrid.LocateColTitle);
+                            }
                         }
-                        else
-                        {
-                            AutomationElement WhereColumnAE = GetColumnElementByPoint(AE, actGrid.WhereColumnTitle, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));
-                            targetAE = GetColOnScreenByPoint(AE, WhereColumnAE, actGrid.LocateColTitle);                            
-                        }                        
-                        break;                        
+                        break;
                 }
 
-                if(targetAE==null)
+                if (targetAE == null && (!actGrid.ControlAction.Equals(ActTableElement.eTableAction.SetText)))
                 {
                     AEColl = GetColumnCollection(actGrid.ColSelectorValue, actGrid.LocateColTitle, AE);
                     if (AEColl[RowNumber].Current.IsOffscreen)
@@ -4811,7 +4815,7 @@ namespace GingerCore.Drivers
                     targetAE = AEColl[RowNumber];
                 }
 
-                HandleTableAction(targetAE, actGrid);
+                HandleTableAction(AE, targetAE, actGrid);
 
             }
             catch (System.Runtime.InteropServices.COMException e)
@@ -4820,6 +4824,66 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
                 throw new System.Runtime.InteropServices.COMException();
             }
+        }
+
+        /// <summary>
+        /// finding grid element by GetText and performing Click and Sendkeys on it
+        /// </summary>
+        public void SetTextByElementGetText(AutomationElement tableElement, string targetColumnTitle, string whereColumnTitle, string whereColumnValue, string value)
+        {
+            int targetXPoint;
+            List<string> keys = MainDict.Keys.ToList();
+            if (!keys.Contains(whereColumnTitle))
+            {
+                throw new Exception("Input Column Name " + whereColumnTitle + " not present in Grid");
+            }
+            if (!keys.Contains(targetColumnTitle))
+            {
+                throw new Exception("Input Column Name " + targetColumnTitle + " not present in Grid");
+            }
+
+            AutomationElement element = (MainDict[whereColumnTitle])[0];
+            getColumnOnScreen(tableElement, whereColumnTitle);
+
+            int sourceYPoint = (int)element.Current.BoundingRectangle.Height + 7;
+            int tableHeight = (int)tableElement.Current.BoundingRectangle.Height;
+            AutomationElement Scroll = tableElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.OrientationProperty, OrientationType.Vertical));
+            AutomationElement pageDown = null, pageUp = null;
+
+            if (Scroll != null)
+            {
+                pageDown = Scroll.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
+                pageUp = Scroll.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page up"));
+            }
+            while (pageUp != null && (!pageUp.Current.IsOffscreen))
+            {
+                ClickElement(pageUp);
+                pageDown = Scroll.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
+            }
+
+            do
+            {
+                while (sourceYPoint < tableHeight)
+                {
+                    string XY = "" + 10 + "," + sourceYPoint;
+                    string val = GetControlText(element, XY);
+                    if (val.Equals(whereColumnValue))
+                    {
+                        sourceYPoint = sourceYPoint + (int)element.Current.BoundingRectangle.Y;
+                        getColumnOnScreen(tableElement, targetColumnTitle);
+                        targetXPoint = (int)MainDict[targetColumnTitle][0].Current.BoundingRectangle.X + 5;
+
+                        winAPI.SendClickOnXYPoint(tableElement, targetXPoint, sourceYPoint);
+                        WinAPIAutomation.SendInputKeys(value);
+                        WinAPIAutomation.SendTabKey();
+                        return;
+                    }
+                    sourceYPoint = sourceYPoint + 5;
+                }
+                if (pageDown != null && (!pageDown.Current.IsOffscreen))
+                    ClickElement(pageDown);
+            } while (pageDown != null);
+            throw new Exception("Given Value " + whereColumnValue + " is not present in column " + whereColumnTitle);
         }
 
         /// <summary>
@@ -4971,22 +5035,25 @@ namespace GingerCore.Drivers
         public void getRowOnScreen(AutomationElement AE, AutomationElement targetAE, int RowNumber, int MinRowOnScreen)
         {
             AutomationElement ScrollButton = AE.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.OrientationProperty, OrientationType.Vertical));
-            if (MinRowOnScreen > RowNumber)
-            {
-                ScrollButton = ScrollButton.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page up"));
-            }
-            else
-            {
-                ScrollButton = ScrollButton.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
-            }
-            do
-            {
-                if (!targetAE.Current.IsOffscreen)
+            if (targetAE.Current.IsOffscreen && ScrollButton != null)
+            {                
+                if (MinRowOnScreen > RowNumber)
                 {
-                    break;
+                    ScrollButton = ScrollButton.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page up"));
                 }
-                ClickElement(ScrollButton);
-            } while (!ScrollButton.Current.IsOffscreen);
+                else
+                {
+                    ScrollButton = ScrollButton.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
+                }
+                do
+                {
+                    if (!targetAE.Current.IsOffscreen)
+                    {
+                        break;
+                    }
+                    ClickElement(ScrollButton);
+                } while (!ScrollButton.Current.IsOffscreen);
+            }
         }
 
 
@@ -5012,7 +5079,7 @@ namespace GingerCore.Drivers
             {
                 return minRowOnScreen;
             }
-            while ((pageRight != null) && ((!pageRight.Current.IsOffscreen) || minRowOnScreen == -1))
+            while ((pageRight != null) && ((!pageRight.Current.IsOffscreen) && minRowOnScreen < 0))
             {
                 ClickElement(pageRight);
                 minRowOnScreen = getMinRowOnscreen(AEColl);
@@ -5026,7 +5093,7 @@ namespace GingerCore.Drivers
             {
                 if (!AEColl[i].Current.IsOffscreen)
                 {
-                    return i;
+                    return i+1;
                 }
             }
             return -1;
@@ -5062,33 +5129,33 @@ namespace GingerCore.Drivers
             return tempcount;
         }
 
-        private void HandleTableAction(AutomationElement AE, ActTableElement actGrid)
+        private void HandleTableAction(AutomationElement TableAE, AutomationElement element, ActTableElement actGrid)
         {
             switch (actGrid.ControlAction)
             {
                 case ActTableElement.eTableAction.SetValue:
-                    SetControlValue(AE, actGrid.ValueForDriver);
+                    SetControlValue(element, actGrid.ValueForDriver);
                     actGrid.ExInfo = actGrid.ValueForDriver + " set";
                     break;
 
                 case ActTableElement.eTableAction.GetValue:
-                    string val = GetControlValue(AE);
+                    string val = GetControlValue(element);
                     actGrid.AddOrUpdateReturnParamActual("Actual", val);
                     actGrid.ExInfo = val;
                     break;
                 case ActTableElement.eTableAction.GetText:
-                    string valText = GetControlText(AE);
+                    string valText = GetControlText(element);
                     actGrid.AddOrUpdateReturnParamActual("Actual", valText);
                     actGrid.ExInfo = valText;
                     break;
                 case ActTableElement.eTableAction.Toggle:
-                    string value = ToggleControlValue(AE);
+                    string value = ToggleControlValue(element);
                     actGrid.AddOrUpdateReturnParamActual("Actual", value);
                     actGrid.ExInfo = value;
                     break;
 
                 case ActTableElement.eTableAction.Click:
-                    string status = ClickElement(AE);
+                    string status = ClickElement(element);
                     if (!status.Contains("Clicked Successfully"))
                     {
                         actGrid.Error += status;
@@ -5097,11 +5164,22 @@ namespace GingerCore.Drivers
                         actGrid.ExInfo += status;
                     break;
                 case ActTableElement.eTableAction.ClickXY:
-                    ClickOnXYPoint(AE, actGrid.ValueForDriver);
+                    ClickOnXYPoint(element, actGrid.ValueForDriver);
                     break;
 
                 case ActTableElement.eTableAction.DoubleClick:
-                    DoDoubleClick(AE, actGrid.ValueForDriver);
+                    DoDoubleClick(element, actGrid.ValueForDriver);
+                    break;
+
+                case ActTableElement.eTableAction.SetText:
+                    //TODO: make support SetText Table action by Row Number and Column Number.
+                    if (!actGrid.LocateRowType.Equals("Where") || (actGrid.WhereColSelector.Equals(ActTableElement.eRunColSelectorValue.ColNum)) || (actGrid.ColSelectorValue.Equals(ActTableElement.eRunColSelectorValue.ColNum)))
+                    {
+                        actGrid.Error = "SetText Table Actoin is currenly supported only by ColumnTitle with Where Option. Other available options are not supported yet";
+                        break;
+                    }
+
+                    SetTextByElementGetText(TableAE, actGrid.LocateColTitle, actGrid.WhereColumnTitle, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue), actGrid.ValueForDriver);
                     break;
 
                 default:

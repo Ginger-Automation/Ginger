@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -90,68 +90,26 @@
     <None Update="TestResources\JSON\sample.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\chromedriver.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="TestResources\PluginPackages\ExamplePlugin\Ginger.PluginPackage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\geckodriver.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="TestResources\PluginPackages\ExamplePlugin\PluginExample.GingerPlugin.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\GingerPlugInsNET.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="TestResources\PluginPackages\GingerOfficePlugin\DocumentFormat.OpenXml.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\GingerPlugInsNET.pdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="TestResources\PluginPackages\GingerOfficePlugin\Ginger.PluginPackage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\IEDriverServer.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="TestResources\PluginPackages\GingerOfficePlugin\GingerOfficePlugin.GingerPlugin.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\IEDriverServer64.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="TestResources\PluginPackages\GingerOfficePlugin\GingerPluginCore.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\Microsoft.mshtml.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\Selenium.GingerPlugin.deps.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\Selenium.GingerPlugin.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\Selenium.GingerPlugin.pdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDriver.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDriverExtended.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDrivers\chromedriver.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDrivers\geckodriver.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDrivers\IEDriverServer.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\SeleniumPluginPackage.1.0.0\WebDrivers\IEDriverServer64.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\StandAlonePluginPackage.1.0.0\StandAloneActions.GingerPlugin.deps.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\StandAlonePluginPackage.1.0.0\StandAloneActions.GingerPlugin.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\StandAlonePluginPackage.1.0.0\StandAloneActions.GingerPlugin.pdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\StandAlonePluginPackage.1.0.0\System.IO.Packaging.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\StandAlonePluginPackage.1.0.0\System.Security.Permissions.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="TestResources\PluginPackages\GingerOfficePlugin\System.IO.Packaging.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

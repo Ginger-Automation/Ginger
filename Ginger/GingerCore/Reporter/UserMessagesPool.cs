@@ -41,6 +41,7 @@ namespace GingerCore
         TestCompleted, CantFindObject, WarnOnDynamicActivities,
         QcConnectSuccess,
         QcConnectFailure,
+        QcConnectFailureRestAPI,
         ALMConnectFailureWithCurrSettings,
         ALMOperationFailed,
         QcLoginSuccess,
@@ -109,12 +110,12 @@ namespace GingerCore
         AskIfSureWantToUndoChange,
         MissingTargetPlatformForConversion, NoConvertibleActionsFound, NoConvertibleActionSelected, SuccessfulConversionDone, NoActivitySelectedForConversion,
         CurrentActionNotSaved,
-        FileExtensionNotSupported, NotifyFileSelectedFromTheSolution, FileImportedSuccessfully, CompilationErrorOccured, CompilationSucceed, Failedtosaveitems, SaveAnalyzerItemWarning,
+        FileExtensionNotSupported, NotifyFileSelectedFromTheSolution, FileImportedSuccessfully, CompilationErrorOccured, CompilationSucceed, Failedtosaveitems, SaveItemParentWarning, SaveAllItemsParentWarning,
         APIParametersListUpdated, APIMappedToActionIsMissing, NoAPIExistToMappedTo, CreateRunset, DeleteRunners, DeleteRunner,DeleteBusinessflow, DeleteBusinessflows, MissingErrorHandler,CantDeleteRunner, AllItemsSaved, APIModelAlreadyContainsReturnValues,
         InitializeBrowser,LoseChangesWarn, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
         VisualTestingFailedToDeleteOldBaselineImage,ApplitoolsLastExecutionResultsNotExists,ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
         FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
-        POMWizardFailedToLearnElement,
+        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported
     }
 
     public static class UserMessagesPool
@@ -197,8 +198,9 @@ namespace GingerCore
             #region Analyzer
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AnalyzerFoundIssues, new UserMessage(eMessageType.WARN, "Issues Detected By Analyzer", "Critical/High Issues were detected, please handle them before execution.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AnalyzerSaveRunSet, new UserMessage(eMessageType.WARN, "Issues Detected By Analyzer", "Please save the " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " first", MessageBoxButton.OK, MessageBoxResult.None));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.SaveAnalyzerItemWarning, new UserMessage(eMessageType.WARN, "Analyzer Item/s Fix Save", "Save process will save the all fixed item/s parent " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "." + System.Environment.NewLine + System.Environment.NewLine + "To continue with save?", MessageBoxButton.YesNo, MessageBoxResult.No));
-            
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.SaveItemParentWarning, new UserMessage(eMessageType.WARN, "Item Parent Save", "Save process will actually save the item {0} parent which called '{1}'." + System.Environment.NewLine + System.Environment.NewLine + "To continue with save?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.SaveAllItemsParentWarning, new UserMessage(eMessageType.WARN, "Items Parent Save", "Save process will actually save item\\s parent\\s (" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ")" + System.Environment.NewLine + System.Environment.NewLine + "To continue with save?", MessageBoxButton.YesNo, MessageBoxResult.No));
+
             #endregion Analyzer
 
             #region Registry Values Check Messages
@@ -403,6 +405,7 @@ namespace GingerCore
             #region ALM
             Reporter.UserMessagesPool.Add(eUserMsgKeys.QcConnectSuccess, new UserMessage(eMessageType.INFO, "QC/ALM Connection", "QC/ALM connection successful!", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.QcConnectFailure, new UserMessage(eMessageType.WARN, "QC/ALM Connection Failed", "QC/ALM connection failed." + System.Environment.NewLine + "Please make sure that the credentials you use are correct and that QC/ALM Client is registered on your machine." + System.Environment.NewLine + System.Environment.NewLine + "For registering QC/ALM Client- please follow below steps:" + System.Environment.NewLine + "1. Launch Internet Explorer as Administrator" + System.Environment.NewLine + "2. Go to http://<QCURL>/qcbin" + System.Environment.NewLine + "3. Click on 'Add-Ins Page' link" + System.Environment.NewLine + "4. In next page, click on 'HP ALM Client Registration'" + System.Environment.NewLine + "5. In next page click on 'Register HP ALM Client'" + System.Environment.NewLine + "6. Restart Ginger and try to reconnect", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.QcConnectFailureRestAPI, new UserMessage(eMessageType.WARN, "QC/ALM Connection Failed", "QC/ALM connection failed." + System.Environment.NewLine + "Please make sure that the server url and the credentials you use are correct." , MessageBoxButton.OK, MessageBoxResult.None));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ALMConnectFailureWithCurrSettings, new UserMessage(eMessageType.WARN, "ALM Connection Failed", "ALM Connection Failed, Please make sure credentials are correct.", MessageBoxButton.OK, MessageBoxResult.None));
 
@@ -601,10 +604,13 @@ namespace GingerCore
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndRepalceFieldIsEmpty, new UserMessage(eMessageType.WARN, "Field is Empty", "Field '{0}' cannot be empty", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceListIsEmpty, new UserMessage(eMessageType.WARN, "List is Empty", "No items were found hence nothing can be replaced", MessageBoxButton.OK, MessageBoxResult.None));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceNoItemsToRepalce, new UserMessage(eMessageType.WARN, "No Suiteable Items", "No suiteable items selected to replace.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceNoItemsToRepalce, new UserMessage(eMessageType.WARN, "No Suitable Items", "No suitable items selected to replace.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceViewRunSetNotSupported, new UserMessage(eMessageType.INFO, "View Run Set", "View RunSet is not supported.", MessageBoxButton.OK, MessageBoxResult.None));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardFailedToLearnElement, new UserMessage(eMessageType.WARN, "Learn Elements Failed", "Error occured while learning the elements." + Environment.NewLine + "Error Details:" + Environment.NewLine + "'{0}'", MessageBoxButton.OK, MessageBoxResult.None));
-            
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements, new UserMessage(eMessageType.WARN, "Re-Learn Elements", "Re-Learn Elements will delete all existing elements" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMDriverIsBusy, new UserMessage(eMessageType.WARN, "Driver Is Busy", "Operation cannot be complete because the Driver is busy with learning operation" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.OK, MessageBoxResult.OK));
+
         }
     }
 }

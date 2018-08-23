@@ -17,21 +17,16 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Plugin.Core.DriversLib;
 using GingerCoreNET.Drivers.CommunicationProtocol;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
-using GingerPlugInsNET.ActionsLib;
-using GingerPlugInsNET.DriversLib;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using static GingerPlugInsNET.ActionsLib.ActionOutputValue;
 
 namespace GingerCoreNET.RunLib
 {
     public class GingerNodeProxy
     {
+        public GingerGrid GingerGrid { get; set; }
+
         GingerNodeInfo mGingerNodeInfo;
 
         private bool mIsConnected = false;
@@ -67,7 +62,7 @@ namespace GingerCoreNET.RunLib
             }
         }
 
-        // public GingerGrid GingerGrid { get; set; }
+        
 
         public void Reserve()
         {
@@ -84,79 +79,39 @@ namespace GingerCoreNET.RunLib
             //TODO: Release lock
         }
 
-        public void RunAction(GingerAction GA)
+        public NewPayLoad RunAction(NewPayLoad newPayLoad)
         {
             // Here we decompose the GA and create Payload to transfer it to the agent
-            NewPayLoad PL = new NewPayLoad("RunAction");
-            PL.AddValue(GA.ID);
-            List<NewPayLoad> Params = new List<NewPayLoad>();
-            foreach (ActionParam AP in GA.InputParams.Values)
-            {
-                // TODO: use const
-                NewPayLoad p = new NewPayLoad("P");   // To save network trafic we send just one letter
-                p.AddValue(AP.Name);
-                p.AddValue(AP.Value.ToString());
-                p.ClosePackage();
-                Params.Add(p);
-            }
+            //NewPayLoad PL = new NewPayLoad("RunAction");
+            //PL.AddValue(GA.ID);
+            //List<NewPayLoad> Params = new List<NewPayLoad>();
+            //foreach (ActionParam AP in GA.InputParams.Values)
+            //{
+            //    if (AP.Name == "GA" || AP.Name == "PluginID") continue;
+            //    // TODO: use const
+            //    NewPayLoad p = new NewPayLoad("P");   // To save network trafic we send just one letter
+            //    p.AddValue(AP.Name);
+            //    p.AddValue(AP.Value.ToString());
+            //    p.ClosePackage();
+            //    Params.Add(p);
+            //}
 
-            PL.AddListPayLoad(Params);
-            PL.ClosePackage();
+            //PL.AddListPayLoad(Params);
+            //PL.ClosePackage();
 
             // TODO: use function which goes to local grid or remote grid
-            NewPayLoad RC = SendRequestPayLoad(PL);
-
-            // After we send it we parse the driver response
-
-            if (RC.Name == "ActionResult")
-            {
-                // We read the ExInfo, Err and output params
-                GA.ExInfo = RC.GetValueString();
-                string Error = RC.GetValueString();
-                if (!string.IsNullOrEmpty(Error))
-                {
-                    GA.AddError("Driver", RC.GetValueString());   // We need to get Error even if Payload is OK - since it might be in
-                }
-
-                List<NewPayLoad> OutpuValues = RC.GetListPayLoad();
-                foreach (NewPayLoad OPL in OutpuValues)
-                {
-                    //TODO: change to use PL AddValueByObjectType
-
-                    // it is param name, type and value
-                    string PName = OPL.GetValueString();
-                    string mOutputValueType = OPL.GetValueEnum();
-
-                    switch (mOutputValueType)
-                    {
-                        case nameof(OutputValueType.String):
-                            string v = OPL.GetValueString();
-                            GA.Output.Values.Add(new ActionOutputValue() { Param = PName, ValueString = v });
-                            break;
-                        case nameof(OutputValueType.ByteArray):
-                            byte[] b = OPL.GetBytes();
-                            GA.Output.Values.Add(new ActionOutputValue() { Param = PName, ValueByteArray = b });
-                            break;
-                        default:
-                            throw new Exception("Unknown param type: " + mOutputValueType);
-                    }
-                }
-            }
-            else
-            {
-                // The RC is not OK when we faced some unexpected exception 
-                //TODO: 
-                string Err = RC.GetValueString();
-                GA.AddError("RunAction", Err);
-            }
+            NewPayLoad RC = SendRequestPayLoad(newPayLoad);
+            return RC;
+           
         }
 
         private NewPayLoad SendRequestPayLoad(NewPayLoad pL)
         {
-            //// if local grid use
-            //return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, pL);
-            //// else use remote grid
-            return null;
+            
+            // if local grid use
+            return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, pL);
+            // else use remote grid
+            
         }
 
         public void StartDriver()
