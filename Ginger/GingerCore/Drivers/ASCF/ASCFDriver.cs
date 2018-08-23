@@ -957,7 +957,7 @@ namespace GingerCore.Drivers.ASCF
         {
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             ASCFControlInfo CI = (ASCFControlInfo)ElementInfo;
             
@@ -1401,13 +1401,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();
@@ -1416,6 +1410,17 @@ namespace GingerCore.Drivers.ASCF
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
             return true;
+        }
+
+        void IWindowExplorer.UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        void IWindowExplorer.TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        {
+            throw new NotImplementedException();
         }
     }
 }

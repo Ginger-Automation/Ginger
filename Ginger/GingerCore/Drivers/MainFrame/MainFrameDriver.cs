@@ -650,7 +650,7 @@ namespace GingerCore.Drivers.MainFrame
 
         #region WindowDriverFunctions
 
-        public void HighLightElement(ElementInfo ElementInfo)
+        public void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             return;
         }
@@ -660,7 +660,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public System.Collections.Generic.List<ElementInfo> GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
+        public System.Collections.Generic.List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
 
@@ -722,15 +722,20 @@ namespace GingerCore.Drivers.MainFrame
         {
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
             return true;
+        }
+
+        public void UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        {
+            throw new NotImplementedException();
         }
     }
 }

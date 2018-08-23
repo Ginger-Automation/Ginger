@@ -250,7 +250,7 @@ namespace GingerCore.ALM.QC
         }
 
         //get test set explorer(tree view)
-        public static List<QCTestSetSummary> GetTestSetExplorer(string PathNode)
+        public static IEnumerable<Object> GetTestSetExplorer(string PathNode)
         {
             TestSetTreeManager treeM = (TestSetTreeManager)mTDConn.TestSetTreeManager;
             TestSetFolder tsFolder = treeM.get_NodeByPath(PathNode);
@@ -283,7 +283,7 @@ namespace GingerCore.ALM.QC
             return testlabPathList;
         }
 
-        public static dynamic GetTSRunStatus(dynamic TSItem)
+        public static Object GetTSRunStatus(dynamic TSItem)
         {
             TestSetFactory TSetFact = mTDConn.TestSetFactory;
             TDFilter tsFilter = TSetFact.Filter;

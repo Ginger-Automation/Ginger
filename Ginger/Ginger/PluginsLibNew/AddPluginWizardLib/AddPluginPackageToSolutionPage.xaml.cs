@@ -16,10 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.PlugInsLib;
+using Amdocs.Ginger.Repository;
 using GingerWPF.WizardLib;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace GingerWPF.PluginsLib.AddPluginWizardLib
@@ -30,10 +28,9 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
     public partial class AddPluginPackageToSolutionPage : Page, IWizardPage
     {
         PluginPackage mPluginPackage;
-        public AddPluginPackageToSolutionPage(PluginPackage pluginPackage)
+        public AddPluginPackageToSolutionPage()
         {
-            InitializeComponent();
-            mPluginPackage = pluginPackage;
+            InitializeComponent();            
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)

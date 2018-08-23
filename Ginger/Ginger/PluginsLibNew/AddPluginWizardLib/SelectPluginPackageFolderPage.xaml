@@ -20,7 +20,7 @@
                 </StackPanel>
             </Button>
 
-            <TextBox x:Name="FolderTextBox"></TextBox>
+            <TextBox x:Name="FolderTextBox" TextChanged="FolderTextBox_TextChanged"></TextBox>
         </StackPanel>
     </Grid>
 </Page>

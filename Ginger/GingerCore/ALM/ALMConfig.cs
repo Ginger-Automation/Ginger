@@ -50,6 +50,20 @@ namespace GingerCore.ALM
             }
         }
 
+        private bool mUseRest;
+        public bool UseRest
+        {
+            get { return mUseRest; }
+            set
+            {
+                if (mUseRest != value)
+                {
+                    mUseRest = value;
+                    OnPropertyChanged(nameof(UseRest));
+                }
+            }
+        }
+
         private string mALMProjectName;
         public string ALMProjectName
         {

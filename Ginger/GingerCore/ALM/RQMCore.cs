@@ -91,7 +91,7 @@ namespace GingerCore.ALM
             return ExportToRQM.Instance.ExportBusinessFlowToRQM(businessFlow, ExternalItemsFields, ref result);
         }
 
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, bool useREST)
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             return ImportFromRQM.GetALMItemFields(bw, online);
         }
@@ -113,9 +113,10 @@ namespace GingerCore.ALM
             set { ImportFromRQM.GingerActivitiesRepo = value; }
         }
 
-        public override void SetALMConfigurations(string ALMServerUrl, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject)
+        public override void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject)
         {
             AlmConfig.ALMServerURL = GetServerValueFromDict(GetDynamicServerConfigAndSetPaths());
+            AlmConfig.UseRest = UseRest;
             AlmConfig.ALMUserName = ALMUserName;
             AlmConfig.ALMPassword = ALMPassword;
             AlmConfig.ALMDomain = ALMDomain;

@@ -16,23 +16,20 @@ limitations under the License.
 */
 #endregion
 
-using GingerPlugInsNET.ActionsLib;
-using GingerPlugInsNET.DriversLib;
-using GingerPlugInsNET.PlugInsLib;
+using Amdocs.Ginger.Plugin.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GingerWPFDriverWindowTest
 {
 
-    public class DummyTestDriver : PluginDriverBase
+    public class DummyTestDriver : IGingerDriver
     {
         IDummyTestDriverDisplay mDisplay = null;
+
+        public List<string> Platforms => throw new NotImplementedException();
 
         public void AttachDisplay(IDummyTestDriverDisplay display)
         {
@@ -41,58 +38,68 @@ namespace GingerWPFDriverWindowTest
 
 
 
-        public override string Name { get { return "Dummy Test Driver"; } }
+        //public override string Name { get { return "Dummy Test Driver"; } }
 
 
-        public override void CloseDriver()
-        {
-            Console.WriteLine("Closing driver");
-            //mDisplay.WriteLine("Closing Web Services driver");
-        }
+        //public override void CloseDriver()
+        //{
+        //    Console.WriteLine("Closing driver");
+        //    //mDisplay.WriteLine("Closing Web Services driver");
+        //}
 
-        public override void StartDriver()
-        {
-            Console.WriteLine("Starting driver");
-        }
+        //public override void StartDriver()
+        //{
+        //    Console.WriteLine("Starting driver");
+        //}
 
 
-        [GingerAction("HTTP" , "HTTP Desc")]
-        public void HTTP(GingerAction gingerAction, string url)
-        {
-            if (mDisplay != null)
-            {
-                mDisplay.URL = url;
-            }
-            // mDisplay.WriteLine("Geeting HTTP URL" + url);
-            // example to show error checks
-            if (!url.StartsWith("HTTP", StringComparison.InvariantCultureIgnoreCase))
-            {
-                gingerAction.AddError("WebServicesDriver.HTTP", "URL must start with HTTP - " + url);
-                return;
-            }
+        //[GingerAction("HTTP" , "HTTP Desc")]
+        //public void HTTP(GingerAction gingerAction, string url)
+        //{
+        //    if (mDisplay != null)
+        //    {
+        //        mDisplay.URL = url;
+        //    }
+        //    // mDisplay.WriteLine("Geeting HTTP URL" + url);
+        //    // example to show error checks
+        //    if (!url.StartsWith("HTTP", StringComparison.InvariantCultureIgnoreCase))
+        //    {
+        //        gingerAction.AddError("WebServicesDriver.HTTP", "URL must start with HTTP - " + url);
+        //        return;
+        //    }
 
-            using (var client = new HttpClient())
-            {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                var result = client.GetAsync(url).Result;
-                stopwatch.Stop();
+        //    using (var client = new HttpClient())
+        //    {
+        //        Stopwatch stopwatch = Stopwatch.StartNew();
+        //        var result = client.GetAsync(url).Result;
+        //        stopwatch.Stop();
 
-                gingerAction.Output.Add("Status Code", result.StatusCode.ToString());
-                gingerAction.Output.Add("Elapsed", stopwatch.ElapsedMilliseconds.ToString());
-                if (mDisplay != null)
-                {
-                    mDisplay.AddLog("Elapsed - " + stopwatch.ElapsedMilliseconds);
-                }
-            }
+        //        gingerAction.Output.Add("Status Code", result.StatusCode.ToString());
+        //        gingerAction.Output.Add("Elapsed", stopwatch.ElapsedMilliseconds.ToString());
+        //        if (mDisplay != null)
+        //        {
+        //            mDisplay.AddLog("Elapsed - " + stopwatch.ElapsedMilliseconds);
+        //        }
+        //    }
 
-            gingerAction.ExInfo = "URL: " + url;
-        }
+        //    gingerAction.ExInfo = "URL: " + url;
+        //}
 
 
 
 
         // Activated from Display
         public void DoHTTP(string url)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Start()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Stop()
         {
             throw new NotImplementedException();
         }

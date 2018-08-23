@@ -82,6 +82,7 @@ namespace GingerCore.Variables
             List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();
             supportedOperations.Add(ActSetVariableValue.eSetValueOptions.SetValue);
             supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ResetValue);
+            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ClearSpecialChar);
             return supportedOperations;
         }
 
