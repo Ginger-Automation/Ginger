@@ -339,6 +339,9 @@
     <Compile Include="Actions\ActionConversion\ActionConverterPage.xaml.cs">
       <DependentUpon>ActionConverterPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
+      <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActLinkEditPage.xaml.cs">
       <DependentUpon>ActLinkEditPage.xaml</DependentUpon>
     </Compile>
@@ -458,6 +461,7 @@
     </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
+    <Compile Include="GeneralLib\Logger.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
     <Compile Include="GeneralValidationRules\GridValidationRule.cs" />
     <Compile Include="MenusLib\ConfigurationsMenu.cs" />
@@ -2500,6 +2504,10 @@
     <Page Include="ActionsNew\NewAddActionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionLogConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AgentsNew\NewAgentEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>

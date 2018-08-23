@@ -18,9 +18,11 @@ limitations under the License.
 
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Environments;
+using Ginger.GeneralLib;
 using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -141,7 +143,7 @@ namespace Ginger.Run
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
         public int ExecutionLogBusinessFlowCounter { get; set; }
-        public static bool UseExeuctionLogger = false;//TODO:  temp flag so Beta users will not be impacted, removed when it is working and tested to be good 
+        // public static bool UseExecutionLogger = false;//TODO:  temp flag so Beta users will not be impacted, removed when it is working and tested to be good 
         public string SolutionFolder { get; set; }
         public bool HighLightElement { get; set; }
 
@@ -688,6 +690,7 @@ namespace Ginger.Run
             agentsNames = agentsNames.TrimEnd(',');
             return agentsNames;
         }
+
         public async Task<int> RunActionAsync(Act act, bool checkIfActionAllowedToRun = true, bool standaloneExecution = false)
         {
             var result = await Task.Run(() => {
@@ -745,8 +748,46 @@ namespace Ginger.Run
                 }
 
                 OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.ActionEnd, null);
+
+                // function for action log 
+                if (act.EnableActionLogConfig) doActionLog(act);
+
             }
         }
+
+        private void doActionLog(Act act)
+        {
+            ActionLogConfig actionLogConfig = act.actionLogConfig;
+            // create a new log file if not exists and append the contents
+            Logger logger = new Logger("logfile.log", false);
+            logger.LogTime();
+            logger.Log(actionLogConfig.LogText);
+        }
+
+
+        //public void CreateActionLogFile()
+        //{
+        //    string FileName = string.Empty;
+
+        //    string FullDirectoryPath = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";
+        //    if (!System.IO.Directory.Exists(FullDirectoryPath))
+        //    {
+        //        System.IO.Directory.CreateDirectory(FullDirectoryPath);
+
+        //    }
+        //    string FullFilePath = FullDirectoryPath + @"\" + FileName + ".feature";
+        //    if (!System.IO.File.Exists(FullFilePath))
+        //    {
+        //        string FileContent = "Feature: Description\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario1 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario2 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n@Tag1 @Tag2\r\n\r\n\r\nScenario Outline: eating\r\n  Given there are <start> cucumbers\r\n  When I eat <eat> cucumbers\r\n  Then I should have <left> cucumbers\r\n\r\n  Examples:\r\n    | start | eat | left |\r\n    |  12   |  5  |  7   |\r\n    |  20   |  5  |  15  |";
+        //        using (Stream fileStream = System.IO.File.Create(FullFilePath))
+        //        {
+        //            fileStream.Close();
+        //        }
+        //        System.IO.File.WriteAllText(FullFilePath, FileContent);
+        //    }
+        //    else
+        //        Reporter.ToUser(eUserMsgKeys.GherkinNotifyFeatureFileExists, FullFilePath);
+        //}
 
         private void ProcessIntervaleRetry(Act act)
         {
