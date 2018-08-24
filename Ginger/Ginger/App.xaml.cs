@@ -423,7 +423,7 @@ namespace Ginger
             }
 
             // Register our own Ginger tool tip handler
-            //--Canceling customize tooltip for now due to many issues and no real added value
+            //--Canceling customize tooltip for now due to many issues and no real added value            
 
             mIsReady = true;
 
@@ -608,6 +608,8 @@ namespace Ginger
             //clear existing solution data
             try
             {
+                // Cleanup last loaded solution 
+                //WorkSpace.Instance.LocalGingerGrid.Reset();  //Temp
                 AppSolutionAutoSave.SolutionAutoSaveEnd();
                 App.UserProfile.Solution = null;
                 //clear exsiting solution data- TODO: catch the solution value change event and if null then clear all below in relevant class/places

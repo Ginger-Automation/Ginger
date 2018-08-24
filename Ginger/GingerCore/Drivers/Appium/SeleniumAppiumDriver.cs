@@ -36,6 +36,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace GingerCore.Drivers.Appium
@@ -800,7 +801,7 @@ namespace GingerCore.Drivers.Appium
                                         act.AddOrUpdateReturnParamActual("Actual", e.TagName);
                                         return;
                                     case "source":
-                                        act.AddOrUpdateReturnParamActual ("source", this.GetPageSource ());
+                                        act.AddOrUpdateReturnParamActual ("source", this.GetPageSource ().Result);
                                         return;
 
                                     case "x":
@@ -816,7 +817,7 @@ namespace GingerCore.Drivers.Appium
                                         if (act.LocateBy == eLocateBy.ByXPath)
                                         {
                                             XmlDocument PageSourceXml = new XmlDocument ();
-                                            PageSourceXml.LoadXml (this.GetPageSource ());
+                                            PageSourceXml.LoadXml (this.GetPageSource ().Result);
                                             XmlNode node = PageSourceXml.SelectSingleNode (act.LocateValueCalculated);
 
                                             foreach(XmlAttribute XA in node.Attributes)
@@ -1101,9 +1102,14 @@ namespace GingerCore.Drivers.Appium
             }
         }
 
-        public string GetPageSource()
+        public async Task<string> GetPageSource()
         {
-            return Driver.PageSource;                  
+            string Pagesource = String.Empty;
+            await Task.Run(() =>
+             {
+                 Pagesource = Driver.PageSource;
+             });
+            return Pagesource;                  
         }
 
         public void SwipeScreen(eSwipeSide side)

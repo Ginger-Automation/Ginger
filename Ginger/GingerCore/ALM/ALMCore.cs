@@ -48,12 +48,13 @@ namespace GingerCore.ALM
         public abstract List<string> GetALMDomains();
         public abstract List<string> GetALMDomainProjects(string ALMDomainName);
         public abstract bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null);
-        public abstract ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, bool useREST = false);
+        public abstract ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType = ALM_Common.DataContracts.ResourceType.ALL);
         public abstract Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST = false);
 
-        public virtual void SetALMConfigurations(string ALMServerUrl, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject)
+        public virtual void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject)
         {
             AlmConfig.ALMServerURL = ALMServerUrl;
+            AlmConfig.UseRest = UseRest;
             AlmConfig.ALMUserName = ALMUserName;
             AlmConfig.ALMPassword = ALMPassword;
             AlmConfig.ALMDomain = ALMDomain;

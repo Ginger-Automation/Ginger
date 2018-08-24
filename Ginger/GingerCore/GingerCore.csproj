@@ -122,9 +122,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\GingerExternal.dll</HintPath>
     </Reference>
-    <Reference Include="GingerPluginCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ginger.Plugin.Core.1.0.0\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
-    </Reference>
     <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
       <Private>True</Private>
@@ -544,6 +541,10 @@
     <Compile Include="ALM\ALMConfig.cs" />
     <Compile Include="ALM\ALMCore.cs" />
     <Compile Include="ALM\PublishToALMConfig.cs" />
+    <Compile Include="ALM\QCRestAPICore.cs" />
+    <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
+    <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
+    <Compile Include="ALM\QCRestAPI\QCRestAPIConnect.cs" />
     <Compile Include="ALM\QC\ExportToQC.cs" />
     <Compile Include="ALM\QCCore.cs" />
     <Compile Include="ALM\QC\ImportFromQC.cs" />
@@ -843,7 +844,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\ALMRestClient.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\ALM_Common.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -855,7 +856,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\QCRestClient.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\RQMExport.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
