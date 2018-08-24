@@ -26,6 +26,7 @@ using GingerTestHelper;
 
 namespace UnitTests.UITests.WebBrowserPageTest
 {
+    [Level3]
     [TestClass]
     public class WebBrowserPageTest
     {

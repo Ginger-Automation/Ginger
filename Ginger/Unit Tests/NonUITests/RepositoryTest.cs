@@ -39,6 +39,7 @@ using System.Linq;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Level1]
     public class RepositoryTest
     {
         [ClassInitialize]

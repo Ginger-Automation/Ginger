@@ -24,6 +24,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
 {
+    [Level2]
     [TestClass]
     public class ActInputValuesTest
     {

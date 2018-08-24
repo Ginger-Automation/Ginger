@@ -33,6 +33,7 @@ namespace UnitTests.NonUITests
 {
     
     [TestClass]
+    [Level3]
     public class XLSFunctionsTest
     {
         BusinessFlow mBF;
