@@ -317,6 +317,8 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         bool SocketConnected(TcpClient s)
         {
+            if (s == null)
+                return false;
             //Keep this part as sometime bad discoonect happend and the below s.connected will still report true!!
             bool part1 = s.Client.Poll(1000, SelectMode.SelectRead);
             bool part2 = (s.Client.Available == 0);
@@ -356,12 +358,16 @@ namespace GingerCore.Drivers.JavaDriverLib
                     clientSocket.Client.Disconnect(true);
                 }
                 clientSocket.Close();
-                clientSocket = null;
-                mConnected = false;
+               
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Ginger Java Agent Driver - " + ex.Message);
+            }
+            finally
+            {
+                clientSocket = null;
+                mConnected = false;
             }
         }
 
