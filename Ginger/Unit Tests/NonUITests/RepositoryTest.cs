@@ -206,6 +206,7 @@ namespace UnitTests.NonUITests
         {
             //Arrange
             BusinessFlow BF = new BusinessFlow();
+            string FileName = TestResources.GetTempFile("activityClearBackup.xml");
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
             BF.Activities = new ObservableList<Activity>();
@@ -222,17 +223,17 @@ namespace UnitTests.NonUITests
             a.Acts.Add(t);
 
             //Act
-            BF.SaveToFile(@"c:\temp\activityClearBackup.xml");   
+            BF.SaveToFile(FileName);   
             a.SaveBackup();
             ActGotoURL g = new ActGotoURL();
             g.Description = "goto URL ";
             g.LocateValue = "ID";
             a.Acts.Add(g);
-            BF.SaveToFile(@"c:\temp\activityClearBackup.xml");
+            BF.SaveToFile(FileName);
             a.SaveBackup();            
             a.RestoreFromBackup();
            
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\activityClearBackup.xml");
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
             BF2.SaveBackup();//dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
@@ -422,6 +423,7 @@ namespace UnitTests.NonUITests
 
             //Arrange
             int ActivitiesToCreate = 5;
+            string FileName = TestResources.GetTempFile("BFSaveLoad.xml");
 
             BusinessFlow BF = new BusinessFlow() { Name = "Biz flow 1", Description = "Desc 1"};
                 
@@ -455,10 +457,10 @@ namespace UnitTests.NonUITests
             //BF.Activities[0].Asserts.Add(vdb);
 
             //Act
-            BF.SaveToFile(@"c:\temp\BFSaveLoad.xml");
+            BF.SaveToFile(FileName);
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\BFSaveLoad.xml");
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
            Assert.AreEqual(BF2.Activities.Count(), ActivitiesToCreate);
             //Assert.AreEqual(BF2. Activities[0].Asserts.Count(), 1);
             //BF2.Description = "aaa";
