@@ -53,7 +53,7 @@ namespace Ginger.Actions
 
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SetParamsCombo();            
+            mAct.ParamList= SetParamsCombo();            
         }
 
         private void BrowseDataButton_Click(object sender, RoutedEventArgs e)
@@ -77,12 +77,10 @@ namespace Ginger.Actions
             }           
         }
 
-        private void SetParamsCombo()
+        private List<string> SetParamsCombo()
         {
             List<string> tmp=new List<string>();
-            object tempFileName = mAct.GetDataFileName();
-            if (ReferenceEquals(tempFileName,null)) return;
-
+            object tempFileName = mAct.GetDataFileName();            
             string dataFileName = Convert.ToString(tempFileName);
             
                 if (File.Exists(dataFileName))
@@ -103,7 +101,7 @@ namespace Ginger.Actions
                     }
                 }
                 
-            mAct.ParamList = tmp;
+            return tmp;
             
         }     
     }
