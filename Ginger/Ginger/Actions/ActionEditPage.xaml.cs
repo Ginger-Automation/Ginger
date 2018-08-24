@@ -78,7 +78,7 @@ namespace Ginger.Actions
         private bool saveWasDone = false;
 
         public General.RepositoryItemPageViewMode EditMode { get; set; }
-
+        
         public ActionEditPage(Act act, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation, BusinessFlow actParentBusinessFlow = null, Activity actParentActivity = null)
         {
             InitializeComponent();
@@ -156,7 +156,7 @@ namespace Ginger.Actions
             App.ObjFieldBinding(AddOutDS, CheckBox.IsCheckedProperty, mAction, Act.Fields.ConfigOutputDS);
             App.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceName);
             App.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);   
-            App.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
+            App.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);            
 
             txtLocateValue.BindControl(mAction, Act.Fields.LocateValue);
             txtLocateValue.ValueTextBox.Text = mAction.LocateValue;  // Why ?
@@ -218,15 +218,9 @@ namespace Ginger.Actions
 
             InitActionLog();
         }
+        
 
-        ActionLogConfigPage actionLogConfigPage = null; 
-
-        private void InitActionLog()
-        {
-            mAction.actionLogConfig = new ActionLogConfig();
-            actionLogConfigPage = new ActionLogConfigPage(mAction.actionLogConfig);
-        }
-
+        
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateOutputTabVisual();
@@ -1563,6 +1557,23 @@ namespace Ginger.Actions
             xRunStatusRow.Height = new GridLength(30);
         }
 
+        private void InitActionLog()
+        {
+            if (mAction.EnableActionLogConfig)
+            {
+                ShowActionLogConfig();
+            }            
+        }
+
+        private void ShowActionLogConfig()
+        {
+            if (mAction.actionLogConfig == null)
+            {
+                mAction.actionLogConfig = new ActionLogConfig();
+            }                        
+            ActionLogConfigFrame.Content = new ActionLogConfigPage(mAction.actionLogConfig);
+        }
+
         private void EnableActionLogConfigCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             mAction.EnableActionLogConfig = true;
@@ -1591,7 +1602,7 @@ namespace Ginger.Actions
         {
             if (mAction.EnableActionLogConfig)
             {
-                ActionLogConfigFrame.Content = actionLogConfigPage;
+                ShowActionLogConfig();
             }
             else
             {

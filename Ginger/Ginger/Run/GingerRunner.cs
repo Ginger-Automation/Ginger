@@ -150,6 +150,8 @@ namespace Ginger.Run
         public event GingerRunnerEventHandler GingerRunnerEvent;
         public delegate void GingerRunnerEventHandler(GingerRunnerEventArgs EventArgs);
 
+        GingerRunnerLogger mGingerRunnerLogger;
+
         public void OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType EvType, Object obj)
         {
             GingerRunnerEventHandler handler = GingerRunnerEvent;
@@ -750,20 +752,11 @@ namespace Ginger.Run
                 OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.ActionEnd, null);
 
                 // function for action log 
-                if (act.EnableActionLogConfig) doActionLog(act);
-
+                mGingerRunnerLogger.LogAction(act);
             }
         }
 
-        private void doActionLog(Act act)
-        {
-            ActionLogConfig actionLogConfig = act.actionLogConfig;
-            // create a new log file if not exists and append the contents
-            Logger logger = new Logger("logfile.log", false);
-            logger.LogTime();
-            logger.Log(actionLogConfig.LogText);
-        }
-
+        
 
         //public void CreateActionLogFile()
         //{

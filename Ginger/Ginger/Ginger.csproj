@@ -598,6 +598,7 @@
       <DependentUpon>ModelItemUsagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MenusLib\ResourcesMenu.cs" />
+    <Compile Include="Run\GingerRunnerLogger.cs" />
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
