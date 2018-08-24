@@ -198,26 +198,10 @@ namespace GingerCore.Actions.Tuxedo
 
         private void ParseResult(string Result)
         {
-            string[] lines = Result.Split('\n');
-            foreach (string s in lines)
-            {
-                if (s.Equals("\r")) continue;
-                string s1 = s.Trim();
-                int firstSpace = s1.IndexOf("\t");
-                string Param;
-                string Value;
-                if (firstSpace > 0)
-                {
-                    Param = s1.Substring(0, firstSpace);
-                    Value = s1.Substring(firstSpace).Trim();
-                }
-                else
-                {
-                    Param = s;
-                    Value = "";
-                }
-                AddOrUpdateReturnParamActual(Param, Value);                
-            }
+            Result = Result.Replace("\r", "");
+            Result = Result.Replace("\t", "");
+            
+            AddOrUpdateReturnParamActual("Actual", Result);            
         }
 
         private void UploadUDFile(string UnixUDfileName, string LocalTempUDFileName)
