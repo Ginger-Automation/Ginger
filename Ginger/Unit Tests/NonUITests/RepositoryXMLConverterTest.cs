@@ -34,14 +34,10 @@ namespace UnitTests.NonUITests
     {
 
 
-        [TestInitialize]
-        public void TestInitialize()
-        {
-
-        }
+     
 
         [TestMethod]
-        public void BusinessFlow_IPDLSAM_v0_1_2_3()
+        public void BusinessFlowDeserializationTest()
         {
             //Arrange
             RepositorySerializer RepositorySerializer = new RepositorySerializer();
@@ -56,7 +52,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        public void Agent_IB1__v1_2_0_0()
+        public void AgentDeserializationTest()
         {
             //Arrange
             RepositorySerializer RepositorySerializer = new RepositorySerializer();
@@ -70,13 +66,13 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(agent.Name, "IB1");
            Assert.AreEqual(agent.DriverType,Agent.eDriverType.InternalBrowser);
         }
-        /*
+        
         [TestMethod]
-        public void Env_CMIIIS__v1_2_0_0()
+        public void EnvironmentDeserializationTest()
         {
             //Arrange
             RepositorySerializer RepositorySerializer = new RepositorySerializer();
-            string sFileName = TestResources.GetTestResourcesFile(@"Converter\CMI IIS test server.Ginger.Environment.xml");
+            string sFileName = TestResources.GetTestResourcesFile(@"Converter\CMI.Ginger.Environment.xml");
 
             //Act
             ProjEnvironment env = (ProjEnvironment)RepositorySerializer.DeserializeFromFile(typeof(ProjEnvironment), sFileName);
@@ -85,7 +81,7 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(env.Name, "CMI IIS test server");
            Assert.AreEqual(env.Applications.Count, 2);
             //TODO: add more asserts
-    }*/
+    }
 
 
 

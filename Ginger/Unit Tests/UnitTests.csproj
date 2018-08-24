@@ -320,7 +320,9 @@
     <Content Include="TestResources\APlusB.vbs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestResources\Converter\CMI IIS test server.Ginger.Environment.xml" />
+    <Content Include="TestResources\Converter\CMI.Ginger.Environment.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\Database\GingerUnitTest.mdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
