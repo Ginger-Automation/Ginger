@@ -48,7 +48,8 @@ namespace Ginger.Actions
             DataFileNameTextBox.Init(mAct.GetOrCreateInputParam(ActCreatePDFChart.Fields.DataFileName), ActInputValue.Fields.Value);
             GingerCore.General.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.SelectedValueProperty, mAct, ActCreatePDFChart.Fields.ParamName);
             GingerCore.General.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.ItemsSourceProperty, mAct, ActCreatePDFChart.Fields.ParamList);
-            DataFileNameTextBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;           
+            DataFileNameTextBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
+            mAct.ParamList = SetParamsCombo();
         }
 
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
