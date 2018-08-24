@@ -20,8 +20,10 @@ using Amdocs.Ginger.Plugin.Core;
 using GingerPlugIns.TextEditorLib;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
 
@@ -29,21 +31,28 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 {
     public class PlugInTextEditorWrapper : TextEditorBase
     {
-        ITextEditor mPlugInTextFileEditor;
+        ITextEditor mPluginTextFileEditor;
 
-        public PlugInTextEditorWrapper(ITextEditor PugInTextFileEditor)
+        public PlugInTextEditorWrapper(ITextEditor PluginTextFileEditor)
         {
-            mPlugInTextFileEditor = PugInTextFileEditor;
+            mPluginTextFileEditor = PluginTextFileEditor;
+            
         }
+
+        public void SetTextHandler(ITextHandler textHandler)
+        {
+            mPluginTextFileEditor.TextHandler = textHandler;
+        }
+        
 
         public string GetEditorID()
         {
-            return "mPlugInTextFileEditor.EditorID";   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            return mPluginTextFileEditor.Name;            
         }
 
         public override List<string> Extensions
         {
-            get { return mPlugInTextFileEditor.Extensions; }
+            get { return mPluginTextFileEditor.Extensions; }
         }
 
         public override string Descritpion { get { return null; } }
@@ -53,7 +62,7 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         public override IHighlightingDefinition HighlightingDefinition
         {
             get {
-                byte[] xml = mPlugInTextFileEditor.HighlightingDefinition;
+                byte[] xml = mPluginTextFileEditor.HighlightingDefinition;
                 MemoryStream ms = new MemoryStream(xml);
                 using (XmlReader reader = XmlReader.Create(ms))
                 {
@@ -64,10 +73,39 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         }
 
 
+        List<ITextEditorToolBarItem> mTools = null;
+        public override List<ITextEditorToolBarItem> Tools 
+        {
+            get {
+                if (mTools == null)
+                {
+                    // We cache the tools
+                    mTools = mPluginTextFileEditor.Tools;
+                    //    new List<TextEditorToolBarItem>();
+                        
+                    //foreach (ITextEditorToolBarItem tool in mPluginTextFileEditor.Tools)
+                    //{
+                    //    mTools.Add(new TextEditorToolBarItem() { Text = tool.ToolText, ToolTip = tool.ToolTip, ClickHandler = aaa });
+                    //}                    
+                }
+                return mTools;
+            }
+        }
 
-        public override List<TextEditorToolBarItem> Tools { get { return null; } }
-            //{ return mPlugInTextFileEditor.Tools; }
-            
+      
+
+        private void aaa(TextEditorToolRoutedEventArgs Args)
+        {
+            // mPlugInTextFileEditor.TextHandler.Text = Args.txt;
+            //mPlugInTextFileEditor.CaretLocation = Args.CaretLocation;
+
+            // use cache !!!!!
+             // mTools[0].clickHandler.Invoke()
+
+            mPluginTextFileEditor.Tools[0].Execute(mPluginTextFileEditor); /// temp hard coded 0 !!!!!!!!!!!!!!!!
+            // Args.txt = mPlugInTextFileEditor.Text;
+
+        }
 
         public override IFoldingStrategy FoldingStrategy
         {
@@ -77,6 +115,8 @@ namespace Ginger.UserControlsLib.TextEditor.Common
                 return null;
             }
         }
+
+        
 
         //public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
         //{

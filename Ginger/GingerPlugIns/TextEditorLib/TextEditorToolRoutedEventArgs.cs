@@ -24,11 +24,13 @@ namespace GingerPlugIns.TextEditorLib
 {
     public class TextEditorToolRoutedEventArgs : RoutedEventArgs
     {
+        //tODO: clean
+
         //Input
         /// <summary>
         /// change to editor text
         /// </summary>
-        public string txt { get; set;}
+        // public string txt { get; set;}
 
         public int CaretLocation { get; set; }
 

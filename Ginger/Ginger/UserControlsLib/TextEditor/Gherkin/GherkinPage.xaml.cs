@@ -74,10 +74,11 @@ namespace Ginger.GherkinLib
                        
             folder = App.UserProfile.Solution.BusinessFlowsMainFolder;
             
-            GherkinTextEditor.AddToolbarTool(General.GetImage("@Save_16x16.png"), Save_Click, "Save Gherkin Feature");
+            //GherkinTextEditor.AddToolbarTool("Save", General.GetImage("@Save_16x16.png"), Save_Click, "Save Gherkin Feature");
+
             GherkinTextEditor.SaveButton.Visibility = Visibility.Collapsed;
 
-            GherkinTextEditor.AddToolbarTool(General.GetImage("@Grid_16x16.png"),  AddTable, "Add Examples Table");            
+            // GherkinTextEditor.AddToolbarTool("Add examples table", General.GetImage("@Grid_16x16.png"),  AddTable, "Add Examples Table");            
 
             DragDrop2.HookEventHandlers(GherkinTextEditor);
 

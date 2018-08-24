@@ -52,6 +52,9 @@ namespace Ginger.UserControlsLib.TextEditor
                     // text editor can return customzied editor
                     EditorFrame.Content = p;
                     p.Load(FileName);
+
+                   //  TE. SetTextHandler
+                    
                 }
                 else
                 {
@@ -63,6 +66,11 @@ namespace Ginger.UserControlsLib.TextEditor
                     else if (!string.IsNullOrEmpty(TE.Title()))
                         UCTE.ContentEditorTitleLabel.Content = TE.Title();
                     EditorFrame.Content = UCTE;
+
+                    if (TE is PlugInTextEditorWrapper)
+                    {
+                        ((PlugInTextEditorWrapper)TE).SetTextHandler(UCTE);
+                    }
                 }
             }
             else
@@ -219,10 +227,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 {
                     foreach (ITextEditor TE in PP.GetTextFileEditors())
                     {
-                        PlugInTextEditorWrapper w = new PlugInTextEditorWrapper(TE);
-                        //PlugInTextEditorWrapper f = (PlugInTextEditorWrapper)TextEditors.Where(x => x is PlugInTextEditorWrapper ? ((PlugInTextEditorWrapper)x).GetEditorID() == w.GetEditorID() : false).FirstOrDefault();
-
-
+                        PlugInTextEditorWrapper w = new PlugInTextEditorWrapper(TE);                        
                         TextEditors.Add(w);
 
                     }
