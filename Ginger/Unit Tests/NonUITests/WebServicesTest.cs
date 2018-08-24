@@ -27,6 +27,7 @@ using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -39,6 +40,7 @@ using System.Xml;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Level3]
     public class WebServicesTest 
     {
         static BusinessFlow mBF;
