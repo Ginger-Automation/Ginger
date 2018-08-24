@@ -141,7 +141,7 @@ namespace GingerCore.Actions
             public static string SupportSimulation = "SupportSimulation";
         }
 
-        public ActionLogConfig actionLogConfig { get; set; }
+        public ActionLogConfig ActionLogConfig { get; set; }
 
         #region Serialized Attributes
         // -----------------------------------------------------------------------------------------------------------------------------------------------

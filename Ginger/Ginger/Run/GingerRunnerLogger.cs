@@ -13,14 +13,15 @@ namespace Ginger.Run
 
         public GingerRunnerLogger(string fileName)
         {
-            logger = new Logger("logfile.log", false);
+            logger = new Logger(fileName, false);
             logger.LogTime();
             logger.Log("Log started");
         }
 
         public void LogAction(Act act)
         {
-            ActionLogConfig actionLogConfig = act.actionLogConfig;
+            if (!act.EnableActionLogConfig) return;
+            ActionLogConfig actionLogConfig = act.ActionLogConfig;
             // create a new log file if not exists and append the contents
             
             logger.LogTime();

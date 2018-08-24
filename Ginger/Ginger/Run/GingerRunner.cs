@@ -752,6 +752,8 @@ namespace Ginger.Run
                 OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.ActionEnd, null);
 
                 // function for action log 
+                // Add flag on GingerRunner of LogLevel
+                if (mGingerRunnerLogger == null) mGingerRunnerLogger = new GingerRunnerLogger(@"c:\temp\GingerLog.txt");  // temp move from here
                 mGingerRunnerLogger.LogAction(act);
             }
         }

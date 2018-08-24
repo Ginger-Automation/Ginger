@@ -1567,16 +1567,20 @@ namespace Ginger.Actions
 
         private void ShowActionLogConfig()
         {
-            if (mAction.actionLogConfig == null)
+            if (mAction.ActionLogConfig == null)
             {
-                mAction.actionLogConfig = new ActionLogConfig();
+                mAction.ActionLogConfig = new ActionLogConfig();
             }                        
-            ActionLogConfigFrame.Content = new ActionLogConfigPage(mAction.actionLogConfig);
+            ActionLogConfigFrame.Content = new ActionLogConfigPage(mAction.ActionLogConfig);
         }
 
         private void EnableActionLogConfigCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             mAction.EnableActionLogConfig = true;
+            if (mAction.ActionLogConfig == null)
+            {
+                mAction.ActionLogConfig = new ActionLogConfig();
+            }
             ResetActionLog();
             SetActionLogFrameView();
         }
