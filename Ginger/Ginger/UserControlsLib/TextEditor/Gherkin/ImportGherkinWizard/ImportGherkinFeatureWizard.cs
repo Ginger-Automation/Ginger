@@ -38,13 +38,14 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         public eImportGherkinFileContext mContext;
         public string FetaureFileName;
 
-        public ImportGherkinFeatureWizard(string folder)
+        public ImportGherkinFeatureWizard(string folder, eImportGherkinFileContext context)
         {
             Folder = folder;
+            mContext = context;
 
             AddPage(Name: "Intro", Title: "Import Gherkin Intro", SubTitle: "Importing BDD Gherkin File...", Page: new ImportGherkinIntroPage());
                         
-            AddPage(Name: "SelectFile", Title: "Select Feature File", SubTitle: "Choose ...", Page: new ImportGherkinFeatureFilePage(folder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder));
+            AddPage(Name: "SelectFile", Title: "Select Feature File", SubTitle: "Choose ...", Page: new ImportGherkinFeatureFilePage(folder, context));
 
             AddPage(Name: "Summary", Title: "Summary", SubTitle: "here is what will happen when you click finish", Page: new ImportGherkinFeatureSummaryPage());
         }
@@ -53,29 +54,32 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
         public override void Finish()
         {
-            Import();
+            if (Import() == "")
+                FetaureFileName = "";
         }
 
         private string Import()
         {
+            if (String.IsNullOrEmpty(mFeatureFile) || !File.Exists(mFeatureFile))
+                return String.Empty;
             // Copy the feature file to local docs
-            string FeatureFolder = App.UserProfile.Solution.ContainingFolderFullPath + @"\Documents\Features\";
+            //string FeatureFolder = App.UserProfile.Solution.ContainingFolderFullPath + @"\Documents\";
 
-            if (mFolder != "Business Flows" && mContext == eImportGherkinFileContext.BusinessFlowFolder)
-                FeatureFolder = FeatureFolder + mFolder + "\\";
-            else if (mFolder != "Documents" && mFolder != "Features" && mContext == eImportGherkinFileContext.DocumentsFolder)
-                FeatureFolder = FeatureFolder + mFolder + "\\";
+            //if (mFolder != "Business Flows" && mContext == eImportGherkinFileContext.BusinessFlowFolder)
+            //    FeatureFolder = FeatureFolder + mFolder + "\\";
+            //else if (mFolder != "Documents" && mFolder != "Features" && mContext == eImportGherkinFileContext.DocumentsFolder)
+            //    FeatureFolder = FeatureFolder + mFolder + "\\";
 
-            if (!Directory.Exists(FeatureFolder))
-            {
-                Directory.CreateDirectory(FeatureFolder);
-            }
+            //if (!Directory.Exists(FeatureFolder))
+            //{
+            //    Directory.CreateDirectory(FeatureFolder);
+            //}
 
-            string FileName = System.IO.Path.GetFileName(FetaureFileName);
-            string targetFile = Path.Combine(FeatureFolder, FileName);
+            FetaureFileName = System.IO.Path.GetFileName(mFeatureFile);
+            string targetFile = Path.Combine(Folder, FetaureFileName);
+            
 
-
-            if (targetFile == FetaureFileName)
+            if (targetFile == mFeatureFile)
             {                
                 Reporter.ToUser(eUserMsgKeys.GherkinNotifyFeatureFileSelectedFromTheSolution, targetFile);
                 return String.Empty;
@@ -87,12 +91,9 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 Reporter.ToUser(eUserMsgKeys.GherkinNotifyFeatureFileExists, targetFile);
                 return String.Empty;
             }
-            File.Copy(FetaureFileName, targetFile);
+            File.Copy(mFeatureFile, targetFile);
             Reporter.ToUser(eUserMsgKeys.GherkinFeatureFileImportedSuccessfully, targetFile);
-            if (genWin != null)
-            {
-                genWin.Close();
-            }
+            
 
             return targetFile;
         }

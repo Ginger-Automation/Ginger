@@ -59,7 +59,7 @@ namespace Ginger.BDD
             string Folder = App.UserProfile.Solution.Folder + @"\BusinessFlows";
             if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
             {
-                WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(Folder));                
+                WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(Folder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder));                
             }
             else
             {

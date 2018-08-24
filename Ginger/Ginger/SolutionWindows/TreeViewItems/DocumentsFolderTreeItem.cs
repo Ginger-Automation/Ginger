@@ -27,6 +27,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using Ginger.UserControlsLib.TextEditor.Gherkin;
+using GingerWPF.WizardLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -171,10 +174,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //Creating text and VBS menus
             TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import txt Document", ImportNewDocument, ".txt", eImageType.Download);
             TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import VBS Document", ImportNewDocument, ".vbs", eImageType.Download);
-            TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import Feature Document", ImportGherkinFeatureFile, null, eImageType.Download);
+            TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import Gherkin Feature Document", ImportGherkinFeatureFile, null, eImageType.Download);
             TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create txt Document", CreateNewDocument, ".txt", eImageType.Add);
             TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create VBS Document", CreateNewDocument, ".vbs", eImageType.Add);
-            TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create Feature Document", CreateGherkinFeatureFile, null, eImageType.Add);
+            TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create Gherkin Feature Document", CreateGherkinFeatureFile, null, eImageType.Add);
         }
 
         //public void AddGherkinOptions(ContextMenu CM)
@@ -269,25 +272,40 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void ImportGherkinFeatureFile(object sender, RoutedEventArgs e)
         {
             string FeatureFolder = Folder;
-            if (this.Path.IndexOf("Documents\\Features\\") > 0)
-                FeatureFolder = this.Path.Substring(this.Path.IndexOf("Documents\\Features\\") + 19);
-            ImportGherkinFeatureFilePage IFP = new ImportGherkinFeatureFilePage(FeatureFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
-            IFP.ShowAsWindow();
-            string featureFile = IFP.mFeatureFile;
+            //if (this.Path.IndexOf("Documents\\Features\\") > 0)
+            //    FeatureFolder = this.Path.Substring(this.Path.IndexOf("Documents\\Features\\") + 19);
+            //if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
+            //{
+            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this.Path, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
+            mWizard.mFolder = this.Path;
+            WizardWindow.ShowWizard(mWizard);
 
-            if(!String.IsNullOrEmpty(featureFile))
-            {               
-                if(Folder == "Documents")
-                {
-                    DocumentsFolderTreeItem DFTI = new DocumentsFolderTreeItem();
-                    DFTI.Path = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";
-                    DFTI.Folder = "Features";
-                    mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                    mTreeView.Tree.GetChildItembyNameandSelect("Features", this);                    
-                }
+            //}
+            //else
+            //{
+            //    ImportGherkinFeatureFilePage IFP = new ImportGherkinFeatureFilePage(FeatureFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
+            //    IFP.ShowAsWindow();
+            //string featureFile = .mFeatureFile;
+
+            //if (!String.IsNullOrEmpty(featureFile))
+            //{
+            //    if (Folder == "Documents")
+            //    {
+            //        DocumentsFolderTreeItem DFTI = new DocumentsFolderTreeItem();
+            //        DFTI.Path = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";
+            //        DFTI.Folder = "Features";
+            //        mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+            //        mTreeView.Tree.GetChildItembyNameandSelect("Features", this);
+            //    }
+            //    mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+            //    mTreeView.Tree.GetChildItembyNameandSelect(System.IO.Path.GetFileName(featureFile), mTreeView.Tree.CurrentSelectedTreeViewItem);
+            //}
+            //}
+            if(!String.IsNullOrEmpty(mWizard.FetaureFileName))
+            {
                 mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                mTreeView.Tree.GetChildItembyNameandSelect(System.IO.Path.GetFileName(featureFile), mTreeView.Tree.CurrentSelectedTreeViewItem);
-            }         
+                mTreeView.Tree.GetChildItembyNameandSelect(System.IO.Path.GetFileName(mWizard.FetaureFileName), mTreeView.Tree.CurrentSelectedTreeViewItem);
+            }
         }
 
         private void CreateGherkinFeatureFile(object sender, RoutedEventArgs e)
@@ -295,31 +313,31 @@ namespace Ginger.SolutionWindows.TreeViewItems
             string FileName = string.Empty;
             if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars()))
             {
-                string FullDirectoryPath = "";
-                DocumentsFolderTreeItem DFTI = null;
-                if (this.Folder == "Documents")
-                {
-                    FullDirectoryPath = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";                    
+                //string FullDirectoryPath = "";
+                //DocumentsFolderTreeItem DFTI = null;
+                //if (this.Folder == "Documents")
+                //{
+                //    FullDirectoryPath = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";                    
                     
-                    if (!System.IO.Directory.Exists(FullDirectoryPath))
-                    {
-                        System.IO.Directory.CreateDirectory(FullDirectoryPath);
-                        DFTI = new DocumentsFolderTreeItem();
-                        DFTI.Path = FullDirectoryPath;
-                        DFTI.Folder = "Features";
-                        mTreeView.Tree.AddChildItemAndSelect(this, DFTI);
-                        mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                    }
-                    else
-                    {
-                        DFTI = (DocumentsFolderTreeItem)mTreeView.Tree.GetChildItembyNameandSelect("Features",this);                        
-                    }
+                //    if (!System.IO.Directory.Exists(FullDirectoryPath))
+                //    {
+                //        System.IO.Directory.CreateDirectory(FullDirectoryPath);
+                //        DFTI = new DocumentsFolderTreeItem();
+                //        DFTI.Path = FullDirectoryPath;
+                //        DFTI.Folder = "Features";
+                //        mTreeView.Tree.AddChildItemAndSelect(this, DFTI);
+                //        mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+                //    }
+                //    else
+                //    {
+                //        DFTI = (DocumentsFolderTreeItem)mTreeView.Tree.GetChildItembyNameandSelect("Features",this);                        
+                //    }
                     
-                }
-                else
-                    FullDirectoryPath = this.Path;
+                //}
+                //else
+                //FullDirectoryPath = this.Path;
 
-                string FullFilePath = FullDirectoryPath + @"\" + FileName + ".feature";
+                string FullFilePath = this.Path + @"\" + FileName + ".feature";
                 if (!System.IO.File.Exists(FullFilePath))
                 {
                     string FileContent = "Feature: Description\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario1 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario2 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n@Tag1 @Tag2\r\n\r\n\r\nScenario Outline: eating\r\n  Given there are <start> cucumbers\r\n  When I eat <eat> cucumbers\r\n  Then I should have <left> cucumbers\r\n\r\n  Examples:\r\n    | start | eat | left |\r\n    |  12   |  5  |  7   |\r\n    |  20   |  5  |  15  |";
