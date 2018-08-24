@@ -235,7 +235,6 @@ namespace GingerCore
         #endregion
 
         public bool IsFailedToStart = false;
-        public bool isRunning = false;
         private static Object thisLock = new Object();
         
         public eStatus Status
@@ -248,13 +247,13 @@ namespace GingerCore
 
                 if (Driver == null) return eStatus.NotStarted;
                 //TODO: fixme  running called too many - and get stuck
-                
-                        lock (thisLock)
+                bool DriverIsRunning = false;
+                lock (thisLock)
                         {
-                            isRunning = Driver.IsRunning();
-                            Reporter.ToLog(eLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {isRunning}");
+                            DriverIsRunning = Driver.IsRunning();
+                            Reporter.ToLog(eLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}");
                         }
-                if (isRunning) return eStatus.Running;
+                if (DriverIsRunning) return eStatus.Running;
                               
                 return eStatus.NotStarted;
             }
@@ -695,11 +694,9 @@ namespace GingerCore
 
         public void ResetAgentStatus(eStatus status)
         {
-            if (status == eStatus.FailedToStart || status == eStatus.Running || status == eStatus.Starting)
+            if (status == eStatus.FailedToStart)
             {
                 IsFailedToStart = false;
-                isRunning = false;
-                mIsStarting = false;
             }
         }
         private void CancelTMSTATask(object sender, DoWorkEventArgs e)

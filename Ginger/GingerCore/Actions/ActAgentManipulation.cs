@@ -66,8 +66,14 @@ namespace GingerCore.Actions
                     {
                         this.Error = "Agent not running";
                     }
-                   
-                    RunOnBusinessFlow.CurrentActivity.CurrentAgent.Close();
+                    if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status == Agent.eStatus.FailedToStart)
+                    {
+                        RunOnBusinessFlow.CurrentActivity.CurrentAgent.ResetAgentStatus(RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status);
+                        this.ExInfo = "Agent is not running, status is updated.";
+                    }
+
+                    if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status != Agent.eStatus.FailedToStart)
+                        RunOnBusinessFlow.CurrentActivity.CurrentAgent.Close();
                     break;
                 case eAgenTManipulationActionType.StartAgent:
                     if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status == Agent.eStatus.Running)
@@ -75,6 +81,10 @@ namespace GingerCore.Actions
                     else if(RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status == Agent.eStatus.Starting)
                     {
                         RunOnBusinessFlow.CurrentActivity.CurrentAgent.Close();
+                    }else if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status == Agent.eStatus.FailedToStart)
+                    {
+                        RunOnBusinessFlow.CurrentActivity.CurrentAgent.ResetAgentStatus(RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status);
+                        this.ExInfo = "Agent is not running, status is updated.";
                     }
                     RunOnBusinessFlow.CurrentActivity.CurrentAgent.DSList = DSList;
                     RunOnBusinessFlow.CurrentActivity.CurrentAgent.StartDriver();
@@ -90,12 +100,15 @@ namespace GingerCore.Actions
                     {
                         this.Error = "Agent not running";
                     }
-                    RunOnBusinessFlow.CurrentActivity.CurrentAgent.Close();
+                    if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status == Agent.eStatus.FailedToStart)
+                    {
+                        RunOnBusinessFlow.CurrentActivity.CurrentAgent.ResetAgentStatus(RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status);
+                        this.ExInfo = "Agent is not running, status is updated.";
+                    }
+                    if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status != Agent.eStatus.FailedToStart)
+                        RunOnBusinessFlow.CurrentActivity.CurrentAgent.Close();
                     RunOnBusinessFlow.CurrentActivity.CurrentAgent.DSList = DSList;
                     RunOnBusinessFlow.CurrentActivity.CurrentAgent.StartDriver();
-                    break;
-                case eAgenTManipulationActionType.ResetAgentStatus:
-                    RunOnBusinessFlow.CurrentActivity.CurrentAgent.ResetAgentStatus(RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status);
                     break;
             }
         }
@@ -109,7 +122,6 @@ namespace GingerCore.Actions
           CloseAgent,
           StartAgent,
           RestartAgent,
-          ResetAgentStatus,
         }
 
         public override List<ePlatformType> Platforms
