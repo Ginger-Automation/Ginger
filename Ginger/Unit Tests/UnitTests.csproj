@@ -792,6 +792,11 @@
     <Folder Include="TestResources\AutoPilot\WSDLs\" />
     <Folder Include="TestResources\AutoPilot\XMLTemplates\" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestResources\UIA Form\FormEmbeddedBrowser.resx">
+      <DependentUpon>FormEmbeddedBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

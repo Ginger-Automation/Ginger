@@ -141,10 +141,8 @@
 //        {
 //            // TODO: Add AAA
 //            UnixShellDriver uxsh = new UnixShellDriver(bf);
-//            // Commented out due to email from security
-//            //uxsh.Host = "indlin991";
-//            //uxsh.UserName = "o2twrk8";
-//            //uxsh.Password = "unix11";
+//
+//        
            
 //            uxsh.Port = 22;
 //            uxsh.StartDriver();
