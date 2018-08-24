@@ -94,6 +94,9 @@ namespace GingerCore.Actions
                     RunOnBusinessFlow.CurrentActivity.CurrentAgent.DSList = DSList;
                     RunOnBusinessFlow.CurrentActivity.CurrentAgent.StartDriver();
                     break;
+                case eAgenTManipulationActionType.ResetAgentStatus:
+                    RunOnBusinessFlow.CurrentActivity.CurrentAgent.ResetAgentStatus(RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status);
+                    break;
             }
         }
 
@@ -106,6 +109,7 @@ namespace GingerCore.Actions
           CloseAgent,
           StartAgent,
           RestartAgent,
+          ResetAgentStatus,
         }
 
         public override List<ePlatformType> Platforms
