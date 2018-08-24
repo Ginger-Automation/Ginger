@@ -20,6 +20,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
