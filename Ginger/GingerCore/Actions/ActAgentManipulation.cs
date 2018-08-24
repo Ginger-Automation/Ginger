@@ -69,7 +69,7 @@ namespace GingerCore.Actions
                     if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status == Agent.eStatus.FailedToStart)
                     {
                         RunOnBusinessFlow.CurrentActivity.CurrentAgent.ResetAgentStatus(RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status);
-                        this.ExInfo = "Agent is not running, status is updated.";
+                        this.ExInfo = "Agent is not running, failed to start status is reset.";
                     }
 
                     if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status != Agent.eStatus.FailedToStart)
@@ -84,7 +84,7 @@ namespace GingerCore.Actions
                     }else if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status == Agent.eStatus.FailedToStart)
                     {
                         RunOnBusinessFlow.CurrentActivity.CurrentAgent.ResetAgentStatus(RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status);
-                        this.ExInfo = "Agent is not running, status is updated.";
+                        this.ExInfo = "Agent is not running, failed to start status is reset.";
                     }
                     RunOnBusinessFlow.CurrentActivity.CurrentAgent.DSList = DSList;
                     RunOnBusinessFlow.CurrentActivity.CurrentAgent.StartDriver();
@@ -103,7 +103,7 @@ namespace GingerCore.Actions
                     if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status == Agent.eStatus.FailedToStart)
                     {
                         RunOnBusinessFlow.CurrentActivity.CurrentAgent.ResetAgentStatus(RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status);
-                        this.ExInfo = "Agent is not running, status is updated.";
+                        this.ExInfo = "Agent is not running, failed to start status is reset.";
                     }
                     if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status != Agent.eStatus.FailedToStart)
                         RunOnBusinessFlow.CurrentActivity.CurrentAgent.Close();
