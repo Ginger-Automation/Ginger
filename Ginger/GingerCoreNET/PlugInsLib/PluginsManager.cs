@@ -187,7 +187,7 @@ namespace Amdocs.Ginger.Repository
             mInstalledPluginPackages = new List<PluginPackage>();
 
             string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
+            //????
             if (path.Contains("GingerWPF"))   // We are running from GingerWPF in debug mode
             {
                 path = path.Replace(@"GingerWPF\bin\Debug", "");   // temp need to be Ginger installation folder !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

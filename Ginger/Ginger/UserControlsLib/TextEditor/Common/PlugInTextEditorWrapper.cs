@@ -33,6 +33,14 @@ namespace Ginger.UserControlsLib.TextEditor.Common
     {
         ITextEditor mPluginTextFileEditor;
 
+        public ITextEditor PluginTextFileEditor
+        {
+            get
+            {
+                return mPluginTextFileEditor;
+            }
+        }
+
         public PlugInTextEditorWrapper(ITextEditor PluginTextFileEditor)
         {
             mPluginTextFileEditor = PluginTextFileEditor;

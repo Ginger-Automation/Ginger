@@ -70,6 +70,7 @@ namespace Ginger.UserControlsLib.TextEditor
                     if (TE is PlugInTextEditorWrapper)
                     {
                         ((PlugInTextEditorWrapper)TE).SetTextHandler(UCTE);
+                        UCTE.PluginTextEditor = ((PlugInTextEditorWrapper)TE).PluginTextFileEditor;
                     }
                 }
             }

@@ -361,6 +361,8 @@ namespace Ginger.UserControlsLib.TextEditor
             toolbar.Items.Add(comboView);
         }
 
+        public ITextEditor PluginTextEditor { get; set; }
+
         private void ToolBarButtonClick(object sender, RoutedEventArgs e)
         {
             // Call the text editor event which added this button, giving him all the data in args
@@ -368,8 +370,8 @@ namespace Ginger.UserControlsLib.TextEditor
 
             ITextEditorToolBarItem t = (ITextEditorToolBarItem)((Button)sender).Tag;
 
-            // FIXME!!!!!!!!!!!!!!!!
-            //t.Execute();
+            
+            t.Execute(PluginTextEditor);
 
             // ToolClickRoutedEventHandler clickHandler = (ToolClickRoutedEventHandler)((Button)sender).Tag;
             // TextEditorToolRoutedEventArgs args = new TextEditorToolRoutedEventArgs();
