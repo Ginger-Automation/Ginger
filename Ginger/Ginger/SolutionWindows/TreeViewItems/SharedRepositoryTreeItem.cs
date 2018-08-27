@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
+using GingerCore.Variables;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -77,7 +78,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Childrens.Add(SAcFTI);
 
             //Add Variables
-            SharedVariablesFolderTreeItem SVFTI = new SharedVariablesFolderTreeItem();
+            SharedVariablesFolderTreeItem SVFTI = new SharedVariablesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>());
             SVFTI.Folder = GingerDicser.GetTermResValue(eTermResKey.Variables);
             SVFTI.Path = App.UserProfile.Solution.Folder + @"\SharedRepository\Variables\";
             SVFTI.IsGingerDefualtFolder = true;

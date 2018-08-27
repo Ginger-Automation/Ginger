@@ -31,6 +31,7 @@ using Ginger.BusinessFlowFolder;
 using Amdocs.Ginger.Common;
 using System.Linq;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Variables
 {
@@ -162,15 +163,16 @@ namespace Ginger.Variables
         }
 
         private void LoadGridData()
-        {
+        {            
             if (mVariablesParentObj != null)
             {
+                ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
                 switch (mVariablesLevel)
                 {
                     case eVariablesLevel.Solution:
                         if (mVariablesParentObjIsStatic)
-                            grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
-                        App.LocalRepository.MarkSharedRepositoryItems((IEnumerable<object>)((Solution)mVariablesParentObj).Variables, (IEnumerable<object>)App.LocalRepository.GetSolutionRepoVariables());
+                            grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);                        
+                        App.LocalRepository.MarkSharedRepositoryItems((IEnumerable<object>)((Solution)mVariablesParentObj).Variables, (IEnumerable<object>)variables);
                         grdVariables.DataSourceList = ((Solution)mVariablesParentObj).Variables;
                         break;
                     case eVariablesLevel.BusinessFlow:
@@ -178,7 +180,9 @@ namespace Ginger.Variables
                             grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
                         else
                             grdVariables.Title = "'" + ((BusinessFlow)mVariablesParentObj).Name + "' - " + GingerDicser.GetTermResValue(eTermResKey.Variables);
-                        App.LocalRepository.MarkSharedRepositoryItems((IEnumerable<object>)((BusinessFlow)mVariablesParentObj).Variables, (IEnumerable<object>)App.LocalRepository.GetSolutionRepoVariables());
+
+                        
+                        App.LocalRepository.MarkSharedRepositoryItems((IEnumerable<object>)((BusinessFlow)mVariablesParentObj).Variables, (IEnumerable<object>)variables);
                         grdVariables.DataSourceList = ((BusinessFlow)mVariablesParentObj).Variables;
                         break;
                     case eVariablesLevel.Activity:
@@ -186,7 +190,7 @@ namespace Ginger.Variables
                             grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
                         else
                             grdVariables.Title = "'" + ((Activity)mVariablesParentObj).ActivityName + "' - " + GingerDicser.GetTermResValue(eTermResKey.Variables);
-                        App.LocalRepository.MarkSharedRepositoryItems((IEnumerable<object>)((Activity)mVariablesParentObj).Variables, (IEnumerable<object>)App.LocalRepository.GetSolutionRepoVariables());
+                        App.LocalRepository.MarkSharedRepositoryItems((IEnumerable<object>)((Activity)mVariablesParentObj).Variables, (IEnumerable<object>)variables);
                         grdVariables.DataSourceList = ((Activity)mVariablesParentObj).Variables;
                         break;
                 }

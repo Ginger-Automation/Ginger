@@ -36,6 +36,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
+using GingerCore.Variables;
 
 namespace Ginger.SourceControl
 {
@@ -370,8 +371,9 @@ namespace Ginger.SourceControl
                     obj = activities.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
                 }
                 else if (SCFI.FileType == "Variable")
-                {                    
-                    obj = App.LocalRepository.GetSolutionRepoVariables().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                {
+                    ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+                    obj = variables.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
                 }
                 else if (SCFI.FileType == "Report Template")
                 {

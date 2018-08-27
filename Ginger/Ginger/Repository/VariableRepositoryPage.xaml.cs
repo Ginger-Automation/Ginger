@@ -28,6 +28,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Repository
 {
@@ -41,8 +42,7 @@ namespace Ginger.Repository
             InitializeComponent();
 
             SetVariablesGridView();
-
-            App.LocalRepository.AttachHandlerToSolutionRepoVariablesChange(RefreshVariables);
+            
         }
 
         private void SetVariablesGridView()
@@ -55,8 +55,7 @@ namespace Ginger.Repository
             view.GridColsView.Add(new GridColView() { Field = "Inst.", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ViewInstancesButton"] });           
             grdVariables.SetAllColumnsDefaultView(view);
             grdVariables.InitViewItems();
-
-            grdVariables.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshVariables));
+            
             grdVariables.AddToolbarTool("@LeftArrow_16x16.png", "Add to " + GingerDicser.GetTermResValue(eTermResKey.Variables), new RoutedEventHandler(AddFromRepository));
             grdVariables.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditVar));
             grdVariables.ShowTagsFilter = Visibility.Visible;
@@ -65,20 +64,13 @@ namespace Ginger.Repository
             grdVariables.ItemDropped += grdVariables_ItemDropped;
             grdVariables.PreviewDragItem += grdVariables_PreviewDragItem;
 
-            grdVariables.DataSourceList = App.LocalRepository.GetSolutionRepoVariables();
+            grdVariables.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
         }
 
 
-        private void RefreshVariables(object sender, RoutedEventArgs e)
-        {
-            App.LocalRepository.RefreshSolutionRepoVariables();
-            grdVariables.DataSourceList = App.LocalRepository.GetSolutionRepoVariables();
-        }
+        
 
-        private void RefreshVariables(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            grdVariables.DataSourceList = App.LocalRepository.GetSolutionRepoVariables();
-        }
+        
 
         private void AddFromRepository(object sender, RoutedEventArgs e)
         {

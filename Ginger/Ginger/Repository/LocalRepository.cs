@@ -53,8 +53,7 @@ namespace Ginger.Repository
 
         private static ObservableList<ActivitiesGroup> mRepoActivitiesGroupsCache = null;
         // private static ObservableList<Activity> mRepoActivitiesCache = null;
-        // private static ObservableList<Act> mRepoActionsCache = null;
-        private static ObservableList<VariableBase> mRepoVariablesCache = null;
+        // private static ObservableList<Act> mRepoActionsCache = null;        
         private static ObservableList<RunSetConfig> mRunSetsCache = null;
         private static ObservableList<BusinessFlowExecutionSummary> mExectionResultsCache = null;        
 
@@ -125,11 +124,7 @@ namespace Ginger.Repository
                 if (mRepoActivitiesGroupsCache.Where(x => x.Guid == itemToAdd.Guid).FirstOrDefault() == null)
                     mRepoActivitiesGroupsCache.Add((ActivitiesGroup)itemToAdd);
             }                        
-            else if (itemToAdd is VariableBase)
-            {
-                if (mRepoVariablesCache.Where(x => x.Guid == itemToAdd.Guid).FirstOrDefault() == null)
-                    mRepoVariablesCache.Add((VariableBase)itemToAdd);
-            }
+            
             else if (itemToAdd is RunSetConfig)
             {
                 if (mRunSetsCache.Where(x => x.Guid == itemToAdd.Guid).FirstOrDefault() == null)
@@ -149,9 +144,7 @@ namespace Ginger.Repository
         public void RemoveItemFromCache(RepositoryItemBase itemToRemove)
         {
             if (itemToRemove is ActivitiesGroup)
-                mRepoActivitiesGroupsCache.Remove((ActivitiesGroup)itemToRemove);                        
-            else if (itemToRemove is VariableBase)
-                mRepoVariablesCache.Remove((VariableBase)itemToRemove);
+                mRepoActivitiesGroupsCache.Remove((ActivitiesGroup)itemToRemove);                                    
             else if (itemToRemove is RunSetConfig)
                 mRunSetsCache.Remove((RunSetConfig)itemToRemove);
             else if (itemToRemove is BusinessFlowExecutionSummary)
@@ -167,8 +160,7 @@ namespace Ginger.Repository
                    
             if (ItemType == typeof(ActivitiesGroup))
                 item = mRepoActivitiesGroupsCache.Where(x => x.FileName == fileName).FirstOrDefault();                        
-            else if (ItemType == typeof(VariableBase))
-                item = mRepoVariablesCache.Where(x => x.FileName == fileName).FirstOrDefault();            
+            
             
 
             if (item == null)
@@ -203,8 +195,7 @@ namespace Ginger.Repository
           
             if (ItemType == typeof(ActivitiesGroup))
                 item = mRepoActivitiesGroupsCache.Where(x => x.Guid == ItemGuid).FirstOrDefault();                        
-            else if (ItemType == typeof(VariableBase))
-                item = mRepoVariablesCache.Where(x => x.Guid == ItemGuid).FirstOrDefault();            
+            
             
 
             return (T)item;
@@ -265,11 +256,7 @@ namespace Ginger.Repository
                     mRepoActivitiesGroupsCache.RemoveAt(itemToReplce.Key);
                     mRepoActivitiesGroupsCache.Insert(itemToReplce.Key, (ActivitiesGroup)itemToReplce.Value);
                 }                                
-                else if (itemType == typeof(VariableBase))
-                {
-                    mRepoVariablesCache.RemoveAt(itemToReplce.Key);
-                    mRepoVariablesCache.Insert(itemToReplce.Key, (VariableBase)itemToReplce.Value);
-                }
+                
                 else if (itemType == typeof(RunSetConfig))
                 {
                     mRunSetsCache.RemoveAt(itemToReplce.Key);
@@ -287,9 +274,7 @@ namespace Ginger.Repository
             foreach (object itemToAdd in itemsToAdd)
             {
               if (itemType == typeof(ActivitiesGroup))
-                    mRepoActivitiesGroupsCache.Add((ActivitiesGroup)itemToAdd);                                
-                else if (itemType == typeof(VariableBase))
-                    mRepoVariablesCache.Add((VariableBase)itemToAdd);
+                    mRepoActivitiesGroupsCache.Add((ActivitiesGroup)itemToAdd);                                                
                 else if (itemType == typeof(RunSetConfig))
                     mRunSetsCache.Add((RunSetConfig)itemToAdd);
                 else if (itemType == typeof(BusinessFlowExecutionSummary))
@@ -300,9 +285,7 @@ namespace Ginger.Repository
             foreach (object itemToRemove in itemsToRemove)
             {
                 if (itemType == typeof(ActivitiesGroup))
-                    mRepoActivitiesGroupsCache.Remove((ActivitiesGroup)itemToRemove);                                
-                else if (itemType == typeof(VariableBase))
-                    mRepoVariablesCache.Remove((VariableBase)itemToRemove);
+                    mRepoActivitiesGroupsCache.Remove((ActivitiesGroup)itemToRemove);                                                
                 else if (itemType == typeof(RunSetConfig))
                     mRunSetsCache.Remove((RunSetConfig)itemToRemove);
                 else if (itemType == typeof(BusinessFlowExecutionSummary))
@@ -330,7 +313,7 @@ namespace Ginger.Repository
         {
             
             RefreshSolutionRepoActivitiesGroups();                       
-            RefreshSolutionRepoVariables();
+            
             RefreshSolutionRunSetsCache();
             RefreshSolutionExectionResultsCache();          
             //RefreshSolutionPluginsCache();
@@ -342,12 +325,11 @@ namespace Ginger.Repository
             if (itemType == typeof(ActivitiesGroup))
                 RefreshSolutionRepoActivitiesGroups(specificFolderPath);
                         
-            else if (itemType == typeof(VariableBase))
-                RefreshSolutionRepoVariables(specificFolderPath);
+            
             else if (itemType == typeof(SharedRepositorySummaryPage))
            {
                 RefreshSolutionRepoActivitiesGroups();                        
-                RefreshSolutionRepoVariables();
+            
             }
             else if (itemType == typeof(RunSetConfig))
                 RefreshSolutionRunSetsCache(specificFolderPath);
@@ -363,15 +345,14 @@ namespace Ginger.Repository
         {            
            if (ItemTypeToClear == typeof(ActivitiesGroup))
                 mRepoActivitiesGroupsCache = null;                        
-            else if (ItemTypeToClear == typeof(VariableBase))
-                mRepoVariablesCache = null;            
+            
         }
 
         public void ClearAllCache()
         {                        
             
             mRepoActivitiesGroupsCache = null;                        
-            mRepoVariablesCache = null;            
+
         }
         
         #endregion General Items Cache Handling
@@ -417,26 +398,7 @@ namespace Ginger.Repository
         }
 
         
-        public ObservableList<VariableBase> GetSolutionRepoVariables(bool UseCache = true, string specificFolderPath = "", bool includeSubFolders = false)
-        {
-            if (mRepoVariablesCache == null)
-            {
-                mRepoVariablesCache = new ObservableList<VariableBase>();
-                LoadObjectsToListIncludingSubFolders(mRepoVariablesCache, typeof(VariableBase));//load cache for first time
-            }
-            ObservableList<object> cacheList = new ObservableList<object>(mRepoVariablesCache.ToList());
-            return GetItemTypeObjects<VariableBase>(typeof(VariableBase), cacheList, UseCache, specificFolderPath, includeSubFolders);
-        }
-        public void RefreshSolutionRepoVariables(string specificFolderPath = "")
-        {
-            if (mRepoVariablesCache == null) return;
-            ObservableList<object> cacheList = new ObservableList<object>(mRepoVariablesCache.ToList());
-            RefreshItemTypeCache(typeof(VariableBase), cacheList, specificFolderPath);
-        }
-        public void AttachHandlerToSolutionRepoVariablesChange(System.Collections.Specialized.NotifyCollectionChangedEventHandler handler)
-        {
-            mRepoVariablesCache.CollectionChanged += handler;
-        }
+        
 
         //public void AddItemToRepositoryWithPreChecks(RepositoryItem item, BusinessFlow containingBusinessFlow = null)
         //{
@@ -877,7 +839,7 @@ namespace Ginger.Repository
         public void AddRepoItemToCache(RepositoryItemBase itemCopy)
         {
             if (itemCopy is ActivitiesGroup && mRepoActivitiesGroupsCache != null) mRepoActivitiesGroupsCache.Add((ActivitiesGroup)itemCopy);                        
-            else if (itemCopy is VariableBase && mRepoVariablesCache != null) mRepoVariablesCache.Add((VariableBase)itemCopy);
+            
         }
 
         private string[] GetRepoItemFiles(Type T, string Folder = null)
@@ -1149,12 +1111,13 @@ namespace Ginger.Repository
 
       
 
+        // FIXME if needed and used outside LR
         public RepositoryItemBase GetMatchingRepoItem(RepositoryItemBase item, IEnumerable<object> existingRepoItems, ref bool linkIsByExternalID, ref bool linkIsByParentID)
         {
             if (existingRepoItems == null)
             {
                 if (item is ActivitiesGroup) existingRepoItems = (IEnumerable<object>)GetSolutionRepoActivitiesGroups();                                
-                else if (item is VariableBase) existingRepoItems = (IEnumerable<object>)GetSolutionRepoVariables();
+                
             }
 
             linkIsByExternalID = false;

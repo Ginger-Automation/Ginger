@@ -25,19 +25,23 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Controls;
+using Amdocs.Ginger.Repository;
+using GingerWPF.TreeViewItemsLib;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class SharedVariablesFolderTreeItem : TreeViewItemBase, ITreeViewItem
+    class SharedVariablesFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
+        RepositoryFolder<VariableBase> mVariablesFolder;
         private VariablesRepositoryPage mVariablesRepositoryPage;
         public enum eVariablesItemsShowMode { ReadWrite, ReadOnly }
         private eVariablesItemsShowMode mShowMode;
         public string Folder { get; set; }
         public string Path { get; set; }
 
-        public SharedVariablesFolderTreeItem(eVariablesItemsShowMode showMode = eVariablesItemsShowMode.ReadWrite)
+        public SharedVariablesFolderTreeItem(RepositoryFolder<VariableBase> variablesFolder,  eVariablesItemsShowMode showMode = eVariablesItemsShowMode.ReadWrite)
         {
+            mVariablesFolder = variablesFolder;
             mShowMode = showMode;
         }
 
@@ -71,44 +75,45 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            return GetChildrentGeneric<VariableBase>(mVariablesFolder, nameof(VariableBase.Name));
+            //List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
-            AddsubFolders(Path, Childrens);
+            //AddsubFolders(Path, Childrens);
 
-            //Add Variables
-            ObservableList<VariableBase> Variables = App.LocalRepository.GetSolutionRepoVariables(specificFolderPath:Path);
+            ////Add Variables
+            //ObservableList<VariableBase> Variables = App.LocalRepository.GetSolutionRepoVariables(specificFolderPath:Path);
 
-            foreach (VariableBase varb in Variables)
-            {
-                SharedVariableTreeItem SVTI = new SharedVariableTreeItem();
-                SVTI.VariableBase = varb;
-                Childrens.Add(SVTI);
-            }
+            //foreach (VariableBase varb in Variables)
+            //{
+            //    SharedVariableTreeItem SVTI = new SharedVariableTreeItem();
+            //    SVTI.VariableBase = varb;
+            //    Childrens.Add(SVTI);
+            //}
 
-            return Childrens;
+            //return Childrens;
         }
 
-        private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
-        {
-            try
-            {
-                foreach (string d in Directory.GetDirectories(Path))
-                {
-                    SharedVariablesFolderTreeItem FolderItem = new SharedVariablesFolderTreeItem();
-                    string FolderName = System.IO.Path.GetFileName(d);
+        //private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
+        //{
+        //    try
+        //    {
+        //        foreach (string d in Directory.GetDirectories(Path))
+        //        {
+        //            SharedVariablesFolderTreeItem FolderItem = new SharedVariablesFolderTreeItem();
+        //            string FolderName = System.IO.Path.GetFileName(d);
 
-                    FolderItem.Folder = FolderName;
-                    FolderItem.Path = d;
+        //            FolderItem.Folder = FolderName;
+        //            FolderItem.Path = d;
 
-                    Childrens.Add(FolderItem);
-                }
+        //            Childrens.Add(FolderItem);
+        //        }
 
-            }
-            catch (System.Exception excpt)
-            {
-                Console.WriteLine(excpt.Message);
-            }
-        }
+        //    }
+        //    catch (System.Exception excpt)
+        //    {
+        //        Console.WriteLine(excpt.Message);
+        //    }
+        //}
 
         bool ITreeViewItem.IsExpandable()
         {

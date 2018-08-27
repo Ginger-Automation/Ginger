@@ -618,7 +618,7 @@ namespace Ginger.Functionalities
                                 mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, activity, ActivityVariablePath, string.Empty));
                         }
                     }
-                    ObservableList<VariableBase> RepoVariables = App.LocalRepository.GetSolutionRepoVariables();
+                    ObservableList<VariableBase> RepoVariables =  WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
                     foreach (VariableBase VB in RepoVariables)
                     {
                         if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;

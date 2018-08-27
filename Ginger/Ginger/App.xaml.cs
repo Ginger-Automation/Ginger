@@ -37,6 +37,7 @@ using GingerCore.Platforms;
 using GingerCore.Repository;
 using GingerCore.Repository.UpgradeLib;
 using GingerCore.SourceControl;
+using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
@@ -859,7 +860,8 @@ namespace Ginger
 
             SR.AddItemInfo<Activity>("*.Ginger.Activity.xml", @"~\SharedRepository\Activities", true, "Shared Activities", addToRootFolders: false, PropertyNameForFileName: nameof(Activity.ActivityName));
             SR.AddItemInfo<Act>("*.Ginger.Action.xml", @"~\SharedRepository\Actions", true, "Shared Actions", addToRootFolders: false, PropertyNameForFileName: nameof(Act.Description));
-
+            SR.AddItemInfo<VariableBase>("*.Ginger.Variable.xml", @"~\SharedRepository\Variables", true, "Shared Variables", addToRootFolders: false, PropertyNameForFileName: nameof(VariableBase.Name));
+            
 
             ////// Note the | which enable to define multiple pattern for same folder
             ////// Shared repository can contains Activities and Actions            

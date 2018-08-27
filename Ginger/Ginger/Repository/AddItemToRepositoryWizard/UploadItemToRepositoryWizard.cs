@@ -118,11 +118,11 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             bool existingItemIsExternalID = false;
             bool existingItemIsParent = false;
             string existingItemFileName = string.Empty;
-            ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+            
             if (item is ActivitiesGroup) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivitiesGroups();
             else if (item is Activity) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-            else if (item is Act) existingRepoItems = (IEnumerable<object>)SharedActions;
-            else if (item is VariableBase) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoVariables();
+            else if (item is Act) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>(); 
+            else if (item is VariableBase) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>(); 
 
             RepositoryItemBase exsitingItem = App.LocalRepository.GetMatchingRepoItem((RepositoryItemBase)item, existingRepoItems, ref existingItemIsExternalID, ref existingItemIsParent);
           

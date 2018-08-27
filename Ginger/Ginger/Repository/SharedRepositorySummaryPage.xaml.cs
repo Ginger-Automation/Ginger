@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Variables;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -42,7 +43,8 @@ namespace Ginger.Repository
             ActivitiesCountLabel.Text = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Count.ToString();
             ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             ActionsCountLabel.Text = SharedActions.Count.ToString();
-            VariablesCountLabel.Text = App.LocalRepository.GetSolutionRepoVariables(fromCache).Count.ToString();
+            ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+            VariablesCountLabel.Text = variables.Count.ToString();
         }
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
