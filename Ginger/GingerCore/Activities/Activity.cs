@@ -33,7 +33,7 @@ namespace GingerCore
 {
     // Activity can have several steps - Acts
     // The activities can come from external like: QC TC Step, vStorm    
-    public class Activity : RepositoryItem
+    public class Activity : RepositoryItemBase
     {
         public enum eActivityAutomationStatus
         {
@@ -701,7 +701,7 @@ namespace GingerCore
             }
         }
 
-        public override RepositoryItem GetUpdatedRepoItem(RepositoryItem itemToUpload, RepositoryItem existingRepoItem, string itemPartToUpdate)
+        public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase existingRepoItem, string itemPartToUpdate)
         {
             Activity updatedActivity = null;
             
