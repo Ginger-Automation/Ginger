@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository.ItemToRepositoryWizard;
@@ -119,7 +120,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             string existingItemFileName = string.Empty;
 
             if (item is ActivitiesGroup) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivitiesGroups();
-            else if (item is Activity) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivities();
+            else if (item is Activity) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             else if (item is Act) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActions();
             else if (item is VariableBase) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoVariables();
 

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
@@ -2122,7 +2123,8 @@ namespace Ginger.Run
         {
             //find activity            
             string activityName = fc.GetNameFromValue().ToUpper();
-            Activity sharedActivity = SolutionLocalRepository.GetSolutionRepoActivities().Where(x => x.ActivityName.ToUpper() == activityName).FirstOrDefault();
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            Activity sharedActivity = activities.Where(x => x.ActivityName.ToUpper() == activityName).FirstOrDefault();
 
             if (sharedActivity != null)
             {

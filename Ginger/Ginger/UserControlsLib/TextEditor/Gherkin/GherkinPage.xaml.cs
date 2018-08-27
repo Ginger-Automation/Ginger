@@ -346,7 +346,10 @@ namespace Ginger.GherkinLib
             //TODO: get 
             string BusinessFlowFolder = "";
             string path = BusinessFlowFolder;
-            Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true,"",true, mSolTags) where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            //FIXME to use tags
+            // Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true,"",true, mSolTags) where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
+            Activity a2 = (from x in activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
             if (a2 != null)
             {                
                 return "Automated in Shared Repo - " + path;
@@ -570,8 +573,11 @@ namespace Ginger.GherkinLib
                 if (a1 == null)
                 {
                     if (GH.AutomationStatus == "Automated in Shared Repo - ")
-                    {                       
-                        Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true, "", true, mSolTags) where x.ActivityName == GH.Text select x).FirstOrDefault();
+                    {
+                        ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                        Activity a2 = (from x in activities where x.ActivityName == GH.Text select x).FirstOrDefault();
+                        //FIXME:
+                        // Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true, "", true, mSolTags) where x.ActivityName == GH.Text select x).FirstOrDefault();
                         if (a2 != null)
                         {
                             mBizFlow.AddActivity(a2);

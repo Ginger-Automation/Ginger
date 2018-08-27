@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -919,8 +920,8 @@ namespace UnitTests.NonUITests
             bf.Activities.Add(activity);
             bf.Activities.Add(activity2);
 
-            activity2.ActivityName = "Test_New";
-            bf.Save();
+            activity2.ActivityName = "Test_New";            
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf);
 
 
             //Act

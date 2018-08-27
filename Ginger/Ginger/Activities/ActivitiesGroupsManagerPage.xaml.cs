@@ -31,6 +31,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Linq;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Activities
 {
@@ -266,7 +267,8 @@ namespace Ginger.Activities
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance();
                 App.BusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                App.BusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, App.LocalRepository.GetSolutionRepoActivities(), false);
+                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                App.BusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                 App.BusinessFlow.AttachActivitiesGroupsAndActivities();
             }
         }

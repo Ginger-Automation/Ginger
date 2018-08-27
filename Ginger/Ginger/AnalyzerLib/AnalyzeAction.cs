@@ -183,7 +183,8 @@ namespace Ginger.AnalyzerLib
                             {
                                 //f.CalcualtedValue(BusinessFlow, App.ProjEnvironment, App.LocalRepository.GetSolutionDataSources());
                                 string RunSharedRepositoryActivity = f.GetNameFromValue();
-                                if (App.LocalRepository.GetSolutionRepoActivities().Where(x => x.ActivityName == RunSharedRepositoryActivity).FirstOrDefault() == null)
+                                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                                if (activities.Where(x => x.ActivityName == RunSharedRepositoryActivity).FirstOrDefault() == null)
                                 {
                                     AnalyzeAction AA = CreateNewIssue(IssuesList, BusinessFlow, parentActivity, a);
                                     AA.Description = "Flow control mapped to Shared Repository "+ GingerDicser.GetTermResValue(eTermResKey.Activity) +" which does not exist";

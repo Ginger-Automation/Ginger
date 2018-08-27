@@ -856,6 +856,9 @@ namespace Ginger
 
             SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", addToRootFolders: true, PropertyNameForFileName: nameof(PluginPackage.PluginID));
 
+            SR.AddItemInfo<Activity>("*.Ginger.Activity.xml", @"~\SharedRepository\Activities", true, "Shared Activities", addToRootFolders: false, PropertyNameForFileName: nameof(Activity.ActivityName));
+            
+
             ////// Note the | which enable to define multiple pattern for same folder
             ////// Shared repository can contains Activities and Actions            
             //SR.AddItemInfo<Activity>("*.Ginger.Activity.xml", @"~\SharedRepository\Activities", true, @"Shared Repository\Activites", addToRootFolders: false);

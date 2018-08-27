@@ -28,6 +28,7 @@ using System.Windows.Input;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM
 {
@@ -305,7 +306,7 @@ namespace Ginger.ALM
             Reporter.ToLog(eLogLevel.INFO, ("Update selected Activities Groups of business flow: " + businessFlow.Name + " from ALM"));
 
             ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = App.LocalRepository.GetSolutionRepoActivities(false);
+            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
@@ -321,7 +322,7 @@ namespace Ginger.ALM
             Reporter.ToLog(eLogLevel.INFO, ("Update business flow: " + businessFlow.Name + " from ALM"));
 
             ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = App.LocalRepository.GetSolutionRepoActivities(false);
+            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {

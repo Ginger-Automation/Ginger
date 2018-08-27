@@ -16,20 +16,19 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 using Ginger.Repository;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
-using GingerCore.GeneralLib;
-using GingerCore.SourceControl;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class SharedActivitiesFolderTreeItem : TreeViewItemBase, ITreeViewItem
+    class SharedActivitiesFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private ActivitiesRepositoryPage mActivitiesRepositoryPage;
         public string Folder { get; set; }
@@ -37,8 +36,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public enum eActivitiesItemsShowMode { ReadWrite, ReadOnly }
         private eActivitiesItemsShowMode mShowMode;
 
-        public SharedActivitiesFolderTreeItem(eActivitiesItemsShowMode showMode = eActivitiesItemsShowMode.ReadWrite)
+        public RepositoryFolder<Activity> mActivitiesFolder;
+
+        public SharedActivitiesFolderTreeItem(RepositoryFolder<Activity> activitiesFolder, eActivitiesItemsShowMode showMode = eActivitiesItemsShowMode.ReadWrite)
         {
+            mActivitiesFolder = activitiesFolder;
             mShowMode = showMode;
         }
 
@@ -46,10 +48,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             return null;
         }
-        override public string NodePath()
-        {
-            return Path + @"\";
-        }
+        //override public string NodePath()
+        //{
+        //    return Path + @"\";
+        //}
         override public Type NodeObjectType()
         {
             return typeof(Activity);
@@ -57,56 +59,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFile;
-            if (IsGingerDefualtFolder)
-            {
-                ImageFile = "@Activities_16x16.png";
-            }
-            else
-            {
-                ImageFile = "@Folder2_16x16.png";
-            }
-
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return TreeViewUtils.NewRepositoryItemTreeHeader(mActivitiesFolder, nameof(RepositoryFolder<Activity>.DisplayName), eImageType.Folder, GetSourceControlImage(mActivitiesFolder), false);            
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
-            AddsubFolders(Path, Childrens);
-
-            //Add Activities
-            ObservableList<Activity> Activities = App.LocalRepository.GetSolutionRepoActivities(specificFolderPath: Path);
-            foreach (Activity activity in Activities)
-            {
-                SharedActivityTreeItem SATI = new SharedActivityTreeItem(mShowMode);
-                SATI.Activity = activity;
-                Childrens.Add(SATI);
-            }
-            return Childrens;
+            return GetChildrentGeneric<Activity>(mActivitiesFolder, nameof(Activity.ActivityName));            
         }
 
-        private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
-        {
-            try
-            {
-                foreach (string d in Directory.GetDirectories(Path))
-                {
-                    SharedActivitiesFolderTreeItem FolderItem = new SharedActivitiesFolderTreeItem(mShowMode);
-                    string FolderName = System.IO.Path.GetFileName(d);
-
-                    FolderItem.Folder = FolderName;
-                    FolderItem.Path = d;
-
-                    Childrens.Add(FolderItem);
-                }
-            }
-            catch (System.Exception excpt)
-            {
-                Console.WriteLine(excpt.Message);
-            }
-        }
+       
         bool ITreeViewItem.IsExpandable()
         {
             return true;
@@ -116,7 +78,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActivitiesRepositoryPage == null)
             {
-                mActivitiesRepositoryPage = new ActivitiesRepositoryPage(Path);
+                mActivitiesRepositoryPage = new ActivitiesRepositoryPage(mActivitiesFolder.FolderFullPath);
             }
             return mActivitiesRepositoryPage;
         }

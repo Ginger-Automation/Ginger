@@ -472,7 +472,7 @@ namespace Ginger.Functionalities
                     }
 
                     //Pull Activities from shared repository
-                    ObservableList<Activity> RepoActions = App.LocalRepository.GetSolutionRepoActivities();
+                    ObservableList<Activity> RepoActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     foreach (Activity activity in RepoActions)
                     {
                         if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
@@ -527,7 +527,7 @@ namespace Ginger.Functionalities
                     }
 
                     //Pull all shared repostory actions inside shared repository activities
-                    ObservableList<Activity> RepoActivities = App.LocalRepository.GetSolutionRepoActivities();
+                    ObservableList<Activity> RepoActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     foreach (Activity activity in RepoActivities)
                     {
                         foreach (Act action in activity.Acts)
@@ -608,7 +608,7 @@ namespace Ginger.Functionalities
                     AddVariableFromBusinessFlowList(App.LocalRepository.GetSolutionBusinessFlows());
 
                     //pull variabels from shared repository activities
-                    ObservableList<Activity> RepoActivities = App.LocalRepository.GetSolutionRepoActivities();
+                    ObservableList<Activity> RepoActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     foreach (Activity activity in RepoActivities)
                     {
                         foreach (VariableBase VB in activity.Variables)

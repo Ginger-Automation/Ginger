@@ -22,6 +22,7 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -62,7 +63,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Childrens.Add(SAGFTI);
 
             //Add Activities
-            SharedActivitiesFolderTreeItem SAFTI = new SharedActivitiesFolderTreeItem();
+            SharedActivitiesFolderTreeItem SAFTI = new SharedActivitiesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>());
             SAFTI.Folder = GingerDicser.GetTermResValue(eTermResKey.Activities);
             SAFTI.Path = App.UserProfile.Solution.Folder + @"\SharedRepository\Activities\";
             SAFTI.IsGingerDefualtFolder = true;

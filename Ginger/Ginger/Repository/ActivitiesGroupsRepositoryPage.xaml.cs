@@ -32,6 +32,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Ginger.BusinessFlowWindows;
 using Ginger.BusinessFlowFolder;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Repository
 {
@@ -141,7 +142,8 @@ namespace Ginger.Repository
                     {                       
                         ActivitiesGroup droppedGroupIns = (ActivitiesGroup)selectedItem.CreateInstance(true);
                         mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                        mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, App.LocalRepository.GetSolutionRepoActivities(), false);
+                        ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                        mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                         
                         int selectedActIndex = -1;
                         ObservableList<ActivitiesGroup> actsList = App.BusinessFlow.ActivitiesGroups;

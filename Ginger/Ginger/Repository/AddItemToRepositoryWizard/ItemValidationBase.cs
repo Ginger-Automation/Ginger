@@ -28,6 +28,7 @@ using GingerCore.Actions;
 using System.Linq;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
@@ -113,9 +114,9 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         public static bool CheckForItemWithDuplicateName(UploadItemSelection selectedItem)
         {
             List<RepositoryItemBase> existingRepoItems = new List<RepositoryItemBase>();
-
-            if (selectedItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Cast<RepositoryItemBase>().ToList();
-            else if (selectedItem.UsageItem is Activity) existingRepoItems = App.LocalRepository.GetSolutionRepoActivities().Cast<RepositoryItemBase>().ToList();
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            if (selectedItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Cast<RepositoryItemBase>().ToList();            
+            else if (selectedItem.UsageItem is Activity) existingRepoItems = activities.Cast<RepositoryItemBase>().ToList();
             else if (selectedItem.UsageItem is Act) existingRepoItems =App.LocalRepository.GetSolutionRepoActions().Cast<RepositoryItemBase>().ToList();
             else if (selectedItem.UsageItem is VariableBase) existingRepoItems = App.LocalRepository.GetSolutionRepoVariables().Cast<RepositoryItemBase>().ToList();
             
@@ -137,9 +138,9 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         public static string GetUniqueItemName(UploadItemSelection duplicateItem)
         {
             List<string> existingRepoItems = new List<string>();
-
-            if (duplicateItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Select(x => x.ItemName).ToList();
-            else if (duplicateItem.UsageItem is Activity) existingRepoItems = App.LocalRepository.GetSolutionRepoActivities().Select(x => x.ItemName).ToList(); 
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            if (duplicateItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Select(x => x.ItemName).ToList();            
+            else if (duplicateItem.UsageItem is Activity) existingRepoItems = activities.Select(x => x.ItemName).ToList(); 
             else if (duplicateItem.UsageItem is Act) existingRepoItems = App.LocalRepository.GetSolutionRepoActions().Select(x => x.ItemName).ToList(); 
             else if (duplicateItem.UsageItem is VariableBase) existingRepoItems = App.LocalRepository.GetSolutionRepoVariables().Select(x => x.ItemName).ToList();
 

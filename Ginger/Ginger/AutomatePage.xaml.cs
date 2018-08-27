@@ -30,6 +30,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger
 {
@@ -167,12 +169,13 @@ namespace Ginger
             BusinessFlowsTreeView.TreeTitle = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
             BusinessFlowsTreeView.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_2");
 
-            BusinessFlowsFolderTreeItem BFTVIRecentlyUsed = new BusinessFlowsFolderTreeItem(eBusinessFlowsTreeViewMode.ReadOnly);
-            BFTVIRecentlyUsed.Folder = "Recently Used";
-            BusinessFlowsTreeView.Tree.ClearTreeItems();
-            BusinessFlowsTreeView.Tree.AddItem(BFTVIRecentlyUsed);
+            //BusinessFlowsFolderTreeItem BFTVIRecentlyUsed = new BusinessFlowsFolderTreeItem(eBusinessFlowsTreeViewMode.ReadOnly);
+            //BFTVIRecentlyUsed.Folder = "Recently Used";
+            //BusinessFlowsTreeView.Tree.ClearTreeItems();
+            //BusinessFlowsTreeView.Tree.AddItem(BFTVIRecentlyUsed);
 
-            BusinessFlowsFolderTreeItem BFTVI = new BusinessFlowsFolderTreeItem(eBusinessFlowsTreeViewMode.ReadOnly);
+            RepositoryFolder<BusinessFlow> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>();
+            BusinessFlowsFolderTreeItem BFTVI = new BusinessFlowsFolderTreeItem(repositoryFolder, eBusinessFlowsTreeViewMode.ReadOnly);
             BFTVI.Folder = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: "s");
             BFTVI.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
             BusinessFlowsTreeView.Tree.AddItem(BFTVI);

@@ -31,6 +31,7 @@ using GingerCore.Activities;
 using System.Reflection;
 using GingerCore.ALM.QC;
 using GingerCoreNET.GeneralLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM.QC
 {
@@ -230,7 +231,8 @@ namespace Ginger.ALM.QC
                             //check for automation precentage
                             foreach (QCTSTestStep step in tc.Steps)
                             {
-                                Activity repoStepActivity = App.LocalRepository.GetSolutionRepoActivities().Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                                Activity repoStepActivity = activities.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
                                 if (repoStepActivity != null)
                                     if (repoStepActivity.AutomationStatus == Activity.eActivityAutomationStatus.Automated)
                                         automatedStepsCouter++;

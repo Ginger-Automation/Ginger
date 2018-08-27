@@ -100,7 +100,7 @@ namespace Ginger.Activities
             if (mEditMode == eEditMode.ExecutionFlow)
                 activitiesRepository = App.BusinessFlow.Activities;
             else if (mEditMode == eEditMode.SharedRepository)
-                activitiesRepository = App.LocalRepository.GetSolutionRepoActivities();
+                activitiesRepository = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
             foreach (ActivityIdentifiers actIdent in mActivitiesGroup.ActivitiesIdentifiers)
             {

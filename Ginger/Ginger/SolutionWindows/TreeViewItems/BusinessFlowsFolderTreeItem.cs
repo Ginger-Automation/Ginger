@@ -61,16 +61,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public eBusinessFlowsTreeViewMode mViewMode;
 
 
-        // TODO: remove after we move to RepositoryFolder !!!
-        public BusinessFlowsFolderTreeItem()//added to allow automatic Folder tree creation when doing right click add Sub folder
-        {
-            mViewMode = eBusinessFlowsTreeViewMode.ReadWrite;
-        }
-        public BusinessFlowsFolderTreeItem(eBusinessFlowsTreeViewMode viewMode = eBusinessFlowsTreeViewMode.ReadWrite)
-        {
-            mViewMode = viewMode;
-        }
-
         public BusinessFlowsFolderTreeItem(RepositoryFolder<BusinessFlow> repositoryFolder,  eBusinessFlowsTreeViewMode viewMode = eBusinessFlowsTreeViewMode.ReadWrite)
         {
             mRepositoryFolder = repositoryFolder;
@@ -109,81 +99,85 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-            ObservableList<BusinessFlow> BFs;
+            return GetChildrentGeneric<BusinessFlow>(mRepositoryFolder, nameof(BusinessFlow.Name));
 
-            if (Folder == "Recently Used")
-            {
-                // Since Recently used is per user we keep temp file in the solution folder using MRU class
-                BFs = new ObservableList<BusinessFlow>();
+            // FIXME Recently used
 
-                string[] BizFlowsFile = App.UserProfile.Solution.RecentlyUsedBusinessFlows.getList();
+            //List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            //ObservableList<BusinessFlow> BFs;
 
-                foreach (string BFfilename in BizFlowsFile)
-                {
-                    // DO NOT load from file - need to search or get from db repo... so it will all be in sync wherever ths BF is used
-                    //BusinessFlow BF = App.LocalRepository.GetBusinessFlow(BFfilename);
-                    BusinessFlow BF = App.LocalRepository.GetItemByFileName<BusinessFlow>(typeof(BusinessFlow), BFfilename);
-                    if (BF != null && BFs.Contains(BF) == false)
-                        BFs.Add(BF);
-                }
-            }
-            else
-            {                
-                BFs = mRepositoryFolder.GetFolderItems();
-                AddsubFolders(mRepositoryFolder, Childrens);                                                    
-            }
+            //if (Folder == "Recently Used")
+            //{
+            //    // Since Recently used is per user we keep temp file in the solution folder using MRU class
+            //    BFs = new ObservableList<BusinessFlow>();
 
-            //Add Business Flows to tree children             
-            foreach (BusinessFlow BF in BFs)
-            {
-                BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem(mViewMode);
-                BFTI.BusinessFlow = BF;
-                Childrens.Add(BFTI);
-            }
+            //    string[] BizFlowsFile = App.UserProfile.Solution.RecentlyUsedBusinessFlows.getList();
 
-            return Childrens;
+            //    foreach (string BFfilename in BizFlowsFile)
+            //    {
+            //        // DO NOT load from file - need to search or get from db repo... so it will all be in sync wherever ths BF is used
+            //        //BusinessFlow BF = App.LocalRepository.GetBusinessFlow(BFfilename);
+            //        BusinessFlow BF = App.LocalRepository.GetItemByFileName<BusinessFlow>(typeof(BusinessFlow), BFfilename);
+            //        if (BF != null && BFs.Contains(BF) == false)
+            //            BFs.Add(BF);
+            //    }
+            //}
+            //else
+            //{                
+            //    BFs = mRepositoryFolder.GetFolderItems();
+            //    AddsubFolders(mRepositoryFolder, Childrens);                                                    
+            //}
+
+            ////Add Business Flows to tree children             
+            //foreach (BusinessFlow BF in BFs)
+            //{
+            //    BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem(mViewMode);
+            //    BFTI.BusinessFlow = BF;
+            //    Childrens.Add(BFTI);
+            //}
+
+            //return Childrens;
         }
 
         // TODO: remove after we move to RepositoryFolder
-        private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
-        {
-            try
-            {
-                foreach (string d in Directory.GetDirectories(Path))
-                {
-                    BusinessFlowsFolderTreeItem BFFTI = new BusinessFlowsFolderTreeItem(mViewMode);
-                    string FolderName = System.IO.Path.GetFileName(d);
+        //private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
+        //{
+        //    try
+        //    {
+        //        foreach (string d in Directory.GetDirectories(Path))
+        //        {
+        //            BusinessFlowsFolderTreeItem BFFTI = new BusinessFlowsFolderTreeItem(mViewMode);
+        //            string FolderName = System.IO.Path.GetFileName(d);
 
-                    BFFTI.Folder = FolderName;
-                    BFFTI.Path = d;
+        //            BFFTI.Folder = FolderName;
+        //            BFFTI.Path = d;
 
-                    Childrens.Add(BFFTI);
-                }
+        //            Childrens.Add(BFFTI);
+        //        }
 
-            }
-            catch (System.Exception excpt)
-            {
-                Console.WriteLine(excpt.Message);
-            }
-        }
+        //    }
+        //    catch (System.Exception excpt)
+        //    {
+        //        Console.WriteLine(excpt.Message);
+        //    }
+        //}
 
-        private void AddsubFolders(RepositoryFolder<BusinessFlow> mRepositoryFolder, List<ITreeViewItem> Childrens)
-        {
-            try
-            {
-                foreach (RepositoryFolder<BusinessFlow> f in mRepositoryFolder.GetSubFolders())
-                {
-                    BusinessFlowsFolderTreeItem BFFTI = new BusinessFlowsFolderTreeItem(f, mViewMode);                   
-                    Childrens.Add(BFFTI);
-                }
+        //private void AddsubFolders(RepositoryFolder<BusinessFlow> mRepositoryFolder, List<ITreeViewItem> Childrens)
+        //{
+        //    try
+        //    {
+        //        foreach (RepositoryFolder<BusinessFlow> f in mRepositoryFolder.GetSubFolders())
+        //        {
+        //            BusinessFlowsFolderTreeItem BFFTI = new BusinessFlowsFolderTreeItem(f, mViewMode);                   
+        //            Childrens.Add(BFFTI);
+        //        }
 
-            }
-            catch (System.Exception excpt)
-            {
-                Console.WriteLine(excpt.Message);
-            }
-        }
+        //    }
+        //    catch (System.Exception excpt)
+        //    {
+        //        Console.WriteLine(excpt.Message);
+        //    }
+        //}
 
         bool ITreeViewItem.IsExpandable()
         {

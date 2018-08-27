@@ -34,6 +34,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.BusinessFlowFolder
 {
@@ -174,9 +175,9 @@ namespace Ginger.BusinessFlowFolder
             else if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
-                mBusinessFlow.AddActivitiesGroup(droppedGroupIns);              
-                
-                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, App.LocalRepository.GetSolutionRepoActivities(), false);
+                mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
+                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
 
                 int selectedActIndex = -1;
@@ -345,7 +346,8 @@ namespace Ginger.BusinessFlowFolder
             if (mBusinessFlow != null)
             {
                 grdActivities.Title = "'" + mBusinessFlow.Name + "' - " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-                App.LocalRepository.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.Activities, (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivities());
+                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                App.LocalRepository.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.Activities, (IEnumerable<object>)activities);
                 grdActivities.DataSourceList = mBusinessFlow.Activities;                
             }
             else

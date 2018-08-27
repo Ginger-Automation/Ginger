@@ -31,6 +31,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Repository
 {
@@ -69,8 +71,7 @@ namespace Ginger.Repository
             }
 
             SetActivitiesRepositoryGridView();
-            SetActivitiesRepositoryTreeView();
-            App.LocalRepository.AttachHandlerToSolutionRepoActivitiesChange(RefreshGridActivities);                           
+            SetActivitiesRepositoryTreeView();            
         }
 
         private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -95,7 +96,8 @@ namespace Ginger.Repository
             grdActivitiesRepository.SetAllColumnsDefaultView(view);           
             grdActivitiesRepository.InitViewItems();
 
-            grdActivitiesRepository.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGridActivities));                       
+            grdActivitiesRepository.btnRefresh.Visibility = Visibility.Collapsed;
+            //grdActivitiesRepository.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGridActivities));                       
             grdActivitiesRepository.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(mAddActivityHandler));
             grdActivitiesRepository.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivity));
             
@@ -103,7 +105,7 @@ namespace Ginger.Repository
             grdActivitiesRepository.ItemDropped += grdActivitiesRepository_ItemDropped;
             grdActivitiesRepository.PreviewDragItem += grdActivitiesRepository_PreviewDragItem;            
 
-            grdActivitiesRepository.DataSourceList = App.LocalRepository.GetSolutionRepoActivities();
+            grdActivitiesRepository.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             grdActivitiesRepository.ShowTagsFilter = Visibility.Visible;
         }
 
@@ -122,7 +124,9 @@ namespace Ginger.Repository
                 ActivitiesRepositoryTreeView.TreeTitle = GingerDicser.GetTermResValue(eTermResKey.Activities) + " Repository";
                 ActivitiesRepositoryTreeView.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
                 //Add Activities
-                SharedActivitiesFolderTreeItem SAFTI = new SharedActivitiesFolderTreeItem(SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode.ReadOnly);
+                RepositoryFolder<Activity> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>();
+
+                SharedActivitiesFolderTreeItem SAFTI = new SharedActivitiesFolderTreeItem(repositoryFolder, SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode.ReadOnly);
                 SAFTI.Folder = GingerDicser.GetTermResValue(eTermResKey.Activities);
                 SAFTI.Path = App.UserProfile.Solution.Folder + @"\SharedRepository\Activities\";
                 ActivitiesRepositoryTreeView.Tree.AddItem(SAFTI);
@@ -130,16 +134,11 @@ namespace Ginger.Repository
                 TreeInitDone = true;
             }
         }      
-
-        private void RefreshGridActivities(object sender, RoutedEventArgs e)
-        {
-            App.LocalRepository.RefreshSolutionRepoActivities();
-            grdActivitiesRepository.DataSourceList = App.LocalRepository.GetSolutionRepoActivities();
-        }
+        
 
         private void RefreshGridActivities(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            grdActivitiesRepository.DataSourceList = App.LocalRepository.GetSolutionRepoActivities();
+            grdActivitiesRepository.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
         }
 
         private void AddFromRepository(object sender, RoutedEventArgs e)
