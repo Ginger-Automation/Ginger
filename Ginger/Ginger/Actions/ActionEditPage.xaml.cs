@@ -1620,7 +1620,7 @@ namespace Ginger.Actions
             {
                 if (EnableActionLogConfigCheckBox.IsChecked == true)
                 {
-                    ActionLogRow.Height = new GridLength(170);
+                    ActionLogRow.Height = new GridLength(230);
                 }
                 else
                 {

@@ -15,6 +15,15 @@ namespace Amdocs.Ginger.Common.Actions
 
         [IsSerializedForLocalRepository]
         public bool LogOutputVariables { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public bool LogRunStatus { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public bool LogError { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public bool LogElapsedTime { get; set; }
     }
 
 }

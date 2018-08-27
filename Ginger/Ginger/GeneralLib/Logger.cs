@@ -47,41 +47,29 @@ namespace Ginger.GeneralLib
 
         public void Log(string logMessage)
         {
-            try
-            {
-                log.WriteLine(logMessage);
-            }
-            catch (Exception ex)
-            {
-                //string errorMessage = "[" + this.GetType() + "] Error in Log: " + Environment.NewLine + "Error= " + ex.Message;
-                //App.Log(errorMessage);
-            }
+            log.WriteLine(logMessage);
         }
 
         public void LogTime()
         {
-            try
-            {
-                log.WriteLine("{0}", DateTime.Now.ToString("yyyyMMddHHmmss"));
-            }
-            catch (Exception ex)
-            {
-                //string errorMessage = "[" + this.GetType() + "] Error in LogTime: " + Environment.NewLine + "Error= " + ex.Message;
-                //App.Log(errorMessage);
-            }
+            log.WriteLine("{0}", DateTime.Now.ToString("yyyyMMddHHmmss"));
         }
 
         public void LogTime(string logMessage)
         {
-            try
-            {
-                log.WriteLine("{0} :: {1}", logMessage, DateTime.Now.ToString("yyyyMMddHHmmss"));
-            }
-            catch (Exception ex)
-            {
-                //string errorMessage = "[" + this.GetType() + "] Error in LogTime: " + Environment.NewLine + "Error= " + ex.Message;
-                //App.Log(errorMessage);
-            }
+            log.WriteLine("{0} :: {1}", logMessage, DateTime.Now.ToString("yyyyMMddHHmmss"));
+        }
+
+        public void LogTimeStamp()
+        {
+            log.WriteLine("-------------------------------");
+            log.WriteLine("{0} {1}", DateTime.Now.ToLongDateString(), DateTime.Now.ToLongTimeString());
+            log.WriteLine("-------------------------------");
+        }
+
+        public void LogLine()
+        {
+            log.WriteLine("-------------------------------");
         }
 
 
