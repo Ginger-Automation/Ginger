@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 
 namespace Ginger.SourceControl
 {
@@ -356,7 +357,8 @@ namespace Ginger.SourceControl
                 }
                 else if (SCFI.FileType == "Action")
                 {
-                    obj = App.LocalRepository.GetSolutionRepoActions().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+                    obj = SharedActions.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
                 }
                 else if (SCFI.FileType == "Activities Group")
                 {

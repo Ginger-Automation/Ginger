@@ -542,7 +542,7 @@ namespace Ginger.Functionalities
                     }
 
                     //Pull all shared repository actions
-                    ObservableList<Act> RepoActions = App.LocalRepository.GetSolutionRepoActions();
+                    ObservableList<Act> RepoActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
                     foreach (Act action in RepoActions)
                     {
                         if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;

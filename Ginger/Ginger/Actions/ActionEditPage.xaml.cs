@@ -890,7 +890,8 @@ namespace Ginger.Actions
                 if(mActParentBusinessFlow != null)                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActParentBusinessFlow);
                 else
-                    mActParentActivity.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActParentActivity);
+                
                 saveWasDone = true;
             }
 
@@ -901,7 +902,7 @@ namespace Ginger.Actions
         {
             if (LocalRepository.CheckIfSureDoingChange(mAction, "change") == true)
             {
-                mAction.Save();
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mAction);
                 saveWasDone = true;
                 IsPageClosing = true;
                 _pageGenericWin.Close();

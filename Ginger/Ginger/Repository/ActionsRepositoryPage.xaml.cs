@@ -29,6 +29,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Repository
 {
@@ -42,8 +43,7 @@ namespace Ginger.Repository
             InitializeComponent();
 
             SetActionsGridView();
-
-            App.LocalRepository.AttachHandlerToSolutionRepoActionsChange(RefreshActions);           
+            
         }
 
         private void grdActions_PreviewDragItem(object sender, EventArgs e)
@@ -65,9 +65,9 @@ namespace Ginger.Repository
                 //refresh and select the item
                 try
                {
-                   grdActions.DataSourceList = App.LocalRepository.GetSolutionRepoActions();
+                   grdActions.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
 
-                   Act dragedItemInGrid = ((IEnumerable<Act>)grdActions.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
+                    Act dragedItemInGrid = ((IEnumerable<Act>)grdActions.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
                    if (dragedItemInGrid != null)
                        grdActions.Grid.SelectedItem = dragedItemInGrid;
                }
@@ -85,27 +85,19 @@ namespace Ginger.Repository
             grdActions.SetAllColumnsDefaultView(view);
             grdActions.InitViewItems();
 
-            grdActions.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshActions));
+            grdActions.btnRefresh.Visibility = Visibility.Collapsed;
             grdActions.AddToolbarTool("@LeftArrow_16x16.png", "Add to Actions", new RoutedEventHandler(AddFromRepository));
             grdActions.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditAction));
             grdActions.ShowTagsFilter = Visibility.Visible;
             grdActions.RowDoubleClick += grdActions_grdMain_MouseDoubleClick;
             grdActions.ItemDropped += grdActions_ItemDropped;
             grdActions.PreviewDragItem += grdActions_PreviewDragItem;
-            grdActions.DataSourceList = App.LocalRepository.GetSolutionRepoActions();
-        }
 
-        private void RefreshActions(object sender, RoutedEventArgs e)
-        {
-            App.LocalRepository.RefreshSolutionRepoActions();
-            grdActions.DataSourceList = App.LocalRepository.GetSolutionRepoActions();
+            grdActions.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();            
         }
+        
 
-        private void RefreshActions(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            grdActions.DataSourceList = App.LocalRepository.GetSolutionRepoActions();
-        }
-
+        
         private void AddFromRepository(object sender, RoutedEventArgs e)
         {            
             if (grdActions.Grid.SelectedItems != null && grdActions.Grid.SelectedItems.Count > 0)

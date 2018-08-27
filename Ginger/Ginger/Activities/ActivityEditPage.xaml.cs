@@ -244,8 +244,8 @@ namespace Ginger.BusinessFlowWindows
         private void CheckIfUserWantToSave()
         {
             if (editMode == General.RepositoryItemPageViewMode.SharedReposiotry)
-            {
-                mActivity.Save();
+            {                
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivity);
                 saveWasDone = true;
                 _pageGenericWin.Close();
             }

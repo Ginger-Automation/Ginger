@@ -30,6 +30,7 @@ using Ginger.Run;
 using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Platforms;
@@ -857,7 +858,8 @@ namespace Ginger
             SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", addToRootFolders: true, PropertyNameForFileName: nameof(PluginPackage.PluginID));
 
             SR.AddItemInfo<Activity>("*.Ginger.Activity.xml", @"~\SharedRepository\Activities", true, "Shared Activities", addToRootFolders: false, PropertyNameForFileName: nameof(Activity.ActivityName));
-            
+            SR.AddItemInfo<Activity>("*.Ginger.Action.xml", @"~\SharedRepository\Actions", true, "Shared Actions", addToRootFolders: false, PropertyNameForFileName: nameof(Act.Description));
+
 
             ////// Note the | which enable to define multiple pattern for same folder
             ////// Shared repository can contains Activities and Actions            

@@ -38,7 +38,7 @@ using System.Windows.Controls;
 namespace GingerCore.Actions
 {
     // Each Act is one Activity Step     
-    public abstract partial class Act : RepositoryItem
+    public abstract partial class Act : RepositoryItemBase
     {
         public enum eItemParts
         {
@@ -1302,7 +1302,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override void UpdateInstance(RepositoryItem instance, string partToUpdate, RepositoryItem hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
         {
             Act actInstance = (Act)instance;
 
@@ -1351,7 +1351,7 @@ namespace GingerCore.Actions
         }
 
 
-        public override RepositoryItem GetUpdatedRepoItem(RepositoryItem itemToUpload, RepositoryItem exisstingRepoItem, string itemPartToUpdate)
+        public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase exisstingRepoItem, string itemPartToUpdate)
         {            
             Act updatedAct = null;
 

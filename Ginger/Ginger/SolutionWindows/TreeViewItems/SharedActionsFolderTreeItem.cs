@@ -25,16 +25,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Controls;
+using Amdocs.Ginger.Repository;
+using GingerWPF.TreeViewItemsLib;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class SharedActionsFolderTreeItem : TreeViewItemBase, ITreeViewItem
+    class SharedActionsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private ActionsRepositoryPage mActionsRepositoryPage;
         public string Folder { get; set; }
         public string Path { get; set; }
         public enum eActionsItemsShowMode { ReadWrite, ReadOnly }
         private eActionsItemsShowMode mShowMode;
+        RepositoryFolder<Act> mActionsFolder;
 
         public SharedActionsFolderTreeItem(eActionsItemsShowMode showMode = eActionsItemsShowMode.ReadWrite)
         {
@@ -45,14 +48,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             return null;
         }
-        override public string NodePath()
-        {
-            return Path + @"\";
-        }
-        override public Type NodeObjectType()
-        {
-            return typeof(Act);
-        }
+        //override public string NodePath()
+        //{
+        //    return Path + @"\";
+        //}
+        //override public Type NodeObjectType()
+        //{
+        //    return typeof(Act);
+        //}
 
         StackPanel ITreeViewItem.Header()
         {
@@ -71,41 +74,42 @@ namespace Ginger.SolutionWindows.TreeViewItems
         
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            return GetChildrentGeneric<Act>(mActionsFolder, nameof(Act.Description));
+            //List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
-            AddsubFolders(Path, Childrens);
-            //Add Actions
-            ObservableList<Act> Acts = App.LocalRepository.GetSolutionRepoActions(specificFolderPath:Path);
+            //AddsubFolders(Path, Childrens);
+            ////Add Actions
+            //ObservableList<Act> Acts = App.LocalRepository.GetSolutionRepoActions(specificFolderPath:Path);
 
-            foreach (Act act in Acts)
-            {
-                SharedActionTreeItem SATI = new SharedActionTreeItem();
-                SATI.Act = act;
-                Childrens.Add(SATI);
-            }
-            return Childrens;
+            //foreach (Act act in Acts)
+            //{
+            //    SharedActionTreeItem SATI = new SharedActionTreeItem();
+            //    SATI.Act = act;
+            //    Childrens.Add(SATI);
+            //}
+            //return Childrens;
         }
 
-        private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
-        {
-            try
-            {
-                foreach (string d in Directory.GetDirectories(Path))
-                {
-                    SharedActionsFolderTreeItem FolderItem = new SharedActionsFolderTreeItem();
-                    string FolderName = System.IO.Path.GetFileName(d);
+        //private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
+        //{
+        //    try
+        //    {
+        //        foreach (string d in Directory.GetDirectories(Path))
+        //        {
+        //            SharedActionsFolderTreeItem FolderItem = new SharedActionsFolderTreeItem();
+        //            string FolderName = System.IO.Path.GetFileName(d);
 
-                    FolderItem.Folder = FolderName;
-                    FolderItem.Path = d;
+        //            FolderItem.Folder = FolderName;
+        //            FolderItem.Path = d;
 
-                    Childrens.Add(FolderItem);
-                }
-            }
-            catch (System.Exception excpt)
-            {
-                Console.WriteLine(excpt.Message);
-            }
-        }
+        //            Childrens.Add(FolderItem);
+        //        }
+        //    }
+        //    catch (System.Exception excpt)
+        //    {
+        //        Console.WriteLine(excpt.Message);
+        //    }
+        //}
 
         bool ITreeViewItem.IsExpandable()
         {

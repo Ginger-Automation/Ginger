@@ -17,7 +17,9 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore;
+using GingerCore.Actions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -38,7 +40,8 @@ namespace Ginger.Repository
         {
             ActivitiesGroupsCountLabel.Text = App.LocalRepository.GetSolutionRepoActivitiesGroups(fromCache).Count.ToString();
             ActivitiesCountLabel.Text = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Count.ToString();
-            ActionsCountLabel.Text = App.LocalRepository.GetSolutionRepoActions(fromCache).Count.ToString();
+            ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+            ActionsCountLabel.Text = SharedActions.Count.ToString();
             VariablesCountLabel.Text = App.LocalRepository.GetSolutionRepoVariables(fromCache).Count.ToString();
         }
 

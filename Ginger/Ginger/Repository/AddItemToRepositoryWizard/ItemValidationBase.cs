@@ -48,7 +48,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             public static string ItemClass = "ItemClass";
             public static string Impact = "Impact";
         }
-        public RepositoryItem UsageItem { get; set; }
+        public RepositoryItemBase UsageItem { get; set; }
 
         public static ObservableList<ItemValidationBase> mIssuesList = new ObservableList<ItemValidationBase>();
 
@@ -115,9 +115,10 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         {
             List<RepositoryItemBase> existingRepoItems = new List<RepositoryItemBase>();
             ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             if (selectedItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Cast<RepositoryItemBase>().ToList();            
             else if (selectedItem.UsageItem is Activity) existingRepoItems = activities.Cast<RepositoryItemBase>().ToList();
-            else if (selectedItem.UsageItem is Act) existingRepoItems =App.LocalRepository.GetSolutionRepoActions().Cast<RepositoryItemBase>().ToList();
+            else if (selectedItem.UsageItem is Act) existingRepoItems = SharedActions.Cast<RepositoryItemBase>().ToList();
             else if (selectedItem.UsageItem is VariableBase) existingRepoItems = App.LocalRepository.GetSolutionRepoVariables().Cast<RepositoryItemBase>().ToList();
             
             if (selectedItem.ItemUploadType == UploadItemSelection.eItemUploadType.Overwrite)
@@ -139,9 +140,11 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         {
             List<string> existingRepoItems = new List<string>();
             ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<Act> actions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+
             if (duplicateItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Select(x => x.ItemName).ToList();            
             else if (duplicateItem.UsageItem is Activity) existingRepoItems = activities.Select(x => x.ItemName).ToList(); 
-            else if (duplicateItem.UsageItem is Act) existingRepoItems = App.LocalRepository.GetSolutionRepoActions().Select(x => x.ItemName).ToList(); 
+            else if (duplicateItem.UsageItem is Act) existingRepoItems = actions.Select(x => x.ItemName).ToList(); 
             else if (duplicateItem.UsageItem is VariableBase) existingRepoItems = App.LocalRepository.GetSolutionRepoVariables().Select(x => x.ItemName).ToList();
 
             string newItemName = duplicateItem.ItemName;
@@ -158,7 +161,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             //TODO - find better way to get unique name
         }
 
-        public static ItemValidationBase CreateNewIssue(RepositoryItem rItem)
+        public static ItemValidationBase CreateNewIssue(RepositoryItemBase rItem)
         {
             ItemValidationBase ITB = new ItemValidationBase();
             ITB.UsageItem = rItem;
