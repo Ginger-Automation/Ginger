@@ -17,12 +17,14 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Enums;
 using Ginger.ALM;
 using Ginger.BusinessFlowFolder;
 using Ginger.Exports.ExportToJava;
 using Ginger.UserControlsLib.TextEditor;
 using Ginger.VisualAutomate;
 using GingerCore;
+using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -31,7 +33,7 @@ using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    public class BusinessFlowTreeItem : TreeViewItemBase, ITreeViewItem
+    public class BusinessFlowTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private BusinessFlowPage mBusinessFlowPage;
         public BusinessFlow BusinessFlow { get; set; }
@@ -58,8 +60,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            mHeader = TreeViewUtils.CreateItemHeader(BusinessFlow.Name, "@WorkFlow_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(BusinessFlow.FileName , ref ItemSourceControlStatus), BusinessFlow, BusinessFlow.Fields.Name, BusinessFlow.IsDirty);
-            return mHeader;
+            return NewTVItemStyle(BusinessFlow, eImageType.BusinessFlow, nameof(BusinessFlow.Name));
+            //mHeader = TreeViewUtils.CreateItemHeader(BusinessFlow.Name, "@WorkFlow_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(BusinessFlow.FileName , ref ItemSourceControlStatus), BusinessFlow, BusinessFlow.Fields.Name, BusinessFlow.IsDirty);
+            //return mHeader;
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

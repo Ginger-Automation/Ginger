@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.ALM.QC;
@@ -30,6 +31,7 @@ using Ginger.Repository;
 using Ginger.UserControlsLib.TextEditor.Gherkin;
 using GingerCore;
 using GingerCore.Platforms;
+using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
@@ -47,7 +49,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         ReadOnly = 1
     }
 
-    public class BusinessFlowsFolderTreeItem : TreeViewItemBase, ITreeViewItem
+    public class BusinessFlowsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private ExplorerBusinessFlowsPage mExplorerBusinessFlowsPage;
 
@@ -90,17 +92,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            if (IsGingerDefualtFolder)
-            {
+            return TreeViewUtils.NewRepositoryItemTreeHeader(Folder, nameof(RepositoryFolder<BusinessFlow>.DisplayName), eImageType.Folder, GetSourceControlImage(mRepositoryFolder), false);            
+            
+            //if (IsGingerDefualtFolder)
+            //{
                 
-                return TreeViewUtils.CreateItemHeader(mRepositoryFolder.FolderName, "@WorkFlow_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            //    return TreeViewUtils.CreateItemHeader(mRepositoryFolder.FolderName, "@WorkFlow_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
                 
-            }
-            else
-            {
+            //}
+            //else
+            //{
                 
-                return TreeViewUtils.CreateItemHeader(mRepositoryFolder.FolderName, "@Folder2_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));                
-            }
+            //    return TreeViewUtils.CreateItemHeader(mRepositoryFolder.FolderName, "@Folder2_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));                
+            //}
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
