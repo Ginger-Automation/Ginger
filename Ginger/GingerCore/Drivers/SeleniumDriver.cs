@@ -5361,13 +5361,16 @@ namespace GingerCore.Drivers
 
         private void HandleActUIElement(ActUIElement act)
         {
+            IWebElement e = null;
 
-            IWebElement e = LocateElement(act);
-
-            if (e == null)
+            if (act.ElementLocateBy != eLocateBy.NA)
             {
-                //TODO: if multiple props the message needs to be different... or by X,Y
-                act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                e = LocateElement(act);
+                if (e == null)
+                {
+                    //TODO: if multiple props the message needs to be different... or by X,Y
+                    act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                }
             }
 
             switch (act.ElementAction)
@@ -5482,26 +5485,38 @@ namespace GingerCore.Drivers
                     }
                     break;
 
-                case ActUIElement.eElementAction.RunJavaScript:
-                    e = LocateElement(act);
+                case ActUIElement.eElementAction.RunJavaScript:                    
                     string script = act.GetInputParamCalculatedValue("Value");
                     try
                     {
-                        object a = null;
-                        if (!script.ToUpper().StartsWith("RETURN"))
+                        if (string.IsNullOrEmpty(script))
                         {
-                            script = "return " + script;
+                            act.Error = "Script is empty";
                         }
-                        if (script.ToLower().Contains("arguments[0]") && e != null)
-                            a = ((IJavaScriptExecutor)Driver).ExecuteScript(script, e);
                         else
-                            a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
-                        if (a != null)
-                            act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                        {
+                            object a = null;
+                            if (!script.ToUpper().StartsWith("RETURN"))
+                            {
+                                script = "return " + script;
+                            }
+                            if (act.ElementLocateBy != eLocateBy.NA)
+                            {
+                                if (script.ToLower().Contains("arguments[0]") && e != null)
+                                    a = ((IJavaScriptExecutor)Driver).ExecuteScript(script, e);
+                            }
+                            else
+                            {
+                                a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
+                            }
+
+                            if (a != null)
+                                act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                        }
                     }
                     catch (Exception ex)
                     {
-                        act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "'";
+                        act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "', if element need to be embbeded in the script so make sure you use the 'arguments[0]' place holder for it.";
                     }
                     break;
                     

@@ -54,6 +54,7 @@ using Amdocs.Ginger.UserControls;
 using GingerCore.Platforms.PlatformsInfo;
 using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Threading.Tasks;
 
 namespace Ginger.WindowExplorer
 {
@@ -707,7 +708,10 @@ namespace Ginger.WindowExplorer
                     AppiumElementInfo AEI = new AppiumElementInfo();
                     AEI.WindowExplorer = mWindowExplorerDriver;
                     AEI.XPath = "/";
-                    string pageSourceString = ((SeleniumAppiumDriver)mWindowExplorerDriver).GetPageSource();
+                    SeleniumAppiumDriver SAD = ((SeleniumAppiumDriver)mWindowExplorerDriver);
+
+
+                    string pageSourceString = SAD.GetPageSource().Result;
                     XmlDocument pageSourceXml = new XmlDocument();
                     pageSourceXml.LoadXml(pageSourceString);
                     AEI.XmlDoc = pageSourceXml;
