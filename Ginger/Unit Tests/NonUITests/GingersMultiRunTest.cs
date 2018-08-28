@@ -29,30 +29,33 @@
 
 //namespace UnitTests.NonUITests
 //{
-//    [TestClass]   
-//    public class GingersMultiRunTest 
+
+//    [TestClass]
+//    public class GingersMultiRunTest
 //    {
 
-        
+
 //        RunsetExecutor mGMR;
 
 //        [TestInitialize]
 //        public void TestInitialize()
-//        {            
+//        {
 //            mGMR = new RunsetExecutor();
+//            mGMR.RunSetConfig = new RunSetConfig();
+//            mGMR.RunSetConfig.mRunWithAnalyzer = false;
 
 //            AddGinger(Agent.eDriverType.SeleniumFireFox);
 //            AddGinger(Agent.eDriverType.SeleniumFireFox);
 //            AddGinger(Agent.eDriverType.SeleniumFireFox);
-//            ////AddGinger(Agent.eDriverType.SeleniumFireFox);
-//            ////AddGinger(Agent.eDriverType.SeleniumFireFox);
-            
+//            //AddGinger(Agent.eDriverType.SeleniumFireFox);
+//            //AddGinger(Agent.eDriverType.SeleniumFireFox);
+
 //            AddGinger(Agent.eDriverType.SeleniumChrome);
 //            AddGinger(Agent.eDriverType.SeleniumChrome);
 //            AddGinger(Agent.eDriverType.SeleniumChrome);
-//            //AddGinger(Agent.eDriverType.SeleniumChrome);
-//            //AddGinger(Agent.eDriverType.SeleniumChrome);
-//            // AddGinger(Agent.eDriverType.InternalBrowser);
+//            AddGinger(Agent.eDriverType.SeleniumChrome);
+//            AddGinger(Agent.eDriverType.SeleniumChrome);
+//            AddGinger(Agent.eDriverType.InternalBrowser);
 //        }
 
 //        [TestCleanup()]
@@ -60,7 +63,7 @@
 //        {
 //            foreach (GingerRunner GR in mGMR.Runners)
 //            {
-//                GR.StopAgents();                
+//                GR.StopAgents();
 //            }
 //        }
 
@@ -69,44 +72,43 @@
 //            GingerRunner mGR2 = new GingerRunner();
 //            Platform p22 = new Platform() { PlatformType = ePlatformType.Web };
 //            Agent a2 = new Agent();
-//            //a.Driver = new InternalBrowser(mBF);
+//            a.Driver = new InternalBrowser(mBF);
 //            a2.DriverType = DriverType;
 //            p22.Agent = a2;
 //            mGR2.SolutionAgents = new ObservableList<Agent>();
 //            mGR2.SolutionAgents.Add(a2);
-//            // mGR2.Platforms.Add(p22);
+//            mGR2.Platforms.Add(p22);
 //            for (int i = 1; i < 3; i++)
 //            {
 //                AddBusinessFlow(mGR2);
 //            }
 
 //            mGR2.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a2 });
-
-//            mGMR.Runners.Add(mGR2);            
+//            mGMR.Runners.Add(mGR2);
 //        }
 
 
 //        [TestMethod]
 //        public void RunGingersParallel_FFandChrome_X3()
-//        {            
-//            //Act
+//        {
+//            Act
 //            mGMR.RunRunset();
 
-//            //Assert
+//            Assert
 //            foreach (GingerRunner GR in mGMR.Runners)
 //            {
 //                foreach (BusinessFlow bf in GR.BusinessFlows)
 //                {
-//                   Assert.AreEqual(bf.RunStatus, eRunStatus.Passed);
+//                    Assert.AreEqual(bf.RunStatus, eRunStatus.Passed);
 //                }
-            
+
 //            }
 //        }
 
 //        [TestMethod]
 //        public void SpeedTest_FFx2_Chrome_X1()
 //        {
-//            //Arrange
+//            Arrange
 //            mGMR = new RunsetExecutor();
 //            AddGinger(Agent.eDriverType.SeleniumFireFox);
 //            AddGinger(Agent.eDriverType.SeleniumFireFox);
@@ -120,20 +122,20 @@
 //            }
 
 
-//            //Act
+//            Act
 //            mGMR.RunRunset();
 
-//            //Assert
+//            Assert
 //            foreach (GingerRunner GR in mGMR.Runners)
 //            {
 //                foreach (BusinessFlow bf in GR.BusinessFlows)
 //                {
-//                   Assert.AreEqual(bf.RunStatus, eRunStatus.Passed);
+//                    Assert.AreEqual(bf.RunStatus, eRunStatus.Passed);
 //                }
 
 //            }
 
-            
+
 //        }
 
 
@@ -166,13 +168,13 @@
 //            ActSubmit act4 = new ActSubmit() { LocateBy = eLocateBy.ByValue, LocateValue = "Log in", Active = true };
 //            a1.Acts.Add(act4);
 
-//            ActLink act5 = new ActLink() { LocateBy = eLocateBy.ByLinkText, Wait= 1, LocateValue = "Manage Customer", LinkAction = ActLink.eLinkAction.Click, Active = true };
-//            a1.Acts.Add(act5);            
+//            ActLink act5 = new ActLink() { LocateBy = eLocateBy.ByLinkText, Wait = 1, LocateValue = "Manage Customer", LinkAction = ActLink.eLinkAction.Click, Active = true };
+//            a1.Acts.Add(act5);
 
 //            GR.BusinessFlows.Add(mBF);
 //        }
 
-        
-        
+
+
 //    }
 //}

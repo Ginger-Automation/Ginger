@@ -80,6 +80,26 @@ namespace Ginger.ALM.Repository
             return (string)win.ShowAsWindow(eWindowShowStyle.Dialog);
         }
 
+        public override List<string> GetTestLabExplorer(string path)
+        {
+            return QCConnect.GetTestLabExplorer(path);
+        }
+
+        public override IEnumerable<Object> GetTestSetExplorer(string path)
+        {
+            return QCConnect.GetTestSetExplorer(path);
+        }
+
+        public override Object GetTSRunStatus(Object tsItem)
+        {
+            return QCConnect.GetTSRunStatus(tsItem);
+        }
+
+        public override List<string> GetTestPlanExplorer(string path)
+        {
+            return QCConnect.GetTestPlanExplorer(path);
+        }
+
         #endregion General
 
         #region Import From QC

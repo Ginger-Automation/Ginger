@@ -141,6 +141,8 @@
                     </Grid>
                 </TabItem>
             </TabControl>
+            <Label Content="Loading..." Name="LoadingLabel"/>
+       
         </DockPanel>
     </Grid>
 </Window>

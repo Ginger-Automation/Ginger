@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Core;
@@ -136,9 +137,13 @@ namespace Amdocs.Ginger.UserControls
         }     
 
         public event RoutedEventHandler Click;
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (Click != null)
+            if (e.ChangedButton != MouseButton.Left || e.ClickCount >= 2)
+            {
+                e.Handled = true;
+            }
+            else
             {
                 Click(this, e);
             }

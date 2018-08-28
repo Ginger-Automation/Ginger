@@ -119,6 +119,9 @@ namespace Ginger.Environments
         public string ALMServerURL { get; set; }
 
         [IsSerializedForLocalRepository]
+        public bool UseRest { get; set; }
+
+        [IsSerializedForLocalRepository]
         public string ALMDomain { get; set; }
 
         [IsSerializedForLocalRepository]

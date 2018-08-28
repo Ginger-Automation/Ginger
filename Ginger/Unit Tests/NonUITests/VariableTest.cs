@@ -24,11 +24,13 @@ using System.Threading.Tasks;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Variables;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Level1]
     public class VariableTest 
     {
        
