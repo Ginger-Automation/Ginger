@@ -152,6 +152,7 @@
                             <GingerCore:ucTextDicResource Text="Continue from Current"/>
                         </RibbonMenuButton.ToolTip>
                     </RibbonMenuButton>
+                    <RibbonButton x:Name="RetryMechanism"  ContextMenu="{x:Null}" ToolTip="Configure Global Retry Mechanism" Click="RetryMechanismButton_Click" Label="Retry Mechanism" LargeImageSource="{StaticResource @Reset_24x24.png}" SmallImageSource="{StaticResource @Reset_24x24.png}"/>
                     
                     <StackPanel>
                         <ComboBox x:Name="lstEnvs"  ContextMenu="{x:Null}" SelectionChanged="lstEnvs_SelectionChanged" Width="150" Style="{DynamicResource @InputComboBoxStyle}" Margin="5,5,5,3"></ComboBox>

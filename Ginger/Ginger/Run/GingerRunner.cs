@@ -113,6 +113,9 @@ namespace Ginger.Run
             public static string SpecificEnvironmentName = "SpecificEnvironmentName";
             public static string FilterExecutionByTags = "FilterExecutionByTags";
             public static string RunInSimulationMode = "RunInSimulationMode";
+            public static string GlobalRetry = "GlobalRetry";
+            public static string GlobalRetryInterval = "GlobalRetryInterval";
+            public static string GlobalRetryMaxRetriesNumber = "GlobalRetryMaxRetriesNumber";
         }
 
         private float App = 12345;  // NOT FOR USE - DO NOT REMOVE !!! -  This var in order to avoid using the real App. - see comment at header!!!        
@@ -296,6 +299,20 @@ namespace Ginger.Run
                 OnPropertyChanged(nameof(GingerRunner.RunInSimulationMode));
             }
         }
+
+        private bool mGlobalRetry;
+        [IsSerializedForLocalRepository]
+        public bool GlobalRetry { get { return mGlobalRetry; } set { mGlobalRetry = value; OnPropertyChanged(Fields.GlobalRetry); } }
+
+        private int mGlobalRetryInterval = 5;
+        [IsSerializedForLocalRepository]
+        public int GlobalRetryInterval { get { return mGlobalRetryInterval; } set { mGlobalRetryInterval = value; OnPropertyChanged(Fields.GlobalRetryInterval); } }
+
+        private int mGlobalRetryMaxRetriesNumber = 2;
+        [IsSerializedForLocalRepository]
+        public int GlobalRetryMaxRetriesNumber { get { return mGlobalRetryMaxRetriesNumber; } set { mGlobalRetryMaxRetriesNumber = value; OnPropertyChanged(Fields.GlobalRetryMaxRetriesNumber); } }
+
+        private int GlobalRetryCount;
 
         public GingerRunner()
         {
@@ -711,14 +728,32 @@ namespace Ginger.Run
                     mStopRun = false;
                 }
                 //resetting the retry mechanism count before calling the function.
+                GlobalRetryCount = 0;
                 act.RetryMechanismCount = 0;
                 RunActionWithRetryMechanism(act, checkIfActionAllowedToRun);
                 if (act.EnableRetryMechanism & mStopRun == false)
                 {
-                    while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && act.RetryMechanismCount < act.MaxNumberOfRetries & mStopRun == false)
+                    while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && (act.RetryMechanismCount < act.MaxNumberOfRetries) & mStopRun == false)
                     {
                         //Wait
                         act.RetryMechanismCount++;
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Wait;
+                        if (GiveUserFeedback) OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.DoEventsRequired, null);
+                        ProcessIntervaleRetry(act);
+                        if (mStopRun)
+                            break;
+                        //Run Again
+                        RunActionWithRetryMechanism(act, checkIfActionAllowedToRun);
+                    }
+                }
+
+                else if ((GlobalRetry) & mStopRun == false)
+                {
+                    while ((act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed) && (GlobalRetryCount < GlobalRetryMaxRetriesNumber) & mStopRun == false)
+                    {
+                        //Wait
+                        GlobalRetryCount++;
+
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Wait;
                         if (GiveUserFeedback) OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.DoEventsRequired, null);
                         ProcessIntervaleRetry(act);
@@ -750,11 +785,14 @@ namespace Ginger.Run
 
         private void ProcessIntervaleRetry(Act act)
         {
+            int RetryInterval = 0;
+            if (act.EnableRetryMechanism) RetryInterval = act.RetryMechanismInterval;
+            else if (GlobalRetry) RetryInterval = GlobalRetryInterval;
             Stopwatch st = new Stopwatch();
             st.Start();
-            if (act.RetryMechanismInterval > 0)
+            if (RetryInterval > 0)
             {
-                for (int i = 0; i < act.RetryMechanismInterval * 10; i++)
+                for (int i = 0; i < RetryInterval * 10; i++)
                 {
                     if (mStopRun)
                     {
@@ -881,7 +919,7 @@ namespace Ginger.Run
                 act.ElapsedTicks = st.ElapsedTicks;
 
                 //check if we have retry mechanism if yes go till max
-                if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.EnableRetryMechanism && act.RetryMechanismCount < act.MaxNumberOfRetries)
+                if ((act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) && ((act.EnableRetryMechanism && act.RetryMechanismCount < act.MaxNumberOfRetries) || (GlobalRetry && (GlobalRetryCount < GlobalRetryMaxRetriesNumber))))
                 {
                     //since we retrun and don't do flow control the action is going to run again
                     ExecutionLogger.ActionEnd(CurrentBusinessFlow.CurrentActivity, act);

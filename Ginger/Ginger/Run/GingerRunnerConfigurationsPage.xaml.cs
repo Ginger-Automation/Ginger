@@ -76,6 +76,9 @@ namespace Ginger.Run
                 App.ObjFieldBinding(ExecutionTagsChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.FilterExecutionByTags);
                 App.ObjFieldBinding(specificEnvComboBox, ComboBox.SelectedValueProperty, mGingerRunner, GingerRunner.Fields.SpecificEnvironmentName);
                 App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.RunInSimulationMode);
+                App.ObjFieldBinding(EnableGlobalRetryMechanism, CheckBox.IsCheckedProperty, mGingerRunner, Ginger.Run.GingerRunner.Fields.GlobalRetry);
+                App.ObjFieldBinding(GlobalRetryIntervalTextBox, TextBox.TextProperty, mGingerRunner, Ginger.Run.GingerRunner.Fields.GlobalRetryInterval);
+                App.ObjFieldBinding(GlobalRetryMaxRetriesNumberTextBox, TextBox.TextProperty, mGingerRunner, Ginger.Run.GingerRunner.Fields.GlobalRetryMaxRetriesNumber);
             }
             else
             {
@@ -165,6 +168,22 @@ namespace Ginger.Run
         private void ExecutionTagsChkbox_Unchecked(object sender, RoutedEventArgs e)
         {
             ExecutionTags.Visibility = Visibility.Collapsed;
+        }
+
+        private void EnableGlobalRetryMechanismCheckBox_CheckedUnChecked(object sender, RoutedEventArgs e)
+        {
+            if (EnableGlobalRetryMechanism.IsChecked == true)
+            {
+                EnableGlobalRetryMechanism.Content = "Enable Global Retry Mechanism";
+                GlobalRetryMechanismPnl.Visibility = System.Windows.Visibility.Visible;
+                //SetEnvironments();
+            }
+            else
+            {
+                EnableGlobalRetryMechanism.Content = "Enable Global Retry Mechanism";
+                GlobalRetryMechanismPnl.Visibility = System.Windows.Visibility.Collapsed;
+                //specificEnvComboBox.SelectedValue = null;
+            }
         }
     }
 }

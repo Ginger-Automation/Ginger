@@ -29,6 +29,15 @@
                         
                     </DockPanel>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox x:Name="EnableGlobalRetryMechanism" Content="Enable Global Retry Mechanism" Style="{StaticResource @CheckBoxStyle}" Margin="0,0,10,0" VerticalAlignment="Center" Checked="EnableGlobalRetryMechanismCheckBox_CheckedUnChecked" Unchecked="EnableGlobalRetryMechanismCheckBox_CheckedUnChecked"/>
+                        <DockPanel x:Name="GlobalRetryMechanismPnl"  HorizontalAlignment="Stretch" Visibility="Collapsed" Margin="18,2,0,0" >
+                            <Label Style="{StaticResource @InputFieldLabelStyle}">Interval (seconds):</Label>
+                            <TextBox x:Name="GlobalRetryIntervalTextBox" Margin="0,0,0,0" Style="{StaticResource @MultiRowsTextBoxStyle}" Width="50" FontSize="14" FontWeight="Bold"/>
+                            <Label Style="{StaticResource @InputFieldLabelStyle}">Max Retries Number:</Label>
+                            <TextBox x:Name="GlobalRetryMaxRetriesNumberTextBox" Margin="0,0,0,0" Style="{StaticResource @MultiRowsTextBoxStyle}" Width="50" FontSize="14" FontWeight="Bold"/>
+                        </DockPanel>
+                    </StackPanel>
                     <CheckBox x:Name="ExecutionTagsChkbox" Content="Filter Execution by Tags" Style="{StaticResource @CheckBoxStyle}" Margin="0,6,10,0" VerticalAlignment="Center" Checked="ExecutionTagsChkbox_Checked" Unchecked="ExecutionTagsChkbox_Unchecked"/>
                     <Ginger:ucTagsViewer x:Name="ExecutionTags" HorizontalContentAlignment="Left" Margin="14,0,0,0" Visibility="Collapsed"></Ginger:ucTagsViewer>
                     

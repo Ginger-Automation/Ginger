@@ -941,6 +941,16 @@ namespace Ginger
             }
         }
 
+        private void RetryMechanismButton_Click(object sender, RoutedEventArgs e)
+        {
+            AutoLogProxy.UserOperationStart("RetryMechanismButton_Click");
+
+            GlobalRetryMechanism GRM = new GlobalRetryMechanism(App.AutomateTabGingerRunner);
+            GRM.ShowAsWindow();
+
+            AutoLogProxy.UserOperationEnd();
+        }
+
         private void EnableDisableAutomateTabGrids(bool enableGrids)
         {
             try
