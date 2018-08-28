@@ -638,7 +638,7 @@ namespace Ginger.Functionalities
             }
         }
 
-        private void AddVariableFromBusinessFlowList(ObservableList<BusinessFlow> businessFlowList, string itemPathPrefix="", RepositoryItem parent = null)
+        private void AddVariableFromBusinessFlowList(ObservableList<BusinessFlow> businessFlowList, string itemPathPrefix="", RepositoryItemBase parent = null)
         {
             foreach (BusinessFlow BF in businessFlowList)
             {
@@ -669,7 +669,7 @@ namespace Ginger.Functionalities
 
         private void GetRunSetsToSearchIn()
         {
-            ObservableList<RunSetConfig> RunSets = App.LocalRepository.GetSolutionRunSets();
+            ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
             foreach (RunSetConfig RSC in RunSets)
             {
                 if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;

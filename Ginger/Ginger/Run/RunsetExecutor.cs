@@ -717,7 +717,8 @@ namespace Ginger.Run
 
                         case "RunSet":
                             Reporter.ToLog(eLogLevel.INFO, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), value));
-                            RunSetConfig runSetConfig = App.LocalRepository.GetSolutionRunSets().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
+                            ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                            RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                             if (runSetConfig != null)
                             {
                                 App.RunsetExecutor.RunSetConfig = runSetConfig;

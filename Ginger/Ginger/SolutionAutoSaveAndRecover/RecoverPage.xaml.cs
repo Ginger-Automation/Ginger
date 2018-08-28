@@ -13,10 +13,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowFolder;
 using Ginger.Repository;
+using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
 
@@ -102,7 +104,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
                     }
                     else if (ri.RecoveredItemObject is Run.RunSetConfig)
                     {
-                        ObservableList<Run.RunSetConfig> Runsets = App.LocalRepository.GetSolutionRunSets();
+                        ObservableList<RunSetConfig> Runsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
                         originalItem = Runsets.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
                     }
                     if (originalItem == null)

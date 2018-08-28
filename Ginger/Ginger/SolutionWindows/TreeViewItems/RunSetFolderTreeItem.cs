@@ -26,11 +26,14 @@ using System.IO;
 using System.Windows.Controls;
 using Ginger.Repository;
 using GingerCore.GeneralLib;
+using GingerWPF.TreeViewItemsLib;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class RunSetFolderTreeItem : TreeViewItemBase, ITreeViewItem
+    class RunSetFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
+        public RepositoryFolder<RunSetConfig> mRunSetConfig;
         public string Folder { get; set; }
         public string Path { get; set; }
 
@@ -64,41 +67,42 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-           
-            //Add Run Sets 
-            ObservableList<RunSetConfig> runSets = App.LocalRepository.GetSolutionRunSets(specificFolderPath: Path);
-            AddsubFolders(Path, Childrens);
+            return GetChildrentGeneric<RunSetConfig>(mRunSetConfig, nameof(Agent.Name));
+            //List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
-            foreach (RunSetConfig RSC in runSets)
-            {
-                RunSetTreeItem RSTI = new RunSetTreeItem();
-                RSTI.RunSetConfig = RSC;
-                Childrens.Add(RSTI);
-            }
-            return Childrens;
+            ////Add Run Sets 
+            //ObservableList<RunSetConfig> runSets = App.LocalRepository.GetSolutionRunSets(specificFolderPath: Path);
+            //AddsubFolders(Path, Childrens);
+
+            //foreach (RunSetConfig RSC in runSets)
+            //{
+            //    RunSetTreeItem RSTI = new RunSetTreeItem();
+            //    RSTI.RunSetConfig = RSC;
+            //    Childrens.Add(RSTI);
+            //}
+            //return Childrens;
         }
         
-        private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
-        {
-            try
-            {
-                foreach (string d in Directory.GetDirectories(Path))
-                {
-                    RunSetFolderTreeItem FolderItem = new RunSetFolderTreeItem();
-                    string FolderName = System.IO.Path.GetFileName(d);
+        //private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
+        //{
+        //    try
+        //    {
+        //        foreach (string d in Directory.GetDirectories(Path))
+        //        {
+        //            RunSetFolderTreeItem FolderItem = new RunSetFolderTreeItem();
+        //            string FolderName = System.IO.Path.GetFileName(d);
 
-                    FolderItem.Folder = FolderName;
-                    FolderItem.Path = d;
+        //            FolderItem.Folder = FolderName;
+        //            FolderItem.Path = d;
 
-                    Childrens.Add(FolderItem);
-                }
-            }
-            catch (System.Exception excpt)
-            {
-                Console.WriteLine(excpt.Message);
-            }
-        }
+        //            Childrens.Add(FolderItem);
+        //        }
+        //    }
+        //    catch (System.Exception excpt)
+        //    {
+        //        Console.WriteLine(excpt.Message);
+        //    }
+        //}
 
         bool ITreeViewItem.IsExpandable()
         {

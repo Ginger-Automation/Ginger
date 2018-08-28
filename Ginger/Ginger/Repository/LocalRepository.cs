@@ -54,7 +54,7 @@ namespace Ginger.Repository
         private static ObservableList<ActivitiesGroup> mRepoActivitiesGroupsCache = null;
         // private static ObservableList<Activity> mRepoActivitiesCache = null;
         // private static ObservableList<Act> mRepoActionsCache = null;        
-        private static ObservableList<RunSetConfig> mRunSetsCache = null;
+        
         private static ObservableList<BusinessFlowExecutionSummary> mExectionResultsCache = null;        
 
         public bool UpdateAppProgressBar = true;
@@ -125,11 +125,7 @@ namespace Ginger.Repository
                     mRepoActivitiesGroupsCache.Add((ActivitiesGroup)itemToAdd);
             }                        
             
-            else if (itemToAdd is RunSetConfig)
-            {
-                if (mRunSetsCache.Where(x => x.Guid == itemToAdd.Guid).FirstOrDefault() == null)
-                    mRunSetsCache.Add((RunSetConfig)itemToAdd);
-            }
+            
             else if (itemToAdd is BusinessFlowExecutionSummary)
             {
                 if (mExectionResultsCache.Where(x => x.Guid == itemToAdd.Guid).FirstOrDefault() == null)
@@ -145,8 +141,7 @@ namespace Ginger.Repository
         {
             if (itemToRemove is ActivitiesGroup)
                 mRepoActivitiesGroupsCache.Remove((ActivitiesGroup)itemToRemove);                                    
-            else if (itemToRemove is RunSetConfig)
-                mRunSetsCache.Remove((RunSetConfig)itemToRemove);
+            
             else if (itemToRemove is BusinessFlowExecutionSummary)
                 mExectionResultsCache.Remove((BusinessFlowExecutionSummary)itemToRemove);                        
             
@@ -257,11 +252,7 @@ namespace Ginger.Repository
                     mRepoActivitiesGroupsCache.Insert(itemToReplce.Key, (ActivitiesGroup)itemToReplce.Value);
                 }                                
                 
-                else if (itemType == typeof(RunSetConfig))
-                {
-                    mRunSetsCache.RemoveAt(itemToReplce.Key);
-                    mRunSetsCache.Insert(itemToReplce.Key, (RunSetConfig)itemToReplce.Value);
-                }
+                
                 else if (itemType == typeof(BusinessFlowExecutionSummary))
                 {
                     mExectionResultsCache.RemoveAt(itemToReplce.Key);
@@ -275,8 +266,7 @@ namespace Ginger.Repository
             {
               if (itemType == typeof(ActivitiesGroup))
                     mRepoActivitiesGroupsCache.Add((ActivitiesGroup)itemToAdd);                                                
-                else if (itemType == typeof(RunSetConfig))
-                    mRunSetsCache.Add((RunSetConfig)itemToAdd);
+                
                 else if (itemType == typeof(BusinessFlowExecutionSummary))
                     mExectionResultsCache.Add((BusinessFlowExecutionSummary)itemToAdd);                              
             }
@@ -286,8 +276,7 @@ namespace Ginger.Repository
             {
                 if (itemType == typeof(ActivitiesGroup))
                     mRepoActivitiesGroupsCache.Remove((ActivitiesGroup)itemToRemove);                                                
-                else if (itemType == typeof(RunSetConfig))
-                    mRunSetsCache.Remove((RunSetConfig)itemToRemove);
+                
                 else if (itemType == typeof(BusinessFlowExecutionSummary))
                     mExectionResultsCache.Remove((BusinessFlowExecutionSummary)itemToRemove);               
                 
@@ -314,7 +303,7 @@ namespace Ginger.Repository
             
             RefreshSolutionRepoActivitiesGroups();                       
             
-            RefreshSolutionRunSetsCache();
+            
             RefreshSolutionExectionResultsCache();          
             //RefreshSolutionPluginsCache();
         }
@@ -331,8 +320,7 @@ namespace Ginger.Repository
                 RefreshSolutionRepoActivitiesGroups();                        
             
             }
-            else if (itemType == typeof(RunSetConfig))
-                RefreshSolutionRunSetsCache(specificFolderPath);
+            
             else if (itemType == typeof(BusinessFlowExecutionSummary))
                 RefreshSolutionExectionResultsCache(specificFolderPath);          
         }
@@ -615,33 +603,9 @@ namespace Ginger.Repository
 
         #endregion Shared Repository Items
 
-        #region Run Sets
-        public ObservableList<RunSetConfig> GetSolutionRunSets(bool UseCache = true, string specificFolderPath = "", bool includeSubFolders = false)
-        {
-            if (mRunSetsCache == null)
-            {
-                mRunSetsCache = new ObservableList<RunSetConfig>();
-                LoadObjectsToListIncludingSubFolders(mRunSetsCache, typeof(RunSetConfig));//load cache for first time
-            }
-            ObservableList<object> cacheList = new ObservableList<object>(mRunSetsCache.ToList());
-            return GetItemTypeObjects<RunSetConfig>(typeof(RunSetConfig), cacheList, UseCache, specificFolderPath, includeSubFolders);
-        }
-
-        public void RefreshSolutionRunSetsCache(string specificFolderPath = "")
-        {
-            if (mRunSetsCache == null) return;
-            ObservableList<object> cacheList = new ObservableList<object>(mRunSetsCache.ToList());
-            RefreshItemTypeCache(typeof(RunSetConfig), cacheList, specificFolderPath);
-
-            //dirty solution to keep Run tab RunSet synced with cache items after refresh
-            if (App.RunsetExecutor.RunSetConfig != null)//if not null so that's mean the Run tab is loaded
-            {
-                RunSetConfig lastRunset = App.RunsetExecutor.RunSetConfig;               
-                App.RunsetExecutor.RunSetConfig = mRunSetsCache.Where(x => x.Guid == lastRunset.Guid).FirstOrDefault();
-            }
-        }
+      
         
-        #endregion Run Sets
+        
 
         #region Execution Results
         public ObservableList<BusinessFlowExecutionSummary> GetSolutionExectionResults(bool UseCache = true, string specificFolderPath = "", bool includeSubFolders = false)
@@ -1163,8 +1127,7 @@ namespace Ginger.Repository
                 supportedItems.Add(agent);
             foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
                 supportedItems.Add(env);
-            foreach (RunSetConfig set in GetSolutionRunSets())
-                supportedItems.Add(set);
+            
 
             return supportedItems;
         }

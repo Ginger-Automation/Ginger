@@ -37,6 +37,7 @@ using System.Windows.Controls;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Variables;
+using Ginger.Run;
 
 namespace Ginger.SourceControl
 {
@@ -354,7 +355,8 @@ namespace Ginger.SourceControl
                 }
                 else if (SCFI.FileType == "Run Set")
                 {
-                    obj = App.LocalRepository.GetSolutionRunSets().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                    obj = RunSets.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
                 }
                 else if (SCFI.FileType == "Action")
                 {

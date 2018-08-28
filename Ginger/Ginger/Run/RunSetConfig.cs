@@ -25,7 +25,7 @@ using GingerCore.GeneralLib;
 
 namespace Ginger.Run
 {
-    public class RunSetConfig : RepositoryItem
+    public class RunSetConfig : RepositoryItemBase
     {        
         private string mName;
         [IsSerializedForLocalRepository]

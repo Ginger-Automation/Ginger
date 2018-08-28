@@ -515,7 +515,7 @@ namespace Ginger.Run
             {
                 if (App.UserProfile.Solution == null) return null;
 
-                ObservableList<RunSetConfig> allRunsets = App.LocalRepository.GetSolutionRunSets();
+                ObservableList<RunSetConfig> allRunsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
 
                 //looking for last used Run Set
                 if (App.UserProfile.RecentRunset != null &&
@@ -1100,7 +1100,8 @@ namespace Ginger.Run
                 GR.UpdateBusinessFlowsRunList();
             }
 
-            mRunSetConfig.Save();
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
+            
 
             Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, GingerDicser.GetTermResValue(eTermResKey.RunSet) + " was saved successfully");
         }

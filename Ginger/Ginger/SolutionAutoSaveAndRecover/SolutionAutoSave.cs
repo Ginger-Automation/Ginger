@@ -90,8 +90,9 @@ namespace Ginger.Functionalties
                 foreach (BusinessFlow bf in App.LocalRepository.GetSolutionBusinessFlows())
                         if (bf.IsDirty)
                             DirtyFileAutoSave(bf);
-                    //Run Sets           
-                    foreach (RunSetConfig runSet in App.LocalRepository.GetSolutionRunSets())
+                //Run Sets           
+                ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                foreach (RunSetConfig runSet in RunSets)
                         if (runSet.IsDirty)
                             DirtyFileAutoSave(runSet);
                 
