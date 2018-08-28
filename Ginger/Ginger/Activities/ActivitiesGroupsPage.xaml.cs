@@ -275,7 +275,8 @@ namespace Ginger.Activities
             if (mBusinessFlow != null)
             {
                 grdActivitiesGroups.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups);
-                App.LocalRepository.MarkSharedRepositoryItems((System.Collections.Generic.IEnumerable<object>)mBusinessFlow.ActivitiesGroups, (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivitiesGroups());
+                
+                //App.LocalRepository.MarkSharedRepositoryItems((System.Collections.Generic.IEnumerable<object>)mBusinessFlow.ActivitiesGroups, (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivitiesGroups());
                 UpdateActivitiesGroupsGridViewTestSuiteColumn();
                 grdActivitiesGroups.DataSourceList = mBusinessFlow.ActivitiesGroups;
             }

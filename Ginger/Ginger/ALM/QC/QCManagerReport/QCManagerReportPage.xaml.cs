@@ -220,10 +220,12 @@ namespace Ginger.ALM.QC
 
                         //check if the TC is already exist in repository
                         ActivitiesGroup repoActivsGroup = null;
+
+                        ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
                         if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
-                            repoActivsGroup = App.LocalRepository.GetSolutionRepoActivitiesGroups().Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
+                            repoActivsGroup = activitiesGroup.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
                         if (repoActivsGroup == null)
-                            repoActivsGroup = App.LocalRepository.GetSolutionRepoActivitiesGroups().Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
+                            repoActivsGroup = activitiesGroup.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
                         if (repoActivsGroup != null)
                         {
                             testCaseDetails.ActivitiesGroupID = repoActivsGroup.Guid;

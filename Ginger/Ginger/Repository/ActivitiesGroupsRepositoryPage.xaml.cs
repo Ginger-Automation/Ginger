@@ -61,7 +61,7 @@ namespace Ginger.Repository
             SetActivitiesRepositoryGridView();
             SetActivitiesRepositoryTreeView();
 
-            App.LocalRepository.AttachHandlerToSolutionRepoActivitiesGroupsChange(RefreshGridActivitiesGroups);         
+            
         }
 
         private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -86,14 +86,14 @@ namespace Ginger.Repository
             view.GridColsView.Add(new GridColView() { Field = "Inst.", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ViewInstancesButton"] });
             grdActivitiesGroupsRepository.SetAllColumnsDefaultView(view);
             grdActivitiesGroupsRepository.InitViewItems();
-            
-            grdActivitiesGroupsRepository.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGridActivitiesGroups));                       
+
+            grdActivitiesGroupsRepository.btnRefresh.Visibility = Visibility.Collapsed;
             grdActivitiesGroupsRepository.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(AddFromRepository));
             grdActivitiesGroupsRepository.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivityGroup));
             grdActivitiesGroupsRepository.RowDoubleClick += grdActivitiesGroupsRepository_grdMain_MouseDoubleClick;
             grdActivitiesGroupsRepository.ItemDropped += grdActivitiesGroupsRepository_ItemDropped;
             grdActivitiesGroupsRepository.PreviewDragItem += grdActivitiesGroupsRepository_PreviewDragItem;
-            grdActivitiesGroupsRepository.DataSourceList = App.LocalRepository.GetSolutionRepoActivitiesGroups();
+            grdActivitiesGroupsRepository.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             grdActivitiesGroupsRepository.ShowTagsFilter = Visibility.Visible;
         }
 
@@ -120,16 +120,7 @@ namespace Ginger.Repository
             }
         }    
 
-        private void RefreshGridActivitiesGroups(object sender, RoutedEventArgs e)
-        {
-            App.LocalRepository.RefreshSolutionRepoActivitiesGroups();
-            grdActivitiesGroupsRepository.DataSourceList = App.LocalRepository.GetSolutionRepoActivitiesGroups();
-        }
-
-        private void RefreshGridActivitiesGroups(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            grdActivitiesGroupsRepository.DataSourceList = App.LocalRepository.GetSolutionRepoActivitiesGroups();
-        }
+      
 
         private void AddFromRepository(object sender, RoutedEventArgs e)
         {

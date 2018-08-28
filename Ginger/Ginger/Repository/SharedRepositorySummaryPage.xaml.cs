@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Activities;
 using GingerCore.Variables;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,7 +40,8 @@ namespace Ginger.Repository
 
         private void ShowData(bool fromCache=true)
         {
-            ActivitiesGroupsCountLabel.Text = App.LocalRepository.GetSolutionRepoActivitiesGroups(fromCache).Count.ToString();
+            ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            ActivitiesGroupsCountLabel.Text = activitiesGroup.Count.ToString();
             ActivitiesCountLabel.Text = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Count.ToString();
             ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             ActionsCountLabel.Text = SharedActions.Count.ToString();

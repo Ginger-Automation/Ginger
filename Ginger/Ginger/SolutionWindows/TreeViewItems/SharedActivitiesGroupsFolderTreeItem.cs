@@ -16,23 +16,25 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.Repository;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
 using GingerCore.Activities;
-using GingerCore.GeneralLib;
-using GingerCore.SourceControl;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class SharedActivitiesGroupsFolderTreeItem : TreeViewItemBase, ITreeViewItem
+    class SharedActivitiesGroupsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
+        RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
+
         private ActivitiesGroupsRepositoryPage mActivitiesGroupsRepositoryPage;
         public string Folder { get; set; }
         public string Path { get; set; }
@@ -74,44 +76,45 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            return GetChildrentGeneric<ActivitiesGroup>(mActivitiesGroupFolder, nameof(Agent.Name));
+            //List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
-            AddsubFolders(Path, Childrens);
+            //AddsubFolders(Path, Childrens);
 
-            //Add Activities Group
-            ObservableList<ActivitiesGroup> ActivitiesGroups = App.LocalRepository.GetSolutionRepoActivitiesGroups(specificFolderPath: Path);
+            ////Add Activities Group
+            //ObservableList<ActivitiesGroup> ActivitiesGroups = App.LocalRepository.GetSolutionRepoActivitiesGroups(specificFolderPath: Path);
 
-            foreach (ActivitiesGroup activitiesGroup in ActivitiesGroups)
-            {
-                SharedActivitiesGroupTreeItem SATI = new SharedActivitiesGroupTreeItem(mShowMode);
-                SATI.mActivitiesGroup = activitiesGroup;
-                Childrens.Add(SATI);
-            }
+            //foreach (ActivitiesGroup activitiesGroup in ActivitiesGroups)
+            //{
+            //    SharedActivitiesGroupTreeItem SATI = new SharedActivitiesGroupTreeItem(mShowMode);
+            //    SATI.mActivitiesGroup = activitiesGroup;
+            //    Childrens.Add(SATI);
+            //}
 
-            return Childrens;
+            //return Childrens;
         }
 
-        private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
-        {
-            try
-            {
-                foreach (string d in Directory.GetDirectories(Path))
-                {
-                    SharedActivitiesGroupsFolderTreeItem FolderItem = new SharedActivitiesGroupsFolderTreeItem(mShowMode);
-                    string FolderName = System.IO.Path.GetFileName(d);
+        //private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
+        //{
+        //    try
+        //    {
+        //        foreach (string d in Directory.GetDirectories(Path))
+        //        {
+        //            SharedActivitiesGroupsFolderTreeItem FolderItem = new SharedActivitiesGroupsFolderTreeItem(mShowMode);
+        //            string FolderName = System.IO.Path.GetFileName(d);
 
-                    FolderItem.Folder = FolderName;
-                    FolderItem.Path = d;
+        //            FolderItem.Folder = FolderName;
+        //            FolderItem.Path = d;
 
-                    Childrens.Add(FolderItem);
-                }
+        //            Childrens.Add(FolderItem);
+        //        }
 
-            }
-            catch (System.Exception excpt)
-            {
-                Console.WriteLine(excpt.Message);
-            }
-        }
+        //    }
+        //    catch (System.Exception excpt)
+        //    {
+        //        Console.WriteLine(excpt.Message);
+        //    }
+        //}
 
         bool ITreeViewItem.IsExpandable()
         {
@@ -159,7 +162,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void ExportAllToALM(object sender, System.Windows.RoutedEventArgs e)
         {
-            ObservableList<ActivitiesGroup> agToExport = App.LocalRepository.GetSolutionRepoActivitiesGroups(specificFolderPath: Path);
+            ObservableList<ActivitiesGroup> agToExport = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             if (agToExport.Count > 0)
             {
                 if (agToExport.Count == 1)

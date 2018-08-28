@@ -117,7 +117,8 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             ObservableList<VariableBase> variables= WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
-            if (selectedItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Cast<RepositoryItemBase>().ToList();            
+            ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            if (selectedItem.UsageItem is ActivitiesGroup) existingRepoItems = activitiesGroup.Cast<RepositoryItemBase>().ToList();            
             else if (selectedItem.UsageItem is Activity) existingRepoItems = activities.Cast<RepositoryItemBase>().ToList();
             else if (selectedItem.UsageItem is Act) existingRepoItems = SharedActions.Cast<RepositoryItemBase>().ToList();
             
@@ -145,7 +146,8 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             ObservableList<Act> actions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
 
-            if (duplicateItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Select(x => x.ItemName).ToList();            
+            ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            if (duplicateItem.UsageItem is ActivitiesGroup) existingRepoItems = activitiesGroup.Select(x => x.ItemName).ToList();            
             else if (duplicateItem.UsageItem is Activity) existingRepoItems = activities.Select(x => x.ItemName).ToList(); 
             else if (duplicateItem.UsageItem is Act) existingRepoItems = actions.Select(x => x.ItemName).ToList(); 
             else if (duplicateItem.UsageItem is VariableBase) existingRepoItems = variables.Select(x => x.ItemName).ToList();

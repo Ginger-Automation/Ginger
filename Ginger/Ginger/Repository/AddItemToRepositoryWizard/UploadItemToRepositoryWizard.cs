@@ -75,7 +75,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
                     ActivitiesGroup group = App.BusinessFlow.ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
                     if (group != null)
                     {
-                        ObservableList<ActivitiesGroup> repoGroups = App.LocalRepository.GetSolutionRepoActivitiesGroups();
+                        ObservableList<ActivitiesGroup> repoGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
                         ActivitiesGroup repoGroup = repoGroups.Where(x => (x.Guid == group.Guid) || (x.Guid == group.ParentGuid) || (group.ExternalID != null &&
                         group.ExternalID != string.Empty && x.ExternalID == group.ExternalID)).FirstOrDefault();
                         if (repoGroup == null)
@@ -118,8 +118,9 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             bool existingItemIsExternalID = false;
             bool existingItemIsParent = false;
             string existingItemFileName = string.Empty;
-            
-            if (item is ActivitiesGroup) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivitiesGroups();
+
+            ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            if (item is ActivitiesGroup) existingRepoItems = (IEnumerable<object>)activitiesGroup;
             else if (item is Activity) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             else if (item is Act) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>(); 
             else if (item is VariableBase) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>(); 

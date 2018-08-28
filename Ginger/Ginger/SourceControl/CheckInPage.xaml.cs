@@ -38,6 +38,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Variables;
 using Ginger.Run;
+using GingerCore.Activities;
 
 namespace Ginger.SourceControl
 {
@@ -365,7 +366,8 @@ namespace Ginger.SourceControl
                 }
                 else if (SCFI.FileType == "Activities Group")
                 {
-                    obj = App.LocalRepository.GetSolutionRepoActivitiesGroups().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+                    obj = activitiesGroup.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
                 }
                 else if (SCFI.FileType == "Activity")
                 {
