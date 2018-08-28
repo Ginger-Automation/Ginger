@@ -316,7 +316,7 @@ namespace Ginger.Run
         public void UpdateRunsetExecutionHistoryTabHeader()
         {
             ExecutionSummary.Text = string.Format("Executions History ({0})", mRunSetsExecutionsPage.ExecutionsHistoryList.Count);
-            ExecutionSummary.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
+            //ExecutionSummary.Foreground = (Brush)Application.Current.Resources["$SelectionColor_Pink"];
         }
 
         public void ResetALMDefectsSuggestions()
@@ -331,12 +331,12 @@ namespace Ginger.Run
             if (App.RunsetExecutor.DefectSuggestionsList.Count > 0)
             {
                 ALMDefects.Text = string.Format("ALM Defects Opening ({0})", App.RunsetExecutor.DefectSuggestionsList.Count);
-                ALMDefects.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
+                //ALMDefects.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
             }
             else
             {
                 ALMDefects.Text = string.Format("ALM Defects Opening");
-                ALMDefects.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
+                //ALMDefects.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
             }
         }
 
@@ -1168,7 +1168,7 @@ namespace Ginger.Run
         public void UpdateRunsetOperationsTabHeader()
         {
             RunsetActionTextbox.Text = string.Format("Operations ({0})", RunSetConfig.RunSetActions.Count);
-            RunsetActionTextbox.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
+            //RunsetActionTextbox.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
 
         }
         private void UpdateRunnersTabHeader()
@@ -1176,12 +1176,12 @@ namespace Ginger.Run
             if (mRunSetConfig.GingerRunners.Count > 0)
             {
                 RunnerTextblock.Text = string.Format("Runners ({0})", mRunSetConfig.GingerRunners.Count);
-                RunnerTextblock.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
+                //RunnerTextblock.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
             }
             else
             {
                 RunnerTextblock.Text = "Runners";
-                RunnerTextblock.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
+                //RunnerTextblock.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
             }
         }
         

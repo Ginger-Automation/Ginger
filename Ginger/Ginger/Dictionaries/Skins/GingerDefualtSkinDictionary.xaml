@@ -310,7 +310,7 @@
 
     <Style TargetType="Button" x:Key="$CircleImageButtonStyle">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -737,7 +737,7 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="{x:Type MenuItem}" x:Key="$MenuItemStyle2">
+    <!--<Style TargetType="{x:Type MenuItem}" x:Key="$MenuItemStyle2">
         <Setter Property="Background"
                 Value="{StaticResource $BackgroundColor_LightGray}"></Setter>
         <Setter Property="Foreground"
@@ -760,7 +760,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_Pink}"></Setter>
             </Trigger>
         </Style.Triggers>
-    </Style>
+    </Style>-->
 
     <Style TargetType="TabItem" x:Key="$CoolTab">
         <Setter Property="Template">
@@ -769,7 +769,7 @@
                     <ControlTemplate.Resources>
                         <SolidColorBrush x:Key="MouseOverBackground" Color="#DFE9F5" />
                     </ControlTemplate.Resources>
-                    <Border Name="Border" BorderThickness="0 0 1 0" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $HighlightColor_Purple}">
+                    <Border Name="Border" BorderThickness="0 0 1 0" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $SelectionColor_Pink}">
                         <ContentPresenter x:Name="ContentSite"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
