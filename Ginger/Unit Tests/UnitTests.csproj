@@ -264,9 +264,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="TestResources\ASCF\PBGCRM8.bat" />
-    <None Include="TestResources\AutoPilot\ImportOptionalValue\CretaePaymentOptinalValues.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="TestResources\JavaAgent\MPS with Ginger Agent.bat" />
     <None Include="TestResources\JavaAgent\MPS.bat" />
     <None Include="TestResources\JavaTestApp\SimpleTableDemo.jnlp">
@@ -323,16 +320,9 @@
     <Content Include="TestResources\APlusB.vbs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestResources\AutoPilot\ImportOptionalValue\createPayment.xml">
+    <Content Include="TestResources\Converter\CMI.Ginger.Environment.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestResources\AutoPilot\WSDLs\WorkOrderUpdate\WorkOrderUpdateSvc.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\AutoPilot\WSDLs\WorkOrderUpdate\WorkOrderUpdateSvc1.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Converter\CMI IIS test server.Ginger.Environment.xml" />
     <Content Include="TestResources\Database\GingerUnitTest.mdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -797,8 +787,15 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Documents\" />
+    <Folder Include="TestResources\AutoPilot\ImportOptionalValue\" />
     <Folder Include="TestResources\AutoPilot\JSONTemplates\" />
+    <Folder Include="TestResources\AutoPilot\WSDLs\" />
     <Folder Include="TestResources\AutoPilot\XMLTemplates\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestResources\UIA Form\FormEmbeddedBrowser.resx">
+      <DependentUpon>FormEmbeddedBrowser.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

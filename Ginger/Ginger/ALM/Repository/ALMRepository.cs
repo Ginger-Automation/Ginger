@@ -21,6 +21,7 @@ using GingerCore;
 using GingerCore.Activities;
 using System;
 using System.Collections.Generic;
+using GingerCore.ALM.QC;
 
 namespace Ginger.ALM.Repository
 {
@@ -55,6 +56,10 @@ namespace Ginger.ALM.Repository
         public abstract eUserMsgKeys GetDownloadPossibleValuesMessage();
         public abstract IEnumerable<Object> SelectALMTestSets();
         public abstract bool ImportSelectedTests(string importDestinationPath, IEnumerable<Object> selectedTests);
+        public abstract List<string> GetTestLabExplorer(string path);
+        public abstract IEnumerable<Object> GetTestSetExplorer(string path);
+        public abstract Object GetTSRunStatus(object tsItem);
+        public abstract List<string> GetTestPlanExplorer(string path);
         public abstract bool ShowImportReviewPage(string importDestinationPath, object selectedTestPlan = null);
         public abstract bool LoadALMConfigurations();
         public abstract void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs);

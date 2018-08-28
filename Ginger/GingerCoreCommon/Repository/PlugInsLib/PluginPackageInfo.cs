@@ -9,8 +9,10 @@ namespace Amdocs.Ginger.Repository
         public static string cInfoFile = "Ginger.PluginPackage.json";
 
         public string Id { get; set; }
-        public string Version { get; set; }
+        public string Version { get; set; }    
+        public string ProjectUrl { get; set; }
+        public string  Description { get; set; }
+        public string Summary { get; set; }
 
-        //TODO: Add Author, owner license, url, tags etc..
     }
 }

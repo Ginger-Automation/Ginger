@@ -31,7 +31,7 @@ namespace Ginger.ALM.QC.TreeViewItems
         public string Folder { get; set; }
         public string Path { get; set; }
         public string TestSetName { get; set; }
-        
+
         private new ContextMenu mContextMenu = new ContextMenu();
 
         public List<ITreeViewItem> CurrentChildrens = null;
@@ -45,16 +45,16 @@ namespace Ginger.ALM.QC.TreeViewItems
         {
             //if root item
             if (Folder == "Root")
-            {                
-                return TreeViewUtils.CreateItemHeader(Folder, "@WorkFlow_16x16.png");            
+            {
+                return TreeViewUtils.CreateItemHeader(Folder, "@WorkFlow_16x16.png");
             }
             else
             {
                 if (!String.IsNullOrWhiteSpace(TestSetName))
-                        { return TreeViewUtils.CreateItemHeader(TestSetName, "@TestSet_16x16.png"); }
-                else    { return TreeViewUtils.CreateItemHeader(Folder, "@Folder_16x16.png"); }                
+                { return TreeViewUtils.CreateItemHeader(TestSetName, "@TestSet_16x16.png"); }
+                else { return TreeViewUtils.CreateItemHeader(Folder, "@Folder_16x16.png"); }
             }
-            
+
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -63,38 +63,36 @@ namespace Ginger.ALM.QC.TreeViewItems
 
             // get the sub items for the root here and return list of Childrens
             // Step #1 add sub folder of current folder
-            List<string> strParentFolders = QCConnect.GetTestLabExplorer(Path);
+            List<string> strParentFolders = ALMIntegration.Instance.GetTestLabExplorer(Path);
             //Add QC folders to tree children    
 
-                foreach (string sFolder in strParentFolders)
-                {
-                    QCTestLabFolderTreeItem pfn = new QCTestLabFolderTreeItem();
-                    pfn.Folder = sFolder;
-                    pfn.Path = Path + @"\" + sFolder;
-                    CurrentChildrens.Add(pfn);
-                }
+            foreach (string sFolder in strParentFolders)
+            {
+                QCTestLabFolderTreeItem pfn = new QCTestLabFolderTreeItem();
+                pfn.Folder = sFolder;
+                pfn.Path = Path + @"\" + sFolder;
+                CurrentChildrens.Add(pfn);
+            }
 
-                // Step #2 add folder Test Set list
-                List<QCTestSetSummary> sTestSets = QCConnect.GetTestSetExplorer(Path);
+            // Step #2 add folder Test Set list
+            List<QCTestSetSummary> sTestSets = (List<QCTestSetSummary>)ALMIntegration.Instance.GetTestSetExplorer(Path);
 
-                foreach (QCTestSetSummary tsItem in sTestSets)
-                {
-                    tsItem.TestSetStatuses = new List<string[]>();
-                    QCTestSetTreeItem pfn = new QCTestSetTreeItem();
-                    pfn.TestSetID = tsItem.TestSetID.ToString();
-                    pfn.TestSetName = tsItem.TestSetName;
-                    pfn.Path = Path + @"\" + tsItem.TestSetName;                    
-                    QCTestSetSummary tsItemStatus = QCConnect.GetTSRunStatus(tsItem);
-                    pfn.TestSetStatuses = tsItem.TestSetStatuses;
-                    //if (IsAutomated(pfn.TestSetID)) pfn.Automated = true; else pfn.Automated = false;
-                    //IsTestSetAlreadyImported(pfn);
-                    pfn.IsTestSetAlreadyImported();
-                    CurrentChildrens.Add(pfn);
-                }
+            foreach (QCTestSetSummary tsItem in sTestSets)
+            {
+                tsItem.TestSetStatuses = new List<string[]>();
+                QCTestSetTreeItem pfn = new QCTestSetTreeItem();
+                pfn.TestSetID = tsItem.TestSetID.ToString();
+                pfn.TestSetName = tsItem.TestSetName;
+                pfn.Path = Path + @"\" + tsItem.TestSetName;
+                QCTestSetSummary tsItemStatus = ALMIntegration.Instance.GetTSRunStatus(tsItem);
+                pfn.TestSetStatuses = tsItem.TestSetStatuses;
+                pfn.IsTestSetAlreadyImported();
+                CurrentChildrens.Add(pfn);
+            }
 
-                return CurrentChildrens;
+            return CurrentChildrens;
         }
-        
+
 
         private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
         {
@@ -110,7 +108,7 @@ namespace Ginger.ALM.QC.TreeViewItems
 
                     Childrens.Add(BFFTI);
                 }
-                
+
             }
             catch (System.Exception excpt)
             {
@@ -126,20 +124,20 @@ namespace Ginger.ALM.QC.TreeViewItems
         Page ITreeViewItem.EditPage()
         {
             return null;
-        }   
+        }
 
         ContextMenu ITreeViewItem.Menu()
         {
-            return mContextMenu;            
+            return mContextMenu;
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             //Set Tools
             //TV.AddToolbarTool("@Refresh_16x16.png", "Refresh Business Flows", TV.RefreshTreeNodeChildren);
-            
+
             //Set Context Menu
-            mContextMenu= new ContextMenu();
+            mContextMenu = new ContextMenu();
         }
     }
 }
