@@ -352,7 +352,9 @@ namespace Ginger.SourceControl
                 }
                 else if (SCFI.FileType == "Execution Result")
                 {
-                    obj = App.LocalRepository.GetSolutionExectionResults().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    throw new NotImplementedException();
+                    //FIXME
+                    // obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ExecutionResult>.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
                 }
                 else if (SCFI.FileType == "Run Set")
                 {

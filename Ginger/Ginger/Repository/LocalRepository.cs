@@ -51,7 +51,7 @@ namespace Ginger.Repository
         // Can be Files folder local or on shared drive, can be real DB like Oracle or SQLServer.
         
         
-        private static ObservableList<BusinessFlowExecutionSummary> mExectionResultsCache = null;        
+        
 
         public bool UpdateAppProgressBar = true;
 
@@ -115,14 +115,6 @@ namespace Ginger.Repository
             //TODO: find a better way than if elses...
 
             
-        
-            
-            if (itemToAdd is BusinessFlowExecutionSummary)
-            {
-                if (mExectionResultsCache.Where(x => x.Guid == itemToAdd.Guid).FirstOrDefault() == null)
-                    mExectionResultsCache.Add((BusinessFlowExecutionSummary)itemToAdd);
-            }
-          
             
             
 
@@ -132,9 +124,7 @@ namespace Ginger.Repository
         {
                            
             
-             if (itemToRemove is BusinessFlowExecutionSummary)
-                mExectionResultsCache.Remove((BusinessFlowExecutionSummary)itemToRemove);                        
-            
+         
             
         }
 
@@ -233,26 +223,20 @@ namespace Ginger.Repository
                        
            
                 
-                if (itemType == typeof(BusinessFlowExecutionSummary))
-                {
-                    mExectionResultsCache.RemoveAt(itemToReplce.Key);
-                    mExectionResultsCache.Insert(itemToReplce.Key, (BusinessFlowExecutionSummary)itemToReplce.Value);
-                }               
+                    
                 
             }
 
             //add missing items to cache
             foreach (object itemToAdd in itemsToAdd)
             {
-           if (itemType == typeof(BusinessFlowExecutionSummary))
-                    mExectionResultsCache.Add((BusinessFlowExecutionSummary)itemToAdd);                              
+                          
             }
 
             //delete old items from cache
             foreach (object itemToRemove in itemsToRemove)
             {
-                 if (itemType == typeof(BusinessFlowExecutionSummary))
-                    mExectionResultsCache.Remove((BusinessFlowExecutionSummary)itemToRemove);               
+                   
                 
             }
 
@@ -278,14 +262,12 @@ namespace Ginger.Repository
             
             
             
-            RefreshSolutionExectionResultsCache();          
-            //RefreshSolutionPluginsCache();
+         
         }
 
         public void RefreshCacheByItemType(Type itemType, string specificFolderPath = "")
         {
-         if (itemType == typeof(BusinessFlowExecutionSummary))
-                RefreshSolutionExectionResultsCache(specificFolderPath);          
+        
         }
 
       
@@ -549,26 +531,6 @@ namespace Ginger.Repository
         
         
 
-        #region Execution Results
-        public ObservableList<BusinessFlowExecutionSummary> GetSolutionExectionResults(bool UseCache = true, string specificFolderPath = "", bool includeSubFolders = false)
-        {
-            if (mExectionResultsCache == null)
-            {
-                mExectionResultsCache = new ObservableList<BusinessFlowExecutionSummary>();
-                LoadObjectsToListIncludingSubFolders(mExectionResultsCache, typeof(BusinessFlowExecutionSummary));//load cache for first time
-            }
-            ObservableList<object> cacheList = new ObservableList<object>(mExectionResultsCache.ToList());
-            return GetItemTypeObjects<BusinessFlowExecutionSummary>(typeof(BusinessFlowExecutionSummary), cacheList, UseCache, specificFolderPath, includeSubFolders);
-        }
-
-        public void RefreshSolutionExectionResultsCache(string specificFolderPath = "")
-        {
-            if (mExectionResultsCache == null) return;
-            ObservableList<object> cacheList = new ObservableList<object>(mExectionResultsCache.ToList());
-            RefreshItemTypeCache(typeof(BusinessFlowExecutionSummary), cacheList, specificFolderPath);
-        }
-        
-        #endregion Execution Results
 
         #region XML's Work
         public void SaveNewItem(RepositoryItemBase itemToSave, string path = "")
