@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
@@ -35,6 +36,7 @@ using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
@@ -48,6 +50,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
 
 //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
@@ -1560,7 +1563,7 @@ namespace Ginger.Run
                             break;
 
                         case eActionExecutorType.RunOnPlugIn:
-                            ExecutePlugInAction(act);
+                            ExecutePlugInAction((ActPlugIn)act);
                             break;
 
                         case eActionExecutorType.RunInSimulationMode:
@@ -1808,26 +1811,160 @@ namespace Ginger.Run
             }
         }
 
-        
-        private void ExecutePlugInAction(Act act)
+
+        private void ExecutePlugInAction(ActPlugIn actPlugin)     
         {
-            ActPlugIn pluginAction = (ActPlugIn)act;
-            GingerPlugInsNET.ActionsLib.GingerAction GA = new GingerPlugInsNET.ActionsLib.GingerAction(pluginAction.PluginActionID);
-            foreach(ActInputValue input in act.InputValues)
-            {
-                GA.InputParams[input.Param].Value = input.Value;
-            }
-            amdocs.ginger.GingerCoreNET.WorkSpace.Instance.PlugInsManager.Execute(GA);
-
-            act.Error += GA.Errors;
-            foreach (var o in GA.Output.Values)
-            {
-                act.ReturnValues.Add(new ActReturnValue() { Param = o.Param, Actual = o.ValueString });
-            }
-            // TODO copy output too
+            // first verify we have service ready or start service
             
+            GingerNodeInfo GNI = GetGingerNode(actPlugin);
 
+            if (GNI == null)
+            {
+                // call plugin to start service and wait for ready
+            }
+
+            GNI.Status = "Reserved";
+
+            // Pack the action to payload
+            NewPayLoad p = CreateActionPayload(actPlugin);
+
+            GingerNodeProxy GNP = new GingerNodeProxy(GNI);
             
+            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
+
+            NewPayLoad RC = GNP.RunAction(p);
+
+            // After we send it we parse the driver response
+
+            if (RC.Name == "ActionResult")
+            {
+                // We read the ExInfo, Err and output params
+                actPlugin.ExInfo = RC.GetValueString();
+                string error = RC.GetValueString();
+                if (!string.IsNullOrEmpty(error))
+                {
+                    actPlugin.Error += error;
+                }
+
+                List<NewPayLoad> OutpuValues = RC.GetListPayLoad();
+                foreach (NewPayLoad OPL in OutpuValues)
+                {
+                //    //TODO: change to use PL AddValueByObjectType
+
+                //    // it is param name, type and value
+                    string PName = OPL.GetValueString();
+                    string mOutputValueType = OPL.GetValueEnum();
+                    
+                    switch (mOutputValueType)
+                    {
+                        case nameof(OutputValueType.String):
+                            string v = OPL.GetValueString();
+                            //GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueString = v });
+                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = v});
+                            break;
+                        case nameof(OutputValueType.ByteArray):
+                            byte[] b = OPL.GetBytes();
+                            // GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueByteArray = b });
+                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types
+                            break;
+                        default:
+                            throw new Exception("Unknown param type: " + mOutputValueType);
+                    }
+                }
+            }
+            else
+            {
+                // The RC is not OK when we faced some unexpected exception 
+                //TODO: 
+                string Err = RC.GetValueString();
+                actPlugin.Error += Err;
+            }
+
+            GNI.IncreaseActionCount();
+            GNI.Status = "Ready";
+             
+        }
+
+        private GingerNodeInfo GetGingerNode(ActPlugIn actPlugin)
+        {
+            GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
+
+            GingerNodeInfo GNI = (from x in gingerGrid.NodeList
+                                    where x.ServiceId == actPlugin.ServiceId
+                                         && x.Status == "Ready"
+                                    select x).FirstOrDefault();
+
+            return GNI;
+        }
+
+        // temp public
+        private NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
+        {
+            // Here we decompose the GA and create Payload to transfer it to the agent
+            NewPayLoad PL = new NewPayLoad("RunAction");
+            PL.AddValue(ActPlugIn.GingerActionID);
+            List<NewPayLoad> Params = new List<NewPayLoad>();
+            foreach (ActInputValue AP in ActPlugIn.InputValues)
+            {
+                // Why we need GA?
+                if (AP.Param == "PluginID" || AP.Param == "GA") continue;
+                // TODO: use const
+                NewPayLoad p = new NewPayLoad("P");   // To save network trafic we send just one letter
+                p.AddValue(AP.Param);
+                p.AddValue(AP.Value.ToString());
+                p.ClosePackage();
+                Params.Add(p);
+            }
+
+            PL.AddListPayLoad(Params);
+            PL.ClosePackage();
+            return PL;
+            //// TODO: use function which goes to local grid or remote grid
+            //NewPayLoad RC = SendRequestPayLoad(PL);
+
+            //// After we send it we parse the driver response
+
+            //if (RC.Name == "ActionResult")
+            //{
+            //    // We read the ExInfo, Err and output params
+            //    GA.ExInfo = RC.GetValueString();
+            //    string Error = RC.GetValueString();
+            //    if (!string.IsNullOrEmpty(Error))
+            //    {
+            //        GA.AddError("Driver", Error);   // We need to get Error even if Payload is OK - since it might be in
+            //    }
+
+            //    List<NewPayLoad> OutpuValues = RC.GetListPayLoad();
+            //    foreach (NewPayLoad OPL in OutpuValues)
+            //    {
+            //        //TODO: change to use PL AddValueByObjectType
+
+            //        // it is param name, type and value
+            //        string PName = OPL.GetValueString();
+            //        string mOutputValueType = OPL.GetValueEnum();
+
+            //        switch (mOutputValueType)
+            //        {
+            //            case nameof(OutputValueType.String):
+            //                string v = OPL.GetValueString();
+            //                GA.Output.Values.Add(new ActionOutputValue() { Param = PName, ValueString = v });
+            //                break;
+            //            case nameof(OutputValueType.ByteArray):
+            //                byte[] b = OPL.GetBytes();
+            //                GA.Output.Values.Add(new ActionOutputValue() { Param = PName, ValueByteArray = b });
+            //                break;
+            //            default:
+            //                throw new Exception("Unknown param type: " + mOutputValueType);
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    // The RC is not OK when we faced some unexpected exception 
+            //    //TODO: 
+            //    string Err = RC.GetValueString();
+            //    GA.AddError("RunAction", Err);
+            //}
         }
 
         private void ResetAction(Act act)

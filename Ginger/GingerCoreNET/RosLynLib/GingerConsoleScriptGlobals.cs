@@ -16,11 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.Drivers;
 using GingerCoreNET.DriversLib;
-using GingerPlugInsNET.DriversLib;
-using GingerPlugInsNET.ServicesLib;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -52,25 +51,25 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
 
         public void StartNode(string Name, string ID, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
         {
-            Console.WriteLine("* StartNode - " + Name);
+            //Console.WriteLine("* StartNode - " + Name);
 
-            bNodest = true;
-            bool bReady = false;
-            //start node on task as we might have several running in parallel + we want the script to continue
-            Task t = new Task(() =>
-            {
-                PluginDriverBase d = P.GetDriver(Name);
-                GingerNode GN = StartDriverOnGingerNode(d, ID, GingerGridHost, GingerGridPort);
-                GN.GingerNodeMessage += GingerNodeMessage;
-                GingerNodes.Add(GN);
-                bReady = true;
-            });
-            t.Start();
-            while (!bReady) // TODO: add timeout or use ManualResetEvent with timeout
-            {
-                Console.WriteLine("Waiting for Node to be ready");
-                Thread.Sleep(500);
-            }
+            //bNodest = true;
+            //bool bReady = false;
+            ////start node on task as we might have several running in parallel + we want the script to continue
+            //Task t = new Task(() =>
+            //{
+            //    PluginDriverBase d = P.GetDriver(Name);
+            //    GingerNode GN = StartDriverOnGingerNode(d, ID, GingerGridHost, GingerGridPort);
+            //    GN.GingerNodeMessage += GingerNodeMessage;
+            //    GingerNodes.Add(GN);
+            //    bReady = true;
+            //});
+            //t.Start();
+            //while (!bReady) // TODO: add timeout or use ManualResetEvent with timeout
+            //{
+            //    Console.WriteLine("Waiting for Node to be ready");
+            //    Thread.Sleep(500);
+            //}
         }
 
         private void GingerNodeMessage(GingerNode gingerNode, GingerNode.eGingerNodeEventType GingerNodeEventType)
@@ -109,31 +108,31 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
 
         // ================================================================
 
-        private GingerNode StartDriverOnGingerNode(PluginDriverBase driver, string NodeName, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
-        {
-            Console.WriteLine("Driver Name: " + driver.Name);
-            DriverCapabilities DC = new DriverCapabilities();
+        //private GingerNode StartDriverOnGingerNode(PluginDriverBase driver, string NodeName, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
+        //{
+        //    Console.WriteLine("Driver Name: " + driver.Name);
+        //    DriverCapabilities DC = new DriverCapabilities();
 
-            //TODO: add info about the driver and machine
-            DC.Platform = "Web";  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            DC.OS = "Win 7";  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //    //TODO: add info about the driver and machine
+        //    DC.Platform = "Web";  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //    DC.OS = "Win 7";  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            GingerNode GN = new GingerNode(DC, driver);
-            GN.StartGingerNode(NodeName, GingerGridHost, GingerGridPort);
+        //    GingerNode GN = new GingerNode(DC, driver);
+        //    GN.StartGingerNode(NodeName, GingerGridHost, GingerGridPort);
 
-            Console.WriteLine("Ginger Node started - " + NodeName);  // Add ports and GingerGrid details
-            return GN;
-        }
+        //    Console.WriteLine("Ginger Node started - " + NodeName);  // Add ports and GingerGrid details
+        //    return GN;
+        //}
 
         public void StartService(string Name, string ID, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
         {
-            PluginServiceBase d = P.GetService(Name);
+            IGingerService d = P.GetService(Name);
             StartServiceOnGingerNode(d, ID, GingerGridHost, GingerGridPort);
         }
 
-        private void StartServiceOnGingerNode(PluginServiceBase service, string NodeName, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
+        private void StartServiceOnGingerNode(IGingerService service, string NodeName, string GingerGridHost = "127.0.0.1", int GingerGridPort = 15001)
         {
-            Console.WriteLine("Service Name: " + service.Name);
+            Console.WriteLine("Service Name: " + service );
             bool bReady = false;
             bNodest = true;
             Task t = new Task(() =>

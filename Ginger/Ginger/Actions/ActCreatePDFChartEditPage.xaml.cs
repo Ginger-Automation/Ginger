@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -32,20 +33,28 @@ namespace Ginger.Actions
     public partial class ActCreatePDFChartEditPage 
     {       
         public ActionEditPage actp;
-        private ActCreatePDFChart mAct;
+        private ActCreatePDFChart mAct;        
 
         public ActCreatePDFChartEditPage(ActCreatePDFChart act)
         {     
                 InitializeComponent();
                 mAct = act;
                 Bind();
-                mAct.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
+                mAct.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();                   
         }
-
+                
         public void Bind()
         {
             DataFileNameTextBox.Init(mAct.GetOrCreateInputParam(ActCreatePDFChart.Fields.DataFileName), ActInputValue.Fields.Value);
-            ParamsComboBox.Init(mAct.GetOrCreateInputParam(ActCreatePDFChart.Fields.ParamName), SetParamsCombo(),true);
+            GingerCore.General.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.SelectedValueProperty, mAct, ActCreatePDFChart.Fields.ParamName);
+            GingerCore.General.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.ItemsSourceProperty, mAct, ActCreatePDFChart.Fields.ParamList);
+            DataFileNameTextBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
+            mAct.ParamList = SetParamsCombo();
+        }
+
+        private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            mAct.ParamList= SetParamsCombo();            
         }
 
         private void BrowseDataButton_Click(object sender, RoutedEventArgs e)
@@ -65,31 +74,36 @@ namespace Ginger.Actions
                     FileName = FileName.Replace(SolutionFolder, @"~\");
                 }
 
-                DataFileNameTextBox.ValueTextBox.Text = FileName;
-            }
+                DataFileNameTextBox.ValueTextBox.Text = FileName;                
+            }           
         }
 
         private List<string> SetParamsCombo()
         {
-            object tempFileName = mAct.GetDataFileName();
-            if (ReferenceEquals(tempFileName,null)) return new List<string>();
-
+            List<string> tmp=new List<string>();
+            object tempFileName = mAct.GetDataFileName();            
             string dataFileName = Convert.ToString(tempFileName);
-            StreamReader sr = new StreamReader(dataFileName);
-            var lines = new List<string[]>();
+            
+                if (File.Exists(dataFileName))
+                {
+                    StreamReader sr = new StreamReader(dataFileName);
+                    var lines = new List<string[]>();
 
-            while (!sr.EndOfStream && lines.Count<=0)
-            {
-                string[] Line = sr.ReadLine().Split(',').Select(a=>a.Trim()).ToArray();
-                lines.Add(Line);
-            };
-            List<string> tmp = lines[0].ToList();
-            for (int i = 0; i < tmp.Count; i++)
-            {
-                if (tmp[i].Contains("\""))
-                    tmp[i]=tmp[i].Replace("\"", "");
-            }
+                    while (!sr.EndOfStream && lines.Count<=0)
+                    {
+                        string[] Line = sr.ReadLine().Split(',').Select(a=>a.Trim()).ToArray();
+                        lines.Add(Line);
+                    };
+                    tmp = lines[0].ToList();
+                    for (int i = 0; i < tmp.Count; i++)
+                    {
+                        if (tmp[i].Contains("\""))
+                            tmp[i]=tmp[i].Replace("\"", "");
+                    }
+                }
+                
             return tmp;
-        }
+            
+        }     
     }
 }

@@ -13,8 +13,9 @@
             <ColumnDefinition Width="541*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="220"/>
-            <RowDefinition Height="155*"/>
+            <RowDefinition Height="230"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <StackPanel Background="{StaticResource @Skin1_ColorC}" Grid.Row="0">
@@ -57,7 +58,9 @@
 
         </StackPanel>
 
-        <TabControl x:Name="PlugInTab" Grid.Row="1" >
+        <Ginger:ucGrid x:Name="ServicesGrid" Title="Services" Grid.Row="1"></Ginger:ucGrid>
+        
+        <TabControl x:Name="PlugInTab" Grid.Row="2" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
@@ -76,7 +79,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <Image Source="{StaticResource  @GeneralAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="PlugIn Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <TextBlock Text="Service Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="PlugInsActionsGrid" Title="PlugIn Actions" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
