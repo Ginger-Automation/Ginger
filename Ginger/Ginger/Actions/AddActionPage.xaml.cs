@@ -75,8 +75,8 @@ namespace Ginger.Actions
                     {
                         ActPlugIn act = new ActPlugIn();                        
                         act.Description = SAA.Description;
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.PluginID), pluginPackage.PluginID);
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.PluginActionID),SAA.ID);
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.ServiceId), pluginPackage.PluginID);
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.GingerActionID),SAA.ID);
                         foreach (var v in SAA.InputValues)
                         {
                             act.InputValues.Add(new ActInputValue() { Param = v.Param });
@@ -106,11 +106,9 @@ namespace Ginger.Actions
                 IEnumerable<Act> OrderedActions = allActions.OrderBy(x => x.Description);
                 foreach (Act cA in OrderedActions)
                 {
-                    if (cA.IsLegacyAction)
-                    {
-                        LegacyActions.Add(cA);
-                    }
-                    else if (cA.LegacyActionPlatformsList.Intersect(cA.Platforms).Any()) // App.BusinessFlow.CurrentActivity ??
+                    if (cA.LegacyActionPlatformsList.Intersect(App.UserProfile.Solution.ApplicationPlatforms
+                                                                    .Where(x => App.BusinessFlow.CurrentActivity.TargetApplication == x.AppName)
+                                                                    .Select(x => x.Platform).ToList()).Any())
                     {
                         LegacyActions.Add(cA);
                     }
@@ -197,7 +195,7 @@ namespace Ginger.Actions
 
             if (actionsGrid == PlugInsActionsGrid)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof (ActPlugIn.PlugInName), Header = "Owner PlugIn", WidthWeight = 6, ReadOnly = true , BindingMode = BindingMode.OneWay});
+                view.GridColsView.Add(new GridColView() { Field = nameof (ActPlugIn.ServiceId), Header = "Service ID", WidthWeight = 6, ReadOnly = true , BindingMode = BindingMode.OneWay});
             }
             else
             {

@@ -39,7 +39,6 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Xml;
 
-
 namespace GingerCore.Drivers.AndroidADB
 {
     public class AndroidADBDriver : DriverBase, IWindowExplorer, IVisualTestingDriver
@@ -815,7 +814,7 @@ namespace GingerCore.Drivers.AndroidADB
             //NA
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             Dispatcher.Invoke(() =>
             {
@@ -845,7 +844,7 @@ namespace GingerCore.Drivers.AndroidADB
         {
             return null;
         }
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             List<ElementInfo> list = new List<ElementInfo>();
 
@@ -1604,15 +1603,19 @@ namespace GingerCore.Drivers.AndroidADB
             
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
             return true;
+        }
+
+        public void UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        {
+            throw new NotImplementedException();
         }
 
         //TODO: Phone state

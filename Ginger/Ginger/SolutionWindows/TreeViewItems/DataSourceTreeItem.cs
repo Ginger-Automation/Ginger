@@ -57,10 +57,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-           if(DSDetails.DSType==DataSourceBase.eDSType.MSAccess)
-                return TreeViewUtils.CreateItemHeader(DSDetails.Name, "@AccessDataSource_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus), DSDetails, DataSourceBase.Fields.Name);
-           else
-                return TreeViewUtils.CreateItemHeader(DSDetails.Name, "@DataSource_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus), DSDetails, DataSourceBase.Fields.Name);
+            return NewTVItemStyle(DSDetails, eImageType.DataSource, nameof(DataSourceBase.Name));
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -83,7 +80,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 DSTTI.DSDetails= DSDetails;
                 Childrens.Add(DSTTI);
             }
-            
+
             return Childrens;    
         }
 

@@ -143,7 +143,10 @@ namespace Amdocs.Ginger.Common.Enums
         Active,
         InActive,
         History,
+        Pointer,
+        Camera,
 
+        Power,
 
         #endregion
 

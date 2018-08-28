@@ -67,6 +67,7 @@ namespace GingerCoreNET.RunLib
                 case SocketMessages.Register:
                     {
                         string NodeName = p.GetValueString();
+                        string NodeServiceID = p.GetValueString();
                         string NodeOS = p.GetValueString();
                         string NodeHost = p.GetValueString();
                         string NodeIP = p.GetValueString();
@@ -75,7 +76,7 @@ namespace GingerCoreNET.RunLib
                         gingerSocketInfo.Response = RC;
 
                         // add the info of the new node to the grid list
-                        mGingerNodeInfo.Add(new GingerNodeInfo() { Name = NodeName, OS = NodeOS, Host = NodeHost, IP = NodeIP, SessionID = gingerSocketInfo.SessionID });
+                        mGingerNodeInfo.Add(new GingerNodeInfo() { Name = NodeName, ServiceId = NodeServiceID, OS = NodeOS, Host = NodeHost, IP = NodeIP, SessionID = gingerSocketInfo.SessionID , Status = "Ready"});
                         break;
                     }
 
@@ -144,6 +145,17 @@ namespace GingerCoreNET.RunLib
         {
             NewPayLoad rc = mGingerSocketServer.SendPayLoad(sessionID, pL);
             return rc;
+        }
+
+        public void Reset()
+        {
+            // TODO: send ShutDown to each node
+            //foreach (GingerNodeInfo GNI in NodeList)
+            //{
+            //    GNI.
+            //}
+
+            NodeList.Clear();
         }
     }
 }

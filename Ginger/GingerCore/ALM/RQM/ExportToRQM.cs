@@ -369,7 +369,8 @@ namespace GingerCore.ALM.RQM
                     ExecutionStep exeStep = new ExecutionStep
                     {
                         StepExpResults = act.Expected,
-                        StepOrderId = i
+                        StepOrderId = i,
+                        EntityDesc = act.ActivityName,
                     };
                     i++;
 
