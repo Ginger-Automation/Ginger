@@ -554,13 +554,15 @@ namespace GingerCore.Drivers.Appium
             }
         }
 
-        private void StorePageSource()
+        private async void StorePageSource()
         {
+            LoadingLabel.Visibility = Visibility.Visible;
+            inspectorElementTabsControl.Visibility = Visibility.Hidden;
             int step = 0;
             try
             {
                 step = 1;
-                pageSourceString = AppiumDriver.GetPageSource();
+                pageSourceString = await AppiumDriver.GetPageSource();
                 pageSourceTextViewer.Text = pageSourceString;
                 step = 2;
                 pageSourceXml = new XmlDocument();
@@ -587,6 +589,9 @@ namespace GingerCore.Drivers.Appium
                     pageSourceXMLViewer.xmlDocument = null;
                 }
             }
+
+            LoadingLabel.Visibility = Visibility.Hidden;
+            inspectorElementTabsControl.Visibility = Visibility.Visible;
         }
 
         private void DesignSourceTabContent()

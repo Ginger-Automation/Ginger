@@ -27,10 +27,12 @@ using System.Data;
 using GingerCore;
 using GingerCore.Actions;
 using Amdocs.Ginger.Repository;
+using GingerTestHelper;
 
 namespace UnitTests.NonUITests
 {
-    [TestClass]    
+    [TestClass]
+    [Level3]
     public class RESTTest 
     {
         

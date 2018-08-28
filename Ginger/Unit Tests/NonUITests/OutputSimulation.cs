@@ -25,11 +25,13 @@ using GingerCore.Actions.WebServices;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Level3]
     public class OutputSimulation
     {
         static BusinessFlow mBF;
