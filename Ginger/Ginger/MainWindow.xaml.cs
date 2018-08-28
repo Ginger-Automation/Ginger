@@ -70,6 +70,7 @@ using Ginger.MenusLib;
 using GingerWPF.BusinessFlowsLib;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Repository;
+using GingerCore.DataSource;
 
 namespace Ginger
 {
@@ -716,10 +717,9 @@ namespace Ginger
         // Run Preparations before execution of Action/activity/Flow/start agent
         public void SetAutomateTabRunnerForExecution()
         {
-            App.AutomateTabGingerRunner.ProjEnvironment = App.AutomateTabEnvironment;
-            App.AutomateTabGingerRunner.SolutionLocalRepository = App.LocalRepository;
+            App.AutomateTabGingerRunner.ProjEnvironment = App.AutomateTabEnvironment;            
             App.AutomateTabGingerRunner.SolutionFolder = App.UserProfile.Solution.Folder;
-            App.AutomateTabGingerRunner.DSList = App.LocalRepository.GetSolutionDataSources();
+            App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
             //App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
             App.AutomateTabGingerRunner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
@@ -1055,7 +1055,8 @@ namespace Ginger
         {
             if (e.Key == Key.S && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) && (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)))
             {
-                App.LocalRepository.SaveAllSolutionDirtyItems(true);
+                throw new NotImplementedException();
+                //   App.LocalRepository.SaveAllSolutionDirtyItems(true);
             }
             else if (e.Key == Key.S && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
@@ -1324,7 +1325,7 @@ namespace Ginger
         {
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             bfs.Add(App.BusinessFlow);
-            ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables));
+            ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables));
             ExportResultsToALMConfigPage.Instance.ShowAsWindow();
         }
 
@@ -1333,7 +1334,8 @@ namespace Ginger
             try
             {
                 SaveAllBtn.IsEnabled = false;
-                App.LocalRepository.SaveAllSolutionDirtyItems(true);
+                throw new NotImplementedException();
+                // App.LocalRepository.SaveAllSolutionDirtyItems(true);
             }
             finally
             {

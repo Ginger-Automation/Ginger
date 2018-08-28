@@ -95,7 +95,7 @@ namespace Ginger.ALM.Repository
 
                     try
                     {
-                        BusinessFlow existedBF = App.LocalRepository.GetSolutionBusinessFlows().Where(x => x.ExternalID == RallyID + "=" + testPlan.RallyID).FirstOrDefault();
+                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == RallyID + "=" + testPlan.RallyID).FirstOrDefault();
                         if (existedBF != null)
                         {
                             MessageBoxResult userSelection = Reporter.ToUser(eUserMsgKeys.TestSetExists, testPlan.Name);
@@ -135,10 +135,11 @@ namespace Ginger.ALM.Repository
                         }
 
                         //save bf
-                        tsBusFlow.FileName = LocalRepository.GetRepoItemFileName(tsBusFlow, importDestinationPath);
-                        tsBusFlow.SaveToFile(tsBusFlow.FileName);
+                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
+                        //tsBusFlow.FileName = LocalRepository.GetRepoItemFileName(tsBusFlow, importDestinationPath);
+                        //tsBusFlow.SaveToFile(tsBusFlow.FileName);
                         //add to cach
-                        App.LocalRepository.AddItemToCache(tsBusFlow);
+                        //App.LocalRepository.AddItemToCache(tsBusFlow);
                         Reporter.CloseGingerHelper();
                     }
                     catch (Exception ex)

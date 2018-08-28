@@ -240,7 +240,7 @@ namespace Ginger.AnalyzerLib
                         if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
                         {
                             checkedGuidList.Add(BF.Guid);
-                            BusinessFlow actualBf = App.LocalRepository.GetSolutionBusinessFlows().Where(x => x.Guid == BF.Guid).FirstOrDefault();
+                            BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == BF.Guid).FirstOrDefault();
                             if (actualBf != null)
                                 RunBusinessFlowAnalyzer(actualBf, false);
                         }
@@ -259,7 +259,7 @@ namespace Ginger.AnalyzerLib
 
         private void RunBusinessFlowAnalyzer(BusinessFlow businessFlow, bool markCompletion=true)
         {
-                DSList = Ginger.App.LocalRepository.GetSolutionDataSources();
+                DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
                 List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
                 AddIssues(issues);
@@ -300,7 +300,7 @@ namespace Ginger.AnalyzerLib
 
             //TODO: once this analyzer is taking long time due to many checks, run it using parallel
             //ObservableList<BusinessFlow> BFs = App.LocalRepository.GetAllBusinessFlows();
-            ObservableList<BusinessFlow> BFs = App.LocalRepository.GetSolutionBusinessFlows();
+            ObservableList<BusinessFlow> BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
             // Run it in another task so UI gets updates
             Task t = Task.Factory.StartNew(() =>

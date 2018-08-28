@@ -68,7 +68,7 @@ namespace Ginger.Repository
             try
             {
                 //TODO: check that retreive also sub folder business flows
-                ObservableList<BusinessFlow> BizFlows = App.LocalRepository.GetSolutionBusinessFlows();
+                ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
                 foreach (BusinessFlow BF in BizFlows)
                 {

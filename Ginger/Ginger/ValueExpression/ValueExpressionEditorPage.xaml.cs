@@ -49,7 +49,7 @@ namespace Ginger
     /// </summary>
     public partial class ValueExpressionEditorPage : Page
     {        
-        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,App.LocalRepository.GetSolutionDataSources(),false,"",false);
+        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
         GenericWindow mWin;
         object mObj;
         string mAttrName;
@@ -431,7 +431,7 @@ namespace Ginger
             SetItemView(tviDataSources, "Data Sources", "", "@DataSource_16x16.png");
             xObjectsTreeView.Items.Add(tviDataSources);
             
-            ObservableList<DataSourceBase> DataSources = App.LocalRepository.GetSolutionDataSources();
+            ObservableList<DataSourceBase> DataSources = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
 
             foreach (DataSourceBase ds in DataSources)
             {

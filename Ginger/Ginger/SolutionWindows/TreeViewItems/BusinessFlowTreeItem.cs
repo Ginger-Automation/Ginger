@@ -150,8 +150,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (App.BusinessFlow == BusinessFlow)
             {
-                if (App.LocalRepository.GetSolutionBusinessFlows().Count != 0)
-                    App.BusinessFlow = App.LocalRepository.GetSolutionBusinessFlows()[0];
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count != 0)
+                    App.BusinessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()[0];
                 else
                     App.BusinessFlow = null;
             }

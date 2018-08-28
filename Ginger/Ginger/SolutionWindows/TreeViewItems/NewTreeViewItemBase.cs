@@ -488,8 +488,7 @@ namespace GingerWPF.TreeViewItemsLib
             if (Reporter.ToUser(eUserMsgKeys.SureWantToDoRevert) == MessageBoxResult.Yes)
             {
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.RevertChangesFromSourceControl);
-                SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());
-                App.LocalRepository.RefreshCacheByItemType(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));
+                SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());                
                 mTreeView.Tree.RefreshSelectedTreeNodeParent();
                 Reporter.CloseGingerHelper();
             }
@@ -504,8 +503,7 @@ namespace GingerWPF.TreeViewItemsLib
                 Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "Invalid Path provided");
             else
                 SourceControlIntegration.GetLatest(this.NodePath(), App.UserProfile.Solution.SourceControl);
-
-            App.LocalRepository.RefreshCacheByItemType(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));
+            
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
             Reporter.CloseGingerHelper();
         }

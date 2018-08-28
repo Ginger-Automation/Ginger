@@ -125,7 +125,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             else if (item is Act) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>(); 
             else if (item is VariableBase) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>(); 
 
-            RepositoryItemBase exsitingItem = App.LocalRepository.GetMatchingRepoItem((RepositoryItemBase)item, existingRepoItems, ref existingItemIsExternalID, ref existingItemIsParent);
+            RepositoryItemBase exsitingItem = SharedRepositoryOperations.GetMatchingRepoItem((RepositoryItemBase)item, existingRepoItems, ref existingItemIsExternalID, ref existingItemIsParent);
           
             if (exsitingItem != null)
             {

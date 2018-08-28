@@ -167,7 +167,7 @@ namespace Ginger.Actions
             LoadActionFlowcontrols(mAction);
             TagsViewer.Init(mAction.Tags);
 
-            mDSList = App.LocalRepository.GetSolutionDataSources();
+            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
                 AddOutDS.IsEnabled = false;
 
@@ -900,7 +900,7 @@ namespace Ginger.Actions
         }
         private void CheckIfUserWantToSave()
         {
-            if (LocalRepository.CheckIfSureDoingChange(mAction, "change") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mAction, "change") == true)
             {
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mAction);
                 saveWasDone = true;
@@ -1304,7 +1304,7 @@ namespace Ginger.Actions
 
         private void AddOutDS_Checked(object sender, RoutedEventArgs e)
         {
-            mDSList = App.LocalRepository.GetSolutionDataSources();
+            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
                 return;
             mDSNames.Clear();

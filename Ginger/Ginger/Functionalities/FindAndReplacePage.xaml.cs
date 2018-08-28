@@ -442,7 +442,7 @@ namespace Ginger.Functionalities
             switch (mContext)
             {
                 case eContext.SolutionPage:                   
-                    foreach (BusinessFlow BF in App.LocalRepository.GetSolutionBusinessFlows())
+                    foreach (BusinessFlow BF in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
                         mItemsToSearchIn.Add(new ItemToSearchIn(BF, BF, BF, string.Empty, string.Empty));                    
                     break;
                 case eContext.AutomatePage:
@@ -462,7 +462,7 @@ namespace Ginger.Functionalities
             {
                 case eContext.SolutionPage:
                     //Pull Activities from all businessflows
-                    foreach (BusinessFlow bf in App.LocalRepository.GetSolutionBusinessFlows())
+                    foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
                     {
                         foreach (Activity activity in bf.Activities)
                         {
@@ -510,7 +510,7 @@ namespace Ginger.Functionalities
             {
                 case eContext.SolutionPage:
                     //Pull actions from all solutions
-                    foreach (BusinessFlow bf in App.LocalRepository.GetSolutionBusinessFlows())
+                    foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
                     {
                         foreach (Activity activity in bf.Activities)
                         {
@@ -605,7 +605,7 @@ namespace Ginger.Functionalities
                     }
 
                     //pull variables from all repository BF's
-                    AddVariableFromBusinessFlowList(App.LocalRepository.GetSolutionBusinessFlows());
+                    AddVariableFromBusinessFlowList(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
 
                     //pull variabels from shared repository activities
                     ObservableList<Activity> RepoActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();

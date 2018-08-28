@@ -53,6 +53,7 @@ using GingerCoreNET.RunLib;
 using Ginger.Functionalities;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger;
+using GingerCore.DataSource;
 
 namespace Ginger.Run
 {
@@ -533,7 +534,7 @@ namespace Ginger.Run
                 }
 
                 //create new defualt run set
-                RunSetConfig newRunSet = LocalRepository.CreateNewRunset("Default " + GingerDicser.GetTermResValue(eTermResKey.RunSet), App.UserProfile.Solution.Folder + "\\RunSetConfigs\\");
+                RunSetConfig newRunSet = RunSetOperations.CreateNewRunset("Default " + GingerDicser.GetTermResValue(eTermResKey.RunSet), App.UserProfile.Solution.Folder + "\\RunSetConfigs\\");
                 if (newRunSet != null)
                     return newRunSet;
                 return null;
@@ -928,7 +929,7 @@ namespace Ginger.Run
                             {
                                 Parallel.ForEach(Runner.BusinessFlows, businessFlow =>
                                 {
-                                    BusinessFlow originalBF = App.LocalRepository.GetSolutionBusinessFlows().Where(x => x.Guid == businessFlow.Guid).FirstOrDefault();
+                                    BusinessFlow originalBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == businessFlow.Guid).FirstOrDefault();
                                     if (originalBF != null && System.IO.Path.GetFullPath(originalBF.FileName) == System.IO.Path.GetFullPath(e.FullPath))
                                     {
                                         mRunSetBusinessFlowWasChanged = true;
@@ -1112,7 +1113,7 @@ namespace Ginger.Run
             string name = null;
             if (InputBoxWindow.GetInputWithValidation(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ref name, System.IO.Path.GetInvalidPathChars()))
             {
-                RunSetConfig newRunSet = LocalRepository.CreateNewRunset(name, App.UserProfile.Solution.Folder + "\\RunSetConfigs\\");
+                RunSetConfig newRunSet = RunSetOperations.CreateNewRunset(name, App.UserProfile.Solution.Folder + "\\RunSetConfigs\\");
                 if (newRunSet != null)
                 {
                     LoadRunSetConfig(newRunSet);
@@ -1627,10 +1628,7 @@ namespace Ginger.Run
 
             BusinessFlowsFolderTreeItem bfsFolder;
             
-            bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
-            
-            bfsFolder.Folder = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
-            bfsFolder.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
+            bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());            
             bfsFolder.IsGingerDefualtFolder = true;
             mBusFlowsSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
             mBusFlowsSelectionPage.SelectionDone += MBusFlowsSelectionPage_SelectionDone;
@@ -2147,7 +2145,7 @@ namespace Ginger.Run
             }
             if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables));
+                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables));
                 ExportResultsToALMConfigPage.Instance.ShowAsWindow();
             }
             else

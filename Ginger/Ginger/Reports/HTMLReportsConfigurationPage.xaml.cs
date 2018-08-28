@@ -122,10 +122,10 @@ namespace Ginger.Reports
         public void DefaultTemplatePickerCbx_Binding()
         {
             DefaultTemplatePickerCbx.ItemsSource = null;
-
-            if ((App.UserProfile.Solution != null) && (App.LocalRepository.GetSolutionHTMLReportConfigurations() != null) && (App.LocalRepository.GetSolutionHTMLReportConfigurations().Count > 0))
+            ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+            if (App.UserProfile.Solution != null && HTMLReportConfigurations.Count > 0)
             {
-                DefaultTemplatePickerCbx.ItemsSource = App.LocalRepository.GetSolutionHTMLReportConfigurations();
+                DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
                 DefaultTemplatePickerCbx.SelectedValuePath = HTMLReportConfiguration.Fields.ID;
                 SelectDefualtTemplate();
@@ -137,7 +137,8 @@ namespace Ginger.Reports
             if (mDefualtConfig != null)
                 mDefualtConfig.PropertyChanged -= MDefualtConfig_PropertyChanged;
 
-            mDefualtConfig = App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).FirstOrDefault();
+            ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+            mDefualtConfig = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             if (mDefualtConfig != null)
             {
                 DefaultTemplatePickerCbx.SelectionChanged -= DefaultTemplatePickerCbx_SelectionChanged;

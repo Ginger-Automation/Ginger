@@ -181,7 +181,7 @@ namespace Ginger.AnalyzerLib
                         {
                             if (string.IsNullOrEmpty(f.Value) || ValueExpression.IsThisDynamicVE(f.Value) == false)
                             {
-                                //f.CalcualtedValue(BusinessFlow, App.ProjEnvironment, App.LocalRepository.GetSolutionDataSources());
+                                //f.CalcualtedValue(BusinessFlow, App.ProjEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
                                 string RunSharedRepositoryActivity = f.GetNameFromValue();
                                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                                 if (activities.Where(x => x.ActivityName == RunSharedRepositoryActivity).FirstOrDefault() == null)

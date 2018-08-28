@@ -924,7 +924,7 @@ namespace GingerCore
             //ProjEnvironment = App.AutomateTabEnvironment;
             //BusinessFlow = App.BusinessFlow; ;
             //SolutionFolder = App.UserProfile.Solution.Folder;
-            //DSList = App.LocalRepository.GetSolutionDataSources();
+            //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             try
             {
                 StartDriver();

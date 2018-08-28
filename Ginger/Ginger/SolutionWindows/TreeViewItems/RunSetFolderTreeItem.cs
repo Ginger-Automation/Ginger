@@ -28,6 +28,7 @@ using Ginger.Repository;
 using GingerCore.GeneralLib;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -137,7 +138,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             string runSetName = string.Empty;
             if (InputBoxWindow.GetInputWithValidation(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ref runSetName, System.IO.Path.GetInvalidPathChars()))
             {
-                RunSetConfig Runsets = LocalRepository.CreateNewRunset(runSetName, Path);
+                RunSetConfig Runsets = RunSetOperations.CreateNewRunset(runSetName, Path);
 
                 RunSetTreeItem BFTI = new RunSetTreeItem();
                 BFTI.RunSetConfig = Runsets;
@@ -150,6 +151,21 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 mTreeView.Tree.RefreshHeader(addTreeViewItem);
             }
         }
+
+        //        public static RunSetConfig CreateNewRunset(string runSetName, string runSetFolderPath=null)
+        //        {        
+        //            RunSetConfig rsc = new RunSetConfig();
+        //            rsc.Name = runSetName;
+        //            rsc.GingerRunners.Add(new GingerRunner() { Name = "Runner 1" });
+        //            if (string.IsNullOrEmpty(runSetFolderPath))
+        //                rsc.FileName = LocalRepository.GetRepoItemFileName(rsc);
+        //            else
+        //                rsc.FileName = LocalRepository.GetRepoItemFileName(rsc, runSetFolderPath);
+
+        //            App.LocalRepository.SaveNewItem(rsc, runSetFolderPath);
+        //            App.LocalRepository.AddItemToCache(rsc);
+        //            return rsc;
+        //        }
 
         public override void RefreshTreeFolder(Type itemType, string path)
         {

@@ -31,9 +31,12 @@ using GingerCore.SourceControl;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SourceControl;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
+
+    // class is obsolete !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     public class TreeViewItemBase : TreeViewItemGenericBase
     {
         public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;
@@ -95,8 +98,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (Reporter.ToUser(eUserMsgKeys.SureWantToDoRevert) == MessageBoxResult.Yes)
             {
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.RevertChangesFromSourceControl);
-                SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());
-                App.LocalRepository.RefreshCacheByItemType(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));
+                SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());                
                 mTreeView.Tree.RefreshSelectedTreeNodeParent();
                 Reporter.CloseGingerHelper();
             }
@@ -111,8 +113,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "Invalid Path provided");
             else
                 SourceControlIntegration.GetLatest(this.NodePath(), App.UserProfile.Solution.SourceControl);
-
-            App.LocalRepository.RefreshCacheByItemType(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));
+            
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
             Reporter.CloseGingerHelper();
         }
@@ -174,7 +175,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, ((RepositoryItem)item).GetNameForFileName()) == MessageBoxResult.No)
                         return false;
 
-                App.LocalRepository.DeleteItem((RepositoryItem)item);
+                WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem((RepositoryItem)item);                
                 deleteWasDone = true;
             }
             else
@@ -218,8 +219,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 if (copiedItem != null)
                 {
                     //Save copy to target folder
-                    App.LocalRepository.SaveNewItem(copiedItem, ((RepositoryItem)item).ContainingFolderFullPath);
-                    App.LocalRepository.AddItemToCache(copiedItem);
+                    // check me                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(copiedItem);
 
                     //refresh target folder node
                     mTreeView.Tree.RefreshSelectedTreeNodeParent();
@@ -253,8 +254,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 if (copiedItem != null)
                 {
                     //Save copy to target folder
-                    App.LocalRepository.SaveNewItem(copiedItem, targetFolderNode.NodePath());
-                    App.LocalRepository.AddItemToCache(copiedItem);
+                    //App.LocalRepository.SaveNewItem(copiedItem, targetFolderNode.NodePath());
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(copiedItem);
 
                     //refresh target folder node
                     if (toRefreshFolder)
@@ -302,7 +303,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         //                continue;
         //            }
         //            // Validation unique business name in ginger.
-        //            Amdocs.Ginger.Common.ObservableList<BusinessFlow> allBizFlows = App.LocalRepository.GetSolutionBusinessFlows();
+        //            Amdocs.Ginger.Common.ObservableList<BusinessFlow> allBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
         //            foreach (BusinessFlow bf in allBizFlows)
         //            {
         //                if (bf.ContainingFolderFullPath.Equals(targetFolderPath.TrimEnd('\\')) && bf.Name.Equals(newFileName))
@@ -352,10 +353,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (nodeItemToCut is RepositoryItem)
             {
                 //set target folder path + file name
-                string targetFileName = LocalRepository.GetRepoItemFileName(((RepositoryItem)nodeItemToCut), targetFolderNode.NodePath());
+               // string targetFileName = LocalRepository.GetRepoItemFileName(((RepositoryItem)nodeItemToCut), targetFolderNode.NodePath());
                 //move the item to target folder
-                Directory.Move(((RepositoryItem)nodeItemToCut).FileName, targetFileName);
-                ((RepositoryItem)nodeItemToCut).FileName = targetFileName;
+                //Directory.Move(((RepositoryItem)nodeItemToCut).FileName, targetFileName);
+                //((RepositoryItem)nodeItemToCut).FileName = targetFileName;
 
                 //refresh source and target folder nodes
                 if (toRefreshFolder)
@@ -424,7 +425,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 //TODO: Fix with New Reporter (on GingerWPF)
                 if (System.Windows.MessageBox.Show("Un saved items changes under the refreshed folder will be lost, to continue with refresh?", "Refresh Folder", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.No) == MessageBoxResult.Yes)
                 {
-                    App.LocalRepository.RefreshCacheByItemType(itemType, path);
+                    //App.LocalRepository.RefreshCacheByItemType(itemType, path);
 
                     //refresh Tree
                     mTreeView.Tree.RefreshHeader((ITreeViewItem)this);

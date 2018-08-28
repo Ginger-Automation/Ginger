@@ -344,7 +344,8 @@ namespace Ginger.SourceControl
                 }
                 else if (SCFI.FileType == "Business Flow")
                 {
-                    obj = App.LocalRepository.GetSolutionBusinessFlows().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                    obj = businessFlows.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
                 }
                 else if (SCFI.FileType == "Environment")
                 {
@@ -383,7 +384,8 @@ namespace Ginger.SourceControl
                 }
                 else if (SCFI.FileType == "Report Template")
                 {
-                    obj = App.LocalRepository.GetSolutionReportTemplates().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    ObservableList<ReportTemplate>  reports = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>();
+                    obj = reports.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
                 }                
 
                 if (obj != null && ((RepositoryItemBase)obj).IsDirty)

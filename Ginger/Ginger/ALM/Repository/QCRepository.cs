@@ -182,10 +182,7 @@ namespace Ginger.ALM.Repository
                         }
 
                         //save bf
-                        tsBusFlow.FileName = LocalRepository.GetRepoItemFileName(tsBusFlow, importDestinationPath);
-                        tsBusFlow.SaveToFile(tsBusFlow.FileName);
-                        //add to cach
-                        App.LocalRepository.AddItemToCache(tsBusFlow);
+                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);                        
                         Reporter.CloseGingerHelper();
                     }
                     catch (Exception ex)

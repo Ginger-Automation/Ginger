@@ -79,7 +79,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             {
                 xProcessingImage.Visibility = Visibility.Visible;
 
-                ObservableList<BusinessFlow> BizFlows = App.LocalRepository.GetSolutionBusinessFlows();
+                ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
                 await Task.Run(() =>
                 {
                     foreach (BusinessFlow BF in BizFlows)

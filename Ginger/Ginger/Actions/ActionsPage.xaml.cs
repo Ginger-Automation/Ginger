@@ -32,6 +32,7 @@ using Ginger.BusinessFlowFolder;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using Ginger.Repository;
 
 namespace Ginger.Actions
 {
@@ -379,7 +380,7 @@ namespace Ginger.Actions
                 }
                 grdActions.Title = "'" + mCurrentActivity.ActivityName + "' - Actions";
                 ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
-                App.LocalRepository.MarkSharedRepositoryItems((IEnumerable<object>)mCurrentActivity.Acts, (IEnumerable<object>)SharedActions);
+                SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mCurrentActivity.Acts, (IEnumerable<object>)SharedActions);
                 grdActions.DataSourceList = mCurrentActivity.Acts;
             }
             else

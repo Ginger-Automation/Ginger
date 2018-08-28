@@ -118,7 +118,7 @@ namespace Ginger.Environments
 
             else
             {
-                ObservableList<BusinessFlow> bfs = App.LocalRepository.GetSolutionBusinessFlows();
+                ObservableList<BusinessFlow> bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
                 foreach (BusinessFlow bf in bfs)
                 {

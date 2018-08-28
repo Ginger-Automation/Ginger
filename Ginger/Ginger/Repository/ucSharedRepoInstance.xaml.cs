@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
+using Ginger.Repository;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
@@ -65,7 +66,7 @@ namespace Ginger
             UpdateRepoBtn.Visibility = Visibility.Collapsed;
 
             //get the item from shared repo if exist
-            mLinkedRepoItem = App.LocalRepository.GetMatchingRepoItem(mItem, null, ref mLinkIsByExternalID, ref mLinkIsByParentID);
+            mLinkedRepoItem = SharedRepositoryOperations.GetMatchingRepoItem(mItem, null, ref mLinkIsByExternalID, ref mLinkIsByParentID);
             if (mLinkedRepoItem == null)
             {
                 LinkStatusImage.Source = General.GetResourceImage("@StarGray_24x24.png");

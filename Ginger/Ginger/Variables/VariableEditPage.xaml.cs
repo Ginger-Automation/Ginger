@@ -207,7 +207,7 @@ namespace Ginger.Variables
 
         private void FindAndRepalceSaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (LocalRepository.CheckIfSureDoingChange(mVariable, "change") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mVariable, "change") == true)
             {
                 try
                 {
@@ -271,7 +271,7 @@ namespace Ginger.Variables
 
         private void CheckIfUserWantToSave()
         {
-            if (LocalRepository.CheckIfSureDoingChange(mVariable, "change") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mVariable, "change") == true)
             {
                 saveWasDone = true;                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mVariable);

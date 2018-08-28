@@ -184,7 +184,7 @@ namespace Ginger.Agents
                     SelectedAgent.SolutionFolder = App.UserProfile.Solution.Folder;
                     SelectedAgent.ProjEnvironment = null;// App.AutomateTabEnvironment;
                     SelectedAgent.BusinessFlow = null; //App.BusinessFlow; ;                    
-                    SelectedAgent.DSList = null; //App.LocalRepository.GetSolutionDataSources();
+                    SelectedAgent.DSList = null; //WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                     SelectedAgent.StartDriver();
                     Reporter.CloseGingerHelper();
                     //If there is errorMessageFromDriver is populated then do not wait. 

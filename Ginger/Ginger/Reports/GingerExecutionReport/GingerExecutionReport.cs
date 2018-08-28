@@ -2628,7 +2628,8 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                l.currentTemplate = App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).FirstOrDefault();
+                ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+                l.currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
             //
 
@@ -2706,7 +2707,8 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                l.currentTemplate = App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).FirstOrDefault();
+                ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();                
+                l.currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
             //     
             if (string.IsNullOrEmpty(BF.ExecutionFullLogFolder))

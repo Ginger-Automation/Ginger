@@ -280,8 +280,6 @@ namespace Ginger.Run
 
         public ProjEnvironment ProjEnvironment { get; set; }
 
-        public LocalRepository SolutionLocalRepository { get; set; }
-
         public ObservableList<DataSourceBase> DSList { get; set; }
 
         private bool mRunInSimulationMode;

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -314,10 +315,7 @@ namespace Ginger.Environments
         internal ReportTemplate CreateNewReportTemplate(string path = "")
         {
             ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
-
-            System.Reflection.Assembly ExecutingAssembly;
-            ExecutingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-
+            
             ReportTemplateSelector RTS = new ReportTemplateSelector();
             RTS.ShowAsWindow();
 
@@ -330,55 +328,15 @@ namespace Ginger.Environments
                 string NewReportName = string.Empty;
                 if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
                 {
-                    NewReportTemplate.Name = NewReportName;
-                    if (string.IsNullOrEmpty(path))
-                        NewReportTemplate.FileName = LocalRepository.GetRepoItemFileName(NewReportTemplate);
-                    else
-                        NewReportTemplate.FileName = LocalRepository.GetRepoItemFileName(NewReportTemplate, path);
-                    if (App.LocalRepository != null)
-                    {
-                        App.LocalRepository.SaveNewItem(NewReportTemplate, path);
-                        App.LocalRepository.AddItemToCache(NewReportTemplate);
-                    }
+                    NewReportTemplate.Name = NewReportName;                    
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
                 }
                 return NewReportTemplate;
             }
             return null;
         }
 
-        internal HTMLReportTemplate CreateNewHTMLReportTemplate(string path = "")
-        {
-            HTMLReportTemplate NewReportTemplate = new HTMLReportTemplate() { Name = "New Report Template", Status = HTMLReportTemplate.eReportStatus.Development };
-
-            System.Reflection.Assembly ExecutingAssembly;
-            ExecutingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-
-            HTMLReportTemplateSelector RTS = new HTMLReportTemplateSelector();
-            RTS.ShowAsWindow();
-
-            if (RTS.SelectedReportTemplate != null)
-            {
-                NewReportTemplate.HTML = RTS.SelectedReportTemplate.HTML;
-
-                //Make it Generic or Const string for names used for File
-                string NewReportName = string.Empty;
-                if (GingerCore.General.GetInputWithValidation("Add New Report", "Report Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
-                {
-                    NewReportTemplate.Name = NewReportName;
-                    if (string.IsNullOrEmpty(path))
-                        NewReportTemplate.FileName = LocalRepository.GetRepoItemFileName(NewReportTemplate);
-                    else
-                        NewReportTemplate.FileName = LocalRepository.GetRepoItemFileName(NewReportTemplate, path);
-                    if (App.LocalRepository != null)
-                    {
-                        App.LocalRepository.SaveNewItem(NewReportTemplate, path);
-                        App.LocalRepository.AddItemToCache(NewReportTemplate);
-                    }
-                }
-                return NewReportTemplate;
-            }
-            return null;
-        }
+       
 
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();

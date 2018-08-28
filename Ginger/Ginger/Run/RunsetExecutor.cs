@@ -39,6 +39,7 @@ using GingerCoreNET.SourceControl;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Repository;
+using GingerCore.DataSource;
 
 namespace Ginger.Run
 {
@@ -120,12 +121,11 @@ namespace Ginger.Run
         public void ConfigureRunnerForExecution(GingerRunner runner)
         {
             runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
-
-            runner.SolutionLocalRepository = App.LocalRepository;            
+            
             runner.CurrentSolution = App.UserProfile.Solution;
             runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
             // runner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
-            runner.DSList = App.LocalRepository.GetSolutionDataSources();
+            runner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             runner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
             runner.SolutionFolder = App.UserProfile.Solution.Folder;
         }
@@ -147,9 +147,10 @@ namespace Ginger.Run
             runner.BusinessFlows.Clear();
             foreach (BusinessFlowRun bf in runner.BusinessFlowsRunList)
             {
-                BusinessFlow BF1 = (from bfr in App.LocalRepository.GetSolutionBusinessFlows() where bfr.Guid == bf.BusinessFlowGuid select bfr).FirstOrDefault();
+                ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                BusinessFlow BF1 = (from bfr in businessFlows where bfr.Guid == bf.BusinessFlowGuid select bfr).FirstOrDefault();
                 if (BF1 == null)
-                    BF1 = (from bfr in App.LocalRepository.GetSolutionBusinessFlows() where bfr.Name == bf.BusinessFlowName select bfr).FirstOrDefault();
+                    BF1 = (from bfr in businessFlows where bfr.Name == bf.BusinessFlowName select bfr).FirstOrDefault();
                 if (BF1 == null)
                 {
                     Reporter.ToUser(eUserMsgKeys.CannontFindBusinessFlow, bf.BusinessFlowName);
@@ -426,14 +427,7 @@ namespace Ginger.Run
                     runner.StopRun();
             }
         }
-
-        public void SetRunnersLocalRepository(LocalRepository SolutionLocalRepository)
-        {
-            foreach (GingerRunner GR in Runners)
-            {
-                GR.SolutionLocalRepository = SolutionLocalRepository;
-            }
-        }
+        
 
         internal void ProcessRunSetActions(List<RunSetActionBase.eRunAt> runAtList)
         {

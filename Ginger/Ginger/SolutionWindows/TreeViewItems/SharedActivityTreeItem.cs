@@ -106,7 +106,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            if (LocalRepository.CheckIfSureDoingChange(Activity, "delete") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(Activity, "delete") == true)
             {
                 return (base.DeleteTreeItem(Activity, deleteWithoutAsking, refreshTreeAfterDelete));                
             }

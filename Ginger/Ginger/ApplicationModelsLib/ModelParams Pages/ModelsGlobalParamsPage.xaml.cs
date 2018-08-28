@@ -24,6 +24,7 @@ using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using GingerWPF.WizardLib;
@@ -174,7 +175,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
         public static void UpdateModelGlobalParamVeWithNameChange(List<string> ListObj)
         {
-            ObservableList<RepositoryItemBase> allVESupportingItems = App.LocalRepository.GetSolutionVEsupportedItems();
+            ObservableList<RepositoryItemBase> allVESupportingItems = GetSolutionVEsupportedItems();
             Parallel.ForEach(allVESupportingItems, item =>
             {
                 if (item is BusinessFlow)
@@ -195,6 +196,22 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     UpdateItemModelGlobalParamVeWithNameChange(item, ListObj[0], ListObj[1], ref changedwasDone2);
                 }
             });
+        }
+
+        static ObservableList<RepositoryItemBase> GetSolutionVEsupportedItems()
+        {
+            // CHECK FIXME !?!?
+            ObservableList<RepositoryItemBase> supportedItems = new ObservableList<RepositoryItemBase>();
+            ObservableList<BusinessFlow> BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            foreach (BusinessFlow bf in BFs)
+                supportedItems.Add(bf);
+            foreach (Agent agent in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>())
+                supportedItems.Add(agent);
+            foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+                supportedItems.Add(env);
+
+
+            return supportedItems;
         }
 
         public static void UpdateItemModelGlobalParamVeWithNameChange(object item, string prevParamName, string newParamName, ref bool changedWasDone)

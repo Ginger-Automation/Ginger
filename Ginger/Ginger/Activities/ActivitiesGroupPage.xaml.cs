@@ -207,7 +207,7 @@ namespace Ginger.Activities
 
         private void CheckIfUserWantToSave()
         {
-            if (LocalRepository.CheckIfSureDoingChange(mActivitiesGroup, "change") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivitiesGroup, "change") == true)
             {                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivitiesGroup);
                 _pageGenericWin.Close();

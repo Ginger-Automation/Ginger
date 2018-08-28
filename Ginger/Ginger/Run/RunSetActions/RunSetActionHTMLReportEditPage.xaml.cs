@@ -19,6 +19,8 @@ limitations under the License.
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Ginger.Reports;
 
 namespace Ginger.Run.RunSetActions
@@ -50,22 +52,23 @@ namespace Ginger.Run.RunSetActions
         {
             CurrentTemplatePickerCbx.ItemsSource = null;
 
-            if ((App.UserProfile.Solution != null) && (App.LocalRepository.GetSolutionHTMLReportConfigurations() != null) && (App.LocalRepository.GetSolutionHTMLReportConfigurations().Count > 0))
+            ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+            if ((App.UserProfile.Solution != null) && (HTMLReportConfigurations.Count > 0))
             {
-                CurrentTemplatePickerCbx.ItemsSource = App.LocalRepository.GetSolutionHTMLReportConfigurations();
+                CurrentTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 CurrentTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
                 CurrentTemplatePickerCbx.SelectedValuePath = HTMLReportConfiguration.Fields.ID;
                 if ((runSetActionHTMLReport.selectedHTMLReportTemplateID != 0))
                 {
-                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.ID == runSetActionHTMLReport.selectedHTMLReportTemplateID)).FirstOrDefault());
+                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.ID == runSetActionHTMLReport.selectedHTMLReportTemplateID)).FirstOrDefault());
                     if (CurrentTemplatePickerCbx.SelectedIndex == -1)
                     {
-                        CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).FirstOrDefault());
+                        CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault());
                     }
                 }
                 else
                 {
-                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).FirstOrDefault());
+                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault());
                 }
             }
         }

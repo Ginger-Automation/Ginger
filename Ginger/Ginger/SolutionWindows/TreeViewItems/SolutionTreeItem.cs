@@ -215,7 +215,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void SaveAll(object sender, System.Windows.RoutedEventArgs e)
         {
-            App.LocalRepository.SaveAllSolutionDirtyItems(true);
+            throw new NotImplementedException();
+            // App.LocalRepository.SaveAllSolutionDirtyItems(true);
         }
    }
 }

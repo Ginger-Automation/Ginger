@@ -21,6 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore;
 using Ginger.UserControls;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -28,16 +29,14 @@ namespace Ginger.BusinessFlowWindows
     /// Interaction logic for ExplorerBusinessFlowsPage.xaml
     /// </summary>
     public partial class ExplorerBusinessFlowsPage : Page
-    {
-        string mFolder;
-        public ExplorerBusinessFlowsPage(string Folder)
+    {        
+        public ExplorerBusinessFlowsPage(RepositoryFolder<BusinessFlow> repositoryFolder)
         {
             InitializeComponent();
-            
-            mFolder = Folder;
-            grdBusinessFlows.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
+                        
+            grdBusinessFlows.btnRefresh.Visibility = Visibility.Collapsed; 
             SetBusinessFlowsGridView();
-            SetGridData();
+            grdBusinessFlows.DataSourceList = repositoryFolder.GetFolderItems();
         }
 
         private void SetBusinessFlowsGridView()
@@ -55,14 +54,8 @@ namespace Ginger.BusinessFlowWindows
             grdBusinessFlows.ShowTagsFilter = Visibility.Visible;
         }
 
-        private void RefreshGrid(object sender, RoutedEventArgs e)
-        {
-            SetGridData();
-        }
+        
 
-        private void SetGridData()
-        {
-            grdBusinessFlows.DataSourceList = App.LocalRepository.GetSolutionBusinessFlows(specificFolderPath: mFolder, includeSubFolders: true);
-        }
+
     }
 }

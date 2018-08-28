@@ -65,10 +65,7 @@ namespace Ginger.Run
 
                 //TODO: create intizilize run inside the RunSet executer
                 App.RunsetExecutor.RunsetExecutionEnvironment = env;
-                App.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
-
-                // App.RunsetExecutor.SetRunnersPlugIns(App.LocalRepository.GetSolutionPlugIns()); 
-                App.RunsetExecutor.SetRunnersLocalRepository(App.LocalRepository);
+                App.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());                
             }
             catch (Exception ex)
             {

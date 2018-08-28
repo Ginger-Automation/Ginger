@@ -87,7 +87,7 @@ namespace Ginger.Functionalties
 
                 //get all dirty items for AutoSave
                 //Busines Flows           
-                foreach (BusinessFlow bf in App.LocalRepository.GetSolutionBusinessFlows())
+                foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
                         if (bf.IsDirty)
                             DirtyFileAutoSave(bf);
                 //Run Sets           

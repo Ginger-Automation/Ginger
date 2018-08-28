@@ -19,10 +19,14 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Windows;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
 using GingerCore.Variables;
 using GingerWPF.WizardLib;
 
@@ -79,17 +83,16 @@ namespace Ginger.Repository
 
                 if (isOverwrite)
                 {
-                    App.LocalRepository.MovePrevVersion(itemToUpload.ExistingItem, itemToUpload.ExistingItem.FileName);
-                    App.LocalRepository.RemoveItemFromCache(itemToUpload.ExistingItem);
+                    MovePrevVersion(itemToUpload.ExistingItem, itemToUpload.ExistingItem.FileName);
                     itemFileName = itemToUpload.ExistingItem.FileName;
                 }
                 else
-                    itemFileName = LocalRepository.GetRepoItemFileName(itemCopy, Path.Combine(App.UserProfile.Solution.Folder, LocalRepository.GetSharedRepoItemTypeFolder(itemCopy.GetType())));
+                {
+                    throw new NotImplementedException();
+                    // itemFileName = LocalRepository.GetRepoItemFileName(itemCopy, Path.Combine(App.UserProfile.Solution.Folder, LocalRepository.GetSharedRepoItemTypeFolder(itemCopy.GetType())));
+                }
 
                 itemCopy.SaveToFile(itemFileName);
-
-                App.LocalRepository.AddRepoItemToCache(itemCopy);
-
 
                 itemToUpload.UsageItem.IsSharedRepositoryInstance = true;
 
@@ -184,5 +187,122 @@ namespace Ginger.Repository
             }
             return blockingIssuesHandled;
         }
+
+
+        public static void MarkSharedRepositoryItems(IEnumerable<object> items, IEnumerable<object> existingRepoItems = null)
+        {
+            bool linkIsByExternalID = false;
+            bool linkIsByParentID = false;
+            if (items != null && items.Count() > 0)
+            {
+                foreach (RepositoryItemBase item in items)
+                    if (GetMatchingRepoItem(item, existingRepoItems, ref linkIsByExternalID, ref linkIsByParentID) != null)
+                        item.IsSharedRepositoryInstance = true;
+                    else
+                        item.IsSharedRepositoryInstance = false;
+            }
+        }
+
+
+        //FIXME to work using SR 
+        public static RepositoryItemBase GetMatchingRepoItem(RepositoryItemBase item, IEnumerable<object> existingRepoItems, ref bool linkIsByExternalID, ref bool linkIsByParentID)
+        {
+            throw new NotImplementedException();
+
+            linkIsByExternalID = false;
+            linkIsByParentID = false;
+
+            //check if item with the same GUID already exist in repository
+            RepositoryItem repoItem = (RepositoryItem)existingRepoItems.Where(x => ((RepositoryItem)x).Guid == item.Guid).FirstOrDefault();
+            //check if there is already item in repo which map to a specific ExternalID
+            if (repoItem == null && item.ExternalID != null && item.ExternalID != string.Empty && item.ExternalID != "0")
+            {
+                repoItem = (RepositoryItem)existingRepoItems.Where(x => ((RepositoryItem)x).ExternalID == item.ExternalID).FirstOrDefault();
+                if (repoItem != null) linkIsByExternalID = true;
+            }
+            if (repoItem == null && item.ParentGuid != Guid.Empty)
+            {
+                repoItem = (RepositoryItem)existingRepoItems.Where(x => ((RepositoryItem)x).Guid == item.ParentGuid).FirstOrDefault();
+                if (repoItem != null) linkIsByParentID = true;
+            }
+
+            return repoItem;
+        }
+
+        public static void MovePrevVersion(RepositoryItemBase obj, string FileName)
+        {
+            if (File.Exists(FileName))
+            {
+                //string PrevFolder = App.UserProfile.Solution.Folder + @"\" + obj.ObjFolderName + @"\PrevVersions\";
+
+                string repoItemTypeFolder = GetSharedRepoItemTypeFolder(obj.GetType());
+                string PrevFolder = Path.Combine(App.UserProfile.Solution.Folder, repoItemTypeFolder, "PrevVersions");
+                if (!Directory.Exists(PrevFolder))
+                {
+                    Directory.CreateDirectory(PrevFolder);
+                }
+                //TODO: change to usae locale or yyyymmdd...
+                string dts = DateTime.Now.ToString("MM_dd_yyyy_H_mm_ss");
+                string repoName = string.Empty;
+                if (obj.FileName != null && File.Exists(obj.FileName))
+                    repoName = obj.FileName;
+                else
+                {
+                    //repoName = GetRepoItemFileName(obj);
+                }
+                string PrevFileName = repoName.Replace(repoItemTypeFolder, repoItemTypeFolder + @"\PrevVersions") + "." + dts + "." + obj.ObjFileExt;
+
+                if (PrevFileName.Length > 255)
+                {
+                    PrevFileName = PrevFileName.Substring(0, 250) + new Random().Next(1000).ToString();
+                }
+                try
+                {
+                    if (File.Exists(PrevFileName))
+                        File.Delete(PrevFileName);
+                    File.Move(FileName, PrevFileName);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Save Previous File got error " + ex.Message);
+                }
+            }
+        }
+
+        public static string GetSharedRepoItemTypeFolder(Type T)
+        {
+            string folder = @"SharedRepository\";
+
+            if (T.Equals(typeof(ActivitiesGroup)))
+                folder += "ActivitiesGroups";
+            else if (T.Equals(typeof(Activity)))
+                folder += "Activities";
+            else if (T.IsSubclassOf(typeof(Act)))
+                folder += "Actions";
+            else if (T.IsSubclassOf(typeof(VariableBase)))
+                folder += "Variables";
+
+            if (folder == @"SharedRepository\")
+                throw new System.InvalidOperationException("Shared Repository Item folder path creation is wrong");
+
+            return folder;
+        }
+
+
+        public static bool CheckIfSureDoingChange(RepositoryItemBase item, string changeType)
+        {
+            RepositoryItemUsagePage usagePage = null;
+            usagePage = new RepositoryItemUsagePage(item, true);
+            if (usagePage.RepoItemUsages.Count > 0)//TODO: check if only one instance exist for showing the pop up for better performance
+            {
+                if (Reporter.ToUser(eUserMsgKeys.AskIfWantsToChangeeRepoItem, item.GetNameForFileName(), usagePage.RepoItemUsages.Count, changeType) == MessageBoxResult.Yes)
+                    return true;
+                else
+                    return false;
+            }
+
+            return true;
+        }
+
     }
 }

@@ -37,6 +37,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Amdocs.Ginger.Common.Enums;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run
 {
@@ -324,7 +325,7 @@ namespace Ginger.Run
         private void Businessflow_ClickAutomate(object sender, RoutedEventArgs e)
         {
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
-            BusinessFlow actualBf = App.LocalRepository.GetSolutionBusinessFlows().Where(x => x.Guid == bf.Guid).FirstOrDefault();
+            BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == bf.Guid).FirstOrDefault();
             if (actualBf != null)
                 App.MainWindow.AutomateBusinessFlow(actualBf);
         }

@@ -175,9 +175,7 @@ namespace Ginger
             //BusinessFlowsTreeView.Tree.AddItem(BFTVIRecentlyUsed);
 
             RepositoryFolder<BusinessFlow> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>();
-            BusinessFlowsFolderTreeItem BFTVI = new BusinessFlowsFolderTreeItem(repositoryFolder, eBusinessFlowsTreeViewMode.ReadOnly);
-            BFTVI.Folder = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: "s");
-            BFTVI.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
+            BusinessFlowsFolderTreeItem BFTVI = new BusinessFlowsFolderTreeItem(repositoryFolder, eBusinessFlowsTreeViewMode.ReadOnly);            
             BusinessFlowsTreeView.Tree.AddItem(BFTVI);
 
             BusinessFlowsTreeView.Tree.ItemSelected += BusinessFlowsTreeView_ItemSelected;

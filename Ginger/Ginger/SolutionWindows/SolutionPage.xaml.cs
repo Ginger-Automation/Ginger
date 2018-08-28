@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Environments;
 using Ginger.TagsLib;
@@ -134,7 +135,7 @@ namespace Ginger.SolutionWindows
             if (Reporter.ToUser(eUserMsgKeys.UpdateApplicationNameChangeInSolution) == MessageBoxResult.No) return;
 
 
-            foreach(BusinessFlow bf in App.LocalRepository.GetSolutionBusinessFlows())
+            foreach(BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
             {
                 //update the BF target applications
                 foreach (TargetApplication bfApp in bf.TargetApplications)

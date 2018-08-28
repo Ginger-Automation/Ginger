@@ -16,25 +16,22 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Core;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
+using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using GingerWPF.TreeViewItemsLib;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     class HTMLReportTemplatesTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private HTMLReportTemplatesPage mReportTemplatesPage;
-
-        public string Folder { get; set; }
-        public string Path { get; set; }
-
+        RepositoryFolder<HTMLReportTemplate> mRepositoryFolder;        
         ITreeView mTV;
 
         Object ITreeViewItem.NodeObject()
@@ -43,21 +40,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.CreateItemHeader("E-mail Report Templates", "@HTMLReport_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));            
+        {            
+             return TreeViewUtils.NewRepositoryItemTreeHeader(mRepositoryFolder, nameof(RepositoryFolder<HTMLReportTemplate>.DisplayName), eImageType.HtmlReport, GetSourceControlImage(mRepositoryFolder), false);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-            ObservableList<HTMLReportTemplate> Reports = App.LocalRepository.GetSolutionHTMLReportTemplates(UseCache: false, specificFolderPath: Path);
-            foreach (HTMLReportTemplate rep in Reports)
-            {
-                HTMLReportTemplateTreeItem RTTI = new HTMLReportTemplateTreeItem();
-                RTTI.HTMLReportTemplate = rep;
-                Childrens.Add(RTTI);
-            }
-            return Childrens;
+            return GetChildrentGeneric<HTMLReportTemplate>(mRepositoryFolder, nameof(HTMLReportTemplate.Name));           
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -76,44 +65,61 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         ContextMenu ITreeViewItem.Menu()
         {
-            ContextMenu CM = new ContextMenu();
-            TreeViewUtils.AddMenuItem(CM, "Refresh", RefreshItems, null, eImageType.Refresh);
+            ContextMenu CM = new ContextMenu();            
             TreeViewUtils.AddMenuItem(CM, "Save All", SaveAll, null, eImageType.Save);
-            AddViewFolderFilesMenuItem(CM, Path);
+            AddViewFolderFilesMenuItem(CM, mRepositoryFolder.FolderFullPath);
             return CM;
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)
         {
-            mTV = TV;
-
-            TV.AddToolbarTool(eImageType.Refresh, "Refresh", RefreshItems);
+            mTV = TV;            
             TV.AddToolbarTool("@SaveAll_16x16.png", "Save All", SaveAll);
             TV.AddToolbarTool("@Add_16x16.png", "Add New", AddNewReport);
-            TV.AddToolbarTool("@Glass_16x16.png", "Open Folder in File Explorer", ViewFolderFilesFromTool, System.Windows.Visibility.Visible, Path);
+            TV.AddToolbarTool("@Glass_16x16.png", "Open Folder in File Explorer", ViewFolderFilesFromTool, System.Windows.Visibility.Visible, mRepositoryFolder.FolderFullPath);
         }
 
-        private void RefreshItems(object sender, System.Windows.RoutedEventArgs e)
-        {
-            RefreshChildrens();
-        }
         
         private void SaveAll(object sender, System.Windows.RoutedEventArgs e)
         {
+            throw new NotImplementedException();
         }
 
         private void AddNewReport(object sender, System.Windows.RoutedEventArgs e)
         {
             HTMLReportTemplateTreeItem r = new HTMLReportTemplateTreeItem();
-            r.HTMLReportTemplate = App.UserProfile.Solution.CreateNewHTMLReportTemplate();
+            r.HTMLReportTemplate = CreateNewHTMLReportTemplate();
                                         
             mTV.Tree.AddChildItemAndSelect(this, r);            
         }
         
-        private void RefreshChildrens()
+      
+
+        internal HTMLReportTemplate CreateNewHTMLReportTemplate(string path = "")
         {
-            //App.LocalRepository.RefreshSolutionReportTemapltesCache(specificFolderPath: Path);
-            //mTV.Tree.RefreshSelectedTreeNodeChildrens();
-        }       
+            //TODO: change to wizard
+            HTMLReportTemplate NewReportTemplate = new HTMLReportTemplate() { Name = "New Report Template", Status = HTMLReportTemplate.eReportStatus.Development };
+
+            System.Reflection.Assembly ExecutingAssembly;
+            ExecutingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+
+            HTMLReportTemplateSelector RTS = new HTMLReportTemplateSelector();
+            RTS.ShowAsWindow();
+
+            if (RTS.SelectedReportTemplate != null)
+            {
+                NewReportTemplate.HTML = RTS.SelectedReportTemplate.HTML;
+
+                //Make it Generic or Const string for names used for File
+                string NewReportName = string.Empty;
+                if (GingerCore.General.GetInputWithValidation("Add New Report", "Report Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
+                {
+                    NewReportTemplate.Name = NewReportName;
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);                                        
+                }
+                return NewReportTemplate;
+            }
+            return null;
+        }
     }
 }

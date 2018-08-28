@@ -449,14 +449,12 @@ namespace Ginger.GherkinLib
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(BFName));
             }
-            mBizFlow = LocalRepository.CreateNewBizFlow(BFName);
+            mBizFlow = App.CreateNewBizFlow(BFName);
             mBizFlow.Source = BusinessFlow.eSource.Gherkin;
-            mBizFlow.ExternalID = GherkinTextEditor.FileName.Replace(App.UserProfile.Solution.Folder, @"~\") ;                        
-            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBizFlow);
-            App.LocalRepository.AddItemToCache(mBizFlow);
-
+            mBizFlow.ExternalID = GherkinTextEditor.FileName.Replace(App.UserProfile.Solution.Folder, @"~\") ;                                                
             mBizFlow.Name = BizFlowName;
             mBizFlow.Activities.Clear();
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBizFlow);
         }
 
         //TODO: show message on screen TBD!?
@@ -637,9 +635,8 @@ namespace Ginger.GherkinLib
         {
             Mouse.OverrideCursor = Cursors.Wait;
             try
-            {
-                string path = BFName;
-                mBizFlow=App.LocalRepository.GetItemByFileName<BusinessFlow>(typeof(BusinessFlow), BFName);
+            {                                
+                mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Name == BFName).SingleOrDefault();
                 if (mBizFlow == null)
                 {
                     CreateNewBF(FeatureName);
@@ -679,7 +676,7 @@ namespace Ginger.GherkinLib
             BFName = BFName.Replace(".feature", "");
             BFName = folder + BFName + ".Ginger.BusinessFlow.xml";
             // search if we have the BF defined already, so search in BF will work
-            mBizFlow = App.LocalRepository.GetItemByFileName<BusinessFlow>(typeof(BusinessFlow), BFName);
+            mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x =>x.Name == BFName).SingleOrDefault();
 
             if (File.Exists(BFName))
             {

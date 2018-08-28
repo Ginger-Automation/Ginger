@@ -420,7 +420,7 @@ namespace Ginger.ALM
             return null;
         }
 
-        public void ImportALMTests(string importDestinationFolderPath = "")
+        public void ImportALMTests(string importDestinationFolderPath = null)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, "Importing Business flow from ALM");

@@ -184,8 +184,7 @@ namespace Ginger
         }
         
         public static GingerRunner AutomateTabGingerRunner = new GingerRunner(GingerRunner.eExecutedFrom.Automation);
-
-        public static LocalRepository LocalRepository { get; set; } 
+        
         
         public static AppProgressBar AppProgressBar { get; set; }
 
@@ -390,9 +389,6 @@ namespace Ginger
 
             Reporter.ToLog(eLogLevel.INFO, "Init the Centralized Auto Log");
             AutoLogProxy.Init(App.AppVersion);
-
-            Reporter.ToLog(eLogLevel.INFO, "Creating the Local Repository object");
-            App.LocalRepository = new LocalRepository();
             
             Reporter.ToLog(eLogLevel.INFO, "Initializing the Source control");
             AppSplashWindow.LoadingInfo(phase);
@@ -505,8 +501,7 @@ namespace Ginger
             Reporter.ToLog(eLogLevel.INFO, phase);
             Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
             AutoLogProxy.LogAppOpened();
-            AppSplashWindow.LoadingInfo(phase);
-            App.LocalRepository.UpdateAppProgressBar = false;//because going to be executed by diffrent thread
+            AppSplashWindow.LoadingInfo(phase);            
 
             var result = await App.RunsetExecutor.RunRunSetFromCommandLine();
 
@@ -612,9 +607,7 @@ namespace Ginger
             try
             {
                 AppSolutionAutoSave.SolutionAutoSaveEnd();
-                App.UserProfile.Solution = null;
-                //clear exsiting solution data- TODO: catch the solution value change event and if null then clear all below in relevant class/places
-                App.LocalRepository.ClearAllCache();
+                App.UserProfile.Solution = null;                                
                 App.AutomateTabGingerRunner.ClearAgents();
                 App.BusinessFlow = null;
                 App.MainWindow.ResetSolutionDependedUIElements(false);
@@ -744,7 +737,7 @@ namespace Ginger
                         // App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
                         App.UserProfile.Solution.SetReportsConfigurations();
                         App.AutomateTabGingerRunner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
-                        App.AutomateTabGingerRunner.DSList = App.LocalRepository.GetSolutionDataSources();
+                        App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
 
 
                         BindEnvsCombo();
@@ -905,7 +898,7 @@ namespace Ginger
             try
             {
                 if (App.UserProfile.Solution == null) return;
-                ObservableList<BusinessFlow> allBizFlows = App.LocalRepository.GetSolutionBusinessFlows();
+                ObservableList<BusinessFlow> allBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
                 if (App.UserProfile.RecentBusinessFlow != null &&
                             App.UserProfile.RecentBusinessFlow != Guid.Empty)
@@ -1003,10 +996,36 @@ namespace Ginger
 
         public static BusinessFlow LoadDefaultBusinessFlow()
         {
-            BusinessFlow biz = LocalRepository.CreateNewBizFlow( GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) +" 1");            
+            BusinessFlow biz = CreateNewBizFlow(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) +" 1");            
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(biz);            
             return biz;
         }
+
+        public static BusinessFlow CreateNewBizFlow(string Name)
+        {
+
+            BusinessFlow biz = new BusinessFlow();
+            biz.Name = Name;
+            biz.Activities = new ObservableList<Activity>();
+            biz.Variables = new ObservableList<VariableBase>();
+            // Set the new BF to be same like main app
+            if (App.UserProfile.Solution.MainApplication != null)
+            {
+                biz.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
+            }
+
+            Activity a = new Activity() { Active = true };
+            a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
+            a.Acts = new ObservableList<Act>();
+            if (biz.TargetApplications.Count > 0)
+                a.TargetApplication = biz.TargetApplications[0].AppName;
+            biz.Activities.Add(a);
+
+            biz.Activities.CurrentItem = a;
+            biz.CurrentActivity = a;
+            return biz;
+        }
+
 
         public static void CreateDefaultEnvironment()
         {

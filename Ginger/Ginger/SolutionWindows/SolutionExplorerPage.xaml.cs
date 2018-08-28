@@ -27,6 +27,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Reflection;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows
 {
@@ -139,17 +140,13 @@ namespace Ginger.SolutionWindows
             if (s != null)
             {
                 NoSolutionLabel.Visibility = System.Windows.Visibility.Collapsed;
-                ExplorerTreeGrid.Visibility = System.Windows.Visibility.Visible;
-                
-                // Is it really needed?
-                if (RefreshSol)
-                    App.LocalRepository.RefreshAllCache();
+                ExplorerTreeGrid.Visibility = System.Windows.Visibility.Visible;                
 
                 ItemDetailsFrame.Content = null;                                
                 LoadSoultionTree2();
 
                 //show tips for business flows / agents
-                if(App.LocalRepository.GetSolutionBusinessFlows().Count == 0)
+                if(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count == 0)
                 {
                     //show tip to start with creating a business flow
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.CreateBusinessFlowTip);

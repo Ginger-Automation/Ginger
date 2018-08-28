@@ -52,12 +52,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     public class BusinessFlowsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private ExplorerBusinessFlowsPage mExplorerBusinessFlowsPage;
-
         RepositoryFolder<BusinessFlow> mRepositoryFolder;
-
-        //TODO: remove Folder and Path - not used with new SR
-        public string Folder { get; set; }
-        public string Path { get; set; }
         public eBusinessFlowsTreeViewMode mViewMode;
 
 
@@ -73,7 +68,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
         override public string NodePath()
         {
-            return Path + @"\";
+            return mRepositoryFolder.FolderFullPath + @"\";
         }
         override public Type NodeObjectType()
         {
@@ -82,7 +77,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.NewRepositoryItemTreeHeader(Folder, nameof(RepositoryFolder<BusinessFlow>.DisplayName), eImageType.Folder, GetSourceControlImage(mRepositoryFolder), false);            
+            return TreeViewUtils.NewRepositoryItemTreeHeader(mRepositoryFolder, nameof(RepositoryFolder<BusinessFlow>.DisplayName), eImageType.Folder, GetSourceControlImage(mRepositoryFolder), false);            
             
             //if (IsGingerDefualtFolder)
             //{
@@ -188,15 +183,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mExplorerBusinessFlowsPage == null)
             {
-                mExplorerBusinessFlowsPage = new ExplorerBusinessFlowsPage(Path);
+                mExplorerBusinessFlowsPage = new ExplorerBusinessFlowsPage(mRepositoryFolder);
             }
             return mExplorerBusinessFlowsPage;
         }
 
         private void UploadBusinessFlows(object sender, System.Windows.RoutedEventArgs e)
         {
-            ObservableList<BusinessFlow> BFs = App.LocalRepository.GetSolutionBusinessFlows(specificFolderPath: Path);
-
+            ObservableList<BusinessFlow> BFs = mRepositoryFolder.GetFolderItems();
             UploadBusinessFlowsPage UBFP = new UploadBusinessFlowsPage(BFs);
             UBFP.ShowAsWindow();
         }
@@ -210,24 +204,25 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 BusinessFlow BF = SeleniumToGinger.ConvertSeleniumScript(dlg.FileName);
-                string BFFileName = LocalRepository.GetRepoItemFileName(BF, Path);
+                //string BFFileName = LocalRepository.GetRepoItemFileName(BF, Path);
 
-                BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem();
-                BFTI.BusinessFlow = BF;
+                //BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem();
+                //BFTI.BusinessFlow = BF;
 
-                mTreeView.Tree.AddChildItemAndSelect(this, BFTI);
+                //mTreeView.Tree.AddChildItemAndSelect(this, BFTI);
 
-                BF.SaveToFile(BFFileName);
+                //BF.SaveToFile(BFFileName);
+                mRepositoryFolder.AddRepositoryItem(BF);
             }
         }
 
         private void ALMTSImport(object sender, System.Windows.RoutedEventArgs e)
         {
-            ALMIntegration.Instance.ImportALMTests(Path);
+            ALMIntegration.Instance.ImportALMTests(mRepositoryFolder.FolderFullPath);
         }
         private void ALMTSImportById(object sender, System.Windows.RoutedEventArgs e)
         {
-            ALMIntegration.Instance.ImportALMTestsById(Path);
+            ALMIntegration.Instance.ImportALMTestsById(mRepositoryFolder.FolderFullPath);
         }
         private void ImportASAPScript(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -254,7 +249,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 try
                 {
                     //copy to Solution Business Flow folder 
-                    string importedBFpath = System.IO.Path.Combine(Path, System.IO.Path.GetFileName(dlg.FileName));
+                    string importedBFpath = System.IO.Path.Combine(mRepositoryFolder.FolderFullPath, System.IO.Path.GetFileName(dlg.FileName));
                     File.Copy(dlg.FileName, importedBFpath, false);
 
                     //load it to object
@@ -276,12 +271,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     }
 
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(importedBF);
-
-                    //add it to cache & tree
-                    App.LocalRepository.AddItemToCache(importedBF);
-                    BusinessFlowTreeItem importedBFTI = new BusinessFlowTreeItem();
-                    importedBFTI.BusinessFlow = importedBF;
-                    mTreeView.Tree.AddChildItemAndSelect(this, importedBFTI);
+                    mRepositoryFolder.AddRepositoryItem(importedBF);
                 }
                 catch(Exception ex)
                 {
@@ -293,10 +283,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override void AddTreeItem()
         {
+            //TODO: change to wizard
             string BizFlowName = string.Empty;
             if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName, System.IO.Path.GetInvalidFileNameChars()))
             {
-                BusinessFlow BizFlow = LocalRepository.CreateNewBizFlow(BizFlowName);
+                BusinessFlow BizFlow = App.CreateNewBizFlow(BizFlowName);
 
                 if (App.UserProfile.Solution.ApplicationPlatforms.Count != 1)
                 {
@@ -305,21 +296,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     EBFP.Title = "Configure " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Target Application(s)";
                     EBFP.ShowAsWindow(eWindowShowStyle.Dialog, false);
                 }
-
-                BizFlow.FileName = LocalRepository.GetRepoItemFileName(BizFlow, Path);
-
-                BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem();
-                BFTI.BusinessFlow = BizFlow;
-                ITreeViewItem addTreeViewItem = mTreeView.Tree.AddChildItemAndSelect(this, BFTI);
-
-                //Must do the action after the node was added to tree!
-                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BizFlow);
-
-                //add BF to cach
-                App.LocalRepository.AddItemToCache(BizFlow);
-
-                //refresh header- to reflect source control state
-                mTreeView.Tree.RefreshHeader(addTreeViewItem);
+                mRepositoryFolder.AddRepositoryItem(BizFlow);                
             }
         }
 
@@ -363,13 +340,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
             BusinessFlow BF = null;
             if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
             {
-                WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(Folder));                
+                WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(mRepositoryFolder.FolderFullPath));                
             }
             else
             {
-                string FeatureFolder = Folder;
-                if (!this.Path.EndsWith("BusinessFlows"))
-                    FeatureFolder = this.Path.Substring(this.Path.IndexOf("BusinessFlows\\") + 14);
+                // TODO: check test me
+                string FeatureFolder = mRepositoryFolder.FolderFullPath;
+                if (!mRepositoryFolder.FolderFullPath.EndsWith("BusinessFlows"))
+                    FeatureFolder = mRepositoryFolder.FolderFullPath.Substring(mRepositoryFolder.FolderFullPath.IndexOf("BusinessFlows\\") + 14);
                 ImportGherkinFeatureFilePage IFP = new ImportGherkinFeatureFilePage(FeatureFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
                 IFP.ShowAsWindow();
                 BF = IFP.BizFlow;
@@ -379,9 +357,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     //Refresh and select Faetures Folder
                     DocumentsFolderTreeItem DFTI = (DocumentsFolderTreeItem)mTreeView.Tree.GetChildItembyNameandSelect("Documents");
                     DFTI = (DocumentsFolderTreeItem)mTreeView.Tree.GetChildItembyNameandSelect("Features", DFTI);
-                    if (Folder != "Business Flows")
+                    if (mRepositoryFolder.FolderFullPath != "Business Flows")
                     {
-                        mTreeView.Tree.GetChildItembyNameandSelect(Folder, DFTI);
+                        mTreeView.Tree.GetChildItembyNameandSelect(mRepositoryFolder.FolderFullPath, DFTI);
                     }
                     mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
 
@@ -398,7 +376,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void ExportAllToALM(object sender, System.Windows.RoutedEventArgs e)
         {
-            ObservableList<BusinessFlow> bfToExport = App.LocalRepository.GetSolutionBusinessFlows(specificFolderPath: Path);
+            ObservableList<BusinessFlow> bfToExport = mRepositoryFolder.GetFolderItems();
             if (bfToExport.Count > 0)
             {
                 if (bfToExport.Count == 1)

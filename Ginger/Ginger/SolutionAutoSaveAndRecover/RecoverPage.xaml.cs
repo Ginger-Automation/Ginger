@@ -99,7 +99,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
                     RepositoryItemBase originalItem = null;
                     if (ri.RecoveredItemObject is BusinessFlow)
                     {
-                        ObservableList<BusinessFlow> businessFlows = App.LocalRepository.GetSolutionBusinessFlows();
+                        ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
                         originalItem = businessFlows.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
                     }
                     else if (ri.RecoveredItemObject is Run.RunSetConfig)

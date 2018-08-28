@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM.QC {
     public partial class QCTestLabExplorerPage : Page
@@ -109,7 +110,7 @@ namespace Ginger.ALM.QC {
         /// </summary>
         private void LoadDataBizFlows()
         {     
-            mBizFlows = App.LocalRepository.GetSolutionBusinessFlows(false); 
+            mBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();            
         }
 
         private void TestLabExplorerTreeView_ItemSelected(object sender, EventArgs e)

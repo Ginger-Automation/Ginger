@@ -330,7 +330,7 @@ namespace Ginger.BusinessFlowFolder
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (LocalRepository.CheckIfSureDoingChange(mBusinessFlow, "change") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mBusinessFlow, "change") == true)
             {
                 saveWasDone = true;                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);

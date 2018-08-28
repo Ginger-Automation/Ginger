@@ -37,6 +37,7 @@ using GingerCore.Platforms;
 using System.Xml;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Imports.UFT
 {
@@ -432,7 +433,7 @@ namespace Ginger.Imports.UFT
         private void SaveBusinessFlowButton_Button_Click(object sender, RoutedEventArgs e)
         {
             mBusinessFlow.Name = BusinessFlowNameTextBox.Text;
-            App.LocalRepository.SaveNewItem(mBusinessFlow);
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);            
 
             //TODO: open the new BF in Automate tab + make sure it is added to the tree
             Reporter.ToGingerHelper(eGingerHelperMsgKey.ScriptImported_RefreshSolution);
