@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RosLynLib;
 using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 using Amdocs.Ginger.Repository;
-using GingerPlugInsNET.ActionsLib;
 using System;
 
 namespace Amdocs.Ginger.GingerConsole
@@ -44,30 +43,31 @@ namespace Amdocs.Ginger.GingerConsole
 
         private void LoadPluginAndRunAction()
         {
-            PluginPackage p = new PluginPackage();
-            Console.WriteLine("Plugin Package folder?");
-            string s = Console.ReadLine();
-            p.Folder = s;
-            p.ScanPackage();
-            ObservableList<StandAloneAction> list = p.GetStandAloneActions();
-            int i = 0;
-            foreach (StandAloneAction a in list)
-            {
-                Console.WriteLine(i + ": " + a.ID);
-                i++;
-            }
-            string actnum = Console.ReadLine();
-            ActionHandler AH =  p.GetStandAloneActionHandler(list[int.Parse(actnum)].ID);
+            //PluginPackage p = new PluginPackage();
+            //Console.WriteLine("Plugin Package folder?");
+            //string s = Console.ReadLine();
+            //p.Folder = s;
+            //p.ScanPackage();
+            //ObservableList<StandAloneAction> list = p.GetStandAloneActions();
+            //int i = 0;
+            //foreach (StandAloneAction a in list)
+            //{
+            //    Console.WriteLine(i + ": " + a.ID);
+            //    i++;
+            //}
+            //string actnum = Console.ReadLine();
+            //ActionHandler AH =  p.GetStandAloneActionHandler(list[int.Parse(actnum)].ID);
             
-            // FIXME need lazy load of params
-            foreach(ActionParam v in AH.GingerAction.InputParams.Values)
-            {                
-                Console.WriteLine(v.Name + "?");
-                string val = Console.ReadLine();
-                v.Value = val;
-            }
+            //// FIXME need lazy load of params
+            //// FIXME params not loaded
+            //foreach(ActionParam v in AH.GingerAction.InputParams.Values)
+            //{                
+            //    Console.WriteLine(v.Name + "?");
+            //    string val = Console.ReadLine();
+            //    v.Value = val;
+            //}
 
-            ActionRunner.RunAction(AH.Instance, AH.GingerAction, AH);
+            //ActionRunner.RunAction(AH.Instance, AH.GingerAction, AH);
         }
 
         private void StartDriver()

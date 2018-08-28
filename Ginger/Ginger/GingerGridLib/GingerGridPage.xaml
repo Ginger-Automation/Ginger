@@ -18,6 +18,7 @@
         <StackPanel Orientation="Horizontal" Grid.Row="1">
             <Button x:Name="ListButton" Click="ListButton_Click">List</Button>
             <Button x:Name="UIViewButton" Click="UIViewButton_Click">UI View</Button>
+            <Button x:Name="ClearButton" Click="ClearButton_Click">Clear</Button>
             <UserControls:ucButton x:Name="PingButton" Click="PingButton_Click" ButtonImageType="Refresh" ButtonType="RoundTextAndImageButton" ButtonText="Ping" Width="100" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"/>
             <Label x:Name="StatusLabel">Status</Label>
         </StackPanel>

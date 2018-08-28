@@ -19,12 +19,11 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
-using Amdocs.Ginger.CoreNET.GingerConsoleLib;
 using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
+using Amdocs.Ginger.Plugin.Core;
 using GingerCoreNET.CommandProcessorLib;
+using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
-using GingerPlugInsNET.ActionsLib;
-using GingerPlugInsNET.DriversLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -58,30 +57,30 @@ namespace Amdocs.Ginger.Repository
 
             foreach (PluginPackage p in mPluginPackages)
             {
-                foreach (string s in p.GetDrivers())
-                {
-                    DriverInfo di = new DriverInfo();
-                    di.Name = s;
-                    di.PluginPackageFolder = p.Folder;
-                    drivers.Add(di);
-                }
+                //foreach (string s in p.GetDrivers())
+                //{
+                //    DriverInfo di = new DriverInfo();
+                //    di.Name = s;
+                //    di.PluginPackageFolder = p.Folder;
+                //    drivers.Add(di);
+                //}
             }
             return drivers;
         }
 
-        public List<GingerAction> GetDriverActions(DriverInfo DI)
-        {
-            List<GingerAction> actions = new List<GingerAction>();
-            PluginPackage p = (from x in mPluginPackages where x.Folder == DI.PluginPackageFolder select x).FirstOrDefault();
-            PluginDriverBase driver = p.GetDriver(DI.Name);
-            foreach (ActionHandler AH in driver.ActionHandlers)
-            {
-                GingerAction GA = new GingerAction(AH.ID);
-                UpdateActionParamTypes(GA, AH.MethodInfo);
-                actions.Add(GA);
-            }
-            return actions;
-        }
+        //public List<GingerAction> GetDriverActions(DriverInfo DI)
+        //{
+        //    List<GingerAction> actions = new List<GingerAction>();
+        //    PluginPackage p = (from x in mPluginPackages where x.Folder == DI.PluginPackageFolder select x).FirstOrDefault();
+        //    PluginDriverBase driver = p.GetDriver(DI.Name);
+        //    foreach (ActionHandler AH in driver.ActionHandlers)
+        //    {
+        //        GingerAction GA = new GingerAction(AH.ID);
+        //        UpdateActionParamTypes(GA, AH.MethodInfo);
+        //        actions.Add(GA);
+        //    }
+        //    return actions;
+        //}
 
         ObservableList<StandAloneAction> list;
         public ObservableList<StandAloneAction> GetStandAloneActions()
@@ -100,17 +99,17 @@ namespace Amdocs.Ginger.Repository
             return list;
         }
 
-        private void UpdateActionParamTypes(GingerAction gA, MethodInfo methodInfo)
-        {
-            foreach (ParameterInfo PI in methodInfo.GetParameters())
-            {
-                if (PI.ParameterType != typeof(GingerAction))
-                {
-                    ActionParam AP = gA.InputParams.GetOrCreateParam(PI.Name);
-                    AP.ParamType = PI.ParameterType;
-                }
-            }
-        }
+        //private void UpdateActionParamTypes(GingerAction gA, MethodInfo methodInfo)
+        //{
+        //    foreach (ParameterInfo PI in methodInfo.GetParameters())
+        //    {
+        //        if (PI.ParameterType != typeof(GingerAction))
+        //        {
+        //            ActionParam AP = gA.InputParams.GetOrCreateParam(PI.Name);
+        //            AP.ParamType = PI.ParameterType;
+        //        }
+        //    }
+        //}
 
         public void AddPluginPackage(string folder)
         {
@@ -159,19 +158,19 @@ namespace Amdocs.Ginger.Repository
             return null;
         }
 
-        internal ActionHandler GetStandAloneActionHandler(string pluginID, string ID)
-        {
-            foreach (PluginPackage PP in mPluginPackages)
-            {
-                PP.ScanPackage();
-                ActionHandler AH = PP.GetStandAloneActionHandler(ID);
-                if (AH != null)
-                {
-                    return AH;
-                }
-            }
-            throw new Exception("Action handler not found for Action ID: " + ID);
-        }
+        //internal ActionHandler GetStandAloneActionHandler(string pluginID, string ID)
+        //{
+        //    foreach (PluginPackage PP in mPluginPackages)
+        //    {
+        //        PP.ScanPackage();
+        //        ActionHandler AH = PP.GetStandAloneActionHandler(ID);
+        //        if (AH != null)
+        //        {
+        //            return AH;
+        //        }
+        //    }
+        //    throw new Exception("Action handler not found for Action ID: " + ID);
+        //}
 
         static List<PluginPackage> mInstalledPluginPackages = null;
 
@@ -211,33 +210,39 @@ namespace Amdocs.Ginger.Repository
             return mInstalledPluginPackages;
         }
 
-        public void Execute(GingerAction GA)
+        public void Execute(string PluginId, string ServiceId, NewPayLoad payLoad)
         {            
             GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
 
-            string PID = GA.InputParams["PluginID"].GetValueAsString();
-            PluginPackage p = (from x in mPluginPackages where x.PluginID == PID select x).SingleOrDefault();
+            // string PID = GA.InputParams["PluginID"].GetValueAsString();
+            PluginPackage p = (from x in mPluginPackages where x.PluginID == PluginId select x).SingleOrDefault();
             if (p == null)
             {
-                GA.AddError("Execute", "Plugin id not found: " + PID);
-                return;
+                throw new Exception("Plugin id not found: " + PluginId);
+                // GA.AddError("Execute", "Plugin id not found: " + PID);
+                // return;
             }
             
             //TODO: use nameof after ActPlugin move to common
-            string serviceID = GA.InputParams["PluginActionID"].GetValueAsString();
+            // string serviceID = GA.InputParams["PluginActionID"].GetValueAsString();
 
+            
             GingerNodeInfo GNI = (from x in gingerGrid.NodeList where x.Name == p.PluginID select x).FirstOrDefault();
             //run script only if service is not up            
             if (GNI == null)
             {
                 string script = CommandProcessor.CreateLoadPluginScript(p.Folder);
 
-                // hard coded!!!!!!!!!!
-                script += CommandProcessor.CreateStartServiceScript("ExcelService", p.PluginID, SocketHelper.GetLocalHostIP(), gingerGrid.Port);
+                // hard coded!!!!!!!!!!  - use ServiceId
+                script += CommandProcessor.CreateStartServiceScript("PACTService", p.PluginID, SocketHelper.GetLocalHostIP(), gingerGrid.Port);
+                // script += CommandProcessor.CreateStartServiceScript("ExcelService", p.PluginID, SocketHelper.GetLocalHostIP(), gingerGrid.Port);
+                
 
                 Task t = new Task(() =>
                 {
-                    GingerConsoleHelper.Execute(script);
+                    // GingerConsoleHelper.Execute(script);  // keep it for regular service dll load
+                    string StarterDLL = Path.Combine(p.Folder, "GingerPACTPluginConsole.dll");
+                    StartService(StarterDLL);
                 });
                 t.Start();
             }                
@@ -246,18 +251,36 @@ namespace Amdocs.Ginger.Repository
             while (GNI == null && counter < 30)
             {
                 Thread.Sleep(1000);
-                GNI = (from x in gingerGrid.NodeList where x.Name == p.PluginID select x).FirstOrDefault();                
+                GNI = (from x in gingerGrid.NodeList where x.Name == "PACT" select x).FirstOrDefault();                
                 counter++;
             }
-
+            if (GNI == null)
+            {
+               // GA.AddError("Execute", "Cannot execute action beacuse Service was not found or was not abale to start: " + p.PluginID);
+            }
 
             GingerNodeProxy GNA = new GingerNodeProxy(GNI);
             GNA.Reserve();
             GNA.GingerGrid = gingerGrid;
 
-            GNA.RunAction(GA);
+            //GNA.RunAction(GA);
         }
 
+
+        public void StartService(string DLLFile)
+        {            
+            string cmd = "dotnet " + DLLFile ;            
+            System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
+
+            // The following commands are needed to redirect the standard output.
+            // This means that it will be redirected to the Process.StandardOutput StreamReader.
+            procStartInfo.UseShellExecute = true; // false
+            // Do not create the black window.
+            // Now we create a process, assign its ProcessStartInfo and start it
+            System.Diagnostics.Process proc = new System.Diagnostics.Process();
+            proc.StartInfo = procStartInfo;
+            proc.Start();            
+        }
 
         public string CreatePluginPackageInfo(string id, string version)
         {
