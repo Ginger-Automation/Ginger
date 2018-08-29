@@ -133,14 +133,14 @@ namespace GingerCore
         public static object LoadFromFile(Type type, string FileName)
         {
             GingerCore.Repository.RepositorySerializer RS = new RepositorySerializer();
-            RepositoryItem ri = (RepositoryItem)RS.DeserializeFromFile(type, FileName);
+            RepositoryItemBase ri = (RepositoryItemBase)RS.DeserializeFromFile(type, FileName);
             ri.FileName = FileName;
             return ri;
         }
         public static object LoadFromFile(string FileName)
         {
             GingerCore.Repository.RepositorySerializer RS = new RepositorySerializer();
-            RepositoryItem ri = (RepositoryItem)RS.DeserializeFromFile(FileName);
+            RepositoryItemBase ri = (RepositoryItemBase)RS.DeserializeFromFile(FileName);
             ri.FileName = FileName;
             return ri;
         }

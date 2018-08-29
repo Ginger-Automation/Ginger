@@ -21,20 +21,16 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
-using Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.FlowControlLib;
 using GingerCore.Repository;
 using GingerCore.Variables;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 
 namespace UnitTests.NonUITests
@@ -929,9 +925,8 @@ namespace UnitTests.NonUITests
             bf.Activities.Add(activity);
             bf.Activities.Add(activity2);
 
-            activity2.ActivityName = "Test_New";            
-            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf);
-
+            activity2.ActivityName = "Test_New";                        
+            bf.SaveToFile(TestResources.GetTempFile("BF.xml"));
 
             //Act
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateInstance();
