@@ -191,15 +191,15 @@ namespace GingerCore.ALM.QCRestAPI
                                             }
                                             System.IO.Directory.Delete(activGroup.TempReportFolder, true);
                                             //Creating the Zip file - finish
-                                            //Attaching Zip file - start
-                                            //AttachmentFactory attachmentFactory = (AttachmentFactory)run.Attachments;
-                                            //TDAPIOLELib.Attachment attachment = (TDAPIOLELib.Attachment)attachmentFactory.AddItem(System.DBNull.Value);
-                                            //attachment.Description = "TC Ginger Execution HTML Report";
-                                            //attachment.Type = 1;
-                                            //attachment.FileName = zipFileName;
-                                            //attachment.Post();
+                                            
+                                            ALMResponseData attachmentResponse = QCRestAPIConnect.CreateAttachment(ResourceType.TEST_RUN, currentRun.Id, zipFileName);
 
-                                            //Attaching Zip file - finish
+                                            if (!attachmentResponse.IsSucceed)
+                                            {
+                                                result = "Failed to create attachment";
+                                                return false;
+                                            }
+
                                             System.IO.File.Delete(zipFileName);
                                         }
                                     }
