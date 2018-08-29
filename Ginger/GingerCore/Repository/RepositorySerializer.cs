@@ -130,6 +130,8 @@ namespace GingerCore.Repository
 
         private void WriteRepoItemProperties(XmlTextWriter xml, RepositoryItemBase ri)
         {
+            //TODO: handle all the same like fields and make it shared functions
+
             // Get the properties - need to be ordered so compare/isDirty can work faster
             var properties = ri.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property).OrderBy(x => x.Name);
             foreach (MemberInfo mi in properties)

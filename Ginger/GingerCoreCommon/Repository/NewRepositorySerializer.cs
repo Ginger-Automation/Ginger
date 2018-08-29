@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,9 +24,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -254,7 +252,7 @@ namespace Amdocs.Ginger.Repository
             var Fields = ri.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field).OrderBy(x => x.Name);
 
             foreach (MemberInfo fi in Fields)
-            {
+            {               
                 object v = null;
                 IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(fi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
                 if (token == null) continue;

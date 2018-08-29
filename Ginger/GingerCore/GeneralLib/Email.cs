@@ -70,10 +70,10 @@ namespace GingerCore.GeneralLib
         public string Subject { get; set; }
         
         [IsSerializedForLocalRepository]
-        public string Body { get; set; }       
+        public string Body { get; set; }
 
         [IsSerializedForLocalRepository]
-        public List<string> Attachments { get; set; } // File names
+        public List<string> Attachments; // { get; set; } // File names
 
         public List<KeyValuePair<string, string>> EmbededAttachment = new List<KeyValuePair<string, string>>();
 
