@@ -34,7 +34,7 @@ namespace Ginger.Run
             if (actionLogConfig.LogInputVariables)
             {
                 strBuilder.AppendLine("[Input Values]");
-                formatTextTable.AddColumnHeaders("Parameter", "Value");
+                formatTextTable.AddRowHeader("Parameter", "Value");
                 foreach (ActInputValue actInputValue in act.InputValues)
                 {
                     formatTextTable.AddRowValues(actInputValue.ItemName, actInputValue.Value);
@@ -50,7 +50,7 @@ namespace Ginger.Run
                 formatTextTable.AddRowHeader("Parameter", "Expected", "Actual");
                 foreach (ActReturnValue actReturnValue in act.ReturnValues)
                 {
-                    formatTextTable.AddRow(actReturnValue.ItemName, actReturnValue.Expected, actReturnValue.Actual);
+                    formatTextTable.AddRowValues(actReturnValue.ItemName, actReturnValue.Expected, actReturnValue.Actual);
                 }
                 strBuilder.AppendLine(formatTextTable.CreateTable());
                 formatTextTable.clear();
