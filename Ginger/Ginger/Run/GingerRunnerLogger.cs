@@ -1,10 +1,9 @@
 ﻿using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
-using Ginger.GeneralLib;
+using GingerCoreNET.GeneralLib;
 using GingerCore.Actions;
-using System;
-using System.Collections.Generic;
 using System.Text;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 
 namespace Ginger.Run
 {
@@ -22,53 +21,65 @@ namespace Ginger.Run
         public void LogAction(Act act)
         {
             if (!act.EnableActionLogConfig) return;
-            ActionLogConfig actionLogConfig = act.ActionLogConfig;
-            // create a new log file if not exists and append the contents
 
-            logger.LogTimeStamp();
-            logger.Log("[Action] " + act.ActionDescription);
-            logger.Log("[Text] " + actionLogConfig.LogText);
+            StringBuilder strBuilder = new StringBuilder();
+            ActionLogConfig actionLogConfig = act.ActionLogConfig;
+            FormatTextTable formatTextTable = new FormatTextTable();
+
+            // create a new log file if not exists and append the contents
+            strBuilder.AppendLine("[Action] " + act.ActionDescription);
+            strBuilder.AppendLine("[Text] " + actionLogConfig.LogText);
 
             // log all the input values
             if (actionLogConfig.LogInputVariables)
             {
-                logger.Log("[Input Values]");                
+                strBuilder.AppendLine("[Input Values]");
+                formatTextTable.AddColumnHeaders("Parameter", "Value");
                 foreach (ActInputValue actInputValue in act.InputValues)
                 {
-                    logger.Log(actInputValue.ItemName + " --> " + actInputValue.Value);
+                    formatTextTable.AddRowValues(actInputValue.ItemName, actInputValue.Value);
                 }
-            }
+                strBuilder.AppendLine(formatTextTable.CreateTable());
+                formatTextTable.clear();
+            }            
 
             // log all the output variables
             if (actionLogConfig.LogOutputVariables)
             {
-                logger.Log("[Return Values]");                
+                strBuilder.AppendLine("[Return Values]");
+                formatTextTable.AddRowHeader("Parameter", "Expected", "Actual");
                 foreach (ActReturnValue actReturnValue in act.ReturnValues)
                 {
-                    logger.Log(actReturnValue.ItemName + " --> " + actReturnValue.Expected + " --> " + actReturnValue.Actual);
+                    formatTextTable.AddRow(actReturnValue.ItemName, actReturnValue.Expected, actReturnValue.Actual);
                 }
+                strBuilder.AppendLine(formatTextTable.CreateTable());
+                formatTextTable.clear();
             }
 
             // action status
             if (actionLogConfig.LogRunStatus)
             {
-                logger.Log("[Run Status] " + act.Status);
+                strBuilder.AppendLine("[Run Status] " + act.Status);
             }
 
             // action elapsed time
             if (actionLogConfig.LogElapsedTime)
             {
-                logger.Log("[Elapsed Time (In Secs)] " + act.ElapsedSecs);
+                strBuilder.AppendLine("[Elapsed Time (In Secs)] " + act.ElapsedSecs);
             }
 
             // action error
             if (actionLogConfig.LogError)
             {
-                logger.Log("[Error] " + act.Error);
+                strBuilder.AppendLine("[Error] " + act.Error);
             }
 
             // flush value expression
             // flush flow control
+
+            // flush to logger
+            logger.LogTimeStamp();
+            logger.Log(strBuilder.ToString());
 
         }
 

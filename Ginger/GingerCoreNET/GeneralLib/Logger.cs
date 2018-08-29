@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Ginger.GeneralLib
+namespace GingerCoreNET.GeneralLib
 {
     public class Logger
     {
