@@ -34,6 +34,9 @@ using GingerCore.Environments;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using System.Diagnostics;
+using DocumentFormat.OpenXml;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -46,6 +49,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             [EnumValueDescription("Global")]
             Global
         }
+
+        const string CURRENT_VAL_PARAMETER = "{Current Value}";
+        const string PARAMETER_NAME = "Parameter Name";
+        const string DESCRIPTION = "Description";
+
         public bool ShowMessage { get; set; }//For Non UI Unit Test
         public eParameterType ParameterType { get; set; }
         public ImportOptionalValuesForParameters() { ShowMessage = true; }
@@ -358,6 +366,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     RelevantParameterList.Add(pOriginal);
                 }
+                else
+                {
+                    RelevantParameterList.Add(prm);
+                }
             }
             foreach (var tuple in SelectedParametersGridList.Zip(RelevantParameterList, (x, y) => (x, y)))
             {
@@ -366,22 +378,25 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     if (ParameterValuesByNameDic.ContainsKey(tuple.y.ItemName))
                     {
-                        string[] paramExistingvalues = tuple.y.OptionalValuesString.Split(','); ;
-                        OptionalValue defaultValue = tuple.y.OptionalValuesList.FirstOrDefault(x => x.IsDefault);
+                        tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
                         foreach (string val in ParameterValuesByNameDic[tuple.y.ItemName])
                         {
-                            bool ValueAlreadyExists = paramExistingvalues.Any(x => x == val);
-                            if ((paramExistingvalues != null && !ValueAlreadyExists) && (defaultValue == null || defaultValue.Value != val))
-                            {
-                                OptionalValue OptionalValue = new OptionalValue() { Value = val };
-                                if (tuple.y.OptionalValuesList.Count == 0)
-                                    OptionalValue.IsDefault = true;
-                                tuple.y.OptionalValuesList.Add(OptionalValue);
-                                IsUpdate = true;
-                            }
+                            OptionalValue OptionalValue = new OptionalValue();
+                            OptionalValue.IsDefault = val.Contains("*") ? true : false;
+                            OptionalValue.Value = val.Replace("*", "");
+                            tuple.y.OptionalValuesList.Add(OptionalValue);
+                            IsUpdate = true;
                         }
                     }
                 }
+
+                AppModelParameter cur = AAM.AppModelParameters.FirstOrDefault(p => p.ItemName == tuple.y.ItemName);
+                if (cur == null)
+                {
+                    AAM.AppModelParameters.Add(tuple.y);
+                    IsUpdate = true;
+                }
+
                 if (IsUpdate)
                     UpdatedParameters++;
             }
@@ -401,6 +416,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     RelevantParameterList.Add(pOriginal);
                 }
+                else
+                {
+                    RelevantParameterList.Add(prm);
+                }
             }
             foreach (var tuple in SelectedParametersGridList.Zip(RelevantParameterList, (x, y) => (x, y)))
             {
@@ -409,29 +428,44 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     if (ParameterValuesByNameDic.ContainsKey(tuple.y.ItemName))
                     {
-                        string[] paramExistingvalues = tuple.y.OptionalValuesString.Split(','); ;
-                        OptionalValue defaultValue = tuple.y.OptionalValuesList.FirstOrDefault(x => x.IsDefault);
+                        bool isDefault = false;
+                        string str = ParameterValuesByNameDic.FirstOrDefault(x => x.Key == CURRENT_VAL_PARAMETER).Key;
+                        tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
+                        if (string.IsNullOrEmpty(str))
+                        {
+                            tuple.y.OptionalValuesList.Add(new OptionalValue() { Value = CURRENT_VAL_PARAMETER, IsDefault = true });
+                            isDefault = true;
+                        }
+                        
                         foreach (string val in ParameterValuesByNameDic[tuple.y.ItemName])
                         {
-                            bool ValueAlreadyExists = paramExistingvalues.Any(x => x == val);
-                            if ((paramExistingvalues != null && !ValueAlreadyExists) && (defaultValue == null || defaultValue.Value != val))
+                            OptionalValue OptionalValue = new OptionalValue()
                             {
-                                OptionalValue OptionalValue = new OptionalValue() { Value = val };
-                                if (tuple.y.OptionalValuesList.Count == 0)
-                                    OptionalValue.IsDefault = true;
-                                tuple.y.OptionalValuesList.Add(OptionalValue);
-                                IsUpdate = true;
-                            }
+                                Value = isDefault ? val.Replace("*", "") : val                                
+                            };
+                            OptionalValue.IsDefault = OptionalValue.Value.Contains("*") ? true : false;
+
+                            tuple.y.OptionalValuesList.Add(OptionalValue);
+                            IsUpdate = true;
                         }
                     }
                 }
+
+                GlobalAppModelParameter cur = mGlobalParamterList.FirstOrDefault(p => p.ItemName == tuple.y.ItemName);
+                if (cur == null)
+                {
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tuple.y);
+                    IsUpdate = true;
+                }
+
                 if (IsUpdate)
                 {
                     tuple.y.SaveBackup();
                     UpdatedParameters++;                    
-                }
-                    
+                }                    
             }
+
+
             if (ShowMessage)
                 Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParameters);
         }
@@ -445,79 +479,104 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         private DataTable dtCurrentExcelTable;
         public DataTable GetExceSheetlData(bool WithWhere = false)
         {
-            //TODO: check what is required on the machine and maybe support for other version
-            string ConnString = GetConnectionString();
-            string sSheetName = "";
-
-            using (OleDbConnection Conn = new OleDbConnection(ConnString))
+            DataTable dt = new DataTable();
+            if (!string.IsNullOrEmpty(ExcelFileName))
             {
-                try
+                using (SpreadsheetDocument spreadSheetDocument = SpreadsheetDocument.Open(ExcelFileName, false))
                 {
-                    Conn.Open();
-
-                    OleDbCommand Cmd = new OleDbCommand();
-                    Cmd.Connection = Conn;
-                    if (ExcelSheetName == null)
-                        return new DataTable();
-                    if (ExcelSheetName.Trim().IndexOf("$") == ExcelSheetName.Trim().Length - 1)
-                        sSheetName = ExcelSheetName;
-                    else
-                        sSheetName = ExcelSheetName + "$";
-                    string sql = "Select * from [" + sSheetName + "]";
-                    if (WithWhere)
+                    try
                     {
-                        sql = sql + " WHERE " + ExcelWhereCondition;
+                        WorkbookPart workbookPart = spreadSheetDocument.WorkbookPart;
+                        Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => ExcelSheetName.Equals(s.Name));
+                        if (sheet != null)
+                        {
+                            string relId = sheet.Id;
+                            WorksheetPart worksheetPart = (WorksheetPart)spreadSheetDocument.WorkbookPart.GetPartById(relId);
+                            if (worksheetPart != null)
+                            {
+                                SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+                                if (sheetData != null)
+                                {
+                                    IEnumerable<Row> rows = sheetData.Descendants<Row>();
+                                    if (rows != null && rows.Count() > 0)
+                                    {
+                                        foreach (Cell cell in rows.ElementAt(0))
+                                        {
+                                            dt.Columns.Add(GetCellValue(spreadSheetDocument, cell));
+                                        }
+
+                                        foreach (Row row in rows)
+                                        {
+                                            DataRow tempRow = dt.NewRow();
+                                            for (int i = 0; i < row.Descendants<Cell>().Count(); i++)
+                                            {
+                                                tempRow[i] = GetCellValue(spreadSheetDocument, row.Descendants<Cell>().ElementAt(i));
+                                            }
+                                            dt.Rows.Add(tempRow);
+                                        }
+                                        dt.Rows.RemoveAt(0);
+
+                                        if (WithWhere)
+                                        {
+                                            dt = dt.Select(ExcelWhereCondition).CopyToDataTable();
+                                        }
+                                        dtCurrentExcelTable = dt;
+                                    }
+                                }
+                            }
+                        }
                     }
-                    Cmd.CommandText = sql;
-                    DataTable dt = new DataTable();
-
-                    OleDbDataAdapter da = new OleDbDataAdapter();
-                    da.SelectCommand = Cmd;
-
-                    da.Fill(dt);
-                    dtCurrentExcelTable = dt;
-                    return dt;
-                }
-                catch (Exception ex)
-                {
-                    switch (ex.Message)
+                    catch (Exception ex)
                     {
-                        case "Syntax error in FROM clause.":
-                            break;
-                        case "No value given for one or more required parameters.":
-                            if (ShowMessage)
-                                Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
-                            break;
-                        default:
-                            if (ShowMessage)
-                                System.Windows.MessageBox.Show(ex.Message);
-                            break;
+                        switch (ex.Message)
+                        {
+                            case "Syntax error in FROM clause.":
+                                break;
+                            case "No value given for one or more required parameters.":
+                                if (ShowMessage)
+                                    Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                                break;
+                            default:
+                                if (ShowMessage)
+                                    System.Windows.MessageBox.Show(ex.Message);
+                                break;
+                        }
+                        return null;
                     }
-                    return null;
-                }
+                } 
+            }
+            return dt;
+        }
+
+        private string GetCellValue(SpreadsheetDocument document, Cell cell)
+        {
+            SharedStringTablePart stringTablePart = document.WorkbookPart.SharedStringTablePart;
+            string value = cell.CellValue.InnerXml;
+
+            if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+            {
+                return stringTablePart.SharedStringTable.ChildElements[Int32.Parse(value)].InnerText;
+            }
+            else
+            {
+                return value;
             }
         }
+
         public List<string> GetSheets()
         {
-            string ConnString = GetConnectionString();
-
-            using (OleDbConnection Conn = new OleDbConnection(ConnString))
+            List<string> lst = new List<string>();
+            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(ExcelFileName, false))
             {
-                try
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+                IEnumerable<WorksheetPart> worksheetPart = workbookPart.WorksheetParts;
+                foreach (var item in workbookPart.Workbook.Descendants<Sheet>())
                 {
-                    Conn.Open();
-                    DataTable c = Conn.GetSchema("Tables");
-                    // remove the last $ sign = not user friendly
-                    List<string> returnList = c.AsEnumerable().Select(r => r.Field<string>("TABLE_NAME").Substring(0, r.Field<string>("TABLE_NAME").Length - 1))
-                               .ToList();
-                    return returnList;
-
-                }
-                catch
-                {
-                    return new List<string>();
+                    string sheetName = item.Name;
+                    lst.Add(sheetName);
                 }
             }
+            return lst;
         }
         private string GetConnectionString()
         {
@@ -527,7 +586,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         public Dictionary<string, List<string>> UpdateParametersOptionalValuesFromCurrentExcelTable()
         {
             if (dtCurrentExcelTable == null)//added as quick fix
-                GetExceSheetlData(false);
+            {
+                dtCurrentExcelTable = GetExceSheetlData(false);
+            }
             return GetParametersAndValuesDictionary(dtCurrentExcelTable);
         }
         private Dictionary<string, List<string>> GetParametersAndValuesDictionary(DataTable dt)
@@ -562,6 +623,82 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             return ParameterValuesByNameDic;
         }
+
+        /// <summary>
+        /// This method is used to export the parameter values to export
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public string ExportParametersToExcelFile(List<AppParameters> parameters, string fileName, string fPath = "")
+        {
+            string filePath = string.Empty;
+            try
+            {                
+                int colCount = 2;                
+                foreach (var paramVal in parameters)
+                {
+                    if (paramVal.OptionalValuesString.Contains(CURRENT_VAL_PARAMETER))
+                    {
+                        colCount = (paramVal.OptionalValuesList.Count - 1) > colCount ? (paramVal.OptionalValuesList.Count - 1) : colCount;
+                    }
+                    else
+                    {
+                        colCount = (paramVal.OptionalValuesList.Count) > colCount ? (paramVal.OptionalValuesList.Count) : colCount;
+                    }
+                }
+
+                DataTable dtTemplate = new DataTable("ApiParameters");
+                dtTemplate.Columns.Add(PARAMETER_NAME, typeof(string));
+                dtTemplate.Columns.Add(DESCRIPTION, typeof(string));
+                for (int index = 1; index <= colCount; index++)
+                {
+                    dtTemplate.Columns.Add(string.Format("Value {0}", index), typeof(string));
+                }
+
+                foreach (AppParameters prm in parameters)
+                {
+                    DataRow dr = dtTemplate.NewRow();
+                    dr[0] = Convert.ToString(prm.ItemName);
+                    dr[1] = Convert.ToString(prm.Description);
+
+                    if (!string.IsNullOrEmpty(prm.OptionalValuesString))
+                    {
+                        string opVals = string.Empty;
+                        opVals = prm.OptionalValuesString.Replace("{Current Value}*,", "").Replace("{Current Value}*", "").Replace("{Current Value},", "").Replace("{Current Value}", "");
+                        string[] vals = opVals.Split(',');
+                        if (vals != null && vals.Count() > 0)
+                        {
+                            for (int index = 1; index <= colCount; index++)
+                            {
+                                if (vals.Count() >= index)
+                                {
+                                    dr[index + 1] = Convert.ToString(vals[index - 1]);
+                                }
+                            } 
+                        } 
+                    }
+                    dtTemplate.Rows.Add(dr);
+                }
+
+                filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName + ".xlsx");
+                if(!string.IsNullOrEmpty(fPath))
+                {
+                    filePath = fPath;
+                }
+                bool isExportSuccess = ExportToExcel(dtTemplate, filePath, dtTemplate.TableName);
+                if (isExportSuccess && ShowMessage)
+                {
+                    Reporter.ToUser(eUserMsgKeys.ExportExcelFileDetails);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+            return filePath;
+        }
+        
         public bool ExportTemplateExcelFileForImportOptionalValues(List<AppModelParameter> Parameters,string PathToExport)
         {
             DataTable dtTemplate = new DataTable(ParameterType.ToString());
@@ -577,6 +714,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 Reporter.ToUser(eUserMsgKeys.ExportExcelFileDetails);
             return IsExportSuccess;
         }
+
         private bool ExportToExcel(DataTable table, string sFilePath, string sSheetName = "")
         {
             try
@@ -595,45 +733,58 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     workbook.WorkbookPart.Workbook = new Workbook();
                     workbook.WorkbookPart.Workbook.Sheets = new Sheets();
                 }
-       
+                                
+                if (workbook.WorkbookPart.WorkbookStylesPart == null)
+                {
+                    WorkbookStylesPart stylePart = workbook.WorkbookPart.AddNewPart<WorkbookStylesPart>();
+                    stylePart.Stylesheet = GenerateStylesheet();
+                    stylePart.Stylesheet.Save(); 
+                }
+
                 uint sheetId = 1;
                 var sheetPart = workbook.WorkbookPart.AddNewPart<WorksheetPart>();
                 var sheetData = new SheetData();
                 sheetPart.Worksheet = new Worksheet(sheetData);
                 Sheets sheets = workbook.WorkbookPart.Workbook.GetFirstChild<Sheets>();
+                
                 string relationshipId = workbook.WorkbookPart.GetIdOfPart(sheetPart);
 
                 Sheet oSheet = sheets.Elements<Sheet>().Where(s => s.Name == sSheetName).FirstOrDefault();
                 if (oSheet != null)
                     oSheet.Remove();
-
+                
                 if (sheets.Elements<Sheet>().Count() > 0)
                 {
-                    sheetId =
-                        sheets.Elements<Sheet>().Select(s => s.SheetId.Value).Max() + 1;
+                    sheetId = sheets.Elements<Sheet>().Select(s => s.SheetId.Value).Max() + 1;
                 }
-                Sheet sheet = new Sheet() { Id = relationshipId, SheetId = sheetId, Name = sSheetName };
+
+                Sheet sheet = new Sheet() { Id = relationshipId, SheetId = sheetId, Name = sSheetName };                
                 sheets.Append(sheet);
+                
                 Row headerRow = new Row();
                 List<string> columns = new List<string>();
+                int indx = 0;
                 foreach (DataColumn column in table.Columns)
                 {
                     columns.Add(column.ColumnName);
-                    Cell cell = new Cell();
-                    cell.DataType = CellValues.String;
-                    cell.CellValue = new CellValue(column.ColumnName);
-                    headerRow.AppendChild(cell);
+                    if (indx < 2)
+                    {
+                        headerRow.AppendChild(GetCell(column.ColumnName, CellValues.String, 2)); 
+                    }
+                    else
+                    {
+                        headerRow.AppendChild(GetCell(column.ColumnName, CellValues.String, 1));
+                    }
+                    indx++;
                 }
                 sheetData.AppendChild(headerRow);
+                
                 foreach (DataRow dsrow in table.Rows)
                 {
                     Row newRow = new Row();          
                     foreach (String col in columns)
                     {
-                        Cell cell = new Cell() ; 
-                        cell.DataType = CellValues.String;
-                        cell.CellValue = new CellValue(dsrow[col].ToString());
-                        newRow.AppendChild(cell);
+                        newRow.AppendChild(GetCell(Convert.ToString(dsrow[col]), CellValues.String, 1));
                     }
                     sheetData.AppendChild(newRow);
                 }
@@ -647,6 +798,64 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             return false;
         }
+
+        /// <summary>
+        /// This method is used to Get the new cell
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="dataType"></param>
+        /// <param name="styleIndex"></param>
+        /// <returns></returns>
+        private Cell GetCell(string value, CellValues dataType, uint styleIndex = 0)
+        {
+            return new Cell()
+            {
+                CellValue = new CellValue(value),
+                DataType = new EnumValue<CellValues>(dataType),
+                StyleIndex = styleIndex
+            };
+        }
+
+        /// <summary>
+        /// This method is used to add the stylesheets to the workbook
+        /// </summary>
+        /// <returns></returns>
+        private Stylesheet GenerateStylesheet()
+        {
+            Stylesheet styleSheet = null;
+
+            Fonts fonts = new Fonts(
+                new Font( // Index 0 - default
+                    new FontSize() { Val = 11 }
+
+                ),
+                new Font( // Index 1 - header
+                    new FontSize() { Val = 11 },
+                    new Bold()
+
+                ));
+
+            Fills fills = new Fills(
+                    new Fill(new PatternFill() { PatternType = PatternValues.None }), // Index 0 - default
+                    new Fill(new PatternFill() { PatternType = PatternValues.None })
+                );
+
+            Borders borders = new Borders(
+                    new Border(), // index 0 default
+                    new Border()
+                );
+
+            CellFormats cellFormats = new CellFormats(
+                    new CellFormat(), // default
+                    new CellFormat { FontId = 0 }, // body
+                    new CellFormat { FontId = 1 } // header
+                );
+
+            styleSheet = new Stylesheet(fonts, fills, borders, cellFormats);
+
+            return styleSheet;
+        }
+
         #endregion
 
         #region DB

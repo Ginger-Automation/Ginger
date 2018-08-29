@@ -85,6 +85,28 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 AppModelParameter temp = new AppModelParameter(AMP.PlaceHolder, AMP.Description, AMP.TagName, AMP.Path, new ObservableList<OptionalValue>());
                 AddModelOptionalValuesWizard.ParamsList.Add(temp);
             }
+
+            foreach (var parm in AddModelOptionalValuesWizard.ParameterValuesByNameDic)
+            {
+                var item = AddModelOptionalValuesWizard.mAAMB.AppModelParameters.SingleOrDefault(x => x.Key.ItemName == parm.Key);
+                if (item == null)
+                {
+                    AppModelParameter temp = new AppModelParameter();
+                    temp.Guid = Guid.NewGuid();
+                    temp.ExecutionValue = string.Empty;
+                    temp.PlaceHolder = parm.Key;
+                    temp.Description = string.Empty;
+                    temp.OptionalValuesList = new ObservableList<OptionalValue>();
+                    if (parm.Value != null && parm.Value.Count > 0)
+                    {
+                        foreach (var val in parm.Value)
+                        {
+                            temp.OptionalValuesList.Add(new OptionalValue() { Value = val });
+                        }
+                    }
+                    AddModelOptionalValuesWizard.ParamsList.Add(temp);
+                }
+            }
         }
         private void InitGlobalParametersListForGrid()
         {
@@ -103,6 +125,28 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 temp.Description = GAMP.Description;
                 temp.OptionalValuesList = new ObservableList<OptionalValue>();
                 AddModelOptionalValuesWizard.GlobalParamsList.Add(temp);
+            }
+
+            foreach (var parm in AddModelOptionalValuesWizard.ParameterValuesByNameDic)
+            {
+                var item = AddModelOptionalValuesWizard.mGlobalParamterList.SingleOrDefault(x => x.Key.ItemName == parm.Key);
+                if (item == null)
+                {
+                    GlobalAppModelParameter temp = new GlobalAppModelParameter();
+                    temp.Guid = Guid.NewGuid();
+                    temp.CurrentValue = string.Empty;
+                    temp.PlaceHolder = parm.Key;
+                    temp.Description = string.Empty;
+                    temp.OptionalValuesList = new ObservableList<OptionalValue>() { new OptionalValue() { Value = "{Current Value}", IsDefault = true } };
+                    if (parm.Value != null && parm.Value.Count > 0)
+                    {
+                        foreach (var val in parm.Value)
+                        {
+                            temp.OptionalValuesList.Add(new OptionalValue() { Value = val });
+                        } 
+                    }
+                    AddModelOptionalValuesWizard.GlobalParamsList.Add(temp);
+                }
             }
         }
         private void InitxModelParametersGrid()

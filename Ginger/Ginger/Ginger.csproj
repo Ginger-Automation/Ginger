@@ -435,6 +435,7 @@
     </Compile>
     <Compile Include="Agents\AgentNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
+    <Compile Include="ApplicationModelsLib\ModelOptionalValue\ModelOptionalParameterValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">
       <DependentUpon>UnmappedElementsPage.xaml</DependentUpon>
     </Compile>

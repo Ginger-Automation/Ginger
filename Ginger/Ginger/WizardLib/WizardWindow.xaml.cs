@@ -178,6 +178,10 @@ namespace GingerWPF.WizardLib
                         {
                             ComboBox comboBox = (ComboBox)child;
                             bindingExpression = comboBox.GetBindingExpression(ComboBox.SelectedValueProperty);
+                            if(bindingExpression == null)
+                            {
+                                bindingExpression = comboBox.GetBindingExpression(ComboBox.TextProperty);
+                            }
                         }
 
                         if (bindingExpression != null)

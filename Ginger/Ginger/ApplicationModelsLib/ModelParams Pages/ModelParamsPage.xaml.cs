@@ -26,6 +26,8 @@ using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
 using GingerWPF.WizardLib;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -137,12 +139,31 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             ModelParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddParamsRow));
             ModelParametersGrid.AddToolbarTool("@Upgrade_16x16.png", "Upload to Global Parameters", new RoutedEventHandler(UploadToGlobalParam));
             ModelParametersGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForParameters));
+            ModelParametersGrid.AddToolbarTool(eImageType.ExcelExport, "Export Optional Values For Parameters", new RoutedEventHandler(ExportOptionalValuesForParameters));
         }
         private void ImportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {            
             WizardWindow.ShowWizard(new AddModelOptionalValuesWizard(mAAMB));
             ModelParametersGrid.DataSourceList = mAAMB.AppModelParameters;
         }
+
+        private void ExportOptionalValuesForParameters(object sender, RoutedEventArgs e)
+        {
+            ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+            List<AppParameters> parameters = new List<AppParameters>();
+            foreach (var prms in mAAMB.AppModelParameters)
+            {
+                AppParameters par = new AppParameters();
+                par.ItemName = prms.ItemName;
+                par.OptionalValuesList = prms.OptionalValuesList;
+                par.OptionalValuesString = prms.OptionalValuesString;
+                par.Description = prms.Description;
+                parameters.Add(par);
+            }
+            string filePath = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mAAMB.Name));
+            Process.Start(filePath);
+        }
+
         private void UploadToGlobalParam(object sender, RoutedEventArgs e)
         {
             AppModelParameter CurrentAMDP = (AppModelParameter)ModelParametersGrid.CurrentItem;

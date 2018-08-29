@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
@@ -29,6 +30,7 @@ using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -122,6 +124,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
             xModelsGlobalParamsGrid.DataSourceList = mModelsGlobalParamsList;
             xModelsGlobalParamsGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForGlobalParameters));
+            xModelsGlobalParamsGrid.AddToolbarTool(eImageType.ExcelExport, "Export Optional Values For Parameters", new RoutedEventHandler(ExportOptionalValuesForParameters));
         }
 
         private void ImportOptionalValuesForGlobalParameters(object sender, RoutedEventArgs e)
@@ -130,6 +133,22 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             xModelsGlobalParamsGrid.DataSourceList = mModelsGlobalParamsList;
         }
 
+        private void ExportOptionalValuesForParameters(object sender, RoutedEventArgs e)
+        {
+            ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+            List<AppParameters> parameters = new List<AppParameters>();
+            foreach (var prms in mModelsGlobalParamsList)
+            {
+                AppParameters par = new AppParameters();
+                par.ItemName = prms.ItemName;
+                par.OptionalValuesList = prms.OptionalValuesList;
+                par.OptionalValuesString = prms.OptionalValuesString;
+                par.Description = prms.Description;
+                parameters.Add(par);
+            }
+            string filePath = im.ExportParametersToExcelFile(parameters, "GlobalParameters");
+            Process.Start(filePath);
+        }
 
         string PlaceholderBeforeEdit = string.Empty;
 

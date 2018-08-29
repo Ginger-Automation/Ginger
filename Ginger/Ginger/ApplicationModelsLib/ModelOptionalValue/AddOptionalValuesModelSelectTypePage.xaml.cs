@@ -32,6 +32,9 @@ using GingerCore;
 using System.Linq;
 using static GingerCore.Environments.Database;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using Amdocs.Ginger.UserControls;
+using Amdocs.Ginger.Common.Enums;
+using static Ginger.ExtensionMethods;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -42,6 +45,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
     {
         public AddModelOptionalValuesWizard mAddModelOptionalValuesWizard;
         eOptionalValuesTargetType mOptionalValuesTargetType;
+        public string Path { get; set; }
+        public string SheetName { get; set; }
 
         public AddOptionalValuesModelSelectTypePage(eOptionalValuesTargetType OptionalValuesTargetType)
         {
@@ -55,8 +60,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 case eOptionalValuesTargetType.GlobalParams:
                     ControlsBinding.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), new List<object>() { eSourceType.Excel, eSourceType.DB });
                     break;
-            }           
-                           
+            }
+
+            RefreshButton.Source = ImageMakerControl.GetImage(eImageType.Refresh, 16, 16);
             xSourceTypeComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             SetFieldsGrid(); //XML & JSON
             SetDefaultPresentation();
@@ -93,7 +99,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             if (WizardEventArgs.EventType == EventType.Init)
             {
-                mAddModelOptionalValuesWizard = ((AddModelOptionalValuesWizard)WizardEventArgs.Wizard);              
+                mAddModelOptionalValuesWizard = (AddModelOptionalValuesWizard)WizardEventArgs.Wizard;
+                xPathTextBox.BindControl(this, nameof(Path));
+                xPathTextBox.AddValidationRule(new ModelOptionalParameterValidationRule());
+                xPathTextBox.Focus();
+
+                xSheetNameComboBox.BindControl(this, nameof(SheetName));
+                xSheetNameComboBox.AddValidationRule(new ModelOptionalParameterValidationRule());
+                xSheetNameComboBox.Focus();
             }
             else if (WizardEventArgs.EventType == EventType.LeavingForNextPage)
             {
@@ -114,7 +127,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     LoadFile();
                     mAddModelOptionalValuesWizard.SourceType = eSourceType.DB;
-                }
+                } 
             }
             else if (WizardEventArgs.EventType == EventType.Cancel)
             {
@@ -285,7 +298,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             mAddModelOptionalValuesWizard.ProcessStarted();
             DataTable dt = mAddModelOptionalValuesWizard.ImportOptionalValues.GetExceSheetlData(false);
-            if (dt != null)
+            if (dt != null && dt.Columns.Count > 0 && dt.Rows.Count > 0)
             {
                 xExcelDataGrid.ItemsSource = dt.AsDataView();
                 xExcelDataGridDockPanel.Visibility = Visibility.Visible;
@@ -324,23 +337,39 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         private void xCreateTemplateExcelButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(xPathTextBox.Text.Trim())) { Reporter.ToUser(eUserMsgKeys.MissingExcelDetails); return; }
-            if (!xPathTextBox.Text.Trim().ToLower().EndsWith(".xlsx")) { Reporter.ToUser(eUserMsgKeys.InvalidExcelDetails); return; }
             mAddModelOptionalValuesWizard.ProcessStarted();
-            bool exportSuccess = false;
+            ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+            List<AppParameters> parameters = new List<AppParameters>();
             if (mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
-            {
-                exportSuccess = mAddModelOptionalValuesWizard.ImportOptionalValues.ExportTemplateExcelFileForImportOptionalValues(mAddModelOptionalValuesWizard.mAAMB.AppModelParameters.ToList(), xPathTextBox.Text.Trim());
+            {                
+                foreach (var prms in mAddModelOptionalValuesWizard.mAAMB.AppModelParameters)
+                {
+                    AppParameters par = new AppParameters();
+                    par.ItemName = prms.ItemName;
+                    par.OptionalValuesList = prms.OptionalValuesList;
+                    par.OptionalValuesString = prms.OptionalValuesString;
+                    par.Description = prms.Description;
+                    parameters.Add(par);
+                }
+                xPathTextBox.Text = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mAddModelOptionalValuesWizard.mAAMB.Name), Convert.ToString(xPathTextBox.Text.Trim()));
             }
             else if (mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
             {
-                List<AppModelParameter> GlobalParamList = mAddModelOptionalValuesWizard.mGlobalParamterList.ToList().ConvertAll(x => (AppModelParameter)x);
-                exportSuccess = mAddModelOptionalValuesWizard.ImportOptionalValues.ExportTemplateExcelFileForImportOptionalValues(GlobalParamList, xPathTextBox.Text.Trim());
+                foreach (var prms in mAddModelOptionalValuesWizard.mGlobalParamterList)
+                {
+                    AppParameters par = new AppParameters();
+                    par.ItemName = prms.ItemName;
+                    par.OptionalValuesList = prms.OptionalValuesList;
+                    par.OptionalValuesString = prms.OptionalValuesString;
+                    par.Description = prms.Description;
+                    parameters.Add(par);
+                }
+                xPathTextBox.Text = im.ExportParametersToExcelFile(parameters, "GlobalParameters", Convert.ToString(xPathTextBox.Text.Trim()));
             }
-            if (exportSuccess)
-            {
-                System.Diagnostics.Process.Start(xPathTextBox.Text.Trim());
-            }
+            
+            mAddModelOptionalValuesWizard.ImportOptionalValues.ExcelFileName = xPathTextBox.Text;
+            List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets();
+            GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
             mAddModelOptionalValuesWizard.ProcessEnded();
         }
         #endregion
@@ -409,5 +438,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
         }
         #endregion
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets();
+            GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
+        }
     }
 }

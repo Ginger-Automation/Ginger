@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -131,5 +131,20 @@ namespace Amdocs.Ginger.Repository
 
 
 
+    }
+
+    /// <summary>
+    /// This class is used in the Export Process
+    /// </summary>
+    public class AppParameters
+    {     
+        public string ItemName { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
+        
+        public string OptionalValuesString { get; set; }
+
+        public string Description { get; set; }
     }
 }
