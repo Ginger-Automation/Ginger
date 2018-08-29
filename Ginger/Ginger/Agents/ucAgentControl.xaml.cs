@@ -242,8 +242,6 @@ namespace Ginger.Agents
                 return;
             }
 
-            //xAgentWindowsRefreshBtn.ButtonImageForground = (SolidColorBrush)FindResource("$DarkBlue"); 
-
             List<AppWindow> winsList = ((IWindowExplorer)(SelectedAgent.Driver)).GetAppWindows();
             xAgentWindowsComboBox.ItemsSource = winsList;
             xAgentWindowsComboBox.DisplayMemberPath = nameof(AppWindow.WinInfo);
