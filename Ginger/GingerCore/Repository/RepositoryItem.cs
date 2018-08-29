@@ -29,7 +29,7 @@ using System.Reflection;
 
 namespace GingerCore
 {
-    public abstract class RepositoryItem: RepositoryItemBase 
+    public abstract class RepositoryItem : RepositoryItemBase
     {
         public static partial class Fields
         {
@@ -60,7 +60,7 @@ namespace GingerCore
                 }
             }
         }
-               
+
         // TODO: remove or squeeze to one field
 
         [IsSerializedForLocalRepository]
@@ -82,7 +82,7 @@ namespace GingerCore
         //public new string ExternalID { get; set; }
 
         public bool Deleted { get; set; }
-        
+
         public new string ObjFolderName { get { return FolderName(this.GetType()); } }
 
         public RepositoryItem()
@@ -104,32 +104,32 @@ namespace GingerCore
 
             Deleted = false;
         }
-        
+
         //public void SaveParentGUID()
         //{
         //    ParentGuid = Guid;
         //    Guid = Guid.NewGuid();
         //}
-        
+
         public virtual void Save()
         {
             SaveToFile(FileName);
         }
 
-        public void SaveToFile(string fileName, bool FlagToUpdateFileName=true)
+        public void SaveToFile(string fileName, bool FlagToUpdateFileName = true)
         {
             //DoPreSavePreperations;
             this.Version++;
             this.LastUpdate = DateTime.UtcNow;
             this.LastUpdateBy = Environment.UserName;
-            if(FlagToUpdateFileName)
+            if (FlagToUpdateFileName)
                 this.FileName = fileName;
             this.ClearBackup();
 
             RepositorySerializer rs = new RepositorySerializer();
-            rs.SaveToFile(this,fileName);
+            rs.SaveToFile(this, fileName);
         }
-        
+
         public static object LoadFromFile(Type type, string FileName)
         {
             GingerCore.Repository.RepositorySerializer RS = new RepositorySerializer();
@@ -152,8 +152,8 @@ namespace GingerCore
             GingerCore.Repository.RepositorySerializer RS = new RepositorySerializer();
             RS.DeserializeFromTextWithTargetObj(sourceObj.GetType(), sourceObjXml, targetObj);
         }
-        
-        public RepositoryItem CreateInstance(bool originFromShredRepo=false)
+
+        public RepositoryItem CreateInstance(bool originFromShredRepo = false)
         {
             RepositoryItem copiedItem = (RepositoryItem)this.CreateCopy();
             copiedItem.ParentGuid = this.Guid;
@@ -162,7 +162,7 @@ namespace GingerCore
                 copiedItem.IsSharedRepositoryInstance = true;
                 copiedItem.ExternalID = this.ExternalID;
             }
-                return copiedItem;
+            return copiedItem;
         }
 
         //// Temp solution for backup restore until we have the obj ref tree copy
@@ -214,10 +214,10 @@ namespace GingerCore
             if (T == typeof(BusinessFlow)) { return "BusinessFlow"; }
             if (T == typeof(ActivitiesGroup)) { return "ActivitiesGroup"; }
             if (T == typeof(Activity)) { return "Activity"; }
-            if (T == typeof(ErrorHandler)) { return "Activity"; }            
+            if (T == typeof(ErrorHandler)) { return "Activity"; }
             if (typeof(Act).IsAssignableFrom(T)) { return "Action"; }
             if (typeof(VariableBase).IsAssignableFrom(T)) { return "Variable"; }
-            if (typeof(DataSourceBase).IsAssignableFrom(T)) return "DataSource";        
+            if (typeof(DataSourceBase).IsAssignableFrom(T)) return "DataSource";
             if (T.FullName == "GingerCore.Agent") return "Agent";
             if (T.FullName == "GingerCore.Environments.ProjEnvironment") return "Environment";
             if (T.FullName == "Ginger.Run.RunSetConfig") return "RunSetConfig";
@@ -229,14 +229,14 @@ namespace GingerCore
             if (T.FullName == "Ginger.Reports.HTMLReportConfiguration") return "HTMLReportConfiguration";
             if (T.FullName == "Ginger.TagsLib.RepositoryItemTag") return "RepsotirotyItemTag";
 
-            if (T== typeof(ApplicationDBTableModel)) return "ApplicationDBTableModel";
-            if (T ==  typeof (ApplicationDBModel)) return "ApplicationDBModel";
+            if (T == typeof(ApplicationDBTableModel)) return "ApplicationDBTableModel";
+            if (T == typeof(ApplicationDBModel)) return "ApplicationDBModel";
             if (T == typeof(ApplicationPOMModel)) return "ApplicationPOM";
-            
+
             // Make sure we must impl or get exception
             throw new Exception("Unknown Type for Short Type Name " + T.Name);
         }
-        
+
         public new string ObjFileExt { get { return FileExt(this.GetType()); } }
 
         public new static string FolderName(Type T)

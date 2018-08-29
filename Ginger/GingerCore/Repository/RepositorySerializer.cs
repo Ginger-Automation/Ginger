@@ -73,7 +73,7 @@ namespace GingerCore.Repository
         public string SerializeToString(RepositoryItemBase ri)
         {
             if (ri != null)
-            {                
+            {
                 using (MemoryStream output = new MemoryStream())
                 {
                     using (XmlTextWriter xml = new XmlTextWriter(output, Encoding.UTF8))
@@ -102,7 +102,7 @@ namespace GingerCore.Repository
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-                mGingerVersion = fvi.FileVersion;                                
+                mGingerVersion = fvi.FileVersion;
             }
             return mGingerVersion;
         }
@@ -114,7 +114,7 @@ namespace GingerCore.Repository
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
                 mGingerVersionAsLong = fvi.FileMajorPart * 1000000 + fvi.FileMinorPart * 10000 + fvi.FileBuildPart * 100 + fvi.FilePrivatePart;
-                
+
             }
             return mGingerVersionAsLong;
         }
@@ -131,13 +131,13 @@ namespace GingerCore.Repository
         private void WriteRepoItemProperties(XmlTextWriter xml, RepositoryItemBase ri)
         {
             // Get the properties - need to be ordered so compare/isDirty can work faster
-            var properties = ri.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property).OrderBy(x => x.Name);  
+            var properties = ri.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property).OrderBy(x => x.Name);
             foreach (MemberInfo mi in properties)
             {
                 dynamic v = null;
                 IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(mi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
                 if (token == null) continue;
-                
+
                 //Get tha attr value
                 v = ri.GetType().GetProperty(mi.Name).GetValue(ri);
                 // Enum might be unknow = not set - so no need to write to xml, like null for object                        
@@ -200,17 +200,17 @@ namespace GingerCore.Repository
                             xmlwriteStringList(xml, fi.Name, (List<string>)v);
                         }
                         else if (v is RepositoryItemBase)
-                        {                            
-                            xmlwriteSingleObjectField(xml, fi.Name, v);                            
+                        {
+                            xmlwriteSingleObjectField(xml, fi.Name, v);
                         }
                         else
-                        {                           
+                        {
                             xml.WriteComment(">>>>>>>>>>>>>>>>> Unknown Field type to serialize - " + fi.Name + " - " + v.ToString());
                         }
                     }
                 }
             }
-        }        
+        }
 
         private void xmlwriteSingleObjectField(XmlTextWriter xml, string Name, Object obj)
         {
@@ -218,7 +218,7 @@ namespace GingerCore.Repository
             xml.WriteStartElement(Name);
             xml.WriteWhitespace("\n");
             xmlwriteObject(xml, (RepositoryItemBase)obj);
-            
+
             xml.WriteWhitespace("\n");
             xml.WriteEndElement();
             xml.WriteWhitespace("\n");
@@ -227,17 +227,17 @@ namespace GingerCore.Repository
         private void xmlwriteStringList(XmlTextWriter xml, string Name, List<string> list)
         {
             xml.WriteWhitespace("\n");
-            xml.WriteStartElement(Name);            
+            xml.WriteStartElement(Name);
             foreach (string s in list)
             {
                 xml.WriteWhitespace("\n");
-                xml.WriteElementString("string",s);
+                xml.WriteElementString("string", s);
             }
             xml.WriteWhitespace("\n");
             xml.WriteEndElement();
             xml.WriteWhitespace("\n");
         }
-       
+
 
         private void xmlwriteObservableList(XmlTextWriter xml, string Name, IObservableList list)
         {
@@ -262,25 +262,25 @@ namespace GingerCore.Repository
             }
             xml.WriteWhitespace("\n");
             xml.WriteEndElement();
-            xml.WriteWhitespace("\n");            
+            xml.WriteWhitespace("\n");
         }
 
         private void xmlwriteatrr(XmlTextWriter xml, string Name, string Value)
         {
-            xml.WriteStartAttribute(Name); 
+            xml.WriteStartAttribute(Name);
 
             //TODO: it is big waste to check for string for all writes... perf issue FIXME
             if (string.Compare(Name, "GUID", true) == 0 && isCopy)
-               xml.WriteString(Guid.NewGuid().ToString());
+                xml.WriteString(Guid.NewGuid().ToString());
             else
-                xml.WriteString(Value);      
+                xml.WriteString(Value);
             xml.WriteEndAttribute();
         }
 
         public object DeserializeFromFile(Type t, string FileName)
         {
-            if (FileName.Length>0 && File.Exists(FileName))
-            {                
+            if (FileName.Length > 0 && File.Exists(FileName))
+            {
                 string xml = File.ReadAllText(FileName);
                 if (xml.Contains("GingerRepositoryItem"))
                 {
@@ -300,8 +300,8 @@ namespace GingerCore.Repository
                 throw new Exception("File Not Found - " + FileName);
             }
         }
-        
-        public object DeserializeFromTextWithTargetObj(Type t, string xml, RepositoryItemBase targetObj =null)
+
+        public object DeserializeFromTextWithTargetObj(Type t, string xml, RepositoryItemBase targetObj = null)
         {
             if (xml.Contains("GingerRepositoryItem"))
             {
@@ -311,15 +311,15 @@ namespace GingerCore.Repository
                 throw new Exception("Object was create with new SR, but trying to load with old SR: " + t.Name);
             }
 
-            string encoding = "utf-8";            
-            var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml));       
+            string encoding = "utf-8";
+            var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml));
             var xdrs = new XmlReaderSettings()
             {
                 IgnoreComments = true,
                 IgnoreWhitespace = true,
                 CloseInput = true
             };
-            
+
             XmlReader xdr = XmlReader.Create(ms, xdrs);
             xdr.Read();
             xdr.Read();
@@ -364,7 +364,7 @@ namespace GingerCore.Repository
             {
                 string xml = File.ReadAllText(FileName);
                 // first check if we need to auto upgrade the xml to latest ginger version
-                string upgradedXML= XMLUpgrade.UpgradeSolutionXMLFileIfNeeded(FileName, xml);
+                string upgradedXML = XMLUpgrade.UpgradeSolutionXMLFileIfNeeded(FileName, xml);
                 if (string.IsNullOrEmpty(upgradedXML) == false)
                     xml = upgradedXML;
 
@@ -375,9 +375,9 @@ namespace GingerCore.Repository
                 throw new Exception("File Not Found - " + FileName);
             }
         }
-        
+
         public static object DeserializeFromText(string xml, RepositoryItemBase targetObj = null)
-        {           
+        {
             string encoding = "utf-8";
             //check if we need ms or maybe text reader + do using to release mem
             var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml));
@@ -391,18 +391,18 @@ namespace GingerCore.Repository
             xdr.Read();
             xdr.Read();
             dynamic RootObj = xmlReadObject(null, xdr, targetObj);
-            
+
             return RootObj;
         }
 
-        private static void xmlReadListOfObjects(object ParentObj,XmlReader xdr, IObservableList observableList)
+        private static void xmlReadListOfObjects(object ParentObj, XmlReader xdr, IObservableList observableList)
         {
             // read list of object into the list, add one by one, like activities, actions etc.            
             if (FastLoad)
             {
-                if (IsObseravbleListLazyLoad(xdr.Name))                
+                if (IsObseravbleListLazyLoad(xdr.Name))
                 {
-                        // We can save line/col and reload later when needed
+                    // We can save line/col and reload later when needed
                     string s = xdr.ReadOuterXml();
                     observableList.DoLazyLoadItem(s);
                     observableList.LazyLoad = true;
@@ -437,7 +437,7 @@ namespace GingerCore.Repository
         static Assembly GingerAssembly = System.Reflection.Assembly.Load("Ginger");
         static Assembly GingerCoreAssembly = System.Reflection.Assembly.GetExecutingAssembly();
         static Assembly GingerCoreCommon = typeof(RepositoryItemBase).Assembly;
-            
+
 
         private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null)
         {
@@ -455,13 +455,13 @@ namespace GingerCore.Repository
             if (ClassName == "GingerCore.Actions.EnhancedActInputValue")
             {
                 ClassName = typeof(EnhancedActInputValue).FullName;
-            }            
+            }
 
             try
             {
-            dynamic obj = null;
-            int level = xdr.Depth;
-                
+                dynamic obj = null;
+                int level = xdr.Depth;
+
                 // We first try in current assembly = GingerCore
                 if (targetObj == null)
                 {
@@ -477,8 +477,8 @@ namespace GingerCore.Repository
                 else
                     obj = targetObj; //used for DeepCopy to objects fields
 
-            if (obj == null)
-            {
+                if (obj == null)
+                {
                     if (FastLoad)
                     {
                         obj = GingerAssembly.CreateInstance(ClassName);
@@ -487,14 +487,14 @@ namespace GingerCore.Repository
                     {
                         obj = System.Reflection.Assembly.Load("Ginger").CreateInstance(ClassName);
                     }
-            }        
-            
-            if (obj == null)
-            {
-                obj = GingerCoreCommon.CreateInstance(ClassName);
-            }
+                }
 
-            if (obj == null)
+                if (obj == null)
+                {
+                    obj = GingerCoreCommon.CreateInstance(ClassName);
+                }
+
+                if (obj == null)
                 {
                     if (ClassName == "GingerCore.Actions.ActInputValue" || ClassName == "GingerCore.Common.Actions.ActInputValue") ClassName = typeof(ActInputValue).FullName;
                     if (ClassName == "GingerCore.Actions.ActReturnValue") ClassName = typeof(ActReturnValue).FullName;
@@ -506,48 +506,48 @@ namespace GingerCore.Repository
                     obj = GingerCoreCommon.CreateInstance(ClassName);
                 }
 
-            if (obj==null)
-            {
-                throw new Exception("Error:Cannot create Class: " + ClassName);
-            }
-           
+                if (obj == null)
+                {
+                    throw new Exception("Error:Cannot create Class: " + ClassName);
+                }
+
                 SetObjectAttributes(xdr, obj);
-            
-            xdr.Read();
+
+                xdr.Read();
                 // Set lists attrs
                 // read all object sub elements like lists - obj members              
-                while (xdr.Depth == level +1)         
-                {   
-                        // Check if it one obj attr or list
-                        string attrName = xdr.Name;
-                        FieldInfo FI = obj.GetType().GetField(attrName);
-                        
-                        // We check if it is list by arg count - List<string> will have string etc...
-                        // another option is check the nake to start with List, Observ...
-                        //or find a better way
-                        // meanwhile it is working
-                        if (FI.FieldType.GenericTypeArguments.Count() > 0)
-                        {
-                            SetObjectListAttrs(xdr, obj);
-                        }
-                        else
-                        {                                                        
-                            // Read the attr name/move next
-                            xdr.ReadStartElement();                         
-                            // read the actual object we need to put on the attr                            
-                            object item = xmlReadObject(obj, xdr);             
-                            // Set the attr val with the object
-                            FI.SetValue(obj,item);
+                while (xdr.Depth == level + 1)
+                {
+                    // Check if it one obj attr or list
+                    string attrName = xdr.Name;
+                    FieldInfo FI = obj.GetType().GetField(attrName);
+
+                    // We check if it is list by arg count - List<string> will have string etc...
+                    // another option is check the nake to start with List, Observ...
+                    //or find a better way
+                    // meanwhile it is working
+                    if (FI.FieldType.GenericTypeArguments.Count() > 0)
+                    {
+                        SetObjectListAttrs(xdr, obj);
+                    }
+                    else
+                    {
+                        // Read the attr name/move next
+                        xdr.ReadStartElement();
+                        // read the actual object we need to put on the attr                            
+                        object item = xmlReadObject(obj, xdr);
+                        // Set the attr val with the object
+                        FI.SetValue(obj, item);
 
                         if (item is Email)//If should be removed- placing if for solving Run Set operation release issue with minimum risk
                             xdr.ReadEndElement();
                     }
-                if (xdr.NodeType == XmlNodeType.EndElement)
-                {
-                    xdr.ReadEndElement();
+                    if (xdr.NodeType == XmlNodeType.EndElement)
+                    {
+                        xdr.ReadEndElement();
+                    }
                 }
-            }
-            return obj;
+                return obj;
             }
             catch (Exception ex)
             {
@@ -556,13 +556,13 @@ namespace GingerCore.Repository
         }
 
         private static void SetObjectListAttrs(XmlReader xdr, dynamic obj)
-        {     
+        {
             // Handle object list etc which comes after the obj attrs - like activities, or activity actions
             string AtrrListName = xdr.Name;
             if (xdr.IsStartElement())
             {
-                {                    
-                    FieldInfo fi = obj.GetType().GetField(AtrrListName );
+                {
+                    FieldInfo fi = obj.GetType().GetField(AtrrListName);
                     // generate same type empty list objects
                     Type t = fi.FieldType.GenericTypeArguments[0];
 
@@ -574,7 +574,7 @@ namespace GingerCore.Repository
                     else if (t == typeof(Guid))
                     {
                         ObservableList<Guid> lstsg = fi.GetValue(obj);
-                        xmlReadListOfGuids(xdr, lstsg);                       
+                        xmlReadListOfGuids(xdr, lstsg);
                     }
                     else
                     {
@@ -609,8 +609,8 @@ namespace GingerCore.Repository
         {
             xdr.ReadStartElement();
             while (xdr.NodeType != XmlNodeType.EndElement)
-            {                
-                string s=xdr.ReadElementContentAsString();
+            {
+                string s = xdr.ReadElementContentAsString();
                 lsts.Add(s);
             }
             xdr.ReadEndElement();
@@ -635,18 +635,18 @@ namespace GingerCore.Repository
                                 }
                                 else
                                 {
-                                    Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode:true);
+                                    Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
                                 }
                             }
                             else
                             {
                                 Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
-                }
-                            
+                            }
+
                             xdr.MoveToNextAttribute();
                             continue;
                         }
-                        string Value = xdr.Value;          
+                        string Value = xdr.Value;
                         if (Value != "Null")
                         {
                             SetObjAttrValue(obj, propertyInfo, Value);
@@ -662,23 +662,81 @@ namespace GingerCore.Repository
             }
         }
 
-        private static void SetObjAttrValue(object obj,PropertyInfo propertyInfo,string sValue)
+        private static void SetObjAttrValue(object obj, PropertyInfo propertyInfo, string sValue)
         {
-                try
+            try
+            {
+                System.TypeCode typeCode = Type.GetTypeCode(propertyInfo.PropertyType);
+                switch (typeCode)
                 {
-                    System.TypeCode typeCode = Type.GetTypeCode(propertyInfo.PropertyType);
-                    switch (typeCode)
-                    {
 
-                        case TypeCode.String:
-                            propertyInfo.SetValue(obj, sValue);
-                            break;
+                    case TypeCode.String:
+                        propertyInfo.SetValue(obj, sValue);
+                        break;
 
-                        case TypeCode.Int32:
+                    case TypeCode.Int32:
 
-                            if (propertyInfo.PropertyType.IsEnum)
-                            {                                
-                                object o =  Enum.Parse(propertyInfo.PropertyType, sValue);
+                        if (propertyInfo.PropertyType.IsEnum)
+                        {
+                            object o = Enum.Parse(propertyInfo.PropertyType, sValue);
+                            if (o != null)
+                            {
+                                propertyInfo.SetValue(obj, o);
+                            }
+                            else
+                            {
+                                throw new Exception("Cannot convert Enum - " + sValue);
+                            }
+                        }
+                        else
+                        {
+                            propertyInfo.SetValue(obj, Int32.Parse(sValue));
+                        }
+                        break;
+
+                    case TypeCode.Int64:
+                        propertyInfo.SetValue(obj, Int64.Parse(sValue));
+                        break;
+                    case TypeCode.Double:
+                        propertyInfo.SetValue(obj, double.Parse(sValue));
+                        break;
+
+                    case TypeCode.Decimal:
+                        propertyInfo.SetValue(obj, decimal.Parse(sValue));
+                        break;
+
+                    case TypeCode.DateTime:
+                        propertyInfo.SetValue(obj, DateTime.Parse(sValue));
+                        break;
+
+                    case TypeCode.Boolean:
+                        if (sValue.ToUpper() == "FALSE")
+                        {
+                            propertyInfo.SetValue(obj, false);
+                            return;
+                        }
+                        if (sValue.ToUpper() == "TRUE")
+                        {
+                            propertyInfo.SetValue(obj, true);
+                            return;
+                        }
+
+                        break;
+                    case TypeCode.Object:
+
+                        if (propertyInfo.PropertyType == typeof(System.Guid))
+                        {
+                            if (sValue != "00000000-0000-0000-0000-00000000")
+                            {
+                                propertyInfo.SetValue(obj, new Guid(sValue));
+                            }
+                        }
+                        else
+                        {
+                            //check if this is nullable enum  like: Activity Status? 
+                            if (Nullable.GetUnderlyingType(propertyInfo.PropertyType).IsEnum)
+                            {
+                                object o = Enum.Parse(Nullable.GetUnderlyingType(propertyInfo.PropertyType), sValue);
                                 if (o != null)
                                 {
                                     propertyInfo.SetValue(obj, o);
@@ -689,126 +747,68 @@ namespace GingerCore.Repository
                                 }
                             }
                             else
+                                if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int64)
                             {
-                                propertyInfo.SetValue(obj, Int32.Parse(sValue));
-                            }
-                            break;
-                      
-                        case TypeCode.Int64:
-                            propertyInfo.SetValue(obj, Int64.Parse(sValue));
-                            break;
-                        case TypeCode.Double:
-                            propertyInfo.SetValue(obj, double.Parse(sValue));
-                            break;
-
-                        case TypeCode.Decimal:
-                            propertyInfo.SetValue(obj, decimal.Parse(sValue));
-                            break;
-
-                        case TypeCode.DateTime:
-                            propertyInfo.SetValue(obj, DateTime.Parse(sValue));
-                            break;
-
-                        case TypeCode.Boolean:                            
-                            if (sValue.ToUpper() == "FALSE")
-                            {                                
-                                propertyInfo.SetValue(obj, false);
-                                return;
-                            }
-                            if (sValue.ToUpper() == "TRUE")
-                            {
-                                propertyInfo.SetValue(obj, true);
-                                return;
-                            }
-                            
-                            break;
-                        case TypeCode.Object:                            
-                           
-                            if (propertyInfo.PropertyType == typeof(System.Guid))
-                            {
-                                if (sValue != "00000000-0000-0000-0000-00000000")
+                                if (sValue != null)
                                 {
-                                    propertyInfo.SetValue(obj, new Guid(sValue));
+                                    propertyInfo.SetValue(obj, Int64.Parse(sValue));
+                                }
+                                else
+                                {
+                                    throw new Exception("Cannot convert Nullable Int64 - " + sValue);
                                 }
                             }
                             else
+                                    if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int32)
                             {
-                                //check if this is nullable enum  like: Activity Status? 
-                                if (Nullable.GetUnderlyingType(propertyInfo.PropertyType).IsEnum)
+                                if (sValue != null)
                                 {
-                                    object o = Enum.Parse(Nullable.GetUnderlyingType(propertyInfo.PropertyType), sValue);
-                                    if (o != null)
-                                    {
-                                        propertyInfo.SetValue(obj, o);
-                                    }
-                                    else
-                                    {
-                                        throw new Exception("Cannot convert Enum - " + sValue);
-                                    }
+                                    propertyInfo.SetValue(obj, Int32.Parse(sValue));
                                 }
                                 else
-                                    if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int64)
-                                    {
-                                        if (sValue != null)
-                                        {
-                                            propertyInfo.SetValue(obj, Int64.Parse(sValue));
-                                        }
-                                        else
-                                        {
-                                            throw new Exception("Cannot convert Nullable Int64 - " + sValue);
-                                        }
-                                    }
-                                    else
-                                        if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int32)
-                                        {
-                                            if (sValue != null)
-                                            {
-                                                propertyInfo.SetValue(obj, Int32.Parse(sValue));
-                                            }
-                                            else
-                                            {
-                                                throw new Exception("Cannot convert Nullable Int32 - " + sValue);
-                                            }
-                                        }
-                                        else
-                                            if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Double)
-                                            {
-                                                if (sValue != null)
-                                                {
-                                                    propertyInfo.SetValue(obj, Double.Parse(sValue));
-                                                }
-                                                else
-                                                {
-                                                    throw new Exception("Cannot convert Nullable Double - " + sValue);
-                                                }
-                                            }
-
-                                else
                                 {
-                                    throw new Exception("Serializer - Err set value, Unknown type - " + propertyInfo.PropertyType.ToString() + " Value: " + sValue);
+                                    throw new Exception("Cannot convert Nullable Int32 - " + sValue);
                                 }
                             }
-                            break;
+                            else
+                                        if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Double)
+                            {
+                                if (sValue != null)
+                                {
+                                    propertyInfo.SetValue(obj, Double.Parse(sValue));
+                                }
+                                else
+                                {
+                                    throw new Exception("Cannot convert Nullable Double - " + sValue);
+                                }
+                            }
 
-                        default:
-                            throw new Exception("Serializer - Err set value, Unknow type - " + propertyInfo.PropertyType.ToString() + " Value: " + sValue);
+                            else
+                            {
+                                throw new Exception("Serializer - Err set value, Unknown type - " + propertyInfo.PropertyType.ToString() + " Value: " + sValue);
+                            }
+                        }
+                        break;
 
-                    }
+                    default:
+                        throw new Exception("Serializer - Err set value, Unknow type - " + propertyInfo.PropertyType.ToString() + " Value: " + sValue);
 
-                    //TODO: all other types
                 }
-                catch
-                {                    
-                    string err;
-                    if (propertyInfo != null)
-                    {
-                        err = "Obj=" + obj + ", Property=" + propertyInfo.Name + ", Value=" + sValue.ToString();
-                    }
-                    else
-                    {
-                        err = "Property Not found: Obj=" + obj + " Value=" + sValue.ToString();
-                    }            
+
+                //TODO: all other types
+            }
+            catch
+            {
+                string err;
+                if (propertyInfo != null)
+                {
+                    err = "Obj=" + obj + ", Property=" + propertyInfo.Name + ", Value=" + sValue.ToString();
                 }
+                else
+                {
+                    err = "Property Not found: Obj=" + obj + " Value=" + sValue.ToString();
+                }
+            }
         }
 
         public static bool IsLegacyXmlType(string xml)
@@ -866,7 +866,7 @@ namespace GingerCore.Repository
                 return null;//failed to get the version
             }
         }
-        
+
         //TODO enable to read highlights                
         void IRepositorySerializer.DeserializeObservableListFromText<T>(ObservableList<T> observableList, string s)
         {
@@ -894,7 +894,7 @@ namespace GingerCore.Repository
             return "Ginger." + GetShortType(T);
         }
 
-        public object DeserializeFromText(Type t, string s, string filePath="")
+        public object DeserializeFromText(Type t, string s, string filePath = "")
         {
             return DeserializeFromTextWithTargetObj(t, s);
         }
@@ -909,11 +909,11 @@ namespace GingerCore.Repository
             if (t == typeof(BusinessFlow)) { return "BusinessFlow"; }
             if (t == typeof(ActivitiesGroup)) { return "ActivitiesGroup"; }
             if (t == typeof(Activity)) { return "Activity"; }
-            if (t == typeof(ErrorHandler)) { return "Activity"; }            
+            if (t == typeof(ErrorHandler)) { return "Activity"; }
             if (typeof(Act).IsAssignableFrom(t)) { return "Action"; }
             if (typeof(VariableBase).IsAssignableFrom(t)) { return "Variable"; }
             if (typeof(DataSourceBase).IsAssignableFrom(t)) return "DataSource";
-            if (t.FullName == "GingerCore.Agent") return "Agent";            
+            if (t.FullName == "GingerCore.Agent") return "Agent";
             if (t.FullName == "Ginger.Run.RunSetConfig") return "RunSetConfig";
             if (t.FullName == "Ginger.Run.BusinessFlowExecutionSummary") return "BusinessFlowExecutionSummary";
             if (t.FullName == "Ginger.Reports.ReportTemplate") return "ReportTemplate";
@@ -925,7 +925,7 @@ namespace GingerCore.Repository
             if (t.Name == "PluginPackage") return "PluginPackage";
 
 
-            
+
 
             // Make sure we must impl or get exception
             throw new Exception("Unknown Type for Short Type Name " + t.Name);
@@ -933,11 +933,11 @@ namespace GingerCore.Repository
 
         public static object NewRepositorySerializer_NewRepositorySerializerEvent(NewRepositorySerilizerEventArgs EventArgs)
         {
-            switch(EventArgs.EventType)
+            switch (EventArgs.EventType)
             {
                 case NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired:
-                    Reporter.ToLog(eLogLevel.INFO, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath), null,writeAlsoToConsoleIfNeeded:true , writeOnlyInDebugMode: true);
-                    return DeserializeFromText(EventArgs.XML, EventArgs.TargetObj);                                      
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath), null, writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
+                    return DeserializeFromText(EventArgs.XML, EventArgs.TargetObj);
             }
 
             return null;

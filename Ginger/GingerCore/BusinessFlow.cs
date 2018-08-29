@@ -32,12 +32,9 @@ using Amdocs.Ginger.Common.Repository;
 namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase
-    {
-        //  This class is container for AAA
-        //This class is being serialized and saved to XML when working local
-        // Regex to find variable between {} like: {Var=FirstName}  or {Var=City} , can also find if string contains "AA {Var=First} - {Var=Last} BB"
-        // private static string rxVar = "Var=";
-        // private static Regex rx = new Regex(@"{" + rxVar + "[^}]*}", RegexOptions.Compiled);
+    {        
+        public override bool UseNewRepositorySerializer { get { return true; } }
+
         public BusinessFlow()
         {
 

@@ -844,7 +844,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\ALMRestClient.dll">
-		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\ALM_Common.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -856,7 +856,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\QCRestClient.dll">
-		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\RQMExport.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

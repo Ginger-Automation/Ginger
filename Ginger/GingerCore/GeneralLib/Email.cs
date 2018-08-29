@@ -27,7 +27,7 @@ using OutLook = Microsoft.Office.Interop.Outlook;
 
 namespace GingerCore.GeneralLib
 {
-    public class Email : RepositoryItem
+    public class Email : RepositoryItemBase
     {
         OutLook.MailItem mOutlookMail;
         
