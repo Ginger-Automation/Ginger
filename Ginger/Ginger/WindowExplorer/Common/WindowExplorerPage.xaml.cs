@@ -54,6 +54,7 @@ using Amdocs.Ginger.UserControls;
 using GingerCore.Platforms.PlatformsInfo;
 using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Threading.Tasks;
 
 namespace Ginger.WindowExplorer
 {
@@ -141,7 +142,7 @@ namespace Ginger.WindowExplorer
             SetDetailsExpanderDesign(false, null);
             SetActionsTabDesign(false);
 
-            ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$White");
+            ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");
         }
 
         private void RefreshControlProperties(object sender, RoutedEventArgs e)
@@ -299,16 +300,16 @@ namespace Ginger.WindowExplorer
             ControlsRefreshButton.IsEnabled = ControlsRefreshButtonFlag;
 
             if (ControlsRefreshButtonFlag)
-                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$White");            
+                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");            
             else
-                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$LightGray");
+                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
 
             RefreshWindowsButton.IsEnabled = RefreshWindowsButtonFlag;
                         
             if (RefreshWindowsButtonFlag)
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$DarkBlue");                            
+                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");                            
             else
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$LightGray");
+                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
 
 
             AddSwitchWindowActionButton.IsEnabled = AddSwitchWindowActionButtonFlag;
@@ -707,7 +708,10 @@ namespace Ginger.WindowExplorer
                     AppiumElementInfo AEI = new AppiumElementInfo();
                     AEI.WindowExplorer = mWindowExplorerDriver;
                     AEI.XPath = "/";
-                    string pageSourceString = ((SeleniumAppiumDriver)mWindowExplorerDriver).GetPageSource();
+                    SeleniumAppiumDriver SAD = ((SeleniumAppiumDriver)mWindowExplorerDriver);
+
+
+                    string pageSourceString = SAD.GetPageSource().Result;
                     XmlDocument pageSourceXml = new XmlDocument();
                     pageSourceXml.LoadXml(pageSourceString);
                     AEI.XmlDoc = pageSourceXml;

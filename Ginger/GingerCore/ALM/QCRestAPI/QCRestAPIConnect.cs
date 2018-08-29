@@ -4,6 +4,7 @@ using GingerCore.ALM.QC;
 using QCRestClient;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -436,6 +437,16 @@ namespace GingerCore.ALM.QCRestAPI
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to create entity with REST API", ex);
                 return null;
             }
+        }
+
+        public static ALMResponseData CreateAttachment(ResourceType resourceType, string id, string zipFileName)
+        {
+            FileStream fs = new FileStream(zipFileName, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs);
+            byte[] fileData = br.ReadBytes((Int32)fs.Length);
+            ALMResponseData response = QcRestClient.CreateAttachmentForEntitiyId(ResourceType.TEST_RUN, id, zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData);
+            fs.Close();
+            return response;
         }
 
         public static void DeleteEntity(ResourceType resourceType, string id)

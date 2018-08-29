@@ -39,6 +39,7 @@ using System.Linq;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Level1]
     public class RepositoryTest
     {
         [ClassInitialize]
@@ -118,6 +119,7 @@ namespace UnitTests.NonUITests
         {
 
             //Arrange
+            string TempFilepath = TestResources.GetTempFile("bfIsDirtyTrue.xml");
             int ActivitiesToCreate = 2;
 
             BusinessFlow BF = new BusinessFlow();
@@ -154,11 +156,11 @@ namespace UnitTests.NonUITests
 
 
             //Act
-            BF.SaveToFile(@"c:\temp\bfIsDirty.xml");
+            BF.SaveToFile(TempFilepath);
 
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\bfIsDirty.xml");
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
             //BF2.isDirty();
 
             Assert.IsFalse(BF2.IsDirty);
@@ -185,12 +187,13 @@ namespace UnitTests.NonUITests
             b.Description = "Desciption -2";
             BF.Activities.Add(b);
             b.Status = eRunStatus.Passed;
+            string TempFilepath = TestResources.GetTempFile("bfClearBackup.xml");
 
             //Act
-            BF.SaveToFile(@"c:\temp\bfClearBackup.xml");
+            BF.SaveToFile(TempFilepath);
             BF.SaveBackup();
             BF.RestoreFromBackup();           
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\bfClearBackup.xml");
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
             BF2.SaveBackup();//dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
@@ -203,6 +206,7 @@ namespace UnitTests.NonUITests
         {
             //Arrange
             BusinessFlow BF = new BusinessFlow();
+            string FileName = TestResources.GetTempFile("activityClearBackup.xml");
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
             BF.Activities = new ObservableList<Activity>();
@@ -219,17 +223,17 @@ namespace UnitTests.NonUITests
             a.Acts.Add(t);
 
             //Act
-            BF.SaveToFile(@"c:\temp\activityClearBackup.xml");   
+            BF.SaveToFile(FileName);   
             a.SaveBackup();
             ActGotoURL g = new ActGotoURL();
             g.Description = "goto URL ";
             g.LocateValue = "ID";
             a.Acts.Add(g);
-            BF.SaveToFile(@"c:\temp\activityClearBackup.xml");
+            BF.SaveToFile(FileName);
             a.SaveBackup();            
             a.RestoreFromBackup();
            
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\activityClearBackup.xml");
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
             BF2.SaveBackup();//dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
@@ -254,17 +258,17 @@ namespace UnitTests.NonUITests
             ActGotoURL g = new ActGotoURL();
             g.Description = "goto URL ";
             g.LocateValue = "ID";
-            a.Acts.Add(g);     
-           
+            a.Acts.Add(g);
+            string TempFilepath = TestResources.GetTempFile("actionClearBackup.xml");
             //Act
-            BF.SaveToFile(@"c:\temp\actionClearBackup.xml");
+            BF.SaveToFile(TempFilepath);
             a.SaveBackup();
             g.LocateValue = "ID1";
-            BF.SaveToFile(@"c:\temp\actionClearBackup.xml");
+            BF.SaveToFile(TempFilepath);
             a.SaveBackup();
             a.RestoreFromBackup();
 
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\actionClearBackup.xml");
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
             BF2.SaveBackup();//dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
@@ -279,6 +283,8 @@ namespace UnitTests.NonUITests
 
             //Arrange
             int ActivitiesToCreate = 2;
+
+            string TempFilepath = TestResources.GetTempFile("bfIsDirtyTrue.xml");
 
             BusinessFlow BF = new BusinessFlow();
             BF.Name = "Biz flow 1";
@@ -314,11 +320,11 @@ namespace UnitTests.NonUITests
 
 
             //Act
-            BF.SaveToFile(@"c:\temp\bfIsDirtyTrue.xml");
+            BF.SaveToFile(TempFilepath);
 
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\bfIsDirtyTrue.xml");
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
             BF2.SaveBackup();//dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
@@ -330,7 +336,8 @@ namespace UnitTests.NonUITests
         [TestMethod]
         public void RunSetConfigSaveLoad()
         {
-            //Arrange
+            //Arrange"
+            string TempFilepath = TestResources.GetTempFile("UTRSC1.xml");
 
             //Act
             RunSetConfig RSC = new RunSetConfig();
@@ -341,11 +348,12 @@ namespace UnitTests.NonUITests
             BFR.BusinessFlowName = "BF1";
             ARC1.BusinessFlowsRunList.Add(BFR);
             RSC.GingerRunners.Add(ARC1);
-            RSC.SaveToFile(@"c:\temp\UTRSC1.xml");
+
+            RSC.SaveToFile(TempFilepath);
 
             //Assert
 
-            RunSetConfig RSC2 = (RunSetConfig)RepositoryItem.LoadFromFile(typeof(RunSetConfig), @"c:\temp\UTRSC1.xml");
+            RunSetConfig RSC2 = (RunSetConfig)RepositoryItem.LoadFromFile(typeof(RunSetConfig), TempFilepath);
         }
 
         //[Ignore]
@@ -415,6 +423,7 @@ namespace UnitTests.NonUITests
 
             //Arrange
             int ActivitiesToCreate = 5;
+            string FileName = TestResources.GetTempFile("BFSaveLoad.xml");
 
             BusinessFlow BF = new BusinessFlow() { Name = "Biz flow 1", Description = "Desc 1"};
                 
@@ -448,10 +457,10 @@ namespace UnitTests.NonUITests
             //BF.Activities[0].Asserts.Add(vdb);
 
             //Act
-            BF.SaveToFile(@"c:\temp\BFSaveLoad.xml");
+            BF.SaveToFile(FileName);
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), @"c:\temp\BFSaveLoad.xml");
+            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
            Assert.AreEqual(BF2.Activities.Count(), ActivitiesToCreate);
             //Assert.AreEqual(BF2. Activities[0].Asserts.Count(), 1);
             //BF2.Description = "aaa";

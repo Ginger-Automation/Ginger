@@ -11,7 +11,7 @@
       >
 
 
-    <Grid Background="{StaticResource $BackgroundGray}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="25" />
             <RowDefinition Height="250"/>
