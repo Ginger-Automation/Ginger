@@ -247,7 +247,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline, (SolidColorBrush)FindResource("$PendingStatusColor"), 0, "Pending");
                     break;
                 case eImageType.Processing:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (SolidColorBrush)FindResource("$ProcessingColor"), 2);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (SolidColorBrush)FindResource("$HighlightColor_Orange"), 2);
                     break;
                 case eImageType.Ready:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineUp, (SolidColorBrush)FindResource("$PendingStatusColor"));
@@ -414,7 +414,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Times);
                     break;
                 case eImageType.Times_Red:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Times, (SolidColorBrush)FindResource("$RedColor"), 0, "ToolTip");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Times, (SolidColorBrush)FindResource("$HighlightColor_Red"), 0, "ToolTip");
                     break;
                 case eImageType.Exchange:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
@@ -564,7 +564,7 @@ namespace Amdocs.Ginger.UserControls
                 foreground = (SolidColorBrush)this.ImageForeground;
             }
             else if(foreground == null)
-                foreground = (SolidColorBrush)FindResource("$DarkBlue");           
+                foreground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");           
             xFAImage.Foreground = foreground;
             if (this.ImageForeground != null)
                 xFAFont.Foreground = foreground;                       
@@ -586,7 +586,7 @@ namespace Amdocs.Ginger.UserControls
             if (SetBorder)
             {
                 ImageMakerBorder.BorderThickness = new Thickness(1);
-                ImageMakerBorder.BorderBrush = (SolidColorBrush)FindResource("$DarkBlue");
+                ImageMakerBorder.BorderBrush = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
             }
             else
             {

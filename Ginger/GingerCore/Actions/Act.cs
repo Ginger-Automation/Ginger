@@ -1324,6 +1324,7 @@ namespace GingerCore.Actions
                     newInstance.ParentGuid = actInstance.ParentGuid;
                     newInstance.ExternalID = actInstance.ExternalID;
                     newInstance.Active = actInstance.Active;
+                    newInstance.VariablesDependencies = actInstance.VariablesDependencies;
                     if (ePartToUpdate == eItemParts.Details)
                     {
                         //keep other parts
