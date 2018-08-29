@@ -10,7 +10,7 @@
       Title="POMEditPage">
 
     <ScrollViewer>
-        <Grid Background="{DynamicResource $BackgroundGray}">
+        <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="200"/>
                 <RowDefinition  Name="SecondRow" Height="700"/>
