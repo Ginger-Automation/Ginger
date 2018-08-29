@@ -9,7 +9,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="AdAPIModelMappingPage">
 
-    <Grid Background="{StaticResource $BackgroundGray}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
    
             <RowDefinition Height="200*"/>
