@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -1595,6 +1596,24 @@ namespace GingerCore.Actions
         } // end of ParseRC
 
         
+
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Action;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Description);
+            }
+        }
+
 
 
     }

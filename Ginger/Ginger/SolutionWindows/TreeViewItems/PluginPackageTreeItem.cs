@@ -47,7 +47,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return NewTVItemStyle(PluginPackage, Amdocs.Ginger.Common.Enums.eImageType.PluginPackage, nameof(PluginPackage.PluginID));
+            return NewTVItemHeaderStyle(PluginPackage, Amdocs.Ginger.Common.Enums.eImageType.PluginPackage, nameof(PluginPackage.PluginID));
         }
 
         bool ITreeViewItem.IsExpandable()

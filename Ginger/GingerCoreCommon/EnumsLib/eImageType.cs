@@ -28,6 +28,7 @@ namespace Amdocs.Ginger.Common.Enums
         //############################## Repository Items Images:
         Solution,
         BusinessFlow,
+        ActivitiesGroup,
         Activity,
         Action,
         Agent,
@@ -40,6 +41,7 @@ namespace Amdocs.Ginger.Common.Enums
         Environment,
         Parameter,
         HtmlReport,
+        Variable,
         #endregion
 
 
@@ -117,6 +119,7 @@ namespace Amdocs.Ginger.Common.Enums
         Info,
         Exchange,
         Export,
+        ImportFile,
         #endregion
 
 

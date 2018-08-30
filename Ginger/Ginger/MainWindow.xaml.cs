@@ -71,6 +71,7 @@ using GingerWPF.BusinessFlowsLib;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
+using GingerWPF.UserControlsLib;
 
 namespace Ginger
 {
@@ -462,12 +463,21 @@ namespace Ginger
                 return;
             }
 
+            if (MainRibbon.SelectedItem == xBusinessFlows)
+            {
+                BusinessFlowsFolderTreeItem busFlowsRootFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
+                busFlowsRootFolder.IsGingerDefualtFolder = true;
+                SingleItemTreeViewExplorerPage busFlowsPage = new SingleItemTreeViewExplorerPage("Business Flows", eImageType.BusinessFlow, busFlowsRootFolder, busFlowsRootFolder.SaveAllTreeFolderItemsHandler, busFlowsRootFolder.AddItemHandler);                
+                ShowPage(busFlowsPage);
+                return;
+            }
+
 
         }
 
         public void ToggleMainWindow()
         {
-            if (MainRibbon.SelectedItem != RunRibbon && MainRibbon.SelectedItem != xResources && MainRibbon.SelectedItem != xConfigurations)
+            if (MainRibbon.SelectedItem != RunRibbon && MainRibbon.SelectedItem != xResources && MainRibbon.SelectedItem != xConfigurations && MainRibbon.SelectedItem != xBusinessFlows)
             {
                 MainFrame.Margin = new Thickness(0, 0, 0, 0);
             }
@@ -882,6 +892,7 @@ namespace Ginger
                 ViewSolutionFiles.Visibility = Visibility.Visible;
                 xFindAndReplaceSolutionPageButton.Visibility = Visibility.Visible;
                 xResources.Visibility = Visibility.Visible;
+                xBusinessFlows.Visibility = Visibility.Visible;
                 xConfigurations.Visibility = Visibility.Visible;
                 btnRecover.Visibility = Visibility.Visible;
             }
@@ -890,6 +901,7 @@ namespace Ginger
                 AutomateRibbon.Visibility = Visibility.Collapsed;
                 RunRibbon.Visibility = Visibility.Collapsed;
                 xResources.Visibility = Visibility.Collapsed;
+                xBusinessFlows.Visibility = Visibility.Collapsed;
                 xConfigurations.Visibility = Visibility.Collapsed;
                 RefreshSolutionBtn.Visibility = Visibility.Collapsed;
                 SaveAllBtn.Visibility = Visibility.Collapsed;

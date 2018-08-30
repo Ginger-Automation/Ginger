@@ -65,7 +65,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
 
-            return GetChildrentGeneric<Activity>(mActivitiesFolder, nameof(Activity.ActivityName));            
+            return GetChildrentGeneric<Activity>(mActivitiesFolder);            
         }
 
        

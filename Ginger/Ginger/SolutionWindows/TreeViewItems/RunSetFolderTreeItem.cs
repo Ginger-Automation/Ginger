@@ -53,22 +53,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFile;
-            if (IsGingerDefualtFolder)
-            {
-                ImageFile = "@Run_16x16.png";
-            }
-            else
-            {
-                ImageFile = "@Folder2_16x16.png";
-            }
-
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return NewTVItemFolderHeaderStyle(mRunSetConfig);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return GetChildrentGeneric<RunSetConfig>(mRunSetConfig, nameof(Agent.Name));
+            return GetChildrentGeneric<RunSetConfig>(mRunSetConfig);
             //List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
             ////Add Run Sets 

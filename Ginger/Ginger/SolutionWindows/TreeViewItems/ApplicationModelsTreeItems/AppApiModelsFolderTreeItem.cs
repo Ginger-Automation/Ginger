@@ -59,8 +59,8 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.NewRepositoryItemTreeHeader(mAPIModelFolder, nameof(RepositoryFolder<ApplicationAPIModel>.DisplayName), eImageType.Folder, eImageType.Null, false);
+        {            
+            return NewTVItemFolderHeaderStyle(mAPIModelFolder);
         }
 
         public override ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)

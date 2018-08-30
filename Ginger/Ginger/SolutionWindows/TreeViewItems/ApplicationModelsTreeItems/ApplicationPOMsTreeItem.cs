@@ -57,8 +57,8 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.NewRepositoryItemTreeHeader(mPOMModelFolder, nameof(RepositoryFolder<ApplicationPOMModel>.DisplayName), eImageType.Folder, eImageType.Null, false);
+        {           
+            return NewTVItemFolderHeaderStyle(mPOMModelFolder);
         }
 
         public override ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)

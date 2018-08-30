@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using System;
 
@@ -156,6 +157,22 @@ namespace Ginger.Reports
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             throw new NotImplementedException();
         }
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.HtmlReport;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
     }
 
     public class HTMLReportConfigFieldToSelect : RepositoryItemBase
@@ -231,5 +248,7 @@ namespace Ginger.Reports
                 _HTMLReportConfigFieldToSelect = value;
             }
         }
+
+       
     }
 }

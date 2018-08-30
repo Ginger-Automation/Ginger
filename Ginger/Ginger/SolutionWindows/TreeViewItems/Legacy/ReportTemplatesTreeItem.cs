@@ -48,7 +48,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return GetChildrentGeneric<ReportTemplate>(mRepositoryFolder, nameof(ReportTemplate.Name));         
+            return GetChildrentGeneric<ReportTemplate>(mRepositoryFolder);         
         }
 
         bool ITreeViewItem.IsExpandable()

@@ -870,7 +870,7 @@ namespace Ginger
             ////SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", @"~\RunSetConfigs", true, "Run Set Configs", addToRootFolders: true);, PropertyNameForFileName: nameof(VariableBase.Name));
 
             SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", @"~\RunSetConfigs", true, "Run Set Configs", addToRootFolders: true, PropertyNameForFileName: nameof(RunSetConfig.Name));
-            SR.AddItemInfo<ActivitiesGroup>("*.Ginger.ActivitiesGrouo.xml", @"~\SharedRepository\ActivitiesGroup", true, "Shared Activities Group", addToRootFolders: false, PropertyNameForFileName: nameof(ActivitiesGroup.Name));
+            SR.AddItemInfo<ActivitiesGroup>("*.Ginger.ActivitiesGroup.xml", @"~\SharedRepository\ActivitiesGroup", true, "Shared Activities Group", addToRootFolders: false, PropertyNameForFileName: nameof(ActivitiesGroup.Name));
             ////// Note the | which enable to define multiple pattern for same folder
             ////// Shared repository can contains Activities and Actions            
             //SR.AddItemInfo<Activity>("*.Ginger.Activity.xml", @"~\SharedRepository\Activities", true, @"Shared Repository\Activites", addToRootFolders: false);

@@ -27,6 +27,7 @@ using GingerCore.Actions;
 using System.Windows;
 using GingerCore.Variables;
 using GingerCore.Properties;
+using Amdocs.Ginger.Common.Enums;
 
 //TODO: chang add core
 namespace GingerCore
@@ -847,5 +848,20 @@ namespace GingerCore
             }
         }
 
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Activity;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.ActivityName);
+            }
+        }
     }
 }
