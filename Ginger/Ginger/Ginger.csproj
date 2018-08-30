@@ -450,10 +450,9 @@
     <Compile Include="Agents\ucAgentControl.xaml.cs">
       <DependentUpon>ucAgentControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationModelsLib\ModelOptionalValue\ModelOptionalParameterValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
-    <Compile Include="ApplicationModelsLib\ModelOptionalValue\ModelOptionalParameterValidationRule.cs" />
-    <Compile Include="ApplicationModelsLib\POMModels\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs"/>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMTAValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">
       <DependentUpon>UnmappedElementsPage.xaml</DependentUpon>
