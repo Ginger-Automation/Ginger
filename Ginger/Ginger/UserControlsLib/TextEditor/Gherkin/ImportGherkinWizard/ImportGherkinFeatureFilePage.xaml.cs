@@ -52,7 +52,7 @@ namespace Ginger.GherkinLib
             DocumentsFolder
 
         }
-        GenWindow genWin;
+        s genWin;
 
         public ImportGherkinFeatureFilePage(string folder, eImportGherkinFileContext context)
         {

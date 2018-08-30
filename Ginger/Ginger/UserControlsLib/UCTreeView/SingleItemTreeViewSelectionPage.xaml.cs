@@ -52,7 +52,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
     {
         public enum eItemSelectionType
         {
-            Single, Multi, MultiStayOpenOnDoubleClick
+            Single, Multi, MultiStayOpenOnDoubleClick, Folder
         }
 
         eItemSelectionType mItemSelectionType;
@@ -77,7 +77,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             xTreeView.AllowTreeTools = allowTreeTools;
 
-            TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
+            TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);            
             r.IsExpanded = true;
 
             xTreeView.Tree.ItemDoubleClick += Tree_ItemDoubleClick;
@@ -90,7 +90,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (mItemSelectionType == eItemSelectionType.MultiStayOpenOnDoubleClick)
                 xTipLabel.Visibility = Visibility.Visible;
             else
-                xTipLabel.Visibility = Visibility.Collapsed;
+                xTipLabel.Visibility = Visibility.Collapsed;             
         }
 
         public List<object> ShowAsWindow(string windowTitle="", eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
@@ -177,6 +177,6 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     mPageGenericWin.Close();
                 }
             }
-        }
+        }        
     }
 }

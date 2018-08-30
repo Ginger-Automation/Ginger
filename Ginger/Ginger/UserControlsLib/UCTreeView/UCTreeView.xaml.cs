@@ -37,6 +37,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DI);
         public bool TreeItemDoubleClicked = false;
+        public bool TreeChildFolderOnly = false;
 
         TreeViewItem mlastSelectedTVI = null;
 
@@ -185,14 +186,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             // TODO: remove temp code after cleanup 
             if (TVI.Tag is ITreeViewItem)
             {
-                ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;
-
-                List<ITreeViewItem> Childs = ITVI.Childrens();
+                ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;  
+                
+                List<ITreeViewItem> Childs = ITVI.Childrens();               
                 TVI.Items.Clear();
                 if (Childs != null)
                 {
                     foreach (ITreeViewItem c in Childs)
-                    {
+                    {                        
                         AddItem(c, TVI);
                     }
                 }

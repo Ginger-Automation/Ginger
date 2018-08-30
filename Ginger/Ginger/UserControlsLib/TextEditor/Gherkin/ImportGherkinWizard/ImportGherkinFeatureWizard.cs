@@ -47,6 +47,11 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                         
             AddPage(Name: "SelectFile", Title: "Select Feature File", SubTitle: "Choose ...", Page: new ImportGherkinFeatureFilePage(folder, context));
 
+            if(mContext == eImportGherkinFileContext.DocumentsFolder)
+            {                
+                AddPage(Name: "SelectBusinessFlowFolder", Title: "Target Business Flow Path", SubTitle: "Select Target Folder...", Page: new ImportGherkinTargetFolder(mContext));
+            }                
+
             AddPage(Name: "Summary", Title: "Summary", SubTitle: "here is what will happen when you click finish", Page: new ImportGherkinFeatureSummaryPage());
         }
 
