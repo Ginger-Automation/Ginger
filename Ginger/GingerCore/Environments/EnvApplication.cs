@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
 using System.Linq;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Environments
 {
@@ -100,6 +101,22 @@ namespace GingerCore.Environments
             set
             {
                 this.Name = value;
+            }
+        }
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Application;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
             }
         }
     }

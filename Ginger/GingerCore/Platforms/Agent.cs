@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -957,6 +958,22 @@ namespace GingerCore
         }
 
         public object Tag;
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Agent;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
 
     }
 }

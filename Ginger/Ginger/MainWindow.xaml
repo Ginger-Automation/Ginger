@@ -99,6 +99,10 @@
                 </RibbonGroup>
             </RibbonTab>
 
+            <!-- Business Flows Tab-->
+            <RibbonTab x:Name="xBusinessFlows" Header="Business Flows" AutomationProperties.AutomationId="BusinessFlows" h:GingerHelpProvider.HelpString="Business Flows" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" >
+            </RibbonTab>
+            
             <!-- Automate -->
             <RibbonTab x:Name="AutomateRibbon" AutomationProperties.AutomationId="AutomateRibbon" Header="Automate" h:GingerHelpProvider.HelpString="Automate"  ToolTip="Automate Tab" ContextMenu="{x:Null}" KeyTip="A" Margin="0,3,0,-3" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" IsHitTestVisible="True">
                 <RibbonGroup x:Name="BusFlowGroup" ContextMenu="{x:Null}" Header="{DynamicResource BusinessFlow}">

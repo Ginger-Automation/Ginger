@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using System;
 using System.ComponentModel;
 
@@ -40,6 +41,34 @@ namespace Amdocs.Ginger.Repository
         public Type ItemType;
 
         public bool IsRootFolder { get; set; }
+
+        bool mIsFolderExpanded;
+        public bool IsFolderExpanded
+        {
+            get
+            {
+                return mIsFolderExpanded;
+            }
+            set
+            {
+                if(mIsFolderExpanded != value)
+                {
+                    mIsFolderExpanded = value;
+                    OnPropertyChanged(nameof(FolderImageType));
+                }
+            }
+        }
+
+        public eImageType FolderImageType
+        {
+            get
+            {
+                if (IsFolderExpanded)
+                    return eImageType.OpenFolder;
+                else
+                    return eImageType.Folder;
+            }
+        }
 
         public string FolderRelativePath { get; set; }
 

@@ -24,6 +24,7 @@ using GingerCore.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Activities
 {
@@ -360,6 +361,22 @@ namespace GingerCore.Activities
                     mRunStatus = value;
                     OnPropertyChanged(Fields.RunStatus);
                 }
+            }
+        }
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.ActivitiesGroup;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
             }
         }
     }

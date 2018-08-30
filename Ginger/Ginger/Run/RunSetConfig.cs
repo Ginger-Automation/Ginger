@@ -22,6 +22,7 @@ using System;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.GeneralLib;
+using Amdocs.Ginger.Common.Enums;
 
 namespace Ginger.Run
 {
@@ -133,6 +134,22 @@ namespace Ginger.Run
             set
             {
                 this.Name = value;
+            }
+        }
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.RunSet;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
             }
         }
     }

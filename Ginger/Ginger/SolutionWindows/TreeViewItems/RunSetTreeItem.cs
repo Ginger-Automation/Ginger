@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Ginger.Run;
+using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -24,7 +26,7 @@ using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class RunSetTreeItem : TreeViewItemBase, ITreeViewItem
+    class RunSetTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         public RunSetConfig RunSetConfig { get; set; }
 
@@ -42,8 +44,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.CreateItemHeader(RunSetConfig.Name, "@Run_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(RunSetConfig.FileName, ref ItemSourceControlStatus));
+        {           
+            return NewTVItemHeaderStyle(RunSetConfig);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

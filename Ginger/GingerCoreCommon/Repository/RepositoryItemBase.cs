@@ -509,6 +509,14 @@ namespace Amdocs.Ginger.Repository
             set;
         }
 
+        public virtual string ItemNameField
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public void InitHeader()
         {
             RepositoryItemHeader = new RepositoryItemHeader()
@@ -742,6 +750,14 @@ namespace Amdocs.Ginger.Repository
                 }
             }
             set { mFilePath = value; OnPropertyChanged(nameof(FilePath)); }
+        }
+
+        public virtual eImageType ItemImageType
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         #region SourceControl

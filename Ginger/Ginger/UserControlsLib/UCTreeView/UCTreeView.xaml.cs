@@ -23,6 +23,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Amdocs.Ginger.Repository;
 using GingerWPF.DragDropLib;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
@@ -157,27 +158,50 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 if (item.IsExpandable())
                 {
                     TVI.Expanded += TVI_Expanded;
+                    TVI.Collapsed += TVI_Collapsed; ;
 
-                    TreeViewItem TVDummy = new TreeViewItem() { Header = "DUMMY" };
+                TreeViewItem TVDummy = new TreeViewItem() { Header = "DUMMY" };
                     TVI.Items.Add(TVDummy);
                 }
                             
             return TVI;
         }
 
+       
         private void TVI_Expanded(object sender, RoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
             TreeViewItem TVI = (TreeViewItem)e.Source;
             RemoveDummyNode(TVI);
-
+            SetRepositoryFolderIsExpanded(TVI, true);
             SetTreeNodeItemChilds(TVI);
 
             // remove the handler as expand data is cached now on tree
             TVI.Expanded -= TVI_Expanded;
+            TVI.Expanded += TVI_ExtraExpanded;
 
             Mouse.OverrideCursor = null;
+        }
+
+        private void TVI_Collapsed(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem tvi = (TreeViewItem)e.Source;
+            SetRepositoryFolderIsExpanded(tvi, false);
+        }
+
+        private void TVI_ExtraExpanded(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem tvi = (TreeViewItem)e.Source;
+            SetRepositoryFolderIsExpanded(tvi, true);
+        }
+
+        private void SetRepositoryFolderIsExpanded(TreeViewItem tvi, bool isExpanded)
+        {
+            ITreeViewItem itvi = (ITreeViewItem)tvi.Tag;
+            object itviObject = itvi.NodeObject();
+            if (itviObject is RepositoryFolderBase)
+                ((RepositoryFolderBase)itviObject).IsFolderExpanded = isExpanded;
         }
 
         private void SetTreeNodeItemChilds(TreeViewItem TVI)

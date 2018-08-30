@@ -1087,7 +1087,7 @@
     <Compile Include="BusinessFlowWindows\SourceGherkinPage.xaml.cs">
       <DependentUpon>SourceGherkinPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\TreeViewItems\LegacyReportTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\LegacyReportTreeItem.cs" />
     <Compile Include="UserControlsLib\TextEditor\AutoDetect\AutoDetectTextEditor.cs" />
     <Compile Include="UserControlsLib\TextEditor\Common\SelectedContentArgs.cs" />
     <Compile Include="UserControlsLib\TextEditor\DocumentEditorPage.xaml.cs">

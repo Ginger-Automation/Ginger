@@ -76,7 +76,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return GetChildrentGeneric<ActivitiesGroup>(mActivitiesGroupFolder, nameof(Agent.Name));
+            return GetChildrentGeneric<ActivitiesGroup>(mActivitiesGroupFolder);
             //List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
             //AddsubFolders(Path, Childrens);

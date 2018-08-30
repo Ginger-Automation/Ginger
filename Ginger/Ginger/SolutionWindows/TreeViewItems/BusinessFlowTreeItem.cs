@@ -36,33 +36,33 @@ namespace Ginger.SolutionWindows.TreeViewItems
     public class BusinessFlowTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private BusinessFlowPage mBusinessFlowPage;
-        public BusinessFlow BusinessFlow { get; set; }
-        private StackPanel mHeader;
-        public eBusinessFlowsTreeViewMode mViewMode;
+        private BusinessFlow mBusinessFlow { get; set; }
+        private eBusinessFlowsTreeViewMode mViewMode;
 
         Object ITreeViewItem.NodeObject()
         {
-            return BusinessFlow;
+            return mBusinessFlow;
         }
+
         override public string NodePath()
         {
-            return BusinessFlow.FileName;
+            return mBusinessFlow.FileName;
         }
+
         override public Type NodeObjectType()
         {
             return typeof(BusinessFlow);
         }
 
-        public BusinessFlowTreeItem(eBusinessFlowsTreeViewMode viewMode = eBusinessFlowsTreeViewMode.ReadWrite)
+        public BusinessFlowTreeItem(BusinessFlow businessFlow, eBusinessFlowsTreeViewMode viewMode = eBusinessFlowsTreeViewMode.ReadWrite)
         {
+            mBusinessFlow = businessFlow;
             mViewMode = viewMode;
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return NewTVItemStyle(BusinessFlow, eImageType.BusinessFlow, nameof(BusinessFlow.Name));
-            //mHeader = TreeViewUtils.CreateItemHeader(BusinessFlow.Name, "@WorkFlow_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(BusinessFlow.FileName , ref ItemSourceControlStatus), BusinessFlow, BusinessFlow.Fields.Name, BusinessFlow.IsDirty);
-            //return mHeader;
+        {         
+            return NewTVItemHeaderStyle(mBusinessFlow);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -79,7 +79,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mBusinessFlowPage == null)
             {
-                mBusinessFlowPage = new BusinessFlowPage(BusinessFlow);
+                mBusinessFlowPage = new BusinessFlowPage(mBusinessFlow);
             }
             return mBusinessFlowPage;
         }
@@ -87,19 +87,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         ContextMenu ITreeViewItem.Menu()
         {
             return mContextMenu;
-        }
-
-        private void VisualAutomate(object sender, RoutedEventArgs e)
-        {
-            VisualAutomatePage p = new VisualAutomatePage(BusinessFlow);
-            p.ShowAsWindow();
-        }
-
-        private void ExportToJava(object sender, RoutedEventArgs e)
-        {
-            BFToJava j = new BFToJava();
-            j.BusinessFlowToJava(BusinessFlow);
-        }
+        }     
 
         void ITreeViewItem.SetTools(ITreeView TV)
         {
@@ -127,18 +115,31 @@ namespace Ginger.SolutionWindows.TreeViewItems
             AddGherkinOptions(mContextMenu);
         }
 
+        private void VisualAutomate(object sender, RoutedEventArgs e)
+        {
+            VisualAutomatePage p = new VisualAutomatePage(mBusinessFlow);
+            p.ShowAsWindow();
+        }
+
+        private void ExportToJava(object sender, RoutedEventArgs e)
+        {
+            BFToJava j = new BFToJava();
+            j.BusinessFlowToJava(mBusinessFlow);
+        }
+
         public void AddGherkinOptions(ContextMenu CM)
         {
-            if (BusinessFlow.Source == BusinessFlow.eSource.Gherkin)
+            if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
             {
                 MenuItem GherkinMenu = TreeViewUtils.CreateSubMenu(CM, "Gherkin");
                 //TOD Change Icon
                 TreeViewUtils.AddSubMenuItem(GherkinMenu, "Open Feature file", GoToGherkinFeatureFile, null, "@FeatureFile_16X16.png");
             }
         }
+
         private void GoToGherkinFeatureFile(object sender, RoutedEventArgs e)
         {
-            DocumentEditorPage documentEditorPage = new DocumentEditorPage(BusinessFlow.ExternalID.Replace("~", App.UserProfile.Solution.Folder), true);
+            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mBusinessFlow.ExternalID.Replace("~", App.UserProfile.Solution.Folder), true);
             documentEditorPage.Title = "Gherkin Page";
             documentEditorPage.Height = 700;
             documentEditorPage.Width = 1000;
@@ -148,7 +149,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         
         public override void PostDeleteTreeItemHandler()
         {
-            if (App.BusinessFlow == BusinessFlow)
+            if (App.BusinessFlow == mBusinessFlow)
             {
                 if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count != 0)
                     App.BusinessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()[0];
@@ -159,23 +160,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void Automate(object sender, System.Windows.RoutedEventArgs e)
         {
-            App.MainWindow.AutomateBusinessFlow(BusinessFlow);
+            App.MainWindow.AutomateBusinessFlow(mBusinessFlow);
         }
 
         private void ExportToALM(object sender, System.Windows.RoutedEventArgs e)
         {
-            ALMIntegration.Instance.ExportBusinessFlowToALM(BusinessFlow, true);
+            ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow, true);
         }
+
         private void ExportToCSV(object sender, System.Windows.RoutedEventArgs e)
         {
             Export.GingerToCSV.BrowseForFilename();
-            Export.GingerToCSV.BusinessFlowToCSV(BusinessFlow);
+            Export.GingerToCSV.BusinessFlowToCSV(mBusinessFlow);
         }
-
-        //private void RefreshParentFolderChildrens()
-        //{
-        //    App.LocalRepository.RefreshSolutionBusinessFlowsCache(specificFolderPath: BusinessFlow.ContainingFolderFullPath);
-        //    mTreeView.Tree.RefreshSelectedTreeNodeParent();
-        //}
     }
 }

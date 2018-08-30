@@ -25,6 +25,7 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Variables
 {
@@ -524,5 +525,21 @@ namespace GingerCore.Variables
         public abstract List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations();
 
         public abstract String VariableUIType { get; }
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Variable;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
     }
 }

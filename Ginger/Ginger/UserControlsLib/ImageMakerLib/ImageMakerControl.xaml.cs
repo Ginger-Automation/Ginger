@@ -192,6 +192,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.BusinessFlow:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
                     break;
+                case eImageType.ActivitiesGroup:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Group);
+                    break;
                 case eImageType.Activity:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ThList);
                     break;
@@ -231,6 +234,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.ApplicationPOM:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
+                    break;
+                case eImageType.Variable:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Yen);
                     break;
                 #endregion
 
@@ -409,6 +415,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Export:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ShareAlt);
+                    break;
+                case eImageType.ImportFile:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
                     break;
                 case eImageType.Times:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Times);

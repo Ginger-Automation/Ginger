@@ -28,6 +28,7 @@ using GingerCore.Activities;
 using GingerCore.FlowControlLib;
 using GingerCoreNET.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore
 {
@@ -1076,5 +1077,20 @@ namespace GingerCore
             }
         }
 
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.BusinessFlow;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
     }
 }
