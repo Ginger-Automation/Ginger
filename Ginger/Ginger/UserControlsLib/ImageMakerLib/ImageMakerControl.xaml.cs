@@ -54,6 +54,38 @@ namespace Amdocs.Ginger.UserControls
             }
         }
 
+
+
+         public static readonly DependencyProperty ImageToolTipProperty = DependencyProperty.Register("ImageToolTip", typeof(string), typeof(ImageMakerControl),
+                        new FrameworkPropertyMetadata(string.Empty, OnToolTipPropertyChanged));
+               
+        private static void OnToolTipPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ImageMakerControl IMC = (ImageMakerControl)d;
+            IMC.SetImageToolTip();
+      
+        }
+                
+        public string ImageToolTip
+        {
+            get { return (string)GetValue(ImageToolTipProperty); }
+            set
+            {
+                SetValue(ImageToolTipProperty, value);
+                SetImageToolTip();
+            }
+        }
+
+        public void SetImageToolTip()
+        {
+            if (!string.IsNullOrEmpty(ImageToolTip))
+            {
+                xFAImage.ToolTip = ImageToolTip;
+                xFAFont.ToolTip = ImageToolTip;
+            }
+
+        }
+
         public static ImageSource GetImage(eImageType imageType,double SetAsFontImageWithSize=0.0,double width=0.0,bool SetBorder=false)
         {
             ImageSource Source = null;
@@ -116,7 +148,7 @@ namespace Amdocs.Ginger.UserControls
             }
         }
 
-        public static readonly DependencyProperty SetImageMakerForegroundProperty = DependencyProperty.Register("ImageForeground", typeof(SolidColorBrush), typeof(ImageMakerControl), new FrameworkPropertyMetadata(null, OnIconPropertyChanged));
+        public static readonly DependencyProperty SetImageMakerForegroundProperty = DependencyProperty.Register("ImageForeground", typeof(SolidColorBrush), typeof(ImageMakerControl), new FrameworkPropertyMetadata(null, null));
         public SolidColorBrush ImageForeground
         {
             get
@@ -128,7 +160,7 @@ namespace Amdocs.Ginger.UserControls
                 SetValue(SetImageMakerForegroundProperty, value);
                 SetImage();
             }
-        }
+        }      
 
         public ImageMakerControl()
         {
@@ -197,6 +229,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.HtmlReport:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Html5);
                     break;
+                case eImageType.ApplicationPOM:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
+                    break;
                 #endregion
 
 
@@ -212,7 +247,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline, (SolidColorBrush)FindResource("$PendingStatusColor"), 0, "Pending");
                     break;
                 case eImageType.Processing:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (SolidColorBrush)FindResource("$ProcessingColor"), 2);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (SolidColorBrush)FindResource("$HighlightColor_Orange"), 2);
                     break;
                 case eImageType.Ready:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineUp, (SolidColorBrush)FindResource("$PendingStatusColor"));
@@ -379,7 +414,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Times);
                     break;
                 case eImageType.Times_Red:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Times, (SolidColorBrush)FindResource("$RedColor"), 0, "ToolTip");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Times, (SolidColorBrush)FindResource("$HighlightColor_Red"), 0, "ToolTip");
                     break;
                 case eImageType.Exchange:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
@@ -392,7 +427,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Download:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
-                    break;
+                    break;              
                 #endregion
 
 
@@ -474,6 +509,18 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.DataSource:
                     SetAsStaticImage("DataSource_16x16.png");
                     break;
+                case eImageType.Power:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.PowerOff);
+                    break;
+                case eImageType.PluginPackage:
+                    SetAsStaticImage("Plugin_32x32.png");
+                    break;
+                case eImageType.Pointer:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.HandPointerOutline);
+                    break;
+                case eImageType.Camera:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Camera);
+                    break;
                 case eImageType.ExcelExport:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FileExcelOutline);
                     break;
@@ -502,17 +549,28 @@ namespace Amdocs.Ginger.UserControls
         private void SetAsFontAwesomeIcon(FontAwesomeIcon fontAwesomeIcon, SolidColorBrush foreground = null, double spinDuration = 0, string toolTip = null)
         {
             //set the icon
-            xFAImage.Icon = fontAwesomeIcon;
             xFAFont.Icon = fontAwesomeIcon;
-            
-            if (this.ImageForeground != null)
-                foreground = (SolidColorBrush)this.ImageForeground;
+            xFAImage.Icon = fontAwesomeIcon;
+            if (SetAsFontImageWithSize > 0)
+            {                
+                xFAFont.Visibility = Visibility.Visible;
+                xFAFont.FontSize = SetAsFontImageWithSize;
+            }
+            else
+            {                
+                xFAImage.Visibility = Visibility.Visible;
+            }
 
             //set Foreground
-            if (foreground != null)            
-                xFAImage.Foreground = foreground;            
-            else            
-                xFAImage.Foreground = (SolidColorBrush)FindResource("$DarkBlue");
+            if (this.ImageForeground != null)
+            {
+                foreground = (SolidColorBrush)this.ImageForeground;
+            }
+            else if(foreground == null)
+                foreground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");           
+            xFAImage.Foreground = foreground;
+            if (this.ImageForeground != null)
+                xFAFont.Foreground = foreground;                       
 
             if (spinDuration != 0)
             {
@@ -522,25 +580,16 @@ namespace Amdocs.Ginger.UserControls
                 xFAFont.SpinDuration = spinDuration;
             }
 
-            if(!string.IsNullOrEmpty(toolTip))
+            if(!string.IsNullOrEmpty(toolTip) && string.IsNullOrEmpty(ImageToolTip))
             {
                 xFAImage.ToolTip = toolTip;                
                 xFAFont.ToolTip = toolTip;
             }
-            //set which type to show Image/Font
-            if (SetAsFontImageWithSize > 0)
-            {
-                xFAFont.Visibility = Visibility.Visible;
-                xFAFont.FontSize = SetAsFontImageWithSize;
-            }
-            else
-            {
-                xFAImage.Visibility = Visibility.Visible;
-            }
+            
             if (SetBorder)
             {
                 ImageMakerBorder.BorderThickness = new Thickness(1);
-                ImageMakerBorder.BorderBrush = (SolidColorBrush)FindResource("$DarkBlue");
+                ImageMakerBorder.BorderBrush = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
             }
             else
             {

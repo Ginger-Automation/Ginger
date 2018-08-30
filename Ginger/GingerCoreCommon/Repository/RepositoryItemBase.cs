@@ -300,33 +300,33 @@ namespace Amdocs.Ginger.Repository
 
         public void ClearBackup(bool isLocalBackup = false)
         {
-            var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
-            foreach (MemberInfo mi in properties)
-            {               
-                if(!isLocalBackup)
+                var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
+                foreach (MemberInfo mi in properties)
                 {
-                    if (mi.Name == nameof(mBackupDic)) continue;             
-                }
-                if (mi.Name == nameof(mLocalBackupDic)) continue;
-                dynamic v = null;
-                v = this.GetType().GetField(mi.Name).GetValue(this);
-                if (v is IObservableList)
-                {
-                    foreach (object o in v)
+                    if (!isLocalBackup)
                     {
-                        if (o is RepositoryItemBase)
+                        if (mi.Name == nameof(mBackupDic)) continue;
+                    }
+                    if (mi.Name == nameof(mLocalBackupDic)) continue;
+                    dynamic v = null;
+                    v = this.GetType().GetField(mi.Name).GetValue(this);
+                    if (v is IObservableList)
+                    {
+                        foreach (object o in v)
                         {
-                            ((RepositoryItemBase)o).ClearBackup(isLocalBackup);
-                        }                        
+                            if (o is RepositoryItemBase)
+                            {
+                                ((RepositoryItemBase)o).ClearBackup(isLocalBackup);
+                            }
+                        }
                     }
                 }
-            }
-            if (!isLocalBackup)
-            {
-                mBackupDic = null;
-                OnPropertyChanged(nameof(IsDirty));
-            }                        
-             mLocalBackupDic = null;                         
+                if (!isLocalBackup)
+                {
+                    mBackupDic = null;
+                    OnPropertyChanged(nameof(IsDirty));
+                }
+                mLocalBackupDic = null;                     
         }
 
         private void RestoreBackup(bool isLocalBackup = false)
@@ -389,7 +389,7 @@ namespace Amdocs.Ginger.Repository
                     // Do set only if we can really do set, some attrs are get only
                     // FieldInfo fi = this.GetType().GetField(mi.Name, BindingFlags.SetProperty);
                     FieldInfo fi = this.GetType().GetField(mi.Name);
-                    if (fi != null)
+                    if (fi != null && fi.IsStatic == false)
                     {
                         fi.SetValue(this, v);
                     }

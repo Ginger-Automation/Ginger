@@ -65,6 +65,7 @@ namespace Ginger.Actions.ActionConversion
 
             conversionConfigLblPanel.Visibility = Visibility.Collapsed;
             conversionConfigRadBtnPanel.Visibility = Visibility.Collapsed;
+            conversionBtnPanel.Visibility = Visibility.Collapsed;
 
             btnConvert.Visibility = Visibility.Collapsed;
 
@@ -378,6 +379,7 @@ namespace Ginger.Actions.ActionConversion
                     btnConvert.Visibility = Visibility.Visible;
                     conversionConfigLblPanel.Visibility = Visibility.Visible;
                     conversionConfigRadBtnPanel.Visibility = Visibility.Visible;
+                    conversionBtnPanel.Visibility = Visibility.Visible;
                     return;
                 }
                 else

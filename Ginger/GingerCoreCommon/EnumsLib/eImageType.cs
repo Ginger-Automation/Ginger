@@ -143,6 +143,10 @@ namespace Amdocs.Ginger.Common.Enums
         Active,
         InActive,
         History,
+        Pointer,
+        Camera,
+
+        Power,
         ExcelExport,
 
         #endregion
@@ -167,5 +171,6 @@ namespace Amdocs.Ginger.Common.Enums
         Check,
         Bug,
         DataSource,
+        PluginPackage,
     }
 }

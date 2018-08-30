@@ -2708,7 +2708,6 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 l.currentTemplate = App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
-            //     
             if (string.IsNullOrEmpty(BF.ExecutionFullLogFolder))
             {
                 string exec_folder = string.Empty;
