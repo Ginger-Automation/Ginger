@@ -3,6 +3,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.GeneralWindows;
 using Ginger.GingerGridLib;
+using Ginger.PlugInsWindows;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.TwoLevelMenuLib;
@@ -76,13 +77,18 @@ namespace Ginger.MenusLib
 
             TopMenuItem PluginsMenu = new TopMenuItem("Plugins", ConsoleKey.P, "Plugins AID");
             PluginsMenu.Add("Installed", PluginsList, ConsoleKey.L, "Installed Plugins", "Installed AID");
+            PluginsMenu.Add("Online", OnlinePlugins, ConsoleKey.O, "Online", "Online Plugins");
             PluginsMenu.Add("GingerGrid", GingerGrid, ConsoleKey.G, "Ginger Grid", "Ginger Grid AID");
             twoLevelMenu.Add(PluginsMenu);
 
             return twoLevelMenu;
         }
 
-        
+        private static Page OnlinePlugins()
+        {
+            return new PluginsIndexPage();
+        }
+
         private static Page Documents()
         {
             DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem();

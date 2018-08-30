@@ -603,6 +603,9 @@
       <DependentUpon>ModelItemUsagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MenusLib\ResourcesMenu.cs" />
+    <Compile Include="PlugInsWindows\PluginsIndexPage.xaml.cs">
+      <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
@@ -2757,6 +2760,10 @@
     <Page Include="GeneralLib\TestWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PlugInsWindows\PluginsIndexPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TestLib\WizardLib\MyWizardDetailsPage.xaml">
       <Generator>MSBuild:Compile</Generator>

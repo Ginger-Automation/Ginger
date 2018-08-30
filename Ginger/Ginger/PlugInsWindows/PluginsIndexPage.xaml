@@ -1,0 +1,26 @@
+﻿<Page x:Class="Ginger.PlugInsWindows.PluginsIndexPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.PlugInsWindows"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="PluginsIndexPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="xRefreshButton" Click="xRefreshButton_Click">Refresh</Button>
+            <Button x:Name="xInstallButton" Click="xInstallButton_Click">Install</Button>
+            <Label FontSize="16">Plugins index - available online</Label>
+        </StackPanel>
+
+        <TextBlock x:Name="xJSON" Grid.Row="1"/>
+
+    </Grid>
+</Page>
