@@ -263,6 +263,7 @@ namespace UnitTests.NonUITests
             g.LocateValue = "ID";
             a.Acts.Add(g);
             string TempFilepath = TestResources.GetTempFile("actionClearBackup.xml");
+
             //Act
             BF.SaveToFile(TempFilepath);
             a.SaveBackup();

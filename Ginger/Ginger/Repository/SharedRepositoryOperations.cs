@@ -206,23 +206,21 @@ namespace Ginger.Repository
 
         //FIXME to work using SR 
         public static RepositoryItemBase GetMatchingRepoItem(RepositoryItemBase item, IEnumerable<object> existingRepoItems, ref bool linkIsByExternalID, ref bool linkIsByParentID)
-        {
-            throw new NotImplementedException();
-
+        {            
             linkIsByExternalID = false;
             linkIsByParentID = false;
 
             //check if item with the same GUID already exist in repository
-            RepositoryItem repoItem = (RepositoryItem)existingRepoItems.Where(x => ((RepositoryItem)x).Guid == item.Guid).FirstOrDefault();
+            RepositoryItemBase repoItem = (RepositoryItemBase)existingRepoItems.Where(x => ((RepositoryItemBase)x).Guid == item.Guid).FirstOrDefault();
             //check if there is already item in repo which map to a specific ExternalID
             if (repoItem == null && item.ExternalID != null && item.ExternalID != string.Empty && item.ExternalID != "0")
             {
-                repoItem = (RepositoryItem)existingRepoItems.Where(x => ((RepositoryItem)x).ExternalID == item.ExternalID).FirstOrDefault();
+                repoItem = (RepositoryItemBase)existingRepoItems.Where(x => ((RepositoryItemBase)x).ExternalID == item.ExternalID).FirstOrDefault();
                 if (repoItem != null) linkIsByExternalID = true;
             }
             if (repoItem == null && item.ParentGuid != Guid.Empty)
             {
-                repoItem = (RepositoryItem)existingRepoItems.Where(x => ((RepositoryItem)x).Guid == item.ParentGuid).FirstOrDefault();
+                repoItem = (RepositoryItemBase)existingRepoItems.Where(x => ((RepositoryItemBase)x).Guid == item.ParentGuid).FirstOrDefault();
                 if (repoItem != null) linkIsByParentID = true;
             }
 
