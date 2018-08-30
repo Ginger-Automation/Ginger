@@ -447,27 +447,35 @@ namespace Ginger
         static bool bDone = false;
         public static void InitClassTypesDictionary()
         {
+            //TODO: cleanup after all RIs moved to GingerCoreCommon
+
             if (bDone) return;
             bDone = true;
-            NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
-            RepositoryItemBase.InitSerializers(new RepositorySerializer());
+
+            // TODO: remove after we don't need old serialzier to load old repo items
+            NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;            
 
             // Add all RI classes from GingerCoreCommon
             NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
 
             // Add all RI classes from GingerCore
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.RepositoryItem).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(typeof(Act).Assembly);
 
             // add  old Plugins - TODO: remove later when we change to new plugins
             NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerPlugIns.ActionsLib.PlugInActionsBase).Assembly);
 
 
+            // add from Ginger - items like RunSetConfig
+            NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
+
             // Each class which moved from GingerCore to GingerCoreCommon needed to be added here, so it will auto translate
+            // For backword compatibility of loading old object name in xml
             Dictionary<string, Type> list = new Dictionary<string, Type>();
             list.Add("GingerCore.Actions.ActInputValue", typeof(ActInputValue));
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
+            //list.Add("GingerCore.BusinessFlow", typeof(BusinessFlow));
 
 
             // Verify the old name used in XML

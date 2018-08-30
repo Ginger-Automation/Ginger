@@ -604,6 +604,7 @@
     </Compile>
     <Compile Include="MenusLib\ResourcesMenu.cs" />
     <Compile Include="RunSetLib\RunSetOperations.cs" />
+    <Compile Include="Run\RunSetConfig.cs" />
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
@@ -1803,7 +1804,6 @@
     </Compile>
     <Compile Include="Run\RunsetExecutor.cs" />
     <Compile Include="Reports\HTMLReports\HTMLReportBase.cs" />
-    <Compile Include="Run\RunSetConfig.cs" />
     <Compile Include="SolutionWindows\AddSolutionPage.xaml.cs">
       <DependentUpon>AddSolutionPage.xaml</DependentUpon>
     </Compile>

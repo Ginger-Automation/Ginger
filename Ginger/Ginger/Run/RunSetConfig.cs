@@ -16,13 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using System;
+using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
-using GingerCore;
 using GingerCore.GeneralLib;
 using Amdocs.Ginger.Common.Enums;
+using System;
 
 namespace Ginger.Run
 {
@@ -42,6 +41,8 @@ namespace Ginger.Run
                 }
             }
         }
+
+        public override bool UseNewRepositorySerializer { get { return true; } }
 
         private string mDescription;
         [IsSerializedForLocalRepository]

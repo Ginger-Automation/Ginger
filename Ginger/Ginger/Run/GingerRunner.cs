@@ -60,7 +60,7 @@ using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
 //TODO: move this class to GingerCore
 namespace Ginger.Run
 {
-    public class GingerRunner : RepositoryItem
+    public class GingerRunner : RepositoryItemBase
     {
         public enum eExecutedFrom
         {

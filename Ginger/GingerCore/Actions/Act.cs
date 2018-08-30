@@ -68,12 +68,16 @@ namespace GingerCore.Actions
             [EnumValueDescription("Desktop Screen")]
             DesktopScreen = 2
         }
+
+        public override bool UseNewRepositorySerializer { get { return true; } }
+
+
         private static string mScreenshotTempFolder;
         public static string ScreenshotTempFolder
         {
             get
             {
-                if(string.IsNullOrEmpty(mScreenshotTempFolder))
+                if (string.IsNullOrEmpty(mScreenshotTempFolder))
                     mScreenshotTempFolder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "Ginger_Screenshots");
                 return mScreenshotTempFolder;
             }
@@ -95,7 +99,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Param to Row")]
             ParamToRow,
             [EnumValueDescription("Param To Col")]
-            ParamToCol,            
+            ParamToCol,
         }
         public new static partial class Fields
         {
@@ -174,7 +178,7 @@ namespace GingerCore.Actions
         }
 
         private eLocateBy mLocateBy;
-        
+
         [IsSerializedForLocalRepository]
         public eLocateBy LocateBy
         {
@@ -255,12 +259,12 @@ namespace GingerCore.Actions
             }
             set
             {
-                mWaitVE = value;                
+                mWaitVE = value;
                 OnPropertyChanged(nameof(WaitVE));
             }
         }
 
-        
+
         //private int? mTimeout; //timeout in secs
         [IsSerializedForLocalRepository]
         public int? Timeout { get; set; } //timeout in secs
@@ -301,7 +305,7 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> InputValues = new ObservableList<ActInputValue>();
 
-        [IsSerializedForLocalRepository]        
+        [IsSerializedForLocalRepository]
         public ObservableList<ActReturnValue> ReturnValues = new ObservableList<ActReturnValue>();
 
         [IsSerializedForLocalRepository]
@@ -314,7 +318,7 @@ namespace GingerCore.Actions
         // All serialized Attributes - END
         // -----------------------------------------------------------------------------------------------------------------------------------------------
         #endregion Serialized Attributes
-        
+
         public string Error { get { return mError; } set { mError = value; OnPropertyChanged(Fields.Error); } }
 
         private long? mElapsed;
@@ -513,9 +517,9 @@ namespace GingerCore.Actions
             }
         }
 
-        
-        public ObservableList<ActInputValue> ActInputValues 
-        { 
+
+        public ObservableList<ActInputValue> ActInputValues
+        {
             get
             {
                 return InputValues;
@@ -653,8 +657,8 @@ namespace GingerCore.Actions
 
             return AIV.Value;
         }
-             
-        
+
+
 
         public ActInputValue GetOrCreateInputParam(string Param, string DefaultValue = null)
         {
@@ -787,7 +791,7 @@ namespace GingerCore.Actions
                 {
                     return (T)Enum.Parse(typeof(T), paramValue, true);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Array a = Enum.GetValues(typeof(T));
                     Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
@@ -797,7 +801,7 @@ namespace GingerCore.Actions
 
             return null; // Type is not supported
         }
-        
+
 
         //TODO: make Name a mandatory and enforce providing where used, meanhwile making it optional
         public void AddScreenShot(Bitmap bmp, string Name = "")
@@ -807,7 +811,7 @@ namespace GingerCore.Actions
                 ScreenShots.Add(SaveScreenshotToTempFile(bmp));
                 ScreenShotsNames.Add(Name);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Error = "Failed to save the screenshot bitmap to temp file. Error= " + ex.Message;
                 Reporter.ToLog(eLogLevel.ERROR, Error, ex);
@@ -842,7 +846,7 @@ namespace GingerCore.Actions
         public void AddOrUpdateReturnParsedParamValue(List<KeyValuePair<string, string>> list)
         {
 
-            foreach(KeyValuePair<string,string> outputValuePair in list)
+            foreach (KeyValuePair<string, string> outputValuePair in list)
             {
                 AddOrUpdateReturnParamActual(outputValuePair.Key, outputValuePair.Value);
             }
@@ -855,11 +859,11 @@ namespace GingerCore.Actions
             foreach (KeyValuePair<string, object> entry in outputValues)
             {
                 AddJsonKeyValueToOutputValue(entry.Value, entry.Key, i);
-            }           
+            }
         }
 
-         private void AddJsonKeyValueToOutputValue(object Value, string Key, int Path)
-         {
+        private void AddJsonKeyValueToOutputValue(object Value, string Key, int Path)
+        {
             try
             {
                 if (Value is Dictionary<string, object>)
@@ -901,7 +905,7 @@ namespace GingerCore.Actions
                                     foreach (IList item in (IList)Value)
                                     {
                                         //string a= (Newtonsoft.Json.Linq.JProperty)item).Name;
-                                        AddJsonKeyValueToOutputValue(((Newtonsoft.Json.Linq.JProperty)item).Value, Key + "."+ ((Newtonsoft.Json.Linq.JProperty)item).Name, Path);
+                                        AddJsonKeyValueToOutputValue(((Newtonsoft.Json.Linq.JProperty)item).Value, Key + "." + ((Newtonsoft.Json.Linq.JProperty)item).Name, Path);
                                         j++;
                                     }
                                     k++;
@@ -919,7 +923,7 @@ namespace GingerCore.Actions
                                     k++;
                                 }
                             }
-                            catch(Exception e)
+                            catch (Exception e)
                             {
                                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}");
                             }
@@ -940,7 +944,7 @@ namespace GingerCore.Actions
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}");
                     }
-                            }
+            }
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}");
@@ -966,13 +970,13 @@ namespace GingerCore.Actions
             switch (filterType)
             {
                 case eFilterBy.Tags:
-                    foreach(Guid tagGuid in Tags)
+                    foreach (Guid tagGuid in Tags)
                     {
                         Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x) == true).FirstOrDefault();
                         if (!guid.Equals(Guid.Empty))
                             return true;
                     }
-                break;
+                    break;
             }
             return false;
         }
@@ -1019,20 +1023,20 @@ namespace GingerCore.Actions
 
         public void AddOrUpdateReturnParamActualWithPath(string ParamName, string ActualValue, string sPath)
         {
-                // check if param already exist then update as it can be saved and loaded + keep other values
-                ActReturnValue ARC = (from arc in ReturnValues where arc.Param == ParamName && arc.PathCalculated == sPath select arc).FirstOrDefault();
-                if (ARC == null && (AddNewReturnParams==true || ConfigOutputDS == true))
-                {
-                    ARC = new ActReturnValue();
-                    ARC.Active = true;
-                    ReturnValues.Add(ARC);
-                    ARC.Param = ParamName;
-                    ARC.Path = sPath;
-                }
+            // check if param already exist then update as it can be saved and loaded + keep other values
+            ActReturnValue ARC = (from arc in ReturnValues where arc.Param == ParamName && arc.PathCalculated == sPath select arc).FirstOrDefault();
+            if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
+            {
+                ARC = new ActReturnValue();
+                ARC.Active = true;
+                ReturnValues.Add(ARC);
+                ARC.Param = ParamName;
+                ARC.Path = sPath;
+            }
 
-                if (ARC != null)
-                    ARC.Actual = ActualValue;
-         }
+            if (ARC != null)
+                ARC.Actual = ActualValue;
+        }
 
 
         public string GetReturnParam(string Param)
@@ -1171,7 +1175,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddText(SupportedPlatforms);
             TBH.AddLineBreak();
-            TBH.AddLineBreak(); 
+            TBH.AddLineBreak();
 
             TBH.AddHeader1("Recommended Use Case/s and Guidelines:");
             TBH.AddLineBreak();
@@ -1188,7 +1192,7 @@ namespace GingerCore.Actions
         /// <param name="parentActivity">The Action parent Activity</param>  
         /// <param name="setActStatus">Define of to set the Action Status value in case the check fails</param>   
         /// <returns></returns>
-        public bool? CheckIfVaribalesDependenciesAllowsToRun(Activity parentActivity, bool setActStatus=false)
+        public bool? CheckIfVaribalesDependenciesAllowsToRun(Activity parentActivity, bool setActStatus = false)
         {
             bool? checkStatus = null;
             try
@@ -1354,7 +1358,7 @@ namespace GingerCore.Actions
 
 
         public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase exisstingRepoItem, string itemPartToUpdate)
-        {            
+        {
             Act updatedAct = null;
 
             eItemParts ePartToUpdate = (eItemParts)Enum.Parse(typeof(eItemParts), itemPartToUpdate);
@@ -1369,7 +1373,7 @@ namespace GingerCore.Actions
                         updatedAct.FlowControls = ((Act)exisstingRepoItem).FlowControls;
                         updatedAct.InputValues = ((Act)exisstingRepoItem).InputValues;
                         updatedAct.ReturnValues = ((Act)exisstingRepoItem).ReturnValues;
-                    }                   
+                    }
                     break;
                 case eItemParts.FlowControls:
                     updatedAct = (Act)exisstingRepoItem.CreateCopy(false);
@@ -1392,7 +1396,7 @@ namespace GingerCore.Actions
 
             return updatedAct;
         }
-        
+
         public void Reset()
         {
             if (this != null)
@@ -1400,7 +1404,7 @@ namespace GingerCore.Actions
                 this.ExInfo = string.Empty;
                 this.Error = null;
                 this.Elapsed = null;
-                foreach(string ss in this.ScreenShots)
+                foreach (string ss in this.ScreenShots)
                 {
                     if (ss.ToUpper().Contains(ScreenshotTempFolder.ToUpper()))
                     {
@@ -1410,7 +1414,7 @@ namespace GingerCore.Actions
                             {
                                 System.IO.File.Delete(ss);
                             }
-                            catch(System.IO.IOException ex)
+                            catch (System.IO.IOException ex)
                             {
                                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
                             }
@@ -1430,11 +1434,11 @@ namespace GingerCore.Actions
                 //    this.ReturnValues.Add(returnValue);
                 //}  
 
-               
-                for(int indx=0; indx< this.ReturnValues.Count;indx++)
+
+                for (int indx = 0; indx < this.ReturnValues.Count; indx++)
                 {
                     ActReturnValue value = this.ReturnValues[indx];
-                    if( (String.IsNullOrEmpty(value.Expected) == false || String.IsNullOrEmpty(value.StoreToValue) == false || String.IsNullOrEmpty(value.SimulatedActual) == false))
+                    if ((String.IsNullOrEmpty(value.Expected) == false || String.IsNullOrEmpty(value.StoreToValue) == false || String.IsNullOrEmpty(value.SimulatedActual) == false))
                     {
                         continue;
                     }
@@ -1444,7 +1448,7 @@ namespace GingerCore.Actions
                         indx--;
                     }
                 }
-              
+
                 // reset output
                 foreach (ActReturnValue ARV in this.ReturnValues)
                 {
@@ -1452,7 +1456,7 @@ namespace GingerCore.Actions
                     ARV.ExpectedCalculated = null;
                     ARV.Status = ActReturnValue.eStatus.Pending;
                 }
-              
+
                 //foreach (ActDataSourceConfig ADSC in this.DSOutputConfigParams)
                 //{
                 //    ARV.Actual = null;
@@ -1468,7 +1472,7 @@ namespace GingerCore.Actions
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
             }
         }    // end of Reset
-        
+
 
         public string ExecutionLogFolder { get; set; }
 
@@ -1505,7 +1509,7 @@ namespace GingerCore.Actions
             // this.InputValues
             // this.out
         }
-        
+
 
         // Return details of the action for Actions grid and report 
         // below is default impl but each action can customize
@@ -1518,7 +1522,7 @@ namespace GingerCore.Actions
 
                 // Show old LocateBy, LocateValue
                 // TODO: remove when locate by removed from here
-                ActionDetails AD= new ActionDetails();
+                ActionDetails AD = new ActionDetails();
                 if (this.LocateBy != eLocateBy.NA)
                 {
                     AD.Info = this.LocateBy + "=" + this.LocateValue;
@@ -1590,6 +1594,8 @@ namespace GingerCore.Actions
                 AddOrUpdateReturnParamActual("???", sRC);
             }
         } // end of ParseRC
+
+        
 
 
         public override eImageType ItemImageType

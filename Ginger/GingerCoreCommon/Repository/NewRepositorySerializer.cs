@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,9 +24,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -254,7 +252,7 @@ namespace Amdocs.Ginger.Repository
             var Fields = ri.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field).OrderBy(x => x.Name);
 
             foreach (MemberInfo fi in Fields)
-            {
+            {               
                 object v = null;
                 IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(fi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
                 if (token == null) continue;
@@ -278,33 +276,32 @@ namespace Amdocs.Ginger.Repository
                 if (v == null) continue;
                 if (IsValueDefault(v, token)) continue;
 
-                if (v != null)
+                
+                if (v is IObservableList)
                 {
-                    if (v is IObservableList)
+                    IObservableList vv = (IObservableList)v;
+                    if (vv.Count != 0)  // Write only if we have items - save xml space
                     {
-                        IObservableList vv = (IObservableList)v;
-                        if (vv.Count != 0)  // Write only if we have items - save xml space
-                        {
-                            xmlwriteObservableList(xml, fi.Name, (IObservableList)v);
-                        }
-                    }
-                    else
-                    {
-                        if (v is List<string>)
-                        {
-                            xmlwriteStringList(xml, fi.Name, (List<string>)v);
-                        }
-                        else if (v is RepositoryItemBase)
-                        {                            
-                            xmlwriteSingleObjectField(xml, fi.Name, v);
-                        }                       
-                        else
-                        {
-                            //xml.WriteComment(">>>>>>>>>>>>>>>>> Unknown Field type to serialize - " + fi.Name + " - " + v.ToString());
-                            throw new Exception("Unknown Field type to serialize - " + fi.Name + " - " + v.ToString());
-                        }
+                        xmlwriteObservableList(xml, fi.Name, (IObservableList)v);
                     }
                 }
+                else
+                {
+                    if (v is List<string>)
+                    {
+                        xmlwriteStringList(xml, fi.Name, (List<string>)v);
+                    }
+                    else if (v is RepositoryItemBase)
+                    {                            
+                        xmlwriteSingleObjectField(xml, fi.Name, v);
+                    }                       
+                    else
+                    {
+                        //xml.WriteComment(">>>>>>>>>>>>>>>>> Unknown Field type to serialize - " + fi.Name + " - " + v.ToString());
+                        throw new Exception("Unknown Field type to serialize - " + fi.Name + " - " + v.ToString());
+                    }
+                }
+                
             }
         }
 
@@ -382,6 +379,7 @@ namespace Amdocs.Ginger.Repository
             object o = DeserializeFromFile(t, FileName);
             return o;
         }
+        
 
         public RepositoryItemBase DeserializeFromFile(Type t, string FileName)
         {
@@ -781,7 +779,8 @@ namespace Amdocs.Ginger.Repository
         {            
             var RepositoryItemTypes =              
               from type in a.GetTypes()
-              where type.IsSubclassOf(typeof(RepositoryItemBase))              
+                  //where type.IsSubclassOf(typeof(RepositoryItemBase))              
+              where typeof(RepositoryItemBase).IsAssignableFrom(type) // Will load all sub classes including level 2,3 etc.
               select type;
 
             foreach (Type t in RepositoryItemTypes)

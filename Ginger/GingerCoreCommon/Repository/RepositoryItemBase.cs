@@ -123,30 +123,14 @@ namespace Amdocs.Ginger.Repository
         // TODO: temp by default all repository items use the old Serializer, unless flagged to use the new, overrride in sub class
         public virtual bool UseNewRepositorySerializer { get { return false; } }
 
-        static NewRepositorySerializer NewRepositorySerializer2;
-        static IRepositorySerializer OldRepositorySerializer;
+        static NewRepositorySerializer mRepositorySerializer = new NewRepositorySerializer();
 
-        // TODO: temp until we move all items to new RS
-        public static void InitSerializers(IRepositorySerializer oldRepositorySerializer)
-        {
-            OldRepositorySerializer = oldRepositorySerializer;
-            NewRepositorySerializer2 = new NewRepositorySerializer();
-
-
-        }
 
         public IRepositorySerializer RepositorySerializer
         {
             get
-            {
-                if (UseNewRepositorySerializer)
-                {
-                    return NewRepositorySerializer2;
-                }
-                else
-                {
-                    return OldRepositorySerializer;
-                }
+            {                
+                return mRepositorySerializer;                
             }
         }
 
@@ -191,6 +175,8 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+
+        //TODO: remove from here and force to use RepositorySerialzie.Deser...
         public void SaveToFile(string FilePath)
         {
             RepositorySerializer.SaveToFile(this, FilePath);
@@ -619,24 +605,9 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public static string GetOldRepositoryItemFileExt(Type T)
-        {
-            return OldRepositorySerializer.GetShortType(T);
-        }
-
         public string FileExt(Type T)
         {
-            if (UseNewRepositorySerializer)
-            {
-                return NewRepositorySerializer2.GetShortType(T);
-            }
-            else
-            {
-                return OldRepositorySerializer.GetShortType(T);
-            }
-
-
-            //TODO: use below after we move to GingerCoreCommon
+            return RepositorySerializer.GetShortType(T);
         }
 
         private RepositoryItemKey mRepositoryItemKey;

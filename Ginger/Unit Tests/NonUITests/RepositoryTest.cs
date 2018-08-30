@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -43,7 +42,7 @@ namespace UnitTests.NonUITests
         [Level1]
         public static void ClassInitialize(TestContext TC)
         {
-            RepositoryItemBase.InitSerializers(new RepositorySerializer());
+            Ginger.App.InitClassTypesDictionary();
         }
 
         [TestInitialize]
@@ -97,7 +96,10 @@ namespace UnitTests.NonUITests
 
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
+
+            // BusinessFlow BF2 = (BusinessFlow)RepositoryItemBase.LoadFromFile(typeof(BusinessFlow), FileName);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
 
             Assert.AreEqual(BF2.Name, BF.Name);
             Assert.AreEqual(BF2.Description, BF.Description);
@@ -157,7 +159,8 @@ namespace UnitTests.NonUITests
 
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), TempFilepath);
             //BF2.isDirty();
 
             Assert.IsFalse(BF2.IsDirty);
@@ -189,8 +192,10 @@ namespace UnitTests.NonUITests
             //Act
             BF.SaveToFile(TempFilepath);
             BF.SaveBackup();
-            BF.RestoreFromBackup();           
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
+            BF.RestoreFromBackup();
+
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), TempFilepath);
             BF2.SaveBackup();//dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
@@ -229,8 +234,9 @@ namespace UnitTests.NonUITests
             BF.SaveToFile(FileName);
             a.SaveBackup();            
             a.RestoreFromBackup();
-           
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
+
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
             BF2.SaveBackup();//dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
@@ -265,7 +271,8 @@ namespace UnitTests.NonUITests
             a.SaveBackup();
             a.RestoreFromBackup();
 
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), TempFilepath);
             BF2.SaveBackup();//dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
@@ -321,7 +328,8 @@ namespace UnitTests.NonUITests
 
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), TempFilepath);
             BF2.SaveBackup();//dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
@@ -349,8 +357,8 @@ namespace UnitTests.NonUITests
             RSC.SaveToFile(TempFilepath);
 
             //Assert
-
-            RunSetConfig RSC2 = (RunSetConfig)RepositoryItem.LoadFromFile(typeof(RunSetConfig), TempFilepath);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            RunSetConfig RSC2 = (RunSetConfig)newRepositorySerializer.DeserializeFromFile(typeof(RunSetConfig), TempFilepath);
         }
 
         //[Ignore]
@@ -457,7 +465,8 @@ namespace UnitTests.NonUITests
             BF.SaveToFile(FileName);
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
            Assert.AreEqual(BF2.Activities.Count(), ActivitiesToCreate);
             //Assert.AreEqual(BF2. Activities[0].Asserts.Count(), 1);
             //BF2.Description = "aaa";
@@ -699,21 +708,19 @@ namespace UnitTests.NonUITests
 
             //Act            
             string FileName = TestResources.GetTempFile("RunSetConfig1.xml");
+
             RSC.SaveToFile(FileName);
 
             //
-            
-            RunSetConfig RSC2 = (RunSetConfig)RepositoryItem.LoadFromFile(FileName);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            RunSetConfig RSC2 = (RunSetConfig)newRepositorySerializer.DeserializeFromFile(FileName);
 
             //Assert
-           Assert.AreEqual(RSC.Name, RSC2.Name, "RSC.Name");
-
+            Assert.AreEqual(RSC.Name, RSC2.Name, "RSC.Name");
             RunSetActionSendEmail RSASE2 = (RunSetActionSendEmail)RSC.RunSetActions[0];
-           Assert.AreEqual(RSASE2.Email.MailFrom, MailFrom, "RSC2.MailFrom");
-           Assert.AreEqual(RSASE2.Email.MailTo, MailTo, "RSC2.MailTo");
-           Assert.AreEqual(RSASE2.Email.MailCC, MailCC, "RSC2.MailCC");
-            
-
+            Assert.AreEqual(RSASE2.Email.MailFrom, MailFrom, "RSC2.MailFrom");
+            Assert.AreEqual(RSASE2.Email.MailTo, MailTo, "RSC2.MailTo");
+            Assert.AreEqual(RSASE2.Email.MailCC, MailCC, "RSC2.MailCC");            
         }
 
 
@@ -744,7 +751,8 @@ namespace UnitTests.NonUITests
 
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
 
            Assert.AreEqual(BF2.Name, BF.Name);
            Assert.AreEqual(BF2.Description, BF.Description);
