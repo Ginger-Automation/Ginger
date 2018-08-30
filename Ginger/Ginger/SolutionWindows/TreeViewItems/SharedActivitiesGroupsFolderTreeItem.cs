@@ -27,32 +27,32 @@ using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     class SharedActivitiesGroupsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
-
-        private ActivitiesGroupsRepositoryPage mActivitiesGroupsRepositoryPage;
-        public string Folder { get; set; }
-        public string Path { get; set; }
         public enum eActivitiesGroupsItemsShowMode { ReadWrite, ReadOnly }
+
+        RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
+        private ActivitiesGroupsRepositoryPage mActivitiesGroupsRepositoryPage;
         private eActivitiesGroupsItemsShowMode mShowMode;
 
-        public SharedActivitiesGroupsFolderTreeItem(eActivitiesGroupsItemsShowMode showMode = eActivitiesGroupsItemsShowMode.ReadWrite)
+        public SharedActivitiesGroupsFolderTreeItem(RepositoryFolder<ActivitiesGroup> activitiesGroupFolder, eActivitiesGroupsItemsShowMode showMode = eActivitiesGroupsItemsShowMode.ReadWrite)
         {
+            mActivitiesGroupFolder = activitiesGroupFolder;
             mShowMode = showMode;
         }
 
         Object ITreeViewItem.NodeObject()
         {
-            return null;
+            return mActivitiesGroupFolder;
         }
         override public string NodePath()
         {
-            return Path + @"\";
+            return mActivitiesGroupFolder.FolderFullPath;
         }
         override public Type NodeObjectType()
         {
@@ -61,60 +61,33 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFile;
-            if (IsGingerDefualtFolder)
-            {
-                ImageFile = "@Group_16x16.png";
-            }
-            else
-            {
-                ImageFile = "@Folder2_16x16.png";
-            }
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return NewTVItemFolderHeaderStyle(mActivitiesGroupFolder);
         }
-
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             return GetChildrentGeneric<ActivitiesGroup>(mActivitiesGroupFolder);
-            //List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            //AddsubFolders(Path, Childrens);
-
-            ////Add Activities Group
-            //ObservableList<ActivitiesGroup> ActivitiesGroups = App.LocalRepository.GetSolutionRepoActivitiesGroups(specificFolderPath: Path);
-
-            //foreach (ActivitiesGroup activitiesGroup in ActivitiesGroups)
-            //{
-            //    SharedActivitiesGroupTreeItem SATI = new SharedActivitiesGroupTreeItem(mShowMode);
-            //    SATI.mActivitiesGroup = activitiesGroup;
-            //    Childrens.Add(SATI);
-            //}
-
-            //return Childrens;
         }
 
-        //private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
-        //{
-        //    try
-        //    {
-        //        foreach (string d in Directory.GetDirectories(Path))
-        //        {
-        //            SharedActivitiesGroupsFolderTreeItem FolderItem = new SharedActivitiesGroupsFolderTreeItem(mShowMode);
-        //            string FolderName = System.IO.Path.GetFileName(d);
+        public override ITreeViewItem GetTreeItem(object item)
+        {
+            if (item is ActivitiesGroup)
+            {
+                return new SharedActivitiesGroupTreeItem((ActivitiesGroup)item);
+            }
 
-        //            FolderItem.Folder = FolderName;
-        //            FolderItem.Path = d;
+            if (item is RepositoryFolderBase)
+            {
+                return new SharedActivitiesGroupsFolderTreeItem((RepositoryFolder<ActivitiesGroup>)item);
+            }
 
-        //            Childrens.Add(FolderItem);
-        //        }
+            throw new Exception("Error unknown item added to Activities Group folder");
+        }
 
-        //    }
-        //    catch (System.Exception excpt)
-        //    {
-        //        Console.WriteLine(excpt.Message);
-        //    }
-        //}
+        internal void AddItemHandler(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
         bool ITreeViewItem.IsExpandable()
         {
@@ -125,7 +98,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActivitiesGroupsRepositoryPage == null)
             {
-                mActivitiesGroupsRepositoryPage = new ActivitiesGroupsRepositoryPage(Path);
+                mActivitiesGroupsRepositoryPage = new ActivitiesGroupsRepositoryPage(mActivitiesGroupFolder);
             }
             return mActivitiesGroupsRepositoryPage;
         }
@@ -144,10 +117,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             if (mShowMode == eActivitiesGroupsItemsShowMode.ReadWrite)
             {
-                if (IsGingerDefualtFolder)
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false);
+                if (mActivitiesGroupFolder.IsRootFolder)
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false);
                 else
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false);
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false, allowRefresh: false);
 
                 MenuItem exportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
                 TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportAllToALM, null, "@ALM_16x16.png");
@@ -156,7 +129,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), true, false, false, false, false, false, false, false, false,false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), false, false, false, false, false, false, false, false, false,false);
             }
         }
 

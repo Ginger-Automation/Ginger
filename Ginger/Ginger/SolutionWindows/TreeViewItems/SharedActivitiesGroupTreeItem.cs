@@ -27,17 +27,20 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using GingerWPF.TreeViewItemsLib;
+using Amdocs.Ginger.Common.Enums;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class SharedActivitiesGroupTreeItem : TreeViewItemBase, ITreeViewItem
+    class SharedActivitiesGroupTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private ActivitiesGroupPage mActivitiesGroupPage;
-        public ActivitiesGroup mActivitiesGroup { get; set; }
+        private ActivitiesGroup mActivitiesGroup;
+        private ActivitiesGroupPage mActivitiesGroupPage;        
         private SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode mShowMode;
 
-        public SharedActivitiesGroupTreeItem(SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode showMode = SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode.ReadWrite)
+        public SharedActivitiesGroupTreeItem(ActivitiesGroup activitiesGroup, SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode showMode = SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode.ReadWrite)
         {
+            mActivitiesGroup = activitiesGroup;
             mShowMode = showMode;
         }
 
@@ -56,7 +59,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(mActivitiesGroup.Name, "@Group_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(mActivitiesGroup.FileName, ref ItemSourceControlStatus));
+            return NewTVItemHeaderStyle(mActivitiesGroup);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -93,7 +96,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
                
-                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, "@Link_16x16.png");
+                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
 
                 MenuItem exportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
                 TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportToALM, null, "@ALM_16x16.png");
@@ -102,7 +105,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, "@Link_16x16.png");
+                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
             }                    
         }
 

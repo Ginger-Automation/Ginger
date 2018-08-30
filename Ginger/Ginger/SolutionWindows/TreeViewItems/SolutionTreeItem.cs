@@ -130,9 +130,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //}
 
             //Add Shared Repository
-            SharedRepositoryTreeItem SRTI = new SharedRepositoryTreeItem();
-            SRTI.IsGingerDefualtFolder = true;
-            Childrens.Add(SRTI);
+            //SharedRepositoryTreeItem SRTI = new SharedRepositoryTreeItem();
+            //SRTI.IsGingerDefualtFolder = true;
+            //Childrens.Add(SRTI);
             //TODO: move to Config check
             //if (App.UserProfile.UserTypeHelper.IsSupportReports)
             //{

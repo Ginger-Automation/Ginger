@@ -27,17 +27,17 @@ using System.IO;
 using System.Windows.Controls;
 using Amdocs.Ginger.Repository;
 using GingerWPF.TreeViewItemsLib;
+using System.Windows;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     class SharedVariablesFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        RepositoryFolder<VariableBase> mVariablesFolder;
-        private VariablesRepositoryPage mVariablesRepositoryPage;
         public enum eVariablesItemsShowMode { ReadWrite, ReadOnly }
+
+        RepositoryFolder<VariableBase> mVariablesFolder;
+        private VariablesRepositoryPage mVariablesRepositoryPage;        
         private eVariablesItemsShowMode mShowMode;
-        public string Folder { get; set; }
-        public string Path { get; set; }
 
         public SharedVariablesFolderTreeItem(RepositoryFolder<VariableBase> variablesFolder,  eVariablesItemsShowMode showMode = eVariablesItemsShowMode.ReadWrite)
         {
@@ -47,11 +47,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         Object ITreeViewItem.NodeObject()
         {
-            return null;
+            return mVariablesFolder;
         }
         override public string NodePath()
         {
-            return Path + @"\";
+            return mVariablesFolder.FolderFullPath;
         }
         override public Type NodeObjectType()
         {
@@ -60,60 +60,34 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFile;
-            if (IsGingerDefualtFolder)
-            {
-                ImageFile = "@Variable_16x16.png";
-            }
-            else
-            {
-                ImageFile = "@Folder2_16x16.png";
-            }
-
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return NewTVItemFolderHeaderStyle(mVariablesFolder);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             return GetChildrentGeneric<VariableBase>(mVariablesFolder);
-            //List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            //AddsubFolders(Path, Childrens);
-
-            ////Add Variables
-            //ObservableList<VariableBase> Variables = App.LocalRepository.GetSolutionRepoVariables(specificFolderPath:Path);
-
-            //foreach (VariableBase varb in Variables)
-            //{
-            //    SharedVariableTreeItem SVTI = new SharedVariableTreeItem();
-            //    SVTI.VariableBase = varb;
-            //    Childrens.Add(SVTI);
-            //}
-
-            //return Childrens;
         }
 
-        //private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
-        //{
-        //    try
-        //    {
-        //        foreach (string d in Directory.GetDirectories(Path))
-        //        {
-        //            SharedVariablesFolderTreeItem FolderItem = new SharedVariablesFolderTreeItem();
-        //            string FolderName = System.IO.Path.GetFileName(d);
+        public override ITreeViewItem GetTreeItem(object item)
+        {
+            if (item is VariableBase)
+            {
+                return new SharedVariableTreeItem((VariableBase)item);
+            }
 
-        //            FolderItem.Folder = FolderName;
-        //            FolderItem.Path = d;
+            if (item is RepositoryFolderBase)
+            {
+                return new SharedVariablesFolderTreeItem((RepositoryFolder<VariableBase>)item);
+            }
 
-        //            Childrens.Add(FolderItem);
-        //        }
+            throw new Exception("Error unknown item added to Variables folder");
+        }
 
-        //    }
-        //    catch (System.Exception excpt)
-        //    {
-        //        Console.WriteLine(excpt.Message);
-        //    }
-        //}
+        internal void AddItemHandler(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
 
         bool ITreeViewItem.IsExpandable()
         {
@@ -124,7 +98,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mVariablesRepositoryPage == null)
             {
-                mVariablesRepositoryPage = new VariablesRepositoryPage(Path);
+                mVariablesRepositoryPage = new VariablesRepositoryPage(mVariablesFolder);
             }
             return mVariablesRepositoryPage;
         }
@@ -143,16 +117,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             if (mShowMode == eVariablesItemsShowMode.ReadWrite)
             {
-                if (IsGingerDefualtFolder)
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Variable", allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false);
+                if (mVariablesFolder.IsRootFolder)
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Variable), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh:false);
                 else
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Variable", allowAddNew: false);
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Variable), allowAddNew: false, allowRefresh: false);
                 
                 AddSourceControlOptions(mContextMenu, false, false);
             }
             else
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), true, false, false, false, false, false, false, false, false, false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.Variable), false, false, false, false, false, false, false, false, false, false);
             }
         }       
     }

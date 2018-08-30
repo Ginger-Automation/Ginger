@@ -24,6 +24,8 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.Variables;
+using GingerCore.Activities;
+using GingerCore.Actions;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -57,32 +59,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
             //Add Activities Groups
-            SharedActivitiesGroupsFolderTreeItem SAGFTI = new SharedActivitiesGroupsFolderTreeItem();
-            SAGFTI.Folder = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups);
-            SAGFTI.Path = App.UserProfile.Solution.Folder + @"\SharedRepository\ActivitiesGroups\";
-            SAGFTI.IsGingerDefualtFolder = true;
-            Childrens.Add(SAGFTI);
+            Childrens.Add(new SharedActivitiesGroupsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>()));
 
             //Add Activities
-            SharedActivitiesFolderTreeItem SAFTI = new SharedActivitiesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>());
-            SAFTI.Folder = GingerDicser.GetTermResValue(eTermResKey.Activities);
-            SAFTI.Path = App.UserProfile.Solution.Folder + @"\SharedRepository\Activities\";
-            SAFTI.IsGingerDefualtFolder = true;
-            Childrens.Add(SAFTI);
+            Childrens.Add(new SharedActivitiesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>()));
 
             // Add Actions
-            SharedActionsFolderTreeItem SAcFTI = new SharedActionsFolderTreeItem();
-            SAcFTI.Folder = "Actions";
-            SAcFTI.Path = App.UserProfile.Solution.Folder + @"\SharedRepository\Actions\";
-            SAcFTI.IsGingerDefualtFolder = true;
-            Childrens.Add(SAcFTI);
+            Childrens.Add(new SharedActionsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
 
             //Add Variables
-            SharedVariablesFolderTreeItem SVFTI = new SharedVariablesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>());
-            SVFTI.Folder = GingerDicser.GetTermResValue(eTermResKey.Variables);
-            SVFTI.Path = App.UserProfile.Solution.Folder + @"\SharedRepository\Variables\";
-            SVFTI.IsGingerDefualtFolder = true;
-            Childrens.Add(SVFTI);
+            Childrens.Add(new SharedVariablesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>()));
 
             return Childrens;
         }

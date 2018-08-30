@@ -6,7 +6,11 @@ using Ginger.GingerGridLib;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.TwoLevelMenuLib;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
 using GingerCore.DataSource;
+using GingerCore.Variables;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
 using GingerWPF.PluginsLib;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
@@ -50,25 +54,30 @@ namespace Ginger.MenusLib
         private static TwoLevelMenu GetMenu()
         {
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
-            TopMenuItem ApplicationModelsMenu = new TopMenuItem("Application Models", ConsoleKey.A, "Application Models AID");
-            ApplicationModelsMenu.Add("API Models", APIModels, ConsoleKey.L, "Applications Web Service Requests Templates Repository","AID");
 
+            TopMenuItem SharedRepositoryMenu = new TopMenuItem("Shared Repository", ConsoleKey.S, "Shared Repository AID");
+            SharedRepositoryMenu.Add(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.ActivitiesGroups), SharedActivitiesGroups, ConsoleKey.S, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.ActivitiesGroups, "Shared "), "AID");
+            SharedRepositoryMenu.Add(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Activities), SharedActivities, ConsoleKey.S, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Activities, "Shared "), "AID");
+            SharedRepositoryMenu.Add("Actions", SharedActions, ConsoleKey.S, "Shared Actions", "AID");
+            SharedRepositoryMenu.Add(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Variables), SharedVariables, ConsoleKey.S, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Variables, "Shared "), "AID");
+            twoLevelMenu.Add(SharedRepositoryMenu);
+
+            TopMenuItem ApplicationModelsMenu = new TopMenuItem("Applications Models", ConsoleKey.A, "Application Models AID");
+            ApplicationModelsMenu.Add("API Models", APIModels, ConsoleKey.L, "Applications Web Service Requests Templates Repository","AID");
             //TODO: bind visible to Beta feature or use WorkSpace.Instance.BetaFeatures.PropertyChanged
             // meanwhile show/hide per current status
-            if (WorkSpace.Instance.BetaFeatures.ShowPOMInResourcesTab)
-            {
-                ApplicationModelsMenu.Add("Page Objects Model", POMModels, ConsoleKey.P, "Page Object Modeling", "AID");                
-            }
+            if (WorkSpace.Instance.BetaFeatures.ShowPOMInResourcesTab)            
+                ApplicationModelsMenu.Add("Page Objects Models", POMModels, ConsoleKey.P, "Page Object Modeling", "AID");                            
             ApplicationModelsMenu.Add("Models Global Parameters", ModelsGlobalParameters, ConsoleKey.G, "Add or Edit Models Global Parameters", "AID");
             twoLevelMenu.Add(ApplicationModelsMenu);
 
             // TODO: use visible show/hide instead of not adding
-            if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
-            {
+            //if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
+            //{
                 TopMenuItem DataSourceMenu = new TopMenuItem("Data Sources", ConsoleKey.D, "Data Sources AID");
                 DataSourceMenu.Add("List", DataSources, ConsoleKey.D, "Add and Edit data source", "AID");
                 twoLevelMenu.Add(DataSourceMenu);
-            }
+            //}
 
             TopMenuItem DocumentsMenu = new TopMenuItem("Documents", ConsoleKey.D, "Documents AID");
             DocumentsMenu.Add("List", Documents, ConsoleKey.L, "Solution documents like: text, excel, js scripts and any type of file", "AID");
@@ -82,7 +91,31 @@ namespace Ginger.MenusLib
             return twoLevelMenu;
         }
 
-        
+        private static Page SharedActivitiesGroups()
+        {
+            SharedActivitiesGroupsFolderTreeItem activitiesGroupsRoot = new SharedActivitiesGroupsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>());
+            SingleItemTreeViewExplorerPage activitiesGroupsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.ActivitiesGroups), eImageType.ActivitiesGroup, activitiesGroupsRoot, saveAllHandler: activitiesGroupsRoot.SaveAllTreeFolderItemsHandler);
+            return activitiesGroupsPage;
+        }
+        private static Page SharedActivities()
+        {
+            SharedActivitiesFolderTreeItem activitiesRoot = new SharedActivitiesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>());
+            SingleItemTreeViewExplorerPage activitiesPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Activities), eImageType.Activity, activitiesRoot, saveAllHandler: activitiesRoot.SaveAllTreeFolderItemsHandler);
+            return activitiesPage;
+        }
+        private static Page SharedActions()
+        {
+            SharedActionsFolderTreeItem actionsRoot = new SharedActionsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>());
+            SingleItemTreeViewExplorerPage actionsPage = new SingleItemTreeViewExplorerPage("Actions", eImageType.Action, actionsRoot, actionsRoot.SaveAllTreeFolderItemsHandler);
+            return actionsPage;
+        }
+        private static Page SharedVariables()
+        {
+            SharedVariablesFolderTreeItem variablesRoot = new SharedVariablesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>());
+            SingleItemTreeViewExplorerPage variablesPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Variables), eImageType.Variable, variablesRoot, variablesRoot.SaveAllTreeFolderItemsHandler);
+            return variablesPage;
+        }
+
         private static Page Documents()
         {
             DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem();

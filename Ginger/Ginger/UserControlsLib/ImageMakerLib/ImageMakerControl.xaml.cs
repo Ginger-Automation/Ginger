@@ -479,6 +479,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Link:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLink);
                     break;
+                case eImageType.InstanceLink:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Link);
+                    break;
                 case eImageType.Report:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PieChart);
                     break;

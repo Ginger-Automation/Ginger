@@ -1854,7 +1854,7 @@
     <Compile Include="SolutionWindows\TreeViewItems\SharedActionTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedActivitiesFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedActivityTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SharedRepositoryTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\SharedRepositoryTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedVariablesFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedVariableTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SolutionTreeItem.cs" />

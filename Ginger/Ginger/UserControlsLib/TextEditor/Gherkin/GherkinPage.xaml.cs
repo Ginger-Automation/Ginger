@@ -113,7 +113,7 @@ namespace Ginger.GherkinLib
                 if (guid != Guid.Empty)
                     mSolTags.Add(guid);
             }
-            ARP.grdActivitiesRepository.Tags = mSolTags;
+            ARP.xActivitiesRepositoryGrid.Tags = mSolTags;
             SharedActivitiesFrame.Content = ARP;
         }
 
@@ -293,7 +293,7 @@ namespace Ginger.GherkinLib
             }
 
             
-            ARP.grdActivitiesRepository.Tags = mSolTags;
+            ARP.xActivitiesRepositoryGrid.Tags = mSolTags;
             SharedActivitiesFrame.Content = ARP;
 
             foreach(GherkinStep gStep in mOptimizedSteps)
@@ -665,8 +665,8 @@ namespace Ginger.GherkinLib
                     mSolTags.Add(guid);
             }
             
-            ARP = new ActivitiesRepositoryPage("",null, mSolTags, ArrowButtonHandler);
-            ARP.grdActivitiesRepository.EnableTagsPanel = false;
+            ARP = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), null, mSolTags, ArrowButtonHandler);
+            ARP.xActivitiesRepositoryGrid.EnableTagsPanel = false;
             SharedActivitiesFrame.Content = ARP;
 
             BFName =  FileName.Replace(App.UserProfile.Solution.Folder,"");
@@ -695,7 +695,7 @@ namespace Ginger.GherkinLib
 
         private void ArrowButtonHandler(object sender, RoutedEventArgs e)
         {
-            foreach (Activity selectedItem in ARP.grdActivitiesRepository.Grid.SelectedItems)
+            foreach (Activity selectedItem in ARP.xActivitiesRepositoryGrid.Grid.SelectedItems)
             {
                 GherkinTextEditor.textEditor.SelectedText = GherkinTextEditor.textEditor.SelectedText + selectedItem.ActivityName + Environment.NewLine;
             }    

@@ -140,6 +140,7 @@ namespace Amdocs.Ginger.Common.Enums
         Clock,
         File,
         Link,
+        InstanceLink,
         Search,
         Remove,
         Report,
