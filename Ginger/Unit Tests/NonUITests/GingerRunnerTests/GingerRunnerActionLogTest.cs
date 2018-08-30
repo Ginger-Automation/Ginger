@@ -17,13 +17,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
     public class GingerRunnerActionLogTest
     {
 
-        string fileName;
-        int testId = 1;
-
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            //
+            EmptyTempActionLogFolder();
         }
 
         [ClassCleanup]
@@ -42,16 +39,13 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public void TestCleanUp()
         {
             //after every test
-            DeleteTempFile(fileName);
-            fileName = "";
         }
-
 
         [TestMethod]
         public void TestActionLogText()
         {
-            // ***** Arrange *****
-            fileName = TestResources.GetTempFile("ActionLogTest_" + testId++ + ".log");
+            //Arrange
+            string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_1.log");
             string actionLogText = "ActionLogTestText";
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
@@ -61,19 +55,18 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             actDummy.EnableActionLogConfig = true;
             actDummy.ActionLogConfig.ActionLogText = actionLogText;
 
-            // ***** Act *****
+            //Act
             gingerRunnerLogger.LogAction(actDummy);
 
-            // ***** Assert *****
+            //Assert
             Assert.IsTrue(IsFileContains(fileName, actionLogText));
         }
-
 
         [TestMethod]
         public void TestActionLogInputValues()
         {
-            // ***** Arrange ***** 
-            fileName = TestResources.GetTempFile("ActionLogTest_" + testId++ + ".log");
+            //Arrange 
+            string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_2.log");
             string inputValExpected = "TestInputValue";
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
@@ -91,18 +84,18 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             actDummy.EnableActionLogConfig = true;
 
-            // ***** Act *****
+            //Act
             gingerRunnerLogger.LogAction(actDummy);
 
-            // ***** Assert *****
+            //Assert
             Assert.IsTrue(IsFileContains(fileName, inputValExpected));            
         }
 
         [TestMethod]
         public void TestActionLogReturnValues()
         {
-            // ***** Arrange *****  
-            fileName = TestResources.GetTempFile("ActionLogTest_" + testId++ + ".log");
+            //Arrange  
+            string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_3.log");
             string returnValExpected = "123456";
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
@@ -120,18 +113,18 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             actDummy.EnableActionLogConfig = true;
 
-            // ***** Act *****
+            //Act
             gingerRunnerLogger.LogAction(actDummy);
 
-            // ***** Assert *****
+            //Assert
             Assert.AreEqual(FindTextOccurrencesInFile(fileName, returnValExpected), 2);
         }
 
         [TestMethod]
         public void TestActionLogInputAndReturnValues()
         {
-            // ***** Arrange *****
-            fileName = TestResources.GetTempFile("ActionLogTest_" + testId++ + ".log");
+            //Arrange
+            string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_4.log");
             string inputValExpected = "TestInputValue";
             string returnValExpected = "123456";
 
@@ -157,20 +150,19 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             actDummy.EnableActionLogConfig = true;
 
-            // ***** Act *****
+            //Act
             gingerRunnerLogger.LogAction(actDummy);
 
-            // ***** Assert *****
+            //Assert
             Assert.IsTrue(IsFileContains(fileName, inputValExpected));
             Assert.IsTrue(IsFileContains(fileName, returnValExpected));
         }
 
-
         [TestMethod]
         public void TestActionLogStatusFailCheck()
         {
-            // ***** Arrange *****
-            fileName = TestResources.GetTempFile("ActionLogTest_" + testId++ + ".log");
+            //Arrange
+            string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_5.log");
             string returnValExpected = "123456";
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
@@ -190,19 +182,18 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //actDummy.Execute();
             actDummy.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
 
-            // ***** Act *****
+            //Act
             gingerRunnerLogger.LogAction(actDummy);
 
-            // ***** Assert *****
+            //Assert
             Assert.IsTrue(IsFileContains(fileName, "Failed"));
         }
-
 
         [TestMethod]
         public void TestActionLogStatusPassCheck()
         {
-            // ***** Arrange *****
-            fileName = TestResources.GetTempFile("ActionLogTest_" + testId++ + ".log");
+            //Arrange
+            string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_6.log");
             string returnValExpected = "123456";
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
@@ -223,10 +214,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //actDummy.Execute();
             actDummy.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
 
-            // ***** Act *****
+            //Act
             gingerRunnerLogger.LogAction(actDummy);
 
-            // ***** Assert *****
+            //Assert
             Assert.IsTrue(IsFileContains(fileName, "Passed"));
             Assert.IsTrue(IsFileContains(fileName, returnValExpected));
         }
@@ -234,8 +225,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [TestMethod]
         public void TestActionLogDisableLog()
         {
-            // ***** Arrange *****
-            fileName = TestResources.GetTempFile("ActionLogTest_" + testId++ + ".log");
+            //Arrange
+            string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_7.log");
             string returnValExpected = "123456";
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
@@ -247,10 +238,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             actReturnValue.Actual = returnValExpected;
             actDummy.ReturnValues.Add(actReturnValue);
 
-            // ***** Act *****
+            //Act
             gingerRunnerLogger.LogAction(actDummy);
 
-            // ***** Assert *****
+            //Assert
             Assert.IsFalse(IsFileExists(fileName));
         }
 
@@ -258,7 +249,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             return System.IO.File.ReadAllText(fileName).Contains(textToSearch);
         }
-
 
         private bool IsFileExists(string fileName)
         {
@@ -274,11 +264,16 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             return oRegex.Matches(fileContent).Count;
         }
 
-        private void DeleteTempFile(string fileName)
+        private static void EmptyTempActionLogFolder()
         {
-            System.IO.File.Delete(fileName);
+            string tempFolder = TestResources.GetTempFile("") + "\\ActionLog";
+            if (System.IO.Directory.Exists(tempFolder))
+            {
+                System.IO.DirectoryInfo directory = new DirectoryInfo(tempFolder);
+                foreach (System.IO.FileInfo file in directory.GetFiles()) file.Delete();
+            }
         }
-        
+
 
     }
 }
