@@ -478,6 +478,9 @@ namespace Ginger
             //list.Add("GingerCore.BusinessFlow", typeof(BusinessFlow));
 
 
+            NewRepositorySerializer.AddLazyLoadAttr("Activities"); // TODO: add RI type
+
+            
             // Verify the old name used in XML
             //list.Add("GingerCore.Actions.RepositoryItemTag", typeof(RepositoryItemTag));
             //list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
@@ -487,7 +490,7 @@ namespace Ginger
             //if (WorkSpace.Instance.BetaFeatures.UseNewRepositorySerializer)
             //{
             //RepositorySerializer2 RS2 = new RepositorySerializer2();
-            //    //RS2.AddLazyLoadAttr("Activities"); // TODO: add RI type
+
             //SolutionRepository.mRepositorySerializer = RS2;
             //RepositoryFolderBase.mRepositorySerializer = RS2;
             //    ObservableListSerializer.RepositorySerializer = RS2;

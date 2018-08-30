@@ -240,9 +240,10 @@ namespace Amdocs.Ginger.Repository
             //return false;
         }
 
+        //TODO: Make it class.attr
         static List<string> LazyLoadAttr = new List<string>();
 
-        public void AddLazyLoadAttr(string name)
+        public static void AddLazyLoadAttr(string name)
         {
             LazyLoadAttr.Add(name);
         }
@@ -258,8 +259,8 @@ namespace Amdocs.Ginger.Repository
                 if (token == null) continue;
 
                 if (LazyLoadAttr.Contains(fi.Name))
-                {
-                    bool b = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).LazyLoad;
+                {                    
+                        bool b = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).LazyLoad;
                     if (b)
                     {
                         // Hurray!
