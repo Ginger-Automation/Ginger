@@ -8,7 +8,7 @@ namespace Amdocs.Ginger.Common.Actions
     public class ActionLogConfig
     {
         [IsSerializedForLocalRepository]
-        public string LogText { get; set; }
+        public string ActionLogText { get; set; }
 
         [IsSerializedForLocalRepository]
         public bool LogInputVariables { get; set; }

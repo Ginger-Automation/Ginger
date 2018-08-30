@@ -1,21 +1,19 @@
 ﻿using Amdocs.Ginger.Common.Actions;
-using Amdocs.Ginger.Repository;
-using GingerCoreNET.GeneralLib;
-using GingerCore.Actions;
-using System.Text;
 using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
+using System;
+using System.Text;
 
 namespace Ginger.Run
 {
     public class GingerRunnerLogger
     {
-        Logger logger;
+        string fileName; 
 
         public GingerRunnerLogger(string fileName)
         {
-            logger = new Logger(fileName, false);
-            logger.LogTime();
-            logger.Log("Log started");
+            this.fileName = fileName;
         }
 
         public void LogAction(Act act)
@@ -26,9 +24,12 @@ namespace Ginger.Run
             ActionLogConfig actionLogConfig = act.ActionLogConfig;
             FormatTextTable formatTextTable = new FormatTextTable();
 
+            // log timestamp
+            strBuilder.AppendLine(GetCurrentTimeStampHeader());
+
             // create a new log file if not exists and append the contents
             strBuilder.AppendLine("[Action] " + act.ActionDescription);
-            strBuilder.AppendLine("[Text] " + actionLogConfig.LogText);
+            strBuilder.AppendLine("[Text] " + actionLogConfig.ActionLogText);
 
             // log all the input values
             if (actionLogConfig.LogInputVariables)
@@ -77,10 +78,22 @@ namespace Ginger.Run
             // flush value expression
             // flush flow control
 
-            // flush to logger
-            logger.LogTimeStamp();
-            logger.Log(strBuilder.ToString());
+            // flush to log file
+            FlushToLogFile(strBuilder.ToString());
+        }
 
+        private string GetCurrentTimeStampHeader()
+        {
+            StringBuilder sbr = new StringBuilder();
+            sbr.AppendLine("-------------------------------");
+            sbr.AppendLine(DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString());
+            sbr.AppendLine("-------------------------------");
+            return sbr.ToString();
+        }
+
+        private void FlushToLogFile(string strContents)
+        {
+            System.IO.File.AppendAllText(fileName, strContents);
         }
 
 

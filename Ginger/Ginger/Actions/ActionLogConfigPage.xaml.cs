@@ -25,7 +25,7 @@ namespace Ginger.Actions
         {
             InitializeComponent();
 
-            ActionLogTextBox.BindControl(actionLogConfig, nameof(ActionLogConfig.LogText));
+            ActionLogTextBox.BindControl(actionLogConfig, nameof(ActionLogConfig.ActionLogText));
             LogInputVariablesCheckBox.BindControl(actionLogConfig, nameof(ActionLogConfig.LogInputVariables));
             LogOuputVariablesCheckBox.BindControl(actionLogConfig, nameof(ActionLogConfig.LogOutputVariables));
             LogRunStatusCheckBox.BindControl(actionLogConfig, nameof(ActionLogConfig.LogRunStatus));
