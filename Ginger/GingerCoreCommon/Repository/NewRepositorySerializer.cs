@@ -233,6 +233,23 @@ namespace Amdocs.Ginger.Repository
                         return true;
                     }
                 }
+
+                if (attrValue is string)
+                {
+                    if ((string)attrValue == string.Empty)
+                    {
+                        return true;
+                    }
+                }
+
+                if (attrValue is int)
+                {
+                    if ((int)attrValue == 0)
+                    {
+                        return true;
+                    }
+                }
+
                 return false;  
             }
                 
