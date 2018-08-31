@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Activities;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
@@ -181,7 +182,7 @@ namespace Ginger.BusinessFlowFolder
             App.ObjFieldBinding(txtDescription, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Description);
             App.FillComboFromEnumVal(StatusComboBox, mBusinessFlow.Status);
             App.ObjFieldBinding(StatusComboBox, ComboBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Status);                     
-            App.ObjFieldBinding(CreatedByTextBox, TextBox.TextProperty, mBusinessFlow, RepositoryItem.Fields.CreatedBy);            
+            App.ObjFieldBinding(CreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader,  nameof(RepositoryItemHeader.CreatedBy));  
             App.ObjFieldBinding(AutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.AutomationPrecentage, System.Windows.Data.BindingMode.OneWay);            
             
             // Per source we can show specific source page info
