@@ -82,7 +82,7 @@ namespace GingerWPFUnitTest.AgentsLib
             mutex.ReleaseMutex();
         }
 
-
+        [Level3]
         [TestMethod]
         public void VisualCompareAgentConfig()
         {
@@ -103,7 +103,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
 
-
+        [Level1]
         [TestMethod]
         public void AddAgentUsingWizard()
         {
@@ -119,7 +119,7 @@ namespace GingerWPFUnitTest.AgentsLib
             //Assert
             Assert.AreEqual(name, agent.Name, "Agent.Name is same");
         }
-
+        [Level2]
         [TestMethod]
         public void RenameAgent()
         {
@@ -141,7 +141,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.AreEqual(NewName, SRAgent.Name, "SR.Agent NewName");
         }
 
-
+        [Level1]
         [TestMethod]
         public void AddAgentsFolderinFilesystemShowinTree()
         {
@@ -157,7 +157,7 @@ namespace GingerWPFUnitTest.AgentsLib
             // assert            
             Assert.IsTrue(agentExist, "Agent exist in tree");
         }
-
+        [Level1]
         [TestMethod]
         public void AddAgentsFolderUsingMenu()
         {
@@ -176,7 +176,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(folderCreatedOnTree,"Folder create on tree");
             Assert.IsTrue(Directory.Exists(subFolder),"sub folder exist");
         }
-
+        [Level1]
         [TestMethod]
         public void AddAgentsFolderUsingMenuAndAddAgent()
         {
@@ -197,7 +197,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(folderExist, "Folder exist");
             Assert.IsTrue(agentExist , "Agent exist");
         }
-
+        [Level1]
         [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", @".\TestData\Agents.csv", "Agents#csv", DataAccessMethod.Sequential)]        
         [TestMethod]
         public void CreateAgentsFromCSV()
@@ -219,7 +219,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(agentCreated, "Agent created: " + agentName + ", " + platfromType + ", " + driverType );
         }
 
-
+        [Level1]
         [DataRow("Web 1", "Web", "SeleniumChrome")]
         [DataRow("Web 2", "Web", "SeleniumFireFox")]
         [TestMethod]
@@ -241,7 +241,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
 
-
+        [Level2]
         [TestMethod]
         public void CopyPasteAgentinAgentRoot()
         {
@@ -267,7 +267,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.AreEqual(Acopy, ACopyTag);
 
         }
-
+        [Level2]
         [TestMethod]
         public void CutPasteAgentFromRootToSubFolder()
         {
@@ -298,7 +298,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.AreEqual(MyAgent, ACopyTag, "Same agent object in memeory");
         }
 
-
+        [Level2]
         [TestMethod]
         public void CutPasteAgentFromSubFolderToroot()
         {

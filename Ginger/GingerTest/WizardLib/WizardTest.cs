@@ -60,7 +60,7 @@ namespace GingerTest.WizardLib
             return wizardPOM;
         }
 
-
+        [Level3]
         [TestMethod]
         public void VerifyButtonsOnStartThenCancel()
         {
@@ -103,7 +103,7 @@ namespace GingerTest.WizardLib
             Assert.IsFalse(WizardOpen, "Wizard was closed");
         }
 
-
+        [Level3]
         [TestMethod]
         public void WizardWithWindowWidth()
         {

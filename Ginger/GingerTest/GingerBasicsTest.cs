@@ -104,7 +104,7 @@ namespace GingerWPFUnitTest
 
             Assert.AreEqual("HomeRibbon,SolutionRibbon,SupportRibbon", tabs);
         }
-
+        [Level3]
         [TestMethod]
         public void CheckTabsWhenSolutionOpen()
         {
@@ -120,7 +120,7 @@ namespace GingerWPFUnitTest
         }
 
 
-
+        [Level3]
         [TestMethod]
         public void VerifyEnvsShowinTree()
         {
@@ -136,7 +136,7 @@ namespace GingerWPFUnitTest
             Assert.AreEqual("Default", env1.Name);
         }
 
-
+        [Level3]
         [TestMethod]
         public void AddEnvUsingWizard()
         {
@@ -152,7 +152,7 @@ namespace GingerWPFUnitTest
             Assert.AreEqual("bbb", bbbEnv.Name);
         }
 
-
+        [Level3]
         [TestMethod]
         public void AddEnvToFileSystemWillShowinEnvsTree()
         {            
@@ -175,7 +175,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        
+        [Level3]
         [TestMethod]
         public void DeleteEnvFromFileSystem()
         {
@@ -197,7 +197,7 @@ namespace GingerWPFUnitTest
 
 
         }
-
+        [Level3]
         [TestMethod]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
@@ -218,7 +218,7 @@ namespace GingerWPFUnitTest
             Assert.AreEqual(EnvNewName, env.Name);
             Assert.IsTrue(b);
         }
-
+        [Level3]
         [TestMethod]
         public void AddEnvFolderShowinTree()
         {
@@ -236,7 +236,7 @@ namespace GingerWPFUnitTest
             Assert.IsTrue(b);
         }
 
-
+        [Level1]
         [TestMethod]
         public void DeleteEnvFolderRemovedfromTree()
         {
@@ -256,7 +256,7 @@ namespace GingerWPFUnitTest
             Assert.IsFalse(existAfterDelete);
         }
 
-
+        [Level3]
         [TestMethod]
         public void RenameEnvFolderSyncWithTree()
         {

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Ginger.GeneralLib;
+using GingerTestHelper;
 using GingerWPF.GeneralLib;
 using GingerWPF.UserControlsLib.ImageMakerLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -61,7 +62,7 @@ namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
         }
 
         private static Action EmptyDelegate = delegate () { };
-
+        [Level3]
         [TestMethod]
         [Ignore]
         public void ImageMakerControlsVisualTest1_50()
@@ -87,8 +88,8 @@ namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
             //Assert.IsTrue(IsEquel2);
         }
 
-        
 
+        [Level3]
         [TestMethod]
         [Ignore]
         public void ImageMakerControlsVisualTest51_100()

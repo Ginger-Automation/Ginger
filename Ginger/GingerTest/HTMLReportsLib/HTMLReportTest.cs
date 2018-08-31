@@ -70,7 +70,7 @@ namespace GingerTest.HTMLReportsLib
         }
 
 
-
+        [Level1]
         [TestMethod]
         public void AddHTMLReport()
         {

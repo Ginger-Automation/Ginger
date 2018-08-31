@@ -52,7 +52,7 @@ namespace GingerWPFUnitTest.APIModelLib
 
         }
 
-
+        [Level2]
         [TestMethod]
         public void GenerateAPIfromWSDL()
         {

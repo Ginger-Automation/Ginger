@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 // using GingerCoreNET.CommandProcessorLib;
 using GingerCoreNET.RunLib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GingerConsoleUnitTest
@@ -38,7 +39,7 @@ namespace GingerConsoleUnitTest
             mGingerGrid.Start();
         }
 
-
+        [Level2]
         [TestMethod]
         public void SeleniumChromeDriver()
         {
@@ -71,7 +72,7 @@ namespace GingerConsoleUnitTest
 
         }
 
-
+        [Level1]
         [TestMethod]
         public void FireFoxDriver()
         {
@@ -102,7 +103,7 @@ namespace GingerConsoleUnitTest
             //Assert.AreEqual(GNA.IsConnected, false);
 
         }
-
+        [Level1]
         [TestMethod]
         public void PACT()
         {

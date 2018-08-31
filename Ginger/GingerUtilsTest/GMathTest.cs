@@ -6,6 +6,7 @@ namespace GingerUtilsTest
     [TestClass]
     public class GMathTest
     {
+     
         [TestMethod,Timeout(60000)]
         public void TestMethod1()
         {
