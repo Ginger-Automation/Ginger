@@ -180,10 +180,14 @@ namespace Amdocs.Ginger.Repository
 
                 // We write the property value only if it is not null and different than default when serialzied
                 if (v == null) continue;
+                if (v is Guid)
+                {
+                    if ((Guid)v == Guid.Empty) continue;
+                }
                 if (IsValueDefault(v, token)) continue;
 
 
-                // Enum might be unknow = not set - so no need to write to xml, like null for object                        
+                // Enum might be unknown = not set - so no need to write to xml, like null for object                        
                 if (ri.GetType().GetProperty(mi.Name).PropertyType.IsEnum)
                 {
                     string vs = v.ToString();
@@ -216,11 +220,23 @@ namespace Amdocs.Ginger.Repository
                 }
             }
 
-        private bool IsValueDefault(object v, IsSerializedForLocalRepositoryAttribute IsSerializedForLocalRepository)
+        private bool IsValueDefault(object attrValue, IsSerializedForLocalRepositoryAttribute IsSerializedForLocalRepository)
         {
-            object o = IsSerializedForLocalRepository.GetDefualtValue();
-            if (o == null) return false;  // DeaultValue annotation not exist on attr
-            if (v.Equals(o))
+            object attrDefaultValue = IsSerializedForLocalRepository.GetDefualtValue();
+            if (attrDefaultValue == null)
+            {
+                // DefaultValue annotation not exist on attr
+                if (attrValue is bool)   // in case of bool do not write False as it is the default
+                {
+                    if ((bool)attrValue == false)
+                    {
+                        return true;
+                    }
+                }
+                return false;  
+            }
+                
+            if (attrValue.Equals(attrDefaultValue))
             {
                 return true;
             }
