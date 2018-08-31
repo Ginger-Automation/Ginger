@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -17,12 +17,17 @@ limitations under the License.
 #endregion
 
 
+using Amdocs.Ginger.Repository;
+
 namespace Amdocs.Ginger.Common.UIElement
 {
     //TODO: rename to UIElementProperty
-    public class ControlProperty
+    public class ControlProperty : RepositoryItemBase
     {
+        [IsSerializedForLocalRepository]
         public string Name { get; set; }
+        [IsSerializedForLocalRepository]
         public string Value { get; set; }
+        public override string ItemName { get { return Name; } set { Name = value;  } }
     }
 }

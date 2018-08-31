@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
@@ -32,9 +34,9 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 {
     public class ApplicationPOMsTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        public RepositoryFolder<ApplicationPOMModel> mPOMModelFolder;
-        //POMEditPage mPOMEditPage;
+        public RepositoryFolder<ApplicationPOMModel> mPOMModelFolder;        
         private POMModelsPage mPOMModelsPage;
+        private ObservableList<ApplicationPOMModel> mChildPoms = null;
 
         public ApplicationPOMsTreeItem(RepositoryFolder<ApplicationPOMModel> POMModelFolder)
         {
@@ -56,33 +58,51 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFile;
-            if (IsGingerDefualtFolder)
-            {
-                ImageFile = "@Documents_16x16.png";
-            }
-            else
-            {
-                ImageFile = "@Folder2_16x16.png";
-            }
-            return TreeViewUtils.CreateItemHeader("POMs", ImageFile, SourceControlIntegration.GetItemSourceControlImage(mPOMModelFolder.DisplayName, ref ItemSourceControlStatus));
+            return TreeViewUtils.NewRepositoryItemTreeHeader(mPOMModelFolder, nameof(RepositoryFolder<ApplicationPOMModel>.DisplayName), eImageType.Folder, eImageType.Null, false);
         }
+
+        public override ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)
+        {
+            return new ApplicationPOMsTreeItem((RepositoryFolder<ApplicationPOMModel>)folder);
+        }
+
+        public override ITreeViewItem GetTreeItem(object item)
+        {
+            if (item is ApplicationPOMModel)
+            {
+                return new ApplicationPOMTreeItem((ApplicationPOMModel)item);
+            }
+
+            if (item is RepositoryFolderBase)
+            {
+                return new ApplicationPOMsTreeItem((RepositoryFolder<ApplicationPOMModel>)item);
+            }
+
+            throw new Exception("Error unknown item added to envs folder");
+        }
+
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
-            foreach (RepositoryFolder<ApplicationPOMModel> POMFolder in mPOMModelFolder.GetSubFolders())
+            ObservableList<RepositoryFolder<ApplicationPOMModel>> subFolders = mPOMModelFolder.GetSubFolders();
+            foreach (RepositoryFolder<ApplicationPOMModel> pomFolder in subFolders)
             {
-                ApplicationPOMsTreeItem  apiFTVI = new ApplicationPOMsTreeItem(POMFolder);
-                Childrens.Add(apiFTVI);
+                ApplicationPOMsTreeItem pomFTVI = new ApplicationPOMsTreeItem(pomFolder);
+                Childrens.Add(pomFTVI);
             }
+            subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // untrack sub folders
+            subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
-            //Add direct childrens             
-            foreach (ApplicationPOMModel api in mPOMModelFolder.GetFolderItems())
+            //Add direct childrens        
+            mChildPoms = mPOMModelFolder.GetFolderItems();
+            mChildPoms.CollectionChanged -= TreeFolderItems_CollectionChanged;
+            mChildPoms.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
+            foreach (ApplicationPOMModel pom in mChildPoms.OrderBy(nameof(ApplicationPOMModel.Name)))
             {
-                ApplicationPOMTreeItem apiTI = new ApplicationPOMTreeItem(api);
-                Childrens.Add(apiTI);
+                ApplicationPOMTreeItem pomTI = new ApplicationPOMTreeItem(pom);
+                Childrens.Add(pomTI);
             }
 
             return Childrens;
@@ -112,15 +132,19 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-            AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
-            TreeViewUtils.AddMenuItem(mContextMenu, "Add POM", AddPOM, null, "@Save_16x16.png");
-            mTreeView.AddToolbarTool("@Save_16x16.png", "Save", AddPOM);
-            AddSourceControlOptions(mContextMenu, false, false);
+
+            TreeViewUtils.AddMenuItem(mContextMenu, "Add Page Objects Model", AddPOM, null, eImageType.Add);
+            if (mPOMModelFolder.IsRootFolder)
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false);
+            else
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowRefresh: false);
+
+            AddSourceControlOptions(mContextMenu);
         }
 
         internal void AddPOM(object sender, RoutedEventArgs e)
         {            
-            WizardWindow.ShowWizard(new AddPOMWizard());            
+            WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder));            
         }
     }
 }

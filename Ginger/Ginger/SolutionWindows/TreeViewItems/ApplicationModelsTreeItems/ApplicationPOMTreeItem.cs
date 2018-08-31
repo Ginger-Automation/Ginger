@@ -34,84 +34,51 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 {
     public class ApplicationPOMTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        public string Folder { get; set; }
-        public string Path { get; set; }
-
-        POMEditPage mPOMEditPage;
-
-        public ApplicationPOMModel ApplicationPOM;
+        private ApplicationPOMModel mApplicationPOM;
+        private POMEditPage mPOMEditPage;
 
         public ApplicationPOMTreeItem(ApplicationPOMModel pom)
         {
-            ApplicationPOM = pom;
+            mApplicationPOM = pom;
         }
 
         Object ITreeViewItem.NodeObject()
-        {       
-            return null;
+        {
+            return mApplicationPOM;
         }
         override public string NodePath()
         {
-            return Path + @"\";
+            return mApplicationPOM.FilePath;
         }
         override public Type NodeObjectType()
         {
-            return null;
+            return typeof(ApplicationPOMModel);
         }
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.NewRepositoryItemTreeHeader(ApplicationPOM, nameof(ApplicationPOM.Name), eImageType.Application , eImageType.Null, true, nameof(ApplicationPOM.IsDirty));            
+            return NewTVItemStyle(mApplicationPOM, eImageType.ApplicationPOM, nameof(ApplicationPOMModel.Name));
         }
 
-        List<ITreeViewItem> ITreeViewItem.Childrens()
+        Page ITreeViewItem.EditPage()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            AddsubFolders(Path, Childrens);
-
-            if (!Directory.Exists(Path))
+            if (mPOMEditPage == null)
             {
-                Directory.CreateDirectory(Path);
+                mPOMEditPage = new POMEditPage(mApplicationPOM);
             }
-            return Childrens;
+            return mPOMEditPage;
         }
 
-        private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
+        public List<ITreeViewItem> Childrens()
         {
-            try
-            {
-                foreach (string d in Directory.GetDirectories(Path))
-                {
-                    DocumentsFolderTreeItem FolderItem = new DocumentsFolderTreeItem();
-                    string FolderName = System.IO.Path.GetFileName(d);
-
-                    FolderItem.Folder = FolderName;
-                    FolderItem.Path = d;
-
-                    Childrens.Add(FolderItem);
-                }
-            }
-            catch (System.Exception excpt)
-            {
-                Console.WriteLine(excpt.Message);
-            }
-        }
+            return null;
+        }        
 
         bool ITreeViewItem.IsExpandable()
         {
             return false;
         }
-
-        Page ITreeViewItem.EditPage()
-        {            
-            if (mPOMEditPage == null)
-            {                
-                mPOMEditPage = new POMEditPage(ApplicationPOM);
-            }
-            return mPOMEditPage;
-        }
-
+        
         ContextMenu ITreeViewItem.Menu()
         {
             return mContextMenu;
@@ -121,21 +88,10 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-            
-            TreeViewUtils.AddMenuItem(mContextMenu, "Save", SavePOM, null, "@Save_16x16.png");
-            mTreeView.AddToolbarTool("@Save_16x16.png", "Save", SavePOM);
 
-            if (IsGingerDefualtFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowRenameFolder: false, allowDeleteFolder: false);
-            else
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
+            AddItemNodeBasicManipulationsOptions(mContextMenu);
+
             AddSourceControlOptions(mContextMenu);
-            AddSourceControlOptions(mContextMenu, false, false);
-        }
-
-        private void SavePOM(object sender, RoutedEventArgs e)
-        {
-            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(ApplicationPOM);            
         }
     }
 }

@@ -92,9 +92,10 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
             foreach (RecoveredItem ri in SelectedFiles)
             {
+                RepositoryItemBase originalItem = null;
+
                 try
-                {
-                    RepositoryItemBase originalItem = null;
+                {                    
                     if (ri.RecoveredItemObject is BusinessFlow)
                     {
                         ObservableList<BusinessFlow> businessFlows = App.LocalRepository.GetSolutionBusinessFlows();
@@ -117,9 +118,10 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
                     mRecoverwasDone = true;
                 }
-                catch 
+                catch(Exception ex)
                 {
                     ri.Status = eRecoveredItemStatus.RecoveredFailed;
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to recover the original file '{0}' with the recovered file '{1}'", originalItem.FileName, ri.RecoveredItemObject.FileName), ex);
                 }
             }
 

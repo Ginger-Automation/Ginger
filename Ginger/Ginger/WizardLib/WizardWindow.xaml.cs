@@ -42,7 +42,7 @@ namespace GingerWPF.WizardLib
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Width = width;
-            wizardWindow.ShowDialog();
+           wizardWindow.ShowDialog();
         }
 
         public WizardWindow(WizardBase wizard)
@@ -178,6 +178,11 @@ namespace GingerWPF.WizardLib
                         {
                             ComboBox comboBox = (ComboBox)child;
                             bindingExpression = comboBox.GetBindingExpression(ComboBox.SelectedValueProperty);
+                        }
+                        else if (child is Ginger.Agents.ucAgentControl)
+                        {
+                            Ginger.Agents.ucAgentControl agentControl = (Ginger.Agents.ucAgentControl)child;
+                            bindingExpression = agentControl.GetBindingExpression(Ginger.Agents.ucAgentControl.SelectedAgentProperty);
                         }
 
                         if (bindingExpression != null)

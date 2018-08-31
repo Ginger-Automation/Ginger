@@ -34,6 +34,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System.ComponentModel;
 using GingerCore.Actions.Common;
+using Ginger.Agents;
 
 namespace Ginger
 {
@@ -135,11 +136,12 @@ namespace Ginger
         /// <param name="SelectedValuePath">list item value to to return when selected</param>
         public static void BindControl<T>(this ComboBox ComboBox, Object obj, string Field, ObservableList<T> list, string DisplayMemberPath, string SelectedValuePath, BindingMode bindingMode = BindingMode.TwoWay)
         {
-            ControlsBinding.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);
-
             ComboBox.ItemsSource = list;
             ComboBox.DisplayMemberPath = DisplayMemberPath;
             ComboBox.SelectedValuePath = SelectedValuePath;
+
+            //ControlsBinding.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);   
+            GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);
         }
      
         // ------------------------------------------------------------
@@ -174,7 +176,7 @@ namespace Ginger
                 return;
             }
 
-            throw new Exception("trying to add rule to contole which is not binded - " + comboBox.Name);
+            throw new Exception("trying to add rule to control which is not binded - " + comboBox.Name);
         }
 
         public static void AddValidationRule(this ComboBox comboBox, eValidationRule validationRule)
@@ -223,8 +225,31 @@ namespace Ginger
             }
         }
 
+        // ------------------------------------------------------------
+        // ucAgentControl
+        // ------------------------------------------------------------
+        public static void AddValidationRule(this ucAgentControl agentControl, ValidationRule validationRule)
+        {
+            BindingExpression bd = null;
+            
+            bd = agentControl.GetBindingExpression(ucAgentControl.SelectedAgentProperty);
+            if (bd != null)
+            {
+                AddValidation(agentControl, ucAgentControl.SelectedAgentProperty, validationRule);
+                return;
+            }           
 
+            throw new Exception("trying to add rule to AgentControl user control which is not binded - " + agentControl.Name);
+        }
 
+        // ------------------------------------------------------------
+        // ucAgentControl
+        // ------------------------------------------------------------
+
+        public static void AddValidationRule(this Frame frame, ValidationRule validationRule)
+        {
+            AddValidation(frame, Frame.ContentProperty, validationRule);
+        }
 
         // ------------------------------------------------------------
         // UCValue Expression

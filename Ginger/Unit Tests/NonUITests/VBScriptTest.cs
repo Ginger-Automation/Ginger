@@ -31,6 +31,7 @@ using UnitTests;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Level3]
     public class VBScript 
     {
 

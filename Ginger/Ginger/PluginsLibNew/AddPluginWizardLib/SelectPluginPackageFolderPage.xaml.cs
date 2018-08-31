@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.PlugInsLib;
+using Amdocs.Ginger.Repository;
 using Ginger;
 using GingerWPF.WizardLib;
 using System.Windows;
@@ -29,16 +29,21 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
     /// </summary>
     public partial class SelectPlugPackageinFolderPage : Page, IWizardPage
     {
-        PluginPackage mPluginPackage;
-        public SelectPlugPackageinFolderPage(PluginPackage pluginPackage)
+        AddPluginPackageWizard wiz;
+        public SelectPlugPackageinFolderPage()
         {
-            InitializeComponent();
-            mPluginPackage = pluginPackage;
-            FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
+            InitializeComponent();     
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
-        {            
+        {       
+            switch (WizardEventArgs.EventType)
+            {
+                case EventType.Init:
+                    wiz = (AddPluginPackageWizard)WizardEventArgs.Wizard;
+                    FolderTextBox.BindControl(wiz, nameof(AddPluginPackageWizard.Folder));
+                    break;
+            }
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -48,6 +53,12 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
             {
                 FolderTextBox.Text = s;
             }
+        }
+
+        private void FolderTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // TODO: check folder exist and info file exist
+            wiz.PluginPackage = new PluginPackage(FolderTextBox.Text);
         }
     }
 }
