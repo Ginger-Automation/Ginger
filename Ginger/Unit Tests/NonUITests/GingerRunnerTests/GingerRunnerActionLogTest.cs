@@ -272,6 +272,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
                 System.IO.DirectoryInfo directory = new DirectoryInfo(tempFolder);
                 foreach (System.IO.FileInfo file in directory.GetFiles()) file.Delete();
             }
+            else
+            {
+                System.IO.Directory.CreateDirectory(tempFolder);
+            }
         }
 
 
