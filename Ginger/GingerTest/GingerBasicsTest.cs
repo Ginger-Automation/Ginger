@@ -88,7 +88,7 @@ namespace GingerWPFUnitTest
         }
 
 
-
+        [Level3]
         [TestMethod]  
         [Ignore]
         public void CheckTabsWhenSolutionClosed()

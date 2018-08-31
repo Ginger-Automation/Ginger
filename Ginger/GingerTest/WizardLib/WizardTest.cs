@@ -82,7 +82,7 @@ namespace GingerTest.WizardLib
             Assert.IsFalse(WizardOpen, "Wizard was closed");            
         }
 
-
+        [Level3]
         [TestMethod]
         public void CreateMyWizardItem()
         {
