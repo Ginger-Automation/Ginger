@@ -953,8 +953,8 @@ namespace Ginger.Run
             if (App.UserProfile.Solution != null)
             {
                 xRunsetEnvironmentCombo.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
-                xRunsetEnvironmentCombo.DisplayMemberPath = ProjEnvironment.Fields.Name;
-                xRunsetEnvironmentCombo.SelectedValuePath = RepositoryItem.Fields.Guid;
+                xRunsetEnvironmentCombo.DisplayMemberPath = nameof(ProjEnvironment.Name);
+                xRunsetEnvironmentCombo.SelectedValuePath = nameof(RepositoryItemBase.Guid);
 
                 GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xRunsetEnvironmentCombo, ComboBox.SelectedItemProperty, App.RunsetExecutor, nameof(RunsetExecutor.RunsetExecutionEnvironment));        
 
