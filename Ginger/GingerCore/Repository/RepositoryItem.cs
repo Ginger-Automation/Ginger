@@ -30,16 +30,7 @@ using System.Reflection;
 namespace GingerCore
 {
     public abstract class RepositoryItem : RepositoryItemBase
-    {
-        public static partial class Fields
-        {
-            public static string Image = "Image";
-            public static string FileName = "FileName";
-            public static string Guid = "Guid";
-            public static string ParentGuid = "ParentGuid";
-            public static string CreatedBy = "CreatedBy";
-            public static string SharedRepoInstanceImage = "SharedRepoInstanceImage";
-        }
+    {        
 
         //[IsSerializedForLocalRepository]
         //public new Guid ParentGuid { get; set; }
@@ -56,7 +47,7 @@ namespace GingerCore
                 if (mIsSharedRepositoryInstance != value)
                 {
                     mIsSharedRepositoryInstance = value;
-                    OnPropertyChanged(Fields.SharedRepoInstanceImage);
+                    OnPropertyChanged(nameof(SharedRepoInstanceImage));
                 }
             }
         }
