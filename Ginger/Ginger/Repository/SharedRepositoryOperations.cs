@@ -206,7 +206,10 @@ namespace Ginger.Repository
 
         //FIXME to work using SR 
         public static RepositoryItemBase GetMatchingRepoItem(RepositoryItemBase item, IEnumerable<object> existingRepoItems, ref bool linkIsByExternalID, ref bool linkIsByParentID)
-        {            
+        {
+            // Temp FIX Check me!!!
+            if (existingRepoItems == null) return null;
+
             linkIsByExternalID = false;
             linkIsByParentID = false;
 
