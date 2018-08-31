@@ -394,10 +394,11 @@ namespace GingerCore.Environments
 
                     case eDBTypes.Cassandra:
                         GingerCassandra CassandraDriver = new GingerCassandra(this);
-                        bool cassandraConnection;
-                        cassandraConnection= CassandraDriver.Connect();
-                        if (cassandraConnection == true)
-                            return true;
+                        bool isConnection;
+                        isConnection= CassandraDriver.Connect();
+                        if (isConnection == true)
+                            LastConnectionUsedTime = DateTime.Now;
+                        return true;
                         break;
 
                     case eDBTypes.MySQL:
