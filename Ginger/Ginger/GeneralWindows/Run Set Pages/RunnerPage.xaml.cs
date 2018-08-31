@@ -318,7 +318,7 @@ namespace Ginger.Run
             }
             else
             {
-                ((RunnerItemPage)sender).xItemName.Foreground = FindResource("$DarkBlue") as Brush;
+                ((RunnerItemPage)sender).xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
             }
         }
         private void Businessflow_ClickAutomate(object sender, RoutedEventArgs e)
@@ -681,7 +681,7 @@ namespace Ginger.Run
             }
             else
             {
-                xRunnerNameTxtBlock.Foreground = FindResource("$DarkBlue") as Brush;
+                xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
             }
         }
 

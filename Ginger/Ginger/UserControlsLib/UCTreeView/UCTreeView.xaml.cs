@@ -350,7 +350,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     {
                         if (ctrl != null)
                         {                           
-                            ((Label)ctrl).Foreground = FindResource("$amdocsPink") as Brush;
+                            ((Label)ctrl).Foreground = FindResource("$SelectionColor_Pink") as Brush;
                             ((Label)ctrl).FontWeight = FontWeights.Bold;
                             break;
                         }
