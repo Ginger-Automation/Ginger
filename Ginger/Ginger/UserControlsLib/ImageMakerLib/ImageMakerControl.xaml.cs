@@ -509,6 +509,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.DataSource:
                     SetAsStaticImage("DataSource_16x16.png");
                     break;
+                case eImageType.DataTable:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Table);
+                    break;
                 case eImageType.Power:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PowerOff);
                     break;

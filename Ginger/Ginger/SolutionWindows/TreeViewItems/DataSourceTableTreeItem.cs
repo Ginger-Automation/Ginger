@@ -53,7 +53,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(DSTableDetails.Name, "@DataTable_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus), DSTableDetails, DataSourceTable.Fields.Name);
+            return NewTVItemStyle(DSTableDetails, eImageType.DataTable, nameof(DSDetails.Name));
+            //return TreeViewUtils.CreateItemHeader(DSTableDetails.Name, "@DataTable_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus), DSTableDetails, DataSourceTable.Fields.Name);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -165,8 +166,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 mDataSourceTablePage.SaveTable();
                 this.DSTableDetails.ClearBackup();
+                ResetDirtyStatusForDataSourceTable();
             }            
         }    
+
+        private void ResetDirtyStatusForDataSourceTable()
+        {
+            this.DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;
+        }
 
         private void Rename(object sender, RoutedEventArgs e)
         {            

@@ -53,7 +53,28 @@ namespace GingerCore.DataSource
         
         public DataSourceBase DSC { get; set; }
 
-        public DataTable DataTable { get; set; }
+        DataTable mDataTable;
+        public DataTable DataTable
+        {
+            get { return mDataTable; }
+            set
+            {
+                mDataTable = value;
+                mDataTable.RowChanged += new DataRowChangeEventHandler(Row_Changed);
+                mDataTable.ColumnChanged += new DataColumnChangeEventHandler(Row_Changed);
+                mDataTable.RowDeleted += new DataRowChangeEventHandler(Row_Changed);
+            }
+        }
+
+        private void Row_Changed(object sender, DataRowChangeEventArgs e)
+        {
+            OnPropertyChanged(nameof(Name));
+        }
+
+        private void Row_Changed(object sender, DataColumnChangeEventArgs e)
+        {
+            OnPropertyChanged(nameof(Name));
+        }
 
         public override string ItemName
         {

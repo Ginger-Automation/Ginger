@@ -170,6 +170,7 @@ namespace Amdocs.Ginger.Common.Enums
         Check,
         Bug,
         DataSource,
+        DataTable,
         PluginPackage,
     }
 }

@@ -216,13 +216,18 @@ namespace GingerWPF.TreeViewItemsLib
                         if ((RI.DirtyStatus == eDirtyStatus.NoTracked && RI.IsDirty) 
                                 || (RI.DirtyStatus == eDirtyStatus.Modified))
                         {
-                            // Try to save only items with file name = standalone xml, avoid items like env app                            
+                            // Try to save only items with file name = standalone xml, avoid items like env app
                             if (!string.IsNullOrEmpty(RI.ContainingFolder))
                             {
                                 if (SaveTreeItem(node.NodeObject(), true))
                                 {
                                     itemsSavedCount++;
                                 }
+                            }
+                            else if (node is Ginger.SolutionWindows.TreeViewItems.DataSourceTableTreeItem)
+                            {
+                                ((Ginger.SolutionWindows.TreeViewItems.DataSourceTableTreeItem)node).SaveTreeItem();
+                                itemsSavedCount++;
                             }
                         }
                     }
