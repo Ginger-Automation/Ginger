@@ -121,7 +121,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         // TODO: temp by default all repository items use the old Serializer, unless flagged to use the new, overrride in sub class
-        public virtual bool UseNewRepositorySerializer { get { return false; } }
+        public virtual bool UseNewRepositorySerializer { get { return true; } }
 
         static NewRepositorySerializer mRepositorySerializer = new NewRepositorySerializer();
 
