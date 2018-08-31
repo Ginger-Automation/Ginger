@@ -308,64 +308,69 @@ namespace GingerCore.Drivers
                         break;
 
                     case eBrowserType.FireFox:
-                        //--To be used for Selenium 3.4 or above with Firefox version 54 or above
                         string geckoDriverExePath2 = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\geckodriver.exe";
                         System.Environment.SetEnvironmentVariable("webdriver.gecko.driver", geckoDriverExePath2, EnvironmentVariableTarget.Process);
-                        FirefoxProfile ffProfile2 = new FirefoxProfile();
+
+                        FirefoxOptions FirefoxOption= new FirefoxOptions();
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                         {
+                            FirefoxProfile ffProfile2 = new FirefoxProfile();
                             ffProfile2 = new FirefoxProfile(UserProfileFolderPath);
+
+                            FirefoxOption.Profile = ffProfile2;
                         }
                         else
                         {
-                            ffProfile2 = new FirefoxProfile("AutomationProfile");
-                            if (AutoDetect)
-                                ffProfile2.SetPreference("network.proxy.type", (int)ProxyKind.AutoDetect); //needed beacuse otherwise surfing in not working 
-                            ffProfile2.AcceptUntrustedCertificates = true;
-                            ffProfile2.AssumeUntrustedCertificateIssuer = true;
-                        }
-                        FirefoxOptions ffOptions2 = new FirefoxOptions();
-                        if (SeleniumUserArgs != null)
-                            ffOptions2.AddArguments(SeleniumUserArgs);
-                        ffOptions2.Profile = ffProfile2;
-                        ffOptions2.Proxy = mProxy;
-
-                        if (ProxyKind.Manual.Equals(mProxy.Kind))
-                        {
-                            ffProfile2.SetPreference("network.proxy.type", (int)ProxyKind.Manual);
-                            string[] proxyNodes = mProxy.HttpProxy.Split(':');
-
-                            if (proxyNodes.Length == 2)
+                            FirefoxOption.Proxy = new Proxy();
+                            switch(mProxy.Kind)
                             {
-                                // DriverOptions.Proxy is not supproted currently for firfox driver , so setting proxy using profiler
-                                ffProfile2.SetPreference("network.proxy.http", proxyNodes[0]);
-                                ffProfile2.SetPreference("network.proxy.http_port", Convert.ToInt32(proxyNodes[1]));
-                                ffProfile2.SetPreference("network.proxy.ssl", proxyNodes[0]);
-                                ffProfile2.SetPreference("network.proxy.ssl_port", Convert.ToInt32(proxyNodes[1]));
-                                ffProfile2.SetPreference("network.proxy.ftp", proxyNodes[0]);
-                                ffProfile2.SetPreference("network.proxy.ftp_port", Convert.ToInt32(proxyNodes[1]));
-                                ffProfile2.SetPreference("network.proxy.socks", proxyNodes[0]);
-                                ffProfile2.SetPreference("network.proxy.socks_port", Convert.ToInt32(proxyNodes[1]));
+                                case ProxyKind.Manual:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.Manual;
+                                    FirefoxOption.Proxy.HttpProxy = mProxy.HttpProxy;
+                                  FirefoxOption.Proxy.SslProxy = mProxy.SslProxy;
+                                    //TODO: GETTING ERROR LAUNCHING BROWSER 
+                                  //  FirefoxOption.Proxy.SocksProxy = mProxy.SocksProxy;
+                                    break;
+
+                                case ProxyKind.ProxyAutoConfigure:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.ProxyAutoConfigure;
+                                    FirefoxOption.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;                            
+                                    break;
+
+                                case ProxyKind.Direct:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.Direct;
+                                                   break;
+
+                                case ProxyKind.AutoDetect:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.AutoDetect;
+                      
+                                    break;
+
+                                case ProxyKind.System:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.System;
+
+                                    break;
+
+                                default:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.System;
+                           
+                                    break;
+
                             }
-                            else
-                            {
-                                Reporter.ToLog(eLogLevel.WARN, "Invalid proxy format" + mProxy);
-                            }
+                     
+
                         }
-                        if (ProxyKind.ProxyAutoConfigure.Equals(mProxy.Kind))
-                        {
-                            ffProfile2.SetPreference("network.proxy.type", (int)ProxyKind.ProxyAutoConfigure);
-                            ffProfile2.SetPreference("network.proxy.autoconfig_url", mProxy.ProxyAutoConfigUrl);
-                        }
+
                         if (Convert.ToInt32(HttpServerTimeOut) > 60)
                         {
                             FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
-                            Driver = new FirefoxDriver(service, ffOptions2, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            Driver = new FirefoxDriver(service, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
                         else
                         {
-                            Driver = new FirefoxDriver(ffOptions2);
+                            Driver = new FirefoxDriver(FirefoxOption);
                         }
+                
                         break;
 
                     case eBrowserType.Chrome:
