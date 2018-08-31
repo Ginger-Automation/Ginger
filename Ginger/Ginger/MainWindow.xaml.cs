@@ -1186,9 +1186,7 @@ namespace Ginger
 
 
             App.BusinessFlow.Save();
-            var itemToRemove = App.ItemstoSave.SingleOrDefault(x => x.Guid == App.BusinessFlow.Guid);
-            if(itemToRemove != null)
-                App.ItemstoSave.Remove(itemToRemove);
+               
             App.AddItemToSaveAll(App.BusinessFlow);
 
             Reporter.CloseGingerHelper();

@@ -1265,11 +1265,7 @@ namespace Ginger.Repository
                 Reporter.CloseGingerHelper();
                 return;
             }
-            else
-            {
-                App.ItemstoSave.Clear();
-                App.AddItemToSaveAll();
-            }
+         
             try
             {
                 foreach (RepositoryItem RepoItem in App.ItemstoSave)
