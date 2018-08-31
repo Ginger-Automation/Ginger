@@ -1264,7 +1264,7 @@ namespace Ginger.Repository
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.NoDirtyItem);
                 Reporter.CloseGingerHelper();
                 return;
-            }         
+            }
             try
             {
                 foreach (RepositoryItem RepoItem in App.ItemstoSave)
