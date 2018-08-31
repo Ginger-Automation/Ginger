@@ -28,15 +28,20 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class RunSetTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        public RunSetConfig RunSetConfig { get; set; }
+        RunSetConfig mRunSetConfig;
+
+        public RunSetTreeItem(RunSetConfig runSetConfig)
+        {
+            mRunSetConfig = runSetConfig;
+        }
 
         Object ITreeViewItem.NodeObject()
         {
-            return RunSetConfig;
+            return mRunSetConfig;
         }
         override public string NodePath()
         {
-            return RunSetConfig.FileName;
+            return mRunSetConfig.FileName;
         }
         override public Type NodeObjectType()
         {
@@ -45,7 +50,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {           
-            return NewTVItemHeaderStyle(RunSetConfig);
+            return NewTVItemHeaderStyle(mRunSetConfig);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -79,9 +84,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            if (base.DeleteTreeItem(RunSetConfig, deleteWithoutAsking, refreshTreeAfterDelete))
+            if (base.DeleteTreeItem(mRunSetConfig, deleteWithoutAsking, refreshTreeAfterDelete))
             {
-                if (App.RunsetExecutor.RunSetConfig.Equals(RunSetConfig))//update Run tab in case the loaded run set was deleted
+                if (App.RunsetExecutor.RunSetConfig.Equals(mRunSetConfig))//update Run tab in case the loaded run set was deleted
                     App.RunsetExecutor.RunSetConfig = null;
 
                 return true;
