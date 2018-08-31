@@ -141,15 +141,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //    RTI.IsGingerDefualtFolder = true;
             //    Childrens.Add(RTI);
             //}
-            if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
-            {
-                //Add Execution Results
-                ExecutionResultsFolderTreeItem ERFTI = new ExecutionResultsFolderTreeItem();
-                ERFTI.Folder = "Execution Results";
-                ERFTI.Path = Path.Combine(App.UserProfile.Solution.Folder,  @"ExecutionResults\");
-                ERFTI.IsGingerDefualtFolder = true;
-                Childrens.Add(ERFTI);
-            }
+            //if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
+            //{
+            //    //Add Execution Results
+            //    ExecutionResultsFolderTreeItem ERFTI = new ExecutionResultsFolderTreeItem();
+            //    ERFTI.Folder = "Execution Results";
+            //    ERFTI.Path = Path.Combine(App.UserProfile.Solution.Folder,  @"ExecutionResults\");
+            //    ERFTI.IsGingerDefualtFolder = true;
+            //    Childrens.Add(ERFTI);
+            //}
             return Childrens;
         }
 

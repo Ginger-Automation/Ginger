@@ -45,7 +45,7 @@ namespace Ginger.MenusLib
 
         private static void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Solution")
+            if (e.PropertyName == nameof(UserProfile.Solution))
             {
                 menusPage.Reset();
             }
@@ -74,13 +74,13 @@ namespace Ginger.MenusLib
             // TODO: use visible show/hide instead of not adding
             //if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
             //{
-                TopMenuItem DataSourceMenu = new TopMenuItem("Data Sources", ConsoleKey.D, "Data Sources AID");
-                DataSourceMenu.Add("List", DataSources, ConsoleKey.D, "Add and Edit data source", "AID");
+                TopMenuItem DataSourceMenu = new TopMenuItem("Data Sources", ConsoleKey.D, "Data Sources AID", "Add and Edit Data Sources");
+                DataSourceMenu.Add("List", DataSources, ConsoleKey.D, "", "AID");
                 twoLevelMenu.Add(DataSourceMenu);
             //}
 
-            TopMenuItem DocumentsMenu = new TopMenuItem("Documents", ConsoleKey.D, "Documents AID");
-            DocumentsMenu.Add("List", Documents, ConsoleKey.L, "Solution documents like: text, excel, js scripts and any type of file", "AID");
+            TopMenuItem DocumentsMenu = new TopMenuItem("Documents", ConsoleKey.D, "Documents AID", "Solution documents like: text, excel, js scripts and any type of file");
+            DocumentsMenu.Add("List", Documents, ConsoleKey.L, "", "AID");
             twoLevelMenu.Add(DocumentsMenu);
 
             TopMenuItem PluginsMenu = new TopMenuItem("Plugins", ConsoleKey.P, "Plugins AID");

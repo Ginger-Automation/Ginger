@@ -31,9 +31,7 @@ namespace Ginger.GeneralWindows
             mTwoLevelMenu = twoLevelMenu;
             LoadMenus();
             
-        }
-
-        
+        }        
 
         public void Reset()
         {
@@ -49,6 +47,7 @@ namespace Ginger.GeneralWindows
                 ListViewItem topMenu = new ListViewItem() {Content = menu.Name };
                 topMenu.Style = (Style)TryFindResource("$ListViewItemStyle");
                 topMenu.SetValue(AutomationProperties.AutomationIdProperty, menu.AutomationID);
+                topMenu.ToolTip = menu.ToolTip;
                 xMainNavigationListView.Items.Add(topMenu);
             }
             SelectFirstTopMenu();            

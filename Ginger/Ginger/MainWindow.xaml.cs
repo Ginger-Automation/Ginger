@@ -425,9 +425,10 @@ namespace Ginger
                 return;
             }
 
-            if (MainRibbon.SelectedItem == RunRibbon)
+            if (MainRibbon.SelectedItem == xRun)
             {
-                LoadOrShowPage(typeof(NewRunSetPage));
+                ShowPage(RunMenu.MenusPage);
+                return;
             }
 
             if (MainRibbon.SelectedItem == SupportRibbon)
@@ -477,7 +478,7 @@ namespace Ginger
 
         public void ToggleMainWindow()
         {
-            if (MainRibbon.SelectedItem != RunRibbon && MainRibbon.SelectedItem != xResources && MainRibbon.SelectedItem != xConfigurations && MainRibbon.SelectedItem != xBusinessFlows)
+            if (MainRibbon.SelectedItem != xRun && MainRibbon.SelectedItem != xResources && MainRibbon.SelectedItem != xConfigurations && MainRibbon.SelectedItem != xBusinessFlows)
             {
                 MainFrame.Margin = new Thickness(0, 0, 0, 0);
             }
@@ -863,12 +864,12 @@ namespace Ginger
                 if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
                 {
                     AutomateRibbon.Visibility = Visibility.Visible;
-                    RunRibbon.Visibility = Visibility.Visible;
+                    xRun.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     AutomateRibbon.Visibility = Visibility.Collapsed;
-                    RunRibbon.Visibility = Visibility.Collapsed;
+                    xRun.Visibility = Visibility.Collapsed;
                 }
 
                 if (App.UserProfile.UserTypeHelper.IsSupportAnalyzer)
@@ -899,7 +900,7 @@ namespace Ginger
             else
             {
                 AutomateRibbon.Visibility = Visibility.Collapsed;
-                RunRibbon.Visibility = Visibility.Collapsed;
+                xRun.Visibility = Visibility.Collapsed;
                 xResources.Visibility = Visibility.Collapsed;
                 xBusinessFlows.Visibility = Visibility.Collapsed;
                 xConfigurations.Visibility = Visibility.Collapsed;
@@ -1820,7 +1821,7 @@ namespace Ginger
                 mfindAndReplacePageAutomate.ShowAsWindow();
             }
 
-            else if (MainRibbon.SelectedItem == RunRibbon)
+            else if (MainRibbon.SelectedItem == xRun)
             {
                 NewRunSetPage runSetPage = (NewRunSetPage)(from p1 in mPageList where p1.GetType() == typeof(NewRunSetPage) select p1).SingleOrDefault();
                 runSetPage.ShowFindAndReplacePage();

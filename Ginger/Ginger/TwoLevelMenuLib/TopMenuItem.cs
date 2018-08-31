@@ -14,16 +14,19 @@ namespace Ginger.TwoLevelMenuLib
 
         public bool Active { get; set; }
 
+        public string ToolTip { get; set; }
+
         public ConsoleKey Key { get; set; }
 
         public string AutomationID { get; set; }
 
-        public TopMenuItem(string name, ConsoleKey key, string automationID)
+        public TopMenuItem(string name, ConsoleKey key, string automationID, string toolTip="")
         {
             Key = key;
             Name = name;            
             Active = true;
             AutomationID = automationID;
+            ToolTip = toolTip;
         }
 
         public ObservableList<SubMenuItem> SubItems = new ObservableList<SubMenuItem>();
