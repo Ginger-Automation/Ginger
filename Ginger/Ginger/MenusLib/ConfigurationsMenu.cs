@@ -32,7 +32,7 @@ namespace Ginger.ConfigurationsLib
 
         private static void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Solution")
+            if (e.PropertyName == nameof(UserProfile.Solution))
             {
                 menusPage.Reset();
             }
@@ -41,18 +41,18 @@ namespace Ginger.ConfigurationsLib
         private static TwoLevelMenu GetMenu()
         {
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
-            TopMenuItem environemntsMenu = new TopMenuItem("Environments", ConsoleKey.E, "Environemnts_AID");
-            environemntsMenu.Add("Environments List",  EnvsList, ConsoleKey.L, "Manage Environments", "Envs List");
-            environemntsMenu.Add("Compare", EnvsCompare, ConsoleKey.C, "Compare Environments", "compare Envs AID");
+            TopMenuItem environemntsMenu = new TopMenuItem("Environments", ConsoleKey.E, "Environemnts_AID", "Environments are been used for storing environment level parameters and DB/Unix connections details");
+            environemntsMenu.Add("Environments List",  EnvsList, ConsoleKey.L, "Environments are been used for storing environment level parameters and DB / Unix connections details", "Envs List");
+            //environemntsMenu.Add("Compare", EnvsCompare, ConsoleKey.C, "Compare Environments", "compare Envs AID");
             twoLevelMenu.Add(environemntsMenu);
 
-            TopMenuItem agentsMenu = new TopMenuItem("Agents", ConsoleKey.A, "Agents AID");
+            TopMenuItem agentsMenu = new TopMenuItem("Agents", ConsoleKey.A, "Agents AID", "Agents are the drivers which comunicates with the tested application");
             agentsMenu.Add("List", AgentsList, ConsoleKey.L, "", "AgentsList");            
             twoLevelMenu.Add(agentsMenu);
 
             TopMenuItem reportsMenu = new TopMenuItem("Reports", ConsoleKey.R, "Reports_AID");
-            reportsMenu.Add("Reports Templates", ReportsList, ConsoleKey.L, "Report Templates", "Reports AID");
-            reportsMenu.Add("General Configurations", ReportsConfig, ConsoleKey.C, "Configuration", "Reports Config AID");
+            reportsMenu.Add("Reports Templates", ReportsList, ConsoleKey.L, "Reports Templates are used to define the HTML report content and design", "Reports AID");
+            reportsMenu.Add("General Configurations", ReportsConfig, ConsoleKey.C, "Global Reports Configurations", "Reports Config AID");
             
             // reportsMenu.Add("Templates", ReportsTemplates, ConsoleKey.T, "Edit and Create report templates", "AID");
             twoLevelMenu.Add(reportsMenu);

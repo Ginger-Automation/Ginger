@@ -603,6 +603,7 @@
       <DependentUpon>ModelItemUsagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MenusLib\ResourcesMenu.cs" />
+    <Compile Include="MenusLib\RunMenu.cs" />
     <Compile Include="RunSetLib\RunSetOperations.cs" />
     <Compile Include="Run\RunSetConfig.cs" />
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
@@ -865,15 +866,15 @@
     </Compile>
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\AppApiModelsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\AppApiModelTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationDBsTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationDBTableTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationDBTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBsTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBTableTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationPOMsTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationPOMTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationProcessTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationVersionTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationProcessTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationVersionTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\NewAgentsTreeItems\NewAgentTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\NewAgentsTreeItems\NewAgentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvironmentsFolderTreeItem.cs" />
@@ -1847,7 +1848,7 @@
     <Compile Include="SolutionWindows\TreeViewItems\DocumentTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvApplicationTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvironmentTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ExecutionResultsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\ExecutionResultsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\RunSetFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\RunSetTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedActionsFolderTreeItem.cs" />

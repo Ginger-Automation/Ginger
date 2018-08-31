@@ -209,7 +209,8 @@
             <RibbonTab x:Name="xNewAutomate" Header="New Automate" AutomationProperties.AutomationId="NewAutomate" h:GingerHelpProvider.HelpString="NewAutomate" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" Visibility="Collapsed">
             </RibbonTab>
 
-            <RibbonTab x:Name="RunRibbon" AutomationProperties.AutomationId="RunRibbon" Header="Run" h:GingerHelpProvider.HelpString="Run" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" IsHitTestVisible="True">
+            <!-- Run Tab-->
+            <RibbonTab x:Name="xRun" AutomationProperties.AutomationId="RunRibbon" Header="Run" h:GingerHelpProvider.HelpString="Run" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" IsHitTestVisible="True">
             </RibbonTab>
 
 

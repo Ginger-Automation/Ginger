@@ -531,7 +531,7 @@ namespace Ginger.Run
                 }
 
                 //create new defualt run set
-                RunSetConfig newRunSet = RunSetOperations.CreateNewRunset("Default " + GingerDicser.GetTermResValue(eTermResKey.RunSet), App.UserProfile.Solution.Folder + "\\RunSetConfigs\\");
+                RunSetConfig newRunSet = RunSetOperations.CreateNewRunset("Default " + GingerDicser.GetTermResValue(eTermResKey.RunSet));
                 if (newRunSet != null)
                     return newRunSet;
                 return null;
@@ -1106,21 +1106,16 @@ namespace Ginger.Run
 
         internal void AddNewRunSetConfig()
         {
-            //get run set name 
-            string name = null;
-            if (InputBoxWindow.GetInputWithValidation(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ref name, System.IO.Path.GetInvalidPathChars()))
+            RunSetConfig newRunSet = RunSetOperations.CreateNewRunset();
+            if (newRunSet != null)
             {
-                RunSetConfig newRunSet = RunSetOperations.CreateNewRunset(name, App.UserProfile.Solution.Folder + "\\RunSetConfigs\\");
-                if (newRunSet != null)
-                {
-                    LoadRunSetConfig(newRunSet);
-                    return;
-                }
-                else
-                {
-                    //failed to add the run set
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to add new " + GingerDicser.GetTermResValue(eTermResKey.RunSet));
-                }
+                LoadRunSetConfig(newRunSet);
+                return;
+            }
+            else
+            {
+                //failed to add the run set
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to add new " + GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }
         }
 
@@ -1327,12 +1322,9 @@ namespace Ginger.Run
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
             if (mRunSetsSelectionPage == null)
-            {
-                RunSetFolderTreeItem runSetfolder = new RunSetFolderTreeItem();
-                runSetfolder.Folder = GingerDicser.GetTermResValue(eTermResKey.RunSets);
-                runSetfolder.Path = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"RunSetConfigs\");
-                runSetfolder.IsGingerDefualtFolder = true;
-                mRunSetsSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.RunSets), eImageType.RunSet, runSetfolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
+            {                
+                RunSetFolderTreeItem runSetsRootfolder = new RunSetFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<RunSetConfig>());
+                mRunSetsSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.RunSets), eImageType.RunSet, runSetsRootfolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
             }
 
             List<object> selectedRunSet = mRunSetsSelectionPage.ShowAsWindow();
