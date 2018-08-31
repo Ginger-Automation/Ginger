@@ -33,10 +33,16 @@ using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
+    public enum eDocumentsItemViewMode
+    {
+        All = 0,
+        FoldersOnly = 1
+    };
     class DocumentsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         public string Folder { get; set; }
 
+        public eDocumentsItemViewMode mViewMode;
         string mPath;
         public string Path
         {
@@ -52,8 +58,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 mPath = value;
             }
-        }
+        }  
         
+        public DocumentsFolderTreeItem(eDocumentsItemViewMode viewMode = eDocumentsItemViewMode.All)
+        {
+            mViewMode = viewMode;
+        }
         Object ITreeViewItem.NodeObject()
         {
             return null;
@@ -110,7 +120,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 foreach (string d in Directory.GetDirectories(Path))
                 {
-                    DocumentsFolderTreeItem FolderItem = new DocumentsFolderTreeItem();
+                    DocumentsFolderTreeItem FolderItem = new DocumentsFolderTreeItem(mViewMode);
                     string FolderName = System.IO.Path.GetFileName(d);
 
                     FolderItem.Folder = FolderName;
@@ -152,17 +162,22 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-
-            if (IsGingerDefualtFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document",allowSaveAll:false, allowAddNew:false,allowCopyItems:false,allowCutItems:false,allowPaste:false, allowRenameFolder: false, allowDeleteFolder: false);
+            if(mViewMode == eDocumentsItemViewMode.FoldersOnly)
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", true, false, false, false, false, false, false, true, false, false);
             else
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
-            AddSourceControlOptions(mContextMenu, false, false);
+            {
+                if (IsGingerDefualtFolder)
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document",allowSaveAll:false, allowAddNew:false,allowCopyItems:false,allowCutItems:false,allowPaste:false, allowRenameFolder: false, allowDeleteFolder: false);
+                else
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
+                AddSourceControlOptions(mContextMenu, false, false);
 
-            //if(IsGingerDefualtFolder || this.Path.Contains("\\Documents\\Features")) 
-            //    AddGherkinOptions(mContextMenu);
+                //if(IsGingerDefualtFolder || this.Path.Contains("\\Documents\\Features")) 
+                //    AddGherkinOptions(mContextMenu);
 
-            AddImportsAndCreateDocumentsOptions();
+                AddImportsAndCreateDocumentsOptions();
+            }
+            
         }
 
         private void AddImportsAndCreateDocumentsOptions()

@@ -37,20 +37,27 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         public GenericWindow genWin;
         public eImportGherkinFileContext mContext;
         public string FetaureFileName;
+        ImportGherkinTargetFolder importGherkinTargetFolder;
 
         public ImportGherkinFeatureWizard(string folder, eImportGherkinFileContext context)
         {
             Folder = folder;
             mContext = context;
+            importGherkinTargetFolder = new ImportGherkinTargetFolder(mContext);
 
             AddPage(Name: "Intro", Title: "Import Gherkin Intro", SubTitle: "Importing BDD Gherkin File...", Page: new ImportGherkinIntroPage());
-                        
+
+            if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
+            {
+                AddPage(Name: "SelectDocumentsFolder", Title: "Target Feature File Path", SubTitle: "Select Feature Folder...", Page: importGherkinTargetFolder);
+            }
+
             AddPage(Name: "SelectFile", Title: "Select Feature File", SubTitle: "Choose ...", Page: new ImportGherkinFeatureFilePage(folder, context));
 
             if(mContext == eImportGherkinFileContext.DocumentsFolder)
-            {                
-                AddPage(Name: "SelectBusinessFlowFolder", Title: "Target Business Flow Path", SubTitle: "Select Target Folder...", Page: new ImportGherkinTargetFolder(mContext));
-            }                
+            {
+                AddPage(Name: "SelectBusinessFlowFolder", Title: "Target Business Flow Path", SubTitle: "Select Target Folder...", Page: importGherkinTargetFolder);
+            }
 
             AddPage(Name: "Summary", Title: "Summary", SubTitle: "here is what will happen when you click finish", Page: new ImportGherkinFeatureSummaryPage());
         }
@@ -60,7 +67,31 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         public override void Finish()
         {
             if (Import() == "")
+            {
                 FetaureFileName = "";
+                return;
+            }               
+
+            Imported = true;
+            if (!string.IsNullOrEmpty(mFeatureFile))
+            {
+                GherkinPage GP = new GherkinPage();
+                //GP = importGherkinTargetFolder.mTargetPath + mFeatureFile;
+                bool Compiled = GP.Load(mFeatureFile);                
+                //GP.Optimize();
+                if (Compiled)
+                {
+                    string BFName = System.IO.Path.GetFileName(mFeatureFile).Replace(".feature", "");
+                    GP.CreateNewBF(BFName, mFeatureFile);
+                    GP.CreateActivities();
+                    GP.mBizFlow.Save();
+                    BizFlow = GP.mBizFlow;
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKeys.GherkinBusinessFlowNotCreated);
+                }
+            }
         }
 
         private string Import()

@@ -55,23 +55,27 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             Single, Multi, MultiStayOpenOnDoubleClick, Folder
         }
 
-        eItemSelectionType mItemSelectionType;
+        public enum eItemEnableEventType
+        {
+            DoubleClick,Select
+        }
+        eItemSelectionType mItemSelectionType;        
         GenericWindow mPageGenericWin = null;
         List<object> mSelectedItems = null;
         string mitemTypeName;
-        public event SelectionTreeEventHandler SelectionDone;
+        public event SelectionTreeEventHandler SelectionDone;      
         protected virtual void OnSelectionDone(SelectionTreeEventArgs e)
         {
             if (SelectionDone != null)
                 SelectionDone(this, e);
         }
-
+             
         public TreeView1 TreeView
         {
             get { return xTreeView; }
         }
 
-        public SingleItemTreeViewSelectionPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, eItemSelectionType itemSelectionType = eItemSelectionType.Single, bool allowTreeTools = false)
+        public SingleItemTreeViewSelectionPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, eItemSelectionType itemSelectionType = eItemSelectionType.Single, bool allowTreeTools = false, eItemEnableEventType enableEvent = eItemEnableEventType.DoubleClick)
         {
             InitializeComponent();
 
@@ -80,7 +84,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);            
             r.IsExpanded = true;
 
-            xTreeView.Tree.ItemDoubleClick += Tree_ItemDoubleClick;
+            if(enableEvent==eItemEnableEventType.DoubleClick)
+                xTreeView.Tree.ItemDoubleClick += Tree_ItemDoubleClick;
+            else if(enableEvent == eItemEnableEventType.Select)
+                xTreeView.Tree.ItemSelected += Tree_ItemSelected;
 
             mitemTypeName = itemTypeName;
             xTreeView.TreeTitle = itemTypeName;
@@ -91,7 +98,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 xTipLabel.Visibility = Visibility.Visible;
             else
                 xTipLabel.Visibility = Visibility.Collapsed;             
-        }
+        }        
 
         public List<object> ShowAsWindow(string windowTitle="", eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
@@ -177,6 +184,16 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     mPageGenericWin.Close();
                 }
             }
-        }        
+        }
+        private void Tree_ItemSelected(object sender, EventArgs e)
+        {
+            mSelectedItems = new List<object>();
+            ITreeViewItem itvItem = xTreeView.Tree.CurrentSelectedTreeViewItem;
+            if(itvItem.NodeObject() == null)
+                mSelectedItems.Add(itvItem);
+            else
+                mSelectedItems.Add(itvItem.NodeObject());
+            OnSelectionDone(new SelectionTreeEventArgs(mSelectedItems));
+        }
     }
 }

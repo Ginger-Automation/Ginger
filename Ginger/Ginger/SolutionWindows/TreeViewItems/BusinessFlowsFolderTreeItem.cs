@@ -44,9 +44,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
     public enum eBusinessFlowsTreeViewMode
     {
         ReadWrite = 0,
-        ReadOnly = 1
+        ReadOnly = 1,
+        FoldersOnly =2
     }
-
+    
     public class BusinessFlowsFolderTreeItem : TreeViewItemBase, ITreeViewItem
     {
         private ExplorerBusinessFlowsPage mExplorerBusinessFlowsPage;
@@ -138,14 +139,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
             else
             {                
                 if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                {                    
+                {
+                    AddsubFolders(mRepositoryFolder, Childrens);
+                    if (mViewMode == eBusinessFlowsTreeViewMode.FoldersOnly)
+                        return Childrens;                        
                     BFs = mRepositoryFolder.GetFolderItems();
-                    AddsubFolders(mRepositoryFolder, Childrens);                    
+                                       
                 }
                 else
-                {                    
-                    BFs = App.LocalRepository.GetSolutionBusinessFlows(specificFolderPath: Path);
+                {   
                     AddsubFolders(Path, Childrens);
+                    if (mViewMode == eBusinessFlowsTreeViewMode.FoldersOnly)
+                        return Childrens;
+                    BFs = App.LocalRepository.GetSolutionBusinessFlows(specificFolderPath: Path);
                 }                                
             }
 
@@ -372,6 +378,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import ASAP Script", ImportASAPScript, null, "");
                 MenuItem exportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
                 TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportAllToALM, null, "@ALM_16x16.png");
+            }
+            else if(mViewMode == eBusinessFlowsTreeViewMode.FoldersOnly)
+            {
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), true, false, false, false, false, false, false, true, false, false);
             }
             else
             {

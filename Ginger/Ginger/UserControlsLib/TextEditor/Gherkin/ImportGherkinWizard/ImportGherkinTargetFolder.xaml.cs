@@ -25,6 +25,8 @@ using GingerCore;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.Enums;
 using System.Collections.Generic;
+using System.IO;
+using Ginger.GherkinLib;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -34,8 +36,9 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
     /// 
     public partial class ImportGherkinTargetFolder : Page, IWizardPage
     {
+        public string mTargetPath;
         eImportGherkinFileContext mContext;
-        SingleItemTreeViewSelectionPage mBusFlowsSelectionPage = null;
+        SingleItemTreeViewSelectionPage mTargetFolderSelectionPage = null;
         public ImportGherkinTargetFolder(eImportGherkinFileContext context)
         {
             InitializeComponent();
@@ -53,29 +56,56 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                         BusinessFlowsFolderTreeItem bfsFolder;
                         if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
                         {
-                            bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
+                            bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(),eBusinessFlowsTreeViewMode.FoldersOnly);
                         }
                         else
                         {
-                            bfsFolder = new BusinessFlowsFolderTreeItem();//create new tree each time for now to allow refresh
+                            bfsFolder = new BusinessFlowsFolderTreeItem(eBusinessFlowsTreeViewMode.FoldersOnly);//create new tree each time for now to allow refresh
                         }
                         bfsFolder.Folder = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
                         bfsFolder.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
                         bfsFolder.IsGingerDefualtFolder = true;
-                        
-                        mBusFlowsSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder,false);
-                        mBusFlowsSelectionPage.SelectionDone += MBusFlowsSelectionPage_SelectionDone;
 
-                        TargetPath.Content = mBusFlowsSelectionPage;
+                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true, SingleItemTreeViewSelectionPage.eItemEnableEventType.Select);
+                        
                         //List<object> selectedBfs = mBusFlowsSelectionPage.ShowAsWindow();
                         //AddSelectedBuinessFlows(selectedBfs);
                     }
+                    else if(mContext == eImportGherkinFileContext.BusinessFlowFolder)
+                    {
+                        DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem(eDocumentsItemViewMode.FoldersOnly);
+                        documentsFolderRoot.IsGingerDefualtFolder = true;
+                        documentsFolderRoot.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents");
+                        documentsFolderRoot.Folder = "Documents";
+                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Documents", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,SingleItemTreeViewSelectionPage.eItemEnableEventType.Select);                        
+
+                    }
+                    mTargetFolderSelectionPage.SelectionDone += MTargetFolderSelectionPage_SelectionDone;
+
+                   // mTargetFolderSelectionPage.Click += MTargetFolderSelectionPage_Click;
+
+                    TargetPath.Content = mTargetFolderSelectionPage;
                     break;
+                case EventType.Validate:
+                    {
+                        if (string.IsNullOrEmpty(mTargetPath))
+                        {
+                            //WizardEventArgs.AddError("Please Select target Folder");
+                        }
+                            break;
+                    }                   
             }
+
         }
-        private void MBusFlowsSelectionPage_SelectionDone(object sender, SelectionTreeEventArgs e)
+        private void MTargetFolderSelectionPage_SelectionDone(object sender, SelectionTreeEventArgs e)
         {
-            //AddSelectedBuinessFlows(e.SelectedItems);
-        }
+            if (e.SelectedItems[0].GetType() == typeof(BusinessFlowsFolderTreeItem))
+            {
+                mTargetPath = ((BusinessFlowsFolderTreeItem)e.SelectedItems[0]).NodePath();
+            }else if (e.SelectedItems[0].GetType() == typeof(DocumentsFolderTreeItem))
+            {
+                mTargetPath = ((DocumentsFolderTreeItem)e.SelectedItems[0]).NodePath();
+            }
+        }        
     }
 }

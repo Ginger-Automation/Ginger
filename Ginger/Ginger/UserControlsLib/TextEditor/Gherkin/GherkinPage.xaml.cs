@@ -70,8 +70,8 @@ namespace Ginger.GherkinLib
 
         public GherkinPage()
         {           
-            InitializeComponent();
-                       
+            InitializeComponent(); 
+            
             folder = App.UserProfile.Solution.BusinessFlowsMainFolder;
             
             GherkinTextEditor.AddToolbarTool(General.GetImage("@Save_16x16.png"), Save_Click, "Save Gherkin Feature");
