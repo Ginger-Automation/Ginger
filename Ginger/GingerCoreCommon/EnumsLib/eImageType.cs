@@ -42,6 +42,8 @@ namespace Amdocs.Ginger.Common.Enums
         Parameter,
         HtmlReport,
         Variable,
+        SharedRepositoryItem,
+        NonSharedRepositoryItem,
         #endregion
 
 
@@ -149,7 +151,7 @@ namespace Amdocs.Ginger.Common.Enums
         History,
         Pointer,
         Camera,
-
+        Wrench,
         Power,
 
         #endregion

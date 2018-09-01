@@ -1193,6 +1193,10 @@ public void RemoveCustomView(string viewName)
                                 gridCol = BindImageColumn(colView.Field);
                                 break;
 
+                            case GridColView.eGridColStyleType.ImageMaker:
+                                gridCol = BindImageMakerColumn(colView.Field);
+                                break;
+
                             case GridColView.eGridColStyleType.CheckBox:
                                 gridCol = new DataGridCheckBoxColumn();
                                 ((DataGridCheckBoxColumn)gridCol).Binding = binding;
@@ -1530,6 +1534,22 @@ public void RemoveCustomView(string viewName)
             return imgColumn;
         }
 
+        public DataGridTemplateColumn BindImageMakerColumn(string ImageField)
+        {
+            // Here we add a new Image column 
+            DataGridTemplateColumn imgColumn = new DataGridTemplateColumn();
+            imgColumn.Header = "";
+            FrameworkElementFactory imageFactory = new FrameworkElementFactory(typeof(System.Windows.Controls.Image));
+            Binding b = new Binding();
+            b.Path = new PropertyPath(ImageField);
+            b.Converter = new ImageMakerToSourceConverter();
+            imageFactory.SetValue(System.Windows.Controls.Image.SourceProperty, b);
+            DataTemplate dataTemplate = new DataTemplate();
+            dataTemplate.VisualTree = imageFactory;
+            imgColumn.CellTemplate = dataTemplate;
+            return imgColumn;
+        }
+
         public class ImageToSourceConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter,
@@ -1548,6 +1568,22 @@ public void RemoveCustomView(string viewName)
                     return bi;
                 }
                 return null;
+            }
+
+            public object ConvertBack(object value, Type targetType,
+                object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public class ImageMakerToSourceConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter,
+                    System.Globalization.CultureInfo culture)
+            {
+                eImageType imageType = (eImageType)value;
+                return ImageMakerControl.GetImage(imageType);                
             }
 
             public object ConvertBack(object value, Type targetType,

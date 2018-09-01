@@ -187,7 +187,7 @@ namespace GingerCore.Variables
         public abstract string VariableType();
         public abstract void ResetValue();
         public abstract void GenerateAutoValue();
-        public virtual System.Drawing.Image Image { get{return Resources.Const;} }
+        public virtual System.Drawing.Image Image { get{return Resources.Const;} }//TODO: replace with ItemImageType
         public override string GetNameForFileName() { return Name; }
         public abstract string VariableEditPage { get; }
 

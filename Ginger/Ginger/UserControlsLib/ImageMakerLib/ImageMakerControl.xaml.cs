@@ -193,10 +193,10 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
                     break;
                 case eImageType.ActivitiesGroup:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Group);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ListAlt);
                     break;
                 case eImageType.Activity:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThList);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ListUl);
                     break;
                 case eImageType.Action:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Bolt);
@@ -237,6 +237,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Variable:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Yen);
+                    break;
+                case eImageType.SharedRepositoryItem:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Star, Brushes.Orange);
+                    break;
+                case eImageType.NonSharedRepositoryItem:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Star, Brushes.Gray);
                     break;
                 #endregion
 
@@ -532,6 +538,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Camera:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Camera);
+                    break;
+                case eImageType.Wrench:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Wrench);
                     break;
                 #endregion
 

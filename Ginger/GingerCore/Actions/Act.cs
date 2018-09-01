@@ -370,7 +370,7 @@ namespace GingerCore.Actions
 
 
         // show image base on Act type near the line number
-        public virtual System.Drawing.Image Image { get { return Resources.Act; } }
+        public virtual System.Drawing.Image Image { get { return Resources.Act; } } //TODO: to be replaced with ItemImageType for all Actions types
 
 
         // [IsSerializedForLocalRepository]

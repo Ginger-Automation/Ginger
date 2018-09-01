@@ -131,7 +131,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
             foreach (object o in existingRepoItems)
             {       
-                if (((RepositoryItem)o).GetNameForFileName() == selectedItem.ItemName)
+                if (((RepositoryItemBase)o).GetNameForFileName() == selectedItem.ItemName)
                 {
                     return true;
                 }

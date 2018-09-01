@@ -35,22 +35,6 @@ namespace GingerCore
         //[IsSerializedForLocalRepository]
         //public new Guid ParentGuid { get; set; }
 
-        bool mIsSharedRepositoryInstance = false;
-        public bool IsSharedRepositoryInstance
-        {
-            get
-            {
-                return mIsSharedRepositoryInstance;
-            }
-            set
-            {
-                if (mIsSharedRepositoryInstance != value)
-                {
-                    mIsSharedRepositoryInstance = value;
-                    OnPropertyChanged(nameof(SharedRepoInstanceImage));
-                }
-            }
-        }
 
         // TODO: remove or squeeze to one field
 
@@ -81,20 +65,7 @@ namespace GingerCore
             UpdateControlFields();
         }
 
-        public void UpdateControlFields()
-        {
-            if (Guid == null || Guid == Guid.Empty)
-            {
-                Guid = Guid.NewGuid();
-            }
-            if (CreatedBy == null || CreatedBy == string.Empty)
-            {
-                CreatedBy = Environment.UserName;
-                Created = DateTime.UtcNow;
-            }
-
-            Deleted = false;
-        }
+        
 
         //public void SaveParentGUID()
         //{
@@ -144,17 +115,17 @@ namespace GingerCore
             RS.DeserializeFromTextWithTargetObj(sourceObj.GetType(), sourceObjXml, targetObj);
         }
 
-        public RepositoryItem CreateInstance(bool originFromShredRepo = false)
-        {
-            RepositoryItem copiedItem = (RepositoryItem)this.CreateCopy();
-            copiedItem.ParentGuid = this.Guid;
-            if (originFromShredRepo)
-            {
-                copiedItem.IsSharedRepositoryInstance = true;
-                copiedItem.ExternalID = this.ExternalID;
-            }
-            return copiedItem;
-        }
+        //public RepositoryItem CreateInstance(bool originFromShredRepo = false)
+        //{
+        //    RepositoryItem copiedItem = (RepositoryItem)this.CreateCopy();
+        //    copiedItem.ParentGuid = this.Guid;
+        //    if (originFromShredRepo)
+        //    {
+        //        copiedItem.IsSharedRepositoryInstance = true;
+        //        copiedItem.ExternalID = this.ExternalID;
+        //    }
+        //    return copiedItem;
+        //}
 
         //// Temp solution for backup restore until we have the obj ref tree copy
         //public void SaveBackup()
@@ -280,20 +251,6 @@ namespace GingerCore
 
 
 
-        public System.Drawing.Image SharedRepoInstanceImage
-        {
-            get
-            {
-                if (IsSharedRepositoryInstance)
-                    return Resources.Star_16x16;
-                else
-                    return Resources.StarGray_16x16;
-            }
-        }
-
-        public virtual void UpdateItemFieldForReposiotryUse()
-        {
-            UpdateControlFields();
-        }
+      
     }
 }
