@@ -1188,7 +1188,7 @@ namespace Ginger
         }
 
         private void SaveBizFlowButton_Click(object sender, RoutedEventArgs e)
-        {
+         {
             //warn in case dynamic shared reposiotry Activities are included and going to be deleted
             if (App.BusinessFlow.Activities.Where(x=>x.AddDynamicly == true).FirstOrDefault() != null)
             {
@@ -1200,6 +1200,8 @@ namespace Ginger
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
             
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(App.BusinessFlow);
+               
+            App.AddItemToSaveAll(App.BusinessFlow);
 
             Reporter.CloseGingerHelper();
         }
