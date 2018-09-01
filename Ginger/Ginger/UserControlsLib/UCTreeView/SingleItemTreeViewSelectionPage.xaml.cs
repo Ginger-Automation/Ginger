@@ -126,7 +126,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             ITreeViewItem itvItem = xTreeView.Tree.CurrentSelectedTreeViewItem;
 
-            if (itvItem != null)
+            if (itvItem != null &&  mItemSelectionType != eItemSelectionType.Folder)
             {
                 mSelectedItems = new List<object>();
                 if (itvItem.IsExpandable())
@@ -136,7 +136,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                         MessageBox.Show("Please select single node item (not a folder).", "Item Selection", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                         return false;
                     }
-
+                    
                     //get all childerans objects of direct and sub folders
                     foreach (ITreeViewItem subItvItem in xTreeView.Tree.GetTreeNodeChildsIncludingSubChilds(itvItem))                      
                         if (subItvItem.NodeObject() != null && subItvItem.NodeObject().GetType().BaseType != typeof(RepositoryFolderBase))
@@ -186,14 +186,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
         }
         private void Tree_ItemSelected(object sender, EventArgs e)
-        {
+        {            
             mSelectedItems = new List<object>();
             ITreeViewItem itvItem = xTreeView.Tree.CurrentSelectedTreeViewItem;
             if(itvItem.NodeObject() == null)
                 mSelectedItems.Add(itvItem);
             else
                 mSelectedItems.Add(itvItem.NodeObject());
-            OnSelectionDone(new SelectionTreeEventArgs(mSelectedItems));
+            if (SelectCurrentItem())
+            {
+                OnSelectionDone(new SelectionTreeEventArgs(mSelectedItems));
+            }            
         }
     }
 }

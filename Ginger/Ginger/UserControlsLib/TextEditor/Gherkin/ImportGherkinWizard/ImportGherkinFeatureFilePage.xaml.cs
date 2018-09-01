@@ -28,6 +28,7 @@ using Ginger.SolutionWindows;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.WizardLib;
+using static Ginger.ExtensionMethods;
 
 namespace Ginger.GherkinLib
 {
@@ -37,7 +38,8 @@ namespace Ginger.GherkinLib
     public partial class ImportGherkinFeatureFilePage : Page , IWizardPage
     {
         
-        ImportGherkinFeatureWizard mWizard;       
+        ImportGherkinFeatureWizard mWizard;
+        string mFeatureFolder;
 
         internal string mFeatureFile { get { return mWizard.mFeatureFile; } }
 
@@ -57,6 +59,7 @@ namespace Ginger.GherkinLib
         public ImportGherkinFeatureFilePage(string folder, eImportGherkinFileContext context)
         {
             InitializeComponent();
+            mFeatureFolder = folder;
             FetaureFileName.FileExtensions.Add(".feature");            
             FileContentViewer.Visibility = System.Windows.Visibility.Collapsed;
             FetaureFileName.FilePathTextBox.TextChanged += FilePathTextBox_TextChanged;
@@ -108,12 +111,12 @@ namespace Ginger.GherkinLib
              mWizard.Imported = true;
             if (!string.IsNullOrEmpty(mWizard.mFeatureFile) && mWizard.mContext == eImportGherkinFileContext.BusinessFlowFolder)
             {
-                GherkinPage GP = new GherkinPage();
+                GherkinPage GP = new GherkinPage();                
                 bool Compiled = GP.Load(mWizard.mFeatureFile);
                 //GP.Optimize();
                 if (Compiled)
                 {
-                    string BFName = System.IO.Path.GetFileName(FetaureFileName.FilePathTextBox.Text).Replace(".feature", "");
+                    string BFName = System.IO.Path.GetFileName(mWizard.mFeatureFile).Replace(".feature", "");
                     GP.CreateNewBF(BFName, mWizard.mFeatureFile);
                     GP.CreateActivities();
                     GP.mBizFlow.Save();
@@ -135,7 +138,8 @@ namespace Ginger.GherkinLib
             switch (WizardArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (ImportGherkinFeatureWizard)WizardArgs.Wizard;                    
+                    mWizard = (ImportGherkinFeatureWizard)WizardArgs.Wizard;
+                    //FetaureFileName.FilePathTextBox.AddValidationRule(eValidationRule.CannotBeEmpty);
                     break;
                 case EventType.Validate:
                     if (!File.Exists(FetaureFileName.FilePathTextBox.Text))

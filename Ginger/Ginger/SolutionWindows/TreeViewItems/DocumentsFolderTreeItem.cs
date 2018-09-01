@@ -99,8 +99,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
-            AddSubFolders(Path, Childrens);            
-         
+            AddSubFolders(Path, Childrens);
+
+            if (mViewMode == eDocumentsItemViewMode.FoldersOnly)
+                return Childrens;
+
             //Add Current folder Docs 
             foreach (string f in Directory.GetFiles(Path))
             {                

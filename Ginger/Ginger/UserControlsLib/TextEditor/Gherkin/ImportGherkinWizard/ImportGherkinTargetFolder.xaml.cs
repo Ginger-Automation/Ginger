@@ -66,7 +66,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                         bfsFolder.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
                         bfsFolder.IsGingerDefualtFolder = true;
 
-                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true, SingleItemTreeViewSelectionPage.eItemEnableEventType.Select);
+                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true, SingleItemTreeViewSelectionPage.eItemEnableEventType.Select);
                         
                         //List<object> selectedBfs = mBusFlowsSelectionPage.ShowAsWindow();
                         //AddSelectedBuinessFlows(selectedBfs);
@@ -77,7 +77,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                         documentsFolderRoot.IsGingerDefualtFolder = true;
                         documentsFolderRoot.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents");
                         documentsFolderRoot.Folder = "Documents";
-                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Documents", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,SingleItemTreeViewSelectionPage.eItemEnableEventType.Select);                        
+                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Documents", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true,SingleItemTreeViewSelectionPage.eItemEnableEventType.Select);                        
 
                     }
                     mTargetFolderSelectionPage.SelectionDone += MTargetFolderSelectionPage_SelectionDone;

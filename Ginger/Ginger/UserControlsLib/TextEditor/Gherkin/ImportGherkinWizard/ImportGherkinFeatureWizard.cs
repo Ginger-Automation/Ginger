@@ -29,7 +29,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
     {
         // shared data across pages goes here        
 
-        public string Folder { get; internal set; }
+        public string featureTargetFolder { get; internal set; }
         public string mFolder;
         public bool Imported;
         public string mFeatureFile;
@@ -38,11 +38,15 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         public eImportGherkinFileContext mContext;
         public string FetaureFileName;
         ImportGherkinTargetFolder importGherkinTargetFolder;
+        string bizFlowTargetFolder;
 
         public ImportGherkinFeatureWizard(string folder, eImportGherkinFileContext context)
-        {
-            Folder = folder;
+        {            
             mContext = context;
+            if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
+                bizFlowTargetFolder = folder;
+            else
+                featureTargetFolder = folder;
             importGherkinTargetFolder = new ImportGherkinTargetFolder(mContext);
 
             AddPage(Name: "Intro", Title: "Import Gherkin Intro", SubTitle: "Importing BDD Gherkin File...", Page: new ImportGherkinIntroPage());
@@ -66,7 +70,13 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
         public override void Finish()
         {
-            if (Import() == "")
+            if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
+                featureTargetFolder  = importGherkinTargetFolder.mTargetPath;
+            else
+                bizFlowTargetFolder = importGherkinTargetFolder.mTargetPath;
+
+            mFeatureFile = Import();
+            if (mFeatureFile == "")
             {
                 FetaureFileName = "";
                 return;
@@ -75,17 +85,17 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             Imported = true;
             if (!string.IsNullOrEmpty(mFeatureFile))
             {
-                GherkinPage GP = new GherkinPage();
-                //GP = importGherkinTargetFolder.mTargetPath + mFeatureFile;
+                GherkinPage GP = new GherkinPage();                
                 bool Compiled = GP.Load(mFeatureFile);                
                 //GP.Optimize();
                 if (Compiled)
                 {
-                    string BFName = System.IO.Path.GetFileName(mFeatureFile).Replace(".feature", "");
-                    GP.CreateNewBF(BFName, mFeatureFile);
+                    string BizFlowName =  System.IO.Path.GetFileName(mFeatureFile).Replace(".feature", "");
+                    GP.CreateNewBF(BizFlowName, mFeatureFile, bizFlowTargetFolder);
                     GP.CreateActivities();
                     GP.mBizFlow.Save();
                     BizFlow = GP.mBizFlow;
+                    Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, BizFlow.ContainingFolder.Replace("BusinessFlows\\", "") + BizFlow.Name, "Created");
                 }
                 else
                 {
@@ -112,7 +122,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             //}
 
             FetaureFileName = System.IO.Path.GetFileName(mFeatureFile);
-            string targetFile = Path.Combine(Folder, FetaureFileName);
+            string targetFile = Path.Combine(featureTargetFolder, FetaureFileName);
             
 
             if (targetFile == mFeatureFile)

@@ -36,8 +36,8 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    ImportGherkinFeatureWizard wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard;                    
-                    FolderLabel.Content = wiz.Folder; 
+                    ImportGherkinFeatureWizard wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard;
+                    FolderLabel.Content = wiz.featureTargetFolder; 
                     break;
             }
         }
