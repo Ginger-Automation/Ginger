@@ -24,10 +24,11 @@ using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GingerUnitTests.Documents.IEBrowser;
+using GingerTestHelper;
 
 namespace UnitTests.UITests.IEBrowserWindowTest
 {
- 
+    [Level3]
     [TestClass]
     public class IEBrowserWindowTest 
     {/*

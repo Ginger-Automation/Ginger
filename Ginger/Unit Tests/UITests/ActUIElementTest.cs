@@ -31,9 +31,11 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
+using GingerTestHelper;
 
 namespace UnitTests.UITests
 {
+    [Level3]
     [TestClass]
     public class ActUIElementTest
     {

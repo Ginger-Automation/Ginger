@@ -8,7 +8,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="AddOptionalValuesModelSelectTypePage">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Background="{StaticResource $BackgroundGray}">
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="Auto"/>
@@ -25,7 +25,7 @@
             <ComboBox Grid.Row="0" Grid.Column="1"  Name="xSourceTypeComboBox" ContextMenu="{x:Null}" Width="150"  Style="{StaticResource @InputComboBoxStyle}"  VerticalAlignment="Center" SelectionChanged="xSourceTypeComboBox_SelectionChanged"  HorizontalAlignment="Left"  Margin="0,0,5,0"></ComboBox>
             
             <StackPanel x:Name="xDBStackPanel" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Collapsed" HorizontalAlignment="Left" >
-                <Grid Background="{StaticResource $BackgroundGray}">
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />

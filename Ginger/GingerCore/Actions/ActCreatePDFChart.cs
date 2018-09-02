@@ -72,7 +72,8 @@ namespace GingerCore.Actions
         public new static partial class Fields
         {
             public static string DataFileName = "DataFileName";
-            public static string ParamName = "ParamName";    
+            public static string ParamName = "ParamName";
+            public static string ParamList = "ParamList";
         }
 
         [IsSerializedForLocalRepository]
@@ -85,9 +86,10 @@ namespace GingerCore.Actions
             set
             {
                 AddOrUpdateInputParamValue("DataFileName", value);
-            }
+                OnPropertyChanged(Fields.DataFileName);                
+            }            
         }
-
+             
         [IsSerializedForLocalRepository]
         public string ParamName
         {
@@ -101,6 +103,19 @@ namespace GingerCore.Actions
             }
         }
 
+        private List<string> mParamList;
+        public List<string> ParamList
+        {
+            get
+            {
+                return mParamList;
+            }
+            set
+            {
+                mParamList = value;
+                OnPropertyChanged(nameof(ParamList));
+            }
+        }
         public override string ActionType
         {
             get { return "Create PDF Chart from CSV data"; }
@@ -240,8 +255,15 @@ namespace GingerCore.Actions
                 }
                 else if (el[0] != null && tmp.Keys.Contains(el[0]))
                 {
-                    if (Convert.ToDateTime(el[1]) >= Convert.ToDateTime(tmp[el[0]][1]))
-                        tmp[el[0]] = el;
+                    try
+                    {
+                        if (Convert.ToDateTime(el[1]) >= Convert.ToDateTime(tmp[el[0]][1]))
+                            tmp[el[0]] = el;
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
                 }
                 else
                     continue;
