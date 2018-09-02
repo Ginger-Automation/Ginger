@@ -25,9 +25,7 @@ using System;
 namespace GingerCore.FlowControlLib
 {
     public class FlowControl : RepositoryItemBase
-    {
-        // TODO: remove ALL enum vals
-
+    {        
         public new static partial class Fields
         {
             public static string Active = "Active";
@@ -44,13 +42,13 @@ namespace GingerCore.FlowControlLib
         public enum eBusinessFlowControlAction
         {            
             [EnumValueDescription("GoTo Business Flow")]
-            GoToBusinessFlow = 1,  
+            GoToBusinessFlow,  
             [EnumValueDescription("Rerun Business Flow")]
-            RerunBusinessFlow = 6,
+            RerunBusinessFlow,
             [EnumValueDescription("Stop Runner")]
-            StopRun = 9,
+            StopRun,
             [EnumValueDescription("Set Variable Value")]
-            SetVariableValue = 10,           
+            SetVariableValue,           
         }
 
         public enum eFlowControlAction
@@ -59,47 +57,47 @@ namespace GingerCore.FlowControlLib
             // Only actions which move the Instruction pointer of the flow, with one exception of messagebox
 
             [EnumValueDescription("GoTo Action")]
-            GoToAction = 1,
+            GoToAction,
             [EnumValueDescription("GoTo Activity")]
-            GoToActivity = 2,
+            GoToActivity,
             [EnumValueDescription("GoTo Next Action")]
-            GoToNextAction = 3,
+            GoToNextAction,
             [EnumValueDescription("GoTo Next Activity")]
-            GoToNextActivity = 4,
+            GoToNextActivity,
             [EnumValueDescription("Stop Business Flow")]
-            StopBusinessFlow = 5,
+            StopBusinessFlow,
             [EnumValueDescription("Rerun Activity")]
-            RerunActivity = 6,
+            RerunActivity,
             [EnumValueDescription("Rerun Action")]
-            RerunAction = 7,
+            RerunAction,
             [EnumValueDescription("Show Message Box")]
-            MessageBox = 8,
+            MessageBox,
             [EnumValueDescription("Stop Run")]
-            StopRun = 9,
+            StopRun,
             [EnumValueDescription("Set Variable Value")]
-            SetVariableValue = 10,
+            SetVariableValue,
             [EnumValueDescription("Run Shared Repository Activity")]
-            RunSharedRepositoryActivity = 11,
+            RunSharedRepositoryActivity,
             [EnumValueDescription("Fail Action & Stop Business Flow)")]
-            FailActionAndStopBusinessFlow = 12,
+            FailActionAndStopBusinessFlow,
             [EnumValueDescription("GoTo Activity By Name")]
-            GoToActivityByName = 13,
+            GoToActivityByName,
             [EnumValueDescription("Set Failure to be Auto-Opened Defect")]
-            FailureIsAutoOpenedDefect = 14
+            FailureIsAutoOpenedDefect
         }
 
         public enum eStatus
         {
             [EnumValueDescription("Pending")]
-            Pending = 1,
+            Pending,
             [EnumValueDescription("Action Executed")]
-            Action_Executed = 2,
+            Action_Executed,
             [EnumValueDescription("Action Not Executed (Condition False)")]
-            Action_Not_Executed = 3,
+            Action_Not_Executed,
             [EnumValueDescription("Skipped")]
-            Skipped = 4,
+            Skipped,
             [EnumValueDescription("Action Execution Failed (Error)")]
-            Action_Execution_Failed = 5,
+            Action_Execution_Failed,
         }
 
         public string GUID_NAME_SEPERATOR = "#GUID_NAME#";
