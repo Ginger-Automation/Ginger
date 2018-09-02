@@ -499,7 +499,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                throw new NotImplementedException();
+                throw new Exception("Repository Item didn't implement ItemNameField - " + this.GetType().FullName);                
             }
         }
 
@@ -727,7 +727,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                throw new NotImplementedException();
+                throw new Exception("ItemImageType not defined for: " + this.GetType().FullName);                
             }
         }
 
@@ -863,7 +863,6 @@ namespace Amdocs.Ginger.Repository
                     IObservableList obj = (IObservableList)PI.GetValue(this);
                     if (obj == null) continue;
                     TrackObservableList((IObservableList)obj);
-
                 }
             }
 
@@ -889,6 +888,11 @@ namespace Amdocs.Ginger.Repository
 
         private void TrackObservableList(IObservableList obj)
         {
+            // No need to track items which are lazy load
+            //if (obj.LazyLoad)
+            //{
+            //    return;
+            //}
             List<object> items = ((IObservableList)obj).ListItems;
 
             ((INotifyCollectionChanged)obj).CollectionChanged += ((RepositoryItemBase)this).ChildCollectionChanged;
