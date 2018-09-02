@@ -35,25 +35,13 @@ namespace Ginger.Repository.ItemToRepositoryWizard
     public class ItemValidationBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public static class Fields
-        {
-            public static string Selected = "Selected";
-            public static string ItemName = "ItemName";
-            public static string ItemGUID = "ItemGUID";
-            public static string IssueDescription = "IssueDescription";
-            public static string IssueResolution = "IssueResolution";
-            public static string Details = "Details";
-            public static string IssueType = "IssueType";
-            public static string ItemClass = "ItemClass";
-            public static string Impact = "Impact";
-        }
+       
         public RepositoryItemBase UsageItem { get; set; }
 
         public static ObservableList<ItemValidationBase> mIssuesList = new ObservableList<ItemValidationBase>();
 
         private bool mSelected;
-        public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(Fields.Selected); } } }
+        public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(nameof(Selected)); } } }
         public string ItemName { get; set; }
         public string ItemClass { get; set; }
         public string IssueDescription { get; set; }

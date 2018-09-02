@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
@@ -68,7 +69,7 @@ namespace Ginger.Repository
                 }
                 else
                 {
-                    itemCopy = (RepositoryItem)item.CreateCopy(false);
+                    itemCopy = (RepositoryItemBase)item.CreateCopy(false);
                 }
 
                 itemCopy.UpdateItemFieldForReposiotryUse();
@@ -83,16 +84,18 @@ namespace Ginger.Repository
 
                 if (isOverwrite)
                 {
+                    
                     MovePrevVersion(itemToUpload.ExistingItem, itemToUpload.ExistingItem.FileName);
-                    itemFileName = itemToUpload.ExistingItem.FileName;
+                    //itemFileName = itemToUpload.ExistingItem.FileName;
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(itemToUpload.ExistingItem);
                 }
                 else
                 {
-                    throw new NotImplementedException();
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
                     // itemFileName = LocalRepository.GetRepoItemFileName(itemCopy, Path.Combine(App.UserProfile.Solution.Folder, LocalRepository.GetSharedRepoItemTypeFolder(itemCopy.GetType())));
                 }
 
-                itemCopy.SaveToFile(itemFileName);
+                //itemCopy.SaveToFile(itemFileName);
 
                 itemToUpload.UsageItem.IsSharedRepositoryInstance = true;
 
