@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.ALM;
 using Ginger.BusinessFlowFolder;
+using Ginger.BusinessFlowWindows;
 using Ginger.Exports.ExportToJava;
 using Ginger.UserControlsLib.TextEditor;
 using Ginger.VisualAutomate;
@@ -95,15 +96,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
             if (mViewMode == eBusinessFlowsTreeViewMode.ReadWrite)
             {
-                AddItemNodeBasicManipulationsOptions(mContextMenu);
-                AddSourceControlOptions(mContextMenu);
-
                 if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
                 {
-                    MenuItem automateMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Automate");
-                    TreeViewUtils.AddSubMenuItem(automateMenu, "Automate", Automate, null, "@Automate_16x16.png");
-                    TreeViewUtils.AddSubMenuItem(automateMenu, "Visual Automate", VisualAutomate, null, "@Flow_16x16.png");
+                    //MenuItem automateMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Automate");
+                    //TreeViewUtils.AddSubMenuItem(automateMenu, "Automate", Automate, null, "@Automate_16x16.png");
+                    //TreeViewUtils.AddSubMenuItem(automateMenu, "Visual Automate", VisualAutomate, null, "@Flow_16x16.png");   
+                    TreeViewUtils.AddMenuItem(mContextMenu, "Automate", Automate, null, eImageType.Automate);
                 }
+                
+                AddItemNodeBasicManipulationsOptions(mContextMenu);
+                AddSourceControlOptions(mContextMenu);
 
                 MenuItem ExportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to ALM", ExportToALM, null, "@ALM_16x16.png");
@@ -160,7 +162,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void Automate(object sender, System.Windows.RoutedEventArgs e)
         {
-            App.MainWindow.AutomateBusinessFlow(mBusinessFlow);
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, mBusinessFlow);
         }
 
         private void ExportToALM(object sender, System.Windows.RoutedEventArgs e)

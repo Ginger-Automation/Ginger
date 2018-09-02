@@ -369,7 +369,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Retweet);
                     break;
                 case eImageType.Automate:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Certificate);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cogs);
                     break;
                 case eImageType.ParallelExecution:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Random);

@@ -76,7 +76,7 @@ namespace Ginger
             set
             {
                 mSolution = value;
-                OnPropertyChanged("Solution");
+                OnPropertyChanged(nameof(Solution));
             }
         }
         

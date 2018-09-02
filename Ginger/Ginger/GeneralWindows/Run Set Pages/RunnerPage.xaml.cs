@@ -327,7 +327,7 @@ namespace Ginger.Run
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
             BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == bf.Guid).FirstOrDefault();
             if (actualBf != null)
-                App.MainWindow.AutomateBusinessFlow(actualBf);
+                App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.Automate, actualBf);
         }
         private void dispatcherTimerElapsedTick(object sender, EventArgs e)
         {

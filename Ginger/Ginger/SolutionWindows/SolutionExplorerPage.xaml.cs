@@ -76,13 +76,13 @@ namespace Ginger.SolutionWindows
                 App.CurrentRepositoryItem = (RepositoryItem)iv.NodeObject();
             }
 
-            if (App.CurrentRepositoryItem != null)
-            {
-                if (App.UserProfile.UserTypeHelper.IsSupportAutomate && App.CurrentRepositoryItem.GetType().IsAssignableFrom(typeof(BusinessFlow)))
-                {
-                    App.MainWindow.AutomateBusinessFlow((BusinessFlow)App.CurrentRepositoryItem);
-                }
-            }
+            //if (App.CurrentRepositoryItem != null)
+            //{
+            //    if (App.UserProfile.UserTypeHelper.IsSupportAutomate && App.CurrentRepositoryItem.GetType().IsAssignableFrom(typeof(BusinessFlow)))
+            //    {
+            //        App.MainWindow.AutomateBusinessFlow((BusinessFlow)App.CurrentRepositoryItem);
+            //    }
+            //}
         }
 
         private void SolutionTreeView_ItemSelected(object sender, EventArgs e)

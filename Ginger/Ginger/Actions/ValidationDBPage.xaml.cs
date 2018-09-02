@@ -201,7 +201,8 @@ namespace Ginger.Actions
         {
             // TODO: if there is only one item in the combo auto select it
             AppNameComboBox.Items.Clear();
-            string envName = App.MainWindow.lstEnvs.Text;
+            //string envName = App.MainWindow.lstEnvs.Text; //TODO: need to be fixed
+            string envName = "";
 
             //pe = (from e in App.LocalRepository.getAllEnvs() where e.Name == envName select e).FirstOrDefault();
             pe = (from e in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where e.Name == envName select e).FirstOrDefault();

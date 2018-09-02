@@ -465,6 +465,10 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
+    <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
+      <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
@@ -642,8 +646,8 @@
     <Compile Include="BusinessFlowsLibNew\ActivityVariablesPage.xaml.cs">
       <DependentUpon>ActivityVariablesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\BusinessFlowAutomatePage.xaml.cs">
-      <DependentUpon>BusinessFlowAutomatePage.xaml</DependentUpon>
+    <Compile Include="BusinessFlowsLibNew\NewAutomatePage.xaml.cs">
+      <DependentUpon>NewAutomatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowsLibNew\BusinessFlowDiagramPage.xaml.cs">
       <DependentUpon>BusinessFlowDiagramPage.xaml</DependentUpon>
@@ -1757,7 +1761,7 @@
       <DependentUpon>ActivityEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppProgressBar.cs" />
-    <Compile Include="AutomatePage.xaml.cs">
+    <Compile Include="BusinessFlowWindows\AutomatePage.xaml.cs">
       <DependentUpon>AutomatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Activities\ActivitiesPage.xaml.cs">
@@ -2696,7 +2700,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\BusinessFlowAutomatePage.xaml">
+    <Page Include="BusinessFlowsLibNew\NewAutomatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2719,6 +2723,10 @@
     <Page Include="BusinessFlowsLibNew\GingerActionEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dictionaries\Skins\GingerDefualtSkinDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -4027,7 +4035,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="AutomatePage.xaml">
+    <Page Include="BusinessFlowWindows\AutomatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

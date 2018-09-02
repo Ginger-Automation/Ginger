@@ -172,7 +172,7 @@ namespace Ginger.BusinessFlowWindows
         {
             Button ReportButton = new Button();
             ReportButton.Content = "Generate Report";
-            ReportButton.Click += new RoutedEventHandler(App.MainWindow.btnLastExecutionHTMLReport_click);
+            ReportButton.Click += ReportButton_Click;
             
             Button ExportBtn = new Button();
             ExportBtn.Content = "Export Execution Details";
@@ -180,6 +180,11 @@ namespace Ginger.BusinessFlowWindows
             
             GenericWindow genWin = null;
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, new ObservableList<Button> { ExportBtn, ReportButton });
+        }
+
+        private void ReportButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.GenerateLastExecutedItemReport, null);          
         }
 
         private void ExportExecutionDetails(object sender, RoutedEventArgs e)

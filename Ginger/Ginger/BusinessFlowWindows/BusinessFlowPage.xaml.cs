@@ -121,6 +121,12 @@ namespace Ginger.BusinessFlowFolder
                 xBusinessflowinfo.IsEnabled = false;
                 xTargetApplication.IsEnabled = false;
                 RepositoryExpander.IsEnabled = false;
+                xAutomateBtn.Visibility = Visibility.Collapsed;
+            }
+
+            if (!App.UserProfile.UserTypeHelper.IsSupportAutomate)
+            {
+                xAutomateBtn.Visibility = Visibility.Collapsed;
             }
         }
         
@@ -356,6 +362,11 @@ namespace Ginger.BusinessFlowFolder
         {
             OKButtonClicked = true;
             _pageGenericWin.Close();
+        }
+
+        private void xAutomateBtn_Click(object sender, RoutedEventArgs e)
+        {
+           App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, mBusinessFlow);
         }
     }
 }

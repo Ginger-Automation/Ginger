@@ -35,11 +35,11 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Interaction logic for BusinessFlowPage.xaml
     /// </summary>
-    public partial class BusinessFlowAutomatePage : Page
+    public partial class NewAutomatePage : Page
     {
         BusinessFlow mBusinessFlow;
         GingerRunner mGingerRunner;
-        public BusinessFlowAutomatePage()
+        public NewAutomatePage()
         {
             InitializeComponent();
 
