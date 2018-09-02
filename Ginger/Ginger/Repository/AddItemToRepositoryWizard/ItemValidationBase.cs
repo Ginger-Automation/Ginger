@@ -95,7 +95,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             bool isDuplicateFound = CheckForItemWithDuplicateName(selectedItem);
             if (isDuplicateFound)
             {
-                    ItemValidationBase VA = CreateNewIssue((RepositoryItem)selectedItem.UsageItem);
+                    ItemValidationBase VA = CreateNewIssue((RepositoryItemBase)selectedItem.UsageItem);
                     VA.IssueDescription = "Item with same name already exists";
                     VA.mIssueType = eIssueType.DuplicateName;
                     VA.ItemNewName = GetUniqueItemName(selectedItem);
@@ -171,6 +171,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             ItemValidationBase ITB = new ItemValidationBase();
             ITB.UsageItem = rItem;
             ITB.ItemName = rItem.ItemName;
+            // TODO: remove me and use RepositoryItemBase
             ITB.ItemClass = RepositoryItem.GetShortType(rItem.GetType());          
             return ITB;
         }
