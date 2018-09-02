@@ -221,7 +221,7 @@ namespace Ginger.BusinessFlowFolder
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+            // defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Active, WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.mainGrdActivities.Resources["FieldActive"] });
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Mandatory, Header="Mand.", WidthWeight =3.0, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActivityName, WidthWeight = 15, Header = "Name", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.mainGrdActivities.Resources["FieldName"] });

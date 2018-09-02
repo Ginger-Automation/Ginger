@@ -300,7 +300,7 @@ namespace Ginger.Actions
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();          
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+            // view.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Active, WidthWeight = 2.5, MaxWidth=50, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.BreakPoint, Header="B. Point", WidthWeight = 2.5, MaxWidth = 55, StyleType = GridColView.eGridColStyleType.CheckBox });            
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Description, WidthWeight = 20 });

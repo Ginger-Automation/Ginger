@@ -184,8 +184,8 @@ namespace Ginger.Activities
             //Columns view
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+            // defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+            // defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
             defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Name, Header = "Name", WidthWeight = 40 });
             defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Description, Header = "Description", WidthWeight = 40 });
             if (mBusinessFlow.ActivitiesGroups.Where(z => z.TestSuiteId != null && z.TestSuiteId != string.Empty).ToList().Count > 0)
@@ -217,8 +217,8 @@ namespace Ginger.Activities
             //Columns view
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+            // defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+            // defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
             defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Name, Header = "Name", WidthWeight = 40 });
             defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Description, Header = "Description", WidthWeight = 40 });
             if (mBusinessFlow.ActivitiesGroups.Where(z => z.TestSuiteId != null && z.TestSuiteId != string.Empty).ToList().Count > 0)
