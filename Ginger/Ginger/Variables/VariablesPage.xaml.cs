@@ -216,7 +216,7 @@ namespace Ginger.Variables
             {
                 GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
                 view.GridColsView = new ObservableList<GridColView>();
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });//TODO: replace with ItemImageType
+                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
                 view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
                 view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 20, AllowSorting = true });
                 view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Description, WidthWeight = 15 });

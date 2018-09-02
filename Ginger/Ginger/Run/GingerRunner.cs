@@ -1807,7 +1807,9 @@ namespace Ginger.Run
 
             if (GNI == null)
             {
+                actPlugin.Error = "GNI not found";  //temp fix me!!!
                 // call plugin to start service and wait for ready
+                return;
             }
 
             GNI.Status = "Reserved";

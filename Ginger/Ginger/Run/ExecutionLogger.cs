@@ -797,7 +797,9 @@ namespace Ginger.Run
                         {
                             try
                             {
-                                FieldsType ftype = ((FieldParamsFieldType)prop.GetCustomAttribute(typeof(FieldParamsFieldType))).FieldType;
+                                FieldParamsFieldType attr = ((FieldParamsFieldType)prop.GetCustomAttribute(typeof(FieldParamsFieldType)));
+                                if (attr == null) continue;
+                                FieldsType ftype = attr.FieldType;
                                 if (ftype == FieldsType.Field)
                                 {
                                     string propName = prop.Name;
@@ -806,11 +808,11 @@ namespace Ginger.Run
                                     fieldsAndValues.Add(new KeyValuePair<string, string>(propFullName, propValue));
                                 }
                             }
-                            catch (Exception) { }
+                            catch (Exception) { }   //TODO: !!!!!!!!!!!!!!!!!! FIXME
                         }
                     }
-                    catch (Exception) { }
-                    
+                    catch (Exception) { } //TODO: !!!!!!!!!!!!!!!!!! FIXME
+
 
                     //add to Console
                     string details = string.Empty;

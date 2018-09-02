@@ -288,6 +288,8 @@ namespace GingerCore.Variables
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
+                // TODO: !!! change to nameof
+
                 if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
                     mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
                     mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ScreenShots" ||
@@ -324,6 +326,7 @@ namespace GingerCore.Variables
                         {
                             if (PI.CanWrite)
                             {
+                                //TODO: Use nameof !!!!!
                                 if (mi.Name == "StoreToValue" && mi.DeclaringType.Name=="ActReturnValue" && value.ToString().IndexOf("{DS Name") == -1)
                                 {
                                     //check that it is not GUID of global model Param
@@ -355,7 +358,7 @@ namespace GingerCore.Variables
                                 }
                             }
                         }
-                        catch (Exception ex) { Console.WriteLine(ex.StackTrace); }
+                        catch (Exception ex) { Console.WriteLine(ex.StackTrace); } // TODO: FIXME!!! no empty exception
                     }
                 }
             }

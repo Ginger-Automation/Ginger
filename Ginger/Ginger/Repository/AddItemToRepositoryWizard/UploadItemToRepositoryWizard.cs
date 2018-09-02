@@ -33,7 +33,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 {
     public class UploadItemToRepositoryWizard : WizardBase
     {
-        public override string Title { get { return "Add Items to Repository"; } }
+        public override string Title { get { return "Add Items to Shared Repository"; } }
                          
         public UploadItemToRepositoryWizard(IEnumerable<object> items)
         {
@@ -43,9 +43,9 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             {
                 UploadItemSelection.mSelectedItems.Add(CreateUploadItem((RepositoryItemBase)i));
             }
-            AddPage(Name: "Items Selection", Title: "Upload Item/s Selection", SubTitle: "Selected items to be added to Shared Repository", Page: new UploadItemsSelectionPage(UploadItemSelection.mSelectedItems));
-            AddPage(Name: "Items Validation", Title: "Upload Item/s Validation", SubTitle: "Validate the items to be added to Shared Repository", Page: new UploadItemsValidationPage());
-            AddPage(Name: "Items Upload Status", Title: "Upload Item/s Status", SubTitle: "Upload Item Status", Page: new UploadStatusPage());
+            AddPage(Name: "Items Selection", Title: "Item/s Selection", SubTitle: "Selected items to be added to Shared Repository", Page: new UploadItemsSelectionPage(UploadItemSelection.mSelectedItems));
+            AddPage(Name: "Items Validation", Title: "Item/s Validation", SubTitle: "Validate the items to be added to Shared Repository", Page: new UploadItemsValidationPage());
+            AddPage(Name: "Items Status", Title: "Item/s Status", SubTitle: "Upload Item Status", Page: new UploadStatusPage());
         }
 
         private UploadItemSelection CreateUploadItem(RepositoryItemBase item)
@@ -88,7 +88,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 
             uploadItem.ItemName = item.ItemName;
             uploadItem.ItemGUID = item.Guid;
-            uploadItem.SetItemPartesFromEnum(GetTypeOfItemParts(uploadItem));
+            uploadItem.SetItemPartesFromEnum(GetTypeOfItemParts(item));
             uploadItem.UsageItem = item;
 
             return uploadItem;
