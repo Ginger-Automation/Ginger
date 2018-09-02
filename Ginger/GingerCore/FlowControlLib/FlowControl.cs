@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.DataSource;
@@ -27,6 +26,8 @@ namespace GingerCore.FlowControlLib
 {
     public class FlowControl : RepositoryItemBase
     {
+        // TODO: remove ALL enum vals
+
         public new static partial class Fields
         {
             public static string Active = "Active";
@@ -41,9 +42,9 @@ namespace GingerCore.FlowControlLib
         }
 
         public enum eBusinessFlowControlAction
-        {
+        {            
             [EnumValueDescription("GoTo Business Flow")]
-            GoToBusinessFlow = 1,
+            GoToBusinessFlow = 1,  
             [EnumValueDescription("Rerun Business Flow")]
             RerunBusinessFlow = 6,
             [EnumValueDescription("Stop Runner")]
@@ -266,7 +267,7 @@ namespace GingerCore.FlowControlLib
                 return;
             }
         }
-
+     
         public Guid GetGuidFromValue(bool doNotUseValueCalculated = false)
         {
             try
