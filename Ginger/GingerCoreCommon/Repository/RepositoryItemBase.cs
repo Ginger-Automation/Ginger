@@ -1000,10 +1000,20 @@ namespace Amdocs.Ginger.Repository
                 if (mIsSharedRepositoryInstance != value)
                 {
                     mIsSharedRepositoryInstance = value;
-
-                    //FIXME!! no image in STD 2.0 convert to ImageMaker enum
-                    // OnPropertyChanged(Fields.SharedRepoInstanceImage);
+                    
+                    OnPropertyChanged(nameof(SharedRepoInstanceImage));
                 }
+            }
+        }
+
+        public eImageType SharedRepoInstanceImage
+        {
+            get
+            {
+                if (IsSharedRepositoryInstance)
+                    return eImageType.SharedRepositoryItem;
+                else
+                    return eImageType.NonSharedRepositoryItem;
             }
         }
 
@@ -1052,9 +1062,8 @@ namespace Amdocs.Ginger.Repository
 
             //Deleted = false;
         }
-
-
-
+       
+      
 
     }
 }
