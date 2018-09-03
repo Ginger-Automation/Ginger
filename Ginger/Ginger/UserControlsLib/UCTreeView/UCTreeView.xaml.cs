@@ -24,6 +24,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GingerWPF.DragDropLib;
+using System.Reflection;
+using System.Linq;
+using Amdocs.Ginger.Repository;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -37,6 +40,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DI);
         public bool TreeItemDoubleClicked = false;
+        public Tuple<string, string> PropertyValueFilter = null;
 
         TreeViewItem mlastSelectedTVI = null;
 
@@ -187,7 +191,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             {
                 ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;
 
-                List<ITreeViewItem> Childs = ITVI.Childrens();
+                List<ITreeViewItem> Childs = null;
+
+                if (PropertyValueFilter != null)
+                {
+                    Childs = GetChildrensByPropertyValueFilter(ITVI);
+                }
+                else
+                    Childs = ITVI.Childrens();
+
                 TVI.Items.Clear();
                 if (Childs != null)
                 {
@@ -197,6 +209,54 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     }
                 }
             }
+        }
+
+        private List<ITreeViewItem> GetChildrensByPropertyValueFilter(ITreeViewItem ITVI)
+        {
+            List<ITreeViewItem> childrens = new List<ITreeViewItem>();
+            if (PropertyValueFilter != null)
+            {
+                List<string> propertyStrHierarchy = PropertyValueFilter.Item1.ToString().Split('.').ToList();
+                List<PropertyInfo> propertyInfoHierarchy = new List<PropertyInfo>();
+
+                PropertyInfo pInfo = ITVI.Childrens().Where(z => !(z.NodeObject() is RepositoryFolderBase)).ToList()
+                                                     .First().NodeObject().GetType().GetProperty(propertyStrHierarchy[0]);
+                propertyInfoHierarchy.Add(pInfo);
+
+                if (pInfo != null)
+                {
+                    propertyStrHierarchy.Skip(1).ToList().ForEach(z =>
+                    {
+                        pInfo = pInfo.PropertyType.GetProperty(z.ToString());
+                        propertyInfoHierarchy.Add(pInfo);
+                    });
+
+                    ITVI.Childrens().ForEach(y =>
+                    {
+                        if (y.NodeObject() is RepositoryFolderBase)
+                        {
+                            childrens.Add(y);
+                        }
+                        else
+                        {
+                            List<object> objectsList = new List<object> { propertyInfoHierarchy[0].GetValue(y.NodeObject(), null) };
+                            propertyInfoHierarchy.Skip(1).ToList().ForEach(z =>
+                            {
+                                List<object> objectsListSwap = new List<object>();
+                                objectsList.ForEach(c => objectsListSwap.Add(z.GetValue(c, null)));
+                                objectsList = objectsListSwap;
+                            });
+                            if (objectsList.Contains(PropertyValueFilter.Item2.ToString()))
+                            {
+                                childrens.Add(y);
+                            }
+                        }
+                    });
+                }
+                else
+                    childrens = ITVI.Childrens();
+            }
+            return childrens;
         }
 
         private void RemoveDummyNode(TreeViewItem node)

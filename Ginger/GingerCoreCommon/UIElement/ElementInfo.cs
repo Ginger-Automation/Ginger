@@ -127,6 +127,14 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mElementTypeEnum = value; }
         }
 
+        public string ElementTypeEnumDescription
+        {
+            get
+            {
+                return ((EnumValueDescriptionAttribute[])typeof(eElementType).GetField(mElementTypeEnum.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public List<String> OptionalValues = new List<String>();
 

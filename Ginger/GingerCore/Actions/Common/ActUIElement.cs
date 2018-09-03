@@ -502,6 +502,20 @@ namespace GingerCore.Actions.Common
         [IsSerializedForLocalRepository]
         public eElementType ElementType { get; set; }
 
+        eElementType mElementTypeDelegated;
+        public eElementType ElementTypeDelegated    // To check for a better solution
+        {
+            get { return mElementTypeDelegated; }
+            set
+            {
+                if (mElementTypeDelegated != value)
+                {
+                    mElementTypeDelegated = value;
+                    OnPropertyChanged(nameof(ActUIElement.ElementTypeDelegated));
+                }
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public eElementAction ElementAction { get; set; }
 

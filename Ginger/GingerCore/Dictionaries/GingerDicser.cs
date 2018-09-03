@@ -35,7 +35,7 @@ namespace GingerCore
         Activity, Activities,
         ConversionMechanism,
         Variable, Variables,
-        RunSet, RunSets,
+        RunSet, RunSets, POM
     }
 
     public class GingerDicser
