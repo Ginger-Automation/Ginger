@@ -269,7 +269,9 @@ namespace Ginger
                 return s;
             }
         }
-        
+
+        public static bool RunningFromUnitTest { get; set; }
+
         public static bool RunningFromConfigFile= false;
         
         internal static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
@@ -330,9 +332,19 @@ namespace Ginger
 
             if (Environment.GetCommandLineArgs().Count() > 1)
             {
-                RunningFromConfigFile = true;
-                Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
-                Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)               
+                // When running from unit test there are args, so we set a flag in GingerAutomator to make sure Ginger will Launh
+                // and will not try to process the args for RunSet auto run
+                if (RunningFromUnitTest)
+                {
+                    // do nothing for now, but later on we might want to process and check auto run too
+                }
+                else
+                {
+                    // This Ginger is running with run set config will do the run and close Ginger
+                    RunningFromConfigFile = true;
+                    Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
+                    Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)               
+                }
             }
 
             string phase = string.Empty;

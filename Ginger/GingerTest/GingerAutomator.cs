@@ -54,6 +54,7 @@ namespace GingerWPFUnitTest
                 Application.ResourceAssembly = asm1;
 
                 app = new Ginger.App();
+                Ginger.App.RunningFromUnitTest = true;
                 splash = new Ginger.SplashWindow();
                 splash.Show();
                 //Ginger.App.UserProfile.AutoLoadLastSolution = false;                

@@ -201,10 +201,11 @@ namespace Ginger
                 ResetSolutionDependedUIElements(false);
                 SetUserTypeButtons();
 
-                if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false)
+                if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false && App.RunningFromUnitTest == false)
                 {
                     AutoLoadLastSolution();
                 }
+
                 if (App.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.ExitMode);
