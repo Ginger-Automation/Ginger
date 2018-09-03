@@ -316,7 +316,7 @@ namespace Ginger.Run
         public void UpdateRunsetExecutionHistoryTabHeader()
         {
             ExecutionSummary.Text = string.Format("Executions History ({0})", mRunSetsExecutionsPage.ExecutionsHistoryList.Count);
-            ExecutionSummary.Foreground = (Brush)Application.Current.Resources["$DarkPurple"];
+            //ExecutionSummary.Foreground = (Brush)Application.Current.Resources["$SelectionColor_Pink"];
         }
 
         public void ResetALMDefectsSuggestions()
@@ -331,12 +331,12 @@ namespace Ginger.Run
             if (App.RunsetExecutor.DefectSuggestionsList.Count > 0)
             {
                 ALMDefects.Text = string.Format("ALM Defects Opening ({0})", App.RunsetExecutor.DefectSuggestionsList.Count);
-                ALMDefects.Foreground = (Brush)Application.Current.Resources["$DarkPurple"];
+                //ALMDefects.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
             }
             else
             {
                 ALMDefects.Text = string.Format("ALM Defects Opening");
-                ALMDefects.Foreground = (Brush)Application.Current.Resources["$LightPurple"];
+                //ALMDefects.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
             }
         }
 
@@ -630,7 +630,7 @@ namespace Ginger.Run
             if (mCurrentSelectedRunner != null)
             {
                 mCurrentSelectedRunner.xBorder.Visibility = System.Windows.Visibility.Collapsed;
-                mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Background = FindResource("$DarkBlue") as Brush;
+                mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_DarkBlue") as Brush;
                 mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Height = 1;
                 if (!((GingerRunner)mCurrentSelectedRunner.Runner).Active)
                 {
@@ -638,7 +638,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    mCurrentSelectedRunner.xRunnerNameTxtBlock.Foreground = FindResource("$DarkBlue") as Brush;
+                    mCurrentSelectedRunner.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
                 }
             }
 
@@ -652,7 +652,7 @@ namespace Ginger.Run
             }
             else
             {
-                GRP.xRunnerNameTxtBlock.Foreground = FindResource("$amdocsPink") as Brush;
+                GRP.xRunnerNameTxtBlock.Foreground = FindResource("$SelectionColor_Pink") as Brush;
             }                
             mCurrentSelectedRunner = GRP;
             mCurrentSelectedRunner.RunnerPageEvent -= RunnerPageEvent;
@@ -819,8 +819,8 @@ namespace Ginger.Run
             
             GRP.xBorder.Visibility = System.Windows.Visibility.Collapsed;
             GRP.xRunnerInfoSplitterBorder.Height = 1;
-            GRP.xRunnerInfoSplitterBorder.Background = FindResource("$DarkBlue") as Brush;
-            GRP.xRunnerNameTxtBlock.Foreground = FindResource("$DarkBlue") as Brush;
+            GRP.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_DarkBlue") as Brush;
+            GRP.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
             mFlowX = mFlowX + 610;
             return GRP;
         }
@@ -1168,7 +1168,7 @@ namespace Ginger.Run
         public void UpdateRunsetOperationsTabHeader()
         {
             RunsetActionTextbox.Text = string.Format("Operations ({0})", RunSetConfig.RunSetActions.Count);
-            RunsetActionTextbox.Foreground = (Brush)Application.Current.Resources["$DarkPurple"];
+            //RunsetActionTextbox.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
 
         }
         private void UpdateRunnersTabHeader()
@@ -1176,12 +1176,12 @@ namespace Ginger.Run
             if (mRunSetConfig.GingerRunners.Count > 0)
             {
                 RunnerTextblock.Text = string.Format("Runners ({0})", mRunSetConfig.GingerRunners.Count);
-                RunnerTextblock.Foreground = (Brush)Application.Current.Resources["$DarkPurple"];
+                //RunnerTextblock.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
             }
             else
             {
                 RunnerTextblock.Text = "Runners";
-                RunnerTextblock.Foreground = (Brush)Application.Current.Resources["$LightPurple"];
+                //RunnerTextblock.Foreground = (Brush)Application.Current.Resources["$HighlightColor_Purple"];
             }
         }
         
@@ -1499,7 +1499,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    currentitem.xItemName.Foreground = FindResource("$DarkBlue") as Brush;
+                    currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
                 }                
             }
             if (mCurrentBusinessFlowRunnerItem != null)
@@ -1534,7 +1534,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    mCurrentBusinessFlowRunnerItem.xItemName.Foreground = FindResource("$amdocsPink") as Brush;
+                    mCurrentBusinessFlowRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
                 }
             }
             else
@@ -1553,7 +1553,7 @@ namespace Ginger.Run
 
             foreach (RunnerItemPage currentitem in xActivitiesRunnerItemsListView.Items)
             {
-                currentitem.xItemName.Foreground = FindResource("$DarkBlue") as Brush;
+                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
             }
             if (mCurrentActivityRunnerItem != null)
             {
@@ -1571,7 +1571,7 @@ namespace Ginger.Run
                     xActionsRunnerItemsListView.Visibility = Visibility.Visible;
                 }
 
-                mCurrentActivityRunnerItem.xItemName.Foreground = FindResource("$amdocsPink") as Brush;
+                mCurrentActivityRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
             }
             else
             {
@@ -1590,7 +1590,7 @@ namespace Ginger.Run
 
             foreach (RunnerItemPage currentitem in xActionsRunnerItemsListView.Items)
             {
-                currentitem.xItemName.Foreground = FindResource("$DarkBlue") as Brush;
+                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
             }
             //Need it for first time.
             if (xActionsRunnerItemsListView.SelectedItem == null)
@@ -1599,7 +1599,7 @@ namespace Ginger.Run
             }
             if(mCurrentActionRunnerItem!=null)
             {
-                mCurrentActionRunnerItem.xItemName.Foreground = FindResource("$amdocsPink") as Brush;
+                mCurrentActionRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
             }
         }
         private void xActionsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2021,7 +2021,7 @@ namespace Ginger.Run
                     bf.Active = SetBusinessflowActive;
                     if (SetBusinessflowActive)
                     {
-                        ((RunnerItemPage)ri).xItemName.Foreground = FindResource("$DarkBlue") as Brush;
+                        ((RunnerItemPage)ri).xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
                     }
                     else
                     {
@@ -2120,7 +2120,7 @@ namespace Ginger.Run
                 gr.Active = SetRunnerActive;
                 if (SetRunnerActive)
                 {
-                    ((RunnerPage)rp.GetCustomeShape().Content).xRunnerNameTxtBlock.Foreground = FindResource("$DarkBlue") as Brush;
+                    ((RunnerPage)rp.GetCustomeShape().Content).xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
                 }
                 else
                 {
