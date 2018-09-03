@@ -272,17 +272,17 @@ namespace Ginger.Reports
                     {
                         if (!reference_item.IsNotMandatory)     // if field is mandatory
                         {                                       // select it anyway
-                            reference_item.IsSelected = true;
+                            saved_item.IsSelected = true;
                         }
-                        else
-                        {
-                            reference_item.IsSelected = saved_item.IsSelected;
-                            reference_item.IsSectionCollapsed = saved_item.IsSectionCollapsed;
-                        }
+
+                        saved_item.FieldName = reference_item.FieldName;
+                        saved_item.FieldType = reference_item.FieldType;
+                        saved_item.IsSelected = reference_item.IsSelected;
+                        saved_item.IsNotMandatory = reference_item.IsNotMandatory;
                     }
                 }
             }
-            return referenceFieldSelections;
+            return savedFieldSelections;
         }
 
         private void SetControls()

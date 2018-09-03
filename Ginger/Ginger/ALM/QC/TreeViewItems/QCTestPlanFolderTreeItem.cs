@@ -52,9 +52,9 @@ namespace Ginger.ALM.QC.TreeViewItems
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-            List<string> strParentFolders = QCConnect.GetTestPlanExplorer(Path);
+            List<string> strParentFolders = ALMIntegration.Instance.GetTestPlanExplorer(Path);
             //Add QC folders to tree children             
-                foreach (string sFolder in strParentFolders)
+            foreach (string sFolder in strParentFolders)
                 {
                     QCTestPlanFolderTreeItem pfn = new QCTestPlanFolderTreeItem();
                     pfn.Folder = sFolder;

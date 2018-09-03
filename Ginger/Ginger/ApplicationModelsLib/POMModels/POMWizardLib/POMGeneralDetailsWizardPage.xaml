@@ -10,7 +10,7 @@
       Title="SelectAppFolderWizardPage">
 
 
-    <Grid Background="{StaticResource $BackgroundGray}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <StackPanel Margin="10,10,10,0" >
             <StackPanel >
                 <Label Content="Name:" Style="{StaticResource @LabelStyle}"/>

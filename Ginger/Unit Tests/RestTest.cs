@@ -20,10 +20,12 @@ limitations under the License.
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.REST;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTest
 {
+    [Level3]
     [TestClass]    
     public class RESTTest 
     {

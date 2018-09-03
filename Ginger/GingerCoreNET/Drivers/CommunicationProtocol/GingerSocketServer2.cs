@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -48,7 +49,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 DoStartServer(port);
             }) ;            
             mTask.Start();
-            while (!isReady)
+            Stopwatch st = Stopwatch.StartNew();
+            while (!isReady && st.ElapsedMilliseconds < 3000)  // shouldn't take more than 3 seconds to bind a port
             {
                 Thread.Sleep(100);
             }
