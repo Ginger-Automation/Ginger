@@ -242,7 +242,7 @@
                         <RowDefinition Height="33" Name="ActionLogRow"/>
                         <RowDefinition Height="30*"/>
                     </Grid.RowDefinitions>
-                    <Expander  x:Name="DataSourceExpander" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource @ExpanderLightStyle}" Expanded="DataSourceExpander_Expanded" Collapsed="DataSourceExpander_Collapsed">
+                    <Expander  x:Name="xDataSourceExpander" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource @ExpanderLightStyle}" Expanded="xDataSourceExpander_Expanded" Collapsed="xDataSourceExpander_Collapsed">
                         <Expander.Header>
                             <Label x:Name="DataSourceExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
                                 <Label.Content>
@@ -295,10 +295,10 @@
                                     <RowDefinition Height="170" Name="ActionLogConfigRow"/>
                                 </Grid.RowDefinitions>
 
-                                <StackPanel Name="ActionLogSP"  Grid.Row="0" Margin="5,5,0,0">
+                                <StackPanel Name="ActionLogStackPanel"  Grid.Row="0" Margin="5,5,0,0">
                                     <CheckBox x:Name="EnableActionLogConfigCheckBox" Content="Enable Action Log" HorizontalAlignment="Left" FontWeight="Bold" Style="{StaticResource @CheckBoxStyle}" Checked="EnableActionLogConfigCheckBox_Checked" Unchecked="EnableActionLogConfigCheckBox_UnChecked"/>
                                 </StackPanel>
-                                <StackPanel x:Name="ActionLogDetailsSP" Grid.Row="1" Margin="5,5,0,0">
+                                <StackPanel x:Name="ActionLogDetailsStackPanel" Grid.Row="1" Margin="5,5,0,0">
                                     <Frame x:Name="ActionLogConfigFrame">
                                     </Frame>
                                 </StackPanel>

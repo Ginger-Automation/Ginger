@@ -13,7 +13,8 @@ namespace Ginger.Run
 
         public GingerRunnerLogger(string fileName)
         {
-            this.fileName = fileName;
+            string loggerFile = App.UserProfile.Solution.Folder + @"ExecutionResults\" + FileSystem.AppendTimeStamp(fileName);
+            this.fileName = loggerFile;
         }
 
         public void LogAction(Act act)

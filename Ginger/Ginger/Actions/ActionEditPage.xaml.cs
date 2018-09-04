@@ -107,7 +107,7 @@ namespace Ginger.Actions
 
             if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
             {
-                DataSourceExpander.IsExpanded = true;
+                xDataSourceExpander.IsExpanded = true;
                 mAction.OutDataSourceName = mAction.DSOutputConfigParams[0].DSName;
                 mAction.OutDataSourceTableName = mAction.DSOutputConfigParams[0].DSTable;
                 if (mAction.DSOutputConfigParams[0].OutParamMap == null)
@@ -1305,9 +1305,14 @@ namespace Ginger.Actions
             ADSP.ShowAsWindow();
         }
 
-        private void DataSourceExpander_Expanded(object sender, RoutedEventArgs e)
+        private void xDataSourceExpander_Expanded(object sender, RoutedEventArgs e)
         {
             SetDataSourceConfigTabView();
+        }
+
+        private void xDataSourceExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            DataSourceRow.Height = new GridLength(35);
         }
 
         private void AddOutDS_Checked(object sender, RoutedEventArgs e)
@@ -1350,7 +1355,7 @@ namespace Ginger.Actions
         }
         private void SetDataSourceConfigTabView()
         {
-            if(DataSourceExpander.IsExpanded)
+            if(xDataSourceExpander.IsExpanded)
             {
                 if(AddOutDS.IsChecked == true)
                 {
@@ -1513,11 +1518,6 @@ namespace Ginger.Actions
             }
         }
 
-        private void DataSourceExpander_Collapsed(object sender, RoutedEventArgs e)
-        {
-            DataSourceRow.Height = new GridLength(35);
-        }
-
         private void ActPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == Act.Fields.Status)
@@ -1632,11 +1632,11 @@ namespace Ginger.Actions
 
             if (mAction.EnableActionLogConfig)
             {
-                ActionLogDetailsSP.IsEnabled = true;
+                ActionLogDetailsStackPanel.IsEnabled = true;
             }
             else
             {
-                ActionLogDetailsSP.IsEnabled = false;
+                ActionLogDetailsStackPanel.IsEnabled = false;
             }
         }
 
