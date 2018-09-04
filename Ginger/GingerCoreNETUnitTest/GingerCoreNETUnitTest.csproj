@@ -90,6 +90,12 @@
     <None Update="TestResources\JSON\sample.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\PluginPackages\ExamplePlugin\Ginger.PluginPackage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\ExamplePlugin\PluginExample.GingerPlugin.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\PluginPackages\GingerOfficePlugin\DocumentFormat.OpenXml.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

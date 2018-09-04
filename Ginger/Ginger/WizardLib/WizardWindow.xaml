@@ -30,14 +30,14 @@
 
     </Window.Resources>
 
-    <Grid x:Name="gridMain" Background="{StaticResource $BackgroundGray}">
+    <Grid x:Name="gridMain" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250" />
             <ColumnDefinition Width="*"	/>
         </Grid.ColumnDefinitions>
 
-        <Grid x:Name="gridNavPanel"  Background="{StaticResource $BackgroundGray}">
-            <ListBox x:Name="NavigationList" Background="{StaticResource $BackgroundGray}"  Foreground="{StaticResource $DarkBlue}"
+        <Grid x:Name="gridNavPanel"  Background="{StaticResource $BackgroundColor_LightGray}">
+            <ListBox x:Name="NavigationList" Background="{StaticResource $BackgroundColor_LightGray}"  Foreground="{StaticResource $BackgroundColor_DarkBlue}"
 					 SelectionChanged="NavigationList_SelectionChanged"
 					 >
                 <ListBox.ItemContainerStyle>

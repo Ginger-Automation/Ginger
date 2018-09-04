@@ -9,7 +9,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="AppsListPage">
 
-    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundGray}">
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="85"/>
             <RowDefinition Height="30*"/>

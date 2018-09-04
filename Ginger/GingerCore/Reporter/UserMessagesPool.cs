@@ -41,6 +41,7 @@ namespace GingerCore
         TestCompleted, CantFindObject, WarnOnDynamicActivities,
         QcConnectSuccess,
         QcConnectFailure,
+        QcConnectFailureRestAPI,
         ALMConnectFailureWithCurrSettings,
         ALMOperationFailed,
         QcLoginSuccess,
@@ -404,6 +405,7 @@ namespace GingerCore
             #region ALM
             Reporter.UserMessagesPool.Add(eUserMsgKeys.QcConnectSuccess, new UserMessage(eMessageType.INFO, "QC/ALM Connection", "QC/ALM connection successful!", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.QcConnectFailure, new UserMessage(eMessageType.WARN, "QC/ALM Connection Failed", "QC/ALM connection failed." + System.Environment.NewLine + "Please make sure that the credentials you use are correct and that QC/ALM Client is registered on your machine." + System.Environment.NewLine + System.Environment.NewLine + "For registering QC/ALM Client- please follow below steps:" + System.Environment.NewLine + "1. Launch Internet Explorer as Administrator" + System.Environment.NewLine + "2. Go to http://<QCURL>/qcbin" + System.Environment.NewLine + "3. Click on 'Add-Ins Page' link" + System.Environment.NewLine + "4. In next page, click on 'HP ALM Client Registration'" + System.Environment.NewLine + "5. In next page click on 'Register HP ALM Client'" + System.Environment.NewLine + "6. Restart Ginger and try to reconnect", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.QcConnectFailureRestAPI, new UserMessage(eMessageType.WARN, "QC/ALM Connection Failed", "QC/ALM connection failed." + System.Environment.NewLine + "Please make sure that the server url and the credentials you use are correct." , MessageBoxButton.OK, MessageBoxResult.None));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ALMConnectFailureWithCurrSettings, new UserMessage(eMessageType.WARN, "ALM Connection Failed", "ALM Connection Failed, Please make sure credentials are correct.", MessageBoxButton.OK, MessageBoxResult.None));
 
