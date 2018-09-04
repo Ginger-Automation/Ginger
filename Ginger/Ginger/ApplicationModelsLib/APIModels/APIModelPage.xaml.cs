@@ -73,14 +73,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void DeleteParamEvent(ParamEventArgs eventArgs)
         {
-            bool paramContainPath = false;
+            bool someParamContainPath = false;
             foreach (AppModelParameter param in eventArgs.ModelParamsList)
                 if (!string.IsNullOrEmpty(param.Path))
-                    paramContainPath = true;
+                    someParamContainPath = true;
+
 
             APIModelBodyNodeSyncPage bodyNodeSyncPage;
-            if (paramContainPath &&
-                System.Windows.MessageBox.Show("Do you want to delete also nodes from request body that contain those parameters?", "Delete Nodes from Request Body?", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No) == System.Windows.MessageBoxResult.Yes)
+            if (someParamContainPath)
             {
                 bodyNodeSyncPage = new APIModelBodyNodeSyncPage(mApplicationAPIModel, eventArgs.ModelParamsList);
                 bodyNodeSyncPage.ShowAsWindow();

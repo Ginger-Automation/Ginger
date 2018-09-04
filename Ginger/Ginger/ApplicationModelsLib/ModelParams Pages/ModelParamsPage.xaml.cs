@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.UserControls;
+using GingerCore;
 using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
 using GingerWPF.WizardLib;
@@ -35,7 +36,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 {
     public partial class ModelParamsPage : Page
     {
-        ApplicationAPIModel mAAMB;
+        ApplicationModelBase mAAMB;
         public ObservableList<AppModelParameter> ParamsList = new ObservableList<AppModelParameter>();
         public ObservableList<GlobalAppModelParameter> APIGlobalParamList = new ObservableList<GlobalAppModelParameter>();
         string GridPlaceholderHeader = "Place Holder";
@@ -149,12 +150,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             ModelParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddParamsRow));
             ModelParametersGrid.AddToolbarTool("@Upgrade_16x16.png", "Upload to Global Parameters", new RoutedEventHandler(UploadToGlobalParam));
             ModelParametersGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForParameters));
-            ModelParametersGrid.btnClearAll.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteAllParams));
-            ModelParametersGrid.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteParams));
+
+            ModelParametersGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteParams_Clicked));
+            ModelParametersGrid.SetbtnClearAllHandler(new RoutedEventHandler(ClearAllParams_Clicked));
         }
         private void ImportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {            
-            WizardWindow.ShowWizard(new AddModelOptionalValuesWizard(mAAMB));
+            WizardWindow.ShowWizard(new AddModelOptionalValuesWizard((ApplicationAPIModel)mAAMB));
             ModelParametersGrid.DataSourceList = mAAMB.AppModelParameters;
         }
         private void UploadToGlobalParam(object sender, RoutedEventArgs e)
@@ -191,14 +193,63 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 }
         }
 
-        private void DeleteParams(object sender, RoutedEventArgs e)
+        private void DeleteParams_Clicked(object sender, RoutedEventArgs e)
         {
-            OnParamDeleteEvent(new List<AppModelParameter>(ModelParametersGrid.Grid.SelectedItems.Cast<AppModelParameter>().ToList()));
+            MessageBoxResult messageResult = System.Windows.MessageBoxResult.No;
+            if ((((ApplicationAPIModel)mAAMB).ContentType == ApplicationAPIUtils.eContentType.XML || ((ApplicationAPIModel)mAAMB).ContentType == ApplicationAPIUtils.eContentType.JSon))
+            {
+                messageResult = System.Windows.MessageBox.Show("Do you want to delete also nodes from request body that contain those parameters?", "Delete nodes from request body?", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No);
+            }
+
+            if (messageResult == System.Windows.MessageBoxResult.Yes)
+            {
+                OnParamDeleteEvent(new List<AppModelParameter>(ModelParametersGrid.Grid.SelectedItems.Cast<AppModelParameter>().ToList()));
+            }
+            else if(messageResult == System.Windows.MessageBoxResult.No)
+            {
+                if (ModelParametersGrid.Grid.SelectedItems.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKeys.SelectItemToDelete);
+                    return;
+                }
+
+                ModelParametersGrid.DataSourceList.SaveUndoData();
+
+                List<object> SelectedItemsList = ModelParametersGrid.Grid.SelectedItems.Cast<object>().ToList();
+
+                foreach (object o in SelectedItemsList)
+                {
+                    ModelParametersGrid.DataSourceList.Remove(o);
+                }
+            }
         }
 
-        private void DeleteAllParams(object sender, RoutedEventArgs e)
+        private void ClearAllParams_Clicked(object sender, RoutedEventArgs e)
         {
-            OnParamDeleteEvent(new List<AppModelParameter>(ParamsList));
+            MessageBoxResult messageResult = System.Windows.MessageBoxResult.No;
+            if ((((ApplicationAPIModel)mAAMB).ContentType == ApplicationAPIUtils.eContentType.XML || ((ApplicationAPIModel)mAAMB).ContentType == ApplicationAPIUtils.eContentType.JSon))
+            {
+                messageResult = System.Windows.MessageBox.Show("Do you want to delete also nodes from request body that contain those parameters?", "Delete nodes from request body?", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No);
+            }
+
+            if (messageResult == System.Windows.MessageBoxResult.Yes)
+            {
+                OnParamDeleteEvent(new List<AppModelParameter>(ParamsList));
+            }
+            else if (messageResult == System.Windows.MessageBoxResult.No)
+            {
+                if (ModelParametersGrid.Grid.Items.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKeys.NoItemToDelete);
+                    return;
+                }
+
+                if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == MessageBoxResult.Yes)
+                {
+                    ModelParametersGrid.DataSourceList.SaveUndoData();
+                    ParamsList.ClearAll();
+                }
+            }
         }
 
         private void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -137,6 +137,22 @@ namespace Amdocs.Ginger.Common.GeneralLib
             return JT;
         }
 
+        //
+        // Summary:
+        //     Selects a Newtonsoft.Json.Linq.JToken using a JPath expression. Selects the token
+        //     that matches the object path.
+        //
+        // Parameters:
+        //   path:
+        //     A System.String that contains a JPath expression.
+        //
+        // Returns:
+        //     A Newtonsoft.Json.Linq.JToken, or null.
+        public JToken SelectToken(string path)
+        {
+            return JT.SelectToken(path);
+        }
+
 
         public List<JsonExtended> GetAllNodes(List<JsonExtended> XDL = null)
         {
@@ -233,6 +249,35 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
             foreach (JsonExtended child in childNodesList)
                 child.RemoveDuplicatesNodes();
+        }
+
+        public List<JToken> FindTokens(string name)
+        {
+            List<JToken> matches = new List<JToken>();
+            FindTokens(JT, name, matches);
+            return matches;
+        }
+
+        private void FindTokens(JToken containerToken, string name, List<JToken> matches)
+        {
+            if (containerToken.Type == JTokenType.Object)
+            {
+                foreach (JProperty child in containerToken.Children<JProperty>())
+                {
+                    if (child.Value.ToString() == name)
+                    {
+                        matches.Add(child.Value);
+                    }
+                    FindTokens(child.Value, name, matches);
+                }
+            }
+            else if (containerToken.Type == JTokenType.Array)
+            {
+                foreach (JToken child in containerToken.Children())
+                {
+                    FindTokens(child, name, matches);
+                }
+            }
         }
 
         #endregion
