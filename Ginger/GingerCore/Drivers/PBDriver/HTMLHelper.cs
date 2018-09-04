@@ -846,7 +846,14 @@ namespace GingerCore.Drivers.PBDriver
             switch (val)
             {
                 case "PageSource":
-                    result = (dynamic)mHtmlDocument.documentElement.getAttribute("OuterHtml");
+                    if (currentFrameDocument != null)
+                    {
+                        result = (dynamic)currentFrameDocument.documentElement.getAttribute("OuterHTML");
+                    }
+                    else
+                    {
+                        result = (dynamic)mHtmlDocument.documentElement.getAttribute("OuterHtml");
+                    }                   
                     break;
                 case "PageURL":
                     result = mHtmlDocument.url;
