@@ -131,7 +131,13 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
-                return ((EnumValueDescriptionAttribute[])typeof(eElementType).GetField(mElementTypeEnum.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
+                string enumDescription = mElementTypeEnum.ToString();
+                try
+                {
+                    enumDescription = ((EnumValueDescriptionAttribute[])typeof(eElementType).GetField(mElementTypeEnum.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
+                }
+                catch { }
+                return enumDescription;
             }
         }
 
@@ -297,7 +303,7 @@ namespace Amdocs.Ginger.Common.UIElement
         ByModelName,
         [EnumValueDescription("By CSS Selector")]
         ByCSSSelector,
-        [EnumValueDescription("POM Element")]
+        [EnumValueDescription("Page Objects Model Element")]
         POMElement,
     }
 

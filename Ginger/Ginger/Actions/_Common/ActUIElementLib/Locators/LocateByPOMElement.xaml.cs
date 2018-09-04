@@ -82,9 +82,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
                             {
                                 xPOMElementsGrid.DataSourceList = mSelectedPOM.MappedUIElements;
                                 xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
-                                mAction.ElementTypeDelegated = selectedPOMElement.ElementTypeEnum;
+                                mAction.ElementType = selectedPOMElement.ElementTypeEnum;
                                 POMElementComboBox.IsEnabled = true;
-                                HeaderTextBlock.Text = (selectedPOMElement.ElementName + " - " + selectedPOMElement.ElementTypeEnumDescription).ToString(); 
+                                HeaderTextBlock.Text = selectedPOMElement.ElementName; 
                                 HeaderTextBlock.Visibility = Visibility.Visible;
                                 POMElementComboBox.SelectedItem = HeaderTextBlock;
                                 HighlightButton.IsEnabled = true;
@@ -106,10 +106,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (mApplicationPOMSelectionPage == null)
             {
                 ApplicationPOMsTreeItem pOMsRoot = new ApplicationPOMsTreeItem(mPOMModelFolder);
-                //mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage( GingerDicser.GetTermResValue(eTermResKey.POM), eImageType.ApplicationPOM, pOMsRoot, 
-                //                                                                    SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
-
-                mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.POM), eImageType.ApplicationPOM, pOMsRoot,
+                mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOM, pOMsRoot,
                                                                                     SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
                                                                                     new Tuple<string, string>(  nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
                                                                                                                 nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), 
@@ -148,7 +145,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void POMElementComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
             HeaderTextBlock.Visibility = Visibility.Visible;
-            HeaderTextBlock.Text = (((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName + " - " + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnumDescription).ToString();
+            HeaderTextBlock.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
             POMElementComboBox.SelectedItem = HeaderTextBlock;
         }
 
@@ -157,9 +154,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             xPOMElementsGrid.SetTitleLightStyle = true;
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnumDescription), Header = "Type", WidthWeight = 40, AllowSorting = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnumDescription), Header = "Type", WidthWeight = 40, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             xPOMElementsGrid.SetAllColumnsDefaultView(view);
             xPOMElementsGrid.InitViewItems();
         }
@@ -168,7 +165,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             if ((POMElementComboBox.IsEnabled) && ((DataGrid)sender).SelectedItem != null)
             {
-                mAction.ElementTypeDelegated = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
+                mAction.ElementType = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
                 mAction.ElementLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
                 HighlightButton.IsEnabled = true;
             }

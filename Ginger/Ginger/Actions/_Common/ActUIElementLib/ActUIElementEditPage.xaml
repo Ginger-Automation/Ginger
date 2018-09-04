@@ -39,12 +39,8 @@
                                                   ToolTip="How to Locate the Element on the screen"  Grid.Row="0" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
 
                 <StackPanel  Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="3">
-                    <StackPanel>
-                        <Label x:Name="LocateValueLable" Content="Locate Value:" Width="154" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}"/>
-                    </StackPanel>
-                    <StackPanel x:Name="LocateValueEditFramePanel" Width="254" Margin="0,3,0,0">
-                        <Frame x:Name="LocateValueEditFrame"  BorderBrush="Black"/>
-                    </StackPanel>
+                    <Label x:Name="LocateValueLable" Content="Locate Value:" Width="154" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}"/>
+                    <Frame x:Name="LocateValueEditFrame" Width="254" Margin="0,3,0,0" NavigationUIVisibility="Hidden" BorderBrush="Black"/>
                 </StackPanel>
 
                 <StackPanel  Orientation="Horizontal" Grid.Row="2" Grid.Column="0">

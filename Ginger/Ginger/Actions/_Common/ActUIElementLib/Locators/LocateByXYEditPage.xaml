@@ -6,7 +6,7 @@
       xmlns:Actions="clr-namespace:Ginger.Actions"       
       mc:Ignorable="d" 
       d:DesignHeight="100" d:DesignWidth="300"
-	Title="LocateByPOMElement">
+	Title="LocateByXYEditPage">
 
     <Grid>
         <Grid.RowDefinitions>

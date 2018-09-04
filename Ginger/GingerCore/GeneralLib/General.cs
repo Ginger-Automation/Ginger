@@ -249,7 +249,6 @@ namespace GingerCore
                     s = s.Replace("Variables", GingerDicser.GetTermResValue(eTermResKey.Variables));
                     s = s.Replace("Run Set", GingerDicser.GetTermResValue(eTermResKey.RunSet));
                     s = s.Replace("Run Sets", GingerDicser.GetTermResValue(eTermResKey.RunSets));
-                    s = s.Replace("Application POM Model", GingerDicser.GetTermResValue(eTermResKey.POM));
                 }
                 else
                 {
