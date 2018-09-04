@@ -24,6 +24,7 @@ using mshtml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
@@ -1247,7 +1248,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return list;
         }
         
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             //TODO: impl
             return null;
@@ -1269,7 +1270,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return false;
         }
         
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             //TODO: keep old elemnent border and restore it
             //string scriptRemoveBorder = "arguments[0].style.border='0px'";
@@ -1342,15 +1343,19 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
             return true;
+        }
+
+        void IWindowExplorer.UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        {
+            throw new NotImplementedException();
         }
     }
 }

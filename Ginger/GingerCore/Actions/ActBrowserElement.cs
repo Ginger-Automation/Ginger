@@ -125,7 +125,7 @@ namespace GingerCore.Actions
             SwitchWindow,
             [EnumValueDescription("Switch to Default Window")]
             SwitchToDefaultWindow,
-            [EnumValueDescription("Inject JS")]
+            [EnumValueDescription("Inject Java Script")]
             InjectJS,
             [EnumValueDescription("Wait till page loaded")]
             CheckPageLoaded,
@@ -137,7 +137,7 @@ namespace GingerCore.Actions
             CloseTabExcept,
             [EnumValueDescription("Close All")]
             CloseAll,
-            [EnumValueDescription("Close All")]
+            [EnumValueDescription("Refresh")]
             Refresh,
             [EnumValueDescription("Navigate Back")]
             NavigateBack,
@@ -164,7 +164,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Get MessageBox Text")]
             GetMessageBoxText,
             [EnumValueDescription("Set AlertBox Text")]
-            SetAlertBoxText
+            SetAlertBoxText,
+            [EnumValueDescription("Run Java Script")]
+            RunJavaScript
         }
 
 

@@ -646,7 +646,7 @@ namespace GingerCore.Drivers.WindowsLib
             return GetControlFromMousePosition();
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
             return list;
@@ -694,7 +694,7 @@ namespace GingerCore.Drivers.WindowsLib
             return aw;
         }
         
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             HighLightElement(ElementInfo);           
         }
@@ -907,12 +907,6 @@ namespace GingerCore.Drivers.WindowsLib
         {
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         public VisualElementsInfo GetVisualElementsInfo()
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
@@ -942,6 +936,16 @@ namespace GingerCore.Drivers.WindowsLib
         public override void StopRecording()
         {
 
+        }
+
+        void IWindowExplorer.UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        {
+            throw new NotImplementedException();
         }
     }
 }
