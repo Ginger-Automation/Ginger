@@ -310,7 +310,7 @@ namespace GingerCore.ALM.QC
                         List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
                                                                                        .Where(x => !tc.Steps.Select(y => y.StepID).ToList().Contains(x.ExternalID)).ToList();
 
-                        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
+                        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance(true);
 
                         var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID)); 
                         for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)
