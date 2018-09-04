@@ -272,6 +272,8 @@ namespace Ginger
 
         public static bool RunningFromConfigFile= false;
 
+        public static bool RunningFromUnitTest = false;
+
         internal static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
         {
             //TODO: add Inotify on the obj.attr - so code changes to property will be reflected

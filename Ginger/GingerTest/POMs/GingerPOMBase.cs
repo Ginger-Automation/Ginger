@@ -28,6 +28,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -41,7 +42,39 @@ namespace GingerWPFUnitTest.POMs
 
         public VisualCompare VisualCompare = new VisualCompare();
 
-        
+
+        /// <summary>
+        /// Recursive method to find element by AutomationID
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="automationID"></param>
+        /// <returns></returns>
+        public DependencyObject FindElementByAutomationID<T>(DependencyObject context, string automationID)
+        {            
+            foreach (object o in LogicalTreeHelper.GetChildren(context))
+            {                
+                if (o is DependencyObject)
+                {
+                    DependencyObject dependencyObject = (DependencyObject)o;
+                    if (dependencyObject is T)  // the type we are searching
+                    {
+                        if (AutomationProperties.GetAutomationId(dependencyObject) == automationID)
+                        {
+                            return dependencyObject;
+                        }
+                    }
+
+                    //Drill down the tree
+                    DependencyObject childDependencyObject = FindElementByAutomationID<T>(dependencyObject, automationID);
+                    if (childDependencyObject != null)
+                    {
+                        return dependencyObject;
+                    }
+                }
+            }
+            return null;
+        }
 
 
         internal DependencyObject FindElementByName(DependencyObject context, string name)
@@ -72,8 +105,6 @@ namespace GingerWPFUnitTest.POMs
 
         }
 
-
-        //TODO: Find UI Elem by AutomationID
 
         public void SleepWithDoEvents(int Milliseconds)
         {

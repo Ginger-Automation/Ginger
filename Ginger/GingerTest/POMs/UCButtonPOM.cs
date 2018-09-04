@@ -17,8 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.UserControls;
+using System;
+using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace GingerWPFUnitTest.POMs
@@ -32,11 +33,11 @@ namespace GingerWPFUnitTest.POMs
             ucButton = b;
         }
 
-        Button mButton
+        ucButton mButton
         {
             get
             {
-                return (Button)FindElementByName(ucButton, "xButton");
+                return ucButton; 
             }
         }
 
@@ -44,8 +45,13 @@ namespace GingerWPFUnitTest.POMs
         {            
             Task.Factory.StartNew(() => { 
                 mDispatcher.Invoke(() =>
-                {                                
-                    mButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));                    
+                {
+                    //TODO: verify enabled mButton.IsEnabled
+                    // mButton.BorderThickness = new Thickness(3);
+                    // mButton.BorderBrush =  System.Windows.Media.Brushes.Red;
+                    
+                    // mButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent, mButton));                                        
+                    mButton.DoClick();
                 });
             });
             
@@ -53,7 +59,7 @@ namespace GingerWPFUnitTest.POMs
 
         }
 
-
+     
         public bool IsEnabled
         {
             get
@@ -68,6 +74,6 @@ namespace GingerWPFUnitTest.POMs
         }
 
         //TODO: remove the set
-        public string Text { get { return (string)mButton.Content; } set { Button b = mButton; b.Content = value; } }
+        public string Text { get { return mButton.ButtonText;  }  }
     }
 }

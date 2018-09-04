@@ -71,6 +71,7 @@ namespace GingerWPFUnitTest.POMs
 
         public UCButtonPOM AddButton { get
             {
+                //AddButton                    
                 ucButton b = (ucButton)FindElementByName(SingleItemTreeViewControl, "xAddButton");
                 UCButtonPOM p = new UCButtonPOM(b);
                 return p;
