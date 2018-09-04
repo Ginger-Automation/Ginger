@@ -40,7 +40,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DI);
         public bool TreeItemDoubleClicked = false;
-        public Tuple<string, string> PropertyValueFilter = null;
+
+        public Tuple<string, string> TreeNodesFilterByField { get; set; } 
 
         TreeViewItem mlastSelectedTVI = null;
 
@@ -192,71 +193,60 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;
 
                 List<ITreeViewItem> Childs = null;
-
-                if (PropertyValueFilter != null)
-                {
-                    Childs = GetChildrensByPropertyValueFilter(ITVI);
-                }
-                else
-                    Childs = ITVI.Childrens();
-
+                Childs = ITVI.Childrens();
+                    
                 TVI.Items.Clear();
                 if (Childs != null)
                 {
-                    foreach (ITreeViewItem c in Childs)
+                    foreach (ITreeViewItem item in Childs)
                     {
-                        AddItem(c, TVI);
+                        if (TreeNodesFilterByField != null)
+                        {
+                            if (IsTreeItemFitsFilter(item))
+                            {
+                                AddItem(item, TVI);
+                            }
+                        }
+                        else
+                        {
+                            AddItem(item, TVI);
+                        }
+
                     }
                 }
             }
         }
 
-        private List<ITreeViewItem> GetChildrensByPropertyValueFilter(ITreeViewItem ITVI)
+        private bool IsTreeItemFitsFilter(ITreeViewItem treeItemToCheck)
         {
-            List<ITreeViewItem> childrens = new List<ITreeViewItem>();
-            if (PropertyValueFilter != null)
+            object treeItemToCheckObject = treeItemToCheck.NodeObject();
+            if (treeItemToCheckObject is RepositoryFolderBase)
             {
-                List<string> propertyStrHierarchy = PropertyValueFilter.Item1.ToString().Split('.').ToList();
-                List<PropertyInfo> propertyInfoHierarchy = new List<PropertyInfo>();
+                return true;
+            }
 
-                PropertyInfo pInfo = ITVI.Childrens().Where(z => !(z.NodeObject() is RepositoryFolderBase)).ToList()
-                                                     .First().NodeObject().GetType().GetProperty(propertyStrHierarchy[0]);
-                propertyInfoHierarchy.Add(pInfo);
-
-                if (pInfo != null)
+            //get the object to filter by
+            List<string> filterByfieldHierarchyList = TreeNodesFilterByField.Item1.ToString().Split('.').ToList();
+            object filterByObject = treeItemToCheckObject;
+            foreach (string hierarchyElement in filterByfieldHierarchyList)
+            {
+                PropertyInfo pInfo = filterByObject.GetType().GetProperty(hierarchyElement);
+                if (pInfo is null)
                 {
-                    propertyStrHierarchy.Skip(1).ToList().ForEach(z =>
-                    {
-                        pInfo = pInfo.PropertyType.GetProperty(z.ToString());
-                        propertyInfoHierarchy.Add(pInfo);
-                    });
-
-                    ITVI.Childrens().ForEach(y =>
-                    {
-                        if (y.NodeObject() is RepositoryFolderBase)
-                        {
-                            childrens.Add(y);
-                        }
-                        else
-                        {
-                            List<object> objectsList = new List<object> { propertyInfoHierarchy[0].GetValue(y.NodeObject(), null) };
-                            propertyInfoHierarchy.Skip(1).ToList().ForEach(z =>
-                            {
-                                List<object> objectsListSwap = new List<object>();
-                                objectsList.ForEach(c => objectsListSwap.Add(z.GetValue(c, null)));
-                                objectsList = objectsListSwap;
-                            });
-                            if (objectsList.Contains(PropertyValueFilter.Item2.ToString()))
-                            {
-                                childrens.Add(y);
-                            }
-                        }
-                    });
+                    break;
                 }
                 else
-                    childrens = ITVI.Childrens();
+                {
+                    filterByObject = pInfo.GetValue(filterByObject, null);
+                }
             }
-            return childrens;
+
+            //compare the value
+            string filterbyValue = TreeNodesFilterByField.Item2.ToString();
+            if (filterbyValue == filterByObject.ToString())
+                return true;
+
+            return false;
         }
 
         private void RemoveDummyNode(TreeViewItem node)

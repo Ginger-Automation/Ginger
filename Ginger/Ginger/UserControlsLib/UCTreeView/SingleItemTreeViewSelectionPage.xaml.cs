@@ -75,7 +75,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             InitializeComponent();
 
-            xTreeView.Tree.PropertyValueFilter = propertyValueFilter;
+            xTreeView.Tree.TreeNodesFilterByField = propertyValueFilter;
             xTreeView.AllowTreeTools = allowTreeTools;
 
             TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
