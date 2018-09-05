@@ -4,6 +4,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Ginger.Run
@@ -38,12 +39,16 @@ namespace Ginger.Run
                 strBuilder.AppendLine("[Input Values]");
                 formatTextTable = new FormatTextTable();
 
-                ArrayList colHeaders = new ArrayList() { "Parameter", "Value" };
+                List<string> colHeaders = new List<string>();
+                colHeaders.Add("Parameter");
+                colHeaders.Add("Value");
                 formatTextTable.AddRowHeader(colHeaders);
 
                 foreach (ActInputValue actInputValue in logAction.InputValues)
                 {
-                    ArrayList colValues = new ArrayList() { actInputValue.ItemName, actInputValue.Value };
+                    List<string> colValues = new List<string>();
+                    colValues.Add(actInputValue.ItemName);
+                    colValues.Add(actInputValue.Value);
                     formatTextTable.AddRowValues(colValues);
                 }
                 strBuilder.AppendLine(formatTextTable.FormatLogTable());
@@ -55,12 +60,18 @@ namespace Ginger.Run
                 strBuilder.AppendLine("[Return Values]");
                 formatTextTable = new FormatTextTable();
 
-                ArrayList colHeaders = new ArrayList() { "Parameter", "Expected", "Actual" };
+                List<string> colHeaders = new List<string>();
+                colHeaders.Add("Parameter");
+                colHeaders.Add("Expected");
+                colHeaders.Add("Actual");
                 formatTextTable.AddRowHeader(colHeaders);
 
                 foreach (ActReturnValue actReturnValue in logAction.ReturnValues)
                 {
-                    ArrayList colValues = new ArrayList() { actReturnValue.ItemName, actReturnValue.Expected, actReturnValue.Actual };
+                    List<string> colValues = new List<string>();
+                    colValues.Add(actReturnValue.ItemName);
+                    colValues.Add(actReturnValue.Expected);
+                    colValues.Add(actReturnValue.Actual);
                     formatTextTable.AddRowValues(colValues);
                 }
                 strBuilder.AppendLine(formatTextTable.FormatLogTable());

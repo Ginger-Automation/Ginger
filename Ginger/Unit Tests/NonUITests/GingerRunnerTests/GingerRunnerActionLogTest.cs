@@ -135,13 +135,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             ActInputValue actInputValue = new ActInputValue();
             actInputValue.ItemName = "TestInput";
             actInputValue.Value = inputValExpected;
+            actDummy.InputValues.Add(actInputValue);
 
             ActReturnValue actReturnValue = new ActReturnValue();
             actReturnValue.ItemName = "TestReturn";
             actReturnValue.Expected = returnValExpected;
             actReturnValue.Actual = returnValExpected;
-
-            actDummy.InputValues.Add(actInputValue);
             actDummy.ReturnValues.Add(actReturnValue);
 
             actDummy.ActionLogConfig = new ActionLogConfig();
@@ -245,6 +244,50 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsFalse(IsFileExists(fileName));
         }
 
+
+
+        [TestMethod]
+        public void TestActionLogMultipleOccurancesOfReturnValues()
+        {
+            //Arrange
+            string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_8.log");
+            string returnValExpected = "123456";
+
+            GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
+            ActDummy actDummy = new ActDummy();
+
+            // set all the values in the action
+            ActReturnValue actReturnValue = new ActReturnValue();
+            actReturnValue.ItemName = "TestForFirstReturnValueInTable";
+            actReturnValue.Expected = returnValExpected;
+            actReturnValue.Actual = returnValExpected;
+            actDummy.ReturnValues.Add(actReturnValue);
+
+            actReturnValue = new ActReturnValue();
+            actReturnValue.ItemName = "TestForSecondReturnValueInTable";
+            actReturnValue.Expected = returnValExpected;
+            actReturnValue.Actual = "WrongValue";
+            actDummy.ReturnValues.Add(actReturnValue);
+
+            actReturnValue = new ActReturnValue();
+            actReturnValue.ItemName = "TestForThirdReturnValueInTable";
+            actReturnValue.Expected = "ExpectedRightValue";
+            actReturnValue.Actual = "WrongActualValue";
+            actDummy.ReturnValues.Add(actReturnValue);
+
+            actDummy.ActionLogConfig = new ActionLogConfig();
+            actDummy.ActionLogConfig.LogOutputVariables = true;
+
+            actDummy.EnableActionLogConfig = true;
+
+            //Act
+            gingerRunnerLogger.LogAction(actDummy);
+
+            //Assert
+            Assert.AreEqual(FindTextOccurrencesInFile(fileName, returnValExpected), 3);
+        }
+
+
         private bool IsFileContains(string fileName, string textToSearch)
         {
             return System.IO.File.ReadAllText(fileName).Contains(textToSearch);
@@ -270,7 +313,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             if (System.IO.Directory.Exists(tempFolder))
             {
                 System.IO.DirectoryInfo directory = new DirectoryInfo(tempFolder);
-                foreach (System.IO.FileInfo file in directory.GetFiles()) file.Delete();
+                foreach (System.IO.FileInfo file in directory.GetFiles())
+                {
+                    file.Delete();
+                }
             }
             else
             {

@@ -11,8 +11,11 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         List<string> HeadersList = new List<string>();
         List<int> ColumnLength = new List<int>();
 
-        public void AddRowHeader(ArrayList headerList)
+        public void AddRowHeader(List<string> headerList)
         {
+            logDataTable.Columns.Add("#");
+            ColumnLength.Add(2);
+
             foreach (string header in headerList)
             {
                 ColumnLength.Add(header.Length);
@@ -20,15 +23,18 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             }
         }
 
-        public void AddRowValues(ArrayList rowList)
+        public void AddRowValues(List<string> rowList)
         {
             DataRow dataRow = logDataTable.NewRow();
-            int colId = 0; 
+            int colId = 0;
+
+            dataRow[colId++] = logDataTable.Rows.Count + 1;
+
             foreach (string colValue in rowList)
             {
                 if (colValue != null && colValue.Length > ColumnLength[colId])
                     ColumnLength[colId] = colValue.Length;
-                dataRow[colId++] = colValue; 
+                dataRow[colId++] = colValue;
             }
             logDataTable.Rows.Add(dataRow);
         }
@@ -50,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         public string FormatLogTable()
         {
             StringBuilder sbr = new StringBuilder();
-            string hyp = "-";
+            const string hyp = "-";
             int totRowLen = 0;
             int colLen = 0;
 
@@ -98,18 +104,13 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             return sbr.ToString();
         }
 
-        private string PadSpacesInString(string str, int maxLen)
+        private static string PadSpacesInString(string str, int maxLen)
         {
-            string formatStr = string.Empty; 
-            if (str != null && str.Length > 0)
-            {
-                formatStr = str.PadRight(maxLen);
-            } else
+            if (str == null || str == string.Empty)
             {
                 str = " ";
-                formatStr = str.PadRight(maxLen);
             }
-            return formatStr;
+            return str.PadRight(maxLen);
         }
 
 

@@ -7,7 +7,10 @@ namespace GingerCoreNET.GeneralLib
     {
         StreamWriter log;
 
-        public Logger(string fileName, bool overWrite = true)
+        public Logger(string fileName) : this(fileName, true)
+        { }
+
+        public Logger(string fileName, bool overWrite)
         {
             try
             {
