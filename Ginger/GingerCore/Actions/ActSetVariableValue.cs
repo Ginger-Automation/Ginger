@@ -89,7 +89,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Stop Timer")]
             StopTimer,
             [EnumValueDescription("Continue Timer")]
-            ContinueTimer
+            ContinueTimer,
+            [EnumValueDescription("Clear Special Characters")]
+            ClearSpecialChar
         }
 
 
@@ -149,6 +151,17 @@ namespace GingerCore.Actions
             else if (SetVariableValueOption == eSetValueOptions.ResetValue)
             {                  
                     ((VariableBase)Var).ResetValue();
+            }
+            else if (SetVariableValueOption == eSetValueOptions.ClearSpecialChar)
+            {
+                ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
+                VE.Value = this.Value;
+                string specChar = VE.ValueCalculated;
+                if(string.IsNullOrEmpty(specChar))
+                    specChar=@"{}(),\""";
+                if(!string.IsNullOrEmpty(((VariableString)Var).Value))
+                    foreach (char c in specChar)
+                        ((VariableString)Var).Value = ((VariableString)Var).Value.Replace(c.ToString(), "");
             }
             else if (SetVariableValueOption == eSetValueOptions.AutoGenerateValue)
             {

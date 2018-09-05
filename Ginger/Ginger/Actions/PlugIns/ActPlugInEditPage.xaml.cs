@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions.PlugIns;
@@ -50,67 +51,70 @@ namespace Ginger.Actions.PlugIns
 
         private void LoadEditPage()
         {
-            try
-            {
-                // Edit Page can be .xaml or a classname of a page, or empty if no config needed
-                PlugInWrapper PIW = App.LocalRepository.GetSolutionPlugIns().Where(x => x.ID == mAct.PlugInID).FirstOrDefault();
-                string editpage = string.Empty;
-                if (PIW != null)
-                    editpage = PIW.GetEditPage(mAct.PlugInActionID);
+            InputGrid.ItemsSource = mAct.InputValues;
+            
+            //try
+            //{
+            //    // Edit Page can be .xaml or a classname of a page, or empty if no config needed                
+            //    //WorkSpace.Instance.PluginsManager.GetPluginAction(mAct)
+            //    // Plugin PM.GetStandAloneActions()
+            //    //string editpage = string.Empty;
+            //    if (PIW != null)
+            //        editpage = PIW.GetEditPage(mAct.PlugInActionID);
 
-                if (string.IsNullOrEmpty(editpage))
-                {
-                    EditFrame.Visibility = Visibility.Collapsed;
-                    NoConfigLabel.Visibility = Visibility.Visible;
-                    // There is no Edit page configured = action without params in
-                    return;
-                }
+            //    if (string.IsNullOrEmpty(editpage))
+            //    {
+            //        EditFrame.Visibility = Visibility.Collapsed;
+            //        NoConfigLabel.Visibility = Visibility.Visible;
+            //        // There is no Edit page configured = action without params in
+            //        return;
+            //    }
 
-                NoConfigLabel.Visibility = Visibility.Collapsed;
+            //    NoConfigLabel.Visibility = Visibility.Collapsed;
 
 
-                if (editpage.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!File.Exists(editpage))
-                    {
-                        EditFrame.Content = "Error: xaml file not found - " + editpage;
-                        return;
-                    }
+            //    if (editpage.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        if (!File.Exists(editpage))
+            //        {
+            //            EditFrame.Content = "Error: xaml file not found - " + editpage;
+            //            return;
+            //        }
 
-                    FileStream s = new FileStream(editpage, FileMode.Open);
-                    UIElement rootElement = (UIElement)XamlReader.Load(s);
-                    s.Close();
+            //        FileStream s = new FileStream(editpage, FileMode.Open);
+            //        UIElement rootElement = (UIElement)XamlReader.Load(s);
+            //        s.Close();
 
-                    EditFrame.Content = rootElement;
+            //        EditFrame.Content = rootElement;
 
-                    BindControlsToAction((Panel)rootElement);
-                }
-                else
-                {
-                    Type t = PIW.Assembly.GetType(editpage);
-                    if (t == null)
-                    {
-                        EditFrame.Content = "Error: Action edit page not found - " + editpage;
-                        return;
-                    }
+            //        BindControlsToAction((Panel)rootElement);
+            //    }
+            //    else
+            //    {
+            //        Type t = PIW.Assembly.GetType(editpage);
+            //        if (t == null)
+            //        {
+            //            EditFrame.Content = "Error: Action edit page not found - " + editpage;
+            //            return;
+            //        }
 
-                    Page p = (Page)Activator.CreateInstance(t, mAct.GingerAction);
+            //        Page p = (Page)Activator.CreateInstance(t, mAct.GingerAction);
 
-                    foreach (ActionParam AP in mAct.GingerAction.ParamsIn)
-                    {
-                        mAct.AddOrUpdateInputParamValue(AP.Name, AP.Value == null? string.Empty : AP.Value.ToString());
-                        AP.PropertyChanged -= GingerAction_PropertyChanged;
-                        AP.PropertyChanged += GingerAction_PropertyChanged;
-                    }
-                    EditFrame.Content = p;
-                }
-            }
-            catch(Exception ex)
-            {
-                LoadErrorLbl.Visibility = Visibility.Visible;
-                EditFrame.Visibility = Visibility.Collapsed;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the plugin edit page for the action '" + mAct.Description + "'", ex);
-            }
+            //        foreach (ActionParam AP in mAct.GingerAction.ParamsIn)
+            //        {
+            //            mAct.AddOrUpdateInputParamValue(AP.Name, AP.Value == null ? string.Empty : AP.Value.ToString());
+            //            AP.PropertyChanged -= GingerAction_PropertyChanged;
+            //            AP.PropertyChanged += GingerAction_PropertyChanged;
+            //        }
+            //        EditFrame.Content = p;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    LoadErrorLbl.Visibility = Visibility.Visible;
+            //    EditFrame.Visibility = Visibility.Collapsed;
+            //    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the plugin edit page for the action '" + mAct.Description + "'", ex);
+            //}
         }
 
         private void GingerAction_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

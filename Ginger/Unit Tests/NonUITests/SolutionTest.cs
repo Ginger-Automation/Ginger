@@ -25,9 +25,12 @@ using Amdocs.Ginger.Common.Repository;
 using GingerCore;
 using Ginger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using GingerTestHelper;
+
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Level1]
     public class SolutionTest 
     {
         [ClassInitialize]

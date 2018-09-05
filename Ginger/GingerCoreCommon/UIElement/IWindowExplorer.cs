@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -24,11 +24,12 @@ namespace Amdocs.Ginger.Common.UIElement
     {
         List<AppWindow> GetAppWindows();        
         void SwitchWindow(string Title);     
-        void HighLightElement(ElementInfo ElementInfo);
+        void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators=false);
+        void UnHighLightElements();
         string GetFocusedControl();
         ElementInfo GetControlFromMousePosition();       
         AppWindow GetActiveWindow();
-        List<ElementInfo> GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null);
+        List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null);
         List<ElementInfo> GetElementChildren(ElementInfo ElementInfo);
         // Get All element properties to be displayed in properties 
         ObservableList<ControlProperty> GetElementProperties(ElementInfo ElementInfo);
@@ -44,9 +45,11 @@ namespace Amdocs.Ginger.Common.UIElement
         bool AddSwitchWindowAction(string Title);
 
         ObservableList<ElementInfo> GetElements(ElementLocator EL);
+
         void UpdateElementInfoFields(ElementInfo eI);
-        ObservableList<UIElementFilter> GetFilteringCreteriaDict();
 
         bool IsElementObjectValid(object obj);
+
+        void TestElementLocators(ObservableList<ElementLocator> elementLocators);
     }
 }

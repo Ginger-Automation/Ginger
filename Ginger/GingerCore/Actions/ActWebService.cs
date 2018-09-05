@@ -23,6 +23,7 @@ using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GingerCore.Actions
 {
@@ -31,7 +32,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Web Service Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
-        public override bool IsLegacyAction { get { return true; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
         public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
         {

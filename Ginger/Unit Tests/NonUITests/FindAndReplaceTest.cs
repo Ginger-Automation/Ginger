@@ -5,6 +5,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Reflection;
@@ -13,6 +14,7 @@ using static Amdocs.Ginger.Common.Functionalities.FindAndReplaceUtils;
 namespace UnitTests.NonUITests
 {
     [TestClass]
+    [Level2]
     public class FindAndReplaceTest
     {
 

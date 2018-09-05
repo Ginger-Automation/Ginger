@@ -247,9 +247,8 @@ namespace GingerCore
 
                 if (Driver == null) return eStatus.NotStarted;
                 //TODO: fixme  running called too many - and get stuck
-                
-                    bool DriverIsRunning = false;
-                        lock (thisLock)
+                bool DriverIsRunning = false;
+                lock (thisLock)
                         {
                             DriverIsRunning = Driver.IsRunning();
                             Reporter.ToLog(eLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}");
@@ -692,6 +691,14 @@ namespace GingerCore
                 OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
             }
         }
+
+        public void ResetAgentStatus(eStatus status)
+        {
+            if (status == eStatus.FailedToStart)
+            {
+                IsFailedToStart = false;
+            }
+        }
         private void CancelTMSTATask(object sender, DoWorkEventArgs e)
         {
             if (MSTATask == null)
@@ -948,6 +955,8 @@ namespace GingerCore
 
             }
         }
+
+        public object Tag;
 
     }
 }

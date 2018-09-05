@@ -158,8 +158,11 @@ namespace GingerCore
             RepositoryItem copiedItem = (RepositoryItem)this.CreateCopy();
             copiedItem.ParentGuid = this.Guid;
             if (originFromShredRepo)
+            {
                 copiedItem.IsSharedRepositoryInstance = true;
-            return copiedItem;
+                copiedItem.ExternalID = this.ExternalID;
+            }
+                return copiedItem;
         }
 
         //// Temp solution for backup restore until we have the obj ref tree copy
@@ -211,8 +214,7 @@ namespace GingerCore
             if (T == typeof(BusinessFlow)) { return "BusinessFlow"; }
             if (T == typeof(ActivitiesGroup)) { return "ActivitiesGroup"; }
             if (T == typeof(Activity)) { return "Activity"; }
-            if (T == typeof(ErrorHandler)) { return "Activity"; }
-            if (T == typeof(PlugInWrapper)) { return "PlugIn"; }
+            if (T == typeof(ErrorHandler)) { return "Activity"; }            
             if (typeof(Act).IsAssignableFrom(T)) { return "Action"; }
             if (typeof(VariableBase).IsAssignableFrom(T)) { return "Variable"; }
             if (typeof(DataSourceBase).IsAssignableFrom(T)) return "DataSource";        

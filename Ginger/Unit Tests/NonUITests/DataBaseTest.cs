@@ -27,6 +27,7 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.NonUITests
 {
+    [Level3]
     [TestClass]
     
     public class DataBaseTest 
