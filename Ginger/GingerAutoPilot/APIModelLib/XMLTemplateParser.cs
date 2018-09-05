@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.Repository
             XmlDocument doc = new XmlDocument();
             doc.Load(FileName);
             XMLDocExtended XDE = new XMLDocExtended(doc);
-           
+
             if (avoidDuplicatesNodes)
                 XDE.RemoveDuplicatesNodes();
 
