@@ -3,6 +3,7 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using System;
+using System.Collections;
 using System.Text;
 
 namespace Ginger.Run
@@ -36,26 +37,34 @@ namespace Ginger.Run
             if (actionLogConfig.LogInputVariables)
             {
                 strBuilder.AppendLine("[Input Values]");
-                formatTextTable.AddRowHeader("Parameter", "Value");
+                formatTextTable = new FormatTextTable();
+
+                ArrayList colHeaders = new ArrayList() { "Parameter", "Value" };
+                formatTextTable.AddRowHeader(colHeaders);
+
                 foreach (ActInputValue actInputValue in act.InputValues)
                 {
-                    formatTextTable.AddRowValues(actInputValue.ItemName, actInputValue.Value);
+                    ArrayList colValues = new ArrayList() { actInputValue.ItemName, actInputValue.Value };
+                    formatTextTable.AddRowValues(colValues);
                 }
-                strBuilder.AppendLine(formatTextTable.CreateTable());
-                formatTextTable.clear();
-            }            
+                strBuilder.AppendLine(formatTextTable.FormatLogTable());
+            }
 
             // log all the output variables
             if (actionLogConfig.LogOutputVariables)
             {
                 strBuilder.AppendLine("[Return Values]");
-                formatTextTable.AddRowHeader("Parameter", "Expected", "Actual");
+                formatTextTable = new FormatTextTable();
+
+                ArrayList colHeaders = new ArrayList() { "Parameter", "Expected", "Actual" };
+                formatTextTable.AddRowHeader(colHeaders);
+
                 foreach (ActReturnValue actReturnValue in act.ReturnValues)
                 {
-                    formatTextTable.AddRowValues(actReturnValue.ItemName, actReturnValue.Expected, actReturnValue.Actual);
+                    ArrayList colValues = new ArrayList() { actReturnValue.ItemName, actReturnValue.Expected, actReturnValue.Actual };
+                    formatTextTable.AddRowValues(colValues);
                 }
-                strBuilder.AppendLine(formatTextTable.CreateTable());
-                formatTextTable.clear();
+                strBuilder.AppendLine(formatTextTable.FormatLogTable());
             }
 
             // action status
@@ -96,7 +105,6 @@ namespace Ginger.Run
         {
             System.IO.File.AppendAllText(fileName, strContents);
         }
-
 
     }
 }
