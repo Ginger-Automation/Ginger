@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -204,21 +205,43 @@ namespace Amdocs.Ginger.Common
         {
             try
             {
-                var stringBuilder = new StringBuilder();
-
-                var element = XElement.Parse(xml);
-
                 var settings = new XmlWriterSettings();
                 settings.OmitXmlDeclaration = true;
                 settings.Indent = true;
                 settings.NewLineOnAttributes = newLineOnAttribue;
+                settings.NamespaceHandling = NamespaceHandling.Default;
 
-                using (var xmlWriter = XmlWriter.Create(stringBuilder, settings))
+                XmlDocument document = new XmlDocument();
+                document.Load(new StringReader(xml));
+
+                StringBuilder builder = new StringBuilder();
+                //using (XmlTextWriter writer = new XmlTextWriter(new StringWriter(builder)))
+                //{
+                //    writer.Formatting = Formatting.Indented;
+                //    document.Save(writer);
+                //}
+                using (var xmlWriter = XmlWriter.Create(builder, settings))
                 {
-                    element.Save(xmlWriter);
+                    document.Save(xmlWriter);
                 }
 
-                return stringBuilder.ToString();
+                return builder.ToString();
+                //doc.Save(writer);
+                //var stringBuilder = new StringBuilder();
+
+                //var element = XElement.Parse(xml);
+
+                //var settings = new XmlWriterSettings();
+                //settings.OmitXmlDeclaration = true;
+                //settings.Indent = true;
+                //settings.NewLineOnAttributes = newLineOnAttribue;
+
+                //using (var xmlWriter = XmlWriter.Create(stringBuilder, settings))
+                //{
+                //    element.Save(xmlWriter);
+                //}
+
+                //return stringBuilder.ToString();
             }
 
             catch
