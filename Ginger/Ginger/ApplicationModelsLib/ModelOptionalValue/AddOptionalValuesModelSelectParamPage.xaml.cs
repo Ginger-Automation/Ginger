@@ -182,7 +182,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 if (AddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
                 {
-                    AddModelOptionalValuesWizard.mAAMB.OptionalValuesTemplates.Clear();
+                    ((ApplicationAPIModel)AddModelOptionalValuesWizard.mAAMB).OptionalValuesTemplates.Clear();
                     AddModelOptionalValuesWizard.ParameterValuesByNameDic.Clear();
                 }
                 else if (AddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)

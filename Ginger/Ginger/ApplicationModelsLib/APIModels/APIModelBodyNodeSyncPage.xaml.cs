@@ -253,15 +253,10 @@ namespace Ginger.ApplicationModelsLib.APIModels
         {
             foreach (NodeToDelete xmlNode in NodesToDeleteList)
             {
-                Regex regex = null;
-                if (requestBodyType == ApplicationAPIUtils.eContentType.XML)
-                    regex = new Regex(@"{(.*?)\}");
-                else if(requestBodyType == ApplicationAPIUtils.eContentType.JSon)
-                    regex = new Regex(@"<(.*?)\>");
-
-                foreach (Match match in regex.Matches(xmlNode.ParentOuterXml))
-                    if (mParamsPendingDelete.Where(x => x.PlaceHolder == match.Value).FirstOrDefault() == null)
-                        mParamsPendingDelete.Add(mApplicationAPIModel.AppModelParameters.Where(x => x.PlaceHolder == match.Value).FirstOrDefault());
+                List<AppModelParameter> nodeParamsList = mApplicationAPIModel.AppModelParameters.Where(x => xmlNode.ParentOuterXml.Contains(x.PlaceHolder)).ToList();
+                foreach(AppModelParameter param in nodeParamsList)
+                    if (mParamsPendingDelete.Where(x => x.PlaceHolder == param.PlaceHolder).FirstOrDefault() == null)
+                        mParamsPendingDelete.Add(param);
             }
         }
 
@@ -284,17 +279,6 @@ namespace Ginger.ApplicationModelsLib.APIModels
             else
             {
                 System.Windows.MessageBox.Show("Can't parse API Model Request Body, please check it's syntax is valid.", "Error while parsing request body", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.OK);
-            }
-        }
-
-        private class NodeToDelete
-        {
-            public string ParentOuterXml;
-            public Tuple<int, int> stringNodeRange;
-
-            public NodeToDelete(string parentOuterXml)
-            {
-                ParentOuterXml = parentOuterXml;
             }
         }
     }

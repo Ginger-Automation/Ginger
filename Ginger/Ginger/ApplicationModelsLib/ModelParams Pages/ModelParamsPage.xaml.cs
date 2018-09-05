@@ -53,7 +53,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             }
         }
 
-        public ModelParamsPage(ApplicationAPIModel AAMB)
+        public ModelParamsPage(ApplicationModelBase AAMB)
         {
             InitializeComponent();
             mAAMB = AAMB;
@@ -156,7 +156,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         }
         private void ImportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {            
-            WizardWindow.ShowWizard(new AddModelOptionalValuesWizard((ApplicationAPIModel)mAAMB));
+            WizardWindow.ShowWizard(new AddModelOptionalValuesWizard((ApplicationModelBase)mAAMB));
             ModelParametersGrid.DataSourceList = mAAMB.AppModelParameters;
         }
         private void UploadToGlobalParam(object sender, RoutedEventArgs e)
@@ -195,36 +195,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void DeleteParams_Clicked(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult messageResult = System.Windows.MessageBoxResult.No;
-            if ((((ApplicationAPIModel)mAAMB).ContentType == ApplicationAPIUtils.eContentType.XML || ((ApplicationAPIModel)mAAMB).ContentType == ApplicationAPIUtils.eContentType.JSon))
-            {
-                messageResult = System.Windows.MessageBox.Show("Do you want to delete also nodes from request body that contain those parameters?", "Delete nodes from request body?", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No);
-            }
-
-            if (messageResult == System.Windows.MessageBoxResult.Yes)
-            {
-                OnParamDeleteEvent(new List<AppModelParameter>(ModelParametersGrid.Grid.SelectedItems.Cast<AppModelParameter>().ToList()));
-            }
-            else if(messageResult == System.Windows.MessageBoxResult.No)
-            {
-                if (ModelParametersGrid.Grid.SelectedItems.Count == 0)
-                {
-                    Reporter.ToUser(eUserMsgKeys.SelectItemToDelete);
-                    return;
-                }
-
-                ModelParametersGrid.DataSourceList.SaveUndoData();
-
-                List<object> SelectedItemsList = ModelParametersGrid.Grid.SelectedItems.Cast<object>().ToList();
-
-                foreach (object o in SelectedItemsList)
-                {
-                    ModelParametersGrid.DataSourceList.Remove(o);
-                }
-            }
+            DeleteParams(false);
         }
 
         private void ClearAllParams_Clicked(object sender, RoutedEventArgs e)
+        {
+            DeleteParams(true);
+        }
+
+        private void DeleteParams(bool ClearAllParams)
         {
             MessageBoxResult messageResult = System.Windows.MessageBoxResult.No;
             if ((((ApplicationAPIModel)mAAMB).ContentType == ApplicationAPIUtils.eContentType.XML || ((ApplicationAPIModel)mAAMB).ContentType == ApplicationAPIUtils.eContentType.JSon))
@@ -234,7 +213,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             if (messageResult == System.Windows.MessageBoxResult.Yes)
             {
-                OnParamDeleteEvent(new List<AppModelParameter>(ParamsList));
+                if (ClearAllParams)
+                    OnParamDeleteEvent(new List<AppModelParameter>(ParamsList));
+                else
+                    OnParamDeleteEvent(new List<AppModelParameter>(ModelParametersGrid.Grid.SelectedItems.Cast<AppModelParameter>().ToList()));
             }
             else if (messageResult == System.Windows.MessageBoxResult.No)
             {
@@ -244,10 +226,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     return;
                 }
 
-                if ((Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == MessageBoxResult.Yes)
+                if (ClearAllParams && (Reporter.ToUser(eUserMsgKeys.SureWantToDeleteAll)) == MessageBoxResult.Yes)
                 {
                     ModelParametersGrid.DataSourceList.SaveUndoData();
                     ParamsList.ClearAll();
+                }
+                else
+                {
+                    ModelParametersGrid.DataSourceList.SaveUndoData();
+                    List<object> SelectedItemsList = ModelParametersGrid.Grid.SelectedItems.Cast<object>().ToList();
+                    foreach (object o in SelectedItemsList)
+                        ModelParametersGrid.DataSourceList.Remove(o);
                 }
             }
         }
