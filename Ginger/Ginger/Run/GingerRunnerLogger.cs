@@ -3,6 +3,8 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Ginger.Run
@@ -11,68 +13,86 @@ namespace Ginger.Run
     {
         string fileName; 
 
-        public GingerRunnerLogger(string fileName)
+        public GingerRunnerLogger(string loggerFile)
         {
-            this.fileName = fileName;
+            this.fileName = loggerFile;
         }
 
-        public void LogAction(Act act)
+        public void LogAction(Act logAction)
         {
-            if (!act.EnableActionLogConfig) return;
+            if (!logAction.EnableActionLogConfig) return;
 
             StringBuilder strBuilder = new StringBuilder();
-            ActionLogConfig actionLogConfig = act.ActionLogConfig;
+            ActionLogConfig actionLogConfig = logAction.ActionLogConfig;
             FormatTextTable formatTextTable = new FormatTextTable();
 
             // log timestamp
             strBuilder.AppendLine(GetCurrentTimeStampHeader());
 
             // create a new log file if not exists and append the contents
-            strBuilder.AppendLine("[Action] " + act.ActionDescription);
+            strBuilder.AppendLine("[Action] " + logAction.ActionDescription);
             strBuilder.AppendLine("[Text] " + actionLogConfig.ActionLogText);
 
             // log all the input values
             if (actionLogConfig.LogInputVariables)
             {
                 strBuilder.AppendLine("[Input Values]");
-                formatTextTable.AddRowHeader("Parameter", "Value");
-                foreach (ActInputValue actInputValue in act.InputValues)
+                formatTextTable = new FormatTextTable();
+
+                List<string> colHeaders = new List<string>();
+                colHeaders.Add("Parameter");
+                colHeaders.Add("Value");
+                formatTextTable.AddRowHeader(colHeaders);
+
+                foreach (ActInputValue actInputValue in logAction.InputValues)
                 {
-                    formatTextTable.AddRowValues(actInputValue.ItemName, actInputValue.Value);
+                    List<string> colValues = new List<string>();
+                    colValues.Add(actInputValue.ItemName);
+                    colValues.Add(actInputValue.Value);
+                    formatTextTable.AddRowValues(colValues);
                 }
-                strBuilder.AppendLine(formatTextTable.CreateTable());
-                formatTextTable.clear();
-            }            
+                strBuilder.AppendLine(formatTextTable.FormatLogTable());
+            }
 
             // log all the output variables
             if (actionLogConfig.LogOutputVariables)
             {
                 strBuilder.AppendLine("[Return Values]");
-                formatTextTable.AddRowHeader("Parameter", "Expected", "Actual");
-                foreach (ActReturnValue actReturnValue in act.ReturnValues)
+                formatTextTable = new FormatTextTable();
+
+                List<string> colHeaders = new List<string>();
+                colHeaders.Add("Parameter");
+                colHeaders.Add("Expected");
+                colHeaders.Add("Actual");
+                formatTextTable.AddRowHeader(colHeaders);
+
+                foreach (ActReturnValue actReturnValue in logAction.ReturnValues)
                 {
-                    formatTextTable.AddRowValues(actReturnValue.ItemName, actReturnValue.Expected, actReturnValue.Actual);
+                    List<string> colValues = new List<string>();
+                    colValues.Add(actReturnValue.ItemName);
+                    colValues.Add(actReturnValue.Expected);
+                    colValues.Add(actReturnValue.Actual);
+                    formatTextTable.AddRowValues(colValues);
                 }
-                strBuilder.AppendLine(formatTextTable.CreateTable());
-                formatTextTable.clear();
+                strBuilder.AppendLine(formatTextTable.FormatLogTable());
             }
 
             // action status
             if (actionLogConfig.LogRunStatus)
             {
-                strBuilder.AppendLine("[Run Status] " + act.Status);
+                strBuilder.AppendLine("[Run Status] " + logAction.Status);
             }
 
             // action elapsed time
             if (actionLogConfig.LogElapsedTime)
             {
-                strBuilder.AppendLine("[Elapsed Time (In Secs)] " + act.ElapsedSecs);
+                strBuilder.AppendLine("[Elapsed Time (In Secs)] " + logAction.ElapsedSecs);
             }
 
             // action error
             if (actionLogConfig.LogError)
             {
-                strBuilder.AppendLine("[Error] " + act.Error);
+                strBuilder.AppendLine("[Error] " + logAction.Error);
             }
 
             // flush value expression
@@ -95,7 +115,6 @@ namespace Ginger.Run
         {
             System.IO.File.AppendAllText(fileName, strContents);
         }
-
 
     }
 }

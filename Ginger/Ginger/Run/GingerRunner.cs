@@ -756,7 +756,10 @@ namespace Ginger.Run
 
                 // function for action log 
                 // Add flag on GingerRunner of LogLevel
-                if (mGingerRunnerLogger == null) mGingerRunnerLogger = new GingerRunnerLogger(@"c:\temp\GingerLog.txt");  // temp move from here
+
+                string loggerFile = Ginger.App.UserProfile.Solution.Folder + @"ExecutionResults\" + FileSystem.AppendTimeStamp("GingerLog.txt");
+
+                if (mGingerRunnerLogger == null) mGingerRunnerLogger = new GingerRunnerLogger(loggerFile);
                 mGingerRunnerLogger.LogAction(act);
             }
         }

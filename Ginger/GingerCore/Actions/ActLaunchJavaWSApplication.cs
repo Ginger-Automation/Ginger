@@ -771,7 +771,7 @@ namespace GingerCore.Actions
         {
             string NoTitleWindow = "no title window";// this was added earlier but not in sync with other drivers.
             string NoTitleWindow_2 = "NoTitleWindow";// In PB we use NoTitleWindow for blank title windows. So adding this to have uniformity across the drivers.
-            if ((mWaitForWindowTitle_Calc.ToLower().Contains(NoTitleWindow)|| mWaitForWindowTitle_Calc.ToLower().Contains(NoTitleWindow_2)) && title.Equals(String.Empty))
+            if ((mWaitForWindowTitle_Calc.ToLower().Contains(NoTitleWindow)|| mWaitForWindowTitle_Calc.ToLower().Contains(NoTitleWindow_2.ToLower())) && title.Equals(String.Empty))
             {
                 return true;               
             }

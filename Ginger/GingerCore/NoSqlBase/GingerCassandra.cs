@@ -34,7 +34,7 @@ namespace GingerCore.NoSqlBase
         ActDBValidation Act = null;
         dynamic myclass = null;
         string mUDTName = null;
-
+       
         public override List<eNoSqlOperations> GetSupportedActions()
         {
             List<eNoSqlOperations> SupportedActions = new List<eNoSqlOperations>();
@@ -43,7 +43,7 @@ namespace GingerCore.NoSqlBase
             return SupportedActions;
         }
 
-        public void Connect()
+        public bool Connect()
         {
             try
             {
@@ -70,6 +70,7 @@ namespace GingerCore.NoSqlBase
                 {
                     session = cluster.Connect();
                 }
+                return true;
             }
             catch (Exception e)
             {
