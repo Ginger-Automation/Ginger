@@ -1,0 +1,11 @@
+{
+  "ServerUri": "http://ilrnaginger02:7070/",
+  "Organization": null,
+  "ProjectKey": "Automation123",
+  "Profiles": {
+    "CSharp": {
+      "ProfileKey": "AWWkgiBbBNePrggcjzPK",
+      "ProfileTimestamp": "2018-09-04T17:45:16+05:30"
+    }
+  }
+}
