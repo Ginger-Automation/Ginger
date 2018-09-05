@@ -110,7 +110,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
 
                 }
-                ((ApplicationAPIModel)mAAMB).OptionalValuesTemplates.Clear();
+                if(mAAMB is ApplicationAPIModel)
+                    ((ApplicationAPIModel)mAAMB).OptionalValuesTemplates.Clear();
             }
             ProcessEnded();
         }

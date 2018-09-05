@@ -137,17 +137,11 @@ namespace Amdocs.Ginger.Common.GeneralLib
             return JT;
         }
 
-        //
-        // Summary:
-        //     Selects a Newtonsoft.Json.Linq.JToken using a JPath expression. Selects the token
-        //     that matches the object path.
-        //
-        // Parameters:
-        //   path:
-        //     A System.String that contains a JPath expression.
-        //
-        // Returns:
-        //     A Newtonsoft.Json.Linq.JToken, or null.
+        /// <summary>
+        /// Selects a Newtonsoft.Json.Linq.JToken using a JPath expression. Selects the token that matches the object path.
+        /// </summary>
+        /// <param name="path">A System.String that contains a JPath expression.</param>
+        /// <returns>A Newtonsoft.Json.Linq.JToken, or null.</returns>
         public JToken SelectToken(string path)
         {
             return JT.SelectToken(path);

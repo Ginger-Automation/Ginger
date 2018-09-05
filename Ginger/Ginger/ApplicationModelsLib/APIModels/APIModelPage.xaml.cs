@@ -59,7 +59,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             WorkSpace.Instance.RefreshGlobalAppModelParams(mApplicationAPIModel);
             page = new ModelParamsPage(mApplicationAPIModel);
             xDynamicParamsFrame.Content = page;
-            page.ParamDeleteEvent += DeleteParamEvent;
 
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel);
             xOutputTemplateFrame.Content = outputTemplatePage;
@@ -69,22 +68,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             UpdateModelParametersTabHeader();
             mApplicationAPIModel.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             UpdateOutputTemplateTabHeader();
-        }
-
-        private void DeleteParamEvent(ParamEventArgs eventArgs)
-        {
-            bool someParamContainPath = false;
-            foreach (AppModelParameter param in eventArgs.ModelParamsList)
-                if (!string.IsNullOrEmpty(param.Path))
-                    someParamContainPath = true;
-
-
-            APIModelBodyNodeSyncPage bodyNodeSyncPage;
-            if (someParamContainPath)
-            {
-                bodyNodeSyncPage = new APIModelBodyNodeSyncPage(mApplicationAPIModel, eventArgs.ModelParamsList);
-                bodyNodeSyncPage.ShowAsWindow();
-            }
         }
 
         private void InitializeUIByActionType()
