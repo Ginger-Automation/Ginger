@@ -51,10 +51,10 @@ namespace Ginger.SolutionAutoSaveAndRecover
         private void closeEventHandler(object sender, EventArgs e)
         {
             App.AppSolutionRecover.CleanUp();
-            if (mRecoverwasDone)
-            {
-                App.MainWindow.RefreshSolutionPage();
-            }
+            //if (mRecoverwasDone)
+            //{
+            //    App.MainWindow.RefreshSolutionPage();
+            //}
         }
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {

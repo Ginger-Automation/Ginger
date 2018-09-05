@@ -153,7 +153,7 @@ namespace Ginger.ALM.Repository
                     }
 
                     //Refresh the solution tree
-                    App.MainWindow.RefreshSolutionPage();
+                    //App.MainWindow.RefreshSolutionPage();
 
                     Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
                 }

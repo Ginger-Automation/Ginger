@@ -140,8 +140,8 @@ namespace Ginger.ALM.Repository
                         testSetsItemsToImport.Add(testSetItem);
                     }
                 }
-                if (bfsWereDeleted)
-                    App.MainWindow.RefreshSolutionPage();
+                //if (bfsWereDeleted)
+                //    App.MainWindow.RefreshSolutionPage();
 
                 if (testSetsItemsToImport.Count == 0) return false; //noting to import
 
@@ -213,7 +213,7 @@ namespace Ginger.ALM.Repository
                 }
 
                 //Refresh the solution tree
-                App.MainWindow.RefreshSolutionPage();
+                //App.MainWindow.RefreshSolutionPage();
 
                 Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
 

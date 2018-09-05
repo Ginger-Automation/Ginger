@@ -374,12 +374,11 @@ namespace Ginger.Reports
             _pageGenericWin.Hide();
 
             App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
-            App.UserProfile.Solution.Save();
+            App.UserProfile.Solution.SaveSolutionConfigurations();
 
             if (_existingTemplatePage)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");
-                // _HTMLReportConfiguration.Save();
+                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_HTMLReportConfiguration);
                 Reporter.CloseGingerHelper();
             }

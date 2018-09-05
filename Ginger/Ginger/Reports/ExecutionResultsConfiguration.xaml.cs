@@ -120,7 +120,7 @@ namespace Ginger.Reports
                 return;
             }
 
-            App.UserProfile.Solution.Save();
+            App.UserProfile.Solution.SaveSolutionConfigurations();
 
             // validate the pathes of inserted folders
             Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);

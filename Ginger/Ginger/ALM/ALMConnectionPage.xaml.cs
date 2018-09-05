@@ -417,15 +417,8 @@ namespace Ginger.ALM
         private void SaveALMConfigs()
         {
             ALMIntegration.Instance.SyncConfigurations();
-            //Save Solution Details
-            RepositoryItem RI = App.UserProfile.Solution;
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, RI.GetNameForFileName(), "item");
-            RI.Save();
-
-            //Save User Profile
             App.UserProfile.SaveUserProfile();
-
-            Reporter.CloseGingerHelper();
+            App.UserProfile.Solution.SaveSolutionConfigurations();
         }
 
         private void ALMRadioButton_Checked_Changed(object sender, RoutedEventArgs e)

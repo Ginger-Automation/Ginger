@@ -76,7 +76,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Label lbl2 = new Label();
             lbl2.FontWeight = FontWeights.ExtraBold;
             lbl2.Margin = new Thickness(-10, 0, 0, 0);
-            App.ObjFieldBinding(lbl2, Label.ContentProperty, Solution, Solution.Fields.Name);
+            App.ObjFieldBinding(lbl2, Label.ContentProperty, Solution, nameof(Solution.Name));
 
             Label lbl3 = new Label();
             lbl3.Margin = new Thickness(-10, 0, 0, 0);
@@ -162,7 +162,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mSolutionPage == null)
             {
-                mSolutionPage = new SolutionPage(Solution);
+                mSolutionPage = new SolutionPage();
             }
 
             return mSolutionPage;
@@ -196,7 +196,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void RefreshSolution(object sender, RoutedEventArgs e)
         {
-            App.MainWindow.RefreshSolution_Click(sender, e);
+            //App.MainWindow.RefreshSolution_Click(sender, e);
         }
         
         ContextMenu ITreeViewItem.Menu()

@@ -275,11 +275,11 @@ namespace Ginger.SourceControl
                 xProcessingIcon.Visibility = Visibility.Collapsed;
                 if (SourceControlIntegration.conflictFlag)
                 {
-                    App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage, null, true);
+                    //App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage, null, true);
                     SourceControlIntegration.conflictFlag = false;
                 }
-                else
-                App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage,null, false);
+                //else
+                    //App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage,null, false);
                 
             }
             finally
@@ -424,11 +424,11 @@ namespace Ginger.SourceControl
 
         private void CloseWindow()
         {
-            if (mCheckInWasDone)
-            {
-                //TODO: remove sol refresh afetr all RIs moved to new repo and using new tree item
-                App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage, null);                
-            }
+            //if (mCheckInWasDone)
+            //{
+            //    //TODO: remove sol refresh afetr all RIs moved to new repo and using new tree item
+            //    App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage, null);                
+            //}
 
             // Callback is used in new tree items to refresh the relevant tree
             if (CallBackOnClose != null)

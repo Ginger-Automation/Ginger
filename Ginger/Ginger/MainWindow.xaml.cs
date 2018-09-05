@@ -97,9 +97,6 @@ namespace Ginger
             lblBetaFeatures.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.UsingStatus));
             ErrorsLabel.Visibility = Visibility.Collapsed;
 
-            RefreshSolutionBtn.LargeImageSource = ImageMakerControl.GetImage(eImageType.Refresh, 32, 32);
-            RefreshSolutionBtn.SmallImageSource = ImageMakerControl.GetImage(eImageType.Refresh, 16, 16);
-
             btnRefresh.LargeImageSource = ImageMakerControl.GetImage(eImageType.Refresh, 32, 32);
             btnRefresh.SmallImageSource = ImageMakerControl.GetImage(eImageType.Refresh, 16, 16);
 
@@ -368,7 +365,7 @@ namespace Ginger
             if (MainRibbon.SelectedItem == SolutionRibbon)
             {
 
-                LoadOrShowPage(typeof(SolutionExplorerPage));
+                LoadOrShowPage(typeof(SolutionPage));
                 return;
             }
 
@@ -498,9 +495,7 @@ namespace Ginger
                     SupportRibbon.Visibility = Visibility.Visible;
                 else
                     SupportRibbon.Visibility = Visibility.Collapsed;
-
-                RefreshSolutionBtn.Visibility = Visibility.Visible;
-                SaveAllBtn.Visibility = Visibility.Visible;
+               
                 btnUpgrade.Visibility = Visibility.Visible;
                 ViewSolutionFiles.Visibility = Visibility.Visible;
                 xFindAndReplaceSolutionPageButton.Visibility = Visibility.Visible;
@@ -515,9 +510,7 @@ namespace Ginger
                 xRun.Visibility = Visibility.Collapsed;
                 xResources.Visibility = Visibility.Collapsed;
                 xBusinessFlows.Visibility = Visibility.Collapsed;
-                xConfigurations.Visibility = Visibility.Collapsed;
-                RefreshSolutionBtn.Visibility = Visibility.Collapsed;
-                SaveAllBtn.Visibility = Visibility.Collapsed;
+                xConfigurations.Visibility = Visibility.Collapsed;               
                 btnUpgrade.Visibility = Visibility.Collapsed;
                 btnRecover.Visibility = Visibility.Collapsed;
                 ViewSolutionFiles.Visibility = Visibility.Collapsed;
@@ -667,16 +660,14 @@ namespace Ginger
         {
             //handle solution ribbon tools
             if (App.UserProfile.Solution == null)
-            {
-                RefreshSolutionBtn.IsEnabled = false;
+            {                
                 ViewSolutionFiles.IsEnabled = false;
                 CheckInSolutionBtn.IsEnabled = false;
                 GetLatestSolutionBtn.IsEnabled = false;
                 btnUpgrade.IsEnabled = false;
             }
             else
-            {
-                RefreshSolutionBtn.IsEnabled = true;
+            {                
                 ViewSolutionFiles.IsEnabled = true;
                 CheckInSolutionBtn.IsEnabled = true;
                 GetLatestSolutionBtn.IsEnabled = true;
@@ -684,30 +675,7 @@ namespace Ginger
             }
         }
 
-        public void RefreshSolution_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                RefreshSolutionBtn.IsEnabled = false;
-                RefreshSolutionPage();
-            }
-            finally
-            {
-                RefreshSolutionBtn.IsEnabled = true;
-            }
-        }
-
-        public void RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType refreshType = SolutionExplorerPage.eRefreshSolutionType.InitAllPage, Type treeFolderType = null, bool RefreshSol = true)
-        {
-            SolutionExplorerPage solExplorPage = (SolutionExplorerPage)(from p1 in mPageList where p1.GetType() == typeof(SolutionExplorerPage) select p1).FirstOrDefault();
-            if (solExplorPage != null)
-            {
-                if (refreshType == SolutionExplorerPage.eRefreshSolutionType.InitAllPage)
-                    solExplorPage.Init(App.UserProfile.Solution, RefreshSol);
-                else
-                    solExplorPage.RefreshTreeItemFolder(treeFolderType);
-            }
-        }
+     
 
         private void btnSourceControlConnectionDetails_Click(object sender, RoutedEventArgs e)
         {
@@ -727,10 +695,7 @@ namespace Ginger
 
             AutoLogProxy.UserOperationStart("btnSourceControlCheckIn_Click");
 
-            SolutionExplorerPage solPage =
-      (SolutionExplorerPage)(from p1 in mPageList where p1.GetType() == typeof(SolutionExplorerPage) select p1).FirstOrDefault();
-            if (solPage != null)
-                App.CheckIn(App.UserProfile.Solution.Folder);
+            App.CheckIn(App.UserProfile.Solution.Folder);
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -740,22 +705,15 @@ namespace Ginger
             if (Reporter.ToUser(eUserMsgKeys.LoseChangesWarn) == MessageBoxResult.No) return;
 
             AutoLogProxy.UserOperationStart("btnSourceControlGetLatest_Click");
-            SolutionExplorerPage solPage =
-                  (SolutionExplorerPage)(from p1 in mPageList where p1.GetType() == typeof(SolutionExplorerPage) select p1).FirstOrDefault();
-            if (solPage != null)
-            {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.GetLatestFromSourceControl);
-                if (string.IsNullOrEmpty(App.UserProfile.Solution.Folder))
-                    Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "Invalid Path provided");
-                else
-                    SourceControlIntegration.GetLatest(App.UserProfile.Solution.Folder, App.UserProfile.Solution.SourceControl);
 
-                if (Reporter.ToUser(eUserMsgKeys.RefreshWholeSolution) == MessageBoxResult.Yes)
-                    RefreshSolutionPage();
-                //App.GingerRunner.UpdateApplicationAgents();
-                App.UpdateApplicationsAgentsMapping(false);
-                Reporter.CloseGingerHelper();
-            }
+            Reporter.ToGingerHelper(eGingerHelperMsgKey.GetLatestFromSourceControl);
+            if (string.IsNullOrEmpty(App.UserProfile.Solution.Folder))
+                Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "Invalid Path provided");
+            else
+                SourceControlIntegration.GetLatest(App.UserProfile.Solution.Folder, App.UserProfile.Solution.SourceControl);
+
+            App.UpdateApplicationsAgentsMapping(false);
+            Reporter.CloseGingerHelper();
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -774,20 +732,6 @@ namespace Ginger
             AP.Init(App.UserProfile.Solution);
             AP.ShowAsWindow();
             AutoLogProxy.UserOperationEnd();
-        }
-
-        private async void btnSaveSolutions_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                SaveAllBtn.IsEnabled = false;
-                throw new NotImplementedException();
-                // App.LocalRepository.SaveAllSolutionDirtyItems(true);
-            }
-            finally
-            {
-                SaveAllBtn.IsEnabled = true;
-            }
         }
 
         private void btnSetTerminologyType_Click(object sender, RoutedEventArgs e)
@@ -817,15 +761,9 @@ namespace Ginger
         {
             AutoLogProxy.UserOperationStart("ResolveConflictsBtn_Click");
 
-            SolutionExplorerPage solPage =
-                  (SolutionExplorerPage)(from p1 in mPageList where p1.GetType() == typeof(SolutionExplorerPage) select p1).FirstOrDefault();
-            if (solPage != null)
-            {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.ResolveSourceControlConflicts);
-                SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl, App.UserProfile.Solution.Folder, side);
-                App.MainWindow.RefreshSolutionPage();
-                Reporter.CloseGingerHelper();
-            }
+            Reporter.ToGingerHelper(eGingerHelperMsgKey.ResolveSourceControlConflicts);
+            SourceControlIntegration.ResolveConflicts(App.UserProfile.Solution.SourceControl, App.UserProfile.Solution.Folder, side);
+            Reporter.CloseGingerHelper();
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -1026,22 +964,20 @@ namespace Ginger
         {
             BDDIntegration BDDI = new BDDIntegration();
             bool imported = BDDI.ImportFeatureFile();
-            if (imported)
-                RefreshSolutionPage();
 
-            Page SolutionPage = App.PageList.Where(x => x.Title == "Solution Explorer").FirstOrDefault();
-            //((SolutionExplorerPage)SolutionPage).LoadSoultionTree2();
-            object o = ((SolutionExplorerPage)SolutionPage).SolutionTreeView.Tree.GetItemAt(0);
-            ((TreeViewItem)((TreeViewItem)o).Items[0]).IsSelected = true;
-            foreach (TreeViewItem item in ((ItemCollection)((TreeViewItem)o).Items))
-            {
-                if (item.Tag is BusinessFlowsFolderTreeItem)
-                {
-                    ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Business Flows", Refresh: true, ExpandAll: false);
-                    ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Documents", Refresh: true, ExpandAll: true);
-                    ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Features", Refresh: true, ExpandAll: true);
-                }
-            }
+            //Page SolutionPage = App.PageList.Where(x => x.Title == "Solution Explorer").FirstOrDefault();
+            ////((SolutionExplorerPage)SolutionPage).LoadSoultionTree2();
+            //object o = ((SolutionExplorerPage)SolutionPage).SolutionTreeView.Tree.GetItemAt(0);
+            //((TreeViewItem)((TreeViewItem)o).Items[0]).IsSelected = true;
+            //foreach (TreeViewItem item in ((ItemCollection)((TreeViewItem)o).Items))
+            //{
+            //    if (item.Tag is BusinessFlowsFolderTreeItem)
+            //    {
+            //        ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Business Flows", Refresh: true, ExpandAll: false);
+            //        ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Documents", Refresh: true, ExpandAll: true);
+            //        ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Features", Refresh: true, ExpandAll: true);
+            //    }
+            //}
 
         }
 
@@ -1049,20 +985,19 @@ namespace Ginger
         {
             BDDIntegration BDDI = new BDDIntegration();
             BDDI.CreateFeatureFile();
-            RefreshSolutionPage();
-
-            Page SolutionPage = App.PageList.Where(x => x.Title == "Solution Explorer").FirstOrDefault();
-            //((SolutionExplorerPage)SolutionPage).LoadSoultionTree2();
-            object o = ((SolutionExplorerPage)SolutionPage).SolutionTreeView.Tree.GetItemAt(0);
-            ((TreeViewItem)((TreeViewItem)o).Items[0]).IsSelected = true;
-            foreach (TreeViewItem item in ((ItemCollection)((TreeViewItem)o).Items))
-            {
-                if (item.Tag is BusinessFlowsFolderTreeItem)
-                {
-                    ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Documents", Refresh: true, ExpandAll: true);
-                    ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Features", Refresh: true, ExpandAll: true);
-                }
-            }
+            //RefreshSolutionPage();
+            //Page SolutionPage = App.PageList.Where(x => x.Title == "Solution Explorer").FirstOrDefault();
+            ////((SolutionExplorerPage)SolutionPage).LoadSoultionTree2();
+            //object o = ((SolutionExplorerPage)SolutionPage).SolutionTreeView.Tree.GetItemAt(0);
+            //((TreeViewItem)((TreeViewItem)o).Items[0]).IsSelected = true;
+            //foreach (TreeViewItem item in ((ItemCollection)((TreeViewItem)o).Items))
+            //{
+            //    if (item.Tag is BusinessFlowsFolderTreeItem)
+            //    {
+            //        ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Documents", Refresh: true, ExpandAll: true);
+            //        ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Features", Refresh: true, ExpandAll: true);
+            //    }
+            //}
         }
 
         private void btnLaunchConsole_Click(object sender, RoutedEventArgs e)

@@ -63,14 +63,13 @@
                     <RibbonButton Label="Open"  Click="btnOpenSolutions_Click"  ContextMenu="{x:Null}"  LargeImageSource="{StaticResource @Open_32x32}" ToolTip="Open Existing Solution" SmallImageSource="{StaticResource @Open_16x16}"></RibbonButton>
                     <RibbonButton Label="New" Click="btnNewSolutions_Click"  ContextMenu="{x:Null}" ToolTip="Create New Solution" LargeImageSource="{StaticResource @Add_32x32}" SmallImageSource="{StaticResource @Add_16x16}" AutomationProperties.AutomationId="QA-NewSolutionButton"></RibbonButton>
                     <RibbonButton x:Name="DownloadSolutionBtn" Label="Download Solution"  ToolTip="Download Solution from SVN"  ContextMenu="{x:Null}" Click="btnSourceControlDownloadSolution_Click" LargeImageSource="{StaticResource @Download_32x32}" SmallImageSource="{StaticResource @Download_16x16}"></RibbonButton>
-                    <RibbonButton x:Name="RefreshSolutionBtn" ToolTip="Refresh Solution"  ContextMenu="{x:Null}" Label="Refresh"  Click="RefreshSolution_Click"></RibbonButton>
-                    <RibbonButton x:Name="SaveAllBtn" Label="Save All" ToolTip="Save all pending changes done currently"  ContextMenu="{x:Null}" Click="btnSaveSolutions_Click" LargeImageSource="{StaticResource @SaveAll_32x32}" SmallImageSource="{StaticResource @Save_16x16}"></RibbonButton>
+                    <!--<RibbonButton x:Name="RefreshSolutionBtn" ToolTip="Refresh Solution"  ContextMenu="{x:Null}" Label="Refresh"  Click="RefreshSolution_Click"></RibbonButton>-->
+                    <!--<RibbonButton x:Name="SaveAllBtn" Label="Save All" ToolTip="Save all pending changes done currently"  ContextMenu="{x:Null}" Click="btnSaveSolutions_Click" LargeImageSource="{StaticResource @SaveAll_32x32}" SmallImageSource="{StaticResource @Save_16x16}"></RibbonButton>-->
                     <RibbonButton x:Name="btnUpgrade" Label="Upgrade" ToolTip="Upgrade all Solution items files to latest version"  ContextMenu="{x:Null}" Click="btnUpgrade_Click" LargeImageSource="{StaticResource @Upgrade_32x32}" SmallImageSource="{StaticResource @Upgrade_16x16}"></RibbonButton>
                     <RibbonButton x:Name="ViewSolutionFiles" Label="View Files"  ContextMenu="{x:Null}" ToolTip="View Solution Files from File Explorer "  Click="ViewSolutionFiles_Click"  LargeImageSource="{StaticResource @Glass_32x32}" SmallImageSource="{StaticResource @Glass_16x16}"></RibbonButton>
                     <RibbonButton x:Name="AnalyzerButton" Label="Solution Analyzer"  ContextMenu="{x:Null}" ToolTip="Analyze Solution to Detect Issues" Click="AnalyzerButton_Click" LargeImageSource="{StaticResource @Stethoscope_32x32.png}" SmallImageSource="{StaticResource @Stethoscope_16x16}"></RibbonButton>
                     <RibbonButton x:Name="xFindAndReplaceSolutionPageButton" Label="Find &amp; Replace"  ContextMenu="{x:Null}" ToolTip="Find and Replace" Click="FindAndReplaceSolutionPageButton_Click" LargeImageSource="{StaticResource @MagnifyingGlass_32x32.png}" SmallImageSource="{StaticResource @MagnifyingGlass_24x24.png}"></RibbonButton>
                     <RibbonButton x:Name="btnRecover" Label="Recover" ToolTip="Recover all Solution items files "  ContextMenu="{x:Null}" Click="btnRecover_Click" ></RibbonButton>
-
                 </RibbonGroup>
                 <RibbonGroup x:Name="SolutionGherkin" Header="BDD" Visibility="Collapsed">
                     <RibbonButton x:Name="ImportFeatureFile" Visibility="Collapsed" ContextMenu="{x:Null}" ToolTip="Import Gherkin Feature File" Click="ImportFeatureFile_Click"  Label="Import Feature File" LargeImageSource="{StaticResource @FeatureFile_32x32 }" SmallImageSource="{StaticResource @FeatureFile_16X16}" />
@@ -85,9 +84,7 @@
                         <RibbonMenuItem x:Name="ResolveConflictsLocalMenuItem"  Click="ResolveConflictsLocalMenuItem_Click"  ContextMenu="{x:Null}"  Header="Keep Local Changes" Icon="{StaticResource TBD32x32}"/>
                         <RibbonMenuItem x:Name="ResolveConflictsServerMenuItem"  Click="ResolveConflictsServerMenuItem_Click"  ContextMenu="{x:Null}"  Header="Accept Server Changes" Icon="{StaticResource TBD32x32}"/>
                     </RibbonMenuButton>
-                    
                 </RibbonGroup>
-               
                 <RibbonGroup x:Name="ALMConfigurationsGroup" Header="ALM" ContextMenu="{x:Null}" >
                     <RibbonMenuButton x:Name="ALMMenuBtn" Label="ALM"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @ALM_32x32.png}">
                         <RibbonMenuItem x:Name="ALMConnectionSettingsMenuItem" ContextMenu="{x:Null}"  Header="ALM Connection Settings" Click="ALMConfigButton_Click" Icon="{StaticResource TBD32x32}"/>
@@ -95,7 +92,6 @@
                         <RibbonMenuItem x:Name="ALMDefectsProfilesMenuItem" ContextMenu="{x:Null}"  Header="ALM Defect's Profiles" Click="ALMDefectsProfiles_Click" Icon="{StaticResource TBD32x32}"/>
                         <RibbonMenuItem x:Name="ALMManagerReportMenuItem" ContextMenu="{x:Null}"  Header="ALM Manager Report" Click="QCManagerReport_Click" Icon="{StaticResource TBD32x32}"/>
                     </RibbonMenuButton>
-                    
                 </RibbonGroup>
             </RibbonTab>
 

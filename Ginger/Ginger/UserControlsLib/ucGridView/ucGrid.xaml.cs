@@ -352,7 +352,7 @@ namespace Ginger
         #region #####Grid Handlers
         public object Title
         {
-            get { return lblTitle.Content; }
+            get { return xSimpleHeaderTitle.Content; }
 
             //TODO: FIXME - due to STA driver like IB move Activity will change the caption
             // Send the MainWindow Dispatcher for updates using main thread
@@ -360,7 +360,7 @@ namespace Ginger
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    lblTitle.Content = value;
+                    xSimpleHeaderTitle.Content = value;
                 });
 
             }
@@ -372,19 +372,19 @@ namespace Ginger
         }
         public Visibility ShowHeader
         {
-            get { return Header.Visibility; }
-            set { Header.Visibility = value; }
+            get { return xSimpleHeader.Visibility; }
+            set { xSimpleHeader.Visibility = value; }
         }
         public Visibility ShowTitle
         {
-            get { return lblTitle.Visibility; }
-            set { lblTitle.Visibility = value; }
+            get { return xSimpleHeaderTitle.Visibility; }
+            set { xSimpleHeaderTitle.Visibility = value; }
         }
 
         public Style TitleStyle
         {
-            get { return lblTitle.Style; }
-            set { lblTitle.Style = value; }
+            get { return xSimpleHeaderTitle.Style; }
+            set { xSimpleHeaderTitle.Style = value; }
         }
 
         public bool SetTitleLightStyle
@@ -400,9 +400,38 @@ namespace Ginger
         public void UpdateTitleStyle()
         {
             if (SetTitleLightStyle)
-                lblTitle.Style = (Style)TryFindResource("@ucGridTitleLightStyle");
+                xSimpleHeaderTitle.Style = (Style)TryFindResource("@ucGridTitleLightStyle");
             else
-                lblTitle.Style = (Style)TryFindResource("@ucTitleStyle_3");
+                xSimpleHeaderTitle.Style = (Style)TryFindResource("@ucTitleStyle_3");
+        }
+
+        public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName= "",  RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null)
+        {
+            xSimpleHeaderTitle.Visibility = Visibility.Collapsed;
+            xEnhancedHeader.Visibility = Visibility.Visible;
+
+            xEnhancedHeaderIcon.ImageType = itemTypeIcon;
+
+            if (string.IsNullOrEmpty(itemTypeName))
+                xEnhancedHeaderTitle.Content = xSimpleHeaderTitle.Content.ToString();
+            else
+                xEnhancedHeaderTitle.Content = itemTypeName;
+
+            if (saveAllHandler != null)
+            {
+                xEnhancedHeaderSaveAllButton.Click += saveAllHandler;
+                xEnhancedHeaderSaveAllButton.Visibility = Visibility.Visible;
+            }
+            else
+                xEnhancedHeaderSaveAllButton.Visibility = Visibility.Collapsed;
+
+            if (addHandler != null)
+            {
+                xEnhancedHeaderAddButton.Click += addHandler;
+                xEnhancedHeaderAddButton.Visibility = Visibility.Visible;
+            }
+            else
+                xEnhancedHeaderAddButton.Visibility = Visibility.Collapsed;
         }
 
         public Visibility ShowRefresh
@@ -1911,7 +1940,7 @@ public void RemoveCustomView(string viewName)
 
         public void SetTitleStyle(Style titleStyle)
         {
-            lblTitle.Style = titleStyle;
+            xSimpleHeaderTitle.Style = titleStyle;
         }
 
         private void Btn_MarkUnMarkAll(object sender, RoutedEventArgs e)

@@ -30,19 +30,48 @@ namespace Ginger.TagsLib
     /// <summary>
     /// Interaction logic for TagsEditorPage.xaml
     /// </summary>
-    public partial class SolutionTagsEditorPage : Page
+    public partial class TagsPage : Page
     {
+        public enum eViewMode { Solution, SpecificList }
+
+        eViewMode mViewMode;
         private ObservableList<RepositoryItemTag> mTags;
         GenericWindow genWin = null;
 
-        public SolutionTagsEditorPage(ObservableList<RepositoryItemTag> tags)
+        public TagsPage(eViewMode viewMode, ObservableList<RepositoryItemTag> tags = null)
         {
             InitializeComponent();
 
-            this.mTags = tags;
+            mViewMode = viewMode;
+            mTags = tags;
+
+            if (mViewMode == eViewMode.Solution)
+                App.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+
             SetTagsGridView();
-            TagsGrid.DataSourceList = tags;
-            TagsGrid.Grid.CellEditEnding += Grid_CellEditEnding;
+            SetGridData();
+        }
+
+        private void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(UserProfile.Solution))
+                SetGridData();
+        }
+
+        private void SetGridData()
+        {
+            if (mViewMode == eViewMode.Solution)
+            {
+                if (App.UserProfile.Solution != null)
+                {
+                    mTags = App.UserProfile.Solution.Tags;
+                }
+                else
+                {
+                    mTags = new ObservableList<RepositoryItemTag>();
+                }
+            }
+            xTagsGrid.DataSourceList = mTags;
         }
 
         private void Grid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -59,21 +88,31 @@ namespace Ginger.TagsLib
 
         private void SetTagsGridView()
         {
+            if (mViewMode == eViewMode.Solution)
+            {
+                xTagsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Tag, "Tags", saveAllHandler: saveBtn_Click, addHandler: AddButton);
+                xTagsGrid.ShowUpDown = Visibility.Visible;
+                xTagsGrid.ShowAdd = Visibility.Collapsed;
+            }
+            else
+            {
+                xTagsGrid.ShowTitle = Visibility.Collapsed;
+                xTagsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddButton));
+            }
+
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-
             defView.GridColsView.Add(new GridColView() { Field = RepositoryItemTag.Fields.Name, Header = "Name", WidthWeight = 40 });
             defView.GridColsView.Add(new GridColView() { Field = RepositoryItemTag.Fields.Description, Header = "Description", WidthWeight = 40 });
+            xTagsGrid.SetAllColumnsDefaultView(defView);
+            xTagsGrid.InitViewItems();
 
-            TagsGrid.SetAllColumnsDefaultView(defView);
-            TagsGrid.InitViewItems();
-
-            TagsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddButton));
+            xTagsGrid.Grid.CellEditEnding += Grid_CellEditEnding;
         }
 
         private void AddButton(object sender, RoutedEventArgs e)
         {
-            TagsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
+            xTagsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
             mTags.Add(new RepositoryItemTag());
         }
 
@@ -93,17 +132,15 @@ namespace Ginger.TagsLib
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.UserProfile.Solution.Name, "item");
-            TagsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
+            xTagsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
             CleanUnValidTags();
-            App.UserProfile.Solution.Save();
-            Reporter.CloseGingerHelper();
+            App.UserProfile.Solution.SaveSolutionConfigurations();
         }
 
         private void closeBtn_Click(object sender, EventArgs e)
         {
             CleanUnValidTags();
-            TagsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
+            xTagsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
             genWin.Close();
         }
 

@@ -39,11 +39,11 @@ namespace Amdocs.Ginger.Common.Enums
         Runner,
         Operations,
         Environment,
-        Parameter,
         HtmlReport,
         Variable,
         SharedRepositoryItem,
         NonSharedRepositoryItem,
+        Tag,
         #endregion
 
 
@@ -135,6 +135,7 @@ namespace Amdocs.Ginger.Common.Enums
         ItemModified,
         Email,
         List,
+        Parameter,
         ListGroup,
         FlowDiagram,
         EllipsisH,

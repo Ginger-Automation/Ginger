@@ -610,6 +610,9 @@
     <Compile Include="MenusLib\RunMenu.cs" />
     <Compile Include="RunSetLib\RunSetOperations.cs" />
     <Compile Include="Run\RunSetConfig.cs" />
+    <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
+      <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
@@ -1021,8 +1024,8 @@
     <Compile Include="SourceControl\SourceControlItemInfoPage.xaml.cs">
       <DependentUpon>SourceControlItemInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TagsLib\SolutionTagsEditorPage.xaml.cs">
-      <DependentUpon>SolutionTagsEditorPage.xaml</DependentUpon>
+    <Compile Include="TagsLib\TagsPage.xaml.cs">
+      <DependentUpon>TagsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TagsLib\TagsSelectorPage.xaml.cs">
       <DependentUpon>TagsSelectorPage.xaml</DependentUpon>
@@ -1836,9 +1839,6 @@
       <DependentUpon>RepositoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\GingerRunner.cs" />
-    <Compile Include="SolutionWindows\SolutionExplorerPage.xaml.cs">
-      <DependentUpon>SolutionExplorerPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SolutionWindows\TreeViewItems\AgentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\AgentTreeItem.cs" />
     <Compile Include="ALM\QC\TreeViewItems\QCTestSetTreeItem.cs" />
@@ -1862,7 +1862,7 @@
     <Compile Include="SolutionWindows\TreeViewItems\Legacy\SharedRepositoryTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedVariablesFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedVariableTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SolutionTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\SolutionTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\TreeViewItemBase.cs" />
     <Compile Include="ALM\QC\UploadBusinessFlowsPage.xaml.cs">
       <DependentUpon>UploadBusinessFlowsPage.xaml</DependentUpon>
@@ -1886,12 +1886,12 @@
     <Compile Include="SourceControl\SourceControlConnDetailsPage.xaml.cs">
       <DependentUpon>SourceControlConnDetailsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControlsLib\GridColView.cs" />
-    <Compile Include="UserControlsLib\GridViewDef.cs" />
+    <Compile Include="UserControlsLib\ucGridView\GridColView.cs" />
+    <Compile Include="UserControlsLib\ucGridView\GridViewDef.cs" />
     <Compile Include="UserControlsLib\UCDataColGrid.xaml.cs">
       <DependentUpon>UCDataColGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControlsLib\ucGrid.xaml.cs">
+    <Compile Include="UserControlsLib\ucGridView\ucGrid.xaml.cs">
       <DependentUpon>ucGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\UIHelpers.cs" />
@@ -2768,6 +2768,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="SolutionWindows\TargetApplicationsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TestLib\WizardLib\MyWizardDetailsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3319,7 +3323,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TagsLib\SolutionTagsEditorPage.xaml">
+    <Page Include="TagsLib\TagsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4123,10 +4127,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SolutionWindows\SolutionExplorerPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="ALM\QC\UploadBusinessFlowsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -4159,7 +4159,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControlsLib\ucGrid.xaml">
+    <Page Include="UserControlsLib\ucGridView\ucGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

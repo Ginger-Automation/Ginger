@@ -66,12 +66,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return GetChildrentGeneric<DataSourceBase>(mDataSourcesRepositoryFolder);
         }
 
-        List<ITreeViewItem> GetChildrentGeneric<T>(RepositoryFolder<T> RF)
-        {
-            return GetChildrentGeneric<DataSourceBase>(mDataSourcesRepositoryFolder);
-           
-        }
-
         public override ITreeViewItem GetTreeItem(object item)
         {
             if (item is DataSourceBase)
