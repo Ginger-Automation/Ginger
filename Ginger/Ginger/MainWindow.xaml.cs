@@ -396,7 +396,7 @@ namespace Ginger
         {
             RibbonTab rt = (RibbonTab)MainRibbon.SelectedItem;
             ToggleMainWindow();
-            if (rt.Tag != null)
+            if (rt != null && rt.Tag != null)
             {
                 MainFrame.Content = rt.Tag;
                 return;

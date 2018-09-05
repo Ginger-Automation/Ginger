@@ -73,6 +73,11 @@ namespace GingerWPFUnitTest.POMs
             SelectRibbonTab("AutomateRibbon");
         }
 
+        public void ClickSolutionTab()
+        {
+            SelectRibbonTab("Solution AID");
+        }
+
         internal void ClickResourcesRibbon()
         {
             SelectRibbonTab("Resources");

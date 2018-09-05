@@ -44,7 +44,7 @@ namespace GingerWPFUnitTest.POMs
         public void Click()
         {            
             Task.Factory.StartNew(() => { 
-                mDispatcher.Invoke(() =>
+                Dispatcher.Invoke(() =>
                 {
                     //TODO: verify enabled mButton.IsEnabled
                     // mButton.BorderThickness = new Thickness(3);

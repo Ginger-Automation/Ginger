@@ -16,10 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using GingerWPFUnitTest.POMs;
 using System;
-using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
@@ -30,22 +28,39 @@ namespace GingerWPFUnitTest
 
     public class GingerAutomator
     {
-        // Enable to run only one GingerWPF for all tests
-        public static Mutex mutex = new Mutex();
+        // Enable to run only one Ginger for all tests and one test at a time
+        public static Mutex TestMutex = new Mutex();
 
         static Ginger.App app;
         public MainWindowPOM MainWindowPOM;
+        static bool isReady = false;
+        Thread t = null;
 
-        //public static Dispatcher mDispatcher;
-        public void StartGinger()
+        static GingerAutomator gingerAutomatorInstance;
+        public static GingerAutomator Instance
         {
-            mutex.WaitOne();
+            get
+            {
+                if (app == null)
+                {
+                    gingerAutomatorInstance = new GingerAutomator();
+                    gingerAutomatorInstance.StartGinger();                    
+                }
+                while (!isReady)
+                {
+                    Thread.Sleep(100);
+                }
+                return gingerAutomatorInstance;
+            }
+        }
 
-            if (app != null) return;
+        
 
+        private void StartGinger()
+        {            
             Ginger.SplashWindow splash = null;
             // We start Ginger on STA thread
-            var t = new Thread(() =>
+            t = new Thread(() =>
             {
                 // we need sample class - Dummy
                 Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
@@ -64,7 +79,7 @@ namespace GingerWPFUnitTest
                     Thread.Sleep(100);
                 }
 
-                GingerPOMBase.mDispatcher = app.GetMainWindowDispatcher();
+                GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
                 MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
                 
                 // Makes the thread support message pumping                 
@@ -73,7 +88,7 @@ namespace GingerWPFUnitTest
 
 
             //// Configure the thread
-            t.SetApartmentState(ApartmentState.STA);
+            t.SetApartmentState(ApartmentState.STA);            
             t.Start();
 
             //max 60 seconds for Mainwindow to be ready
@@ -89,15 +104,23 @@ namespace GingerWPFUnitTest
             {
                 Thread.Sleep(100);
             }
-            // Here Ginger WPF is live and visible
-
+            // Here Ginger is live and visible
+            isReady = true;
         }
 
         
         internal void CloseGinger()
-        {
-            MainWindowPOM.Close();
-            mutex.ReleaseMutex();
+        {            
+            MainWindowPOM.Dispatcher.Invoke(() => {                
+                MainWindowPOM.Close();                
+                Thread.Sleep(1000);
+                int i = 0;
+                while (app.Windows.Count > 0 && i < 100) //max 10 seconds for closing all windows
+                {
+                    i++;
+                    Thread.Sleep(100);
+                }                                
+            });            
         }
 
 
@@ -155,7 +178,8 @@ namespace GingerWPFUnitTest
 
         internal void OpenSolution(string folder)
         {
-            GingerPOMBase.mDispatcher.Invoke(() =>
+            MainWindowPOM.ClickSolutionTab();
+            GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
                 Ginger.App.SetSolution(folder);                
@@ -164,7 +188,7 @@ namespace GingerWPFUnitTest
 
         internal void CloseSolution()
         {
-            GingerPOMBase.mDispatcher.Invoke(() =>
+            GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
                 Ginger.App.CloseSolution();

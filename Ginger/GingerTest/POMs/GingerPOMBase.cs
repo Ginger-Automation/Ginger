@@ -16,29 +16,22 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
 using GingerTest;
 using GingerTest.POMs.Common;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace GingerWPFUnitTest.POMs
 {
     public abstract class GingerPOMBase
     {
-        public static Dispatcher mDispatcher;
+        public static Dispatcher Dispatcher;
 
         public VisualCompare VisualCompare = new VisualCompare();
 
@@ -120,7 +113,7 @@ namespace GingerWPFUnitTest.POMs
         public void DoEvents()
         {
             DispatcherFrame frame = new DispatcherFrame();
-            mDispatcher.BeginInvoke(DispatcherPriority.Background, new DispatcherOperationCallback(ExitFrame), frame);
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, new DispatcherOperationCallback(ExitFrame), frame);
             Dispatcher.PushFrame(frame);
         }
 
@@ -137,7 +130,7 @@ namespace GingerWPFUnitTest.POMs
         /// <param name="action"></param>
         public void Execute(Action action)
         {
-            mDispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 action.Invoke();
                 SleepWithDoEvents(100);
