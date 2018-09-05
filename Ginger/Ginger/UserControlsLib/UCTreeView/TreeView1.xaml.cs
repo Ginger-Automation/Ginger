@@ -116,13 +116,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 xSearchClearBtn.Visibility = Visibility.Visible;
             }
             else
-            {                                                
+            {
+                xSearchNullText.Visibility = Visibility.Visible;
+                xSearchClearBtn.Visibility = Visibility.Collapsed;
                 List<TreeViewItem> pathNodes = new List<TreeViewItem>();
                 if (xTreeViewTree.mlastSelectedTVI!=null)
                 {
                     pathNodes = getSelecetdItemPathNodes(xTreeViewTree.mlastSelectedTVI);
                 }
-                ExpandCollapsePreviousState(xTreeViewTree.TreeItemsCollection, pathNodes);
+                CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
                 return;
             }
 
@@ -130,19 +132,19 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);
         }
         
-        private void ExpandCollapsePreviousState(ItemCollection itemCollection,List<TreeViewItem> pathNodes)
+        private void CollapseUnselectedTreeNodes(ItemCollection itemCollection,List<TreeViewItem> pathNodes)
         {                     
             foreach (TreeViewItem tvItem in itemCollection)
             {                                                
                 if (tvItem.HasItems)
                 {
-                    ExpandCollapsePreviousState(tvItem.Items, pathNodes);
+                    CollapseUnselectedTreeNodes(tvItem.Items, pathNodes);
                     foreach (TreeViewItem item in tvItem.Items)
                     {                        
                         if (!(pathNodes != null && pathNodes.Contains(item)))
                         {
                             item.IsExpanded = false;
-                            item.Visibility = System.Windows.Visibility.Visible;
+                            item.Visibility = Visibility.Visible;
                         }                                                
                     }
                 }                
