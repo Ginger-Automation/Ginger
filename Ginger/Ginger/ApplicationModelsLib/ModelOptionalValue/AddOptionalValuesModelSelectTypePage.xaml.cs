@@ -62,8 +62,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     break;
             }
 
-            RefreshButton.Source = ImageMakerControl.GetImage(eImageType.Refresh, 16, 16);
+            RefreshButton.Source = ImageMakerControl.GetImage(eImageType.Refresh, 8, 8);
+            xBrowseButtonIcon.Source = ImageMakerControl.GetImage(eImageType.OpenFolder, 8, 8);
+            xCreateTemplateExcelButtonIcon.Source = ImageMakerControl.GetImage(eImageType.PlusSquare, 8, 8);
+            ExcelViewDataButton.Source = ImageMakerControl.GetImage(eImageType.Th, 8, 8);
+            ExcelViewWhereButton.Source = ImageMakerControl.GetImage(eImageType.ThLarge, 8, 8);
+
             xSourceTypeComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
+            xSheetNameComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             SetFieldsGrid(); //XML & JSON
             SetDefaultPresentation();
         }
@@ -179,8 +185,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     FillSheetCombo();
                     xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
                     // AddModelOptionalValuesWizard.FinishEnabled = false;
-                    xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
+                    //xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
+                    xExcelViewDataButton.Visibility = Visibility.Collapsed;
+                    xExcelViewWhereButton.Visibility = Visibility.Collapsed;
                     xExcelGridSplitter.Visibility = Visibility.Collapsed;
+                    if (xSheetNameComboBox.Items.Count == 1)
+                    {
+                        xSheetNameComboBox.SelectedIndex = 0;
+                    }
                 }
                 else
                 {
@@ -219,7 +231,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xExcelFileStackPanel.Visibility = Visibility.Visible;
                 xSaveExcelLable.Visibility = Visibility.Visible;
                 xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
-                xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
+                //xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
+                xExcelViewDataButton.Visibility = Visibility.Collapsed;
+                xExcelViewWhereButton.Visibility = Visibility.Collapsed;
                 xExcelGridSplitter.Visibility = Visibility.Collapsed;
                 xSheetNameComboBox.Visibility = Visibility.Visible;
                 xSheetLable.Visibility = Visibility.Visible;
@@ -231,7 +245,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xExcelFileStackPanel.Visibility = Visibility.Collapsed;
                 xSaveExcelLable.Visibility = Visibility.Collapsed;
                 xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
-                xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
+                //xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
+                xExcelViewDataButton.Visibility = Visibility.Collapsed;
+                xExcelViewWhereButton.Visibility = Visibility.Collapsed;
                 xExcelGridSplitter.Visibility = Visibility.Collapsed;
                 xSheetNameComboBox.Visibility = Visibility.Collapsed;
                 xSheetLable.Visibility = Visibility.Collapsed;
@@ -245,7 +261,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xExcelFileStackPanel.Visibility = Visibility.Collapsed;
                 xSaveExcelLable.Visibility = Visibility.Collapsed;
                 xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
-                xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
+                //xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
+                xExcelViewDataButton.Visibility = Visibility.Collapsed;
+                xExcelViewWhereButton.Visibility = Visibility.Collapsed;
                 xExcelGridSplitter.Visibility = Visibility.Collapsed;
                 xSheetNameComboBox.Visibility = Visibility.Collapsed;
                 xSheetLable.Visibility = Visibility.Collapsed;
@@ -314,7 +332,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 if (!string.IsNullOrEmpty(xSheetNameComboBox.SelectedValue.ToString()))
                 {
                     xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
-                    xExcelViewButtonsDoclPanel.Visibility = Visibility.Visible;
+                    //xExcelViewButtonsDoclPanel.Visibility = Visibility.Visible;
+                    xExcelViewDataButton.Visibility = Visibility.Visible;
+                    xExcelViewWhereButton.Visibility = Visibility.Visible;
                     xExcelGridSplitter.Visibility = Visibility.Visible;
                     // AddModelOptionalValuesWizard.NextEnabled = false;
                 }
@@ -329,7 +349,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             mAddModelOptionalValuesWizard.ProcessStarted();
             mAddModelOptionalValuesWizard.ImportOptionalValues.ExcelFileName = xPathTextBox.Text;
             List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets();
-            GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
+            GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);            
             mAddModelOptionalValuesWizard.ProcessEnded();
         }
         private void xPathTextBox_TextChanged(object sender, TextChangedEventArgs e)

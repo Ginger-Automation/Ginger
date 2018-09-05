@@ -75,29 +75,40 @@
                     </StackPanel>
                     
                     <DockPanel Grid.Row="0" Grid.Column="2">
-                        <Button   x:Name="xBrowseButton"  Content="Browse"  Click="xBrowseButton_Click"  Style="{StaticResource @InputButtonStyle}" Height="20" Width="60"  HorizontalAlignment="Left" VerticalAlignment="Bottom"  Margin="2,0,1,0"/>
-                        <Button   x:Name="xCreateTemplateExcelButton" Content="Create Temlpate"  Click="xCreateTemplateExcelButton_Click"  Style="{StaticResource @InputButtonStyle}" Height="20" Width="100"  HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Create Template Of Excel File With Existing Parameters" Margin="2,0,5,0"/>
+                        <ToggleButton   x:Name="xBrowseButton"  Click="xBrowseButton_Click"  HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}"  Height="20" Width="20" Margin="2,0,1,0">
+                            <Image x:Name="xBrowseButtonIcon" />
+                        </ToggleButton>
+                        <ToggleButton   x:Name="xCreateTemplateExcelButton" Click="xCreateTemplateExcelButton_Click"  Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}"  Height="20" Width="20"  HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Create Template Of Excel File With Existing Parameters" Margin="2,0,5,0">
+                            <Image x:Name="xCreateTemplateExcelButtonIcon" />
+                        </ToggleButton>
                     </DockPanel>
-                    <Label Grid.Row="1" Name="xSaveExcelLable" Style="{StaticResource @LabelStyle}"  Content="Please save and close Excel after editing it." VerticalAlignment="Bottom"  />
-                    <StackPanel Grid.Row="2" Grid.ColumnSpan="2">
-                        <Label Name="xSheetLable"   HorizontalAlignment="Left" Content="Sheet:" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"  />
-                        <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"    VerticalAlignment="Center" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>                        
-                    </StackPanel>
-                    <ToggleButton x:Name="RefreshBtn" Grid.Row="2" Grid.Column="2" Click="RefreshButton_Click" ToolTip="Refresh Sheets" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="-105,0,0,0">
-                        <Image x:Name="RefreshButton" />
-                    </ToggleButton>
-                    <StackPanel Grid.Row="3" Grid.ColumnSpan="2">
-                        <Label Name="xSelectRowLable"  Style="{StaticResource @InputFieldLabelStyle}"  Content="Select Row(s) Where:" VerticalAlignment="Center"  />
-                        <TextBox x:Name="xSelectRowTextBox" Background="White" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger'."  Style="{StaticResource @MultiRowsTextBoxStyle}" Text ="" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" IsEnabled="true"/>
-                    </StackPanel>
+                    <Label Grid.Row="1" Name="xSaveExcelLable" Style="{StaticResource @LabelStyle}"  Content="Please save and close Excel after editing it." VerticalAlignment="Bottom" Margin="0,10,0,0" />
+                    <DockPanel Grid.Row="2" Grid.ColumnSpan="3">
+                        <StackPanel >
+                            <Label Name="xSheetLable"   HorizontalAlignment="Left" Content="Sheet:" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"  />
+                            <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"    VerticalAlignment="Center" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
+                        </StackPanel>
+                        <ToggleButton x:Name="RefreshBtn" Click="RefreshButton_Click" Margin="5,0,0,2" Height="20" Width="20" ToolTip="Refresh Sheets" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" >
+                            <Image x:Name="RefreshButton" />
+                        </ToggleButton>
+                        <ToggleButton x:Name="xExcelViewDataButton" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" Click="xExcelViewDataButton_Click" ToolTip="View All Data" HorizontalAlignment="Left" Height="20" Width="20" Margin="5,33,0,2" >
+                            <Image x:Name="ExcelViewDataButton" />
+                        </ToggleButton>
+                    </DockPanel>
 
+                    <DockPanel Grid.Row="3" Grid.ColumnSpan="3">
+                        <StackPanel Margin="0,10,0,0">
+                            <Label Name="xSelectRowLable"  Style="{StaticResource @InputFieldLabelStyle}"  Content="Select Row(s) Where:" VerticalAlignment="Center"  />
+                            <TextBox x:Name="xSelectRowTextBox" Background="White" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger'."  Style="{StaticResource @MultiRowsTextBoxStyle}" Text ="" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" IsEnabled="true"/>
+                        </StackPanel>
+                        <ToggleButton x:Name="xExcelViewWhereButton" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" Click="xExcelViewWhereButton_Click" ToolTip="View Filtered Data" DockPanel.Dock="Left" HorizontalAlignment="Left" Height="20" Width="20" Margin="5,35,0,0" >
+                            <Image x:Name="ExcelViewWhereButton" />
+                        </ToggleButton>
+                    </DockPanel>
+                    
                     <GridSplitter x:Name="xExcelGridSplitter" Grid.ColumnSpan="3" Grid.Row="4" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource @Skin1_ColorA}" IsEnabled="False" Margin="0,5,0,5" />
 
-                    <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">
-                        <DockPanel x:Name="xExcelViewButtonsDoclPanel" DockPanel.Dock="Top">
-                            <Button x:Name="xExcelViewDataButton" Style="{StaticResource @WindowButtonStyle}" Click="xExcelViewDataButton_Click" Content="View All Data" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="80" Padding="5,0,5,0" Margin="0,0,5,0" />
-                            <Button x:Name="xExcelViewWhereButton" Style="{StaticResource @WindowButtonStyle}" Click="xExcelViewWhereButton_Click" Content="View Filtered Data" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="110" Padding="5,0,5,0" Margin="0,0,5,0" />
-                        </DockPanel>
+                    <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">                        
                         <DockPanel x:Name="xExcelDataGridDockPanel" Margin="0,5,5,5">
                             <Label Style ="{StaticResource @InputFieldLabelStyle}" Content="Excel Data:" DockPanel.Dock="Left"></Label>
                             <DataGrid x:Name="xExcelDataGrid" DockPanel.Dock="Top" >

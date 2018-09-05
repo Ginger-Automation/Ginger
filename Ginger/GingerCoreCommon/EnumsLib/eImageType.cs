@@ -172,5 +172,8 @@ namespace Amdocs.Ginger.Common.Enums
         Bug,
         DataSource,
         PluginPackage,
+        PlusSquare,
+        Th,
+        ThLarge
     }
 }

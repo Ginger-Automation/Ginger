@@ -371,8 +371,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     RelevantParameterList.Add(prm);
                 }
             }
+            
             foreach (var tuple in SelectedParametersGridList.Zip(RelevantParameterList, (x, y) => (x, y)))
             {
+                
                 IsUpdate = false;
                 if (tuple.x.RequiredAsInput)//selected
                 {
@@ -381,11 +383,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
                         foreach (string val in ParameterValuesByNameDic[tuple.y.ItemName])
                         {
-                            OptionalValue OptionalValue = new OptionalValue();
-                            OptionalValue.IsDefault = val.Contains("*") ? true : false;
-                            OptionalValue.Value = val.Replace("*", "");
-                            tuple.y.OptionalValuesList.Add(OptionalValue);
-                            IsUpdate = true;
+                            if (!string.IsNullOrEmpty(val))
+                            {
+                                OptionalValue OptionalValue = new OptionalValue();
+                                OptionalValue.IsDefault = val.Contains("*") ? true : false;
+                                OptionalValue.Value = val.Replace("*", "");
+                                tuple.y.OptionalValuesList.Add(OptionalValue);
+                                IsUpdate = true; 
+                            }
                         }
                     }
                 }
@@ -397,9 +402,24 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     IsUpdate = true;
                 }
 
+                int countDefault = tuple.y.OptionalValuesList.Where(t => t.IsDefault == true).Count();
+                if (countDefault > 1)
+                {
+                    int indx = 1;
+                    foreach (var opVal in tuple.y.OptionalValuesList.Where(t => t.IsDefault == true))
+                    {
+                        if(indx < countDefault)
+                        {
+                            opVal.IsDefault = false;
+                        }
+                        indx++;
+                    }
+                }
+
                 if (IsUpdate)
                     UpdatedParameters++;
             }
+            
             if (ShowMessage)
                 Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParameters);
         }
@@ -428,25 +448,26 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     if (ParameterValuesByNameDic.ContainsKey(tuple.y.ItemName))
                     {
-                        bool isDefault = false;
                         string str = ParameterValuesByNameDic.FirstOrDefault(x => x.Key == CURRENT_VAL_PARAMETER).Key;
                         tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
                         if (string.IsNullOrEmpty(str))
                         {
                             tuple.y.OptionalValuesList.Add(new OptionalValue() { Value = CURRENT_VAL_PARAMETER, IsDefault = true });
-                            isDefault = true;
                         }
                         
                         foreach (string val in ParameterValuesByNameDic[tuple.y.ItemName])
                         {
-                            OptionalValue OptionalValue = new OptionalValue()
+                            if (!string.IsNullOrEmpty(val))
                             {
-                                Value = isDefault ? val.Replace("*", "") : val                                
-                            };
-                            OptionalValue.IsDefault = OptionalValue.Value.Contains("*") ? true : false;
+                                OptionalValue OptionalValue = new OptionalValue()
+                                {
+                                    Value = val.Replace("*", "")
+                                };
+                                OptionalValue.IsDefault = val.Contains("*") ? true : false;
 
-                            tuple.y.OptionalValuesList.Add(OptionalValue);
-                            IsUpdate = true;
+                                tuple.y.OptionalValuesList.Add(OptionalValue);
+                                IsUpdate = true; 
+                            }
                         }
                     }
                 }
@@ -456,6 +477,20 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tuple.y);
                     IsUpdate = true;
+                }
+
+                int countDefault = tuple.y.OptionalValuesList.Where(t => t.IsDefault == true).Count();
+                if (countDefault > 1)
+                {
+                    int indx = 1;
+                    foreach (var opVal in tuple.y.OptionalValuesList.Where(t => t.IsDefault == true))
+                    {
+                        if (indx < countDefault)
+                        {
+                            opVal.IsDefault = false;
+                        }
+                        indx++;
+                    }
                 }
 
                 if (IsUpdate)
@@ -508,9 +543,18 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                         foreach (Row row in rows)
                                         {
                                             DataRow tempRow = dt.NewRow();
-                                            for (int i = 0; i < row.Descendants<Cell>().Count(); i++)
+                                            int i = 0;
+                                            int preColIndx = 0;
+                                            foreach (Cell cel in row.Descendants<Cell>())
                                             {
-                                                tempRow[i] = GetCellValue(spreadSheetDocument, row.Descendants<Cell>().ElementAt(i));
+                                                int curColIndx = GetColumnIndexFromColumnName(cel.CellReference);
+                                                if ((preColIndx + 1) < curColIndx)
+                                                {
+                                                    i++;
+                                                }
+                                                tempRow[i] = GetCellValue(spreadSheetDocument, cel);
+                                                preColIndx = curColIndx;
+                                                i++;
                                             }
                                             dt.Rows.Add(tempRow);
                                         }
@@ -548,21 +592,95 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             return dt;
         }
 
+        /// <summary>
+        /// This method is used to get the cell value
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="cell"></param>
+        /// <returns></returns>
         private string GetCellValue(SpreadsheetDocument document, Cell cell)
         {
-            SharedStringTablePart stringTablePart = document.WorkbookPart.SharedStringTablePart;
-            string value = cell.CellValue.InnerXml;
+            string value = string.Empty;
+            try
+            {
+                SharedStringTablePart stringTablePart = document.WorkbookPart.SharedStringTablePart;
+                value = cell.CellValue.InnerXml;
 
-            if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
-            {
-                return stringTablePart.SharedStringTable.ChildElements[Int32.Parse(value)].InnerText;
+                if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+                {
+                    value = stringTablePart.SharedStringTable.ChildElements[Int32.Parse(value)].InnerText;
+                }
             }
-            else
+            catch (Exception)
             {
-                return value;
             }
+            return value;
         }
 
+        /// <summary>
+        /// This method is used to reve the integer from the cell refrence
+        /// </summary>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        private string RemoveIntegerFromColumnName(string columnName)
+        {
+            string cName = string.Empty;
+            try
+            {
+                columnName = columnName.Replace("#", "");
+                foreach (char ch in columnName)
+                {
+                    int num = 0;
+                    if (int.TryParse(Convert.ToString(ch), out num))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        cName = cName + Convert.ToString(ch);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return cName;
+        }
+
+        /// <summary>
+        /// This method is used to Get Column Index From ColumnName
+        /// </summary>
+        /// <param name="colName"></param>
+        /// <returns></returns>
+        private int GetColumnIndexFromColumnName(string colName)
+        {
+            int res = 0;
+            try
+            {
+                string colAdress = RemoveIntegerFromColumnName(colName);
+                int[] digits = new int[colAdress.Length];
+                for (int i = 0; i < colAdress.Length; ++i)
+                {
+                    digits[i] = Convert.ToInt32(colAdress[i]) - 64;
+                }
+                int mul = 1;
+                for (int pos = digits.Length - 1; pos >= 0; --pos)
+                {
+                    res += digits[pos] * mul;
+                    mul *= 26;
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// This method is used to get the sheets list
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetSheets()
         {
             List<string> lst = new List<string>();
@@ -573,11 +691,112 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 foreach (var item in workbookPart.Workbook.Descendants<Sheet>())
                 {
                     string sheetName = item.Name;
-                    lst.Add(sheetName);
+                    DataTable dt = GetExcelSheetDataBySheetName(sheetName);
+                    bool isValid = CheckIsSheetDataValid(dt);
+                    if (isValid)
+                    {
+                        lst.Add(sheetName); 
+                    }
                 }
             }
             return lst;
         }
+
+        /// <summary>
+        /// This method is used to check the datatable valid or not for ModelParameter import/export
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        private bool CheckIsSheetDataValid(DataTable dt)
+        {
+            bool isValid = false;
+            try
+            {
+                int indx = 1;
+                foreach (DataColumn col in dt.Columns)
+                {
+                    if ((indx == 1 && col.ColumnName == PARAMETER_NAME) ||
+                        (indx == 2 && col.ColumnName == DESCRIPTION))
+                    {
+                        isValid = true;
+                    }
+                    else
+                    {
+                        isValid = false;
+                        break;
+                    }
+                    indx++;
+                    if (indx > 2)
+                    {
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return isValid;
+        }
+
+        /// <summary>
+        /// This method is used to get the sheed data for the sheet
+        /// </summary>
+        /// <param name="shName"></param>
+        /// <returns></returns>
+        private DataTable GetExcelSheetDataBySheetName(string shName)
+        {
+            DataTable dt = new DataTable();
+            if (!string.IsNullOrEmpty(ExcelFileName))
+            {
+                using (SpreadsheetDocument spreadSheetDocument = SpreadsheetDocument.Open(ExcelFileName, false))
+                {
+                    try
+                    {
+                        WorkbookPart workbookPart = spreadSheetDocument.WorkbookPart;
+                        Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().Where(s => s.Name == shName).FirstOrDefault();
+                        if (sheet != null)
+                        {
+                            string relId = sheet.Id;
+                            WorksheetPart worksheetPart = (WorksheetPart)spreadSheetDocument.WorkbookPart.GetPartById(relId);
+                            if (worksheetPart != null)
+                            {
+                                SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+                                if (sheetData != null)
+                                {
+                                    IEnumerable<Row> rows = sheetData.Descendants<Row>();
+                                    if (rows != null && rows.Count() > 0)
+                                    {
+                                        foreach (Cell cell in rows.ElementAt(0))
+                                        {
+                                            dt.Columns.Add(GetCellValue(spreadSheetDocument, cell));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        switch (ex.Message)
+                        {
+                            case "Syntax error in FROM clause.":
+                                break;
+                            case "No value given for one or more required parameters.":
+                                if (ShowMessage)
+                                    Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                                break;
+                            default:
+                                if (ShowMessage)
+                                    System.Windows.MessageBox.Show(ex.Message);
+                                break;
+                        }
+                        return null;
+                    }
+                }
+            }
+            return dt;
+        }
+
         private string GetConnectionString()
         {
             string connString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=\"Excel 12.0 Xml;HDR=YES;\"",ExcelFileName);
@@ -635,7 +854,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             string filePath = string.Empty;
             try
             {                
-                int colCount = 2;                
+                int colCount = 100;                
                 foreach (var paramVal in parameters)
                 {
                     if (paramVal.OptionalValuesString.Contains(CURRENT_VAL_PARAMETER))
@@ -648,9 +867,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     }
                 }
 
-                DataTable dtTemplate = new DataTable("ApiParameters");
+                DataTable dtTemplate = new DataTable("ModelParameters");
                 dtTemplate.Columns.Add(PARAMETER_NAME, typeof(string));
                 dtTemplate.Columns.Add(DESCRIPTION, typeof(string));
+
+                colCount = colCount > 100 ? 200 : colCount;
                 for (int index = 1; index <= colCount; index++)
                 {
                     dtTemplate.Columns.Add(string.Format("Value {0}", index), typeof(string));
@@ -662,21 +883,17 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     dr[0] = Convert.ToString(prm.ItemName);
                     dr[1] = Convert.ToString(prm.Description);
 
-                    if (!string.IsNullOrEmpty(prm.OptionalValuesString))
+                    if (prm.OptionalValuesList.Count > 0)
                     {
-                        string opVals = string.Empty;
-                        opVals = prm.OptionalValuesString.Replace("{Current Value}*,", "").Replace("{Current Value}*", "").Replace("{Current Value},", "").Replace("{Current Value}", "");
-                        string[] vals = opVals.Split(',');
-                        if (vals != null && vals.Count() > 0)
+                        int index = 2;
+                        foreach (var item in prm.OptionalValuesList)
                         {
-                            for (int index = 1; index <= colCount; index++)
+                            if (!item.Value.StartsWith(CURRENT_VAL_PARAMETER))
                             {
-                                if (vals.Count() >= index)
-                                {
-                                    dr[index + 1] = Convert.ToString(vals[index - 1]);
-                                }
-                            } 
-                        } 
+                                dr[index] = Convert.ToString(item.Value);
+                                index++; 
+                            }
+                        }
                     }
                     dtTemplate.Rows.Add(dr);
                 }
@@ -751,8 +968,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
                 Sheet oSheet = sheets.Elements<Sheet>().Where(s => s.Name == sSheetName).FirstOrDefault();
                 if (oSheet != null)
-                    oSheet.Remove();
-                
+                {
+                    sSheetName += "_" + sheets.Elements<Sheet>().Count();
+                    //oSheet.Remove();
+                }
+
                 if (sheets.Elements<Sheet>().Count() > 0)
                 {
                     sheetId = sheets.Elements<Sheet>().Select(s => s.SheetId.Value).Max() + 1;
@@ -767,14 +987,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 foreach (DataColumn column in table.Columns)
                 {
                     columns.Add(column.ColumnName);
-                    if (indx < 2)
-                    {
-                        headerRow.AppendChild(GetCell(column.ColumnName, CellValues.String, 2)); 
-                    }
-                    else
-                    {
-                        headerRow.AppendChild(GetCell(column.ColumnName, CellValues.String, 1));
-                    }
+                    headerRow.AppendChild(GetCell(column.ColumnName, CellValues.String, 2));
                     indx++;
                 }
                 sheetData.AppendChild(headerRow);
