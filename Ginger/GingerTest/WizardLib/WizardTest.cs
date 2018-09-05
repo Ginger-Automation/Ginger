@@ -103,6 +103,7 @@ namespace GingerTest.WizardLib
         }
 
         [Level3]
+        [Ignore] //TODO FIXME
         [TestMethod]
         public void WizardWithWindowWidth()
         {
