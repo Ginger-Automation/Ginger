@@ -76,7 +76,8 @@ namespace Ginger.Actions
             if (!Directory.Exists(SHFilesPath))
                 Directory.CreateDirectory(SHFilesPath);
             string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-            .Where(s => s.EndsWith(".vbs") || s.EndsWith(".js") || s.EndsWith(".pl") || s.EndsWith(".bat") || s.EndsWith(".cmd")).ToArray();
+            .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
+            
             foreach (string file in fileEntries)
             {
                 string s = file.Replace(SHFilesPath, "");
@@ -120,10 +121,67 @@ namespace Ginger.Actions
             if (ScriptInterpreterComboBox.SelectedValue.ToString() == "Other")
             {
                 InterpreterPanel.Visibility = Visibility.Visible;
+                InterpreterPanelLabel.Visibility = Visibility.Visible;
+                ScriptNameComboBox.Items.Clear();
+                if (!Directory.Exists(SHFilesPath))
+                    Directory.CreateDirectory(SHFilesPath);
+                string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
+                .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
+
+                foreach (string file in fileEntries)
+                {
+                    string s = file.Replace(SHFilesPath, "");
+                    ScriptNameComboBox.Items.Add(s);
+                }
             }
-            else
+            else if (ScriptInterpreterComboBox.SelectedValue.ToString() == "BAT")
+            {
+                InterpreterPanel.Visibility = Visibility.Visible;
+                InterpreterPanelLabel.Visibility = Visibility.Collapsed;
+
+                ScriptNameComboBox.Items.Clear();
+                if (!Directory.Exists(SHFilesPath))
+                    Directory.CreateDirectory(SHFilesPath);
+                string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
+                .Where(s => s.ToLower().EndsWith(".bat")).ToArray();
+
+                foreach (string file in fileEntries)
+                {
+                    string s = file.Replace(SHFilesPath, "");
+                    ScriptNameComboBox.Items.Add(s);
+                }
+            }
+            else 
             {
                 InterpreterPanel.Visibility = Visibility.Collapsed;
+                if(ScriptInterpreterComboBox.SelectedValue.ToString() == "VBS")
+                {
+                    ScriptNameComboBox.Items.Clear();
+                    if (!Directory.Exists(SHFilesPath))
+                        Directory.CreateDirectory(SHFilesPath);
+                    string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
+                    .Where(s => s.ToLower().EndsWith(".vbs")).ToArray();
+
+                    foreach (string file in fileEntries)
+                    {
+                        string s = file.Replace(SHFilesPath, "");
+                        ScriptNameComboBox.Items.Add(s);
+                    }
+                }
+                else if (ScriptInterpreterComboBox.SelectedValue.ToString() == "JS")
+                {
+                    ScriptNameComboBox.Items.Clear();
+                    if (!Directory.Exists(SHFilesPath))
+                        Directory.CreateDirectory(SHFilesPath);
+                    string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
+                    .Where(s => s.ToLower().EndsWith(".js")).ToArray();
+
+                    foreach (string file in fileEntries)
+                    {
+                        string s = file.Replace(SHFilesPath, "");
+                        ScriptNameComboBox.Items.Add(s);
+                    }
+                }
             }
         }
     }

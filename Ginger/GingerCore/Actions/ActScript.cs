@@ -76,6 +76,7 @@ namespace GingerCore.Actions
         {            
             VBS,
             JS,
+            BAT,
             Other,
         }
         [IsSerializedForLocalRepository]
@@ -152,6 +153,12 @@ namespace GingerCore.Actions
             switch (ScriptInterpreterType)
             {
                 case eScriptInterpreterType.JS:
+                case eScriptInterpreterType.BAT:
+                    if (File.Exists(GetSystemDirectory() + @"\cmd.exe"))
+                        p.StartInfo.FileName = GetSystemDirectory() + @"\cmd.exe";
+                    else
+                        p.StartInfo.FileName = @"cmd";
+                    break;
                 case eScriptInterpreterType.VBS:
                    if(File.Exists(GetSystemDirectory()+@"\cscript.exe"))
                        p.StartInfo.FileName = GetSystemDirectory() + @"\cscript.exe";

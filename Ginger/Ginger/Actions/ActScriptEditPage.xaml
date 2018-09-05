@@ -12,8 +12,11 @@
             <Label Style="{StaticResource @InputFieldLabelStyle}">Script Interpreter</Label>
             <ComboBox x:Name="ScriptInterpreterComboBox" SelectionChanged="ScriptInterpreterComboBox_SelectionChanged"></ComboBox>
             <StackPanel x:Name="InterpreterPanel" Visibility="Collapsed">
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Script Interpreter</Label>
+                <StackPanel x:Name="InterpreterPanelLabel" Visibility="Collapsed">
+                <Label x:Name="ScriptInterpreterLabel" Style="{StaticResource @InputFieldLabelStyle}">Script Interpreter</Label>
                 <Actions:UCFileBrowser x:Name="ScriptInterPreter"/>
+                </StackPanel>
+
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Script Action</Label>
                 <ComboBox x:Name="ScriptActComboBox" SelectionChanged="ScriptActComboBox_SelectionChanged"></ComboBox>
             </StackPanel>
