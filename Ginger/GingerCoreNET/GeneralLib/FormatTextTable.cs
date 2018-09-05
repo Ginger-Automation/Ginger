@@ -51,44 +51,49 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         {
             StringBuilder sbr = new StringBuilder();
             string hyp = "-";
-            int rowNum = 0;
             int totRowLen = 0;
             int colLen = 0;
 
-            totRowLen = GetTotalRowLength();
-
-            sbr.AppendLine(hyp.PadRight(totRowLen + logDataTable.Columns.Count + 1, '-'));
-            foreach (DataRow row in logDataTable.Rows)
+            if (logDataTable != null && logDataTable.Columns.Count > 0)
             {
-                rowNum++;
-                if (rowNum == 1)
+                totRowLen = GetTotalRowLength();
+
+                // log line
+                sbr.AppendLine(hyp.PadRight(totRowLen + logDataTable.Columns.Count + 1, '-'));
+
+                // log table headers
+                int col = 0;
+                foreach (DataColumn dataCol in logDataTable.Columns)
                 {
-                    int col = 0;
+                    colLen = ColumnLength[col++];
+                    sbr.Append("|");
+                    sbr.Append(PadSpacesInString(dataCol.ColumnName, colLen));
+                }
+                sbr.AppendLine("|");
+
+                // log line
+                sbr.AppendLine(hyp.PadRight(totRowLen + logDataTable.Columns.Count + 1, '-'));
+
+                // log table rows
+                foreach (DataRow dataRow in logDataTable.Rows)
+                {
+                    col = 0;
                     foreach (DataColumn dataCol in logDataTable.Columns)
                     {
-                        colLen = ColumnLength[col++];
-                        sbr.Append("|");
-                        sbr.Append(PadSpacesInString(dataCol.ColumnName, colLen));
-                    }
-                    sbr.AppendLine("|");
-                }
-                else if (rowNum == 2)
-                {
-                    sbr.AppendLine(hyp.PadRight(totRowLen + logDataTable.Columns.Count + 1 , '-'));
-                }
-                else
-                {
-                    int col = 0;
-                    foreach (DataColumn dataCol in logDataTable.Columns)
-                    {
-                        string dataColVal = row[dataCol].ToString();
+                        string dataColVal = string.Empty;
+                        if (dataRow[dataCol] != null)
+                        {
+                            dataColVal = dataRow[dataCol].ToString();
+                        }
                         sbr.Append("|");
                         sbr.Append(PadSpacesInString(dataColVal, ColumnLength[col++]));
                     }
                     sbr.AppendLine("|");
-                }                
+                }
+
+                // log line
+                sbr.AppendLine(hyp.PadRight(totRowLen + logDataTable.Columns.Count + 1, '-'));
             }
-            sbr.AppendLine(hyp.PadRight(totRowLen + logDataTable.Columns.Count + 1, '-'));
 
             return sbr.ToString();
         }

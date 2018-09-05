@@ -12,25 +12,24 @@ namespace Ginger.Run
     {
         string fileName; 
 
-        public GingerRunnerLogger(string fileName)
+        public GingerRunnerLogger(string loggerFile)
         {
-            string loggerFile = App.UserProfile.Solution.Folder + @"ExecutionResults\" + FileSystem.AppendTimeStamp(fileName);
             this.fileName = loggerFile;
         }
 
-        public void LogAction(Act act)
+        public void LogAction(Act logAction)
         {
-            if (!act.EnableActionLogConfig) return;
+            if (!logAction.EnableActionLogConfig) return;
 
             StringBuilder strBuilder = new StringBuilder();
-            ActionLogConfig actionLogConfig = act.ActionLogConfig;
+            ActionLogConfig actionLogConfig = logAction.ActionLogConfig;
             FormatTextTable formatTextTable = new FormatTextTable();
 
             // log timestamp
             strBuilder.AppendLine(GetCurrentTimeStampHeader());
 
             // create a new log file if not exists and append the contents
-            strBuilder.AppendLine("[Action] " + act.ActionDescription);
+            strBuilder.AppendLine("[Action] " + logAction.ActionDescription);
             strBuilder.AppendLine("[Text] " + actionLogConfig.ActionLogText);
 
             // log all the input values
@@ -42,7 +41,7 @@ namespace Ginger.Run
                 ArrayList colHeaders = new ArrayList() { "Parameter", "Value" };
                 formatTextTable.AddRowHeader(colHeaders);
 
-                foreach (ActInputValue actInputValue in act.InputValues)
+                foreach (ActInputValue actInputValue in logAction.InputValues)
                 {
                     ArrayList colValues = new ArrayList() { actInputValue.ItemName, actInputValue.Value };
                     formatTextTable.AddRowValues(colValues);
@@ -59,7 +58,7 @@ namespace Ginger.Run
                 ArrayList colHeaders = new ArrayList() { "Parameter", "Expected", "Actual" };
                 formatTextTable.AddRowHeader(colHeaders);
 
-                foreach (ActReturnValue actReturnValue in act.ReturnValues)
+                foreach (ActReturnValue actReturnValue in logAction.ReturnValues)
                 {
                     ArrayList colValues = new ArrayList() { actReturnValue.ItemName, actReturnValue.Expected, actReturnValue.Actual };
                     formatTextTable.AddRowValues(colValues);
@@ -70,19 +69,19 @@ namespace Ginger.Run
             // action status
             if (actionLogConfig.LogRunStatus)
             {
-                strBuilder.AppendLine("[Run Status] " + act.Status);
+                strBuilder.AppendLine("[Run Status] " + logAction.Status);
             }
 
             // action elapsed time
             if (actionLogConfig.LogElapsedTime)
             {
-                strBuilder.AppendLine("[Elapsed Time (In Secs)] " + act.ElapsedSecs);
+                strBuilder.AppendLine("[Elapsed Time (In Secs)] " + logAction.ElapsedSecs);
             }
 
             // action error
             if (actionLogConfig.LogError)
             {
-                strBuilder.AppendLine("[Error] " + act.Error);
+                strBuilder.AppendLine("[Error] " + logAction.Error);
             }
 
             // flush value expression
