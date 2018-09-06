@@ -32,9 +32,9 @@ namespace GingerWPFUnitTest
         private static Mutex TestMutex = new Mutex();
 
         static Ginger.App app;
-        public MainWindowPOM MainWindowPOM;
+        public static MainWindowPOM MainWindowPOM;
         static bool isReady = false;
-        Thread t = null;
+        static Thread mGingerThread = null;
 
         static GingerAutomator gingerAutomatorInstance;  // currently we have only one Ginger running for all tests
         static int SessionCount = 0; // count how many seesions are waiting in queue
@@ -60,18 +60,21 @@ namespace GingerWPFUnitTest
             SessionCount--;
             TestMutex.ReleaseMutex();
 
-            
-            //if (SessionCount == 0)
-            //{
-            
-            //}            
+
+            if (SessionCount == 0)
+            {
+                gingerAutomatorInstance.CloseGinger();
+                app = null;
+                mGingerThread.Abort();
+            }            
         }
 
-        ~GingerAutomator()
-        {
-            gingerAutomatorInstance.CloseGinger();
-            app = null;
-        }
+
+        //Not sure if we get here!!!
+        //~GingerAutomator()
+        //{
+            
+        //}
 
         
       
@@ -80,36 +83,43 @@ namespace GingerWPFUnitTest
         {            
             Ginger.SplashWindow splash = null;
             // We start Ginger on STA thread
-            t = new Thread(() =>
+            mGingerThread = new Thread(() =>
             {
-                // we need sample class - Dummy
-                Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
-                Assembly asm1 = d.GetType().Assembly;
-                // Set the app resources to Ginger so image an other will be locally to Ginger
-                Application.ResourceAssembly = asm1;
-
-                app = new Ginger.App();
-                Ginger.App.RunningFromUnitTest = true;
-                splash = new Ginger.SplashWindow();
-                splash.Show();
-                //Ginger.App.UserProfile.AutoLoadLastSolution = false;                
-
-                while (!app.IsReady && splash.IsVisible)
+                try
                 {
-                    Thread.Sleep(100);
-                }
+                    // we need sample class - Dummy
+                    Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
+                    Assembly asm1 = d.GetType().Assembly;
+                    // Set the app resources to Ginger so image an other will be locally to Ginger
+                    Application.ResourceAssembly = asm1;
 
-                GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
-                MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
-                
-                // Makes the thread support message pumping                 
-                System.Windows.Threading.Dispatcher.Run();                
+                    app = new Ginger.App();
+                    Ginger.App.RunningFromUnitTest = true;
+                    splash = new Ginger.SplashWindow();
+                    splash.Show();
+                    //Ginger.App.UserProfile.AutoLoadLastSolution = false;                
+
+                    while (!app.IsReady && splash.IsVisible)
+                    {
+                        Thread.Sleep(100);
+                    }
+
+                    GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
+                    MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
+
+                    // Makes the thread support message pumping                 
+                    System.Windows.Threading.Dispatcher.Run();
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Ginger Thread Exception: " + ex.Message);
+                }
             });
 
 
             //// Configure the thread
-            t.SetApartmentState(ApartmentState.STA);            
-            t.Start();
+            mGingerThread.SetApartmentState(ApartmentState.STA);            
+            mGingerThread.Start();
 
             //max 60 seconds for Mainwindow to be ready
             int i = 0;
