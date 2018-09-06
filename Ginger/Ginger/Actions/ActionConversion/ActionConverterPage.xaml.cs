@@ -30,6 +30,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.ActionConversion;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Windows.Input;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -55,7 +56,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 mBusinessFlow.Activities.Where(x => x.SelectedForConversion == true).ToList().ForEach(x => { x.SelectedForConversion = false; });
             }
-            grdGroups.DataSourceList = businessFlow.Activities;
+            grdGroups.DataSourceList = GingerCore.General.ConvertListToObservableList(businessFlow.Activities.Where(x => x.Active == true).ToList());
             grdGroups.RowChangedEvent += grdGroups_RowChangedEvent;
             grdGroups.Title = "Name of Activities in '" + mBusinessFlow.Name + "'";
             grdGroups.btnMarkAll.Visibility = Visibility.Visible;
@@ -222,6 +223,8 @@ namespace Ginger.Actions.ActionConversion
             }
             else
             {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
                 // setting the conversion status label as visible
                 lblConversionStatus.Visibility = Visibility.Visible;
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.BusinessFlowConversion, null, mBusinessFlow.Name );
@@ -315,6 +318,7 @@ namespace Ginger.Actions.ActionConversion
                         }
                     }
                 }
+                Mouse.OverrideCursor = null;
             }
             lblConversionStatus.Visibility = Visibility.Hidden;
             Reporter.CloseGingerHelper();

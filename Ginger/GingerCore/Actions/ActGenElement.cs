@@ -166,6 +166,7 @@ namespace GingerCore.Actions
                     case eGenElementAction.Focus:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SetFocus;
                         break;
+                    case eGenElementAction.SetAttributeUsingJs:
                     case eGenElementAction.RunJavaScript:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.RunJavaScript;
                         break;

@@ -160,7 +160,6 @@ namespace GingerCore.Actions
 
         Act IObsoleteAction.GetNewAction()
         {
-            bool uIElementTypeAssigned = false;
             AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
 
@@ -190,15 +189,14 @@ namespace GingerCore.Actions
                         newAct.ElementAction = ActUIElement.eElementAction.GetTextLength;
                         break;
                     default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ActionType.ToString());
+                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ActionType.ToString().TrimStart("TextBox:".ToCharArray()).ToString());
                         break;
                 }
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
             newAct.ElementLocateValue = String.Copy(this.LocateValue);
-            if (!uIElementTypeAssigned)
-                newAct.ElementType = eElementType.TextBox;
+            newAct.ElementType = eElementType.TextBox;
             newAct.Active = true;
 
             return newAct;
