@@ -39,16 +39,13 @@ namespace GingerWPFUnitTest.AgentsLib
 
         static TestContext mTC;
         static string SolutionFolder;
-        static GingerAutomator mGingerAutomator = GingerAutomator.Instance;
+        static GingerAutomator mGingerAutomator;
 
         [ClassInitialize]
         public static void ClassInit(TestContext TC)
-        {
-            GingerAutomator.TestMutex.WaitOne();
-
+        {            
             mTC = TC;
             
-
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\AgentsTest");
             SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\AgentsTest");
             if (Directory.Exists(SolutionFolder))
@@ -58,13 +55,14 @@ namespace GingerWPFUnitTest.AgentsLib
 
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
 
+            mGingerAutomator = GingerAutomator.StartSession();
             mGingerAutomator.OpenSolution(SolutionFolder);            
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            GingerAutomator.TestMutex.ReleaseMutex();           
+            GingerAutomator.EndSession(); 
         }
 
 

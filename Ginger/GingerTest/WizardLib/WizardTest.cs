@@ -20,7 +20,7 @@ namespace GingerTest.WizardLib
         public static void ClassInit(TestContext TC)
         {
             //Arrange
-            mGingerAutomator = GingerAutomator.Instance;              
+            mGingerAutomator = GingerAutomator.StartSession();
         }
 
         [ClassCleanup]

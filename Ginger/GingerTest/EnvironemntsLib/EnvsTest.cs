@@ -32,7 +32,7 @@ namespace GingerWPFUnitTest
     public class EnvsTest
     {
         static TestContext mTC;
-        static GingerAutomator mGingerAutomator = GingerAutomator.Instance; // TestAssemblyInit.mGingerAutomator; //. new GingerAutomator();
+        static GingerAutomator mGingerAutomator; 
         static string SolutionFolder;
         // Mutex mutex = new Mutex();
 
@@ -50,17 +50,16 @@ namespace GingerWPFUnitTest
             }
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
 
-            GingerAutomator.TestMutex.WaitOne();
+            mGingerAutomator = GingerAutomator.StartSession();
+            GingerAutomator.StartSession(); 
             mGingerAutomator.OpenSolution(SolutionFolder);
         }
 
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {
-            //mGingerAutomator.CloseGinger();
-            //mGingerAutomator = null;
-            GingerAutomator.TestMutex.ReleaseMutex();
+        {            
+            GingerAutomator.EndSession(); 
         }
 
         // Run before each test

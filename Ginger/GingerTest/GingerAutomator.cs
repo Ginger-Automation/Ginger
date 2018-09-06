@@ -29,32 +29,45 @@ namespace GingerWPFUnitTest
     public class GingerAutomator
     {
         // Enable to run only one Ginger for all tests and one test at a time
-        public static Mutex TestMutex = new Mutex();
+        private static Mutex TestMutex = new Mutex();
 
         static Ginger.App app;
         public MainWindowPOM MainWindowPOM;
         static bool isReady = false;
         Thread t = null;
 
-        static GingerAutomator gingerAutomatorInstance;
-        public static GingerAutomator Instance
+        static GingerAutomator gingerAutomatorInstance;  // currently we have only one Ginger running for all tests
+        static int SessionCount = 0; // count how many seesions are waiting in queue
+
+        public static GingerAutomator StartSession()
         {
-            get
+            SessionCount++;
+            TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
+            if (app == null)
             {
-                if (app == null)
-                {
-                    gingerAutomatorInstance = new GingerAutomator();
-                    gingerAutomatorInstance.StartGinger();                    
-                }
+                gingerAutomatorInstance = new GingerAutomator();
+                gingerAutomatorInstance.StartGinger();
                 while (!isReady)
                 {
                     Thread.Sleep(100);
                 }
-                return gingerAutomatorInstance;
+            }            
+            return gingerAutomatorInstance;
+        }
+
+        public static void EndSession()
+        {
+            SessionCount--;            
+            if (SessionCount == 0)
+            {
+                gingerAutomatorInstance.CloseGinger();
+                app = null;
             }
+            TestMutex.ReleaseMutex();
         }
 
         
+      
 
         private void StartGinger()
         {            
@@ -120,8 +133,7 @@ namespace GingerWPFUnitTest
                     i++;
                     Thread.Sleep(100);
                 }
-                app.Shutdown();
-                Thread.Sleep(500);
+                app.Shutdown();                
             });            
         }
 

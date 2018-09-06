@@ -29,8 +29,8 @@ namespace GingerTest.HTMLReportsLib
         public static void ClassInitialize(TestContext TC)
         {
             CreateTestSolution();
-            
-            mGingerAutomator = GingerAutomator.Instance;             
+
+            mGingerAutomator = GingerAutomator.StartSession();
             mGingerAutomator.OpenSolution(solutionFolder);
 
         }

@@ -33,13 +33,13 @@ namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
     [TestClass]
     public class ImageMakerControlTest
     {
-        static GingerAutomator mGingerWPFAutomator = GingerAutomator.Instance; 
+        // static GingerAutomator mGingerWPFAutomator; 
         // Mutex mutex = new Mutex();
 
         [ClassInitialize]
         public static void ClassInit(TestContext TC)
         {
-            
+            // mGingerAutomator = GingerAutomator.StartSession();
         }
 
         [ClassCleanup]
