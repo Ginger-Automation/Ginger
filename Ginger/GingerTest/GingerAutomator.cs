@@ -32,7 +32,7 @@ namespace GingerWPFUnitTest
         private static Mutex TestMutex = new Mutex();
 
         static Ginger.App app;
-        public static MainWindowPOM MainWindowPOM;
+        public MainWindowPOM MainWindowPOM;
         static bool isReady = false;
         static Thread mGingerThread = null;
 
