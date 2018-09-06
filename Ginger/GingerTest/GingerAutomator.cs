@@ -113,13 +113,15 @@ namespace GingerWPFUnitTest
         {            
             MainWindowPOM.Dispatcher.Invoke(() => {                
                 MainWindowPOM.Close();                
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
                 int i = 0;
                 while (app.Windows.Count > 0 && i < 100) //max 10 seconds for closing all windows
                 {
                     i++;
                     Thread.Sleep(100);
-                }                                
+                }
+                app.Shutdown();
+                Thread.Sleep(500);
             });            
         }
 

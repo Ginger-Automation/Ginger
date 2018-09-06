@@ -645,7 +645,7 @@ namespace Ginger
                     ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
                     if (higherVersionFiles.Count > 0)
                     {
-                        if (App.RunningFromConfigFile == false)
+                        if (App.RunningFromConfigFile == false && RunningFromUnitTest == false)
                         {
                             UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
                             gingerUpgradePage.ShowAsWindow();
