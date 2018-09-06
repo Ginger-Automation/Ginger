@@ -47,7 +47,7 @@ namespace GingerCoreNET.Dictionaries
         Activity, Activities,
         ConversionMechanism,
         Variable, Variables,
-        RunSet, RunSets,
+        RunSet, RunSets
     }
 
     public class GingerDicser
