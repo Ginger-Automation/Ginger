@@ -57,13 +57,20 @@ namespace GingerWPFUnitTest
 
         public static void EndSession()
         {
-            SessionCount--;            
-            if (SessionCount == 0)
-            {
-                gingerAutomatorInstance.CloseGinger();
-                app = null;
-            }
+            SessionCount--;
             TestMutex.ReleaseMutex();
+
+            
+            //if (SessionCount == 0)
+            //{
+            
+            //}            
+        }
+
+        ~GingerAutomator()
+        {
+            gingerAutomatorInstance.CloseGinger();
+            app = null;
         }
 
         
