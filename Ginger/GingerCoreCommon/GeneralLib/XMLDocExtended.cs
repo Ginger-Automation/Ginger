@@ -222,7 +222,7 @@ namespace Amdocs.Ginger.Common
                 return stringBuilder.ToString();
             }
 
-            catch
+            catch(Exception ee)
             {
                 return xml;
             }
