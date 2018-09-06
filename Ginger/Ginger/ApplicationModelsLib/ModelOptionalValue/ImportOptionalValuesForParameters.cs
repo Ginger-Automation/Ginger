@@ -153,7 +153,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             Tuple<string, string> tuple = new Tuple<string, string>(XDN.LocalName, XDN.XPath);
             string Value = XDN.Value;
-            //XDN.Attributes;
+            
             if (OptionalValuesPerParameterDict.ContainsKey(tuple))
             {
                 OptionalValuesPerParameterDict[tuple].Add(Value);
@@ -174,9 +174,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     OptionalValuesPerParameterDict[attributetuple].Add(attributeValue);
                 }
                 else
-                {
+               
                     OptionalValuesPerParameterDict.Add(attributetuple, new List<string>() { attributeValue });
-                }
+                
 
             }
         }
