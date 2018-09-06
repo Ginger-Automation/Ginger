@@ -175,7 +175,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
                 else
                
-                    OptionalValuesPerParameterDict.Add(attributetuple, new List<string>() { attributeValue });
+                    OptionalValuesPerParameterDict.Add(attributetuple, new List<string> { attributeValue });
                 
 
             }
