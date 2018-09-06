@@ -48,12 +48,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         public  ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
         public  Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict;//XML&JSON
         public  ObservableList<GlobalAppModelParameter> mGlobalParamterList;
-        public  ApplicationAPIModel mAAMB;
+        public ApplicationModelBase mAAMB;
         public  ObservableList<AppModelParameter> ParamsList = new ObservableList<AppModelParameter>();//Grid presentation
         public  ObservableList<GlobalAppModelParameter> GlobalParamsList = new ObservableList<GlobalAppModelParameter>();//Grid presentation
 
         public eSourceType SourceType { get; set; }
-        public AddModelOptionalValuesWizard(ApplicationAPIModel AAMB)//Local Parameters
+        public AddModelOptionalValuesWizard(ApplicationModelBase AAMB)//Local Parameters
         {
             mAAMB = AAMB;
             ImportOptionalValues.ParameterType = ImportOptionalValuesForParameters.eParameterType.Local;
@@ -110,7 +110,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
 
                 }
-                mAAMB.OptionalValuesTemplates.Clear();
+                if(mAAMB is ApplicationAPIModel)
+                    ((ApplicationAPIModel)mAAMB).OptionalValuesTemplates.Clear();
             }
             ProcessEnded();
         }
