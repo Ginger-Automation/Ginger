@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -206,7 +206,9 @@ namespace Amdocs.Ginger.Common
             {
                 var stringBuilder = new StringBuilder();
 
-                var element = XElement.Parse(xml);
+                XmlDocument element = new XmlDocument();
+                element.LoadXml(xml);
+                //var element = XElement.Parse(xml);
 
                 var settings = new XmlWriterSettings();
                 settings.OmitXmlDeclaration = true;
