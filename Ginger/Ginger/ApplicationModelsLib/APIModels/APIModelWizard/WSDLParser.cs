@@ -73,6 +73,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         public override ObservableList<ApplicationAPIModel> ParseDocument(string URL, bool avoidDuplicatesNodes = false)
         {
             mURL = URL;
+            ContainingFolder = GetContainingFolderFromURL(URL);
+
 
             if (mServiceDescriptionsList.Count == 0)
             {
@@ -84,7 +86,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 if (import.Location.ToUpper().EndsWith("WSDL"))
                 {
-                    AddServiceDescription(import.Location);
+                    string CompleteURL = GetCompleteURL(import.Location);
+
+                    AddServiceDescription(CompleteURL);
                 }
             }
 
@@ -113,7 +117,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 }
             }
 
-            ContainingFolder = GetContainingFolderFromURL(URL);
+
 
             PopulateAllURLsList();
 
@@ -1655,8 +1659,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                             {
                                 string OperationInputMessageName = ((OperationInput)message).Message.Name;
                                 string OperationInputBindingName = bindingOperation.Input.Name;
-
-                                if ((!string.IsNullOrEmpty(OperationInputBindingName) && OperationInputMessageName == OperationInputBindingName) || (string.IsNullOrEmpty(OperationInputBindingName)))
+                                string OperationInputName = ((OperationInput)message).Name;
+                                if ((!string.IsNullOrEmpty(OperationInputBindingName) && OperationInputMessageName == OperationInputBindingName) || (string.IsNullOrEmpty(OperationInputBindingName)|| (!string.IsNullOrEmpty(OperationInputName) && (OperationInputName == OperationInputBindingName)) ))
                                 {
                                     OD.InputMessageName = OperationInputMessageName;
                                     OD.ParameterOrder = portTypeOperation.ParameterOrder;
