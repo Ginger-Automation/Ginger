@@ -560,7 +560,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                         }
                                         dt.Rows.RemoveAt(0);
 
-                                        if (WithWhere)
+                                        if (WithWhere && !string.IsNullOrEmpty(ExcelWhereCondition))
                                         {
                                             dt = dt.Select(ExcelWhereCondition).CopyToDataTable();
                                         }
@@ -867,7 +867,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     }
                 }
 
-                DataTable dtTemplate = new DataTable("ModelParameters");
+                string tableName = fileName.StartsWith("GlobalParameters") ? "GlobalModelParameters" : "ModelParameters";
+                DataTable dtTemplate = new DataTable(tableName);
                 dtTemplate.Columns.Add(PARAMETER_NAME, typeof(string));
                 dtTemplate.Columns.Add(DESCRIPTION, typeof(string));
 
@@ -890,7 +891,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         {
                             if (!item.Value.StartsWith(CURRENT_VAL_PARAMETER))
                             {
-                                dr[index] = Convert.ToString(item.Value);
+                                dr[index] = item.IsDefault ? Convert.ToString(item.Value) + "*" : Convert.ToString(item.Value);
                                 index++; 
                             }
                         }

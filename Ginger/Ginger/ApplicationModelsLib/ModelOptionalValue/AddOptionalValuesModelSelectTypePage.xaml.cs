@@ -35,6 +35,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.UserControls;
 using Amdocs.Ginger.Common.Enums;
 using static Ginger.ExtensionMethods;
+using System.Diagnostics;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -64,9 +65,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
             RefreshButton.Source = ImageMakerControl.GetImage(eImageType.Refresh, 8, 8);
             xBrowseButtonIcon.Source = ImageMakerControl.GetImage(eImageType.OpenFolder, 8, 8);
-            xCreateTemplateExcelButtonIcon.Source = ImageMakerControl.GetImage(eImageType.PlusSquare, 8, 8);
-            ExcelViewDataButton.Source = ImageMakerControl.GetImage(eImageType.Th, 8, 8);
-            ExcelViewWhereButton.Source = ImageMakerControl.GetImage(eImageType.ThLarge, 8, 8);
+            xCreateTemplateExcelButtonIcon.Source = ImageMakerControl.GetImage(eImageType.ExcelExport, 8, 8);
+            ExcelViewDataButton.Source = ImageMakerControl.GetImage(eImageType.View, 8, 8);
+            ExcelViewWhereButton.Source = ImageMakerControl.GetImage(eImageType.Filter, 8, 8);
 
             xSourceTypeComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             xSheetNameComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
@@ -185,7 +186,6 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     FillSheetCombo();
                     xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
                     // AddModelOptionalValuesWizard.FinishEnabled = false;
-                    //xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
                     xExcelViewDataButton.Visibility = Visibility.Collapsed;
                     xExcelViewWhereButton.Visibility = Visibility.Collapsed;
                     xExcelGridSplitter.Visibility = Visibility.Collapsed;
@@ -193,6 +193,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     {
                         xSheetNameComboBox.SelectedIndex = 0;
                     }
+                    Process.Start(dlg.FileName);
                 }
                 else
                 {
@@ -231,7 +232,6 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xExcelFileStackPanel.Visibility = Visibility.Visible;
                 xSaveExcelLable.Visibility = Visibility.Visible;
                 xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
-                //xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
                 xExcelViewDataButton.Visibility = Visibility.Collapsed;
                 xExcelViewWhereButton.Visibility = Visibility.Collapsed;
                 xExcelGridSplitter.Visibility = Visibility.Collapsed;
@@ -245,7 +245,6 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xExcelFileStackPanel.Visibility = Visibility.Collapsed;
                 xSaveExcelLable.Visibility = Visibility.Collapsed;
                 xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
-                //xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
                 xExcelViewDataButton.Visibility = Visibility.Collapsed;
                 xExcelViewWhereButton.Visibility = Visibility.Collapsed;
                 xExcelGridSplitter.Visibility = Visibility.Collapsed;
@@ -261,7 +260,6 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xExcelFileStackPanel.Visibility = Visibility.Collapsed;
                 xSaveExcelLable.Visibility = Visibility.Collapsed;
                 xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
-                //xExcelViewButtonsDoclPanel.Visibility = Visibility.Collapsed;
                 xExcelViewDataButton.Visibility = Visibility.Collapsed;
                 xExcelViewWhereButton.Visibility = Visibility.Collapsed;
                 xExcelGridSplitter.Visibility = Visibility.Collapsed;
@@ -298,19 +296,16 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         #region Excel
         private void xExcelViewWhereButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(xSelectRowTextBox.Text))
+            mAddModelOptionalValuesWizard.ProcessStarted();
+            mAddModelOptionalValuesWizard.ImportOptionalValues.ExcelWhereCondition = Convert.ToString(xSelectRowTextBox.Text);
+            DataTable dt = mAddModelOptionalValuesWizard.ImportOptionalValues.GetExceSheetlData(true);
+            if (dt != null)
             {
-                mAddModelOptionalValuesWizard.ProcessStarted();
-                mAddModelOptionalValuesWizard.ImportOptionalValues.ExcelWhereCondition = xSelectRowTextBox.Text;
-                DataTable dt = mAddModelOptionalValuesWizard.ImportOptionalValues.GetExceSheetlData(true);
-                if (dt != null)
-                {
-                    xExcelDataGrid.ItemsSource = dt.AsDataView();
-                    xExcelDataGridDockPanel.Visibility = Visibility.Visible;
-                    //AddModelOptionalValuesWizard.NextEnabled = true;
-                }
-                mAddModelOptionalValuesWizard.ProcessEnded(); 
+                xExcelDataGrid.ItemsSource = dt.AsDataView();
+                xExcelDataGridDockPanel.Visibility = Visibility.Visible;
+                //AddModelOptionalValuesWizard.NextEnabled = true;
             }
+            mAddModelOptionalValuesWizard.ProcessEnded();
         }
         private void xExcelViewDataButton_Click(object sender, RoutedEventArgs e)
         {
@@ -332,7 +327,6 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 if (!string.IsNullOrEmpty(xSheetNameComboBox.SelectedValue.ToString()))
                 {
                     xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
-                    //xExcelViewButtonsDoclPanel.Visibility = Visibility.Visible;
                     xExcelViewDataButton.Visibility = Visibility.Visible;
                     xExcelViewWhereButton.Visibility = Visibility.Visible;
                     xExcelGridSplitter.Visibility = Visibility.Visible;

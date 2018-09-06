@@ -71,7 +71,7 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Row="0" Grid.ColumnSpan="2">
                         <Label Name="xPathLable" Style="{StaticResource @InputFieldLabelStyle}"  Content="Path:" VerticalAlignment="Top"  />
-                        <TextBox x:Name="xPathTextBox" Background="White" ToolTip="Please Provide Full  Valid Path To Create Excel Template File."  Text="" HorizontalAlignment="Stretch" VerticalAlignment="Center"  IsEnabled="true" TextChanged="xPathTextBox_TextChanged" Style="{StaticResource @TextBoxStyle}" />
+                        <TextBox x:Name="xPathTextBox" Background="White" ToolTip="Please Provide Full  Valid Path To Create Excel Template File." Margin="5,0,0,0"  Text="" HorizontalAlignment="Stretch" VerticalAlignment="Center"  IsEnabled="true" TextChanged="xPathTextBox_TextChanged" Style="{StaticResource @TextBoxStyle}" />
                     </StackPanel>
                     
                     <DockPanel Grid.Row="0" Grid.Column="2">
@@ -86,7 +86,7 @@
                     <DockPanel Grid.Row="2" Grid.ColumnSpan="3">
                         <StackPanel >
                             <Label Name="xSheetLable"   HorizontalAlignment="Left" Content="Sheet:" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"  />
-                            <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"    VerticalAlignment="Center" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
+                            <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"  Margin="5,0,0,0"  VerticalAlignment="Center" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
                         </StackPanel>
                         <ToggleButton x:Name="RefreshBtn" Click="RefreshButton_Click" Margin="5,0,0,2" Height="20" Width="20" ToolTip="Refresh Sheets" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" >
                             <Image x:Name="RefreshButton" />
@@ -99,7 +99,7 @@
                     <DockPanel Grid.Row="3" Grid.ColumnSpan="3">
                         <StackPanel Margin="0,10,0,0">
                             <Label Name="xSelectRowLable"  Style="{StaticResource @InputFieldLabelStyle}"  Content="Select Row(s) Where:" VerticalAlignment="Center"  />
-                            <TextBox x:Name="xSelectRowTextBox" Background="White" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger'."  Style="{StaticResource @MultiRowsTextBoxStyle}" Text ="" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" IsEnabled="true"/>
+                            <TextBox x:Name="xSelectRowTextBox" Background="White" Margin="5,0,0,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger'."  Style="{StaticResource @MultiRowsTextBoxStyle}" Text ="" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" IsEnabled="true"/>
                         </StackPanel>
                         <ToggleButton x:Name="xExcelViewWhereButton" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" Click="xExcelViewWhereButton_Click" ToolTip="View Filtered Data" DockPanel.Dock="Left" HorizontalAlignment="Left" Height="20" Width="20" Margin="5,35,0,0" >
                             <Image x:Name="ExcelViewWhereButton" />

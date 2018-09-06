@@ -117,6 +117,7 @@ namespace Amdocs.Ginger.Common.Enums
         Info,
         Exchange,
         Export,
+        Filter,
         #endregion
 
 
