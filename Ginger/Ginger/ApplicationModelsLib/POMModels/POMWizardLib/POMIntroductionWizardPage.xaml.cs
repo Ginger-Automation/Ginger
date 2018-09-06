@@ -36,26 +36,27 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorA")).ToString());
             //Application info
-            TBH.AddFormattedText("For What POMs is Needed?", foregroundColor, true);
+            TBH.AddFormattedText("What are POMs used for?", foregroundColor, true);
             TBH.AddLineBreak();
-            TBH.AddFormattedText("POMs are needed for storing page elementslike: Buttons, Textboxes and DropDown lists ect.", foregroundColor);
+            TBH.AddFormattedText("POMs are models used to store a given GUI page’s objects such as buttons, text boxes, drop-down lists, etc.", foregroundColor);
             TBH.AddLineBreak();
-            TBH.AddFormattedText("Idea is that you will be able to maintain your page elements better and keep tracking on the elements availability in any case of the page elements properties changes to minimize failures during execution causes such changes and avoid duplications while using the same control on different acrtions", foregroundColor);
-            TBH.AddLineBreak();
-            TBH.AddLineBreak();
-            TBH.AddLineBreak();
-            TBH.AddFormattedText("How to Create a POM?", foregroundColor, true);
-            TBH.AddLineBreak();
-            TBH.AddFormattedText("You can create the POM by simply follow the Wizard and learn a spesific relevant page elements then you can filter founded elements list and select only the elements which neeeded to perform the automation", foregroundColor);
+            TBH.AddFormattedText("By using POMs you will be able to maintain relevant page objects better and keep track of the objects’ availability within the pages, any time there are changes made to them. This will enable you to minimize potential failures encountered during execution and avoid duplications whenever using the same controls in different actions on the same page.", foregroundColor);
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            TBH.AddFormattedText("How to Integrate POM in Automation Flow?", foregroundColor, true);
+            TBH.AddFormattedText("How to create a POM?", foregroundColor, true);
             TBH.AddLineBreak();
-            TBH.AddFormattedText("After creating the POM Use the Element Action to perform operation on a spesific Page Element", foregroundColor);
+            TBH.AddFormattedText("You can create a POM by simply following the POM wizard, which will automatically learn a page’s relevant objects and properties. Once learned, you will be able to filter the objects and select only those needed to create the automation required.", foregroundColor);
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddLineBreak();
+            //Deleting until we will know how exactly to integrate POM in Automation Flow
+            //TBH.AddFormattedText("How to Integrate POM in Automation Flow?", foregroundColor, true);
+            //TBH.AddLineBreak();
+            //TBH.AddFormattedText("After creating the POM Use the Element Action to perform operation on a spesific Page Element", foregroundColor);
+            //TBH.AddLineBreak();
+            //TBH.AddLineBreak();
+            //TBH.AddLineBreak();
 
 
         }

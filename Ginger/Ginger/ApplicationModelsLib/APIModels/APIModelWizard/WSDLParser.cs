@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -66,6 +67,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void AddServiceDescription(string URL)
         {
             XmlTextReader reader = new XmlTextReader(URL);
+
+            //NetworkCredential nc = new NetworkCredential("zachig", "89232010", "http://10.124.1.80/");
+            //XmlUrlResolver resolver = new XmlUrlResolver();
+            //resolver.Credentials = nc;
+
+            //reader.XmlResolver = resolver;
             ServiceDescription sd = ServiceDescription.Read(reader);
                mServiceDescriptionsList.Add(sd);
         }

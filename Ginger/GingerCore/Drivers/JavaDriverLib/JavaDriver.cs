@@ -2793,7 +2793,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             throw new NotImplementedException();
         }
 
-        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators)
         {
             throw new NotImplementedException();
         }

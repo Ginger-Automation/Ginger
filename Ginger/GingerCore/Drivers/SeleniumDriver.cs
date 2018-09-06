@@ -2954,7 +2954,7 @@ namespace GingerCore.Drivers
             IWebElement elem = null;
             foreach (ElementLocator locator in Locators)
             {
-                locator.LocateStatusError = string.Empty;
+                locator.StatusError = string.Empty;
                 locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
             }
 
@@ -2963,7 +2963,7 @@ namespace GingerCore.Drivers
                 elem = LocateElementByLocator(locator, true);
                 if (elem != null)
                 {
-                    locator.LocateStatusError = string.Empty;
+                    locator.StatusError = string.Empty;
                     locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
                     return elem;
                 }
@@ -2980,7 +2980,7 @@ namespace GingerCore.Drivers
         private IWebElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
         {
             IWebElement elem = null;
-            locator.LocateStatusError = "";
+            locator.StatusError = "";
             locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
 
             try
@@ -3016,7 +3016,7 @@ namespace GingerCore.Drivers
                     if (AlwaysReturn)
                     {
                         elem = null;
-                        locator.LocateStatusError = ex.Message;
+                        locator.StatusError = ex.Message;
                         locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
                         return elem;
                     }
@@ -3128,7 +3128,7 @@ namespace GingerCore.Drivers
                 if (AlwaysReturn == true)
                 {
                     elem = null;
-                    locator.LocateStatusError = ex.Message;
+                    locator.StatusError = ex.Message;
                     locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
                     return elem;
                 }
@@ -3140,7 +3140,7 @@ namespace GingerCore.Drivers
                 if (AlwaysReturn == true)
                 {
                     elem = null;
-                    locator.LocateStatusError = ex.Message;
+                    locator.StatusError = ex.Message;
                     locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
                     return elem;
                 }
@@ -6302,22 +6302,33 @@ namespace GingerCore.Drivers
             return true;
         }
 
-        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators)
         {
             foreach (ElementLocator el in elementLocators)
                 el.LocateStatus = ElementLocator.eLocateStatus.Pending;
 
-            foreach (ElementLocator el in elementLocators.Where(x=>x.Active==true).ToList())
+
+            List<ElementLocator> activesElementLocators = elementLocators.Where(x => x.Active == true).ToList();
+            foreach (ElementLocator el in activesElementLocators)
             {                
                 if (LocateElementByLocator(el, true) != null)
                 {
-                    el.LocateStatusError = string.Empty;
+                    el.StatusError = string.Empty;
                     el.LocateStatus = ElementLocator.eLocateStatus.Passed;                   
                 }
                 else
                 {
                     el.LocateStatus = ElementLocator.eLocateStatus.Failed;
                 }
+            }
+
+            if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }

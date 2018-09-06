@@ -18,11 +18,16 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
+using Ginger.Agents;
+using GingerCore;
+using GingerCore.Actions.VisualTesting;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.BindingLib;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -38,8 +43,38 @@ namespace Ginger.ApplicationModelsLib.POMModels
     public partial class POMEditPage : Page
     {
         ApplicationPOMModel mPOM;
-        
+        ScreenShotViewPage mScreenShotViewPage;
+
+
+        private Agent mAgent;
+        public Agent Agent
+        {
+            get
+            {
+                return mAgent;
+            }
+            set
+            {
+                mAgent = value;
+                pomAllElementsPage.SetAgent(mAgent);
+            }
+        }
+
+        public IWindowExplorer mWinExplorer
+        {
+            get
+            {
+                if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
+                    return mAgent.Driver as IWindowExplorer;
+                else
+                    return null;
+            }
+
+        }
+
+
         ScreenShotViewPage pd;
+        PomAllElementsPage pomAllElementsPage;
         public POMEditPage(ApplicationPOMModel POM)
         {
             InitializeComponent();
@@ -52,6 +87,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTargetApplicationComboBox.Init(mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTagsViewer.Init(mPOM.TagsKeys);
 
+            ePlatformType mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
+            ObservableList<Agent>  optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
+            xAgentControlUC.Init(optionalAgentsList);
+            App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
+
+            //xAgentControlUC.xAgentStatusBtn.Click += StartAgentButtonClicked;
+
             BitmapSource source = null;
             if (mPOM.ScreenShotImage != null)
             {
@@ -60,14 +102,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             //Bitmap ScreenShot = BitmapFromSource(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.LogoBase64Image.ToString())));
 
-            ScreenShotViewPage p = new ScreenShotViewPage(mPOM.Name, source);
-            xScreenShotFrame.Content = p;
+            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
+            xScreenShotFrame.Content = mScreenShotViewPage;
 
             //PomElementsMappingPage mappedUIElementsPage = new PomElementsMappingPage(mPOM,null);
-            PomAllElementsPage pomAllElementsPage = new PomAllElementsPage(mPOM, null);
+            pomAllElementsPage = new PomAllElementsPage(mPOM);
             //pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
             //pomAllElementsPage.unmappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
             xUIElementsFrame.Content = pomAllElementsPage;
+
+            UIElementTabTextBlockUpdate();
 
             //PageNameTextBox.BindControl(mApplicationPOM, nameof(ApplicationPOM.Name));
 
@@ -106,6 +150,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             //InitControlPropertiesGrid();
         }
 
+
+
+        //private void StartAgentButtonClicked(object sender, RoutedEventArgs e)
+        //{
+        //    pomAllElementsPage.SetWindowExplorer(xAgentControlUC.IWindowExplorerDriver);
+        //}
+
         private void FillTargetAppsComboBox()
         {
             //get key object 
@@ -138,6 +189,79 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 bitmap = new Bitmap(outStream);
             }
             return bitmap;
+        }
+
+        private void UIElementTabTextBlockUpdate()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xUIElementTabTextBlock.Text = string.Format("UI Elements ({0})", mPOM.MappedUIElements.Count + mPOM.UnMappedUIElements.Count);
+            });
+        }
+
+        private void TakeScreenShotButtonClicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ShowScreenShot();
+        }
+
+        public void ShowScreenShot()
+        {
+
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                return;
+            }
+
+            mWinExplorer.UnHighLightElements();
+            Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mAgent.Driver).GetScreenShot();
+            mPOM.ScreenShotImage = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(ScreenShotBitmap);
+            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
+            xScreenShotFrame.Content = mScreenShotViewPage;
+        }
+
+        private void BrowseImageButtonClicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
+            op.Title = "Select a picture";
+            op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
+            op.ShowDialog();
+            if (!string.IsNullOrEmpty(op.FileName))
+            {
+                var fileLength = new FileInfo(op.FileName).Length;
+                if (fileLength <= 30000)
+                {
+                    if ((op.FileName != null) && (op.FileName != string.Empty))
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            BitmapImage bi = new BitmapImage(new Uri(op.FileName));
+                            Tuple<int, int> sizes = Ginger.Reports.GingerExecutionReport.ExtensionMethods.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
+
+                            BitmapImage bi_resized = new BitmapImage();
+                            bi_resized.BeginInit();
+                            bi_resized.UriSource = new Uri(op.FileName);
+                            bi_resized.DecodePixelHeight = sizes.Item2;
+                            bi_resized.DecodePixelWidth = sizes.Item1;
+                            bi_resized.EndInit();
+                            Bitmap ScreenShotBitmap = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(bi_resized);
+                            mPOM.ScreenShotImage = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(ScreenShotBitmap);
+                            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
+                            xScreenShotFrame.Content = mScreenShotViewPage;
+                        }
+                    }
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKeys.ImageSize);
+                }
+            }
+            
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
 
         //private void InitControlPropertiesGrid()

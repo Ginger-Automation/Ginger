@@ -1,5 +1,7 @@
 ﻿using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -24,7 +26,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
     public partial class PomAllElementsPage : Page
     {
         ApplicationPOMModel mPOM;
-        public IWindowExplorer mWinExplorer;
+        public IWindowExplorer mWinExplorer
+        {
+            get
+            {
+                if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
+                    return mAgent.Driver as IWindowExplorer;
+                else
+                    return null;
+            }
+
+        }
+
+        public Agent mAgent;
 
         public enum eElementsContext
         {
@@ -33,22 +47,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         }
 
+        public static bool DriverIsBusy { get; set; }
+
         public PomElementsPage mappedUIElementsPage;
         public PomElementsPage unmappedUIElementsPage;
 
-        public PomAllElementsPage(ApplicationPOMModel POM, IWindowExplorer winExplorer)
+        public PomAllElementsPage(ApplicationPOMModel POM)
         {
             InitializeComponent();
             mPOM = POM;
             mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
 
-            mWinExplorer = winExplorer;
-
-            mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, mWinExplorer);
+            mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped);
             xMappedElementsFrame.Content = mappedUIElementsPage;
 
-            unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, mWinExplorer);
+            unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped);
             xUnMappedElementsFrame.Content = unmappedUIElementsPage;
 
             UnMappedUIElementsUpdate();
@@ -84,14 +98,210 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void ActionTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
         }
 
-        public void SetWindowExplorer(IWindowExplorer windowExplorerDriver)
+        //public void SetWindowExplorer(IWindowExplorer windowExplorerDriver)
+        //{
+        //    mWinExplorer = windowExplorerDriver;
+        //    mappedUIElementsPage.SetWindowExplorer(windowExplorerDriver);
+        //    unmappedUIElementsPage.SetWindowExplorer(windowExplorerDriver);
+        //}
+
+        public void SetAgent(Agent agent)
         {
-            mWinExplorer = windowExplorerDriver;
-            mappedUIElementsPage.SetWindowExplorer(windowExplorerDriver);
-            unmappedUIElementsPage.SetWindowExplorer(windowExplorerDriver);
+            mAgent = agent;
+            mappedUIElementsPage.SetAgent(mAgent);
+            unmappedUIElementsPage.SetAgent(mAgent);
+
+            //if (mAgent.Status == Agent.eStatus.Running)
+            //{
+            //    SetWindowExplorer((IWindowExplorer)mAgent.Driver);
+            //}
         }
+
+        private void CreateNewElemetClicked(object sender, RoutedEventArgs e)
+        {
+            mPOM.MappedUIElements.Add(mSpyElement);
+            mPOM.MappedUIElements.CurrentItem = mSpyElement;
+            mappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
+            xCreateNewElement.Visibility = Visibility.Collapsed;
+            xStatusLable.Content = "Element added to the list";
+        }
+
+
+        System.Windows.Threading.DispatcherTimer dispatcherTimer = null;
+
+        private void LiveSpyHandler(object sender, RoutedEventArgs e)
+        {
+            if (DriverIsBusy)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                return;
+            }
+
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                return;
+            }
+
+
+            if (LiveSpyButton.IsChecked == true)
+            {
+                xStatusLable.Content = "Spying on";
+                if (dispatcherTimer == null)
+                {
+                    dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+                    dispatcherTimer.Tick += new EventHandler(timenow);
+                    dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+                }
+
+                dispatcherTimer.IsEnabled = true;
+            }
+            else
+            {
+                xCreateNewElement.Visibility = Visibility.Collapsed;
+                xStatusLable.Content = "Spying off";
+                dispatcherTimer.IsEnabled = false;
+            }
+        }
+
+        private void StopSpying()
+        {
+            xCreateNewElement.Visibility = Visibility.Collapsed;
+            xStatusLable.Content = "Spying off";
+            dispatcherTimer.IsEnabled = false;
+        }
+
+        ElementInfo mSpyElement;
+
+        private void timenow(object sender, EventArgs e)
+        {
+            // Get control info only if control key is pressed
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                xStatusLable.Content = "Spying Element, Please Wait...";
+                xCreateNewElement.Visibility = Visibility.Collapsed;
+                GingerCore.General.DoEvents();
+                mSpyElement = mWinExplorer.GetControlFromMousePosition();
+                if (mSpyElement != null)
+                {
+                    xStatusLable.Content = "Element found";
+                    FocusSpyItemOnElementsGrid();
+                    mWinExplorer.HighLightElement(mSpyElement);
+                }
+                else
+                {
+                    xStatusLable.Content = "Failed to spy element.";
+                    GingerCore.General.DoEvents();
+                }
+            }
+        }
+
+        private void FocusSpyItemOnElementsGrid()
+        {
+            bool elementfocused = false;
+            if (mSpyElement == null) return;
+            foreach (ElementInfo EI in mPOM.MappedUIElements)
+            {
+                mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
+
+                if (EI.XPath == mSpyElement.XPath && EI.Path == mSpyElement.Path)
+                {
+                    xMappedElementsTab.Focus();
+                    elementfocused = true;
+                    mPOM.MappedUIElements.CurrentItem = EI;
+                    mappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
+                    break;
+                }
+            }
+
+            foreach (ElementInfo EI in mPOM.UnMappedUIElements)
+            {
+                mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
+
+                if (EI.XPath == mSpyElement.XPath && EI.Path == mSpyElement.Path)
+                {
+                    xUnmappedElementsTab.Focus();
+                    elementfocused = true;
+                    mPOM.UnMappedUIElements.CurrentItem = EI;
+                    unmappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
+                    break;
+                }
+            }
+
+            if (!elementfocused)
+            {
+                xStatusLable.Content = "Element has not been found on the list, Click here to create new Element ";
+                xCreateNewElement.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void TestAllElementsClicked(object sender, RoutedEventArgs e)
+        {
+
+            //Change Grid View
+            
+
+
+            if (PomAllElementsPage.DriverIsBusy)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                return;
+            }
+
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                return;
+            }
+
+            mappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
+            TestAllElementsAsync();
+        }
+
+
+        public async void TestAllElementsAsync()
+        {
+            await Task.Run(() => TestAllElements());
+        }
+
+        private void TestAllElements()
+        {
+            foreach (ElementInfo EI in mPOM.MappedUIElements)
+            {
+                if (mWinExplorer.TestElementLocators(EI.Locators))
+                {
+                    //TODO: Add Error frm locators
+                    //EI.ElementStatus = EI.Locators.Where(x=>x.StatusError)
+                    EI.ElementStatus = ElementInfo.eElementStatus.Passed;
+                }
+                else
+                {
+                    EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                }
+
+                int Total = EI.Locators.Count;
+                int Failed = EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).Count();
+                int Passed = EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count();
+
+            }
+        }
+
+
+        //private void CompareAllElementsClicked(object sender, RoutedEventArgs e)
+        //{
+        //    foreach (ElementInfo EI in mPOM.MappedUIElements)
+        //    {
+        //        mWinExplorer.TestElementLocators(EI.Locators);
+
+        //        int Total = EI.Locators.Count;
+        //        int Failed = EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).Count();
+        //        int Passed = EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count();
+
+
+
+        //    }
+        //}
     }
 }

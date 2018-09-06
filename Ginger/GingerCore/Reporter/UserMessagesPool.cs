@@ -115,7 +115,8 @@ namespace GingerCore
         InitializeBrowser,LoseChangesWarn, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
         VisualTestingFailedToDeleteOldBaselineImage,ApplitoolsLastExecutionResultsNotExists,ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
         FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
-        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported
+        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, POMDriverIsBusy, POMAgentIsNotRunning,
+        FindAndReplaceViewRunSetNotSupported
     }
 
     public static class UserMessagesPool
@@ -610,7 +611,8 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardFailedToLearnElement, new UserMessage(eMessageType.WARN, "Learn Elements Failed", "Error occured while learning the elements." + Environment.NewLine + "Error Details:" + Environment.NewLine + "'{0}'", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements, new UserMessage(eMessageType.WARN, "Re-Learn Elements", "Re-Learn Elements will delete all existing elements" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.YesNo, MessageBoxResult.No));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMDriverIsBusy, new UserMessage(eMessageType.WARN, "Driver Is Busy", "Operation cannot be complete because the Driver is busy with learning operation" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.OK, MessageBoxResult.OK));
-
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMAgentIsNotRunning, new UserMessage(eMessageType.WARN, "Agent Is Down", "In Order to perform this operation the Agent needs to be up and running" + Environment.NewLine + "Please start the agent and re-try", MessageBoxButton.OK, MessageBoxResult.OK));
+            
         }
     }
 }

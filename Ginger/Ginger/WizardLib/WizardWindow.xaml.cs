@@ -41,6 +41,9 @@ namespace GingerWPF.WizardLib
         public static void ShowWizard(WizardBase wizard, double width = 800)
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
+            //wizardWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            //wizardWindow.Top = 0;
+            //wizardWindow.MaxWidth = 500;
             wizardWindow.Width = width;
            wizardWindow.ShowDialog();
         }
