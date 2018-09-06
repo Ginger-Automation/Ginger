@@ -118,69 +118,54 @@ namespace Ginger.Actions
         }
         private void ScriptInterpreterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ScriptInterpreterComboBox.SelectedValue.ToString() == "Other")
+            string[] fileEntries = null;
+            if(f.ScriptName!=null)
             {
-                InterpreterPanel.Visibility = Visibility.Visible;
-                InterpreterPanelLabel.Visibility = Visibility.Visible;
-                ScriptNameComboBox.Items.Clear();
-                if (!Directory.Exists(SHFilesPath))
-                    Directory.CreateDirectory(SHFilesPath);
-                string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-                .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
-
-                foreach (string file in fileEntries)
+                if (ScriptInterpreterComboBox.SelectedValue.ToString() == "Other")
                 {
-                    string s = file.Replace(SHFilesPath, "");
-                    ScriptNameComboBox.Items.Add(s);
-                }
-            }
-            else if (ScriptInterpreterComboBox.SelectedValue.ToString() == "BAT")
-            {
-                InterpreterPanel.Visibility = Visibility.Visible;
-                InterpreterPanelLabel.Visibility = Visibility.Collapsed;
-
-                ScriptNameComboBox.Items.Clear();
-                if (!Directory.Exists(SHFilesPath))
-                    Directory.CreateDirectory(SHFilesPath);
-                string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-                .Where(s => s.ToLower().EndsWith(".bat")).ToArray();
-
-                foreach (string file in fileEntries)
-                {
-                    string s = file.Replace(SHFilesPath, "");
-                    ScriptNameComboBox.Items.Add(s);
-                }
-            }
-            else 
-            {
-                InterpreterPanel.Visibility = Visibility.Collapsed;
-                if(ScriptInterpreterComboBox.SelectedValue.ToString() == "VBS")
-                {
+                    InterpreterPanel.Visibility = Visibility.Visible;
+                    InterpreterPanelLabel.Visibility = Visibility.Visible;
                     ScriptNameComboBox.Items.Clear();
                     if (!Directory.Exists(SHFilesPath))
                         Directory.CreateDirectory(SHFilesPath);
-                    string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-                    .Where(s => s.ToLower().EndsWith(".vbs")).ToArray();
+                    fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
+                   .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
 
-                    foreach (string file in fileEntries)
-                    {
-                        string s = file.Replace(SHFilesPath, "");
-                        ScriptNameComboBox.Items.Add(s);
-                    }
                 }
-                else if (ScriptInterpreterComboBox.SelectedValue.ToString() == "JS")
+                else if (ScriptInterpreterComboBox.SelectedValue.ToString() == "BAT")
                 {
+                    InterpreterPanel.Visibility = Visibility.Visible;
+                    InterpreterPanelLabel.Visibility = Visibility.Collapsed;
+
                     ScriptNameComboBox.Items.Clear();
                     if (!Directory.Exists(SHFilesPath))
                         Directory.CreateDirectory(SHFilesPath);
-                    string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-                    .Where(s => s.ToLower().EndsWith(".js")).ToArray();
+                    fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".bat");
 
-                    foreach (string file in fileEntries)
+                }
+                else
+                {
+                    InterpreterPanel.Visibility = Visibility.Collapsed;
+                    if (ScriptInterpreterComboBox.SelectedValue.ToString() == "VBS")
                     {
-                        string s = file.Replace(SHFilesPath, "");
-                        ScriptNameComboBox.Items.Add(s);
+                        //ScriptNameComboBox.Items.Clear();
+                        if (!Directory.Exists(SHFilesPath))
+                            Directory.CreateDirectory(SHFilesPath);
+                        fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".vbs");
+
                     }
+                    else if (ScriptInterpreterComboBox.SelectedValue.ToString() == "JS")
+                    {
+                        //ScriptNameComboBox.Items.Clear();
+                        if (!Directory.Exists(SHFilesPath))
+                            Directory.CreateDirectory(SHFilesPath);
+
+                        fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".js");
+
+                    }
+                    ScriptNameComboBox.ItemsSource = fileEntries;
+                    
+                    //f.ScriptName != ScriptNameComboBox.SelectedValue.ToString()
                 }
             }
         }

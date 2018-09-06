@@ -1098,6 +1098,12 @@ namespace GingerCore
             }
         }
 
+        public static string[] ReturnFilesWithDesiredExtension(string filepath, string extension)
+        {
+            string[] fileEntries = Directory.EnumerateFiles(filepath, "*.*", SearchOption.AllDirectories)
+                    .Where(s => s.ToLower().EndsWith(extension)).ToArray();
+            return fileEntries;
+        }
         public static ObservableList<T> ConvertListToObservableList<T>(List<T> List)
         {
             ObservableList<T> ObservableList = new ObservableList<T>();

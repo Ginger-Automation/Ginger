@@ -10,7 +10,7 @@
     <Grid>                        
         <StackPanel>
             <Label Style="{StaticResource @InputFieldLabelStyle}">Script Interpreter</Label>
-            <ComboBox x:Name="ScriptInterpreterComboBox" SelectionChanged="ScriptInterpreterComboBox_SelectionChanged"></ComboBox>
+            <ComboBox x:Name="ScriptInterpreterComboBox" SelectionChanged="ScriptInterpreterComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             <StackPanel x:Name="InterpreterPanel" Visibility="Collapsed">
                 <StackPanel x:Name="InterpreterPanelLabel" Visibility="Collapsed">
                 <Label x:Name="ScriptInterpreterLabel" Style="{StaticResource @InputFieldLabelStyle}">Script Interpreter</Label>
@@ -18,12 +18,12 @@
                 </StackPanel>
 
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Script Action</Label>
-                <ComboBox x:Name="ScriptActComboBox" SelectionChanged="ScriptActComboBox_SelectionChanged"></ComboBox>
+                <ComboBox x:Name="ScriptActComboBox" SelectionChanged="ScriptActComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             </StackPanel>
             
             <StackPanel x:Name="ScriptStackPanel">
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Script Name - Located in Solution~\Documents\Scripts\</Label>                
-                <ComboBox x:Name="ScriptNameComboBox" SelectionChanged="ScriptNameComboBox_SelectionChanged" ></ComboBox>
+                <Label Style="{StaticResource @InputFieldLabelStyle}">Script Name - Located in Solution~\Documents\Scripts\</Label>
+                <ComboBox x:Name="ScriptNameComboBox" SelectionChanged="ScriptNameComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" ></ComboBox>
                 <Label x:Name="ScriptDescriptionLabel">Script Description</Label>
             </StackPanel>
          

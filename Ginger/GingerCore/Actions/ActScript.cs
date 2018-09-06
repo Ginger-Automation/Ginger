@@ -88,8 +88,22 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public eScriptInterpreterType ScriptInterpreterType { get; set; }
 
+        public static string mScriptNname;
         [IsSerializedForLocalRepository]
-        public string ScriptName { get; set; }
+        public string ScriptName
+        {
+            get; set;
+            //get
+            //{
+            //    return mScriptNname;
+            //}
+            //set
+            //{
+            //    mScriptNname = value;
+            //    OnPropertyChanged(Fields.ScriptName);
+            //}
+        }
+
 
         [IsSerializedForLocalRepository]
         public string ScriptPath { get; set; }
