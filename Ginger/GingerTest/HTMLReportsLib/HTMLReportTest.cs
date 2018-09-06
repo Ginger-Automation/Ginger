@@ -38,7 +38,7 @@ namespace GingerTest.HTMLReportsLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+            GingerAutomator.EndSession();
         }
 
         private static void CreateTestSolution()

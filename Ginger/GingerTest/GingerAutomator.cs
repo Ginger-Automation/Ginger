@@ -65,18 +65,10 @@ namespace GingerWPFUnitTest
             {
                 gingerAutomatorInstance.CloseGinger();
                 app = null;
-                mGingerThread.Abort();
+                //mGingerThread.Abort();
             }            
         }
 
-
-        //Not sure if we get here!!!
-        //~GingerAutomator()
-        //{
-            
-        //}
-
-        
       
 
         private void StartGinger()
@@ -84,36 +76,29 @@ namespace GingerWPFUnitTest
             Ginger.SplashWindow splash = null;
             // We start Ginger on STA thread
             mGingerThread = new Thread(() =>
-            {
-                try
+            {                
+                // we need sample class - Dummy
+                Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
+                Assembly asm1 = d.GetType().Assembly;
+                // Set the app resources to Ginger so image an other will be locally to Ginger
+                Application.ResourceAssembly = asm1;
+
+                app = new Ginger.App();
+                Ginger.App.RunningFromUnitTest = true;
+                splash = new Ginger.SplashWindow();
+                splash.Show();
+                //Ginger.App.UserProfile.AutoLoadLastSolution = false;                
+
+                while (!app.IsReady && splash.IsVisible)
                 {
-                    // we need sample class - Dummy
-                    Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
-                    Assembly asm1 = d.GetType().Assembly;
-                    // Set the app resources to Ginger so image an other will be locally to Ginger
-                    Application.ResourceAssembly = asm1;
-
-                    app = new Ginger.App();
-                    Ginger.App.RunningFromUnitTest = true;
-                    splash = new Ginger.SplashWindow();
-                    splash.Show();
-                    //Ginger.App.UserProfile.AutoLoadLastSolution = false;                
-
-                    while (!app.IsReady && splash.IsVisible)
-                    {
-                        Thread.Sleep(100);
-                    }
-
-                    GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
-                    MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
-
-                    // Makes the thread support message pumping                 
-                    System.Windows.Threading.Dispatcher.Run();
+                    Thread.Sleep(100);
                 }
-                catch(Exception ex)
-                {
-                    Console.WriteLine("Ginger Thread Exception: " + ex.Message);
-                }
+
+                GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
+                MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
+
+                // Makes the thread support message pumping                 
+                System.Windows.Threading.Dispatcher.Run();                                    
             });
 
 
@@ -143,8 +128,15 @@ namespace GingerWPFUnitTest
         {            
             MainWindowPOM.Dispatcher.Invoke(() => {
                 Console.WriteLine("Closing Ginger");
+                app.ShutdownMode = ShutdownMode.OnMainWindowClose;
                 MainWindowPOM.Close();
                 Console.WriteLine("MainWindow closed");
+                
+                // app.Shutdown();
+                //while (mGingerThread.IsAlive)
+                //{
+                //    Thread.Sleep(100);
+                //}
                 //Thread.Sleep(500);
                 //int i = 0;
                 //while (app.Windows.Count > 0 && i < 100) //max 10 seconds for closing all windows

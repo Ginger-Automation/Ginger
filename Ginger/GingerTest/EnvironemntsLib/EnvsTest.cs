@@ -23,6 +23,7 @@ using GingerWPFUnitTest.POMs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace GingerWPFUnitTest
 {
@@ -34,14 +35,13 @@ namespace GingerWPFUnitTest
         static TestContext mTC;
         static GingerAutomator mGingerAutomator; 
         static string SolutionFolder;
-        // Mutex mutex = new Mutex();
+        static Mutex mutex = new Mutex();
 
         [ClassInitialize]
         public static void ClassInit(TestContext TC)
         {
             
-            mTC = TC;
-            // mGingerAutomator.StartGinger();
+            mTC = TC;            
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
             SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\EnvsTest");
             if (Directory.Exists(SolutionFolder))
@@ -50,8 +50,7 @@ namespace GingerWPFUnitTest
             }
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
 
-            mGingerAutomator = GingerAutomator.StartSession();
-            GingerAutomator.StartSession(); 
+            mGingerAutomator = GingerAutomator.StartSession();            
             mGingerAutomator.OpenSolution(SolutionFolder);
         }
 
@@ -66,15 +65,14 @@ namespace GingerWPFUnitTest
         [TestInitialize]
         public void TestInitialize()
         {
-            // mutex.WaitOne();
+            mutex.WaitOne();
             
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            // mutex.ReleaseMutex();
-            
+            mutex.ReleaseMutex();            
         }
 
 

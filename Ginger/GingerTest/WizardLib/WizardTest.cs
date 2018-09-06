@@ -26,7 +26,7 @@ namespace GingerTest.WizardLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+            GingerAutomator.EndSession();
         }
 
         [TestInitialize]
