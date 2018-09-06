@@ -67,7 +67,7 @@ namespace Ginger.Actions
         private string mDataSourceName;
         List<String> mColNames = null;
         ObservableList<ActOutDataSourceConfig> aOutDSConfigParam = new ObservableList<ActOutDataSourceConfig>();
-        
+
         private BusinessFlow mActParentBusinessFlow = null;
         private Activity mActParentActivity = null;
 
@@ -78,16 +78,16 @@ namespace Ginger.Actions
         private bool saveWasDone = false;
 
         public General.RepositoryItemPageViewMode EditMode { get; set; }
-        
+
         public ActionEditPage(Act act, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation, BusinessFlow actParentBusinessFlow = null, Activity actParentActivity = null)
         {
             InitializeComponent();
-            
+
             mAction = act;
             if (editMode != General.RepositoryItemPageViewMode.View)
             {
                 mAction.SaveBackup();
-            }            
+            }
 
             RunDescritpion.Init(act, Act.Fields.RunDescription);
 
@@ -151,12 +151,13 @@ namespace Ginger.Actions
             App.ObjFieldBinding(EnableRetryMechanismCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.EnableRetryMechanism);
             App.ObjFieldBinding(RetryMechanismIntervalTextBox, TextBox.TextProperty, mAction, Act.Fields.RetryMechanismInterval);
             App.ObjFieldBinding(RetryMechanismMaxRetriesTextBox, TextBox.TextProperty, mAction, Act.Fields.MaxNumberOfRetries);
-            
+
             dsOutputParamMapType = DataSourceConfigGrid.AddComboBox(typeof(Act.eOutputDSParamMapType), "Out Param Mapping", "", new RoutedEventHandler(OutDSParamType_SelectionChanged));
             App.ObjFieldBinding(AddOutDS, CheckBox.IsCheckedProperty, mAction, Act.Fields.ConfigOutputDS);
             App.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceName);
-            App.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);   
-            App.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);            
+            App.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);
+            App.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
+            App.ObjFieldBinding(EnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
 
             txtLocateValue.BindControl(mAction, Act.Fields.LocateValue);
             txtLocateValue.ValueTextBox.Text = mAction.LocateValue;  // Why ?
@@ -193,7 +194,7 @@ namespace Ginger.Actions
             mAction.PropertyChanged += ActPropertyChanged;
             if (mAction.ObjectLocatorConfigsNeeded == false)
                 ActionLocatorPanel.Visibility = System.Windows.Visibility.Collapsed;
-            
+
             UpdateTabsVisual();
             UpdateHelpTab();
 
@@ -201,13 +202,16 @@ namespace Ginger.Actions
             mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             DataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
 
-            if (EditMode == General.RepositoryItemPageViewMode.Automation|| EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+            if (EditMode == General.RepositoryItemPageViewMode.Automation || EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+            {
                 SharedRepoInstanceUC.Init(mAction, null);
+            }
             else
             {
                 SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 SharedRepoInstanceUC_Col.Width = new GridLength(0);
             }
+
             if (editMode == General.RepositoryItemPageViewMode.View)
             {
                 SetViewMode();
@@ -1572,6 +1576,7 @@ namespace Ginger.Actions
                 mAction.ActionLogConfig = new ActionLogConfig();
             }                        
             ActionLogConfigFrame.Content = new ActionLogConfigPage(mAction.ActionLogConfig);
+            ActionLogConfigExpander.IsExpanded = true;
         }
 
         private void EnableActionLogConfigCheckBox_Checked(object sender, RoutedEventArgs e)

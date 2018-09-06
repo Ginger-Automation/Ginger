@@ -1,6 +1,10 @@
-﻿using Amdocs.Ginger.Common.Actions;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using GingerCore;
 using GingerCore.Actions;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,6 +20,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
     [TestClass]
     public class GingerRunnerActionLogTest
     {
+        private const string INP_VAL_EXPECTED = "TestInputValue";
+        private const string RET_VAL_EXPECTED = "123456";
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
@@ -67,7 +73,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             //Arrange 
             string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_2.log");
-            string inputValExpected = "TestInputValue";
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
             ActDummy actDummy = new ActDummy();
@@ -75,7 +80,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             // set all the values in the action
             ActInputValue actInputValue = new ActInputValue();
             actInputValue.ItemName = "TestInput";
-            actInputValue.Value = inputValExpected;
+            actInputValue.Value = INP_VAL_EXPECTED;
 
             actDummy.InputValues.Add(actInputValue);
 
@@ -88,7 +93,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             gingerRunnerLogger.LogAction(actDummy);
 
             //Assert
-            Assert.IsTrue(IsFileContains(fileName, inputValExpected));            
+            Assert.IsTrue(IsFileContains(fileName, INP_VAL_EXPECTED));            
         }
 
         [TestMethod]
@@ -96,7 +101,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             //Arrange  
             string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_3.log");
-            string returnValExpected = "123456";
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
             ActDummy actDummy = new ActDummy();
@@ -104,8 +108,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             // set all the return values in the action
             ActReturnValue actReturnValue = new ActReturnValue();
             actReturnValue.ItemName = "TestReturn";
-            actReturnValue.Expected = returnValExpected;
-            actReturnValue.Actual = returnValExpected;
+            actReturnValue.Expected = RET_VAL_EXPECTED;
+            actReturnValue.Actual = RET_VAL_EXPECTED;
             actDummy.ReturnValues.Add(actReturnValue);
 
             actDummy.ActionLogConfig = new ActionLogConfig();
@@ -117,7 +121,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             gingerRunnerLogger.LogAction(actDummy);
 
             //Assert
-            Assert.AreEqual(FindTextOccurrencesInFile(fileName, returnValExpected), 2);
+            Assert.AreEqual(FindTextOccurrencesInFile(fileName, RET_VAL_EXPECTED), 2);
         }
 
         [TestMethod]
@@ -125,8 +129,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             //Arrange
             string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_4.log");
-            string inputValExpected = "TestInputValue";
-            string returnValExpected = "123456";
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
             ActDummy actDummy = new ActDummy();
@@ -134,13 +136,13 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             // set all the values in the action
             ActInputValue actInputValue = new ActInputValue();
             actInputValue.ItemName = "TestInput";
-            actInputValue.Value = inputValExpected;
+            actInputValue.Value = INP_VAL_EXPECTED;
             actDummy.InputValues.Add(actInputValue);
 
             ActReturnValue actReturnValue = new ActReturnValue();
             actReturnValue.ItemName = "TestReturn";
-            actReturnValue.Expected = returnValExpected;
-            actReturnValue.Actual = returnValExpected;
+            actReturnValue.Expected = RET_VAL_EXPECTED;
+            actReturnValue.Actual = RET_VAL_EXPECTED;
             actDummy.ReturnValues.Add(actReturnValue);
 
             actDummy.ActionLogConfig = new ActionLogConfig();
@@ -153,8 +155,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             gingerRunnerLogger.LogAction(actDummy);
 
             //Assert
-            Assert.IsTrue(IsFileContains(fileName, inputValExpected));
-            Assert.IsTrue(IsFileContains(fileName, returnValExpected));
+            Assert.IsTrue(IsFileContains(fileName, INP_VAL_EXPECTED));
+            Assert.IsTrue(IsFileContains(fileName, RET_VAL_EXPECTED));
         }
 
         [TestMethod]
@@ -208,15 +210,14 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             //Arrange
             string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_7.log");
-            string returnValExpected = "123456";
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
             ActDummy actDummy = new ActDummy();
 
             ActReturnValue actReturnValue = new ActReturnValue();
             actReturnValue.ItemName = "TestReturn";
-            actReturnValue.Expected = returnValExpected;
-            actReturnValue.Actual = returnValExpected;
+            actReturnValue.Expected = RET_VAL_EXPECTED;
+            actReturnValue.Actual = RET_VAL_EXPECTED;
             actDummy.ReturnValues.Add(actReturnValue);
 
             //Act
@@ -231,7 +232,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             //Arrange
             string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_8.log");
-            string returnValExpected = "123456";
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
             ActDummy actDummy = new ActDummy();
@@ -239,13 +239,13 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             // set all the values in the action
             ActReturnValue actReturnValue = new ActReturnValue();
             actReturnValue.ItemName = "TestForFirstReturnValueInTable";
-            actReturnValue.Expected = returnValExpected;
-            actReturnValue.Actual = returnValExpected;
+            actReturnValue.Expected = RET_VAL_EXPECTED;
+            actReturnValue.Actual = RET_VAL_EXPECTED;
             actDummy.ReturnValues.Add(actReturnValue);
 
             actReturnValue = new ActReturnValue();
             actReturnValue.ItemName = "TestForSecondReturnValueInTable";
-            actReturnValue.Expected = returnValExpected;
+            actReturnValue.Expected = RET_VAL_EXPECTED;
             actReturnValue.Actual = "WrongValue";
             actDummy.ReturnValues.Add(actReturnValue);
 
@@ -264,7 +264,47 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             gingerRunnerLogger.LogAction(actDummy);
 
             //Assert
-            Assert.AreEqual(FindTextOccurrencesInFile(fileName, returnValExpected), 3);
+            Assert.AreEqual(FindTextOccurrencesInFile(fileName, RET_VAL_EXPECTED), 3);
+        }
+
+        [TestMethod]
+        public void TestActionLog_CheckActionLogEnableOptionSavedInBFXML()
+        {
+
+            //Arrange
+            string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_BF.xml");
+
+            //Act
+
+            // define action
+            ActDummy actDummy = new ActDummy();
+            // set all the values in the action
+            actDummy.ActionLogConfig = new ActionLogConfig();
+            actDummy.ActionLogConfig.ActionLogText = "TestActionLog";
+            actDummy.ActionLogConfig.LogRunStatus = true;
+            actDummy.EnableActionLogConfig = true;
+
+            // define activity 
+            Activity activity = new Activity();
+            activity.ActivityName = "Activity Number 1";
+
+            // define business flow
+            BusinessFlow businessFlowWrite = new BusinessFlow();
+            businessFlowWrite.Name = "Business Flow 1";
+            businessFlowWrite.Activities = new ObservableList<Activity>();
+
+            activity.Acts.Add(actDummy);
+            businessFlowWrite.Activities.Add(activity);
+
+            businessFlowWrite.SaveToFile(fileName);
+
+            // Assert
+            BusinessFlow businessFlowRead = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), fileName);
+            ActDummy actDummyRead = (ActDummy) businessFlowRead.Activities[0].Acts[0]; 
+
+            Assert.AreEqual(actDummyRead.EnableActionLogConfig, actDummy.EnableActionLogConfig);
+            Assert.AreEqual(actDummyRead.ActionLogConfig.ActionLogText, actDummy.ActionLogConfig.ActionLogText);
+            Assert.AreEqual(actDummyRead.ActionLogConfig.LogRunStatus , actDummy.ActionLogConfig.LogRunStatus);
         }
 
 
