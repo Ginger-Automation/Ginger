@@ -662,7 +662,7 @@ namespace Ginger
                         ValueExpression.SolutionFolder = SolutionFolder;
 
                         //Offer to upgrade Solution items to current version
-                        if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false)
+                        if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false && RunningFromUnitTest == false)
                         {
                             //TODO: think if it safe to use Async upgrade offer while already started to load the solution
 
