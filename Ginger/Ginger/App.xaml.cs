@@ -665,7 +665,7 @@ namespace Ginger
                         return false;
                     }
 
-                    Solution sol = (Solution)RepositoryItem.LoadFromFile(typeof(Solution), SolFile);
+                    Solution sol = Solution.LoadSolutionFile(SolFile); 
 
                     if (sol != null)
                     {

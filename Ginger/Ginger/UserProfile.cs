@@ -99,7 +99,7 @@ namespace Ginger
                     string SolutionFile = s + @"\Ginger.Solution.xml";
                     if (File.Exists(SolutionFile))
                     {
-                        Solution sol = (Solution)RepositoryItem.LoadFromFile(typeof(Solution), SolutionFile);
+                        Solution sol = Solution.LoadSolutionFile(SolutionFile);
                         sol.Folder = s;
                         RecentSolutionsObjects.Add(sol);
 

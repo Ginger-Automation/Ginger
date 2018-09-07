@@ -23,7 +23,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.GeneralLib;
 using Ginger.Reports;
-using Ginger.Repository;
 using GingerCore;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -47,6 +46,13 @@ namespace Ginger.Environments
         public Solution()
         {
             Tags = new ObservableList<RepositoryItemTag>();
+        }
+
+        public static Solution LoadSolutionFile(string solutionFileName)
+        {
+            string txt = File.ReadAllText(solutionFileName);
+            Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
+            return solution;
         }
 
         [IsSerializedForLocalRepository]
@@ -384,7 +390,7 @@ namespace Ginger.Environments
         }
         
         [IsSerializedForLocalRepository]
-        public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();
+        public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();        
 
         public void SaveSolutionConfigurations(bool showWarning=true)
         {
