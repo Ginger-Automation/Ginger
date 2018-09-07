@@ -401,6 +401,9 @@
     <Compile Include="Actions\ActDataSourcePage.xaml.cs">
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml.cs">
+      <DependentUpon>LocateByPOMElement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\_Common\ActUIElementLib\UIElementSendKeysAndValidate.xaml.cs">
       <DependentUpon>UIElementSendKeysAndValidate.xaml</DependentUpon>
     </Compile>
@@ -449,10 +452,14 @@
       <DependentUpon>AgentDriverConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\AgentNameValidationRule.cs" />
+    <Compile Include="ApplicationModelsLib\APIModels\APIModelBodyNodeSyncPage.xaml.cs">
+      <DependentUpon>APIModelBodyNodeSyncPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ALM\Repository\QCRestAPIRepository.cs" />
     <Compile Include="Agents\ucAgentControl.xaml.cs">
       <DependentUpon>ucAgentControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationModelsLib\APIModels\NodeToDelete.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMTAValidationRule.cs" />
@@ -2514,6 +2521,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Actions\ActionLogConfigPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2543,6 +2554,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Agents\AgentDriverConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\APIModels\APIModelBodyNodeSyncPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -24,6 +24,7 @@ using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Linq;
 using Amdocs.Ginger.Common;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
@@ -338,7 +339,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByXY);
                 mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);
-
+                if (WorkSpace.Instance.BetaFeatures.ShowPOMInResourcesTab)
+                {
+                    mElementLocatorsTypeList.Add(eLocateBy.POMElement);
+                }
                 mElementLocatorsTypeList.Add(eLocateBy.NA);
                 mElementLocatorsTypeList.Add(eLocateBy.ByName);
                 mElementLocatorsTypeList.Add(eLocateBy.Unknown);
