@@ -151,10 +151,11 @@ namespace Ginger
                 ResetSolutionDependedUIElements(false);
                 SetUserTypeButtons();
 
-                if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false)
+                if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false && App.RunningFromUnitTest == false)
                 {
                     AutoLoadLastSolution();
                 }
+
                 if (App.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.ExitMode);
@@ -337,7 +338,7 @@ namespace Ginger
         {
             RibbonTab rt = (RibbonTab)MainRibbon.SelectedItem;
             ToggleMainWindow();
-            if (rt.Tag != null)
+            if (rt != null && rt.Tag != null)
             {
                 MainFrame.Content = rt.Tag;
                 return;

@@ -498,9 +498,20 @@ namespace GingerCore.Actions.Common
             MouseDragDrop,
         }
 
-        // TODO - check whether these fields are required to be serialized or not
+        eElementType mElementType;
         [IsSerializedForLocalRepository]
-        public eElementType ElementType { get; set; }
+        public eElementType ElementType
+        {
+            get { return mElementType; }
+            set
+            {
+                if (mElementType != value)
+                {
+                    mElementType = value;
+                    OnPropertyChanged(nameof(ActUIElement.ElementType));
+                }
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public eElementAction ElementAction { get; set; }

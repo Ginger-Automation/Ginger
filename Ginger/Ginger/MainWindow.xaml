@@ -58,7 +58,7 @@
             </RibbonTab>
 
             <!-- Solution  group-->
-            <RibbonTab x:Name="SolutionRibbon" h:GingerHelpProvider.HelpString="Solution" ContextMenu="{x:Null}" ToolTip="Solution Tab" AutomationProperties.AutomationId="QA-SolutionRibbon" Header="Solution" KeyTip="H" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" >
+            <RibbonTab x:Name="SolutionRibbon" h:GingerHelpProvider.HelpString="Solution" ContextMenu="{x:Null}" ToolTip="Solution Tab" AutomationProperties.AutomationId="Solution AID" Header="Solution" KeyTip="H" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" >
                 <RibbonGroup x:Name="SolutionRibbonGroup" Header="Solution"  ContextMenu="{x:Null}" >
                     <RibbonButton Label="Open"  Click="btnOpenSolutions_Click"  ContextMenu="{x:Null}"  LargeImageSource="{StaticResource @Open_32x32}" ToolTip="Open Existing Solution" SmallImageSource="{StaticResource @Open_16x16}"></RibbonButton>
                     <RibbonButton Label="New" Click="btnNewSolutions_Click"  ContextMenu="{x:Null}" ToolTip="Create New Solution" LargeImageSource="{StaticResource @Add_32x32}" SmallImageSource="{StaticResource @Add_16x16}" AutomationProperties.AutomationId="QA-NewSolutionButton"></RibbonButton>

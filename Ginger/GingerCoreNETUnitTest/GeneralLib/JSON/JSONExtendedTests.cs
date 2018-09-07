@@ -35,7 +35,7 @@ namespace GingerCoreNETUnitTest.GeneralLib.JSON
 
         }
 
-
+        [Level2]
         [TestMethod]
         public void XMLDocGetAllNodesTest()
         {
