@@ -39,7 +39,7 @@ namespace UnitTests.NonUITests.AutoPilot
         {
 
         }
-
+        [Level2]
         [TestMethod]
         public void SwaggerParseCheckHeaderAndParamsCount()
         {

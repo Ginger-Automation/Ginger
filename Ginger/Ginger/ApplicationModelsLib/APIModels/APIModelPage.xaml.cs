@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.ApplicationModelsLib.APIModels;
 using Ginger.Extensions;
 using Ginger.UserControls;
 using GingerCoreNET.ReporterLib;
@@ -35,6 +36,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using static GingerWPF.ApplicationModelsLib.APIModelWizard.ModelParamsPage;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels
 {
@@ -57,6 +59,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             WorkSpace.Instance.RefreshGlobalAppModelParams(mApplicationAPIModel);
             page = new ModelParamsPage(mApplicationAPIModel);
             xDynamicParamsFrame.Content = page;
+
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel);
             xOutputTemplateFrame.Content = outputTemplatePage;
 

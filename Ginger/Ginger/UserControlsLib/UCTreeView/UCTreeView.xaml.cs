@@ -25,6 +25,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Amdocs.Ginger.Repository;
 using GingerWPF.DragDropLib;
+using System.Reflection;
+using System.Linq;
+using Amdocs.Ginger.Repository;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -38,6 +41,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DI);
         public bool TreeItemDoubleClicked = false;
+
+        public Tuple<string, string> TreeNodesFilterByField { get; set; } 
 
         TreeViewItem mlastSelectedTVI = null;
 
@@ -211,16 +216,61 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             {
                 ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;
 
-                List<ITreeViewItem> Childs = ITVI.Childrens();
+                List<ITreeViewItem> Childs = null;
+                Childs = ITVI.Childrens();
+                    
                 TVI.Items.Clear();
                 if (Childs != null)
                 {
-                    foreach (ITreeViewItem c in Childs)
+                    foreach (ITreeViewItem item in Childs)
                     {
-                        AddItem(c, TVI);
+                        if (TreeNodesFilterByField != null)
+                        {
+                            if (IsTreeItemFitsFilter(item))
+                            {
+                                AddItem(item, TVI);
+                            }
+                        }
+                        else
+                        {
+                            AddItem(item, TVI);
+                        }
+
                     }
                 }
             }
+        }
+
+        private bool IsTreeItemFitsFilter(ITreeViewItem treeItemToCheck)
+        {
+            object treeItemToCheckObject = treeItemToCheck.NodeObject();
+            if (treeItemToCheckObject is RepositoryFolderBase)
+            {
+                return true;
+            }
+
+            //get the object to filter by
+            List<string> filterByfieldHierarchyList = TreeNodesFilterByField.Item1.ToString().Split('.').ToList();
+            object filterByObject = treeItemToCheckObject;
+            foreach (string hierarchyElement in filterByfieldHierarchyList)
+            {
+                PropertyInfo pInfo = filterByObject.GetType().GetProperty(hierarchyElement);
+                if (pInfo is null)
+                {
+                    break;
+                }
+                else
+                {
+                    filterByObject = pInfo.GetValue(filterByObject, null);
+                }
+            }
+
+            //compare the value
+            string filterbyValue = TreeNodesFilterByField.Item2.ToString();
+            if (filterbyValue == filterByObject.ToString())
+                return true;
+
+            return false;
         }
 
         private void RemoveDummyNode(TreeViewItem node)
