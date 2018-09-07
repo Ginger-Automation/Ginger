@@ -206,7 +206,8 @@ namespace Amdocs.Ginger.Common
             {
                 var stringBuilder = new StringBuilder();
 
-                var element = XElement.Parse(xml);
+                XmlDocument element = new XmlDocument();
+                element.LoadXml(xml);
 
                 var settings = new XmlWriterSettings();
                 settings.OmitXmlDeclaration = true;
