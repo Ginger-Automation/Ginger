@@ -347,6 +347,9 @@
     <Compile Include="Actions\ActionConversion\ActionConverterPage.xaml.cs">
       <DependentUpon>ActionConverterPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
+      <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActLinkEditPage.xaml.cs">
       <DependentUpon>ActLinkEditPage.xaml</DependentUpon>
     </Compile>
@@ -610,6 +613,7 @@
       <DependentUpon>ModelItemUsagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MenusLib\ResourcesMenu.cs" />
+    <Compile Include="Run\GingerRunnerLogger.cs" />
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
@@ -2520,6 +2524,10 @@
     <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionLogConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AgentsNew\NewAgentEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
