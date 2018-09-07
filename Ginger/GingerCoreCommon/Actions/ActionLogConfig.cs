@@ -5,7 +5,7 @@ using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.Actions
 {
-    public class ActionLogConfig
+    public class ActionLogConfig : RepositoryItemBase
     {
         [IsSerializedForLocalRepository]
         public string ActionLogText { get; set; }
@@ -24,6 +24,8 @@ namespace Amdocs.Ginger.Common.Actions
 
         [IsSerializedForLocalRepository]
         public bool LogElapsedTime { get; set; }
+
+        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
 }

@@ -141,13 +141,16 @@ namespace GingerCore.Actions
             public static string SupportSimulation = "SupportSimulation";
         }
 
-        public ActionLogConfig ActionLogConfig { get; set; }
+
 
         #region Serialized Attributes
         // -----------------------------------------------------------------------------------------------------------------------------------------------
         // All serialized Attributes - Start
         // -----------------------------------------------------------------------------------------------------------------------------------------------
-        
+
+        [IsSerializedForLocalRepository]
+        public ActionLogConfig ActionLogConfig;
+
         private bool mEnableActionLogConfig;
         [IsSerializedForLocalRepository]
         public bool EnableActionLogConfig { get { return mEnableActionLogConfig; } set { mEnableActionLogConfig = value; OnPropertyChanged(nameof(EnableActionLogConfig)); } }

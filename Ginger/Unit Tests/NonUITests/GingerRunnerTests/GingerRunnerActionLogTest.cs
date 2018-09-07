@@ -270,11 +270,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [TestMethod]
         public void TestActionLog_CheckActionLogEnableOptionSavedInBFXML()
         {
-
             //Arrange
             string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_BF.xml");
-
-            //Act
 
             // define action
             ActDummy actDummy = new ActDummy();
@@ -296,12 +293,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             activity.Acts.Add(actDummy);
             businessFlowWrite.Activities.Add(activity);
 
+            //Act            
             businessFlowWrite.SaveToFile(fileName);
+            BusinessFlow businessFlowRead = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), fileName);
+            ActDummy actDummyRead = (ActDummy)businessFlowRead.Activities[0].Acts[0];
 
             // Assert
-            BusinessFlow businessFlowRead = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), fileName);
-            ActDummy actDummyRead = (ActDummy) businessFlowRead.Activities[0].Acts[0]; 
-
             Assert.AreEqual(actDummyRead.EnableActionLogConfig, actDummy.EnableActionLogConfig);
             Assert.AreEqual(actDummyRead.ActionLogConfig.ActionLogText, actDummy.ActionLogConfig.ActionLogText);
             Assert.AreEqual(actDummyRead.ActionLogConfig.LogRunStatus , actDummy.ActionLogConfig.LogRunStatus);
