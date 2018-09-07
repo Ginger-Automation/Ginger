@@ -218,7 +218,8 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(agentCreated, "Agent created: " + agentName + ", " + platfromType + ", " + driverType );
         }
 
-        
+
+        [Ignore]
         [DataRow("Web 1", "Web", "SeleniumChrome")]
         [DataRow("Web 2", "Web", "SeleniumFireFox")]
         [TestMethod]

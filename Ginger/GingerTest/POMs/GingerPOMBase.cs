@@ -105,7 +105,7 @@ namespace GingerWPFUnitTest.POMs
             while (st.ElapsedMilliseconds < Milliseconds)
             {
                 DoEvents();
-                Thread.Sleep(50);
+                Thread.Sleep(1);
             }
 
         }
