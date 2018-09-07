@@ -47,9 +47,7 @@ namespace Ginger.SourceControl
         string mPath;
         ObservableList<SourceControlFileInfo> mFiles;
         GenericWindow genWin = null;
-        bool mCheckInWasDone=false;
-
-        public Action CallBackOnClose { get; internal set; }
+        bool mCheckInWasDone=false;       
 
         public CheckInPage(string path)
         {
@@ -125,7 +123,7 @@ namespace Ginger.SourceControl
                              {
                              //try to unsearlize
                              object item = RepositoryItem.LoadFromFile(SCFI.Path);
-                                 SCFI.Name = ((RepositoryItem)item).GetNameForFileName();
+                                 SCFI.Name = ((RepositoryItem)item).GetNameForFileName();                                 
                              }
                              else
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
@@ -275,8 +273,8 @@ namespace Ginger.SourceControl
                     SourceControlIntegration.conflictFlag = false;
                 }
                 else
-                App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage,null, false);
-                
+                    App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage,null, false);
+
             }
             finally
             {
@@ -289,12 +287,17 @@ namespace Ginger.SourceControl
         {
             foreach (SourceControlFileInfo fi in selectedFiles)
             {
-                Agent a = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.FilePath == fi.Path select x).SingleOrDefault();
-                if (a != null)
+                RepositoryItemBase repoItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(fi.Path);                
+                //Refresh repository item folder source control status icon 
+                WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder((RepositoryItemBase)repoItem).RefreshSourceControlStatus();
+                //Refresh repository item root folder source control status icon 
+                ((RepositoryFolderBase)WorkSpace.Instance.SolutionRepository.GetItemRepositoryRootFolder((RepositoryItemBase)repoItem)).RefreshSourceControlStatus();
+                if (repoItem != null)
                 {
-                    a.OnPropertyChanged(nameof(Agent.SourceControlStatus));
+                    //Refresh repository item source control status icon 
+                    ((RepositoryItemBase)repoItem).RefreshSourceControlStatus();
                 }
-            }
+            }                        
         }
 
         private void AfterCommitProcess(bool CommitSuccess, bool conflictHandled)
@@ -332,49 +335,49 @@ namespace Ginger.SourceControl
         {
             foreach (SourceControlFileInfo SCFI in SelectedFiles)
             {
-                Object obj = null;
-                
-                if (SCFI.FileType == "Agent")
-                {
-                    obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }
-                else if (SCFI.FileType == "Business Flow")
-                {
-                    obj = App.LocalRepository.GetSolutionBusinessFlows().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }
-                else if (SCFI.FileType == "Environment")
-                {
-                    obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }
-                else if (SCFI.FileType == "Execution Result")
-                {
-                    obj = App.LocalRepository.GetSolutionExectionResults().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }
-                else if (SCFI.FileType == "Run Set")
-                {
-                    obj = App.LocalRepository.GetSolutionRunSets().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }
-                else if (SCFI.FileType == "Action")
-                {
-                    obj = App.LocalRepository.GetSolutionRepoActions().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }
-                else if (SCFI.FileType == "Activities Group")
-                {
-                    obj = App.LocalRepository.GetSolutionRepoActivitiesGroups().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }
-                else if (SCFI.FileType == "Activity")
-                {
-                    obj = App.LocalRepository.GetSolutionRepoActivities().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }
-                else if (SCFI.FileType == "Variable")
-                {
-                    obj = App.LocalRepository.GetSolutionRepoVariables().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }
-                else if (SCFI.FileType == "Report Template")
-                {
-                    obj = App.LocalRepository.GetSolutionReportTemplates().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }                
+            Object obj = null;
 
+            if (SCFI.FileType == "Agent")
+            {
+                obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();                
+            }
+            else if (SCFI.FileType == "Business Flow")
+            {
+                obj = App.LocalRepository.GetSolutionBusinessFlows().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+            }
+            else if (SCFI.FileType == "Environment")
+            {               
+                obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();             
+            }
+            else if (SCFI.FileType == "Execution Result")
+            {
+                obj = App.LocalRepository.GetSolutionExectionResults().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+            }
+            else if (SCFI.FileType == "Run Set")
+            {
+                obj = App.LocalRepository.GetSolutionRunSets().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+            }
+            else if (SCFI.FileType == "Action")
+            {
+                obj = App.LocalRepository.GetSolutionRepoActions().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+            }
+            else if (SCFI.FileType == "Activities Group")
+            {
+                obj = App.LocalRepository.GetSolutionRepoActivitiesGroups().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+            }
+            else if (SCFI.FileType == "Activity")
+            {
+                obj = App.LocalRepository.GetSolutionRepoActivities().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+            }
+            else if (SCFI.FileType == "Variable")
+            {
+                obj = App.LocalRepository.GetSolutionRepoVariables().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+            }
+            else if (SCFI.FileType == "Report Template")
+            {
+                obj = App.LocalRepository.GetSolutionReportTemplates().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+            }
+     
                 if (obj != null && ((RepositoryItemBase)obj).IsDirty)
                 {
                     if (Reporter.ToUser(eUserMsgKeys.SourceControlCheckInUnsavedFileChecked, SCFI.Name) == MessageBoxResult.Yes)
@@ -415,12 +418,6 @@ namespace Ginger.SourceControl
             {
                 //TODO: remove sol refresh afetr all RIs moved to new repo and using new tree item
                 App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage, null);                
-            }
-
-            // Callback is used in new tree items to refresh the relevant tree
-            if (CallBackOnClose != null)
-            {
-                CallBackOnClose.Invoke();
             }
 
             genWin.Close();

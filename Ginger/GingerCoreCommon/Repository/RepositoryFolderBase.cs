@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
 using System;
 using System.ComponentModel;
 
@@ -138,5 +140,27 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         /// <param name="repositoryFolder"></param>
         public abstract void MoveItem(RepositoryItemBase repositoryItem, RepositoryFolderBase repositoryFolder);
+             
+        public static ISourceControl SourceControl = null;
+        public eImageType? SourceControlStatus
+        {
+            get
+            {
+                if (SourceControl != null)
+                {
+                    eImageType st = SourceControl.GetFileStatusForRepositoryItemPath(FolderFullPath);                         
+                    return st;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public void RefreshSourceControlStatus()
+        {
+            OnPropertyChanged(nameof(SourceControlStatus));
+        }
     }
 }

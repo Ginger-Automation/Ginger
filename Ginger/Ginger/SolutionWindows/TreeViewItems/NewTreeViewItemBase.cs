@@ -84,7 +84,7 @@ namespace GingerWPF.TreeViewItemsLib
 
             return false;
         }
-
+      
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
             if (item is RepositoryItemBase)
@@ -458,30 +458,9 @@ namespace GingerWPF.TreeViewItemsLib
 
         public void SourceControlCheckIn(object sender, System.Windows.RoutedEventArgs e)
         {
-            CheckInPage CIW = new CheckInPage(this.NodePath());
-            CIW.CallBackOnClose += CIWClosed;
+            CheckInPage CIW = new CheckInPage(this.NodePath());            
             CIW.ShowAsWindow();
-        }
-
-        void CIWClosed()
-        {                     
-            // when the check in window is closed we refresh the source control status icon
-            Object nodeObject = ((ITreeViewItem)this).NodeObject();
-
-            if (nodeObject is RepositoryItemBase)   // Single Repository item 
-            {
-                ((RepositoryItemBase)nodeObject).RefreshSourceControlStatus();
-            }
-            else if (nodeObject is RepositoryFolderBase)  // repositoryFolder
-            {
-                var v = ((RepositoryFolderBase)nodeObject).GetFolderRepositoryItems();
-                foreach (RepositoryItemBase RI in v)
-                {
-                    RI.RefreshSourceControlStatus();
-                }
-            }
-
-        }
+        }     
 
         public void SourceControlUndoChanges(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -534,7 +513,7 @@ namespace GingerWPF.TreeViewItemsLib
             ObservableList<RepositoryFolder<T>> subFolders = RF.GetSubFolders();
             foreach (RepositoryFolder<T> envFolder in subFolders)
             {
-                Childrens.Add(GetTreeItem(envFolder));
+                Childrens.Add(GetTreeItem(envFolder));               
             }
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // track sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
@@ -548,7 +527,7 @@ namespace GingerWPF.TreeViewItemsLib
             foreach (T item in folderItems.OrderBy(OrderBy))
             {
                 ITreeViewItem tvi = GetTreeItem(item);
-                Childrens.Add(tvi);
+                Childrens.Add(tvi);           
             }
             return Childrens;
         }
@@ -557,7 +536,7 @@ namespace GingerWPF.TreeViewItemsLib
         protected StackPanel NewTVItemStyle(RepositoryItemBase RI, eImageType imageType, string NameProperty)
         {            
             RI.StartDirtyTracking();
-
+            
             //The new item style with Source control
             StackPanel stack = new StackPanel();
             stack.Orientation = Orientation.Horizontal;

@@ -87,8 +87,8 @@ namespace Amdocs.Ginger.Repository
             {
                 return Path.GetFileName(PathHelper.GetLongPath(FolderFullPath));
             }
-        }
-
+        }       
+        
         //private string GetItemTypeForFileName(Type t)
         //{
         //    string s = RepositoryItemBase.GetClassShortName(t);
@@ -272,7 +272,7 @@ namespace Amdocs.Ginger.Repository
             // rbb.UseSolutionRepository = true;
             rbb.ContainingFolder = containingFolder;
         }
-        
+
 
         public override void StartFileWatcher()
         {
@@ -432,15 +432,18 @@ namespace Amdocs.Ginger.Repository
         private void HandleFileChange(FileSystemEventArgs e)
         {            
             RepositoryItemBase item = null;
-
+            RepositoryFolderBase folderItem = null;
             switch (e.ChangeType)
             {
                 case WatcherChangeTypes.Changed:
                     WaitforFileIsReadable(e.FullPath);
                     // reLoad the object to mem updating fields
                     item = GetItemFromCacheByFileName(e.FullPath);
+                    folderItem = GetSubFolder(Path.GetDirectoryName(e.FullPath));
+                    folderItem.RefreshSourceControlStatus();
+                    folderItem.OnPropertyChanged(nameof(RepositoryItemBase.SourceControlStatus));
                     NewRepositorySerializer.ReloadObjectFromFile(item);
-
+                    item.RefreshSourceControlStatus();
                     //Trigger so source control item can update if needed
                     item.OnPropertyChanged(nameof(RepositoryItemBase.SourceControlStatus));
 

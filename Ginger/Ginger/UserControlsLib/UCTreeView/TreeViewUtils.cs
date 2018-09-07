@@ -28,6 +28,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Ginger;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -65,7 +66,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             {
                 try
                 {
-                    ImageMakerControl icon = new ImageMakerControl();
+                    ImageMakerControl icon = new ImageMakerControl();                    
                     icon.ImageType = itemIcon;
                     icon.Height = 16;
                     icon.Width = 16;
@@ -80,9 +81,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (itemSourceControlStateIcon != eImageType.Null)
             {
                 try
-                {
+                {                    
                     ImageMakerControl sourceControlIcon = new ImageMakerControl();
                     sourceControlIcon.ImageType = itemSourceControlStateIcon;
+                    sourceControlIcon.BindControl((RepositoryFolderBase)itemObj, nameof(RepositoryFolderBase.SourceControlStatus));
                     sourceControlIcon.Height = 10;
                     sourceControlIcon.Width = 10;                   
                     headerStack.Children.Add(sourceControlIcon);
