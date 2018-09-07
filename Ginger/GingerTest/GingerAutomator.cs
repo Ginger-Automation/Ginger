@@ -22,6 +22,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace GingerWPFUnitTest
 {
@@ -63,9 +64,7 @@ namespace GingerWPFUnitTest
 
             if (SessionCount == 0)
             {
-                gingerAutomatorInstance.CloseGinger();
-                app = null;
-                //mGingerThread.Abort();
+                gingerAutomatorInstance.CloseGinger();                
             }            
         }
 
@@ -76,17 +75,20 @@ namespace GingerWPFUnitTest
             Ginger.SplashWindow splash = null;
             // We start Ginger on STA thread
             mGingerThread = new Thread(() =>
-            {                
+            {
+
+                SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
+
                 // we need sample class - Dummy
                 Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
-                Assembly asm1 = d.GetType().Assembly;
+                Assembly asm1 = d.GetType().Assembly;                
                 // Set the app resources to Ginger so image an other will be locally to Ginger
                 Application.ResourceAssembly = asm1;
 
                 app = new Ginger.App();
                 Ginger.App.RunningFromUnitTest = true;
                 splash = new Ginger.SplashWindow();
-                splash.Show();
+                splash.Show();                
                 //Ginger.App.UserProfile.AutoLoadLastSolution = false;                
 
                 while (!app.IsReady && splash.IsVisible)
@@ -96,7 +98,8 @@ namespace GingerWPFUnitTest
 
                 GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
 
-                Ginger.App.MainWindow.Closed += (sender1, e1) => Ginger.App.MainWindow.Dispatcher.InvokeShutdown();
+                //Ginger.App.MainWindow.Closed += (sender1, e1) => 
+                //    Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
 
                 MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
 
@@ -105,7 +108,7 @@ namespace GingerWPFUnitTest
             });
 
 
-            //// Configure the thread
+            //// Configure the thread            
             mGingerThread.SetApartmentState(ApartmentState.STA);
             mGingerThread.IsBackground = true;
             mGingerThread.Start();
@@ -122,36 +125,59 @@ namespace GingerWPFUnitTest
             while (splash.IsVisible)
             {
                 Thread.Sleep(100);
-            }
+            }            
             // Here Ginger is live and visible
             isReady = true;
         }
 
         
-        internal void CloseGinger()
-        {            
-            MainWindowPOM.Dispatcher.Invoke(() => {
-                Console.WriteLine("Closing Ginger");
-                app.ShutdownMode = ShutdownMode.OnMainWindowClose;
-                MainWindowPOM.Close();                
-                Console.WriteLine("MainWindow closed");
+        void CloseGinger()
+        {
+            // app.Shutdown(0);
+            MainWindowPOM.Close();
+            Thread.Sleep(5000);
 
-                // app.Shutdown();
-                //int i = 0;
-                //while (mGingerThread.IsAlive  && i<100)
-                //{
-                //    Thread.Sleep(100);
-                //    i++;
-                //}
-                //Thread.Sleep(500);
-                //int i = 0;
-                //while (app.Windows.Count > 0 && i < 100) //max 10 seconds for closing all windows
-                //{
-                //    i++;
-                //    Thread.Sleep(100);
-                //}
-                //app.Shutdown();                
-            });            
+            //while (!Dispatcher.CurrentDispatcher.HasShutdownFinished)
+            //{
+            //    Thread.Sleep(100);
+            //}
+
+            //MainWindowPOM.Dispatcher.Invoke(() => {
+            //    try
+            //    {
+            //        //Console.WriteLine("Closing Ginger");
+            //        //app.ShutdownMode = ShutdownMode.OnMainWindowClose;
+            //        // Thread.Sleep(30000);
+
+            //        //Console.WriteLine("MainWindow closed");
+
+            //        //app.Shutdown();
+            //        //app = null;                    
+            //        //int i = 0;
+            //        //while (mGingerThread.IsAlive  && i<100)
+            //        //{
+            //        //    Thread.Sleep(100);
+            //        //    i++;
+            //        //}
+
+            //        //int i = 0;
+            //        //while (app.Windows.Count > 0 && i < 100) //max 10 seconds for closing all windows
+            //        //{
+            //        //    i++;
+            //        //    Thread.Sleep(100);
+            //        //}
+            //        //app.Shutdown();                
+            //    }
+            //    catch(Exception ex)
+            //    {
+
+            //    }
+
+            //Thread.Sleep(5000);
+            //});
+
+            // Thread.Sleep(30000);
+            // mGingerThread.Abort();
         }
 
 

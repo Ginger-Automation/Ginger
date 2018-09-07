@@ -45,9 +45,12 @@ namespace GingerWPFUnitTest.POMs
 
         public void Close()
         {
-            Execute(() => {
+            Dispatcher.Invoke(() =>
+            {                
                 mMainWindow.CloseWithoutAsking();
+                Dispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);                
             });
+            
         }
 
         public Button TestButton()

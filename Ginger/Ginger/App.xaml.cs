@@ -328,7 +328,7 @@ namespace Ginger
         {
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StanndAloneThreadsExceptionHandler);
+            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
 
             if (Environment.GetCommandLineArgs().Count() > 1)
             {
@@ -441,8 +441,17 @@ namespace Ginger
 
         }
 
-        private static void StanndAloneThreadsExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        private static void StandAloneThreadExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
+            if (RunningFromUnitTest)
+            {                
+                // happen when we close Ginger from unit tests
+                if (e.ExceptionObject is System.Runtime.InteropServices.InvalidComObjectException || e.ExceptionObject is System.Threading.Tasks.TaskCanceledException) 
+                {
+                    Console.WriteLine("StandAloneThreadExceptionHandler: Running from unit test ignoring error on ginger close");
+                    return;
+                }
+            }
             Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occured on stand alone thread(non UI) - " + e.ExceptionObject.ToString());
             MessageBox.Show("Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
             App.AppSolutionAutoSave.DoAutoSave();
