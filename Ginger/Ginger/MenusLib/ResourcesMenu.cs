@@ -6,14 +6,17 @@ using Ginger.GingerGridLib;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.TwoLevelMenuLib;
+using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.DataSource;
+using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
 using GingerWPF.PluginsLib;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
+using GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems;
 using GingerWPF.UserControlsLib;
 using System;
 using System.Collections.Generic;
@@ -55,40 +58,49 @@ namespace Ginger.MenusLib
         {
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
 
-            TopMenuItem SharedRepositoryMenu = new TopMenuItem("Shared Repository", ConsoleKey.S, "Shared Repository AID");
+            TopMenuItem SharedRepositoryMenu = new TopMenuItem("Shared Repository", ConsoleKey.S, "Shared Repository AID", "Flow Elements which can be shared between multiple " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
             SharedRepositoryMenu.Add(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.ActivitiesGroups), SharedActivitiesGroups, ConsoleKey.S, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.ActivitiesGroups, "Shared "), "AID");
             SharedRepositoryMenu.Add(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Activities), SharedActivities, ConsoleKey.S, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Activities, "Shared "), "AID");
             SharedRepositoryMenu.Add("Actions", SharedActions, ConsoleKey.S, "Shared Actions", "AID");
             SharedRepositoryMenu.Add(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Variables), SharedVariables, ConsoleKey.S, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Variables, "Shared "), "AID");
             twoLevelMenu.Add(SharedRepositoryMenu);
 
-            TopMenuItem ApplicationModelsMenu = new TopMenuItem("Applications Models", ConsoleKey.A, "Application Models AID");
-            ApplicationModelsMenu.Add("API Models", APIModels, ConsoleKey.L, "Applications Web Service Requests Templates Repository","AID");
+            TopMenuItem ApplicationModelsMenu = new TopMenuItem("Applications Models", ConsoleKey.A, "Application Models AID", "Applications Layers Templates" );
+            ApplicationModelsMenu.Add("API Models", APIModels, ConsoleKey.L, "API Templates Repository","AID");
             //TODO: bind visible to Beta feature or use WorkSpace.Instance.BetaFeatures.PropertyChanged
             // meanwhile show/hide per current status
             if (WorkSpace.Instance.BetaFeatures.ShowPOMInResourcesTab)            
-                ApplicationModelsMenu.Add("Page Objects Models", POMModels, ConsoleKey.P, "Page Object Modeling", "AID");                            
+                ApplicationModelsMenu.Add("Page Objects Models", POMModels, ConsoleKey.P, "Page UI elemetns Modeling", "AID");                            
             ApplicationModelsMenu.Add("Models Global Parameters", ModelsGlobalParameters, ConsoleKey.G, "Add or Edit Models Global Parameters", "AID");
             twoLevelMenu.Add(ApplicationModelsMenu);
 
-            // TODO: use visible show/hide instead of not adding
-            //if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
-            //{
-                TopMenuItem DataSourceMenu = new TopMenuItem("Data Sources", ConsoleKey.D, "Data Sources AID", "Add and Edit Data Sources");
-                DataSourceMenu.Add("List", DataSources, ConsoleKey.D, "", "AID");
-                twoLevelMenu.Add(DataSourceMenu);
-            //}
+            TopMenuItem environemntsMenu = new TopMenuItem("Environments", ConsoleKey.E, "Environemnts_AID", "Environments are been used for storing environment level parameters and DB/Unix connections details");
+            environemntsMenu.Add("Environments", GetEnvsPage, ConsoleKey.L, "Environments are been used for storing environment level parameters and DB / Unix connections details", "Envs List");
+            //environemntsMenu.Add("Compare", EnvsCompare, ConsoleKey.C, "Compare Environments", "compare Envs AID");
+            twoLevelMenu.Add(environemntsMenu);
+
+            TopMenuItem GlobalVariabelsMenu = new TopMenuItem(GingerDicser.GetTermResValue(eTermResKey.Variables,"Global "), ConsoleKey.G, "Global Variables AID", GingerDicser.GetTermResValue(eTermResKey.Variables, suffixString:" which can be used cross " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
+            GlobalVariabelsMenu.Add("Grid", GetGlobalVariabelsPage, ConsoleKey.G, "", "AID");
+            twoLevelMenu.Add(GlobalVariabelsMenu);
 
             TopMenuItem DocumentsMenu = new TopMenuItem("Documents", ConsoleKey.D, "Documents AID", "Solution documents like: text, excel, js scripts and any type of file");
             DocumentsMenu.Add("List", Documents, ConsoleKey.L, "", "AID");
             twoLevelMenu.Add(DocumentsMenu);
 
-            TopMenuItem PluginsMenu = new TopMenuItem("Plugins", ConsoleKey.P, "Plugins AID");
-            PluginsMenu.Add("Installed", PluginsList, ConsoleKey.L, "Installed Plugins", "Installed AID");
-            PluginsMenu.Add("GingerGrid", GingerGrid, ConsoleKey.G, "Ginger Grid", "Ginger Grid AID");
+            TopMenuItem DataSourceMenu = new TopMenuItem("Data Sources", ConsoleKey.D, "Data Sources AID", "Add and Edit Data Sources");
+                DataSourceMenu.Add("List", DataSources, ConsoleKey.D, "", "AID");
+                twoLevelMenu.Add(DataSourceMenu);
+
+            TopMenuItem PluginsMenu = new TopMenuItem("Plugins", ConsoleKey.P, "Plugins AID", "Ginger extention Add-ons");
+            PluginsMenu.Add("Installed", PluginsList, ConsoleKey.L, "Installed Plugins", "Installed AID");           
             twoLevelMenu.Add(PluginsMenu);
 
             return twoLevelMenu;
+        }
+
+        private static Page GetGlobalVariabelsPage()
+        {
+            return (new VariablesPage(eVariablesLevel.Solution));
         }
 
         private static Page SharedActivitiesGroups()
@@ -114,6 +126,18 @@ namespace Ginger.MenusLib
             SharedVariablesFolderTreeItem variablesRoot = new SharedVariablesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>());
             SingleItemTreeViewExplorerPage variablesPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Variables), eImageType.Variable, variablesRoot, variablesRoot.SaveAllTreeFolderItemsHandler);
             return variablesPage;
+        }
+
+        private static Page GetEnvsPage()
+        {
+            EnvironmentsFolderTreeItem EnvsRoot = new EnvironmentsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ProjEnvironment>());
+            SingleItemTreeViewExplorerPage p = new SingleItemTreeViewExplorerPage("Environments", eImageType.Environment, EnvsRoot, EnvsRoot.SaveAllTreeFolderItemsHandler, EnvsRoot.AddItemHandler);
+            EnvsRoot.IsGingerDefualtFolder = true;
+            return p;
+        }
+        private static Page EnvsCompare()
+        {
+            return new Page() { Content = "Env Compare coming soon..." };
         }
 
         private static Page Documents()
@@ -163,9 +187,6 @@ namespace Ginger.MenusLib
             return PluginsRootPage;
         }
 
-        private static Page GingerGrid()
-        {
-            return new GingerGridPage(WorkSpace.Instance.LocalGingerGrid);
-        }
+
     }
 }

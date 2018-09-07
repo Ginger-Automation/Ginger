@@ -60,8 +60,8 @@ namespace Ginger.BusinessFlowFolder
                 mBusinessFlow = App.BusinessFlow;
                 mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
                 App.PropertyChanged += AppPropertychanged;
-                grdActivities.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Activity", App.MainWindow.FloatingContinueRunActivityButton_Click, 4);
-                grdActivities.AddFloatingImageButton("@RunAction_20x20.png", "Run Selected Action", App.MainWindow.RunActionButton_Click, 4);
+                grdActivities.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Activity", FloatingContinueRunActivityButton_Click, 4);
+                grdActivities.AddFloatingImageButton("@RunAction_20x20.png", "Run Selected Action", RunActionButton_Click, 4);
                 grdActivities.AddFloatingImageButton("@Run2_20x20.png", "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity), RunFloatingButtonClicked, 4); 
             }
           
@@ -75,6 +75,15 @@ namespace Ginger.BusinessFlowFolder
                 grdActivities.RowDoubleClick -= grdActivities_grdMain_MouseDoubleClick;
                 grdActivities.DisableGridColoumns();
             }
+        }
+
+        public void FloatingContinueRunActivityButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ContinueActivityRun, null);
+        }
+        public void RunActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, null);
         }
 
         private void SetGridRowStyle()
@@ -131,7 +140,7 @@ namespace Ginger.BusinessFlowFolder
         private void RunFloatingButtonClicked(object sender, RoutedEventArgs e)
         {
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
-            App.MainWindow.RunActivity(); 
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActivity, null); 
         }
 
         private void CurrentActivity_PropertyChanged(object sender, PropertyChangedEventArgs e)

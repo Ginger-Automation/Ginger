@@ -223,9 +223,6 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Environment:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Globe);
                     break;
-                case eImageType.Parameter:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Sliders);
-                    break;
                 case eImageType.Application:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
                     break;
@@ -243,6 +240,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.NonSharedRepositoryItem:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Star, Brushes.Gray);
+                    break;
+                case eImageType.Tag:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Tag);
                     break;
                 #endregion
 
@@ -369,7 +369,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Retweet);
                     break;
                 case eImageType.Automate:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Certificate);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cogs);
                     break;
                 case eImageType.ParallelExecution:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Random);
@@ -457,6 +457,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.List:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Table);
+                    break;
+                case eImageType.Parameter:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Sliders);
                     break;
                 case eImageType.File:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FileOutline);

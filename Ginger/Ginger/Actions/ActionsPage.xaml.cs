@@ -72,8 +72,8 @@ namespace Ginger.Actions
 
                 grdActions.AddToolbarTool("@Split_16x16.png", "Split to " + GingerDicser.GetTermResValue(eTermResKey.Activities), new RoutedEventHandler(Split));
                 grdActions.AddToolbarTool(eImageType.Reset, "Reset Run Details", new RoutedEventHandler(ResetAction));
-                grdActions.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Action", App.MainWindow.FloatingContinueRunActionButton_Click, 4);
-                grdActions.AddFloatingImageButton("@RunAction_20x20.png", "Run Action", App.MainWindow.FloatingRunActionButton_Click, 4);
+                grdActions.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Action", FloatingContinueRunActionButton_Click, 4);
+                grdActions.AddFloatingImageButton("@RunAction_20x20.png", "Run Action", FloatingRunActionButton_Click, 4);
             }            
             SetActionsGridView();
                                    
@@ -84,6 +84,17 @@ namespace Ginger.Actions
                 SetViewMode();
             }
         }
+
+        public void FloatingRunActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.RunCurrentAction, null);
+            
+        }
+        public void FloatingContinueRunActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.ContinueActionRun, null);            
+        }
+        
 
         private void ResetAction(object sender, RoutedEventArgs e)
         {

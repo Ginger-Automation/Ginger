@@ -49,7 +49,8 @@ namespace Ginger.Variables
         private eVariablesLevel mVariablesLevel;
         private object mVariablesParentObj;
         private bool mVariablesParentObjIsStatic;
-        
+        General.RepositoryItemPageViewMode mEditMode;
+
         public eVariablesLevel VariablesLevel
         {
             get { return mVariablesLevel; }
@@ -67,6 +68,8 @@ namespace Ginger.Variables
 
             mVariablesLevel = variablesLevel;
             mVariablesParentObj = variablesParentObj;
+            mEditMode = editMode;
+
             if (variablesParentObj == null)
             {
                 mVariablesParentObjIsStatic = false;
@@ -77,9 +80,13 @@ namespace Ginger.Variables
             SetVariablesParentObj();            
             SetVariablesGridView();
             LoadGridData();
-            if (editMode == General.RepositoryItemPageViewMode.View)
+
+            if (mEditMode == General.RepositoryItemPageViewMode.View)
             {
-                SetViewMode();
+                grdVariables.ShowToolsBar = Visibility.Collapsed;
+                grdVariables.ToolsTray.Visibility = Visibility.Collapsed;
+                grdVariables.RowDoubleClick -= VariablesGrid_grdMain_MouseDoubleClick;
+                grdVariables.DisableGridColoumns();
             }
         }
 
@@ -134,6 +141,7 @@ namespace Ginger.Variables
                             mVariablesParentObj = new Solution();//to avoid crashing
                     }
                     break;
+
                 case eVariablesLevel.BusinessFlow:
                     if (mVariablesParentObjIsStatic == false)
                     {
@@ -146,6 +154,7 @@ namespace Ginger.Variables
                             mVariablesParentObj = new BusinessFlow();//to avoid crashing
                     }
                     break;
+
                 case eVariablesLevel.Activity:
                     if (mVariablesParentObjIsStatic == false)
                     {
@@ -171,21 +180,21 @@ namespace Ginger.Variables
                 switch (mVariablesLevel)
                 {
                     case eVariablesLevel.Solution:
-                        if (mVariablesParentObjIsStatic)
-                            grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
-                        SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)((Solution)mVariablesParentObj).Variables, (IEnumerable<object>)variables);
+                        //if (mVariablesParentObjIsStatic)
+                        //    grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
+                        //SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)((Solution)mVariablesParentObj).Variables, (IEnumerable<object>)variables);
                         grdVariables.DataSourceList = ((Solution)mVariablesParentObj).Variables;
                         break;
+
                     case eVariablesLevel.BusinessFlow:
                         if (mVariablesParentObjIsStatic)
                             grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
                         else
                             grdVariables.Title = "'" + ((BusinessFlow)mVariablesParentObj).Name + "' - " + GingerDicser.GetTermResValue(eTermResKey.Variables);
-
-
                         SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)((BusinessFlow)mVariablesParentObj).Variables, (IEnumerable<object>)variables);
                         grdVariables.DataSourceList = ((BusinessFlow)mVariablesParentObj).Variables;
                         break;
+
                     case eVariablesLevel.Activity:
                         if (mVariablesParentObjIsStatic)
                             grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
@@ -202,13 +211,7 @@ namespace Ginger.Variables
                 }
             }
         }
-        public void SetViewMode()
-        {           
-                grdVariables.ShowToolsBar = Visibility.Collapsed;             
-                grdVariables.ToolsTray.Visibility = Visibility.Collapsed;
-                grdVariables.RowDoubleClick -= VariablesGrid_grdMain_MouseDoubleClick;
-                grdVariables.DisableGridColoumns();
-        }
+
         private void SetVariablesGridView()
         {
             //Columns View
@@ -220,41 +223,50 @@ namespace Ginger.Variables
                 view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
                 view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 20, AllowSorting = true });
                 view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Description, WidthWeight = 15 });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.VariableUIType, Header="Type", WidthWeight = 10, BindingMode = BindingMode.OneWay });
+                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.VariableUIType, Header = "Type", WidthWeight = 10, BindingMode = BindingMode.OneWay });
                 view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Formula, WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
                 view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.SetAsInputValue, Header = "Set as Input Value", WidthWeight = 10, MaxWidth = 200, StyleType = GridColView.eGridColStyleType.CheckBox });
                 view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.SetAsOutputValue, Header = "Set as Output Value", WidthWeight = 10, MaxWidth = 200, StyleType = GridColView.eGridColStyleType.CheckBox });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.LinkedVariableName, Header="Linked Variable", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Value, Header = "Current Value", WidthWeight = 20, BindingMode = BindingMode.TwoWay, ReadOnly = true });                                                              
+                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.LinkedVariableName, Header = "Linked Variable", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Value, Header = "Current Value", WidthWeight = 20, BindingMode = BindingMode.TwoWay, ReadOnly = true });
                 grdVariables.SetAllColumnsDefaultView(view);
             }
-            else//Global Variables 
+            else//Solution Global Variables 
             {
                 GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
                 view.GridColsView = new ObservableList<GridColView>();
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });                
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 20 , AllowSorting = true });
+                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 20, AllowSorting = true });
                 view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Description, WidthWeight = 20 });
                 view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Formula, WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
                 view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.LinkedVariableName, Header = "Linked Variable", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Value, Header = "Current Value", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });               
+                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Value, Header = "Current Value", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
                 grdVariables.SetAllColumnsDefaultView(view);
+
+                grdVariables.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Variable, GingerDicser.GetTermResValue(eTermResKey.Variables, "Global "), saveAllHandler: SaveSolutionConfigurations, addHandler: AddVar);
+                grdVariables.ShowAdd = Visibility.Collapsed;
+                grdVariables.ShowRefresh = Visibility.Collapsed;
             }
 
             grdVariables.InitViewItems();
 
             //Tool Bar
             grdVariables.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditVar));
-            grdVariables.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddVar));
+            
             grdVariables.ShowCopyCutPast = System.Windows.Visibility.Visible;
             grdVariables.ShowTagsFilter = Visibility.Visible;
-            grdVariables.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshVarsGrid));
+
+
             grdVariables.AddToolbarTool("@Reset_16x16.png", "Reset Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value", new RoutedEventHandler(ResetVariablesValue));
             grdVariables.AddToolbarTool("@A_16x16.png", "Generate Auto Value to Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + "", new RoutedEventHandler(GenerateVariablesValue));
-            grdVariables.AddFloatingImageButton("@Reset_16x16.png", "Reset Value", new RoutedEventHandler(ResetVariablesValue), 2);           
+            grdVariables.AddFloatingImageButton("@Reset_16x16.png", "Reset Value", new RoutedEventHandler(ResetVariablesValue), 2);
             grdVariables.AddFloatingImageButton("@A_16x16.png", "Generate Auto Value", new RoutedEventHandler(GenerateVariablesValue), 2);
             if (mVariablesLevel != eVariablesLevel.Solution)
-                grdVariables.AddToolbarTool("@UploadStar_16x16.png", "Add to Shared Repository", new RoutedEventHandler(AddToRepository));
+            {
+                grdVariables.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddVar));               
+                grdVariables.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshVarsGrid));                
+                grdVariables.AddToolbarTool("@UploadStar_16x16.png", "Add to Shared Repository", new RoutedEventHandler(AddToRepository));                
+            }
 
             //Events
             grdVariables.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
@@ -270,7 +282,7 @@ namespace Ginger.Variables
 
         private void App_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "BusinessFlow")
+            if (e.PropertyName == nameof(App.BusinessFlow))
             {
                 if (App.BusinessFlow != null)
                 {
@@ -287,14 +299,14 @@ namespace Ginger.Variables
                 }
                 else
                 {
-                    //TODO: ???
+                    grdVariables.DataSourceList = new ObservableList<VariableBase>();
                 }
             }
         }
 
         private void Solution_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Variables" && mVariablesLevel == eVariablesLevel.Solution)
+            if (e.PropertyName == nameof(Solution.Variables) && mVariablesLevel == eVariablesLevel.Solution)
             {
                 if ((Solution)mVariablesParentObj == App.UserProfile.Solution)
                 {
@@ -305,7 +317,7 @@ namespace Ginger.Variables
 
         private void BusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "CurrentActivity" && mVariablesLevel == eVariablesLevel.Activity)
+            if (e.PropertyName == nameof(BusinessFlow.CurrentActivity) && mVariablesLevel == eVariablesLevel.Activity)
             {
                 if ((Activity)mVariablesParentObj != App.BusinessFlow.CurrentActivity)
                 {
@@ -313,7 +325,7 @@ namespace Ginger.Variables
                     LoadGridData();
                 }
             }
-            else if (e.PropertyName == "Variables" && mVariablesLevel == eVariablesLevel.BusinessFlow)
+            else if (e.PropertyName == nameof(BusinessFlow.Variables) && mVariablesLevel == eVariablesLevel.BusinessFlow)
             {
                 if ((BusinessFlow)mVariablesParentObj == App.BusinessFlow)
                 {
@@ -324,7 +336,7 @@ namespace Ginger.Variables
 
         private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Variables" && mVariablesLevel == eVariablesLevel.Activity)
+            if (e.PropertyName == nameof(Activity.Variables) && mVariablesLevel == eVariablesLevel.Activity)
             {
                 if ((Activity)mVariablesParentObj == App.BusinessFlow.CurrentActivity)
                 {
@@ -413,6 +425,11 @@ namespace Ginger.Variables
 
             if (selectedVarb.NameBeforeEdit != selectedVarb.Name)
                 UpdateVariableNameChange(selectedVarb);
+        }
+
+        private void SaveSolutionConfigurations(object sender, RoutedEventArgs e)
+        {
+            ((Solution)mVariablesParentObj).SaveSolutionConfigurations();
         }
 
         private void AddVar(object sender, RoutedEventArgs e)

@@ -58,19 +58,18 @@
             </RibbonTab>
 
             <!-- Solution  group-->
-            <RibbonTab x:Name="SolutionRibbon" h:GingerHelpProvider.HelpString="Solution" ContextMenu="{x:Null}" ToolTip="Solution Tab" AutomationProperties.AutomationId="QA-SolutionRibbon" Header="Solution" KeyTip="H" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" >
+            <RibbonTab x:Name="SolutionRibbon" h:GingerHelpProvider.HelpString="Solution" ContextMenu="{x:Null}" ToolTip="Solution Tab" AutomationProperties.AutomationId="Solution AID" Header="Solution" KeyTip="H" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" >
                 <RibbonGroup x:Name="SolutionRibbonGroup" Header="Solution"  ContextMenu="{x:Null}" >
                     <RibbonButton Label="Open"  Click="btnOpenSolutions_Click"  ContextMenu="{x:Null}"  LargeImageSource="{StaticResource @Open_32x32}" ToolTip="Open Existing Solution" SmallImageSource="{StaticResource @Open_16x16}"></RibbonButton>
                     <RibbonButton Label="New" Click="btnNewSolutions_Click"  ContextMenu="{x:Null}" ToolTip="Create New Solution" LargeImageSource="{StaticResource @Add_32x32}" SmallImageSource="{StaticResource @Add_16x16}" AutomationProperties.AutomationId="QA-NewSolutionButton"></RibbonButton>
                     <RibbonButton x:Name="DownloadSolutionBtn" Label="Download Solution"  ToolTip="Download Solution from SVN"  ContextMenu="{x:Null}" Click="btnSourceControlDownloadSolution_Click" LargeImageSource="{StaticResource @Download_32x32}" SmallImageSource="{StaticResource @Download_16x16}"></RibbonButton>
-                    <RibbonButton x:Name="RefreshSolutionBtn" ToolTip="Refresh Solution"  ContextMenu="{x:Null}" Label="Refresh"  Click="RefreshSolution_Click"></RibbonButton>
-                    <RibbonButton x:Name="SaveAllBtn" Label="Save All" ToolTip="Save all pending changes done currently"  ContextMenu="{x:Null}" Click="btnSaveSolutions_Click" LargeImageSource="{StaticResource @SaveAll_32x32}" SmallImageSource="{StaticResource @Save_16x16}"></RibbonButton>
+                    <!--<RibbonButton x:Name="RefreshSolutionBtn" ToolTip="Refresh Solution"  ContextMenu="{x:Null}" Label="Refresh"  Click="RefreshSolution_Click"></RibbonButton>-->
+                    <!--<RibbonButton x:Name="SaveAllBtn" Label="Save All" ToolTip="Save all pending changes done currently"  ContextMenu="{x:Null}" Click="btnSaveSolutions_Click" LargeImageSource="{StaticResource @SaveAll_32x32}" SmallImageSource="{StaticResource @Save_16x16}"></RibbonButton>-->
                     <RibbonButton x:Name="btnUpgrade" Label="Upgrade" ToolTip="Upgrade all Solution items files to latest version"  ContextMenu="{x:Null}" Click="btnUpgrade_Click" LargeImageSource="{StaticResource @Upgrade_32x32}" SmallImageSource="{StaticResource @Upgrade_16x16}"></RibbonButton>
                     <RibbonButton x:Name="ViewSolutionFiles" Label="View Files"  ContextMenu="{x:Null}" ToolTip="View Solution Files from File Explorer "  Click="ViewSolutionFiles_Click"  LargeImageSource="{StaticResource @Glass_32x32}" SmallImageSource="{StaticResource @Glass_16x16}"></RibbonButton>
                     <RibbonButton x:Name="AnalyzerButton" Label="Solution Analyzer"  ContextMenu="{x:Null}" ToolTip="Analyze Solution to Detect Issues" Click="AnalyzerButton_Click" LargeImageSource="{StaticResource @Stethoscope_32x32.png}" SmallImageSource="{StaticResource @Stethoscope_16x16}"></RibbonButton>
                     <RibbonButton x:Name="xFindAndReplaceSolutionPageButton" Label="Find &amp; Replace"  ContextMenu="{x:Null}" ToolTip="Find and Replace" Click="FindAndReplaceSolutionPageButton_Click" LargeImageSource="{StaticResource @MagnifyingGlass_32x32.png}" SmallImageSource="{StaticResource @MagnifyingGlass_24x24.png}"></RibbonButton>
                     <RibbonButton x:Name="btnRecover" Label="Recover" ToolTip="Recover all Solution items files "  ContextMenu="{x:Null}" Click="btnRecover_Click" ></RibbonButton>
-
                 </RibbonGroup>
                 <RibbonGroup x:Name="SolutionGherkin" Header="BDD" Visibility="Collapsed">
                     <RibbonButton x:Name="ImportFeatureFile" Visibility="Collapsed" ContextMenu="{x:Null}" ToolTip="Import Gherkin Feature File" Click="ImportFeatureFile_Click"  Label="Import Feature File" LargeImageSource="{StaticResource @FeatureFile_32x32 }" SmallImageSource="{StaticResource @FeatureFile_16X16}" />
@@ -85,9 +84,7 @@
                         <RibbonMenuItem x:Name="ResolveConflictsLocalMenuItem"  Click="ResolveConflictsLocalMenuItem_Click"  ContextMenu="{x:Null}"  Header="Keep Local Changes" Icon="{StaticResource TBD32x32}"/>
                         <RibbonMenuItem x:Name="ResolveConflictsServerMenuItem"  Click="ResolveConflictsServerMenuItem_Click"  ContextMenu="{x:Null}"  Header="Accept Server Changes" Icon="{StaticResource TBD32x32}"/>
                     </RibbonMenuButton>
-                    
                 </RibbonGroup>
-               
                 <RibbonGroup x:Name="ALMConfigurationsGroup" Header="ALM" ContextMenu="{x:Null}" >
                     <RibbonMenuButton x:Name="ALMMenuBtn" Label="ALM"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @ALM_32x32.png}">
                         <RibbonMenuItem x:Name="ALMConnectionSettingsMenuItem" ContextMenu="{x:Null}"  Header="ALM Connection Settings" Click="ALMConfigButton_Click" Icon="{StaticResource TBD32x32}"/>
@@ -95,119 +92,15 @@
                         <RibbonMenuItem x:Name="ALMDefectsProfilesMenuItem" ContextMenu="{x:Null}"  Header="ALM Defect's Profiles" Click="ALMDefectsProfiles_Click" Icon="{StaticResource TBD32x32}"/>
                         <RibbonMenuItem x:Name="ALMManagerReportMenuItem" ContextMenu="{x:Null}"  Header="ALM Manager Report" Click="QCManagerReport_Click" Icon="{StaticResource TBD32x32}"/>
                     </RibbonMenuButton>
-                    
                 </RibbonGroup>
             </RibbonTab>
 
             <!-- Business Flows Tab-->
             <RibbonTab x:Name="xBusinessFlows" Header="Business Flows" AutomationProperties.AutomationId="BusinessFlows" h:GingerHelpProvider.HelpString="Business Flows" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" >
             </RibbonTab>
-            
-            <!-- Automate -->
-            <RibbonTab x:Name="AutomateRibbon" AutomationProperties.AutomationId="AutomateRibbon" Header="Automate" h:GingerHelpProvider.HelpString="Automate"  ToolTip="Automate Tab" ContextMenu="{x:Null}" KeyTip="A" Margin="0,3,0,-3" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" IsHitTestVisible="True">
-                <RibbonGroup x:Name="BusFlowGroup" ContextMenu="{x:Null}" Header="{DynamicResource BusinessFlow}">
-                    <RibbonButton x:Name="SaveBizFlowButton" Click="SaveBizFlowButton_Click"  ContextMenu="{x:Null}" Label="Save" LargeImageSource="{StaticResource @Save_32x32}" SmallImageSource="{StaticResource @Save_16x16}" 
-                                  ToolTip="Save the currently opened Business Flow" 
-                                  />
-                    <RibbonButton x:Name="UndoBizFlowChangesButton" ContextMenu="{x:Null}" ToolTip="Undo all changes made" Click="UndoBizFlowChangesButton_Click" Label="Undo All Changes" LargeImageSource="{StaticResource @Undo_32x32.png}" SmallImageSource="{StaticResource @Undo_16x16}" />
-                    <RibbonButton x:Name="AutomateAnalyzerButton" Label="Analyzer" ContextMenu="{x:Null}"  Click="AutomateAnalyzerButton_Click"  LargeImageSource="{StaticResource @Stethoscope_32x32.png}" SmallImageSource="{StaticResource @Stethoscope_16x16}">
-                        <RibbonButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Analyze the [BusinessFlow]- Detect Integrity Issues"/>
-                        </RibbonButton.ToolTip>
-                    </RibbonButton>
-                    <RibbonButton x:Name="btnActionConversion" Label="Actions Conversion" ContextMenu="{x:Null}"  Click="btnActionConversion_Click"  LargeImageSource="{StaticResource @Connection_32x32}" SmallImageSource="{StaticResource @Connection_32x32}"/>
-                    <RibbonMenuButton x:Name="btnResetStatus" Label="Reset Status" ContextMenu="{x:Null}">
-                        <RibbonMenuItem  x:Name="btnResetFlow" Header="Reset Status of Business Flow" Click="btnResetFlow_Click"/>
-                        <RibbonMenuItem  x:Name="btnResetFromCurrentActivity" Header="Reset Status from Current Activity"  Click="btnResetFromCurrentActivity_Click"/>
-                        <RibbonMenuItem x:Name="btnResetFromCurrentAction"  Header="Reset Status from Current Action" Click="btnResetFromCurrentAction_Click"/>
-                        <RibbonMenuButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Reset Status"/>
-                        </RibbonMenuButton.ToolTip>
-                    </RibbonMenuButton>
-                    <RibbonButton x:Name="xFindAndReplaceAutomatePageButton" Label="Find &amp; Replace"  ContextMenu="{x:Null}" Click="FindAndReplaceAutomatePage_Click" LargeImageSource="{StaticResource @MagnifyingGlass_32x32.png}" SmallImageSource="{StaticResource @MagnifyingGlass_24x24.png}">
-                        <RibbonButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Find and Replace in [BusinessFlow]"/>
-                        </RibbonButton.ToolTip>
-                    </RibbonButton>
-                </RibbonGroup>
-                <RibbonGroup x:Name="Gherkin" Header="BDD" Visibility="Collapsed">
-                    <RibbonButton x:Name="GenerateScenario" Visibility="Collapsed" ContextMenu="{x:Null}" ToolTip="Generate BDD Scenarios" Click="GenerateScenarioButton_Click"  Label="Generate Scenarios" LargeImageSource="{StaticResource @AddScnearios_32x32 }" SmallImageSource="{StaticResource @Report_16x16}" />
-                    <RibbonButton x:Name="CleanScenario" Visibility="Collapsed" ContextMenu="{x:Null}" ToolTip="Clean BDD Scenarios" Click="CleanScenarioButton_Click"  Label="Clean Scenarios" LargeImageSource="{StaticResource @CleanScenarios_32x32 }" SmallImageSource="{StaticResource @Report_16x16}" />
-                    <RibbonButton x:Name="OpenFeatureFile" Visibility="Collapsed" ContextMenu="{x:Null}" ToolTip="Open Feature File" Click="OpenFeatureFileButton_Click"  Label="Open Feature File" LargeImageSource="{StaticResource @FeatureFile_32x32 }" SmallImageSource="{StaticResource @Report_16x16}" />
-                </RibbonGroup>
-                <RibbonGroup x:Name="Execution" Header="Execution"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @Play_32x32}" SmallImageSource="{StaticResource @Play_16x16}">
-                    <RibbonButton x:Name="RunActionButton"  ContextMenu="{x:Null}" ToolTip="Run Current Action" Click="RunActionButton_Click" Label="Run Action" LargeImageSource="{StaticResource @PlayAction_32x32}" SmallImageSource="{StaticResource @PlayAction_16x16.png}" />
-                    <RibbonButton x:Name="btnRunActivity"  ContextMenu="{x:Null}" ToolTip="Run Current Activity" Click="btnRunActivity_Click" LargeImageSource="{StaticResource @Play_32x32}" SmallImageSource="{StaticResource @Play_16x16}"/>
 
-                    <RibbonMenuButton x:Name="btnRunFlow" Label="Run Flow" ContextMenu="{x:Null}" LargeImageSource="{StaticResource @PlayFlow_32x32}" SmallImageSource="{StaticResource @PlayFlow_16x16}">
-                        <RibbonMenuItem  Header="Run Flow" Click="btnRunFlow_Click" ImageSource="{StaticResource @PlayFlow_16x16}" />
-                        <RibbonMenuItem  Header="Run Flow without Analyzing" Click="btnRunFlowNoAnaylze_Click" ImageSource="{StaticResource @LightRunFlow_16x16}" />
-                        <RibbonMenuItem  Header="Run Flow And Generate Report" Click="btnRunFlowAndGenerateReport_Click" ImageSource="{StaticResource @RunAndReport_16x16}" />
-                        <RibbonMenuButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Run whole [BusinessFlow]"/>
-                        </RibbonMenuButton.ToolTip>
-                    </RibbonMenuButton>
-                    <RibbonButton x:Name="StopRunButton"  ContextMenu="{x:Null}" ToolTip="Stop ongoing Execution" Click="StopRunButton_Click" Label="Stop" LargeImageSource="{StaticResource @Stop_32x32}" SmallImageSource="{StaticResource @Stop_16x16}"/>
-                    <RibbonMenuButton x:Name="btnContinueFlow" Label="Continue Flow" ContextMenu="{x:Null}" LargeImageSource="{StaticResource @ContinueFlow_32x32}" SmallImageSource="{StaticResource @ContinueFlow_16x16}">
-                        <RibbonMenuItem  Header="Continue Run from Last Stopped Action" Click="btnContinute_Click" ImageSource="{StaticResource @ContinueFlow_16x16}" />
-                        <RibbonMenuItem  x:Name="ContinuteRunActiviy"  Click="ContinuteRunActiviytButton_Click" ImageSource="{StaticResource @ContinueFlow_16x16}"/>
-                        <RibbonMenuItem  Header="Continue Run from Current Action" Click="ContinuteRunButton_Click" ImageSource="{StaticResource @ContinueFlow_16x16}" />
-                        <RibbonMenuButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Continue from Current"/>
-                        </RibbonMenuButton.ToolTip>
-                    </RibbonMenuButton>
-                    
-                    <StackPanel>
-                        <ComboBox x:Name="lstEnvs"  ContextMenu="{x:Null}" SelectionChanged="lstEnvs_SelectionChanged" Width="150" Style="{DynamicResource @InputComboBoxStyle}" Margin="5,5,5,3"></ComboBox>
-                        <Label HorizontalAlignment="Center">Environment</Label>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel Orientation="Vertical">
-                            <StackPanel Orientation="Horizontal">
-                                <Label HorizontalAlignment="Center">Speed:</Label>
-                                <ComboBox Name="cboSpeed" Style="{DynamicResource @InputComboBoxStyle}" Width="40" Margin="5,5,5,3">
-                                    <ComboBoxItem ToolTip="Super Fast">0</ComboBoxItem>
-                                    <ComboBoxItem ToolTip="1 Sec wait between actions">1</ComboBoxItem>
-                                    <ComboBoxItem ToolTip="2 Sec wait between actions">2</ComboBoxItem>
-                                    <ComboBoxItem>3</ComboBoxItem>
-                                </ComboBox>
-                            </StackPanel>
-                            <RibbonCheckBox x:Name="SimulationMode"  ContextMenu="{x:Null}" Style="{DynamicResource @CheckBoxGridCellElemntStyle}" Label="Run in simulation mode"  Margin="0,5,5,0" />
-                        </StackPanel>
-                    </StackPanel>
-                </RibbonGroup>
-                <RibbonGroup x:Name="AgentsRibbon"  ContextMenu="{x:Null}" ToolTip="Current Agents Available" Header="Agent(s)" LargeImageSource="{StaticResource @Agent_32x32}">
-                    
-                    <Frame x:Name="AppAgentsMappingExpander2Frame" NavigationUIVisibility="Hidden"></Frame>
-                    
-                    <RibbonButton x:Name="StartAgent" Click="StartAgent_Click" ContextMenu="{x:Null}" Label="Start All Agents" KeyTip="X" LargeImageSource="{StaticResource @AgentsLaunch_32x32.png}" SmallImageSource="{StaticResource @AgentsLaunch_16x16}" />
-                </RibbonGroup>
-                <RibbonGroup x:Name="Views" ContextMenu="{x:Null}"  Header="Views" ToolTip="View Grids" LargeImageSource="{StaticResource @GridView_32x32}" SmallImageSource="{StaticResource @Grid_16x16.png}">
-                    <RibbonMenuButton Label="Grids View" ContextMenu="{x:Null}" LargeImageSource="{StaticResource @GridView_32x32}" SmallImageSource="{StaticResource @Grid_16x16.png}">
-                        <RibbonMenuItem x:Name="btnGridViewAll"  Click="btnGridViewAll_Click"  Header="All" />
-                        <RibbonMenuItem x:Name="btnGridViewDesign"  Click="btnGridViewDesign_Click" Header="Design"/>
-                        <RibbonMenuItem x:Name="btnGridViewExecution"  Click="btnGridViewExecution_Click" Header="Execution" />
-                    </RibbonMenuButton>
-                    
-                </RibbonGroup>
-                <RibbonGroup x:Name="Reports" Header="Reports"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @Report2_32x32.png}" SmallImageSource="{StaticResource @Report2_16x16}">
-                    <RibbonButton x:Name="SummeryReportButton"  ContextMenu="{x:Null}" ToolTip="View Summary Report" Click="SummeryReportButton_Click"  Label="Execution Summary" LargeImageSource="{StaticResource @Report_32x32 }" SmallImageSource="{StaticResource @Report_16x16}" />
-                    
-                    <RibbonMenuButton Label="Generate Report"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @Report2_32x32.png}" ToolTip="Generate execution report" SmallImageSource="{StaticResource @Report2_16x16}">
-                        <RibbonMenuItem x:Name="btnLastExecutionHTMLReport"  Click="btnLastExecutionHTMLReport_click"  Header="Generate Last Executed Item Report" />
-                        <RibbonMenuItem x:Name="btnOfflineExecutionHTMLReport"  Click="btnOfflineExecutionHTMLReport_click" Header="Generate Full Business Flow Report"/>
-                    </RibbonMenuButton>
-                </RibbonGroup>
-                <RibbonGroup x:Name="ALMGroup" Header="{DynamicResource ALM}" ContextMenu="{x:Null}" LargeImageSource="{StaticResource @ALM_32x32.png}" SmallImageSource="{StaticResource @ALM_16x16.png}">
-                    <RibbonButton x:Name="ExportBizFlowButton" ContextMenu="{x:Null}" ToolTip="Export to ALM" Click="ExportBizFlowButton_Click" Label="Export to ALM" LargeImageSource="{StaticResource @ExportToALM_32x32}" SmallImageSource="{StaticResource @ExportToALM_16x16}" />
-                    <RibbonButton x:Name="RefreshFromALM" ContextMenu="{x:Null}" ToolTip="Refresh From ALM" Click="RefreshFromALM_Click" Label="Refresh From ALM" LargeImageSource="{StaticResource @RefreshALM_32x32}" SmallImageSource="{StaticResource @RefreshALM_16x16}" />
-                    <RibbonButton x:Name="ExportExecutionResultsToALM" ContextMenu="{x:Null}" ToolTip="Export Execution Results to ALM " Click="ExportExecutionResultsToALM_Click" Label="Export Results to ALM " LargeImageSource="{StaticResource @ExportExecutionResultsToALM_32x32}" SmallImageSource="{StaticResource @ExportExecutionResultsToALM_16x16}" />
-                </RibbonGroup>
-            </RibbonTab>
-
-
-            <RibbonTab x:Name="xNewAutomate" Header="New Automate" AutomationProperties.AutomationId="NewAutomate" h:GingerHelpProvider.HelpString="NewAutomate" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" Visibility="Collapsed">
-            </RibbonTab>
+            <!--<RibbonTab x:Name="xNewAutomate" Header="New Automate" AutomationProperties.AutomationId="NewAutomate" h:GingerHelpProvider.HelpString="NewAutomate" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" Visibility="Collapsed">
+            </RibbonTab>-->
 
             <!-- Run Tab-->
             <RibbonTab x:Name="xRun" AutomationProperties.AutomationId="RunRibbon" Header="Run" h:GingerHelpProvider.HelpString="Run" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" IsHitTestVisible="True">

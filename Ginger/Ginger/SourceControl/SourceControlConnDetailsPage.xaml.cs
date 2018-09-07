@@ -72,7 +72,7 @@ namespace Ginger.SourceControl
             {
                 ShowIndicationkForLockedItems.Visibility = Visibility.Visible;
             }
-            App.ObjFieldBinding(ShowIndicationkForLockedItems, CheckBox.IsCheckedProperty, App.UserProfile.Solution, Solution.Fields.ShowIndicationkForLockedItems);
+            App.ObjFieldBinding(ShowIndicationkForLockedItems, CheckBox.IsCheckedProperty, App.UserProfile.Solution, nameof(Solution.ShowIndicationkForLockedItems));
 
             SourceControlPassTextBox.Password = App.UserProfile.Solution.SourceControl.SourceControlPass;
 
@@ -108,10 +108,8 @@ namespace Ginger.SourceControl
         }
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
-        {
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.UserProfile.Solution.GetNameForFileName(), "item");
-            App.UserProfile.Solution.Save();
-            Reporter.CloseGingerHelper();
+        {           
+            App.UserProfile.Solution.SaveSolutionConfigurations();           
         }
 
         private void Close_Click(object sender, EventArgs e)

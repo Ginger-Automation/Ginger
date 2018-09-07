@@ -1617,8 +1617,7 @@ namespace Ginger.Run
 
             BusinessFlowsFolderTreeItem bfsFolder;
             
-            bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());            
-            bfsFolder.IsGingerDefualtFolder = true;
+            bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());                        
             mBusFlowsSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
             mBusFlowsSelectionPage.SelectionDone += MBusFlowsSelectionPage_SelectionDone;
             

@@ -4,14 +4,14 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.TagsLib"
-      xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.TagsLib.SolutionTagsEditorPage"
+      xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.TagsLib.TagsPage"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="TagsEditorPage">
 
     <Grid>
 
-        <Ginger:ucGrid x:Name="TagsGrid" Title="Solution Tags List" Margin="5" Grid.Row="1" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowSearch="Collapsed" ShowUpDown="Collapsed"/>
+        <Ginger:ucGrid x:Name="xTagsGrid" Title="Solution Tags List" Margin="5" Grid.Row="1" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowSearch="Collapsed" ShowUpDown="Collapsed"/>
 
     </Grid>
 </Page>

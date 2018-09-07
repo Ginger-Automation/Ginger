@@ -91,12 +91,8 @@ namespace Ginger.ALM
             ObservableList<ExternalItemFieldBase> tempItemList = new ObservableList<ExternalItemFieldBase>();
             foreach (ExternalItemFieldBase field in mItemsFields.Where(x => x.ToUpdate == true).ToList())
                 tempItemList.Add(field);
-
             App.UserProfile.Solution.ExternalItemsFields = tempItemList;
-
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.UserProfile.Solution.GetNameForFileName(), "item");
-            App.UserProfile.Solution.Save();
-            Reporter.CloseGingerHelper();
+            App.UserProfile.Solution.SaveSolutionConfigurations();
             genWin.Close();
         }
 

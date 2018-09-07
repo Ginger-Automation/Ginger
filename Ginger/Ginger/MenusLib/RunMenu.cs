@@ -1,4 +1,6 @@
-﻿using Ginger.GeneralWindows;
+﻿using amdocs.ginger.GingerCoreNET;
+using Ginger.GeneralWindows;
+using Ginger.GingerGridLib;
 using Ginger.Run;
 using Ginger.TwoLevelMenuLib;
 using System;
@@ -36,13 +38,18 @@ namespace Ginger.MenusLib
         {
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
 
-            TopMenuItem RunSetMenu = new TopMenuItem(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet), ConsoleKey.R, "Run Set AID", GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet, "Create, Design and Execute "));
-            RunSetMenu.Add(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet), GetRunSetPage, ConsoleKey.R, "", "AID");
-            twoLevelMenu.Add(RunSetMenu);
+            TopMenuItem runSetMenu = new TopMenuItem(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet), ConsoleKey.R, "Run Set AID", GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet, "Create, Design and Execute "));
+            runSetMenu.Add("", GetRunSetPage, ConsoleKey.R, "", "AID");
+            twoLevelMenu.Add(runSetMenu);
 
-            TopMenuItem ExecutionsHistoryMenu = new TopMenuItem("Executions History", ConsoleKey.E, "Executions History AID", "View executions history of all Run Sets");
-            ExecutionsHistoryMenu.Add("Executions History", GetExecutionsHistoryPage, ConsoleKey.E, "", "AID");
-            twoLevelMenu.Add(ExecutionsHistoryMenu);
+            TopMenuItem gingerGridMenu = new TopMenuItem("Gingers Grid", ConsoleKey.G, "Ginger Grid AID", "Grid showing all connected Ginger Nodes");
+            gingerGridMenu.Add("", GetGingerGridPage, ConsoleKey.G, "", "AID");
+            twoLevelMenu.Add(gingerGridMenu);
+            
+
+            TopMenuItem executionsHistoryMenu = new TopMenuItem("Executions History", ConsoleKey.E, "Executions History AID", "View executions history of all Run Sets");
+            executionsHistoryMenu.Add("", GetExecutionsHistoryPage, ConsoleKey.E, "", "AID");
+            twoLevelMenu.Add(executionsHistoryMenu);
 
             return twoLevelMenu;
         }
@@ -54,6 +61,11 @@ namespace Ginger.MenusLib
         private static Page GetExecutionsHistoryPage()
         {
             return new RunSetsExecutionsHistoryPage(RunSetsExecutionsHistoryPage.eExecutionHistoryLevel.Solution);
+        }
+
+        private static Page GetGingerGridPage()
+        {
+            return new GingerGridPage(WorkSpace.Instance.LocalGingerGrid);
         }
     }
 }

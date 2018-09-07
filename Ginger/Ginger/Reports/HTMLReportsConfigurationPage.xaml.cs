@@ -165,8 +165,7 @@ namespace Ginger.Reports
         }
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            
+        {            
             if (HTMLReportFolderTextBox.Text.Length > 100)
             {
                 Reporter.ToUser(eUserMsgKeys.FolderNamesAreTooLong);
@@ -179,7 +178,7 @@ namespace Ginger.Reports
             }
 
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            App.UserProfile.Solution.Save();
+            App.UserProfile.Solution.SaveSolutionConfigurations();
         }
 
         private void DefaultTemplatePickerCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)

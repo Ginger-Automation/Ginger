@@ -125,7 +125,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 Reporter.ToUser(eUserMsgKeys.GherkinNotifyBFIsNotExistForThisFeatureFile, FileName);
             else
             {
-                App.MainWindow.AutomateBusinessFlow(BF);
+                App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.Automate, BF);
             }
         }
 

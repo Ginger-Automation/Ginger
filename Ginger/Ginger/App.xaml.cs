@@ -22,6 +22,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
+using Ginger.BusinessFlowWindows;
 using Ginger.Environments;
 using Ginger.Extensions;
 using Ginger.Reports;
@@ -225,12 +226,6 @@ namespace Ginger
                     UserProfile.RecentBusinessFlow = App.BusinessFlow.Guid;
                     UserProfile.Solution.LastBusinessFlowFileName = mBusinessFlow.FileName;
                     AddLastUsedBusinessFlow(mBusinessFlow);
-                    if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
-                        App.MainWindow.AutomateRibbon.Visibility = System.Windows.Visibility.Visible;
-                }
-                else
-                {
-                    App.MainWindow.AutomateRibbon.Visibility = System.Windows.Visibility.Collapsed;
                 }
 
                 App.AutomateTabGingerRunner.BusinessFlows.Clear();
@@ -239,8 +234,7 @@ namespace Ginger
                 App.AutomateTabGingerRunner.CurrentBusinessFlow = App.BusinessFlow;
 
                 UpdateApplicationsAgentsMapping();
-
-                OnPropertyChanged("BusinessFlow");
+                OnPropertyChanged(nameof(BusinessFlow));
             }
         }
 
@@ -273,6 +267,8 @@ namespace Ginger
         }
 
         public static bool RunningFromConfigFile= false;
+
+        public static bool RunningFromUnitTest = false;
 
         internal static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
         {
@@ -328,13 +324,23 @@ namespace Ginger
         {
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StanndAloneThreadsExceptionHandler);
+            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
 
             if (Environment.GetCommandLineArgs().Count() > 1)
             {
-                RunningFromConfigFile = true;
-                Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
-                Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)               
+                // When running from unit test there are args, so we set a flag in GingerAutomator to make sure Ginger will Launh
+                // and will not try to process the args for RunSet auto run
+                if (RunningFromUnitTest)
+                {
+                    // do nothing for now, but later on we might want to process and check auto run too
+                }
+                else
+                {
+                    // This Ginger is running with run set config will do the run and close Ginger
+                    RunningFromConfigFile = true;
+                    Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
+                    Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)               
+                }
             }
 
             string phase = string.Empty;
@@ -345,6 +351,7 @@ namespace Ginger
             WorkSpace.Instance.BetaFeatures = BetaFeatures.LoadUserPref();
             WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatureChanged;
 
+            AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
 
             if (WorkSpace.Instance.BetaFeatures.ShowDebugConsole)
             {
@@ -428,8 +435,17 @@ namespace Ginger
 
         }
 
-        private static void StanndAloneThreadsExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        private static void StandAloneThreadExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
+            if (RunningFromUnitTest)
+            {                
+                // happen when we close Ginger from unit tests
+                if (e.ExceptionObject is System.Runtime.InteropServices.InvalidComObjectException || e.ExceptionObject is System.Threading.Tasks.TaskCanceledException) 
+                {
+                    Console.WriteLine("StandAloneThreadExceptionHandler: Running from unit test ignoring error on ginger close");
+                    return;
+                }
+            }
             Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occured on stand alone thread(non UI) - " + e.ExceptionObject.ToString());
             MessageBox.Show("Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
             App.AppSolutionAutoSave.DoAutoSave();
@@ -640,7 +656,7 @@ namespace Ginger
                     ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
                     if (higherVersionFiles.Count > 0)
                     {
-                        if (App.RunningFromConfigFile == false)
+                        if (App.RunningFromConfigFile == false && RunningFromUnitTest == false)
                         {
                             UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
                             gingerUpgradePage.ShowAsWindow();
@@ -649,7 +665,7 @@ namespace Ginger
                         return false;
                     }
 
-                    Solution sol = (Solution)RepositoryItem.LoadFromFile(typeof(Solution), SolFile);
+                    Solution sol = Solution.LoadSolutionFile(SolFile); 
 
                     if (sol != null)
                     {
@@ -657,7 +673,7 @@ namespace Ginger
                         ValueExpression.SolutionFolder = SolutionFolder;
 
                         //Offer to upgrade Solution items to current version
-                        if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false)
+                        if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false && RunningFromUnitTest == false)
                         {
                             //TODO: think if it safe to use Async upgrade offer while already started to load the solution
 
@@ -750,10 +766,7 @@ namespace Ginger
                         // App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
                         App.UserProfile.Solution.SetReportsConfigurations();
                         App.AutomateTabGingerRunner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
-                        App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-
-
-                        BindEnvsCombo();
+                        App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();                        
 
                         if (App.MainWindow.MainRibbonSelectedTab != "Solution")
                             App.MainWindow.MainRibbonSelectedTab = "Solution";
@@ -800,44 +813,7 @@ namespace Ginger
                 AppSolutionRecover.SolutionRecoverStart();
         }
 
-        private static void BindEnvsCombo()
-        {
-            ComboBox envsCombo = App.MainWindow.lstEnvs;
-
-            envsCombo.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().AsCollectionViewOrderBy(nameof(ProjEnvironment.Name));
-            envsCombo.DisplayMemberPath = nameof(ProjEnvironment.Name);
-            envsCombo.SelectedValuePath = nameof(ProjEnvironment.Guid);
-
-
-            if (UserProfile.Solution != null)
-            {
-                //select last used environment
-                if (envsCombo.Items != null && envsCombo.Items.Count > 0)
-                {
-                    if (envsCombo.Items.Count > 1 && App.UserProfile.RecentEnvironment != null && App.UserProfile.RecentEnvironment != Guid.Empty)
-                    {
-                        foreach (object env in envsCombo.Items)
-                        {
-                            if (((ProjEnvironment)env).Guid == App.UserProfile.RecentEnvironment)
-                            {
-                                envsCombo.SelectedIndex = envsCombo.Items.IndexOf(env);
-                                return;
-                            }
-                        }
-                    }
-
-                    //defualt selection
-                    envsCombo.SelectedIndex = 0;
-                }
-            }
-
-            //move to top after bind
-            if (envsCombo.Items.Count == 0)
-            {
-                CreateDefaultEnvironment();
-                envsCombo.SelectedItem = envsCombo.Items[0];
-            }
-        }
+       
 
 
         public static SolutionRepository CreateGingerSolutionRepository()
@@ -1040,22 +1016,7 @@ namespace Ginger
         }
 
 
-        public static void CreateDefaultEnvironment()
-        {
-            ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
-
-            // Add all solution target app
-            foreach (ApplicationPlatform AP in App.UserProfile.Solution.ApplicationPlatforms)
-            {
-                EnvApplication EA = new EnvApplication();
-                EA.Name = AP.AppName;
-                EA.CoreProductName = AP.Core;
-                EA.CoreVersion = AP.CoreVersion;
-                EA.Active = true;
-                newEnv.Applications.Add(EA);
-            }
-        }
+        
 
 
 
@@ -1198,5 +1159,25 @@ namespace Ginger
             App.UserProfile.Solution = null;
         }
 
+
+        public static event AutomateBusinessFlowEventHandler AutomateBusinessFlowEvent;
+        public delegate void AutomateBusinessFlowEventHandler(AutomateEventArgs args);
+        public static void OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType eventType, object obj)
+        {
+            AutomateBusinessFlowEventHandler handler = AutomateBusinessFlowEvent;
+            if (handler != null)
+            {
+                handler(new AutomateEventArgs(eventType, obj));
+            }
+        }
+
+        private static void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
+        {
+            if (args.EventType == AutomateEventArgs.eEventType.Automate)
+            {
+                App.BusinessFlow = (BusinessFlow)args.Object;
+                App.BusinessFlow.SaveBackup();
+            }
+        }
     }
 }

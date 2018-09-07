@@ -219,7 +219,7 @@ namespace Ginger
                 if (mFullListEditTag!=null && ((RepositoryItemTag)TagsComboBox.SelectedItem).Guid == mFullListEditTag.Guid)
                 {
                     //open edit solution page
-                    SolutionTagsEditorPage page = new SolutionTagsEditorPage(mFullTagsList);
+                    TagsPage page = new TagsPage(TagsPage.eViewMode.SpecificList, mFullTagsList);
                     
                     page.ShowAsWindow();
                 }
@@ -298,7 +298,7 @@ namespace Ginger
 
         private void EditTagBtn_Click(object sender, RoutedEventArgs e)
         {
-            SolutionTagsEditorPage s = new SolutionTagsEditorPage(mFullTagsList);
+            TagsPage s = new TagsPage(TagsPage.eViewMode.SpecificList, mFullTagsList);
             s.ShowAsWindow();
         }
     }

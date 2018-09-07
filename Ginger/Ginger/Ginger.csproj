@@ -398,6 +398,9 @@
     <Compile Include="Actions\ActDataSourcePage.xaml.cs">
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml.cs">
+      <DependentUpon>LocateByPOMElement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\_Common\ActUIElementLib\UIElementSendKeysAndValidate.xaml.cs">
       <DependentUpon>UIElementSendKeysAndValidate.xaml</DependentUpon>
     </Compile>
@@ -446,10 +449,14 @@
       <DependentUpon>AgentDriverConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\AgentNameValidationRule.cs" />
+    <Compile Include="ApplicationModelsLib\APIModels\APIModelBodyNodeSyncPage.xaml.cs">
+      <DependentUpon>APIModelBodyNodeSyncPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ALM\Repository\QCRestAPIRepository.cs" />
     <Compile Include="Agents\ucAgentControl.xaml.cs">
       <DependentUpon>ucAgentControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationModelsLib\APIModels\NodeToDelete.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMTAValidationRule.cs" />
@@ -464,6 +471,10 @@
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
+    <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
+      <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
@@ -606,6 +617,9 @@
     <Compile Include="MenusLib\RunMenu.cs" />
     <Compile Include="RunSetLib\RunSetOperations.cs" />
     <Compile Include="Run\RunSetConfig.cs" />
+    <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
+      <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
@@ -642,8 +656,8 @@
     <Compile Include="BusinessFlowsLibNew\ActivityVariablesPage.xaml.cs">
       <DependentUpon>ActivityVariablesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\BusinessFlowAutomatePage.xaml.cs">
-      <DependentUpon>BusinessFlowAutomatePage.xaml</DependentUpon>
+    <Compile Include="BusinessFlowsLibNew\NewAutomatePage.xaml.cs">
+      <DependentUpon>NewAutomatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowsLibNew\BusinessFlowDiagramPage.xaml.cs">
       <DependentUpon>BusinessFlowDiagramPage.xaml</DependentUpon>
@@ -1017,8 +1031,8 @@
     <Compile Include="SourceControl\SourceControlItemInfoPage.xaml.cs">
       <DependentUpon>SourceControlItemInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TagsLib\SolutionTagsEditorPage.xaml.cs">
-      <DependentUpon>SolutionTagsEditorPage.xaml</DependentUpon>
+    <Compile Include="TagsLib\TagsPage.xaml.cs">
+      <DependentUpon>TagsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TagsLib\TagsSelectorPage.xaml.cs">
       <DependentUpon>TagsSelectorPage.xaml</DependentUpon>
@@ -1757,7 +1771,7 @@
       <DependentUpon>ActivityEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppProgressBar.cs" />
-    <Compile Include="AutomatePage.xaml.cs">
+    <Compile Include="BusinessFlowWindows\AutomatePage.xaml.cs">
       <DependentUpon>AutomatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Activities\ActivitiesPage.xaml.cs">
@@ -1832,9 +1846,6 @@
       <DependentUpon>RepositoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\GingerRunner.cs" />
-    <Compile Include="SolutionWindows\SolutionExplorerPage.xaml.cs">
-      <DependentUpon>SolutionExplorerPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SolutionWindows\TreeViewItems\AgentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\AgentTreeItem.cs" />
     <Compile Include="ALM\QC\TreeViewItems\QCTestSetTreeItem.cs" />
@@ -1858,7 +1869,7 @@
     <Compile Include="SolutionWindows\TreeViewItems\Legacy\SharedRepositoryTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedVariablesFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedVariableTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SolutionTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\SolutionTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\TreeViewItemBase.cs" />
     <Compile Include="ALM\QC\UploadBusinessFlowsPage.xaml.cs">
       <DependentUpon>UploadBusinessFlowsPage.xaml</DependentUpon>
@@ -1882,12 +1893,12 @@
     <Compile Include="SourceControl\SourceControlConnDetailsPage.xaml.cs">
       <DependentUpon>SourceControlConnDetailsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControlsLib\GridColView.cs" />
-    <Compile Include="UserControlsLib\GridViewDef.cs" />
+    <Compile Include="UserControlsLib\ucGridView\GridColView.cs" />
+    <Compile Include="UserControlsLib\ucGridView\GridViewDef.cs" />
     <Compile Include="UserControlsLib\UCDataColGrid.xaml.cs">
       <DependentUpon>UCDataColGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControlsLib\ucGrid.xaml.cs">
+    <Compile Include="UserControlsLib\ucGridView\ucGrid.xaml.cs">
       <DependentUpon>ucGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\UIHelpers.cs" />
@@ -2512,6 +2523,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="AgentsNew\NewAgentEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2537,6 +2552,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Agents\AgentDriverConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\APIModels\APIModelBodyNodeSyncPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2696,7 +2715,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\BusinessFlowAutomatePage.xaml">
+    <Page Include="BusinessFlowsLibNew\NewAutomatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2719,6 +2738,10 @@
     <Page Include="BusinessFlowsLibNew\GingerActionEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dictionaries\Skins\GingerDefualtSkinDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2759,6 +2782,10 @@
     <Page Include="GeneralLib\TestWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SolutionWindows\TargetApplicationsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TestLib\WizardLib\MyWizardDetailsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -3311,7 +3338,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TagsLib\SolutionTagsEditorPage.xaml">
+    <Page Include="TagsLib\TagsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4027,7 +4054,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="AutomatePage.xaml">
+    <Page Include="BusinessFlowWindows\AutomatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4115,10 +4142,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SolutionWindows\SolutionExplorerPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="ALM\QC\UploadBusinessFlowsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -4151,7 +4174,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControlsLib\ucGrid.xaml">
+    <Page Include="UserControlsLib\ucGridView\ucGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

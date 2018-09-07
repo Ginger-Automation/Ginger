@@ -23,7 +23,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.GeneralLib;
 using Ginger.Reports;
-using Ginger.Repository;
 using GingerCore;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -36,25 +35,8 @@ using System.Threading.Tasks;
 
 namespace Ginger.Environments
 {
-    public class Solution : RepositoryItem
+    public class Solution : RepositoryItemBase
     {
-        public new static class Fields
-        {
-            public static string Name = "Name";
-            public static string Folder = "Folder";
-            public static string MainPlatform = "MainPlatform";   //TODO: delete old usage , after fully moving to apps/platform, meanwhile keeping so code will compile
-            public static string Account = "Account";
-            public static string Variables = "Variables";
-            public static string VariablesNames = "VariablesNames";
-            public static string AlmType = "AlmType";
-
-            public static string ALMServerURL = "ALMServerURL";
-            public static string ALMDomain = "ALMDomain";
-            public static string ALMProject = "ALMProject";
-
-            public static string ShowIndicationkForLockedItems = "ShowIndicationkForLockedItems";
-        }
-
         public SourceControlBase SourceControl { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -64,6 +46,13 @@ namespace Ginger.Environments
         public Solution()
         {
             Tags = new ObservableList<RepositoryItemTag>();
+        }
+
+        public static Solution LoadSolutionFile(string solutionFileName)
+        {
+            string txt = File.ReadAllText(solutionFileName);
+            Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
+            return solution;
         }
 
         [IsSerializedForLocalRepository]
@@ -173,7 +162,6 @@ namespace Ginger.Environments
                     return null;
                 }
             }
-
         }
         
         [IsSerializedForLocalRepository]
@@ -196,7 +184,7 @@ namespace Ginger.Environments
 
         // Need to be tree view
         public override string GetNameForFileName() { return Name; }
-        
+
         public string BusinessFlowsMainFolder
         {
             get
@@ -208,17 +196,6 @@ namespace Ginger.Environments
             }
         }
 
-        public string ApplicationsMainFolder
-        {
-            get
-            {
-                string folderPath = Folder + @"Applications\";
-                if (Directory.Exists(folderPath) == false)
-                    Directory.CreateDirectory(folderPath);
-                return folderPath;
-            }
-        }
-        
         public void SetUniqueApplicationName(ApplicationPlatform app)
         {
             if (this.ApplicationPlatforms.Where(obj => obj.AppName == app.AppName).FirstOrDefault() == null) return; //no name like it in the group
@@ -339,7 +316,6 @@ namespace Ginger.Environments
             return null;
         }
 
-       
 
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
@@ -350,30 +326,30 @@ namespace Ginger.Environments
         [IsSerializedForLocalRepository]
         public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
 
-        public string VariablesNames
-        {
-            get
-            {
-                string varsNames = string.Empty;
-                foreach (VariableBase var in Variables)
-                    varsNames += var.Name + ", ";
-                return (varsNames.TrimEnd(new char[] { ',', ' ' }));
-            }
-        }
+        //public string VariablesNames
+        //{
+        //    get
+        //    {
+        //        string varsNames = string.Empty;
+        //        foreach (VariableBase var in Variables)
+        //            varsNames += var.Name + ", ";
+        //        return (varsNames.TrimEnd(new char[] { ',', ' ' }));
+        //    }
+        //}
 
-        public void RefreshVariablesNames() { OnPropertyChanged(Fields.VariablesNames); }
+        //public void RefreshVariablesNames() { OnPropertyChanged(Fields.VariablesNames); }
 
-        public VariableBase GetVariable(string varName)
-        {
-            VariableBase v = (from v1 in Variables where v1.Name == varName select v1).FirstOrDefault();
-            return v;
-        }
+        //public VariableBase GetVariable(string varName)
+        //{
+        //    VariableBase v = (from v1 in Variables where v1.Name == varName select v1).FirstOrDefault();
+        //    return v;
+        //}
 
-        public void ResetVaribles()
-        {
-            foreach (VariableBase va in Variables)
-                va.ResetValue();
-        }
+        //public void ResetVaribles()
+        //{
+        //    foreach (VariableBase va in Variables)
+        //        va.ResetValue();
+        //}
 
         public void AddVariable(VariableBase v)
         {
@@ -414,6 +390,23 @@ namespace Ginger.Environments
         }
         
         [IsSerializedForLocalRepository]
-        public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();
+        public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();        
+
+        public void SaveSolutionConfigurations(bool showWarning=true)
+        {
+            bool doSave = false;
+
+            if (showWarning)
+                if(Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Note: save will include saving any change which was done to: Target Applications, " + GingerDicser.GetTermResValue(eTermResKey.Variables,"Global ") +", Tags and ALM/Source Control Settings." + System.Environment.NewLine + System.Environment.NewLine + "To continue with Save operation?") == System.Windows.MessageBoxResult.Yes)
+                    doSave = true;
+            else
+                    doSave = true;
+            if (doSave)
+            {
+                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, "Solution Configurations", "item");
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(this);
+                Reporter.CloseGingerHelper();
+            }
+        }
     }
 }

@@ -617,7 +617,7 @@ namespace Ginger.Actions
 
         private void StopRunBtn_Click(object sender, RoutedEventArgs e)
         {
-            App.MainWindow.StopAutomateRun();
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.StopRun, null);
         }
 
         private void ShowHideRunStopButtons()
@@ -646,8 +646,8 @@ namespace Ginger.Actions
                 if (mAction.GetType() == typeof(ActLowLevelClicks))
                     App.MainWindow.WindowState = WindowState.Minimized;
                 mAction.IsSingleAction = true;
-                
-                App.MainWindow.SetAutomateTabRunnerForExecution();
+
+                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.SetupRunnerForExecution, null);
 
                 //No need for agent for some actions like DB and read for excel. For other need agent   
                 if (!(typeof(ActWithoutDriver).IsAssignableFrom(mAction.GetType())))
