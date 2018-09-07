@@ -289,13 +289,13 @@ namespace Ginger.SourceControl
             {
                 RepositoryItemBase repoItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(fi.Path);                
                 //Refresh repository item folder source control status icon 
-                WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder((RepositoryItemBase)repoItem).RefreshSourceControlStatus();
+                WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(repoItem).RefreshSourceControlStatus();
                 //Refresh repository item root folder source control status icon 
-                ((RepositoryFolderBase)WorkSpace.Instance.SolutionRepository.GetItemRepositoryRootFolder((RepositoryItemBase)repoItem)).RefreshSourceControlStatus();
+                WorkSpace.Instance.SolutionRepository.GetItemRepositoryRootFolder(repoItem).RefreshSourceControlStatus();
                 if (repoItem != null)
                 {
                     //Refresh repository item source control status icon 
-                    ((RepositoryItemBase)repoItem).RefreshSourceControlStatus();
+                    repoItem.RefreshSourceControlStatus();
                 }
             }                        
         }

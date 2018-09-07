@@ -182,7 +182,7 @@ namespace Amdocs.Ginger.Repository
         /// Get the Repository Root Folder of the Repository Item
         /// </summary>
         /// <param name="repositoryItem"></param>
-        public object GetItemRepositoryRootFolder(RepositoryItemBase repositoryItem)
+        public RepositoryFolderBase GetItemRepositoryRootFolder(RepositoryItemBase repositoryItem)
         {
             SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
             return SRII.ItemRootRepositoryFolder;

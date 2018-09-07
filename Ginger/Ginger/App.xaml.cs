@@ -730,7 +730,7 @@ namespace Ginger
 
                         WorkSpace.Instance.SourceControl = sol.SourceControl;
                         RepositoryItemBase.SourceControl = sol.SourceControl;
-                        RepositoryFolderBase.SourceControl = sol.SourceControl;
+                        RepositoryFolderBase.SetSourceControl(sol.SourceControl);
                         App.UserProfile.Solution = sol;
                         
 
