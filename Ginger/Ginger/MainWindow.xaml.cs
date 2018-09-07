@@ -97,11 +97,11 @@ namespace Ginger
             lblBetaFeatures.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.UsingStatus));
             ErrorsLabel.Visibility = Visibility.Collapsed;
 
-            btnRefresh.LargeImageSource = ImageMakerControl.GetImage(eImageType.Refresh, 32, 32);
-            btnRefresh.SmallImageSource = ImageMakerControl.GetImage(eImageType.Refresh, 16, 16);
+            btnRefresh.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.Refresh, 32);
+            btnRefresh.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.Refresh, 16);
 
-            btnRecover.LargeImageSource = ImageMakerControl.GetImage(eImageType.Reset, 32, 32);
-            btnRecover.SmallImageSource = ImageMakerControl.GetImage(eImageType.Reset, 16, 16);
+            btnRecover.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, 32);
+            btnRecover.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, 16);
 
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
         }

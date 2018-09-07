@@ -1612,7 +1612,7 @@ public void RemoveCustomView(string viewName)
                     System.Globalization.CultureInfo culture)
             {
                 eImageType imageType = (eImageType)value;
-                return ImageMakerControl.GetImage(imageType);                
+                return ImageMakerControl.GetImageSource(imageType);                
             }
 
             public object ConvertBack(object value, Type targetType,

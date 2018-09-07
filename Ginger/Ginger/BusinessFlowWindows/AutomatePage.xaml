@@ -21,7 +21,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="xNavigationRow" Height="40" />
+            <RowDefinition x:Name="xNavigationRow" Height="0" />
             <RowDefinition x:Name="RibbonRow" Height="120" />
             <RowDefinition x:Name="CurrentBusRow" Height="215*" MinHeight="35" MaxHeight="215"/>
             <RowDefinition x:Name="ClosedExpandersRow" Height="35" MaxHeight="35"/>
@@ -32,18 +32,19 @@
             <RowDefinition x:Name="Row5" Height="35*" MinHeight="35"/>
         </Grid.RowDefinitions>
 
-        <UserControls:ucButton x:Name="xToBusinessFlowsListBtn" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ButtonType="RoundTextAndImageButton" ButtonImageType="GoBack" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" HorizontalAlignment="Left">
-            <!--<UserControls:ucButton.ButtonText>
+        <!--<UserControls:ucButton x:Name="xToBusinessFlowsListBtn" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ButtonType="RoundTextAndImageButton" ButtonImageType="GoBack" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" HorizontalAlignment="Left">
+            --><!--<UserControls:ucButton.ButtonText>
                 <GingerCore:ucTextDicResource Text="To [BusinessFlows] List"/>
-            </UserControls:ucButton.ButtonText>-->
-        </UserControls:ucButton>
+            </UserControls:ucButton.ButtonText>--><!--
+        </UserControls:ucButton>-->
 
-        <Ribbon x:Name="xRibbon" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Title="" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Loaded="xRibbon_Loaded" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,-5,0,0">
+        <Ribbon x:Name="xRibbon" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Title="" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Loaded="xRibbon_Loaded" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
             <Ribbon.ApplicationMenu>
                 <RibbonApplicationMenu Visibility="Collapsed"></RibbonApplicationMenu>
             </Ribbon.ApplicationMenu>
             <RibbonTab x:Name="AutomateRibbon" AutomationProperties.AutomationId="AutomateRibbon" Header="Automate" h:GingerHelpProvider.HelpString="Automate"  ToolTip="Automate Tab" ContextMenu="{x:Null}" KeyTip="A" Margin="0,3,0,-3" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle_Hidden}" IsHitTestVisible="True">
                 <RibbonGroup x:Name="BusFlowGroup" ContextMenu="{x:Null}" Header="{DynamicResource BusinessFlow}">
+                    <RibbonButton x:Name="xToBusinessFlowsListBtn" ContextMenu="{x:Null}" Foreground="{StaticResource $SelectionColor_LightBlue}"/>
                     <RibbonButton x:Name="SaveBizFlowButton" Click="SaveBizFlowButton_Click"  ContextMenu="{x:Null}" Label="Save" LargeImageSource="{StaticResource @Save_32x32}" SmallImageSource="{StaticResource @Save_16x16}" ToolTip="Save the currently opened Business Flow" />
                     <RibbonButton x:Name="UndoBizFlowChangesButton" ContextMenu="{x:Null}" ToolTip="Undo all changes made" Click="UndoBizFlowChangesButton_Click" Label="Undo All Changes" LargeImageSource="{StaticResource @Undo_32x32.png}" SmallImageSource="{StaticResource @Undo_16x16}" />
                     <RibbonButton x:Name="AutomateAnalyzerButton" Label="Analyzer" ContextMenu="{x:Null}"  Click="AutomateAnalyzerButton_Click"  LargeImageSource="{StaticResource @Stethoscope_32x32.png}" SmallImageSource="{StaticResource @Stethoscope_16x16}">

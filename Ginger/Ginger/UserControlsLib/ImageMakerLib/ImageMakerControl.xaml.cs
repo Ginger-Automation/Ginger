@@ -83,26 +83,8 @@ namespace Amdocs.Ginger.UserControls
                 xFAImage.ToolTip = ImageToolTip;
                 xFAFont.ToolTip = ImageToolTip;
             }
-
         }
 
-        public static ImageSource GetImage(eImageType imageType,double SetAsFontImageWithSize=0.0,double width=0.0,bool SetBorder=false)
-        {
-            ImageSource Source = null;
-
-            ImageMakerControl IM = new ImageMakerControl();
-            IM.ImageType = imageType;
-            IM.SetAsFontImageWithSize = SetAsFontImageWithSize;
-            IM.Width = width;
-            IM.SetBorder = SetBorder;
-            
-            if (IM.xStaticImage.Source != null)
-                Source = IM.xStaticImage.Source;
-            else if (IM.xFAImage.Source != null)
-                Source = IM.xFAImage.Source;
-           
-            return Source;
-        }
         
         //Font Size Property
         //if this value is set then instead of showing image will show FAFont and set its FontSize 
@@ -621,6 +603,21 @@ namespace Amdocs.Ginger.UserControls
         private BitmapImage GetImageBitMap(string imageName)
         {
             return new BitmapImage(new Uri("pack://application:,,,/Ginger;component/UserControlsLib/ImageMakerLib/Images/" + imageName));
+        }
+
+        public static ImageSource GetImageSource(eImageType imageType, double width = 0.0, bool SetBorder = false)
+        {
+            ImageMakerControl IM = new ImageMakerControl();
+            IM.ImageType = imageType;
+            IM.Width = width;
+            IM.SetBorder = SetBorder;
+
+            if (IM.xFAImage.Visibility == Visibility.Visible)
+                return IM.xFAImage.Source;
+            else if (IM.xStaticImage.Visibility == Visibility.Visible)
+                return IM.xStaticImage.Source;
+
+            return null;
         }
 
         private void SetAsStaticImage(string imageName = "", BitmapImage imageBitMap = null)

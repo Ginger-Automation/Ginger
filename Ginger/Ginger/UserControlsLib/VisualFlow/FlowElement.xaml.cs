@@ -85,7 +85,7 @@ namespace Ginger.UserControlsLib.VisualFlow
         {
             InitializeComponent();
 
-            FEImage.Source = ImageMakerControl.GetImage(eImageType.Refresh, 25, 25);
+            FEImage.Source = ImageMakerControl.GetImageSource(eImageType.Refresh, 25);
             Width = width;
             Height = height;
             Margin = new Thickness(left, top, 0, 0);
