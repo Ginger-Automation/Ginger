@@ -132,7 +132,7 @@ namespace GingerWPFUnitTest
         }
 
 
-
+        [Ignore]
         [TestMethod]
         public void DeleteEnvFromFileSystem()
         {
@@ -176,6 +176,8 @@ namespace GingerWPFUnitTest
             Assert.AreEqual(EnvNewName, env.Name);
             Assert.IsTrue(b);
         }
+
+        [Ignore]
         [Level3]
         [TestMethod]
         public void AddEnvFolderShowinTree()
