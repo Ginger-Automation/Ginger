@@ -95,6 +95,9 @@ namespace GingerWPFUnitTest
                 }
 
                 GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
+
+                Ginger.App.MainWindow.Closed += (sender1, e1) => Ginger.App.MainWindow.Dispatcher.InvokeShutdown();
+
                 MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
 
                 // Makes the thread support message pumping                 
@@ -103,7 +106,8 @@ namespace GingerWPFUnitTest
 
 
             //// Configure the thread
-            mGingerThread.SetApartmentState(ApartmentState.STA);            
+            mGingerThread.SetApartmentState(ApartmentState.STA);
+            mGingerThread.IsBackground = true;
             mGingerThread.Start();
 
             //max 60 seconds for Mainwindow to be ready
@@ -129,13 +133,15 @@ namespace GingerWPFUnitTest
             MainWindowPOM.Dispatcher.Invoke(() => {
                 Console.WriteLine("Closing Ginger");
                 app.ShutdownMode = ShutdownMode.OnMainWindowClose;
-                MainWindowPOM.Close();
+                MainWindowPOM.Close();                
                 Console.WriteLine("MainWindow closed");
-                
+
                 // app.Shutdown();
-                //while (mGingerThread.IsAlive)
+                //int i = 0;
+                //while (mGingerThread.IsAlive  && i<100)
                 //{
                 //    Thread.Sleep(100);
+                //    i++;
                 //}
                 //Thread.Sleep(500);
                 //int i = 0;
