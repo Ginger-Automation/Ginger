@@ -272,6 +272,8 @@ namespace Ginger
 
         public static bool RunningFromConfigFile= false;
 
+        public static bool RunningFromUnitTest = false;
+
         internal static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
         {
             //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
@@ -326,13 +328,23 @@ namespace Ginger
         {
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StanndAloneThreadsExceptionHandler);
+            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
 
             if (Environment.GetCommandLineArgs().Count() > 1)
             {
-                RunningFromConfigFile = true;
-                Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
-                Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)               
+                // When running from unit test there are args, so we set a flag in GingerAutomator to make sure Ginger will Launh
+                // and will not try to process the args for RunSet auto run
+                if (RunningFromUnitTest)
+                {
+                    // do nothing for now, but later on we might want to process and check auto run too
+                }
+                else
+                {
+                    // This Ginger is running with run set config will do the run and close Ginger
+                    RunningFromConfigFile = true;
+                    Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
+                    Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)               
+                }
             }
 
             string phase = string.Empty;
@@ -429,8 +441,17 @@ namespace Ginger
 
         }
 
-        private static void StanndAloneThreadsExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        private static void StandAloneThreadExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
+            if (RunningFromUnitTest)
+            {                
+                // happen when we close Ginger from unit tests
+                if (e.ExceptionObject is System.Runtime.InteropServices.InvalidComObjectException || e.ExceptionObject is System.Threading.Tasks.TaskCanceledException) 
+                {
+                    Console.WriteLine("StandAloneThreadExceptionHandler: Running from unit test ignoring error on ginger close");
+                    return;
+                }
+            }
             Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occured on stand alone thread(non UI) - " + e.ExceptionObject.ToString());
             MessageBox.Show("Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
             App.AppSolutionAutoSave.DoAutoSave();
@@ -633,7 +654,7 @@ namespace Ginger
                     ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
                     if (higherVersionFiles.Count > 0)
                     {
-                        if (App.RunningFromConfigFile == false)
+                        if (App.RunningFromConfigFile == false && RunningFromUnitTest == false)
                         {
                             UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
                             gingerUpgradePage.ShowAsWindow();
@@ -650,7 +671,7 @@ namespace Ginger
                         ValueExpression.SolutionFolder = SolutionFolder;
 
                         //Offer to upgrade Solution items to current version
-                        if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false)
+                        if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false && RunningFromUnitTest == false)
                         {
                             //TODO: think if it safe to use Async upgrade offer while already started to load the solution
 

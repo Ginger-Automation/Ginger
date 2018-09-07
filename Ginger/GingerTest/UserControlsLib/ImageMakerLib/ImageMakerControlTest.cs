@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Ginger.GeneralLib;
+using GingerTestHelper;
 using GingerWPF.GeneralLib;
 using GingerWPF.UserControlsLib.ImageMakerLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,19 +33,19 @@ namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
     [TestClass]
     public class ImageMakerControlTest
     {
-        static GingerAutomator mGingerWPFAutomator = new GingerAutomator();
+        // static GingerAutomator mGingerWPFAutomator; 
         // Mutex mutex = new Mutex();
 
         [ClassInitialize]
         public static void ClassInit(TestContext TC)
         {
-            mGingerWPFAutomator.StartGinger();
+            // mGingerAutomator = GingerAutomator.StartSession();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {            
-            mGingerWPFAutomator.CloseGinger();
+            
         }
 
 
@@ -61,7 +62,7 @@ namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
         }
 
         private static Action EmptyDelegate = delegate () { };
-
+        [Level3]
         [TestMethod]
         [Ignore]
         public void ImageMakerControlsVisualTest1_50()
@@ -87,8 +88,8 @@ namespace GingerWPFUnitTest.UserControlsLib.ImageMakerLib
             //Assert.IsTrue(IsEquel2);
         }
 
-        
 
+        [Level3]
         [TestMethod]
         [Ignore]
         public void ImageMakerControlsVisualTest51_100()
