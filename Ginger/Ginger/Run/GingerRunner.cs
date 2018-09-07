@@ -152,8 +152,7 @@ namespace Ginger.Run
 
         public event GingerRunnerEventHandler GingerRunnerEvent;
         public delegate void GingerRunnerEventHandler(GingerRunnerEventArgs EventArgs);
-
-        GingerRunnerLogger mGingerRunnerLogger;
+        
 
         public void OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType EvType, Object obj)
         {
@@ -753,14 +752,7 @@ namespace Ginger.Run
                 }
 
                 OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.ActionEnd, null);
-
-                // function for action log 
-                // Add flag on GingerRunner of LogLevel
-
-                string loggerFile = Ginger.App.UserProfile.Solution.Folder + @"ExecutionResults\" + FileSystem.AppendTimeStamp("GingerLog.txt");
-
-                if (mGingerRunnerLogger == null) mGingerRunnerLogger = new GingerRunnerLogger(loggerFile);
-                mGingerRunnerLogger.LogAction(act);
+               
             }
         }
 
