@@ -41,6 +41,13 @@ namespace Amdocs.Ginger.Repository
             return folders.OrderBy(x => x).ToArray();
         }
 
+
+        /// <summary>
+        /// Append a timestamp to file name while keeping the extension 
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns>The file name with timestamp in format yyyymmddhhmmss for example: log_20180906075812</returns>
+
         public static string AppendTimeStamp(string fileName)
         {
             return string.Concat(
