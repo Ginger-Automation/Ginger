@@ -3,18 +3,28 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MenusPage" KeyDown="Page_KeyDown">
 
     <DockPanel  Background="{StaticResource $BackgroundColor_LightGray}">
         <!--Main Navigation Panel-->
-        <ListView x:Name="xMainNavigationListView" DockPanel.Dock="Top" Height="30" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="xMainNavigationListView_SelectionChanged">
+        <ListView x:Name="xMainNavigationListView" DockPanel.Dock="Top" Height="40" Background="{StaticResource $BackgroundColor_Gray}" SelectionChanged="xMainNavigationListView_SelectionChanged" Loaded="xMainNavigationListView_Loaded" >
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"></StackPanel>
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" ToolTip="{Binding Path=ToolTip}" AutomationProperties.AutomationId="{Binding Path=AutomationID}" Background="{StaticResource $BackgroundColor_Gray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="{Binding Path=IconType}" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" Margin="10,0,0,0" />
+                        <Label Content="{Binding Path=Name}" Style="{StaticResource $MainListViewItemLabelStyle}" Margin="0,0,10,0">
+                        </Label>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
         </ListView>
 
         <!--Sub Navigation Panel-->

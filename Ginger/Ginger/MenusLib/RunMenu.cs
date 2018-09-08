@@ -1,4 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Enums;
 using Ginger.GeneralWindows;
 using Ginger.GingerGridLib;
 using Ginger.Run;
@@ -38,16 +39,16 @@ namespace Ginger.MenusLib
         {
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
 
-            TopMenuItem runSetMenu = new TopMenuItem(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet), ConsoleKey.R, "Run Set AID", GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet, "Create, Design and Execute "));
+            TopMenuItem runSetMenu = new TopMenuItem(eImageType.RunSet, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet), ConsoleKey.R, "Run Set AID", GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet, "Create, Design and Execute "));
             runSetMenu.Add("", GetRunSetPage, ConsoleKey.R, "", "AID");
             twoLevelMenu.Add(runSetMenu);
 
-            TopMenuItem gingerGridMenu = new TopMenuItem("Gingers Grid", ConsoleKey.G, "Ginger Grid AID", "Grid showing all connected Ginger Nodes");
+            TopMenuItem gingerGridMenu = new TopMenuItem(eImageType.Ginger, "Gingers Grid", ConsoleKey.G, "Ginger Grid AID", "Grid showing all connected Ginger Nodes");
             gingerGridMenu.Add("", GetGingerGridPage, ConsoleKey.G, "", "AID");
             twoLevelMenu.Add(gingerGridMenu);
             
 
-            TopMenuItem executionsHistoryMenu = new TopMenuItem("Executions History", ConsoleKey.E, "Executions History AID", "View executions history of all Run Sets");
+            TopMenuItem executionsHistoryMenu = new TopMenuItem(eImageType.History, "Executions History", ConsoleKey.E, "Executions History AID", "View executions history of all Run Sets");
             executionsHistoryMenu.Add("", GetExecutionsHistoryPage, ConsoleKey.E, "", "AID");
             twoLevelMenu.Add(executionsHistoryMenu);
 

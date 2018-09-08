@@ -1,6 +1,8 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,8 +10,17 @@ using System.Windows.Controls;
 
 namespace Ginger.TwoLevelMenuLib
 {
-    public class TopMenuItem
+    public class TopMenuItem: INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
         public string Name { get; set; }        
 
         public bool Active { get; set; }
@@ -20,8 +31,13 @@ namespace Ginger.TwoLevelMenuLib
 
         public string AutomationID { get; set; }
 
-        public TopMenuItem(string name, ConsoleKey key, string automationID, string toolTip="")
+        public eImageType IconType { get; set; }
+
+        public ObservableList<ListViewItem> LoadedSubItems { get; set; }        
+
+        public TopMenuItem(eImageType iconType, string name, ConsoleKey key, string automationID, string toolTip="")
         {
+            IconType = iconType;
             Key = key;
             Name = name;            
             Active = true;

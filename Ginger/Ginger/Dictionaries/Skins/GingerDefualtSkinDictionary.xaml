@@ -600,7 +600,7 @@
         <Setter Property="Background" Value="White" />
     </Style>
 
-    <Style TargetType="ListViewItem" x:Key="$MainListViewItemStyle">
+    <Style TargetType="ListViewItem" x:Key="$TopListViewItemStyle">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
         <Setter Property="FontFamily" Value="Open Sans" />
@@ -622,7 +622,6 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-
                             <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
@@ -635,12 +634,12 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-    <Style TargetType="ListViewItem" x:Key="$ListViewItemStyle">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="Gray" />
+        
+    <Style TargetType="ListViewItem" x:Key="$MainListViewItemStyle">
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_Gray}" />
+        <Setter Property="Foreground" Value="DarkGray" />
         <Setter Property="FontFamily" Value="Open Sans" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="15" />
         <Setter Property="Margin" Value="25,0,0,0" />
         <Setter Property="Template">
             <Setter.Value>
@@ -654,7 +653,51 @@
                                 RecognizesAccessKey="True"/>
                     </Border>
                     <ControlTemplate.Triggers>
-                        
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $HighlightColor_Yellow}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="false">
+                            <Setter Property="Foreground" Value="DarkGray" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Label" x:Key="$MainListViewItemLabelStyle">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="DarkGray" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+    </Style>
+
+    <Style TargetType="ListViewItem" x:Key="$SubListViewItemStyle">
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}" />
+        <Setter Property="Foreground" Value="Gray" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Margin" Value="25,0,0,0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <Border Background="{TemplateBinding Background}">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $HighlightColor_Yellow}" />
+                        </Trigger>
                         <Trigger Property="IsSelected" Value="false">
                             <Setter Property="Foreground" Value="Gray" />
                         </Trigger>
@@ -666,6 +709,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+
+
     <Style TargetType="ListViewItem" x:Key="$ListViewItemUnderlineStyle">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="Gray" />

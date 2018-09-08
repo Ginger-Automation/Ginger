@@ -65,12 +65,22 @@ namespace Ginger.SolutionWindows
             }
             else
             {
-                mSolution = new Solution();
+                mSolution = null;
             }
 
-            App.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Name));
-            App.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Folder));
-            App.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Account));
+            if (mSolution != null)
+            {
+                xLoadSolutionlbl.Visibility = Visibility.Collapsed;
+                xSolutionDetailsStack.Visibility = Visibility.Visible;
+                App.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Name));
+                App.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Folder));
+                App.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Account));
+            }
+            else
+            {
+                xLoadSolutionlbl.Visibility = Visibility.Visible;
+                xSolutionDetailsStack.Visibility = Visibility.Collapsed;
+            }
         }
 
 

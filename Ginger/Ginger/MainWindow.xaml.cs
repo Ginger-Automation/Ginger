@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Agents;
 using Ginger.ALM;
 using Ginger.ALM.QC;
 using Ginger.AnalyzerLib;
@@ -29,16 +28,13 @@ using Ginger.Environments;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
 using Ginger.Reports;
-using Ginger.Run;
 using Ginger.SolutionWindows;
-using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SourceControl;
 using Ginger.Support;
 using Ginger.UserConfig;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Repository.UpgradeLib;
-using GingerCoreNET.RunLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
 using System;
@@ -231,16 +227,15 @@ namespace Ginger
             // Handle Solution change
             //TODO: cleanup close current biz flow etc...
             if (e.PropertyName == nameof(UserProfile.Solution))
-            {
-                bool isSolutionLoaded = true;
+            {               
                 if (App.UserProfile.Solution == null)
                 {
-                    isSolutionLoaded = false;
+                    ResetSolutionDependedUIElements(false);
                     lblSolution.Content = "No Solution";
                     return;
                 }
 
-                ResetSolutionDependedUIElements(isSolutionLoaded);
+                ResetSolutionDependedUIElements(true);
                 App.LastBusinessFlow = null;
                 lblSolution.Content = App.UserProfile.Solution.Name;
             }
@@ -497,13 +492,15 @@ namespace Ginger
                 else
                     SupportRibbon.Visibility = Visibility.Collapsed;
                
-                btnUpgrade.Visibility = Visibility.Visible;
+                btnUpgrade.Visibility = Visibility.Visible;               
                 ViewSolutionFiles.Visibility = Visibility.Visible;
                 xFindAndReplaceSolutionPageButton.Visibility = Visibility.Visible;
                 xResources.Visibility = Visibility.Visible;
                 xBusinessFlows.Visibility = Visibility.Visible;
                 xConfigurations.Visibility = Visibility.Visible;
                 btnRecover.Visibility = Visibility.Visible;
+                AnalyzerButton.Visibility = Visibility.Visible;
+                ALMConfigurationsGroup.Visibility = Visibility.Visible;
             }
             else
             {
@@ -516,6 +513,8 @@ namespace Ginger
                 btnRecover.Visibility = Visibility.Collapsed;
                 ViewSolutionFiles.Visibility = Visibility.Collapsed;
                 xFindAndReplaceSolutionPageButton.Visibility = Visibility.Collapsed;
+                AnalyzerButton.Visibility = Visibility.Collapsed;
+                ALMConfigurationsGroup.Visibility = Visibility.Collapsed;
             }
 
         }

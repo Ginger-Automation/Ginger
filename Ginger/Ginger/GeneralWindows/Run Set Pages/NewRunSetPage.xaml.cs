@@ -188,17 +188,20 @@ namespace Ginger.Run
         {
             InitializeComponent();
 
-            //Init
-            Init();
-
-            //load Run Set
-            RunSetConfig defualtRunSet = GetDefualtRunSetConfig();
-            if (defualtRunSet != null)
-                LoadRunSetConfig(defualtRunSet);
-            else
+            if (App.UserProfile.Solution != null)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                //TODO: hide all pages elements
+                //Init
+                Init();
+
+                //load Run Set
+                RunSetConfig defualtRunSet = GetDefualtRunSetConfig();
+                if (defualtRunSet != null)
+                    LoadRunSetConfig(defualtRunSet);
+                else
+                {
+                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    //TODO: hide all pages elements
+                }
             }
         }
 
@@ -899,16 +902,19 @@ namespace Ginger.Run
         }
         private void SetBusinessFlowsChangesLisener()
         {
-            mBusinessFlowsXmlsChangeWatcher = new FileSystemWatcher();
-            mBusinessFlowsXmlsChangeWatcher.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
-            mBusinessFlowsXmlsChangeWatcher.Filter = "*.xml";
-            mBusinessFlowsXmlsChangeWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
-            mBusinessFlowsXmlsChangeWatcher.IncludeSubdirectories = true;
+            if (App.UserProfile.Solution != null)
+            {
+                mBusinessFlowsXmlsChangeWatcher = new FileSystemWatcher();
+                mBusinessFlowsXmlsChangeWatcher.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
+                mBusinessFlowsXmlsChangeWatcher.Filter = "*.xml";
+                mBusinessFlowsXmlsChangeWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
+                mBusinessFlowsXmlsChangeWatcher.IncludeSubdirectories = true;
 
-            mBusinessFlowsXmlsChangeWatcher.Changed += new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
-            mBusinessFlowsXmlsChangeWatcher.Deleted += new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
+                mBusinessFlowsXmlsChangeWatcher.Changed += new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
+                mBusinessFlowsXmlsChangeWatcher.Deleted += new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
 
-            mBusinessFlowsXmlsChangeWatcher.EnableRaisingEvents = true;
+                mBusinessFlowsXmlsChangeWatcher.EnableRaisingEvents = true;
+            }
         }
 
         private void OnBusinessFlowsXmlsChange(object source, FileSystemEventArgs e)

@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.UserControls;
 using Ginger.TwoLevelMenuLib;
 using System;
 using System.Collections.Generic;
@@ -29,8 +30,7 @@ namespace Ginger.GeneralWindows
         {
             InitializeComponent();
             mTwoLevelMenu = twoLevelMenu;
-            LoadMenus();
-            
+            LoadMenus();            
         }        
 
         public void Reset()
@@ -44,45 +44,36 @@ namespace Ginger.GeneralWindows
         {            
             foreach(TopMenuItem menu in mTwoLevelMenu.MenuList)
             {
-                ListViewItem topMenu = new ListViewItem() {Content = menu.Name };
-                topMenu.Style = (Style)TryFindResource("$ListViewItemStyle");
-                topMenu.SetValue(AutomationProperties.AutomationIdProperty, menu.AutomationID);
-                topMenu.ToolTip = menu.ToolTip;
-                xMainNavigationListView.Items.Add(topMenu);
+                xMainNavigationListView.Items.Add(menu);
             }
             SelectFirstTopMenu();            
         }
 
         private void SelectFirstTopMenu()
         {
-            xMainNavigationListView.SelectedItem = xMainNavigationListView.Items[0];
-            UpdateMainFrame();
+            xMainNavigationListView.SelectedItem = xMainNavigationListView.Items[0];            
         }
 
         private void xMainNavigationListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateMainFrame();         
-        }
+            TopMenuItem selectedMainListItem = (TopMenuItem)xMainNavigationListView.SelectedItem;
+            SetSelectedListItemStyle(xMainNavigationListView);
 
-        private void UpdateMainFrame()
-        {
-            ListViewItem mainListItem = (ListViewItem)xMainNavigationListView.SelectedItem;
             ObservableList<ListViewItem> subItems;
-            // we cahce the sub items in the Tag
-            if (mainListItem.Tag == null)
+            // we cahce the sub items in the Content
+            if (selectedMainListItem.LoadedSubItems == null)
             {
-                TopMenuItem topMenuItem = (from x in mTwoLevelMenu.MenuList where x.Name == mainListItem.Content.ToString() select x).SingleOrDefault();
-                subItems = LoadSubNavigationList(topMenuItem);
-                mainListItem.Tag = subItems;
+                subItems = LoadSubNavigationList(selectedMainListItem);
+                selectedMainListItem.LoadedSubItems = subItems;
             }
             else
             {
-                subItems = (ObservableList<ListViewItem>)mainListItem.Tag;
+                subItems = selectedMainListItem.LoadedSubItems;
             }
+
             xSubNavigationListView.Items.Clear();
             foreach (ListViewItem lvi in subItems)
             {
-                lvi.Style = (Style)TryFindResource("$ListViewItemStyle");
                 xSubNavigationListView.Items.Add(lvi);
             }
 
@@ -90,15 +81,13 @@ namespace Ginger.GeneralWindows
             if (subItems.CurrentItem == null)
             {
                 // first time click auto select first sub menu item
-                subItems.CurrentItem = subItems[0];                
+                subItems.CurrentItem = subItems[0];
             }
 
             // Get the user back to the last sub item he had
             xSubNavigationListView.SelectedItem = subItems.CurrentItem;
 
-
-
-            // if we have one sub item no need to show sub menu
+            // if we have only one sub item no need to show sub menu
             if (xSubNavigationListView.Items.Count > 1)
             {
                 xSubNavigationListView.Visibility = Visibility.Visible;
@@ -106,7 +95,7 @@ namespace Ginger.GeneralWindows
             else
             {
                 xSubNavigationListView.Visibility = Visibility.Collapsed;
-            }            
+            }
         }
 
         private ObservableList<ListViewItem> LoadSubNavigationList(TopMenuItem topMenuItem)
@@ -118,7 +107,7 @@ namespace Ginger.GeneralWindows
                 ListViewItem listViewItem = new ListViewItem();
                 listViewItem.Content = subMenuItem.Name;
                 listViewItem.Tag = subMenuItem;
-                listViewItem.Style = (Style)TryFindResource("$ListViewItemStyle");
+                listViewItem.Style = (Style)TryFindResource("$SubListViewItemStyle");
                 listViewItem.FontSize = 11;
                 listViewItem.ToolTip = subMenuItem.ToolTip;
                 listViewItem.SetValue(AutomationProperties.AutomationIdProperty, subMenuItem.AutomationID);
@@ -151,12 +140,40 @@ namespace Ginger.GeneralWindows
                 GingerCore.General.DoEvents();
             }
 
-            xSelectedItemFrame.SetContent(subMenuItem.ItemPage);            
+            if (subMenuItem != null && subMenuItem.ItemPage != null)
+                xSelectedItemFrame.SetContent(subMenuItem.ItemPage);            
         }
 
         private void Page_KeyDown(object sender, KeyEventArgs e)
         {            
             // MessageBox.Show(e.Key.ToString());            
+        }
+
+        private void SetSelectedListItemStyle(ListView listView)
+        {
+            for (int i = 0; i < listView.Items.Count; i++)
+            {
+                ListViewItem listViewItem = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(i);
+                if (listViewItem != null)
+                {
+                    StackPanel stack = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(listViewItem, 0), 0), 0) as StackPanel;
+                    if (i == xMainNavigationListView.SelectedIndex)
+                    {
+                        ((ImageMakerControl)stack.Children[0]).Foreground = (Brush)Application.Current.Resources["$SelectionColor_Pink"];
+                        ((Label)stack.Children[1]).Foreground = (Brush)Application.Current.Resources["$SelectionColor_Pink"];
+                    }
+                    else
+                    {
+                        ((ImageMakerControl)stack.Children[0]).Foreground = Brushes.DarkGray;
+                        ((Label)stack.Children[1]).Foreground = Brushes.DarkGray;
+                    }
+                }
+            }
+        }
+
+        private void xMainNavigationListView_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetSelectedListItemStyle(xMainNavigationListView);
         }
     }
 }
