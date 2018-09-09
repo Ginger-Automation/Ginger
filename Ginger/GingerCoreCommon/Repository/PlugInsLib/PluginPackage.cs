@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Plugin.Core.ActionsLib;
@@ -347,7 +348,6 @@ namespace Amdocs.Ginger.Repository
             return services;
         }
 
-
         public ObservableList<ITextEditor> GetTextFileEditors()
         {
             //TODO: cache
@@ -370,6 +370,22 @@ namespace Amdocs.Ginger.Repository
                 }
             }
             return textEditors;
+        }
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.PluginPackage;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.PluginID);
+            }
         }
     }
 }

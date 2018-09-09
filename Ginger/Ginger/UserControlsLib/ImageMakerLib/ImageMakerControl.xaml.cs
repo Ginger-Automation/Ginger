@@ -188,13 +188,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.RunSet:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PlayCircle);
-                    break;                             
-                //TODO: remove 16/32 need to have only one 
-                case eImageType.APIModel16:
-                    SetAsStaticImage("ApiModel_16x16.png");
                     break;
-                case eImageType.APIModel32:
-                    SetAsStaticImage("ApiModel_32x32.png");
+                case eImageType.ApplicationModel:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThLarge);
+                    break;
+                case eImageType.APIModel:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
                     break;
                 case eImageType.Runner:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PlayCircleOutline);
@@ -211,11 +210,11 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.HtmlReport:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Html5);
                     break;
-                case eImageType.ApplicationPOM:
+                case eImageType.ApplicationPOMModel:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
                     break;
                 case eImageType.Variable:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Yen);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Code);
                     break;
                 case eImageType.SharedRepositoryItem:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Star, Brushes.Orange);
@@ -225,6 +224,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Tag:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Tag);
+                    break;
+                case eImageType.DataSource:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
+                    break;
+                case eImageType.PluginPackage:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Plug);
                     break;
                 #endregion
 
@@ -509,14 +514,8 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Bug:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Bug);
                     break;
-                case eImageType.DataSource:
-                    SetAsStaticImage("DataSource_16x16.png");
-                    break;
                 case eImageType.Power:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PowerOff);
-                    break;
-                case eImageType.PluginPackage:
-                    SetAsStaticImage("Plugin_32x32.png");
                     break;
                 case eImageType.Pointer:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.HandPointerOutline);

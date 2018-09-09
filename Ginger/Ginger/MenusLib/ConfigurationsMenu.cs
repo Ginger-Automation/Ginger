@@ -43,20 +43,20 @@ namespace Ginger.ConfigurationsLib
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
 
             TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, "Target Applications", ConsoleKey.T, "Target Applications AID", "Name & Platformes of the Applications which been tested in current Solution");
-            targetApplicationsMenu.Add("", GetTargetApplicationsPage, ConsoleKey.T, "", "AID");
+            targetApplicationsMenu.Add(eImageType.Application, "", GetTargetApplicationsPage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(targetApplicationsMenu);
 
             TopMenuItem agentsMenu = new TopMenuItem(eImageType.Agent, "Agents", ConsoleKey.A, "Agents AID", "Agents are the drivers which comunicates with the tested application");
-            agentsMenu.Add("", AgentsList, ConsoleKey.A, "", "AID");
+            agentsMenu.Add(eImageType.Agent, "", AgentsList, ConsoleKey.A, "", "AID");
             twoLevelMenu.Add(agentsMenu);
            
             TopMenuItem reportsMenu = new TopMenuItem(eImageType.Report, "Reports", ConsoleKey.R, "Reports_AID", "Reports Templates and Configurations");
-            reportsMenu.Add("Reports Templates", ReportsList, ConsoleKey.R, "Reports Templates are used to define the HTML report content and design", "Reports AID");
-            reportsMenu.Add("General Configurations", ReportsConfig, ConsoleKey.R, "Global Reports Configurations", "Reports Config AID");           
+            reportsMenu.Add(eImageType.Report, "Reports Templates", ReportsList, ConsoleKey.R, "Reports Templates are used to define the HTML report content and design", "Reports AID");
+            reportsMenu.Add(eImageType.Config, "General Configurations", ReportsConfig, ConsoleKey.R, "Global Reports Configurations", "Reports Config AID");           
             twoLevelMenu.Add(reportsMenu);
 
             TopMenuItem tagsMenu = new TopMenuItem(eImageType.Tag, "Tags", ConsoleKey.T, "Tags AID", "List of Tags to be used for marking any of the Solution items with");
-            tagsMenu.Add("", GetTagsPage, ConsoleKey.T, "", "AID");
+            tagsMenu.Add(eImageType.Tag, "", GetTagsPage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(tagsMenu);
 
             return twoLevelMenu;

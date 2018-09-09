@@ -630,10 +630,11 @@
       <DependentUpon>MyWizardPropertiesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TestLib\WizardLib\MyWizardSubItem.cs" />
-    <Compile Include="TwoLevelMenuLib\LoadingPage.xaml.cs">
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\LoadingPage.xaml.cs">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TwoLevelMenuLib\TwoLevelMenuPage.xaml.cs">
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\MenuItemBase.cs" />
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenuPage.xaml.cs">
       <DependentUpon>TwoLevelMenuPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="SolutionAutoSaveAndRecover\RecoveredItem.cs" />
@@ -907,9 +908,9 @@
     <Compile Include="TestLib\ImageMakerTestPage.xaml.cs">
       <DependentUpon>ImageMakerTestPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TwoLevelMenuLib\SubMenuItem.cs" />
-    <Compile Include="TwoLevelMenuLib\TopMenuItem.cs" />
-    <Compile Include="TwoLevelMenuLib\TwoLevelMenu.cs" />
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\SubMenuItem.cs" />
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\TopMenuItem.cs" />
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenu.cs" />
     <Compile Include="UserConfig\SetUserTypePage.xaml.cs">
       <DependentUpon>SetUserTypePage.xaml</DependentUpon>
     </Compile>
@@ -2795,11 +2796,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TwoLevelMenuLib\LoadingPage.xaml">
+    <Page Include="UserControlsLib\TwoLevelMenuLib\LoadingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TwoLevelMenuLib\TwoLevelMenuPage.xaml">
+    <Page Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenuPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

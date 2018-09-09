@@ -10,7 +10,7 @@
 
     <DockPanel  Background="{StaticResource $BackgroundColor_LightGray}">
         <!--Main Navigation Panel-->
-        <ListView x:Name="xMainNavigationListView" DockPanel.Dock="Top" Height="40" Background="{StaticResource $BackgroundColor_Gray}" SelectionChanged="xMainNavigationListView_SelectionChanged" Loaded="xMainNavigationListView_Loaded" >
+        <ListView x:Name="xMainNavigationListView" DockPanel.Dock="Top" Height="40" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xMainNavigationListView_SelectionChanged" Loaded="xMainNavigationListView_Loaded" >
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"></StackPanel>
@@ -18,22 +18,29 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" ToolTip="{Binding Path=ToolTip}" AutomationProperties.AutomationId="{Binding Path=AutomationID}" Background="{StaticResource $BackgroundColor_Gray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                    <StackPanel Orientation="Horizontal" ToolTip="{Binding Path=ToolTip}" AutomationProperties.AutomationId="{Binding Path=AutomationID}" Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                         <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="{Binding Path=IconType}" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" Margin="10,0,0,0" />
-                        <Label Content="{Binding Path=Name}" Style="{StaticResource $MainListViewItemLabelStyle}" Margin="0,0,10,0">
-                        </Label>
+                        <Label Content="{Binding Path=Name}" Style="{StaticResource $MainListViewItemLabelStyle}" Margin="0,0,10,0"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
         <!--Sub Navigation Panel-->
-        <ListView x:Name="xSubNavigationListView" DockPanel.Dock="Top" Height="25" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="xSubNavigationListView_SelectionChanged" >
+        <ListView x:Name="xSubNavigationListView" DockPanel.Dock="Top" Height="35" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xSubNavigationListView_SelectionChanged" Loaded="xSubNavigationListView_Loaded">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"></StackPanel>
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" ToolTip="{Binding Path=ToolTip}" AutomationProperties.AutomationId="{Binding Path=AutomationID}" Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="{Binding Path=IconType}" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" Margin="10,0,0,0" />
+                        <Label Content="{Binding Path=Name}" Style="{StaticResource $SubListViewItemLabelStyle}" Margin="0,0,10,0"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
         </ListView>
 
         <!--Selected Item Page-->

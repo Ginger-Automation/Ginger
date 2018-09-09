@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                return eImageType.ApplicationPOM;
+                return eImageType.ApplicationPOMModel;
             }
         }
 

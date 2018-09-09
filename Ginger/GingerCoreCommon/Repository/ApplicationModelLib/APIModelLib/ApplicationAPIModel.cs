@@ -162,7 +162,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                return eImageType.APIModel16;
+                return eImageType.APIModel;
             }
         }
 

@@ -32,9 +32,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class AgentTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
+        private Agent mAgent;
         private AgentEditPage mAgentEditPage;
-        private Agent mAgent { get; set; }   
-        
+                
         public AgentTreeItem(Agent agent)
         {
             mAgent = agent;

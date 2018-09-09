@@ -668,15 +668,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="Label" x:Key="$MainListViewItemLabelStyle">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="DarkGray" />
-        <Setter Property="FontFamily" Value="Open Sans" />
-        <Setter Property="FontSize" Value="15" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="Margin" Value="0,0,0,0" />
-    </Style>
-
     <Style TargetType="ListViewItem" x:Key="$SubListViewItemStyle">
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}" />
         <Setter Property="Foreground" Value="Gray" />
@@ -710,7 +701,23 @@
         </Setter>
     </Style>
 
+    <Style TargetType="Label" x:Key="$MainListViewItemLabelStyle">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="DarkGray" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+    </Style>
 
+    <Style TargetType="Label" x:Key="$SubListViewItemLabelStyle">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="Gray" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+    </Style>
 
     <Style TargetType="ListViewItem" x:Key="$ListViewItemUnderlineStyle">
         <Setter Property="Background" Value="Transparent" />

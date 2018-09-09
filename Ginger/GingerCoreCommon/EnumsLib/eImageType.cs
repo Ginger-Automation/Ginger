@@ -33,9 +33,9 @@ namespace Amdocs.Ginger.Common.Enums
         Action,
         Agent,
         RunSet,
-        APIModel32,
-        APIModel16,
-        ApplicationPOM,
+        ApplicationModel,
+        APIModel,
+        ApplicationPOMModel,
         Runner,
         Operations,
         Environment,
@@ -44,6 +44,8 @@ namespace Amdocs.Ginger.Common.Enums
         SharedRepositoryItem,
         NonSharedRepositoryItem,
         Tag,
+        DataSource,
+        PluginPackage,
         #endregion
 
 
@@ -176,7 +178,6 @@ namespace Amdocs.Ginger.Common.Enums
         OpenFolder,
         Check,
         Bug,
-        DataSource,
-        PluginPackage,
+       
     }
 }
