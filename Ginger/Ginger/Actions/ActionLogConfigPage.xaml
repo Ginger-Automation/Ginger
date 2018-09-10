@@ -1,0 +1,40 @@
+﻿<Page x:Class="Ginger.Actions.ActionLogConfigPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Actions"
+      mc:Ignorable="d" 
+      d:DesignHeight="150" d:DesignWidth="600"
+      Title="ActionLogConfigPage">
+
+    <Grid>
+
+        <StackPanel x:Name="ActionLogConfigStackPanel" >
+            <StackPanel x:Name="ActionLogConfigPnl" Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" Grid.Row ="0" Grid.Column="0">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}">Log Text</Label>
+                    <TextBox x:Name="ActionLogTextBox" Style="{StaticResource @TextBoxStyle}" ToolTip="Enter the text to be printed in the Log" Width="150" Margin="5,0,0,0"  Text="" ></TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
+                    <CheckBox x:Name="LogInputVariablesCheckBox" Content="Log Input Variables" ToolTip="Logs Action Input Variables" Style="{StaticResource @CheckBoxStyle}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
+                    <CheckBox x:Name="LogOuputVariablesCheckBox" Content="Log Output Variables" ToolTip="Logs Action Return Variables" Style="{StaticResource @CheckBoxStyle}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
+                    <CheckBox x:Name="LogRunStatusCheckBox" Content="Log Action Run Status" ToolTip="Logs Action Run Status" Style="{StaticResource @CheckBoxStyle}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
+                    <CheckBox x:Name="LogErrorCheckBox" Content="Log Action Error" ToolTip="Logs Action Error" Style="{StaticResource @CheckBoxStyle}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
+                    <CheckBox x:Name="LogElapsedTimeCheckBox" Content="Log Action Elapsed Time" ToolTip="Logs Action Elapsed Time" Style="{StaticResource @CheckBoxStyle}"/>
+                </StackPanel>                
+            </StackPanel>
+            <Label HorizontalAlignment="Left" Margin="0,20,0,0" Style="{StaticResource @LabelStyle}">Note: By enabling the Action Log, action information will be logged in the log file</Label>
+        </StackPanel>
+        
+    </Grid>
+    
+</Page>
