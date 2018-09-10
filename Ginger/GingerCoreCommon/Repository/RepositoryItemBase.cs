@@ -120,9 +120,7 @@ namespace Amdocs.Ginger.Repository
             return ShortName;
         }
 
-        // TODO: temp by default all repository items use the old Serializer, unless flagged to use the new, overrride in sub class
-        public virtual bool UseNewRepositorySerializer { get { return true; } }
-
+        
         static NewRepositorySerializer mRepositorySerializer = new NewRepositorySerializer();
 
 

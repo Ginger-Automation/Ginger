@@ -33,8 +33,7 @@ using Amdocs.Ginger.Common;
 namespace Ginger.Reports
 {
     public class ReportTemplate : RepositoryItemBase
-    {
-        public override bool UseNewRepositorySerializer { get { return true; } }
+    {        
 
         public override string GetNameForFileName() { return Name; }
 

@@ -55,8 +55,7 @@ namespace GingerCore
 
     public class Agent : RepositoryItemBase
     {
-
-        public override bool UseNewRepositorySerializer { get { return true; } }
+        
 
         public enum eDriverType
         {

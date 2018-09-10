@@ -68,8 +68,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Desktop Screen")]
             DesktopScreen = 2
         }
-
-        public override bool UseNewRepositorySerializer { get { return true; } }
+        
 
 
         private static string mScreenshotTempFolder;

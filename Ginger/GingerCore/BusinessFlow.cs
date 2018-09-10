@@ -34,7 +34,6 @@ namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase
     {        
-        public override bool UseNewRepositorySerializer { get { return true; } }
 
         public BusinessFlow()
         {

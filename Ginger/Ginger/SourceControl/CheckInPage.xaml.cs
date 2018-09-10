@@ -392,11 +392,8 @@ namespace Ginger.SourceControl
                 {
                     if (Reporter.ToUser(eUserMsgKeys.SourceControlCheckInUnsavedFileChecked, SCFI.Name) == MessageBoxResult.Yes)
                     {
-                        Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.UserProfile.Solution.GetNameForFileName(), "item");
-                        if (((RepositoryItemBase)obj).UseNewRepositorySerializer)
-                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem((RepositoryItemBase)obj);
-                        else
-                            ((RepositoryItem)obj).Save();
+                        Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.UserProfile.Solution.GetNameForFileName(), "item");                        
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem((RepositoryItemBase)obj);                        
                         Reporter.CloseGingerHelper();
                     }
                     else

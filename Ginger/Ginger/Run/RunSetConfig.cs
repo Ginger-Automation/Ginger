@@ -41,8 +41,7 @@ namespace Ginger.Run
                 }
             }
         }
-
-        public override bool UseNewRepositorySerializer { get { return true; } }
+        
 
         private string mDescription;
         [IsSerializedForLocalRepository]

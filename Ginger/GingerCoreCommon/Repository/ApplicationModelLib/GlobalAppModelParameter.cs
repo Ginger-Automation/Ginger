@@ -29,7 +29,6 @@ namespace Amdocs.Ginger.Repository
 
     public class GlobalAppModelParameter : AppModelParameter
     {
-        public override bool UseNewRepositorySerializer { get { return true; } }
 
         public static string CURRENT_VALUE = "{Current Value}";
 

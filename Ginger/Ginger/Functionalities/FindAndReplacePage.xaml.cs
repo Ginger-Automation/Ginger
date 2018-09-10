@@ -995,17 +995,8 @@ namespace Ginger.Functionalities
                 if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
 
                 try
-                {
-                    if (foundItem.ParentItemToSave.UseNewRepositorySerializer)
-                    {
-                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(foundItem.ParentItemToSave);
-                    }
-                    else
-                    {
-                        if (foundItem.ParentItemToSave is RepositoryItem)
-                            ((RepositoryItem)foundItem.ParentItemToSave).Save();
-                    }
-
+                {                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(foundItem.ParentItemToSave);                                        
                     foundItem.Status = FoundItem.eStatus.Saved;
                 }
                 catch

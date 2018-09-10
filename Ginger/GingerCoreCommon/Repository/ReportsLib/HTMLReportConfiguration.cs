@@ -24,8 +24,7 @@ using System;
 namespace Ginger.Reports
 {
     public class HTMLReportConfiguration : RepositoryItemBase
-    {
-        public override bool UseNewRepositorySerializer { get { return true; } }
+    {        
 
         public  static partial class Fields
         {

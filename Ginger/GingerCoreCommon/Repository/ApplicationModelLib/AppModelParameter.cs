@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.Repository
 
     public class AppModelParameter : RepositoryItemBase
     {
-        public override bool UseNewRepositorySerializer { get { return true; } }
+        
         public virtual string ParamLevel { get { return "Local"; } set { } }
        
         [IsSerializedForLocalRepository]

@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.Common
 
 
         // Repository
-        public bool UseNewRepositorySerializer { get { return GetFeature(nameof(UseNewRepositorySerializer)).Selected; } set { UpdateFeature(nameof(UseNewRepositorySerializer), value); } }
+        // public bool UseNewRepositorySerializer { get { return GetFeature(nameof(UseNewRepositorySerializer)).Selected; } set { UpdateFeature(nameof(UseNewRepositorySerializer), value); } }
 
 
         // CDL
@@ -106,7 +106,7 @@ namespace Amdocs.Ginger.Common
 
             //Repository
             // mFeatures.Add(new BetaFeature() { Group = "Repository", Description = "Use Solution Repository instead of LocalRepository", ID = nameof(Use Solution Repository instead of LocalRepository), Warning = "Will reload solution" });
-            mFeatures.Add(new BetaFeature() { Group = "Repository", Description = "Use New Repository Serializer", ID = nameof(UseNewRepositorySerializer), Warning = "Will reload solution" });
+            // mFeatures.Add(new BetaFeature() { Group = "Repository", Description = "Use New Repository Serializer", ID = nameof(UseNewRepositorySerializer), Warning = "Will reload solution" });
 
             //CDL            
             mFeatures.Add(new BetaFeature() { Group = "CDL", Description = "Show CDL - Change Definition Language", ID = nameof(ShowCDL) });

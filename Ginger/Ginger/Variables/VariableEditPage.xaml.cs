@@ -210,16 +210,8 @@ namespace Ginger.Variables
             if (SharedRepositoryOperations.CheckIfSureDoingChange(mVariable, "change") == true)
             {
                 try
-                {
-                    if (mParent.UseNewRepositorySerializer)
-                    {
-                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mParent);
-                    }
-                    else
-                    {
-                        if (mParent is RepositoryItem)
-                            ((RepositoryItem)mParent).Save();
-                    }
+                {                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mParent);                    
                     saveWasDone = true;
                 }
                 catch

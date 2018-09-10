@@ -24,8 +24,7 @@ using Amdocs.Ginger.Common.Enums;
 namespace GingerCore.Environments
 {
     public class EnvApplication : RepositoryItemBase
-    {
-        public override bool UseNewRepositorySerializer { get { return true; } }
+    {        
 
         public  static class Fields
         {

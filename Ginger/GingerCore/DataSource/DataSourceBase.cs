@@ -28,7 +28,6 @@ namespace GingerCore.DataSource
 
     public abstract class DataSourceBase : RepositoryItemBase
     {
-        public override bool UseNewRepositorySerializer { get { return true; } }
         public enum eDSType
         {
             // Access
