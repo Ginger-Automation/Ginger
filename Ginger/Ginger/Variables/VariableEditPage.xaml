@@ -7,7 +7,7 @@
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Variable"
       mc:Ignorable="d" 
-      Height="575" Width="600">
+      d:DesignHeight="575" d:DesignWidth="600">
 
     <Grid Background="{StaticResource @Skin1_ColorC}">
         <Grid.RowDefinitions>

@@ -81,6 +81,8 @@ namespace Ginger.Activities
 
         private void SetGroupedActivitiesGridView()
         {
+            grdGroupedActivities.SetTitleLightStyle = true;
+
             GridViewDef defView2 = new GridViewDef(GridViewDef.DefaultViewName);
             defView2.GridColsView = new ObservableList<GridColView>();
 

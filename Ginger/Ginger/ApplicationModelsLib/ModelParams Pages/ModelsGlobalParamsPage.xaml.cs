@@ -48,7 +48,6 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         List<GlobalAppModelParameter> GlobalParamsCopiedItemsList = new List<GlobalAppModelParameter>();
         string gridPlaceholderHeader = "Place Holder";
         bool mSelectionModePage;
-
         public ModelsGlobalParamsPage(bool selectionModePage = false)
         {
             InitializeComponent();
@@ -81,7 +80,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         }
 
         private void InitApplicationModelsGlobalParamsGrid()
-        {
+        {            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.PlaceHolder), Header = gridPlaceholderHeader, WidthWeight = 100, AllowSorting = true });
@@ -90,25 +89,27 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
             if (!mSelectionModePage)
             {
+                xModelsGlobalParamsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Parameter, "Applications Models Global Parameters", saveAllHandler: SaveAllGlobalParametersChanges, addHandler: AddGlobalParam);
+
                 view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["OpenEditPossibleValuesPage"] });
                 view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.CurrentValue), Header = "Current Value", WidthWeight = 80, AllowSorting = true });
 
                 xModelsGlobalParamsGrid.btnSaveSelectedChanges.AddHandler(Button.ClickEvent, new RoutedEventHandler(SaveSelectedGlobalParametersChanges));
-                xModelsGlobalParamsGrid.btnSaveAllChanges.AddHandler(Button.ClickEvent, new RoutedEventHandler(SaveAllGlobalParametersChanges));
-                xModelsGlobalParamsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddGlobalParam));
+                //xModelsGlobalParamsGrid.btnSaveAllChanges.AddHandler(Button.ClickEvent, new RoutedEventHandler(SaveAllGlobalParametersChanges));
+                //xModelsGlobalParamsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddGlobalParam));
                 xModelsGlobalParamsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteSelectedEvent));
                 xModelsGlobalParamsGrid.SetbtnClearAllHandler(DeleteAllEvent);
                 xModelsGlobalParamsGrid.SetbtnCopyHandler(BtnCopyGlobalParamsClicked);
                 xModelsGlobalParamsGrid.SetbtnPastHandler(BtnPastGlobalParamsClicked);
 
-                xModelsGlobalParamsGrid.ShowSaveAllChanges = Visibility.Visible;
+                xModelsGlobalParamsGrid.ShowSaveAllChanges = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowSaveSelectedChanges = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowEdit = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowCopy = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowPaste = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowCut = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowRefresh = Visibility.Collapsed;
-                xModelsGlobalParamsGrid.ShowAdd = Visibility.Visible;
+                xModelsGlobalParamsGrid.ShowAdd = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowDelete = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowClearAll = Visibility.Visible;
                 xModelsGlobalParamsGrid.Grid.CanUserDeleteRows = false;
