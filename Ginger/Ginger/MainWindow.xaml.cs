@@ -201,10 +201,11 @@ namespace Ginger
                 ResetSolutionDependedUIElements(false);
                 SetUserTypeButtons();
 
-                if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false)
+                if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false && App.RunningFromUnitTest == false)
                 {
                     AutoLoadLastSolution();
                 }
+
                 if (App.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.ExitMode);
@@ -395,7 +396,7 @@ namespace Ginger
         {
             RibbonTab rt = (RibbonTab)MainRibbon.SelectedItem;
             ToggleMainWindow();
-            if (rt.Tag != null)
+            if (rt != null && rt.Tag != null)
             {
                 MainFrame.Content = rt.Tag;
                 return;
@@ -1173,7 +1174,7 @@ namespace Ginger
         }
 
         private void SaveBizFlowButton_Click(object sender, RoutedEventArgs e)
-        {
+         {
             //warn in case dynamic shared reposiotry Activities are included and going to be deleted
             if (App.BusinessFlow.Activities.Where(x=>x.AddDynamicly == true).FirstOrDefault() != null)
             {
@@ -1184,7 +1185,10 @@ namespace Ginger
             Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.BusinessFlow.Name,
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
 
+
             App.BusinessFlow.Save();
+               
+            App.AddItemToSaveAll(App.BusinessFlow);
 
             Reporter.CloseGingerHelper();
         }

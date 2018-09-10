@@ -136,6 +136,8 @@ namespace Amdocs.Ginger.UserControls
             }
         }     
 
+        // Why in Preview and not on click?
+
         public event RoutedEventHandler Click;
         private void Button_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -147,6 +149,11 @@ namespace Amdocs.Ginger.UserControls
             {
                 Click(this, e);
             }
+        }
+
+        public void DoClick()
+        {
+            Click(this, null);
         }
 
         Style mPreviousStyle = null;

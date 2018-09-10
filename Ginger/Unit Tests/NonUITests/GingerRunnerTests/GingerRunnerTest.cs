@@ -31,7 +31,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
 using GingerTestHelper;
 
-namespace UnitTests.NonUITests
+namespace UnitTests.NonUITests.GingerRunnerTests
 {
     [TestClass]
     [Level1]

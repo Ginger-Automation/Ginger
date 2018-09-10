@@ -88,9 +88,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             get { return currentParser; }
             set { currentParser = value; }
         }
-        public void GetAllOptionalValuesFromExamplesFiles(ApplicationAPIModel AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
+        public void GetAllOptionalValuesFromExamplesFiles(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
         {
-            foreach (TemplateFile TF in AAM.OptionalValuesTemplates)
+            foreach (TemplateFile TF in ((ApplicationAPIModel)AAM).OptionalValuesTemplates)
             {
                 CreateParser(TF.FilePath);
                 if (currentParser.GetType() == typeof(XMLTemplateParser))
@@ -108,7 +108,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// </summary>
         /// <param name="AAM"></param>
         /// <param name="OptionalValuesPerParameterDict"></param>
-        public void PopulateOptionalValuesForAPIParameters(ApplicationAPIModel AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
+        public void PopulateOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
         {
             if (currentParser != null)
             {
@@ -128,7 +128,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <param name="AAM"></param>
         /// <param name="OptionalValuesPerParameterDict"></param>
         /// <param name="SelectedParametersGridList"></param>
-        public void PopulateOptionalValuesForAPIParameters(ApplicationAPIModel AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict, List<AppModelParameter> SelectedParametersGridList)
+        public void PopulateOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict, List<AppModelParameter> SelectedParametersGridList)
         {
             if (currentParser != null)
             {
@@ -161,6 +161,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             Tuple<string, string> tuple = new Tuple<string, string>(XDN.LocalName, XDN.XPath);
             string Value = XDN.Value;
+            
             if (OptionalValuesPerParameterDict.ContainsKey(tuple))
             {
                 OptionalValuesPerParameterDict[tuple].Add(Value);
@@ -169,13 +170,30 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 OptionalValuesPerParameterDict.Add(tuple, new List<string>() { Value });
             }
+
+            foreach (XmlAttribute attribute in XDN.Attributes)
+            {
+
+                Tuple<string, string> attributetuple = new Tuple<string, string>(attribute.LocalName, XDN.XPath);
+                string attributeValue = attribute.Value;
+
+                if (OptionalValuesPerParameterDict.ContainsKey(attributetuple))
+                {
+                    OptionalValuesPerParameterDict[attributetuple].Add(attributeValue);
+                }
+                else
+               
+                    OptionalValuesPerParameterDict.Add(attributetuple, new List<string> { attributeValue });
+                
+
+            }
         }
         /// <summary>
         /// Update all parameters optional values according to xml file
         /// </summary>
         /// <param name="AAM"></param>
         /// <param name="OptionalValuesPerParameterDict"></param>
-        public void PopulateXMLOptionalValuesForAPIParameters(ApplicationAPIModel AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
+        public void PopulateXMLOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
         {
             int UpdatedParametersCounter = 0;
             foreach (AppModelParameter AMP in AAM.AppModelParameters)
@@ -215,7 +233,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <param name="AAM"></param>
         /// <param name="OptionalValuesPerParameterDict"></param>
         /// <param name="SelectedParametersGridList"></param>
-        public void PopulateXMLOptionalValuesForAPIParameters(ApplicationAPIModel AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict, List<AppModelParameter> SelectedParametersGridList)
+        public void PopulateXMLOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict, List<AppModelParameter> SelectedParametersGridList)
         {
             int UpdatedParametersCounter = 0;
             foreach (var tuple in SelectedParametersGridList.Zip(AAM.AppModelParameters, (x, y) => (x, y)))
@@ -298,7 +316,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// </summary>
         /// <param name="AAM"></param>
         /// <param name="OptionalValuesPerParameterDict"></param>
-        public void PopulateJSONOptionalValuesForAPIParameters(ApplicationAPIModel AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
+        public void PopulateJSONOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
         {
             int UpdatedParametersCounter = 0;
             foreach (AppModelParameter AMP in AAM.AppModelParameters)
@@ -324,7 +342,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <param name="AAM"></param>
         /// <param name="OptionalValuesPerParameterDict"></param>
         /// <param name="SelectedParametersGridList"></param>
-        public void PopulateJSONOptionalValuesForAPIParameters(ApplicationAPIModel AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict, List<AppModelParameter> SelectedParametersGridList)
+        public void PopulateJSONOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict, List<AppModelParameter> SelectedParametersGridList)
         {
             int UpdatedParametersCounter = 0;
             foreach (var tuple in SelectedParametersGridList.Zip(AAM.AppModelParameters, (x, y) => (x, y)))
@@ -354,7 +372,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// </summary>
         /// <param name="AAM"></param>
         /// <param name="SelectedParametersGridList"></param>
-        public void PopulateExcelDBOptionalValuesForAPIParametersExcelDB(ApplicationAPIModel AAM, List<AppModelParameter> SelectedParametersGridList, Dictionary<string, List<string>> ParameterValuesByNameDic)
+        public void PopulateExcelDBOptionalValuesForAPIParametersExcelDB(ApplicationModelBase AAM, List<AppModelParameter> SelectedParametersGridList, Dictionary<string, List<string>> ParameterValuesByNameDic)
         {
             int UpdatedParameters = 0;
             bool IsUpdate;

@@ -92,9 +92,9 @@ namespace UnitTests.NonUITests
 
         //    //Assert
         //   Assert.AreEqual(dt.Rows.Count,98);
-            
-        //}
 
+        //}
+        [Level2]
         [TestMethod]
         public void ReadDataFromXLSGetRowCount()
         {            
