@@ -4,6 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="AddOptionalValuesModelSelectTypePage">
@@ -23,7 +25,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Content="Source Type:" Style="{StaticResource @InputFieldLabelStyle}" />
             <ComboBox Grid.Row="0" Grid.Column="1"  Name="xSourceTypeComboBox" ContextMenu="{x:Null}" Width="150"  Style="{StaticResource @InputComboBoxStyle}"  VerticalAlignment="Center" SelectionChanged="xSourceTypeComboBox_SelectionChanged"  HorizontalAlignment="Left"  Margin="0,0,5,0"></ComboBox>
-            
+
             <StackPanel x:Name="xDBStackPanel" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Collapsed" HorizontalAlignment="Left" >
                 <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid.RowDefinitions>
@@ -53,7 +55,7 @@
                     <TextBox Grid.Row="5" Grid.Column="1" Background="White" x:Name="xSQLTextBox"  Visibility="Collapsed"  Text="" VerticalAlignment="Bottom" TextChanged="xSQLTextBox_TextChanged" IsEnabled="true"  Style="{StaticResource @MultiRowsTextBoxStyle}" Grid.ColumnSpan="3" Margin="0,0,5,0" />
                 </Grid>
             </StackPanel>
-            
+
             <StackPanel x:Name="xExcelFileStackPanel" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Visible">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -73,14 +75,18 @@
                         <Label Name="xPathLable" Style="{StaticResource @InputFieldLabelStyle}"  Content="Path:" VerticalAlignment="Top"  />
                         <TextBox x:Name="xPathTextBox" Background="White" ToolTip="Please Provide Full  Valid Path To Create Excel Template File." Margin="5,0,0,0"  Text="" HorizontalAlignment="Stretch" VerticalAlignment="Center"  IsEnabled="true" TextChanged="xPathTextBox_TextChanged" Style="{StaticResource @TextBoxStyle}" />
                     </StackPanel>
-                    
+
                     <DockPanel Grid.Row="0" Grid.Column="2">
-                        <ToggleButton   x:Name="xBrowseButton"  Click="xBrowseButton_Click"  HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}"  Height="20" Width="20" Margin="2,0,1,0">
-                            <Image x:Name="xBrowseButtonIcon" />
-                        </ToggleButton>
-                        <ToggleButton   x:Name="xCreateTemplateExcelButton" Click="xCreateTemplateExcelButton_Click"  Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}"  Height="20" Width="20"  HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Create Template Of Excel File With Existing Parameters" Margin="2,0,5,0">
-                            <Image x:Name="xCreateTemplateExcelButtonIcon" />
-                        </ToggleButton>
+                        <usercontrols:ucButton x:Name="xBrowseButton" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="OpenFolder" Click="xBrowseButton_Click" VerticalAlignment="Bottom" Margin="0,0,0,-10">
+                            <usercontrols:ucButton.ToolTip>
+                                <GingerCore:ucTextDicResource Text="Browse File"/>
+                            </usercontrols:ucButton.ToolTip>
+                        </usercontrols:ucButton>
+                        <usercontrols:ucButton x:Name="xCreateTemplateExcelButton" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="ExcelFile" Click="xCreateTemplateExcelButton_Click" VerticalAlignment="Bottom" Margin="-10,0,0,-10">
+                            <usercontrols:ucButton.ToolTip>
+                                <GingerCore:ucTextDicResource Text="Create Template"/>
+                            </usercontrols:ucButton.ToolTip>
+                        </usercontrols:ucButton>
                     </DockPanel>
                     <Label Grid.Row="1" Name="xSaveExcelLable" Style="{StaticResource @LabelStyle}"  Content="Please save and close Excel after editing it." VerticalAlignment="Bottom" Margin="0,10,0,0" />
                     <DockPanel Grid.Row="2" Grid.ColumnSpan="3">
@@ -88,12 +94,16 @@
                             <Label Name="xSheetLable"   HorizontalAlignment="Left" Content="Sheet:" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"  />
                             <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"  Margin="5,0,0,0"  VerticalAlignment="Center" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
                         </StackPanel>
-                        <ToggleButton x:Name="RefreshBtn" Click="RefreshButton_Click" Margin="5,0,0,2" Height="20" Width="20" ToolTip="Refresh Sheets" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" >
-                            <Image x:Name="RefreshButton" />
-                        </ToggleButton>
-                        <ToggleButton x:Name="xExcelViewDataButton" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" Click="xExcelViewDataButton_Click" ToolTip="View All Data" HorizontalAlignment="Left" Height="20" Width="20" Margin="5,33,0,2" >
-                            <Image x:Name="ExcelViewDataButton" />
-                        </ToggleButton>
+                        <usercontrols:ucButton x:Name="RefreshBtn" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="Refresh" Click="RefreshButton_Click" VerticalAlignment="Bottom" Margin="0,20,0,0">
+                            <usercontrols:ucButton.ToolTip>
+                                <GingerCore:ucTextDicResource Text="Refresh Sheets"/>
+                            </usercontrols:ucButton.ToolTip>
+                        </usercontrols:ucButton>
+                        <usercontrols:ucButton x:Name="xExcelViewDataButton" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="View" Click="xExcelViewDataButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,20,0,0">
+                            <usercontrols:ucButton.ToolTip>
+                                <GingerCore:ucTextDicResource Text="View All Data"/>
+                            </usercontrols:ucButton.ToolTip>
+                        </usercontrols:ucButton>
                     </DockPanel>
 
                     <DockPanel Grid.Row="3" Grid.ColumnSpan="3">
@@ -101,14 +111,16 @@
                             <Label Name="xSelectRowLable"  Style="{StaticResource @InputFieldLabelStyle}"  Content="Select Row(s) Where:" VerticalAlignment="Center"  />
                             <TextBox x:Name="xSelectRowTextBox" Background="White" Margin="5,0,0,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger'."  Style="{StaticResource @MultiRowsTextBoxStyle}" Text ="" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" IsEnabled="true"/>
                         </StackPanel>
-                        <ToggleButton x:Name="xExcelViewWhereButton" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" Click="xExcelViewWhereButton_Click" ToolTip="View Filtered Data" DockPanel.Dock="Left" HorizontalAlignment="Left" Height="20" Width="20" Margin="5,35,0,0" >
-                            <Image x:Name="ExcelViewWhereButton" />
-                        </ToggleButton>
+                        <usercontrols:ucButton x:Name="xExcelViewWhereButton" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageType="Filter" Click="xExcelViewWhereButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,25,0,0">
+                            <usercontrols:ucButton.ToolTip>
+                                <GingerCore:ucTextDicResource Text="View Filtered Data"/>
+                            </usercontrols:ucButton.ToolTip>
+                        </usercontrols:ucButton>
                     </DockPanel>
-                    
+
                     <GridSplitter x:Name="xExcelGridSplitter" Grid.ColumnSpan="3" Grid.Row="4" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource @Skin1_ColorA}" IsEnabled="False" Margin="0,5,0,5" />
 
-                    <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">                        
+                    <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">
                         <DockPanel x:Name="xExcelDataGridDockPanel" Margin="0,5,5,5">
                             <Label Style ="{StaticResource @InputFieldLabelStyle}" Content="Excel Data:" DockPanel.Dock="Left"></Label>
                             <DataGrid x:Name="xExcelDataGrid" DockPanel.Dock="Top" >
@@ -128,7 +140,7 @@
                     </StackPanel>
                 </Grid>
             </StackPanel>
-            
+
             <Ginger:ucGrid x:Name="xImportOptionalValuesGrid" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Visibility="Collapsed" Margin="5,0,5,0" />
         </Grid>
     </ScrollViewer>

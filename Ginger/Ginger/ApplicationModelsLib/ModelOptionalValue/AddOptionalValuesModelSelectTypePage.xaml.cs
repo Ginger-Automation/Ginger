@@ -36,6 +36,8 @@ using Amdocs.Ginger.UserControls;
 using Amdocs.Ginger.Common.Enums;
 using static Ginger.ExtensionMethods;
 using System.Diagnostics;
+using System.Reflection;
+using Amdocs.Ginger.ValidationRules;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -62,13 +64,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     ControlsBinding.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), new List<object>() { eSourceType.Excel, eSourceType.DB });
                     break;
             }
-
-            RefreshButton.Source = ImageMakerControl.GetImage(eImageType.Refresh, 8, 8);
-            xBrowseButtonIcon.Source = ImageMakerControl.GetImage(eImageType.OpenFolder, 8, 8);
-            xCreateTemplateExcelButtonIcon.Source = ImageMakerControl.GetImage(eImageType.ExcelExport, 8, 8);
-            ExcelViewDataButton.Source = ImageMakerControl.GetImage(eImageType.View, 8, 8);
-            ExcelViewWhereButton.Source = ImageMakerControl.GetImage(eImageType.Filter, 8, 8);
-
+            
             xSourceTypeComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             xSheetNameComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             SetFieldsGrid(); //XML & JSON
@@ -108,12 +104,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 mAddModelOptionalValuesWizard = (AddModelOptionalValuesWizard)WizardEventArgs.Wizard;
                 xPathTextBox.BindControl(this, nameof(Path));
-                xPathTextBox.AddValidationRule(new ModelOptionalParameterValidationRule());
-                xPathTextBox.Focus();
+                xPathTextBox.AddValidationRule(new EmptyValidationRule());
 
                 xSheetNameComboBox.BindControl(this, nameof(SheetName));
-                xSheetNameComboBox.AddValidationRule(new ModelOptionalParameterValidationRule());
-                xSheetNameComboBox.Focus();
+                xSheetNameComboBox.AddValidationRule(new EmptyValidationRule());
+                xPathTextBox.Focus();
             }
             else if (WizardEventArgs.EventType == EventType.LeavingForNextPage)
             {
@@ -181,30 +176,37 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                if ((xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.Excel.ToString()))
+                try
                 {
-                    xPathTextBox.Text = dlg.FileName;
-                    FillSheetCombo();
-                    xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
-                    // AddModelOptionalValuesWizard.FinishEnabled = false;
-                    xExcelViewDataButton.Visibility = Visibility.Collapsed;
-                    xExcelViewWhereButton.Visibility = Visibility.Collapsed;
-                    xExcelGridSplitter.Visibility = Visibility.Collapsed;
-                    if (xSheetNameComboBox.Items.Count == 1)
+                    if ((xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.Excel.ToString()))
                     {
-                        xSheetNameComboBox.SelectedIndex = 0;
+                        xPathTextBox.Text = dlg.FileName;
+                        FillSheetCombo();
+                        xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
+                        // AddModelOptionalValuesWizard.FinishEnabled = false;
+                        xExcelViewDataButton.Visibility = Visibility.Collapsed;
+                        xExcelViewWhereButton.Visibility = Visibility.Collapsed;
+                        xExcelGridSplitter.Visibility = Visibility.Collapsed;
+                        if (xSheetNameComboBox.Items.Count == 1)
+                        {
+                            xSheetNameComboBox.SelectedIndex = 0;
+                        }
+                        Process.Start(dlg.FileName);
                     }
-                    Process.Start(dlg.FileName);
+                    else
+                    {
+                        foreach (String file in dlg.FileNames)
+                        {
+                            mAddModelOptionalValuesWizard.OVFList.Add(new TemplateFile() { FilePath = file });
+                            if (mAddModelOptionalValuesWizard.mAAMB is ApplicationAPIModel)
+                                ((ApplicationAPIModel)mAddModelOptionalValuesWizard.mAAMB).OptionalValuesTemplates.Add(new TemplateFile() { FilePath = file });
+                        }
+                        xImportOptionalValuesGrid.DataSourceList = mAddModelOptionalValuesWizard.OVFList;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    foreach (String file in dlg.FileNames)
-                    {
-                        mAddModelOptionalValuesWizard.OVFList.Add(new TemplateFile() { FilePath = file });
-                        if(mAddModelOptionalValuesWizard.mAAMB is ApplicationAPIModel)
-                            ((ApplicationAPIModel)mAddModelOptionalValuesWizard.mAAMB).OptionalValuesTemplates.Add(new TemplateFile() { FilePath = file });
-                    }
-                    xImportOptionalValuesGrid.DataSourceList = mAddModelOptionalValuesWizard.OVFList;
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 }
             }
             else
@@ -360,12 +362,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {                
                 foreach (var prms in mAddModelOptionalValuesWizard.mAAMB.AppModelParameters)
                 {
-                    AppParameters par = new AppParameters();
-                    par.ItemName = prms.ItemName;
-                    par.OptionalValuesList = prms.OptionalValuesList;
-                    par.OptionalValuesString = prms.OptionalValuesString;
-                    par.Description = prms.Description;
-                    parameters.Add(par);
+                    im.AddNewParameterToList(parameters, prms);
                 }
                 xPathTextBox.Text = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mAddModelOptionalValuesWizard.mAAMB.Name), Convert.ToString(xPathTextBox.Text.Trim()));
             }
@@ -373,12 +370,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 foreach (var prms in mAddModelOptionalValuesWizard.mGlobalParamterList)
                 {
-                    AppParameters par = new AppParameters();
-                    par.ItemName = prms.ItemName;
-                    par.OptionalValuesList = prms.OptionalValuesList;
-                    par.OptionalValuesString = prms.OptionalValuesString;
-                    par.Description = prms.Description;
-                    parameters.Add(par);
+                    im.AddNewParameterToList(parameters, prms);
                 }
                 xPathTextBox.Text = im.ExportParametersToExcelFile(parameters, "GlobalParameters", Convert.ToString(xPathTextBox.Text.Trim()));
             }
@@ -387,7 +379,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets();
             GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
             mAddModelOptionalValuesWizard.ProcessEnded();
-        }
+        }       
+
         #endregion
 
         #region DB

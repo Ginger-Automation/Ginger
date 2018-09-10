@@ -524,7 +524,7 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Camera:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Camera);
                     break;
-                case eImageType.ExcelExport:
+                case eImageType.ExcelFile:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FileExcelOutline);
                     break;
                 case eImageType.PlusSquare:

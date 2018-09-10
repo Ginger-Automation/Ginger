@@ -1088,6 +1088,24 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             return styleSheet;
         }
 
+        /// <summary>
+        /// This method is used to add the parameter to the list
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="prms"></param>
+        public void AddNewParameterToList(List<AppParameters> parameters, AppModelParameter prms)
+        {
+            if (prms != null)
+            {
+                AppParameters par = new AppParameters();
+                par.ItemName = prms.ItemName;
+                par.OptionalValuesList = prms.OptionalValuesList;
+                par.OptionalValuesString = prms.OptionalValuesString;
+                par.Description = prms.Description;
+                parameters.Add(par); 
+            }
+        }
+
         #endregion
 
         #region DB

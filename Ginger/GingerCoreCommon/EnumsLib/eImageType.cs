@@ -148,7 +148,7 @@ namespace Amdocs.Ginger.Common.Enums
         Camera,
 
         Power,
-        ExcelExport,
+        ExcelFile,
 
         #endregion
 

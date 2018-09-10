@@ -97,17 +97,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     temp.PlaceHolder = parm.Key;
                     temp.Description = string.Empty;
                     temp.OptionalValuesList = new ObservableList<OptionalValue>();
-                    if (parm.Value != null && parm.Value.Count > 0)
-                    {
-                        foreach (var val in parm.Value)
-                        {
-                            temp.OptionalValuesList.Add(new OptionalValue() { Value = val });
-                        }
-                    }
+                    SetOptionalValueList(parm, temp);
                     AddModelOptionalValuesWizard.ParamsList.Add(temp);
                 }
             }
-        }
+        }        
+
         private void InitGlobalParametersListForGrid()
         {
             AddModelOptionalValuesWizard.GlobalParamsList = new ObservableList<GlobalAppModelParameter>();
@@ -138,17 +133,28 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     temp.PlaceHolder = parm.Key;
                     temp.Description = string.Empty;
                     temp.OptionalValuesList = new ObservableList<OptionalValue>() { new OptionalValue() { Value = "{Current Value}", IsDefault = true } };
-                    if (parm.Value != null && parm.Value.Count > 0)
-                    {
-                        foreach (var val in parm.Value)
-                        {
-                            temp.OptionalValuesList.Add(new OptionalValue() { Value = val });
-                        } 
-                    }
+                    SetOptionalValueList(parm, temp);
                     AddModelOptionalValuesWizard.GlobalParamsList.Add(temp);
                 }
             }
         }
+
+        /// <summary>
+        /// This method is used to set the optional value list
+        /// </summary>
+        /// <param name="parm"></param>
+        /// <param name="temp"></param>
+        private void SetOptionalValueList(KeyValuePair<string, List<string>> parm, AppModelParameter temp)
+        {
+            if (parm.Value != null && parm.Value.Count > 0)
+            {
+                foreach (var val in parm.Value)
+                {
+                    temp.OptionalValuesList.Add(new OptionalValue() { Value = val });
+                }
+            }            
+        }
+
         private void InitxModelParametersGrid()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);

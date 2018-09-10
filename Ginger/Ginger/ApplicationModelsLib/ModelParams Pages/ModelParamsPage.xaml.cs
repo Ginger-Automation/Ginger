@@ -144,7 +144,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             ModelParametersGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteParams_Clicked));
             ModelParametersGrid.SetbtnClearAllHandler(new RoutedEventHandler(ClearAllParams_Clicked));
-            ModelParametersGrid.AddToolbarTool(eImageType.ExcelExport, "Export Optional Values For Parameters", new RoutedEventHandler(ExportOptionalValuesForParameters));
+            ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Optional Values For Parameters", new RoutedEventHandler(ExportOptionalValuesForParameters));
         }
         private void ImportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {            
@@ -158,12 +158,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             List<AppParameters> parameters = new List<AppParameters>();
             foreach (var prms in mApplicationModel.AppModelParameters)
             {
-                AppParameters par = new AppParameters();
-                par.ItemName = prms.ItemName;
-                par.OptionalValuesList = prms.OptionalValuesList;
-                par.OptionalValuesString = prms.OptionalValuesString;
-                par.Description = prms.Description;
-                parameters.Add(par);
+                im.AddNewParameterToList(parameters, prms);
             }
             string filePath = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mApplicationModel.Name));
             Process.Start(filePath);

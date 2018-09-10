@@ -140,7 +140,6 @@ namespace Amdocs.Ginger.Repository
     {     
         public string ItemName { get; set; }
 
-        [IsSerializedForLocalRepository]
         public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
         
         public string OptionalValuesString { get; set; }

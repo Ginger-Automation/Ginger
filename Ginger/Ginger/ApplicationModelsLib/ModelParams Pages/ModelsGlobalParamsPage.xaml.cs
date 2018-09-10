@@ -124,7 +124,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
             xModelsGlobalParamsGrid.DataSourceList = mModelsGlobalParamsList;
             xModelsGlobalParamsGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForGlobalParameters));
-            xModelsGlobalParamsGrid.AddToolbarTool(eImageType.ExcelExport, "Export Optional Values For Parameters", new RoutedEventHandler(ExportOptionalValuesForParameters));
+            xModelsGlobalParamsGrid.AddToolbarTool(eImageType.ExcelFile, "Export Optional Values For Parameters", new RoutedEventHandler(ExportOptionalValuesForParameters));
         }
 
         private void ImportOptionalValuesForGlobalParameters(object sender, RoutedEventArgs e)
@@ -139,12 +139,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             List<AppParameters> parameters = new List<AppParameters>();
             foreach (var prms in mModelsGlobalParamsList)
             {
-                AppParameters par = new AppParameters();
-                par.ItemName = prms.ItemName;
-                par.OptionalValuesList = prms.OptionalValuesList;
-                par.OptionalValuesString = prms.OptionalValuesString;
-                par.Description = prms.Description;
-                parameters.Add(par);
+                im.AddNewParameterToList(parameters, prms);                
             }
             string filePath = im.ExportParametersToExcelFile(parameters, "GlobalParameters");
             Process.Start(filePath);
