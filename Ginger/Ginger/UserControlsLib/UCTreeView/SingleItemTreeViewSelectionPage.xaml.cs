@@ -75,10 +75,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             get { return xTreeView; }
         }
 
-        public SingleItemTreeViewSelectionPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, eItemSelectionType itemSelectionType = eItemSelectionType.Single, bool allowTreeTools = false, eItemEnableEventType enableEvent = eItemEnableEventType.DoubleClick)
+        public SingleItemTreeViewSelectionPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, eItemSelectionType itemSelectionType = eItemSelectionType.Single, bool allowTreeTools = false, Tuple<string, string> propertyValueFilter = null)
         {
             InitializeComponent();
 
+            xTreeView.Tree.TreeNodesFilterByField = propertyValueFilter;
             xTreeView.AllowTreeTools = allowTreeTools;
 
             TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);            

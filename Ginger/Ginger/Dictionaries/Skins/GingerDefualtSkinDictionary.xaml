@@ -2528,7 +2528,7 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="@InputComboBoxStyle" TargetType="{x:Type ComboBox}">
+        <Style x:Key="@InputComboBoxStyle" TargetType="{x:Type ComboBox}">
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
