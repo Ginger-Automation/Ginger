@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.IO;
 using System.Linq;
 
 namespace Amdocs.Ginger.Repository
@@ -38,5 +40,22 @@ namespace Amdocs.Ginger.Repository
             // We return the list sorted 
             return folders.OrderBy(x => x).ToArray();
         }
+
+
+        /// <summary>
+        /// Append a timestamp to file name while keeping the extension 
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns>The file name with timestamp in format yyyymmddhhmmss for example: log_20180906075812</returns>
+
+        public static string AppendTimeStamp(string fileName)
+        {
+            return string.Concat(
+                Path.GetFileNameWithoutExtension(fileName), "_",
+                DateTime.Now.ToString("yyyymmddhhmmss"),
+                Path.GetExtension(fileName)
+                );
+        }
+
     }
 }

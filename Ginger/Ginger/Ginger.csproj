@@ -54,6 +54,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>true</Prefer32Bit>
     <LangVersion>latest</LangVersion>
+    <CodeAnalysisRuleSet>Ginger.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -65,6 +66,7 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <LangVersion>latest</LangVersion>
+    <CodeAnalysisRuleSet>Ginger.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>2E9649D219B930C930D10870815D43A8D2252E7A</ManifestCertificateThumbprint>
@@ -347,6 +349,9 @@
     <Compile Include="Actions\ActionConversion\ActionConverterPage.xaml.cs">
       <DependentUpon>ActionConverterPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
+      <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActLinkEditPage.xaml.cs">
       <DependentUpon>ActLinkEditPage.xaml</DependentUpon>
     </Compile>
@@ -610,6 +615,7 @@
       <DependentUpon>ModelItemUsagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MenusLib\ResourcesMenu.cs" />
+    <Compile Include="Run\GingerRunnerLogger.cs" />
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
@@ -1959,6 +1965,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Resource Include="PluginsLibNew\AddPluginWizardLib\AddPluginIntro.md" />
+    <None Include="Ginger.ruleset" />
     <None Include="Resources\VBSTemplate.bmp" />
     <None Include="Resources\VBSTemplate.vbs" />
     <Resource Include="Images\%40A_16x16.png" />
@@ -2520,6 +2527,10 @@
     <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionLogConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AgentsNew\NewAgentEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -71,6 +71,7 @@ namespace GingerWPFUnitTest.POMs
 
         public UCButtonPOM AddButton { get
             {
+                //AddButton                    
                 ucButton b = (ucButton)FindElementByName(SingleItemTreeViewControl, "xAddButton");
                 UCButtonPOM p = new UCButtonPOM(b);
                 return p;
@@ -122,12 +123,12 @@ namespace GingerWPFUnitTest.POMs
             {
                 // retry up to 10 seconds
                 int i = 0;
-                while (tvi == null & i<10)
+                while (tvi == null & i<100)
                 {
                     tvi = FindItemInList(GetRootItems(), title);                                        
                     if (tvi == null)
                     {
-                        SleepWithDoEvents(1000);
+                        SleepWithDoEvents(100);
                     }
                     i++;                    
                 }                                
@@ -206,13 +207,9 @@ namespace GingerWPFUnitTest.POMs
 
        
 
-        internal bool IsItemExist(string envName)
-        {
-            SleepWithDoEvents(100);
-            TreeViewItem tvi = null;
-            Execute(() => {
-                tvi = FindItem(envName);             
-            });
+        internal bool IsItemExist(string title)
+        {            
+            TreeViewItem tvi = FindItem(title);            
             if (tvi != null)
             {
                 return true;
