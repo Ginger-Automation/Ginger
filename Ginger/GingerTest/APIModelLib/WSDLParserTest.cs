@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.Environments;
 using GingerTestHelper;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -52,7 +51,8 @@ namespace GingerWPFUnitTest.APIModelLib
 
         }
 
-
+        [Ignore] // TODO: FIXME
+        [Level2]
         [TestMethod]
         public void GenerateAPIfromWSDL()
         {

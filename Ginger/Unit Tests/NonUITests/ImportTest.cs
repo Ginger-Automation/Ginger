@@ -60,10 +60,10 @@ namespace UnitTests.NonUITests
         //    // Preeti - please put small file with expected number of obj
         //   Assert.AreEqual(Objectlist_ORI.Count(), 10, "Objects count");
         //    // MessageBox.Show("Actual Object Count fetched:" + Objectlist_ORI.Count());
-       
+
         //}
 
-        
+
         //[TestMethod]
         //public void BusAndAssociatedGUI()
         //{
@@ -81,7 +81,7 @@ namespace UnitTests.NonUITests
         //    foreach (BusFunction x in BusList)
         //    {
         //        AllBusFunctions = AllBusFunctions + "\n" + x.BusFunctionName;
-                    
+
         //        if (x.ListOfGuiFunctions.Count!=0)
         //        {
         //            AllBusFunctions = AllBusFunctions + "\n\n";
@@ -90,16 +90,16 @@ namespace UnitTests.NonUITests
         //                AllBusFunctions = AllBusFunctions + "\t" + gui;
         //            }
         //        }
-                
+
         //    }
 
 
         //    // No messages in UT
         //    // MessageBox.Show("=== ALL BUS & GUI LIST FUNCTIONS ==== : " + AllBusFunctions);
-            
+
         //}
 
-
+        [Level3]
         [TestMethod]
         public void Import_ASAP_1()
         {
