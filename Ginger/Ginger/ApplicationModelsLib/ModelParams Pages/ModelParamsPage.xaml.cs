@@ -156,7 +156,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
             List<AppParameters> parameters = new List<AppParameters>();
-            foreach (var prms in mAAMB.AppModelParameters)
+            foreach (var prms in mApplicationModel.AppModelParameters)
             {
                 AppParameters par = new AppParameters();
                 par.ItemName = prms.ItemName;
@@ -165,7 +165,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 par.Description = prms.Description;
                 parameters.Add(par);
             }
-            string filePath = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mAAMB.Name));
+            string filePath = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mApplicationModel.Name));
             Process.Start(filePath);
         }
 
