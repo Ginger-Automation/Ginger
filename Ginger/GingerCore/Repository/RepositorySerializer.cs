@@ -59,9 +59,7 @@ namespace GingerCore.Repository
     public class RepositorySerializer : IRepositorySerializer
     {
         static string mGingerVersion;
-        static long mGingerVersionAsLong = 0;
-
-        public static bool FastLoad = false;
+        static long mGingerVersionAsLong = 0;        
 
         public void SaveToFile(RepositoryItemBase ri, string FileName)
         {
@@ -172,21 +170,20 @@ namespace GingerCore.Repository
                 IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(fi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
                 if (token == null) continue;
 
-                if (FastLoad)
+                
+                if (IsObseravbleListLazyLoad(fi.Name))
                 {
-                    if (IsObseravbleListLazyLoad(fi.Name))
+                    bool b = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).LazyLoad;
+                    if (b)
                     {
-                        bool b = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).LazyLoad;
-                        if (b)
-                        {
-                            string s = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).StringData;
-                            xml.WriteStartElement("Activities");
-                            xml.WriteString(s);
-                            xml.WriteEndElement();
-                            return;
-                        }
+                        string s = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).StringData;
+                        xml.WriteStartElement("Activities");
+                        xml.WriteString(s);
+                        xml.WriteEndElement();
+                        return;
                     }
                 }
+                
 
                 v = ri.GetType().GetField(fi.Name).GetValue(ri);
                 if (v != null)
@@ -400,17 +397,17 @@ namespace GingerCore.Repository
         private static void xmlReadListOfObjects(object ParentObj, XmlReader xdr, IObservableList observableList)
         {
             // read list of object into the list, add one by one, like activities, actions etc.            
-            if (FastLoad)
+            
+            //Fast Load
+            if (IsObseravbleListLazyLoad(xdr.Name))
             {
-                if (IsObseravbleListLazyLoad(xdr.Name))
-                {
-                    // We can save line/col and reload later when needed
-                    string s = xdr.ReadOuterXml();
-                    observableList.DoLazyLoadItem(s);
-                    observableList.LazyLoad = true;
-                    return;
-                }
+                // We can save line/col and reload later when needed
+                string s = xdr.ReadOuterXml();
+                observableList.DoLazyLoadItem(s);
+                observableList.LazyLoad = true;
+                return;
             }
+            
             xdr.Read();
             while (xdr.NodeType != XmlNodeType.EndElement)
             {
@@ -467,28 +464,28 @@ namespace GingerCore.Repository
                 // We first try in current assembly = GingerCore
                 if (targetObj == null)
                 {
-                    if (FastLoad)
-                    {
+                    //if (FastLoad)
+                    //{
                         obj = GingerCoreAssembly.CreateInstance(ClassName);
-                    }
-                    else
-                    {
-                        obj = System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(ClassName);
-                    }
+                    //}
+                    //else
+                    //{
+                    //    obj = System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(ClassName);
+                    //}
                 }
                 else
                     obj = targetObj; //used for DeepCopy to objects fields
 
                 if (obj == null)
                 {
-                    if (FastLoad)
-                    {
+                    //if (FastLoad)
+                    //{
                         obj = GingerAssembly.CreateInstance(ClassName);
-                    }
-                    else
-                    {
+                    //}
+                    //else
+                    //{
                         obj = System.Reflection.Assembly.Load("Ginger").CreateInstance(ClassName);
-                    }
+                    //}
                 }
 
                 if (obj == null)
