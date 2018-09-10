@@ -26,7 +26,7 @@ namespace UnitTests.NonUITests.AutoPilot
             ImportOptionalValues = new ImportOptionalValuesForParameters();
             ImportOptionalValues.ShowMessage = false;
         }
-
+        [Level2]
         [TestMethod]
         public void ImportOptionalFromExcelRegressionTest()
         {/*
@@ -47,7 +47,7 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(dic.Count, 9, "Count of Parameters With New Optional Values");
         */
         }
-
+        [Level2]
         [TestMethod]
         public void ImportOptionalFromDBRegressionTest()
         {

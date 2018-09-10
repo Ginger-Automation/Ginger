@@ -77,7 +77,7 @@ namespace Amdocs.Ginger.Repository
             return string.Empty;
         }
 
-        private static bool IsValidJson(string strInput)
+        public static bool IsValidJson(string strInput)
         {
             strInput = strInput.Trim();
             if ((strInput.StartsWith("{") && strInput.EndsWith("}")) || //For object
@@ -99,7 +99,7 @@ namespace Amdocs.Ginger.Repository
             }
             return false;
         }
-        private static bool IsValidXML(string strInput)
+        public static bool IsValidXML(string strInput)
         {
             try
             {

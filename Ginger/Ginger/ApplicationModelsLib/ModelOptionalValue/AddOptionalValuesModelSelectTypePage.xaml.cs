@@ -120,7 +120,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 if (mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
                 {
-                    mAddModelOptionalValuesWizard.mAAMB.OptionalValuesTemplates.Clear();//XML & JSON
+                    if(mAddModelOptionalValuesWizard.mAAMB is ApplicationAPIModel)
+                        ((ApplicationAPIModel)mAddModelOptionalValuesWizard.mAAMB).OptionalValuesTemplates.Clear();//XML & JSON
                     mAddModelOptionalValuesWizard.ParameterValuesByNameDic.Clear();//Excel & DB
                 } 
                 else if(mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
@@ -174,7 +175,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     foreach (String file in dlg.FileNames)
                     {
                         mAddModelOptionalValuesWizard.OVFList.Add(new TemplateFile() { FilePath = file });
-                        mAddModelOptionalValuesWizard.mAAMB.OptionalValuesTemplates.Add(new TemplateFile() { FilePath = file });
+                        if(mAddModelOptionalValuesWizard.mAAMB is ApplicationAPIModel)
+                            ((ApplicationAPIModel)mAddModelOptionalValuesWizard.mAAMB).OptionalValuesTemplates.Add(new TemplateFile() { FilePath = file });
                     }
                     xImportOptionalValuesGrid.DataSourceList = mAddModelOptionalValuesWizard.OVFList;
                 }
