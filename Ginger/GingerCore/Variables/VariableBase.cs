@@ -293,7 +293,7 @@ namespace GingerCore.Variables
                 if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
                     mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
                     mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ScreenShots" ||
-                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath") continue;
+                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType") continue;
 
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
