@@ -52,8 +52,16 @@ namespace Ginger.Environments
         {
             string txt = File.ReadAllText(solutionFileName);
             Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
+            solution.FilePath = solutionFileName;
             return solution;
         }
+
+        public void Save()
+        {
+            SaveToFile(FilePath);
+        }
+
+
 
         [IsSerializedForLocalRepository]
         public string Name { get; set; }
@@ -390,21 +398,28 @@ namespace Ginger.Environments
         }
         
         [IsSerializedForLocalRepository]
-        public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();        
+        public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();
 
-        public void SaveSolutionConfigurations(bool showWarning=true)
+        public void SaveSolutionConfigurations(bool showWarning = true)
         {
-            bool doSave = false;
+            bool doSave = true;
 
-            if (showWarning)
-                if(Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Note: save will include saving any change which was done to: Target Applications, " + GingerDicser.GetTermResValue(eTermResKey.Variables,"Global ") +", Tags and ALM/Source Control Settings." + System.Environment.NewLine + System.Environment.NewLine + "To continue with Save operation?") == System.Windows.MessageBoxResult.Yes)
-                    doSave = true;
-            else
-                    doSave = true;
+            //if (showWarning)
+            //{
+            //    if (Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Note: save will include saving any change which was done to: Target Applications, " + GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ") + ", Tags and ALM/Source Control Settings." + System.Environment.NewLine + System.Environment.NewLine + "To continue with Save operation?") == System.Windows.MessageBoxResult.Yes)
+            //    {
+            //        doSave = true;
+            //    }
+            //    else
+            //    {
+            //        doSave = false;
+            //    }
+            //}
+
             if (doSave)
             {
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, "Solution Configurations", "item");
-                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(this);
+                Save();
                 Reporter.CloseGingerHelper();
             }
         }
