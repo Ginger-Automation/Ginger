@@ -209,17 +209,24 @@ namespace GingerCore.Actions.REST
         {
             get
             {
-                if (IsInputParamExist(Fields.UseLegacyJSONParsing) == false && ReturnValues.Count > 0)
+                if (!IsInputParamExist(Fields.UseLegacyJSONParsing) && ReturnValues.Count > 0)
+                {
                     AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "True");//old action- for backward support- for not breaking existing validations using old parsing
-
-                if (IsInputParamExist(Fields.UseLegacyJSONParsing) == false)
+                }
+                if (!IsInputParamExist(Fields.UseLegacyJSONParsing))
+                {
                     AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "False"); //as defualt use new JSON parser
-
+                }
                 bool eVal = true;
                 if (bool.TryParse(GetInputParamValue(Fields.UseLegacyJSONParsing), out eVal))
+
+                {
                     return eVal;
+                }
                 else
+                {
                     return false;  //default value          
+                }
             }
             set
             {
@@ -295,6 +302,8 @@ namespace GingerCore.Actions.REST
                 case eSercurityType.Tls12:
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                     break;
+                default:
+                    throw new NotSupportedException("The COnfigured secutrity type is not supported");
 
             }
   
@@ -385,6 +394,8 @@ namespace GingerCore.Actions.REST
                     case eCookieMode.New:
                         _sessionCokkiesDic.Clear();
                         break;
+                    default:
+                        throw new NotSupportedException("Configured mode is not supported");
                 }
 
                 //Not sending data on a get request 
@@ -405,12 +416,14 @@ namespace GingerCore.Actions.REST
                     
                    
                     string req = HttpUtility.UrlEncode(RequestBody.Value);
-                    if(ReqHttpVersion==eHttpVersion.HTTPV10)
+                    if (ReqHttpVersion == eHttpVersion.HTTPV10)
                     {
                         WebReq.ProtocolVersion = HttpVersion.Version10;
                     }
                     else
+                    {
                         WebReq.ProtocolVersion = HttpVersion.Version11;
+                    }
                     WebReq.ContentLength = dataByte.Length;
 
                     Stream Webstream = WebReq.GetRequestStream();
@@ -665,10 +678,16 @@ namespace GingerCore.Actions.REST
             else
             {
                 if (CT == eContentType.JSon)
+
+                {
                     fileName += ".json";
+                }
+
                 else
+                {
                     fileName += ".txt";
-                //string getFolderPath = GetValueForDriverParam(Fields.SaveRequestResponseFolderPath);
+                }
+                
 
                 System.IO.File.WriteAllText(DirectoryPath + "\\" + fileName, fileContent);
             }
