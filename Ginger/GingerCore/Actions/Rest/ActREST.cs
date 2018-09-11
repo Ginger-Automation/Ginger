@@ -735,6 +735,10 @@ namespace GingerCore.Actions.REST
                 {
                     WebReq.Date = DateTime.Parse(httpHeader.ValueForDriver);
                 }
+                else if (httpHeader.Param.ToUpper() == "CONTENT-TYPE")
+                {
+                    WebReq.ContentType =httpHeader.ValueForDriver;
+                }
                 else
                 {
                     WebReq.Headers.Add(httpHeader.Param, httpHeader.ValueForDriver);
