@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -70,7 +70,12 @@ namespace Amdocs.Ginger.Common
         }
 
 
-        
+        // Override the base in case of Lazy load
+        new public T this[int Index]
+        {
+            get { return Items[Index]; }
+            set { Items[Index] = value; }
+        }
 
 
         public object CurrentItem
