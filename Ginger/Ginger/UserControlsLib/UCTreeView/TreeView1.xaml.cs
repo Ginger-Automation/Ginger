@@ -132,7 +132,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);
         }
         
-        private void CollapseUnselectedTreeNodes(ItemCollection itemCollection,List<TreeViewItem> pathNodes)
+        private static void CollapseUnselectedTreeNodes(ItemCollection itemCollection,List<TreeViewItem> pathNodes)
         {                     
             foreach (TreeViewItem tvItem in itemCollection)
             {                                                
@@ -163,7 +163,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return pathNodes;
         }        
 
-        public object getParentItem(object tvi)
+        public static object getParentItem(object tvi)
         {
             return ((TreeViewItem)tvi).Parent;
         }        
