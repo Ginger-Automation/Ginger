@@ -677,7 +677,7 @@ namespace GingerCore
                     newInstance.ActivitiesGroupID = activityInstance.ActivitiesGroupID;
                     newInstance.TargetApplication = activityInstance.TargetApplication;
                     newInstance.Active = activityInstance.Active;
-                    newInstance.VariablesDependencies = activityInstance.VariablesDependencies;
+                    newInstance.VariablesDependencies = activityInstance.VariablesDependencies;                   
                     if (ePartToUpdate == eItemParts.Details)
                     {
                         //keep other parts
@@ -832,8 +832,7 @@ namespace GingerCore
         public override void UpdateItemFieldForReposiotryUse()
         {
             base.UpdateItemFieldForReposiotryUse();
-            ActivitiesGroupID = null;
-            Mandatory = false;
+            ActivitiesGroupID = null;            
         }
 
         public override bool IsTempItem
