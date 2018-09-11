@@ -731,18 +731,31 @@ namespace GingerCore.Actions.REST
                     Ve.Value=httpHeader.Value;
                     httpHeader.ValueForDriver=Ve.ValueCalculated;
                 }
-                if (httpHeader.Param.ToUpper() == "DATE")
+
+                switch(httpHeader.Param.ToUpper())
                 {
-                    WebReq.Date = DateTime.Parse(httpHeader.ValueForDriver);
+                    case "DATE":
+                        WebReq.Date = DateTime.Parse(httpHeader.ValueForDriver);
+                        break;
+                    case "CONTENT-TYPE":
+                        WebReq.ContentType = httpHeader.ValueForDriver;
+                        break;
+                    case "ACCEPT":
+                        WebReq.Accept = httpHeader.ValueForDriver;
+                    break;
+                    case "REFERER":
+                        WebReq.Referer = httpHeader.ValueForDriver;
+                        break;
+                    case "":
+
+                        break;
+                    default:
+                        WebReq.Headers.Add(httpHeader.Param, httpHeader.ValueForDriver);
+                        break;
                 }
-                else if (httpHeader.Param.ToUpper() == "CONTENT-TYPE")
-                {
-                    WebReq.ContentType =httpHeader.ValueForDriver;
-                }
-                else
-                {
-                    WebReq.Headers.Add(httpHeader.Param, httpHeader.ValueForDriver);
-                }
+                
+      
+        
             }
            
         }
