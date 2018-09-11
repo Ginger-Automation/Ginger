@@ -708,10 +708,22 @@ namespace GingerCore.Actions.REST
                 WebReq.PreAuthenticate = true;
                 if (String.IsNullOrEmpty(httpHeader.ValueForDriver))
                 {
+                    
                     Ve.Value=httpHeader.Value;
                     httpHeader.ValueForDriver=Ve.ValueCalculated;
                 }
-                WebReq.Headers.Add (httpHeader.Param, httpHeader.ValueForDriver);
+                if (httpHeader.Param.ToUpper() == "DATE")
+                {
+                    WebReq.Date = DateTime.Parse(httpHeader.ValueForDriver);
+                }
+                else if (httpHeader.Param.ToUpper() == "CONTENT-TYPE")
+                {
+                    WebReq.ContentType =httpHeader.ValueForDriver;
+                }
+                else
+                {
+                    WebReq.Headers.Add(httpHeader.Param, httpHeader.ValueForDriver);
+                }
             }
            
         }
