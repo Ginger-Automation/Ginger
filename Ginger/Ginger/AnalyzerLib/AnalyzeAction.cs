@@ -389,7 +389,52 @@ namespace Ginger.AnalyzerLib
                 }
             }
         }
-        
+
+        public static List<string> getUsedVariableFromAction(Act action)
+        {
+            List<string> ActivityUsedVariables = new List<string>();
+            VariableBase.GetListOfUsedVariables(action, ref ActivityUsedVariables);
+            return ActivityUsedVariables;
+        }
+
+        public static List<AnalyzerItemBase> getUnusedVariables(BusinessFlow BusinessFlow, Activity parentActivity, List<string> ActivityUsedVariables)
+        {           
+            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
+            List<string> ActivityAllVariable = new List<string>();
+            if (parentActivity.Variables.Count > 0)
+            {
+                ActivityAllVariable=parentActivity.VariablesNames.Split(',').ToList();
+            }
+
+            if (ActivityAllVariable.Count > 0 )
+            {
+                foreach (string var in ActivityAllVariable)
+                {
+                    //List<string> unusedVariables = BusinessFlow.GetAllVariables(parentActivity).Where(x => x.Name != var).Select(x => x.Name).ToList();
+                    
+                    if(ActivityUsedVariables!=null && (!ActivityUsedVariables.Contains(var)))                    
+                    {
+                         //analyzeaction aa = CreateNewIssue(IssuesList, BusinessFlow, parentActivity);
+                        AnalyzeAction aa = new AnalyzeAction();
+                        aa.Status = AnalyzerItemBase.eStatus.NeedFix;
+                        aa.ItemName = var;
+                        aa.mActivity = parentActivity;                        
+                        aa.ItemParent = BusinessFlow.Name + " > " + parentActivity.ActivityName;                       
+                        aa.mBusinessFlow = BusinessFlow;                                      
+                        aa.Description = var + " is Unused in "+aa.ItemParent;                        
+                        //aa.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and put " + a.ActionDescription + " Action in a separate " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.No;    // we can autofix by delete, but don't want to                
+                        aa.IssueType = eType.Error;                        
+                        aa.Severity = eSeverity.Medium;
+                        IssuesList.Add(aa);
+                    }
+
+                }
+            }
+
+            return IssuesList;
+        }
+
         private static void FixFlowControlWrongActionMapping(object sender, EventArgs e)
         {
             //look for Action with same name and re-map the Flow Control            

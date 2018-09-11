@@ -256,25 +256,41 @@ namespace Ginger.AnalyzerLib
             });
         }
 
-        private void RunBusinessFlowAnalyzer(BusinessFlow businessFlow, bool markCompletion=true)
+        private List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, bool markCompletion = true)
         {
-                DSList = Ginger.App.LocalRepository.GetSolutionDataSources();
-                SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
-                List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
-                AddIssues(issues);
-                foreach (Activity activitiy in businessFlow.Activities)
-                {
-                    issues = AnalyzeActivity.Analyze(businessFlow, activitiy);
-                    AddIssues(issues);
-                    foreach (Act action in activitiy.Acts)
-                    {
-                        List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activitiy, action, DSList);
-                        AddIssues(actionissues);
-                    }
-                }
+            List<string> usedVariablesInBF = new List<string>();
+            List<string> usedVariablesInActivity = new List<string>();
+            List<string> SolutionUsedVariables = new List<string>();
 
-                if (markCompletion)
-                    SetAnalayzeProceesAsCompleted();
+            DSList = Ginger.App.LocalRepository.GetSolutionDataSources();
+            SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
+            List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
+            AddIssues(issues);
+            foreach (Activity activity in businessFlow.Activities)
+            {
+                issues = AnalyzeActivity.Analyze(businessFlow, activity);
+                AddIssues(issues);
+                foreach (Act action in activity.Acts)
+                {
+                    List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activity, action, DSList);
+                    AddIssues(actionissues);
+                    List<string> tempList = AnalyzeAction.getUsedVariableFromAction(action);
+                    usedVariablesInActivity.AddRange(tempList);                    
+                }
+                List<AnalyzerItemBase> unusedActivityVariables = AnalyzeAction.getUnusedVariables(businessFlow, activity, usedVariablesInActivity);
+                AddIssues(unusedActivityVariables);
+                usedVariablesInBF.AddRange(usedVariablesInActivity);
+                usedVariablesInActivity.Clear();
+            }            
+            List<AnalyzerItemBase> unusedBFVariables = AnalyzeBusinessFlow.getUnusedVariables(businessFlow, usedVariablesInBF);
+            AddIssues(unusedBFVariables);
+            
+
+            if (markCompletion)
+                SetAnalayzeProceesAsCompleted();
+
+            return usedVariablesInBF;
+
         }
 
         private void SetStatus(string txt)
@@ -306,12 +322,16 @@ namespace Ginger.AnalyzerLib
             {
 
                 List<AnalyzerItemBase> issues = AnalyzeSolution.Analyze(mSolution);
+                List<string> usedVariablesInSolution = new List<string>();
                 AddIssues(issues);
 
                 foreach (BusinessFlow BF in BFs)
                 {
-                    RunBusinessFlowAnalyzer(BF, false);
+                    List<string> tempList=RunBusinessFlowAnalyzer(BF, false);
+                    usedVariablesInSolution.AddRange(tempList);                    
                 }
+                List<AnalyzerItemBase> unusedSolutionVariables = AnalyzeBusinessFlow.getUnusedVariablesFromSolution(BFs.First(), usedVariablesInSolution);
+
 
                 SetAnalayzeProceesAsCompleted();
             });            
