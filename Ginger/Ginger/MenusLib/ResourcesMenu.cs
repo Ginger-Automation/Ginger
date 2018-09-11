@@ -83,13 +83,13 @@ namespace Ginger.MenusLib
             GlobalVariabelsMenu.Add(eImageType.Variable, "", GetGlobalVariabelsPage, ConsoleKey.G, "", "AID");
             twoLevelMenu.Add(GlobalVariabelsMenu);
 
-            TopMenuItem DocumentsMenu = new TopMenuItem(eImageType.File, "Documents", ConsoleKey.D, "Documents AID", "Solution documents like: text, excel, js scripts and any type of file");
-            DocumentsMenu.Add(eImageType.File, "", Documents, ConsoleKey.D, "", "AID");
-            twoLevelMenu.Add(DocumentsMenu);
-
             TopMenuItem DataSourceMenu = new TopMenuItem(eImageType.DataSource, "Data Sources", ConsoleKey.D, "Data Sources AID", "Add and Edit Data Sources");
                 DataSourceMenu.Add(eImageType.DataSource, "", DataSources, ConsoleKey.D, "", "AID");
                 twoLevelMenu.Add(DataSourceMenu);
+
+            TopMenuItem DocumentsMenu = new TopMenuItem(eImageType.File, "Documents", ConsoleKey.D, "Documents AID", "Solution documents like: text, excel, js scripts and any type of file");
+            DocumentsMenu.Add(eImageType.File, "", Documents, ConsoleKey.D, "", "AID");
+            twoLevelMenu.Add(DocumentsMenu);
 
             TopMenuItem PluginsMenu = new TopMenuItem(eImageType.PluginPackage, "Plugins", ConsoleKey.P, "Plugins AID", "Ginger extention Add-ons");
             PluginsMenu.Add(eImageType.PluginPackage, "", PluginsList, ConsoleKey.P, "", "AID");           

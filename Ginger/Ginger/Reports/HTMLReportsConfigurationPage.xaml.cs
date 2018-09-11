@@ -178,7 +178,7 @@ namespace Ginger.Reports
             }
 
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            App.UserProfile.Solution.SaveSolutionConfigurations();
+            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportsSettings);
         }
 
         private void DefaultTemplatePickerCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)

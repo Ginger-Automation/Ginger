@@ -92,7 +92,7 @@ namespace UnitTests.NonUITests
             v.Description = "VDesc 1";
             BF.AddVariable(v);
             string FileName = TestResources.GetTempFile("bf1.xml");
-            BF.SaveToFile(FileName);
+            BF.RepositorySerializer.SaveToFile(BF, FileName);
 
 
             // Assert
@@ -155,7 +155,7 @@ namespace UnitTests.NonUITests
 
 
             //Act
-            BF.SaveToFile(TempFilepath);
+            BF.RepositorySerializer.SaveToFile(BF, TempFilepath);
 
 
             // Assert
@@ -190,7 +190,7 @@ namespace UnitTests.NonUITests
             string TempFilepath = TestResources.GetTempFile("bfClearBackup.xml");
 
             //Act
-            BF.SaveToFile(TempFilepath);
+            BF.RepositorySerializer.SaveToFile(BF, TempFilepath);
             BF.SaveBackup();
             BF.RestoreFromBackup();
 
@@ -225,13 +225,13 @@ namespace UnitTests.NonUITests
             a.Acts.Add(t);
 
             //Act
-            BF.SaveToFile(FileName);   
+            BF.RepositorySerializer.SaveToFile(BF, FileName);   
             a.SaveBackup();
             ActGotoURL g = new ActGotoURL();
             g.Description = "goto URL ";
             g.LocateValue = "ID";
             a.Acts.Add(g);
-            BF.SaveToFile(FileName);
+            BF.RepositorySerializer.SaveToFile(BF, FileName);
             a.SaveBackup();            
             a.RestoreFromBackup();
 
@@ -265,10 +265,10 @@ namespace UnitTests.NonUITests
             string TempFilepath = TestResources.GetTempFile("actionClearBackup.xml");
 
             //Act
-            BF.SaveToFile(TempFilepath);
+            BF.RepositorySerializer.SaveToFile(BF, TempFilepath);
             a.SaveBackup();
             g.LocateValue = "ID1";
-            BF.SaveToFile(TempFilepath);
+            BF.RepositorySerializer.SaveToFile(BF, TempFilepath);
             a.SaveBackup();
             a.RestoreFromBackup();
 
@@ -325,7 +325,7 @@ namespace UnitTests.NonUITests
 
 
             //Act
-            BF.SaveToFile(TempFilepath);
+            BF.RepositorySerializer.SaveToFile(BF, TempFilepath);
 
 
             // Assert
@@ -463,7 +463,7 @@ namespace UnitTests.NonUITests
             //BF.Activities[0].Asserts.Add(vdb);
 
             //Act
-            BF.SaveToFile(FileName);
+            BF.RepositorySerializer.SaveToFile(BF, FileName);
 
             // Assert
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
@@ -748,7 +748,7 @@ namespace UnitTests.NonUITests
             //Act
 
             string FileName = TestResources.GetTempFile("BFWithTags.xml");
-            BF.SaveToFile(FileName);
+            BF.RepositorySerializer.SaveToFile(BF, FileName);
 
 
             // Assert
@@ -935,7 +935,7 @@ namespace UnitTests.NonUITests
             bf.Activities.Add(activity2);
 
             activity2.ActivityName = "Test_New";                        
-            bf.SaveToFile(TestResources.GetTempFile("BF.xml"));
+            bf.RepositorySerializer.SaveToFile(bf, TestResources.GetTempFile("BF.xml"));
 
             //Act
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateInstance();

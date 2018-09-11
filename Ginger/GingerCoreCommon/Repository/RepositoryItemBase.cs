@@ -173,13 +173,6 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-
-        //TODO: remove from here and force to use RepositorySerialzie.Deser...
-        public void SaveToFile(string FilePath)
-        {
-            RepositorySerializer.SaveToFile(this, FilePath);
-        }
-
         public void SaveBackup()
         {
             if (IsDirty == false)

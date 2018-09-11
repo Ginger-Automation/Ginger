@@ -19,7 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.UserConfig;
 using GingerCore;
 using GingerCore.Platforms;
@@ -99,7 +99,7 @@ namespace Ginger
                     string SolutionFile = s + @"\Ginger.Solution.xml";
                     if (File.Exists(SolutionFile))
                     {
-                        Solution sol = Solution.LoadSolutionFile(SolutionFile);
+                        Solution sol = Solution.LoadSolution(SolutionFile, false);
                         sol.Folder = s;
                         RecentSolutionsObjects.Add(sol);
 

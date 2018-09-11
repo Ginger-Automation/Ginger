@@ -134,7 +134,7 @@ namespace Ginger.Functionalties
                 }
 
                 //save item
-                itemCopy.SaveToFile(Path.Combine(itemAutoSavePath, itemCopy.FileName.ToString()));
+                itemCopy.RepositorySerializer.SaveToFile(itemCopy, Path.Combine(itemAutoSavePath, itemCopy.FileName.ToString()));
             }
             catch (Exception ex)
             {

@@ -23,7 +23,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.Extensions;
 using Ginger.Reports;
 using Ginger.Repository;
@@ -665,7 +665,7 @@ namespace Ginger
                         return false;
                     }
 
-                    Solution sol = Solution.LoadSolutionFile(SolFile); 
+                    Solution sol = Solution.LoadSolution(SolFile); 
 
                     if (sol != null)
                     {

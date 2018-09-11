@@ -18,7 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.TagsLib;
 using Ginger.UserControls;
 using Ginger.Variables;
@@ -86,7 +86,7 @@ namespace Ginger.SolutionWindows
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
-            mSolution.SaveSolutionConfigurations();
+            mSolution.SaveSolution(true,Solution.eSolutionItemToSave.GeneralDetails);
         }
     }
 }

@@ -379,7 +379,7 @@ namespace Ginger.Reports
             _pageGenericWin.Hide();
 
             App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
-            App.UserProfile.Solution.SaveSolutionConfigurations();
+            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportsSettings);
 
             if (_existingTemplatePage)
             {

@@ -529,6 +529,11 @@ namespace GingerCore.Variables
 
         public abstract String VariableUIType { get; }
 
+        /// <summary>
+        /// Do not use, exist for backward support
+        /// </summary>
+        public int CycleCount { get; set; }
+
         public override eImageType ItemImageType
         {
             get

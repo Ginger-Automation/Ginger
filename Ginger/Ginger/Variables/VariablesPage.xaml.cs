@@ -33,6 +33,7 @@ using System.Linq;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using Ginger.Repository;
+using Ginger.SolutionGeneral;
 
 namespace Ginger.Variables
 {
@@ -429,7 +430,7 @@ namespace Ginger.Variables
 
         private void SaveSolutionConfigurations(object sender, RoutedEventArgs e)
         {
-            ((Solution)mVariablesParentObj).SaveSolutionConfigurations();
+            ((Solution)mVariablesParentObj).SaveSolution(true, Solution.eSolutionItemToSave.GlobalVariabels);
         }
 
         private void AddVar(object sender, RoutedEventArgs e)

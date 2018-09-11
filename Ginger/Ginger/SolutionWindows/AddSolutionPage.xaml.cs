@@ -19,7 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.DataSource;
@@ -93,7 +93,8 @@ namespace Ginger.SolutionWindows
                 //check solution not already exist
                 if (System.IO.File.Exists(mSolution.Folder + @"\Ginger.Solution.xml") == false)
                 {
-                    mSolution.SaveToFile(mSolution.Folder + @"\Ginger.Solution.xml");
+                    mSolution.FilePath = mSolution.Folder + @"\Ginger.Solution.xml";
+                    mSolution.SaveSolution(false);
                 }
                 else
                 {
@@ -195,7 +196,7 @@ namespace Ginger.SolutionWindows
             a.FilePath = @"~DataSources\GingerDataSource.mdb";
             a.DSType = DataSourceBase.eDSType.MSAccess;
             string sFileName = mSolution.Folder + @"DataSources\" + a.GetNameForFileName() + "." + a.ObjFileExt + ".xml";
-            a.SaveToFile(sFileName);
+            a.RepositorySerializer.SaveToFile(a, sFileName); 
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
