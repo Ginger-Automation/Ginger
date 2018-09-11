@@ -288,6 +288,9 @@ namespace GingerCore.Actions.REST
 
             switch (SecurityType)
             {
+                case eSercurityType.None:
+                    
+                    break;
                 case eSercurityType.Ssl3:
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
                     break;
@@ -303,7 +306,7 @@ namespace GingerCore.Actions.REST
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                     break;
                 default:
-                    throw new NotSupportedException("The COnfigured secutrity type is not supported");
+                    throw new NotSupportedException("The Configured secutrity type is not supported");
 
             }
   
