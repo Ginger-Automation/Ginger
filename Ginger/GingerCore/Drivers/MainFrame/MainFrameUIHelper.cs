@@ -63,12 +63,16 @@ namespace GingerCore.Drivers.MainFrame
             }
 
             if (ScreenElements.Fields == null || ScreenElements == null)
+            {
                 return;
+            }
             foreach (XMLScreenField XF in ScreenElements.Fields)
             {
                 Control C = GetControlFromScreenField(XF);
                 if (C == null)
+                {
                     continue;
+                }
                 Brush Brsh = CalculateBrush(XF);
                 ConfigureControl(C, XF, ConsoleCanvas, MFDW);
                 C.Foreground = Brsh;
@@ -81,10 +85,12 @@ namespace GingerCore.Drivers.MainFrame
         {
             Console.WriteLine(XF.Location.length);
             Console.WriteLine(XF.Text);
-            if (XF.Attributes.Protected == true && (XF.Attributes.FieldType == "Hidden" || XF.Location.length == 0))
+            if (XF.Attributes.Protected && (XF.Attributes.FieldType == "Hidden" || XF.Location.length == 0))
+            {
                 return null;
-            Console.WriteLine(XF.Attributes.FieldType);
-            if (XF.Attributes.Protected == true && !String.IsNullOrEmpty(XF.Text))
+            }
+           
+            if (XF.Attributes.Protected&& !String.IsNullOrEmpty(XF.Text))
             {
                 return (Control)AddLabel(XF);
             }
@@ -144,6 +150,8 @@ namespace GingerCore.Drivers.MainFrame
                         return new SolidColorBrush(Colors.Gray);
                     case "white":
                         return new SolidColorBrush(Colors.White);
+                    default:
+                        return new SolidColorBrush(Colors.Black);
                 }
             }
             else
@@ -217,7 +225,9 @@ namespace GingerCore.Drivers.MainFrame
                 XMLScreenField XF = (XMLScreenField)C.Tag;
                 MainFrameDriverWindow MFDW = (MainFrameDriverWindow)Window.GetWindow(C);
                 if (MFDW == null)
+                {
                     return;
+                }
                 MFDW.CaretXY.Text = XF.Location.left + "/" + XF.Location.top;
                 MFDW.CaretIndex.Text = XF.Location.position.ToString();
             }
@@ -229,14 +239,15 @@ namespace GingerCore.Drivers.MainFrame
         private static void SetControlLocation(Control c, MainFrameDriverWindow MFDW)
         {
             if (!c.Tag.GetType().ToString().Contains("XMLScreenField"))
+            {
                 return;
+            }
             XMLScreenField Xldf = ((XMLScreenField)c.Tag);
             c.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
             c.VerticalAlignment = System.Windows.VerticalAlignment.Top;
             c.Margin = new Thickness(MFDW.WidthPerCharachter * Xldf.Location.left, MFDW.HeightPerRow * Xldf.Location.top, 0, 0);
 
-            Console.WriteLine(Xldf.Location.left.ToString() + "----------" + Xldf.Location.top.ToString());
-
+            
             if (c.GetType() == typeof(TextBox))
             {
                 ((TextBox)c).FontSize = 20;
@@ -256,8 +267,9 @@ namespace GingerCore.Drivers.MainFrame
             TextBox TB = new TextBox();
 
             if (!String.IsNullOrEmpty(x.Text))
+            {
                 TB.Text = x.Text;
-
+            }
             TB.MaxLength = x.Location.length;
             TB.LostFocus += Control_LostFocus;
             TB.BorderBrush = Brushes.YellowGreen;
@@ -276,7 +288,9 @@ namespace GingerCore.Drivers.MainFrame
             {
                 MainFrameDriverWindow MDW = (MainFrameDriverWindow)(Window.GetWindow((Control)sender));
                 if (MDW == null)
+                {
                     return;
+                }
                 SetTextoMainframe(sender);
 
                 MDW.Refresh();
@@ -299,7 +313,9 @@ namespace GingerCore.Drivers.MainFrame
                 XF = (XMLScreenField)TB.Tag;
                 MDW = (MainFrameDriverWindow)Window.GetWindow(TB);
                 if (MDW == null)
+                {
                     return;
+                }
                 mdriver = MDW.mDriver;
                 Command = TB.Text;
             }
@@ -313,10 +329,14 @@ namespace GingerCore.Drivers.MainFrame
                 Command = PWB.Password;
             }
             else
+            {
                 return;
+            }
 
             if (XF == null || String.IsNullOrEmpty(Command) || mdriver == null)
-                return;
+            {
+             
+            }
             else
             {
                 mdriver.SetTextAtPosition(Command, XF.Location.left, XF.Location.top, false);
@@ -330,7 +350,9 @@ namespace GingerCore.Drivers.MainFrame
                         AMFST.LocateValue = XF.Location.position.ToString();
                         AMFST.Value = Command;
                         if (mdriver.mBusinessFlow == null)
+                        {
                             return;
+                        }
                         if (IsFeildPassword)
                         {
                             AMFST.Description = "Set Password ";
