@@ -16,17 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Environments;
-using GingerCore.GeneralLib;
 using GingerCore.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 namespace UnitTests.NonUITests
 {
     [TestClass]
@@ -40,16 +36,16 @@ namespace UnitTests.NonUITests
         [TestMethod]
         public void BusinessFlowDeserializationTest()
         {
-            //Arrange
-            RepositorySerializer RepositorySerializer = new RepositorySerializer();
-            string sFileName = TestResources.GetTestResourcesFile(@"Converter\IPDLSAM.Ginger.BusinessFlow.xml");           
+            //Arrange            
+            string sFileName = TestResources.GetTestResourcesFile(@"Converter\IPDLSAM.Ginger.BusinessFlow.xml");
+            string txt = File.ReadAllText(sFileName);
 
             //Act
-            BusinessFlow BF = (BusinessFlow)RepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), sFileName);
+            BusinessFlow BF = (BusinessFlow)NewRepositorySerializer.DeserializeFromText(txt);
 
             //Assert
             //TODO: add more asserts
-           Assert.AreEqual(BF.Activities.Count(), 14);
+           Assert.AreEqual(14, BF.Activities.Count, "BF has 14 activities");
         }
 
         [TestMethod]

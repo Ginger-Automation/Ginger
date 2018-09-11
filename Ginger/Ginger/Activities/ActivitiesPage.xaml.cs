@@ -131,7 +131,7 @@ namespace Ginger.BusinessFlowFolder
 
         private void BusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Activities")
+            if (e.PropertyName == nameof(BusinessFlow.Activities))
             {
                 RefreshActivitiesGrid();
             }

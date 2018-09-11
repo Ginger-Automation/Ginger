@@ -211,7 +211,7 @@ namespace Amdocs.Ginger.Repository
                     if (mi.Name == nameof(mBackupDic)) continue; // since we are running on repo item which contain the dic we need to ignore trying to save it...
                 }
                 if (mi.Name == nameof(mLocalBackupDic)) continue;
-                dynamic v = null;
+                dynamic v = null;  //TODO: replace with object dynamic is heavy
                 if (mi.MemberType == MemberTypes.Property)
                 {
                     //Make sure we can do set - not all props have set, so do not save if there is only get
@@ -231,21 +231,27 @@ namespace Amdocs.Ginger.Repository
                     v = this.GetType().GetField(mi.Name).GetValue(this);
                 }
                 
+                
+                
+                //else
+                //{
+                    // TODO: add List<string>
+                //}
+                // Save it
+
+                if (!isLocalBackup)
+                {
+                    mBackupDic.Add(mi.Name, v);                  
+                }
+
                 if (v is IObservableList)
                 {
                     BackupList(mi.Name, v, isLocalBackup);
                 }
                 else
                 {
-                    // TODO: add List<string>
+                    mLocalBackupDic.Add(mi.Name, v);
                 }
-                // Save it
-
-                if (!isLocalBackup)
-                {
-                    mBackupDic.Add(mi.Name, v);                  
-                }                    
-                mLocalBackupDic.Add(mi.Name, v);
             }
         }
 
@@ -253,7 +259,7 @@ namespace Amdocs.Ginger.Repository
         private void BackupList(string Name, IObservableList v, bool isLocalBackup = false)
         {
             //TODO: if v is Lazy bak the text without drill down
-            List<dynamic> list = new List<dynamic>();
+            List<dynamic> list = new List<dynamic>();  //TODO: FIXME very heavy!!! dynamic
             foreach (object o in v)
             {
                 // Run back on each item, so will drill down the hierarchy
@@ -268,7 +274,7 @@ namespace Amdocs.Ginger.Repository
             {                
                 mBackupDic.Add(Name + "~List", list);
             }                        
-                mLocalBackupDic.Add(Name + "~List", list);            
+            mLocalBackupDic.Add(Name + "~List", list);            
         }
 
         // Item which will not be saved to the XML - for example dynamic activities or temp output values - no expected or store to

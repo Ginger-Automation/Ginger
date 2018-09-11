@@ -293,12 +293,12 @@ namespace Amdocs.Ginger.Repository
 
                 if (LazyLoadAttr.Contains(fi.Name))
                 {                    
-                        bool b = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).LazyLoad;
+                    bool b = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).LazyLoad;
                     if (b)
                     {
                         // Hurray!
                         string s = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).StringData;
-                        xml.WriteStartElement("Activities"); //!!!
+                        xml.WriteStartElement(fi.Name);
                         xml.WriteString(s);
                         xml.WriteEndElement();
                     }

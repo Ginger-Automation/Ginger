@@ -176,17 +176,14 @@ namespace UnitTests.NonUITests
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
             BF.Activities = new ObservableList<Activity>();
-            Activity a = new Activity();
-            a.ActivityName = "Activity 1";
-            a.Description = "Desciption -1";
+            
+            Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };            
             BF.Activities.Add(a);
-            a.Status = eRunStatus.Passed;
+            
             BF.SaveBackup();
-            Activity b = new Activity();
-            b.ActivityName = "Activity 2";
-            b.Description = "Desciption -2";
+            Activity b = new Activity() { ActivityName = "Activity 2", Description = "Desciption -2", Status = eRunStatus.Passed };            
             BF.Activities.Add(b);
-            b.Status = eRunStatus.Passed;
+            
             string TempFilepath = TestResources.GetTempFile("bfClearBackup.xml");
 
             //Act
@@ -212,32 +209,24 @@ namespace UnitTests.NonUITests
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
             BF.Activities = new ObservableList<Activity>();
-            Activity a = new Activity();
-            a.ActivityName = "Activity 1";
-            a.Description = "Desciption -1";
+            Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };            
             BF.Activities.Add(a);
-            a.Status = eRunStatus.Passed;
 
-            ActTextBox t = new ActTextBox();
-            t.Description = "Set text box ";
-            t.LocateBy = eLocateBy.ByID;
-            t.LocateValue = "ID";
+            ActTextBox t = new ActTextBox() { Description = "Set text box ", LocateBy = eLocateBy.ByID, LocateValue = "ID" };                        
             a.Acts.Add(t);
 
             //Act
             BF.SaveToFile(FileName);   
             a.SaveBackup();
-            ActGotoURL g = new ActGotoURL();
-            g.Description = "goto URL ";
-            g.LocateValue = "ID";
+            ActGotoURL g = new ActGotoURL() { Description = "goto URL ", LocateValue = "ID" };            
             a.Acts.Add(g);
             BF.SaveToFile(FileName);
             a.SaveBackup();            
             a.RestoreFromBackup();
 
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
-            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
-            BF2.SaveBackup();//dirty now just indicate if backup exist
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);            
+            BF2.SaveBackup(); //dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
             // Assert
