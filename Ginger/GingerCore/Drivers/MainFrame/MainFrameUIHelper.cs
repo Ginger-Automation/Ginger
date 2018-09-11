@@ -149,9 +149,8 @@ namespace GingerCore.Drivers.MainFrame
                     case "grey":
                         return new SolidColorBrush(Colors.Gray);
                     case "white":
-                        return new SolidColorBrush(Colors.White);
                     default:
-                        return new SolidColorBrush(Colors.Black);
+                        return new SolidColorBrush(Colors.White);
                 }
             }
             else

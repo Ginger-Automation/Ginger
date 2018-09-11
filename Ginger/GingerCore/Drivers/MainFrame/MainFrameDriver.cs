@@ -314,7 +314,7 @@ namespace GingerCore.Drivers.MainFrame
         private void MainframeGetDetailsFromText(Act act)
         {
             ActMainframeGetDetails MFGD = (ActMainframeGetDetails)act;
-            int locx = -1;
+            int locx;
             int locy = -1;
             String[] MainFrameLines = MFE.screenText.Split('\n');
             int instance = 1;
