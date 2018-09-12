@@ -127,6 +127,20 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mElementTypeEnum = value; }
         }
 
+        public string ElementTypeEnumDescription
+        {
+            get
+            {
+                string enumDescription = mElementTypeEnum.ToString();
+                try
+                {
+                    enumDescription = ((EnumValueDescriptionAttribute[])typeof(eElementType).GetField(mElementTypeEnum.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
+                }
+                catch { }
+                return enumDescription;
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public List<String> OptionalValues = new List<String>();
 
@@ -289,6 +303,8 @@ namespace Amdocs.Ginger.Common.UIElement
         ByModelName,
         [EnumValueDescription("By CSS Selector")]
         ByCSSSelector,
+        [EnumValueDescription("Page Objects Model Element")]
+        POMElement,
     }
 
     public enum eElementType

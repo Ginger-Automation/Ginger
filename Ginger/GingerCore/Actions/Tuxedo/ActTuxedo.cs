@@ -289,7 +289,7 @@ namespace GingerCore.Actions.Tuxedo
             shell.Write(Command + "\n");
             cmdResult = reader.ReadToEnd();
             int iCount = 1;
-            Regex regExp = new Regex(@"ENTER ...|continue ...|option :|\> |\$ |\% |\.");
+            Regex regExp = new Regex(@"ENTER ...|continue ...|option :|\> |\$ |\%");
             while (regExp.Matches(cmdResult.ToString()).Count == 0 && iCount<20)
             {
                 cmdResult += reader.ReadToEnd();

@@ -19,9 +19,11 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Environments;
+using Ginger.GeneralLib;
 using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -144,12 +146,13 @@ namespace Ginger.Run
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
         public int ExecutionLogBusinessFlowCounter { get; set; }
-        public static bool UseExeuctionLogger = false;//TODO:  temp flag so Beta users will not be impacted, removed when it is working and tested to be good 
+        // public static bool UseExecutionLogger = false;//TODO:  temp flag so Beta users will not be impacted, removed when it is working and tested to be good 
         public string SolutionFolder { get; set; }
         public bool HighLightElement { get; set; }
 
         public event GingerRunnerEventHandler GingerRunnerEvent;
         public delegate void GingerRunnerEventHandler(GingerRunnerEventArgs EventArgs);
+        
 
         public void OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType EvType, Object obj)
         {
@@ -691,6 +694,7 @@ namespace Ginger.Run
             agentsNames = agentsNames.TrimEnd(',');
             return agentsNames;
         }
+
         public async Task<int> RunActionAsync(Act act, bool checkIfActionAllowedToRun = true, bool standaloneExecution = false)
         {
             var result = await Task.Run(() => {
@@ -748,8 +752,10 @@ namespace Ginger.Run
                 }
 
                 OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.ActionEnd, null);
+               
             }
         }
+
 
         private void ProcessIntervaleRetry(Act act)
         {
