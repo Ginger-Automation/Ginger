@@ -31,7 +31,9 @@ namespace GingerCore.ALM.QCRestAPI
                 validateQcServerUrl = qcServerUrl.Remove(qcServerUrl.Length - 5);
             }  
             if (QcRestClient == null || validateQcServerUrl != ServerURL || qcUserName != UserName || qcPassword != Password)
+            {
                 QcRestClient = new QCClient(validateQcServerUrl, qcUserName, qcPassword);
+            }
 
             ServerURL = validateQcServerUrl;
             UserName = qcUserName;
