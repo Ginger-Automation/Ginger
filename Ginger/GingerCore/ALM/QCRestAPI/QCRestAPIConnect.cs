@@ -157,7 +157,7 @@ namespace GingerCore.ALM.QCRestAPI
             return int.Parse(separatePath.Last());
         }
 
-        //get test plan explorer(tree view)
+        // get test plan explorer(tree view)
         public static List<string> GetTestPlanExplorer(string PathNode)
         {
             string[] separatePath = PathNode.Split('\\');
