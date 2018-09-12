@@ -84,7 +84,7 @@ namespace GingerWPFUnitTest.POMs
         internal void ClickResourcesRibbon()
         {
             SelectRibbonTab("Resources");
-            WaitForPage(typeof(TwoLevelMenu));
+            WaitForPage(typeof(TwoLevelMenuPage));
         }
 
         internal void ClickConfigurationsRibbon()
@@ -95,7 +95,7 @@ namespace GingerWPFUnitTest.POMs
 
         private void WaitForPage(Type p1)
         {
-            SleepWithDoEvents(100);
+            SleepWithDoEvents(1);
             Frame f = (Frame)mMainWindow.FindName("MainFrame");
             int i = 0;
             while (true && i <100)
@@ -214,12 +214,11 @@ namespace GingerWPFUnitTest.POMs
                 TwoLevelMenuPage configurationsPage = (TwoLevelMenuPage)f.Content;
 
                 ListView lv = (ListView)configurationsPage.FindName("xMainNavigationListView");
-                foreach (ListViewItem lvi in lv.Items)
-                {
-                    string AID = AutomationProperties.GetAutomationId(lvi);
-                    if (AID == "Agents AID")
+                foreach (TopMenuItem topMenuItem in lv.Items)
+                {                    
+                    if (topMenuItem.AutomationID == "Agents AID")
                     {
-                        lv.SelectedItem = lvi;
+                        lv.SelectedItem = topMenuItem;
                         SleepWithDoEvents(100);
                         Frame f1 = (Frame)FindElementByName(configurationsPage, "xSelectedItemFrame");
                         SingleItemTreeViewExplorerPage itemExplorerPage = (SingleItemTreeViewExplorerPage)f1.Content;
@@ -227,7 +226,8 @@ namespace GingerWPFUnitTest.POMs
                         {
                             SleepWithDoEvents(100);
                         }
-                        Agents = new AgentsPOM(itemExplorerPage);                        
+                        Agents = new AgentsPOM(itemExplorerPage);
+                        break;
                     }
                 }
             });
