@@ -20,7 +20,7 @@ using Amdocs.Ginger.Common;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;

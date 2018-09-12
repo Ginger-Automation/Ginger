@@ -24,7 +24,7 @@ using Ginger.AnalyzerLib;
 using Ginger.BDD;
 using Ginger.BusinessFlowWindows;
 using Ginger.Dictionaries;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
 using Ginger.Reports;
@@ -605,7 +605,7 @@ namespace Ginger
                 else
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, RIS.GetNameForFileName(), "item");
-                    RIS.SaveToFile(RIS.FileName);
+                    RIS.RepositorySerializer.SaveToFile(RIS, RIS.FileName);
                     Reporter.CloseGingerHelper();
                 }
             }

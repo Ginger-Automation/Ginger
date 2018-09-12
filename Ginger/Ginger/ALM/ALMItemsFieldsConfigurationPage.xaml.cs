@@ -92,7 +92,7 @@ namespace Ginger.ALM
             foreach (ExternalItemFieldBase field in mItemsFields.Where(x => x.ToUpdate == true).ToList())
                 tempItemList.Add(field);
             App.UserProfile.Solution.ExternalItemsFields = tempItemList;
-            App.UserProfile.Solution.SaveSolutionConfigurations();
+            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
             genWin.Close();
         }
 

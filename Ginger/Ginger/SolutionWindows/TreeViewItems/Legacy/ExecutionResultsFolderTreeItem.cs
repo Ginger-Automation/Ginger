@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.Run;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore.SourceControl;

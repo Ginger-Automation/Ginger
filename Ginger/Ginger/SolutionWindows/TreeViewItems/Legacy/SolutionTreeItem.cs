@@ -19,7 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.Imports.CDL;
 using GingerCore;
 using GingerWPF.UserControlsLib.UCTreeView;

@@ -1,6 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms;
@@ -44,10 +44,11 @@ namespace Ginger.SolutionWindows
             xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, "Target Applications", saveAllHandler: SaveHandler, addHandler: AddApplication);
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 60 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.CoreVersion), Header = "Version", WidthWeight = 20 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 30 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Description), Header = "Description", WidthWeight = 40 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.CoreVersion), Header = "Version", WidthWeight = 15 });
             List<string> platformesTypesList = GingerCore.General.GetEnumValues(typeof(ePlatformType));
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 40, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = platformesTypesList });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = platformesTypesList });
             xTargetApplicationsGrid.SetAllColumnsDefaultView(view);
             xTargetApplicationsGrid.InitViewItems();
             
@@ -71,7 +72,7 @@ namespace Ginger.SolutionWindows
 
         private void SaveHandler(object sender, RoutedEventArgs e)
         {
-            mSolution.SaveSolutionConfigurations();
+            mSolution.SaveSolution(true, Solution.eSolutionItemToSave.TargetApplications);
         }
 
         private void AddApplication(object sender, RoutedEventArgs e)
@@ -113,15 +114,16 @@ namespace Ginger.SolutionWindows
                 foreach (TargetApplication bfApp in bf.TargetApplications)
                 {
                     if (bfApp.AppName == app.NameBeforeEdit)
-                    {
-                        App.AddItemToSaveAll(bf);
+                    {                        
                         bfApp.AppName = app.AppName;
 
                         //update the bf activities
                         foreach (Activity activity in bf.Activities)
                         {
                             if (activity.TargetApplication == app.NameBeforeEdit)
+                            {
                                 activity.TargetApplication = app.AppName;
+                            }
                         }
 
                         numOfAfectedBFs++;

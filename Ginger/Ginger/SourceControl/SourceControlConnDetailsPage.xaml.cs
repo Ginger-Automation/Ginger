@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
@@ -109,7 +110,7 @@ namespace Ginger.SourceControl
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
         {           
-            App.UserProfile.Solution.SaveSolutionConfigurations();           
+            App.UserProfile.Solution.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);           
         }
 
         private void Close_Click(object sender, EventArgs e)

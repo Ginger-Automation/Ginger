@@ -162,33 +162,10 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public bool IsDirty
-        {
-            get
-            {
-                if (mBackupDic == null)
-                    return false;
-                else
-                    return true;
-            }
-        }
-
-
-        //TODO: remove from here and force to use RepositorySerialzie.Deser...
-        public void SaveToFile(string FilePath)
-        {
-            RepositorySerializer.SaveToFile(this, FilePath);
-        }
-
         public void SaveBackup()
         {
-            if (IsDirty == false)
-            {
-                CreateBackup();              
-                OnPropertyChanged(nameof(IsDirty));
-            }
-            else
-            {
+            if (mBackupDic == null)
+            {            
                 CreateBackup(true);
             }
         }
@@ -196,7 +173,6 @@ namespace Amdocs.Ginger.Repository
         // Deep backup keep obj ref and all prop, restore to real original situation
         private void CreateBackup(bool isLocalBackup = false)
         {
-
             if (!isLocalBackup)
             {
                 mBackupDic = new Dictionary<string, object>();                
@@ -290,33 +266,32 @@ namespace Amdocs.Ginger.Repository
 
         public void ClearBackup(bool isLocalBackup = false)
         {
-                var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
-                foreach (MemberInfo mi in properties)
+            var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
+            foreach (MemberInfo mi in properties)
+            {
+                if (!isLocalBackup)
                 {
-                    if (!isLocalBackup)
+                    if (mi.Name == nameof(mBackupDic)) continue;
+                }
+                if (mi.Name == nameof(mLocalBackupDic)) continue;
+                dynamic v = null;
+                v = this.GetType().GetField(mi.Name).GetValue(this);
+                if (v is IObservableList)
+                {
+                    foreach (object o in v)
                     {
-                        if (mi.Name == nameof(mBackupDic)) continue;
-                    }
-                    if (mi.Name == nameof(mLocalBackupDic)) continue;
-                    dynamic v = null;
-                    v = this.GetType().GetField(mi.Name).GetValue(this);
-                    if (v is IObservableList)
-                    {
-                        foreach (object o in v)
+                        if (o is RepositoryItemBase)
                         {
-                            if (o is RepositoryItemBase)
-                            {
-                                ((RepositoryItemBase)o).ClearBackup(isLocalBackup);
-                            }
+                            ((RepositoryItemBase)o).ClearBackup(isLocalBackup);
                         }
                     }
                 }
-                if (!isLocalBackup)
-                {
-                    mBackupDic = null;
-                    OnPropertyChanged(nameof(IsDirty));
-                }
-                mLocalBackupDic = null;                     
+            }
+            if (!isLocalBackup)
+            {
+                mBackupDic = null;                
+            }
+            mLocalBackupDic = null;
         }
 
         private void RestoreBackup(bool isLocalBackup = false)
@@ -776,7 +751,10 @@ namespace Amdocs.Ginger.Repository
                 if (mDirtyStatus != value)
                 {
                     mDirtyStatus = value;
-                    if (value == eDirtyStatus.Modified) RaiseDirtyChangedEvent();
+                    if (value == eDirtyStatus.Modified)
+                    {
+                        RaiseDirtyChangedEvent();
+                    }
                     OnPropertyChanged(nameof(DirtyStatus));
                     OnPropertyChanged(nameof(DirtyStatusImage));
                 }
@@ -1033,15 +1011,15 @@ namespace Amdocs.Ginger.Repository
 
         public static void ObjectsDeepCopy(RepositoryItemBase sourceObj, RepositoryItemBase targetObj)
         {
-            NewRepositorySerializer repoSer = new NewRepositorySerializer();
+            NewRepositorySerializer repoSer = new NewRepositorySerializer(); 
+
             string sourceObjXml = repoSer.SerializeToString(sourceObj);
-
             NewRepositorySerializer RS = new NewRepositorySerializer();
-
             //TODO: FIXME !!!
             throw new NotImplementedException();
+ 
             //RS.DeserializeFromTextWithTargetObj(sourceObj.GetType(), sourceObjXml, targetObj);
-        }
+         }
 
         public virtual void UpdateItemFieldForReposiotryUse()
         {

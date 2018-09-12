@@ -134,7 +134,7 @@ namespace Ginger.TagsLib
         {
             xTagsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
             CleanUnValidTags();
-            App.UserProfile.Solution.SaveSolutionConfigurations();
+            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.Tags);
         }
 
         private void closeBtn_Click(object sender, EventArgs e)

@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -51,8 +51,8 @@ namespace UnitTests.NonUITests
             string SolFile = TestResources.GetTempFile("Solution1.Ginger.Solution.xml");
 
             //Act
-            createSol.SaveToFile(SolFile);
-            Solution loadSol = Solution.LoadSolutionFile(SolFile);
+            createSol.RepositorySerializer.SaveToFile(createSol, SolFile);
+            Solution loadSol = Solution.LoadSolution(SolFile, false);
 
             //Assert
            Assert.AreEqual(loadSol.Name, createSol.Name);
@@ -69,8 +69,8 @@ namespace UnitTests.NonUITests
             string solFile = TestResources.GetTempFile("Solution2.Ginger.Solution.xml");
             
             //Act
-            createSol.SaveToFile(solFile);
-            Solution loadSol = Solution.LoadSolutionFile(solFile);
+            createSol.RepositorySerializer.SaveToFile(createSol, solFile);
+            Solution loadSol = Solution.LoadSolution(solFile, false);
 
             //Assert
            Assert.AreEqual(loadSol.Name, createSol.Name);

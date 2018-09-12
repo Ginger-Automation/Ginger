@@ -41,6 +41,7 @@ using System.Reflection;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using Ginger.SolutionGeneral;
 
 namespace Ginger
 {

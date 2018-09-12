@@ -25,7 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore;
 using Ginger.UserControls;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using GingerCore.Actions;
 using GingerCore.Actions.ActionConversion;
 using GingerCore.Actions.Common;

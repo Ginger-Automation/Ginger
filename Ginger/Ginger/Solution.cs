@@ -33,7 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ginger.Environments
+namespace Ginger.SolutionGeneral
 {
     public class Solution : RepositoryItemBase
     {
@@ -48,20 +48,167 @@ namespace Ginger.Environments
             Tags = new ObservableList<RepositoryItemTag>();
         }
 
-        public static Solution LoadSolutionFile(string solutionFileName)
+        public static Solution LoadSolution(string solutionFileName, bool startDirtyTracking= true)
         {
             string txt = File.ReadAllText(solutionFileName);
+            txt = txt.Replace("Ginger.Environments.Solution", "Ginger.SolutionGeneral.Solution");//changed the namespace so need to handle old xml's
             Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
             solution.FilePath = solutionFileName;
+            if (startDirtyTracking)
+            {
+                solution.StartDirtyTracking();
+            }
             return solution;
         }
 
-        public void Save()
+        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, ReportsSettings}
+        public void SaveSolution(bool showWarning = true, eSolutionItemToSave solutionItemToSave = eSolutionItemToSave.GeneralDetails)
         {
-            SaveToFile(FilePath);
+            bool doSave = false;
+
+            if (!showWarning)
+            {
+                doSave = true;
+            }
+            else
+            {
+                Solution lastSavedSolution = LoadSolution(FilePath, false);
+                string extraChangedItems = "";
+                if (solutionItemToSave != eSolutionItemToSave.GeneralDetails)
+                {
+                    if (this.Name != lastSavedSolution.Name || this.Account != lastSavedSolution.Account)
+                        extraChangedItems += "Solution General Details, ";
+                }
+                if (solutionItemToSave != eSolutionItemToSave.ALMSettings)
+                {
+                    if (this.ALMDomain != lastSavedSolution.ALMDomain || this.ALMProject != lastSavedSolution.ALMProject || this.ALMServerURL != lastSavedSolution.ALMServerURL || this.AlmType != lastSavedSolution.AlmType)
+                        extraChangedItems += "ALM Details, ";
+                }
+                if (solutionItemToSave != eSolutionItemToSave.SourceControlSettings)
+                {
+                    if (this.SourceControl != lastSavedSolution.SourceControl)
+                        extraChangedItems += "Source Control Details, ";
+                }
+                if (solutionItemToSave != eSolutionItemToSave.ReportsSettings)
+                {
+                    if (ExecutionLoggerConfigurationSetList.Count != lastSavedSolution.ExecutionLoggerConfigurationSetList.Count || HTMLReportsConfigurationSetList.Count != lastSavedSolution.HTMLReportsConfigurationSetList.Count)
+                    {
+                        extraChangedItems += "Reports Settings, ";
+                    }
+                    else
+                    {
+                        foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
+                        {
+                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            {
+                                extraChangedItems += "Reports Settings, ";
+                                break;
+                            }
+                        }
+                        if (!extraChangedItems.Contains("Reports Settings"))
+                        {
+                            foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
+                            {
+                                if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                                {
+
+                                    extraChangedItems += "Reports Settings, ";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (solutionItemToSave != eSolutionItemToSave.GlobalVariabels)
+                {
+                    if (Variables.Count != lastSavedSolution.Variables.Count)
+                    {
+                        extraChangedItems += GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", ");
+                    }
+                    else
+                    {
+                        foreach (VariableBase var in Variables)
+                        {
+                            if (var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            {
+                                extraChangedItems += GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", ");
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (solutionItemToSave != eSolutionItemToSave.TargetApplications)
+                {
+                    if (ApplicationPlatforms.Count != lastSavedSolution.ApplicationPlatforms.Count)
+                    {
+                        extraChangedItems += "Target Applications, ";
+                    }
+                    else
+                    {
+                        foreach (ApplicationPlatform app in ApplicationPlatforms)
+                        {
+                            if (app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            {
+                                extraChangedItems += "Target Applications, ";
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (solutionItemToSave != eSolutionItemToSave.Tags)
+                {
+                    if (Tags.Count != lastSavedSolution.Tags.Count)
+                    {
+                        extraChangedItems += "Tags, ";
+                    }
+                    else
+                    {
+                        foreach (RepositoryItemTag tag in Tags)
+                        {
+                            if (tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            {
+                                extraChangedItems += "Tags, ";
+                                break;
+                            }
+                        }                        
+                    }
+                }
+
+                if (string.IsNullOrEmpty(extraChangedItems))
+                {
+                    doSave = true;
+                }
+                else
+                {
+                    extraChangedItems= extraChangedItems.TrimEnd();
+                    extraChangedItems= extraChangedItems.TrimEnd(new char[] { ',' });                    
+                    if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == System.Windows.MessageBoxResult.Yes)
+                    {
+                        doSave = true;
+                    }
+                }
+            }
+
+            if (doSave)
+            {
+                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, "Solution Configurations", "item");
+                RepositorySerializer.SaveToFile(this, FilePath);
+                this.SetDirtyStatusToNoChange();
+                Reporter.CloseGingerHelper();
+            }
         }
 
-
+        //private bool CheckIfListItemsChanged(ObservableList<RepositoryItemBase> list)
+        //{
+        //    foreach (RepositoryItemBase item in list)
+        //    {
+        //        if (item.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || item.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
 
         [IsSerializedForLocalRepository]
         public string Name { get; set; }
@@ -400,28 +547,6 @@ namespace Ginger.Environments
         [IsSerializedForLocalRepository]
         public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();
 
-        public void SaveSolutionConfigurations(bool showWarning = true)
-        {
-            bool doSave = true;
-
-            //if (showWarning)
-            //{
-            //    if (Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Note: save will include saving any change which was done to: Target Applications, " + GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ") + ", Tags and ALM/Source Control Settings." + System.Environment.NewLine + System.Environment.NewLine + "To continue with Save operation?") == System.Windows.MessageBoxResult.Yes)
-            //    {
-            //        doSave = true;
-            //    }
-            //    else
-            //    {
-            //        doSave = false;
-            //    }
-            //}
-
-            if (doSave)
-            {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, "Solution Configurations", "item");
-                Save();
-                Reporter.CloseGingerHelper();
-            }
-        }
+        
     }
 }

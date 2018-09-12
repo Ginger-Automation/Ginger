@@ -418,7 +418,7 @@ namespace Ginger.ALM
         {
             ALMIntegration.Instance.SyncConfigurations();
             App.UserProfile.SaveUserProfile();
-            App.UserProfile.Solution.SaveSolutionConfigurations();
+            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
         }
 
         private void ALMRadioButton_Checked_Changed(object sender, RoutedEventArgs e)
