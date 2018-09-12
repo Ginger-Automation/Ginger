@@ -26,6 +26,7 @@ using System.Windows.Navigation;
 using GingerCore;
 using Ginger.Environments;
 using System.Diagnostics;
+using Ginger.SolutionGeneral;
 
 namespace Ginger
 {

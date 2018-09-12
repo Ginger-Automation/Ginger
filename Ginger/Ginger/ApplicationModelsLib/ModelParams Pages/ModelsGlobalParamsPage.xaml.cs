@@ -306,6 +306,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 {
                     newModelGlobalParam.OptionalValuesList.Add(new OptionalValue() { Value = GlobalAppModelParameter.CURRENT_VALUE, IsDefault = true });
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newModelGlobalParam);
+                    newModelGlobalParam.StartDirtyTracking();
                     break;
                 }
             }
