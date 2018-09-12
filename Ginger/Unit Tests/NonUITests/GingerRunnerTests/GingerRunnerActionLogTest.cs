@@ -1,17 +1,12 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
@@ -27,6 +22,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public static void ClassInitialize(TestContext TestContext)
         {
             EmptyTempActionLogFolder();
+            Ginger.App.InitClassTypesDictionary();
         }
 
         [ClassCleanup]
@@ -271,8 +267,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public void TestActionLog_CheckActionLogEnableOptionSavedInBFXML()
         {
             //Arrange
-            string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_BF.xml");
-
+            
             // define action
             ActDummy actDummy = new ActDummy();
             // set all the values in the action
@@ -293,9 +288,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             activity.Acts.Add(actDummy);
             businessFlowWrite.Activities.Add(activity);
 
-            //Act            
-            businessFlowWrite.RepositorySerializer.SaveToFile(businessFlowWrite, fileName);
-            BusinessFlow businessFlowRead = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), fileName);
+            //Act                                    
+            string txt = businessFlowWrite.RepositorySerializer.SerializeToString(businessFlowWrite); 
+            BusinessFlow businessFlowRead = (BusinessFlow)NewRepositorySerializer.DeserializeFromText(txt);
             ActDummy actDummyRead = (ActDummy)businessFlowRead.Activities[0].Acts[0];
 
             // Assert
