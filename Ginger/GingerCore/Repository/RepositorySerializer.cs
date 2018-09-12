@@ -17,10 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
@@ -41,6 +39,9 @@ using System.Xml.Linq;
 
 namespace GingerCore.Repository
 {
+    // OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD
+
+
     // This class is for storing RepositoryItem on disk, it needs to be serialized to XML
     // reason for not using some of the exisiting options:
     // Binary - makes it diffcult to compare version/history in CC + some say it is slower!?
@@ -429,7 +430,7 @@ namespace GingerCore.Repository
         {
             // Here we decide which Observable List we cache as string until user really ask for the data
             // for now we cache only activities which is the major issue for performance when laoding solution
-            if (name == nameof(BusinessFlow.Activities)) return true;
+            // if (name == nameof(BusinessFlow.Activities)) return true;
             return false;
         }
 
@@ -458,7 +459,7 @@ namespace GingerCore.Repository
 
             try
             {
-                dynamic obj = null;
+                object obj = null;
                 int level = xdr.Depth;
 
                 // We first try in current assembly = GingerCore
@@ -519,28 +520,62 @@ namespace GingerCore.Repository
                 {
                     // Check if it one obj attr or list
                     string attrName = xdr.Name;
-                    FieldInfo FI = obj.GetType().GetField(attrName);
 
-                    // We check if it is list by arg count - List<string> will have string etc...
-                    // another option is check the nake to start with List, Observ...
-                    //or find a better way
-                    // meanwhile it is working
-                    if (FI.FieldType.GenericTypeArguments.Count() > 0)
+                    MemberInfo mi = obj.GetType().GetMember(attrName).SingleOrDefault(); 
+
+                    // New to support prop and field - like BF.Activities
+                    if (mi.MemberType == MemberTypes.Field)
                     {
-                        SetObjectListAttrs(xdr, obj);
+                        FieldInfo FI = (FieldInfo)mi; 
+                        // obj.GetType().GetField(attrName);
+                        // We check if it is list by arg count - List<string> will have string etc...
+                        // another option is check the nake to start with List, Observ...
+                        //or find a better way
+                        // meanwhile it is working
+                        if (FI.FieldType.GenericTypeArguments.Count() > 0)
+                        {
+                            SetObjectListAttrs(xdr, obj);
+                        }
+                        else
+                        {
+                            // Read the attr name/move next
+                            xdr.ReadStartElement();
+                            // read the actual object we need to put on the attr                            
+                            object item = xmlReadObject(obj, xdr);
+                            // Set the attr val with the object
+                            FI.SetValue(obj, item);
+
+                            if (item is Email)//If should be removed- placing if for solving Run Set operation release issue with minimum risk
+                                xdr.ReadEndElement();
+                        }
                     }
                     else
                     {
-                        // Read the attr name/move next
-                        xdr.ReadStartElement();
-                        // read the actual object we need to put on the attr                            
-                        object item = xmlReadObject(obj, xdr);
-                        // Set the attr val with the object
-                        FI.SetValue(obj, item);
+                        PropertyInfo PI = (PropertyInfo)mi;
+                        // obj.GetType().GetField(attrName);
+                        // We check if it is list by arg count - List<string> will have string etc...
+                        // another option is check the nake to start with List, Observ...
+                        //or find a better way
+                        // meanwhile it is working
+                        if (PI.PropertyType.GenericTypeArguments.Count() > 0)
+                        {
+                            SetObjectListAttrs(xdr, obj);
+                        }
+                        else
+                        {
+                            // Read the attr name/move next
+                            xdr.ReadStartElement();
+                            // read the actual object we need to put on the attr                            
+                            object item = xmlReadObject(obj, xdr);
+                            // Set the attr val with the object
+                            PI.SetValue(obj, item);
 
-                        if (item is Email)//If should be removed- placing if for solving Run Set operation release issue with minimum risk
-                            xdr.ReadEndElement();
+                            if (item is Email)//If should be removed- placing if for solving Run Set operation release issue with minimum risk
+                                xdr.ReadEndElement();
+                        }
                     }
+
+                    
                     if (xdr.NodeType == XmlNodeType.EndElement)
                     {
                         xdr.ReadEndElement();
@@ -554,35 +589,65 @@ namespace GingerCore.Repository
             }
         }
 
-        private static void SetObjectListAttrs(XmlReader xdr, dynamic obj)
+        private static void SetObjectListAttrs(XmlReader xdr, object obj)
         {
             // Handle object list etc which comes after the obj attrs - like activities, or activity actions
             string AtrrListName = xdr.Name;
             if (xdr.IsStartElement())
             {
                 {
-                    FieldInfo fi = obj.GetType().GetField(AtrrListName);
-                    // generate same type empty list objects
-                    Type t = fi.FieldType.GenericTypeArguments[0];
+                    MemberInfo mi = obj.GetType().GetMember(AtrrListName).SingleOrDefault();
+                    if (mi.MemberType == MemberTypes.Field)
+                    {
+                        FieldInfo fi = (FieldInfo)mi;
+                        // generate same type empty list objects
+                        Type t = fi.FieldType.GenericTypeArguments[0];
 
-                    if (t == typeof(string))
-                    {
-                        List<string> lsts = fi.GetValue(obj);
-                        xmlReadListOfStrings(xdr, lsts);
-                    }
-                    else if (t == typeof(Guid))
-                    {
-                        ObservableList<Guid> lstsg = fi.GetValue(obj);
-                        xmlReadListOfGuids(xdr, lstsg);
+                        if (t == typeof(string))
+                        {
+                            List<string> lsts = (List<string>)fi.GetValue(obj);
+                            xmlReadListOfStrings(xdr, lsts);
+                        }
+                        else if (t == typeof(Guid))
+                        {
+                            ObservableList<Guid> lstsg = (ObservableList<Guid>)fi.GetValue(obj);
+                            xmlReadListOfGuids(xdr, lstsg);
+                        }
+                        else
+                        {
+                            //TODO: handle other types of list, meanwhile Assume observb list
+                            IObservableList lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(t)));
+                            //assign it to the relevant obj
+                            fi.SetValue(obj, lst);
+                            // Read the list from the xml
+                            xmlReadListOfObjects(obj, xdr, lst);
+                        }
                     }
                     else
                     {
-                        //TODO: handle other types of list, meanwhile Assume observb list
-                        IObservableList lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(t)));
-                        //assign it to the relevant obj
-                        fi.SetValue(obj, lst);
-                        // Read the list from the xml
-                        xmlReadListOfObjects(obj, xdr, lst);
+                        PropertyInfo pi = (PropertyInfo)mi;
+                        // generate same type empty list objects
+                        Type t = pi.PropertyType.GenericTypeArguments[0];
+
+                        if (t == typeof(string))
+                        {
+                            List<string> lsts = (List<string>)pi.GetValue(obj);
+                            xmlReadListOfStrings(xdr, lsts);
+                        }
+                        else if (t == typeof(Guid))
+                        {
+                            ObservableList<Guid> lstsg = (ObservableList<Guid>)pi.GetValue(obj);
+                            xmlReadListOfGuids(xdr, lstsg);
+                        }
+                        else
+                        {
+                            //TODO: handle other types of list, meanwhile Assume observb list
+                            IObservableList lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(t)));
+                            //assign it to the relevant obj
+                            pi.SetValue(obj, lst);
+                            // Read the list from the xml
+                            xmlReadListOfObjects(obj, xdr, lst);
+                        }
                     }
                 }
             }

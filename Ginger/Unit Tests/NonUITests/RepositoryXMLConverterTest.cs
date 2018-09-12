@@ -30,8 +30,11 @@ namespace UnitTests.NonUITests
     public class RepositoryXMLConverterTest 
     {
 
-
-     
+        [ClassInitialize]        
+        public static void ClassInitialize(TestContext TC)
+        {
+            Ginger.App.InitClassTypesDictionary();            
+        }
 
         [TestMethod]
         public void BusinessFlowDeserializationTest()

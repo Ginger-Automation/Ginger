@@ -141,8 +141,8 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public string RunDescription { get { return mRunDescription; } set { if (mRunDescription != value) { mRunDescription = value; OnPropertyChanged(Fields.RunDescription); } } }
 
-        double? mElapsed;
-        [IsSerializedForLocalRepository]
+        double? mElapsed; 
+        [IsSerializedForLocalRepository]     // TODO: Needed?
         public double? Elapsed
         {
             get { return mElapsed; }
@@ -254,8 +254,22 @@ namespace GingerCore
         //@ Run info 
 
 
+        // private ObservableList<Activity> mActivities;
+
         [IsSerializedForLocalRepository]
-        public ObservableList<Activity> Activities; //DO NOT USE  { get; set; } it will break repo serializer
+        public ObservableList<Activity> Activities;
+        //{
+        //    get
+        //    {
+        //        if (mActivities.LazyLoad)
+        //        {
+        //            var x = mActivities.ListItems;
+        //        }
+        //        return mActivities;
+        //    }
+        //    set { mActivities = value; }
+        //}
+        //DO NOT USE  { get; set; } it will break repo serializer - Fixed with New
 
         [IsSerializedForLocalRepository]
         public new string ExternalID { get; set; } // will use it for QC ID or other external ID

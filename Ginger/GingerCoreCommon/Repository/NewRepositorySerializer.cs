@@ -159,67 +159,139 @@ namespace Amdocs.Ginger.Repository
             string ClassName = ri.GetType().Name;
             xml.WriteStartElement(ClassName);
 
-            WriteRepoItemProperties(xml, ri);
-            WriteRepoItemFields(xml, ri);
+            WriteRepoItemAttrs(xml, ri);            
             xml.WriteEndElement();
         }
 
-
-        private void WriteRepoItemProperties(XmlTextWriter xml, RepositoryItemBase ri)
+        class RIAttr
         {
-            // Get the properties - need to be ordered so compare/isDirty can work faster
-            var properties = ri.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property).OrderBy(x => x.Name);  // .OrderBy(x => x.Name);
-            foreach (MemberInfo mi in properties)
+            public string Name;
+            public Type ttt;
+            public object value;
+            public IsSerializedForLocalRepositoryAttribute attrIS;
+        }
+
+        private void WriteRepoItemAttrs(XmlTextWriter xml, RepositoryItemBase ri)
+        {
+            //TODO: cache class how to serialzie so will work faster and use reflection sort etc... only for first time
+
+            // Get all serialized attrs (properties and fields)
+            // var attrs = ri.GetType().GetMembers().Where(x => x.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute)) != null).OrderBy(x => x.Name);
+            var attrs = ri.GetType().GetMembers().OrderBy(x => x.Name);         // Order by name so XML compare will be easier  
+
+            List<RIAttr> SimpleAttrs = new List<RIAttr>();
+            List<RIAttr> ListAttrs = new List<RIAttr>();
+            // order by attrs with simple prop first then lists latest 
+
+            foreach (MemberInfo mi in attrs)  
             {
-                object v = null;
-                IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(mi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
-                if (token == null) continue;
-
-                //Get tha attr value
-                v = ri.GetType().GetProperty(mi.Name).GetValue(ri);
-
-                // We write the property value only if it is not null and different than default when serialzied
-                if (v == null) continue;
-                if (v is Guid)
+                IsSerializedForLocalRepositoryAttribute isSerialziedAttr = (IsSerializedForLocalRepositoryAttribute)mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
+                if (isSerialziedAttr != null)
                 {
-                    if ((Guid)v == Guid.Empty) continue;
-                }
-                if (IsValueDefault(v, token)) continue;
-
-
-                // Enum might be unknown = not set - so no need to write to xml, like null for object                        
-                if (ri.GetType().GetProperty(mi.Name).PropertyType.IsEnum)
-                {
-                    string vs = v.ToString();
-                    // No need to write enum unknown = null
-                    if (vs != "Unknown")
+                    Type tt;
+                    object value;
+                    if (mi.MemberType == MemberTypes.Property)
                     {
-                        xmlwriteatrr(xml, mi.Name, vs);
+                        tt = ((PropertyInfo)mi).PropertyType;
+                        value = ri.GetType().GetProperty(mi.Name).GetValue(ri);
                     }
-                }
-                else
-                {
-                    if (v != null)
+                    else
                     {
-                        //if (v is RepositoryItem)
-                        //{                                                        
-                        //    xml.WriteStartAttribute(mi.Name);
-                        //    // xml.WriteString("Value");
-                        //    xmlwriteObject(xml, v);
-
-                        //    xml.WriteWhitespace("\n");                            
-                        //    xml.WriteEndAttribute();                            
-
-                        //}
-                        // else
-                        //{
-                        xmlwriteatrr(xml, mi.Name, v.ToString());
-                        // }
+                        tt = ((FieldInfo)mi).FieldType;
+                        value = ri.GetType().GetField(mi.Name).GetValue(ri);
                     }
-                }
+
+
+                    RIAttr rIAttr = new RIAttr() { Name = mi.Name, ttt = tt, value = value, attrIS = isSerialziedAttr };
+                    if (value is IObservableList || value is List<string>) 
+                    {
+                        
+                        ListAttrs.Add(rIAttr);
+                    }
+                    else
+                    {
+                        SimpleAttrs.Add(rIAttr);
+                        
+                    }
                 }
             }
 
+            // Write simple attr: string, int etc.
+            foreach (RIAttr mi in SimpleAttrs)  
+            {                                                
+                WriteRepoItemAttr(xml, mi);                
+            }
+
+            // Write list
+            foreach (RIAttr mi in ListAttrs)
+            {
+                WriteRepoItemAttr(xml, mi);
+            }
+        }
+
+        private void WriteRepoItemAttr(XmlTextWriter xml, RIAttr rIAttr)
+        {
+
+            //if (LazyLoadAttr.Contains(rIAttr.Name))
+            //{
+            //    bool b;
+            //    if (mi.MemberType == MemberTypes.Field)
+            //    {
+            //        b = ((IObservableList)(ri.GetType().GetField(mi.Name).GetValue(ri))).LazyLoad;
+            //    }
+            //    else
+            //    {
+            //        b = ((IObservableList)(ri.GetType().GetProperty(mi.Name).GetValue(ri))).LazyLoad;
+            //    }
+
+            //    if (b)
+            //    {
+            //        // Hurray! we use the cache ready made string
+            //        string s = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).StringData;
+            //        xml.WriteStartElement(mi.Name);
+            //        xml.WriteString(s);
+            //        xml.WriteEndElement();
+                //}
+            //}
+
+            // We write the property value only if it is not null and different than default when serialized
+            if (rIAttr.value == null)
+            {
+                return;
+            }
+            if (IsValueDefault(rIAttr.value, rIAttr.attrIS))
+            {
+                return;
+            }
+
+
+            if (rIAttr.value is IObservableList)
+            {
+                IObservableList vv = (IObservableList)rIAttr.value;
+                if (vv.Count != 0)  // Write only if we have items - save xml space
+                {
+                    xmlwriteObservableList(xml, rIAttr.Name, (IObservableList)rIAttr.value);
+                }
+            }
+            else if(rIAttr.value is List<string>)
+            {
+                    xmlwriteStringList(xml, rIAttr.Name, (List<string>)rIAttr.value);
+            }
+            else if (rIAttr.value is RepositoryItemBase)
+            {
+                xmlwriteSingleObjectField(xml, rIAttr.Name, rIAttr.value);
+            }
+            else
+            {
+                if (rIAttr.value != null)
+                {                     
+                    xmlwriteatrr(xml, rIAttr.Name, rIAttr.value.ToString());                     
+                }                    
+            }
+            
+        }
+
+     
         private bool IsValueDefault(object attrValue, IsSerializedForLocalRepositoryAttribute IsSerializedForLocalRepository)
         {
             object attrDefaultValue = IsSerializedForLocalRepository.GetDefualtValue();
@@ -281,63 +353,7 @@ namespace Amdocs.Ginger.Repository
             LazyLoadAttr.Add(name);
         }
 
-        private void WriteRepoItemFields(XmlTextWriter xml, RepositoryItemBase ri)
-        {
-            var Fields = ri.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field).OrderBy(x => x.Name);
-
-            foreach (MemberInfo fi in Fields)
-            {               
-                object v = null;
-                IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(fi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
-                if (token == null) continue;
-
-                if (LazyLoadAttr.Contains(fi.Name))
-                {                    
-                    bool b = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).LazyLoad;
-                    if (b)
-                    {
-                        // Hurray!
-                        string s = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).StringData;
-                        xml.WriteStartElement(fi.Name);
-                        xml.WriteString(s);
-                        xml.WriteEndElement();
-                    }
-                }
-
-                v = ri.GetType().GetField(fi.Name).GetValue(ri);
-
-                // We write the property value only if it is not null and different than default when serialized
-                if (v == null) continue;
-                if (IsValueDefault(v, token)) continue;
-
-                
-                if (v is IObservableList)
-                {
-                    IObservableList vv = (IObservableList)v;
-                    if (vv.Count != 0)  // Write only if we have items - save xml space
-                    {
-                        xmlwriteObservableList(xml, fi.Name, (IObservableList)v);
-                    }
-                }
-                else
-                {
-                    if (v is List<string>)
-                    {
-                        xmlwriteStringList(xml, fi.Name, (List<string>)v);
-                    }
-                    else if (v is RepositoryItemBase)
-                    {                            
-                        xmlwriteSingleObjectField(xml, fi.Name, v);
-                    }                       
-                    else
-                    {
-                        //xml.WriteComment(">>>>>>>>>>>>>>>>> Unknown Field type to serialize - " + fi.Name + " - " + v.ToString());
-                        throw new Exception("Unknown Field type to serialize - " + fi.Name + " - " + v.ToString());
-                    }
-                }
-                
-            }
-        }
+       
 
         
 
@@ -639,10 +655,7 @@ namespace Amdocs.Ginger.Repository
 
         private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null)
         {
-            string className = xdr.Name;
-            //bool conversion = false;
-          //  if (className == "GingerCore.Platforms.ApplicationPlatform") className = "GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib";
-            
+            string className = xdr.Name;            
 
             try
             {
@@ -669,30 +682,55 @@ namespace Amdocs.Ginger.Repository
                 while (xdr.Depth == level + 1)
                 {
                     // Check if it one obj attr or list
-                    string attrName = xdr.Name;                  
-                    FieldInfo FI = obj.GetType().GetField(attrName);
-                    // PropertyInfo FI = obj.GetType().GetProperty(attrName);
-                    // string bt = FI.FieldType.Name;
+                    string attrName = xdr.Name;                    
+
+                    MemberInfo mi = obj.GetType().GetMember(attrName).SingleOrDefault();
+
+                    if (mi==null)
+                    {
+                        NewReporter.ToConsole("Error: Cannot find attrbiute. Class: " + className + ", Attribute: " + xdr.Name);
+                        throw new Exception("Error: Cannot find attrbiute. Class: " + className + ", Attribute: " + xdr.Name);
+                    }
+
+                    
 
                     // We check if it is list by arg count - List<string> will have string etc...
-                    // another option is check the nake to start with List, Observ...
+                    // another option is check the name to start with List, Observ...
                     //or find a better way
                     // meanwhile it is working
-                    if (FI.FieldType.GenericTypeArguments.Count() > 0)
+
+
+                    
+                    if (mi.MemberType == MemberTypes.Property)
                     {
-                        SetObjectListAttrs(xdr, obj);
+                        // check if this is kind of a list
+                        if (((PropertyInfo)mi).PropertyType.GenericTypeArguments.Count() > 0)
+                        // if (((PropertyInfo)mi).PropertyType is IObservableList)
+                        {
+                            SetObjectListAttrs(xdr, obj);
+                        }
+                        else
+                        {
+                            xdr.ReadStartElement();
+                            object item = xmlReadObject(obj, xdr);
+                            xdr.ReadEndElement();
+                            ((PropertyInfo)mi).SetValue(obj, item);
+                            
+                        }
                     }
                     else
                     {
-                        // Read the attr name/move next
-                        xdr.ReadStartElement();
-                        // read the actual object we need to put on the attr                            
-                        object item = xmlReadObject(obj, xdr);
-                        // Set the attr val with the object
-                        FI.SetValue(obj, item);
-
-                        // Create UT for below and then remove the next if
-                         xdr.ReadEndElement(); 
+                        if (((FieldInfo)mi).FieldType.GenericTypeArguments.Count() > 0)
+                        {
+                            SetObjectListAttrs(xdr, obj);
+                        }
+                        else
+                        {
+                            xdr.ReadStartElement();
+                            object item = xmlReadObject(obj, xdr);
+                            xdr.ReadEndElement();
+                            ((FieldInfo)mi).SetValue(obj, item);                            
+                        }
                     }
 
                     //Keep it here
@@ -742,8 +780,8 @@ namespace Amdocs.Ginger.Repository
             }
             catch (Exception ex)
             {
-                NewReporter.ToConsole("Error:Cannot create instance of: " + className + ", for attribute: " + xdr.Name + " - " + ex.Message);
-                throw new Exception("Error:Cannot create instance of: " + className + ", for attribute: " + xdr.Name + " - " + ex.Message);               
+                NewReporter.ToConsole("Error: Cannot create instance of: " + className + ", for attribute: " + xdr.Name + " - " + ex.Message);
+                throw new Exception("Error: Cannot create instance of: " + className + ", for attribute: " + xdr.Name + " - " + ex.Message);
             }
         }
 
@@ -860,7 +898,7 @@ namespace Amdocs.Ginger.Repository
 
 
 
-        private static void SetObjectListAttrs(XmlReader xdr, dynamic obj)
+        private static void SetObjectListAttrs(XmlReader xdr, object obj)
         {
 
             // Handle object list etc which comes after the obj attrs - like activities, or activity actions
@@ -868,28 +906,52 @@ namespace Amdocs.Ginger.Repository
             if (xdr.IsStartElement())
             {
                 {
-                    FieldInfo fi = obj.GetType().GetField(AtrrListName);
+                    MemberInfo mi = obj.GetType().GetMember(AtrrListName).SingleOrDefault();
 
-                    // generate same type empty list objects
-                    Type t = fi.FieldType.GenericTypeArguments[0];
-
-                    if (t == typeof(string))
+                    // FieldInfo fi = obj.GetType().GetField(AtrrListName);
+                    Type elementType;
+                    object value;
+                    if (mi.MemberType == MemberTypes.Property)
                     {
-                        List<string> lsts = fi.GetValue(obj);
+                        // generate same type empty list objects
+                        elementType = ((PropertyInfo)mi).PropertyType.GenericTypeArguments[0];
+                        value = ((PropertyInfo)mi).GetValue(obj);
+                    }
+                    else
+                    {
+                        elementType = ((FieldInfo)mi).FieldType.GenericTypeArguments[0];
+                        value = ((FieldInfo)mi).GetValue(obj);
+                    }
+
+
+                    if (elementType == typeof(string))
+                    {
+                        List<string> lsts = (List<string>)value;
                         xmlReadListOfStrings(xdr, lsts);
                         //fi.SetValue(obj, lsts);
                     }
-                    else if (t == typeof(Guid))
+                    else if (elementType == typeof(Guid))
                     {
-                        ObservableList<Guid> lstsg = fi.GetValue(obj);
+                        ObservableList<Guid> lstsg = (ObservableList<Guid>)value;
                         xmlReadListOfGuids(xdr, lstsg);
                     }
                     else
                     {
                         //TODO: handle other types of list, meanwhile Assume observb list
-                        IObservableList lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(t)));
+                        IObservableList lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(elementType)));
                         //assign it to the relevant obj
-                        fi.SetValue(obj, lst);
+
+                        if (mi.MemberType == MemberTypes.Property)
+                        {
+                            ((PropertyInfo)mi).SetValue(obj, lst);                            
+                        }
+                        else
+                        {
+                            ((FieldInfo)mi).SetValue(obj, lst);                            
+                        }
+
+
+                        // fi.SetValue(obj, lst);
                         // Read the list from the xml
                         xmlReadListOfObjects(obj, xdr, lst);
                     }

@@ -77,7 +77,7 @@ namespace Amdocs.Ginger.Common
             set { Items[Index] = value; }
         }
 
-
+           
         public object CurrentItem
         {
             get { return mCurrentItem; }
@@ -169,13 +169,14 @@ namespace Amdocs.Ginger.Common
 
         public new int Count
         {
-            get {
-                    if (mLazyLoad)
-                    {
-                        GetItemsInfo();
-                    }
+            get
+            {
+                if (mLazyLoad)
+                {
+                    GetItemsInfo();
+                }
 
-                    return base.Count;
+                return base.Count;
             }
         }
 
@@ -261,16 +262,17 @@ namespace Amdocs.Ginger.Common
         int mDataLen;
 
 
-        protected new IList<T> Items { get {                
+        protected new IList<T> Items
+        {
+            get
+            {
                 if (mLazyLoad)
                 {
                     GetItemsInfo();
                 }
-                
                 return base.Items;
-                
-                
-            } }
+            }
+        }
 
         bool IObservableList.LazyLoad { get { return mLazyLoad; } set { mLazyLoad = value; } }
 
@@ -281,13 +283,16 @@ namespace Amdocs.Ginger.Common
 
         public bool LazyLoad { get { return mLazyLoad; } }
 
-        new IEnumerator GetEnumerator()
+
+
+
+        public new IEnumerator<T> GetEnumerator()
         {
             if (mLazyLoad)
             {
                 GetItemsInfo();
             }
-            return this.GetEnumerator();
+            return base.GetEnumerator();
         }
 
         public void DoLazyLoadItem(string s)
@@ -368,7 +373,14 @@ namespace Amdocs.Ginger.Common
             base.Remove(obj);
         }
 
-        public List<object> ListItems { get { return Items.Cast<object>().ToList(); } }
+        public List<object> ListItems
+        {
+            get
+            {                
+                return Items.Cast<object>().ToList();
+            }
+        }
+      
 
     } 
 }
