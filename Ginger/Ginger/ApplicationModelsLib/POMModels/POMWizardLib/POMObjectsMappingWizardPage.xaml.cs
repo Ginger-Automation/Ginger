@@ -23,6 +23,7 @@ using Ginger.Actions.UserControls;
 using Ginger.UserControls;
 using Ginger.WindowExplorer;
 using GingerCore;
+using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerCore.Platforms;
 using GingerWPF.WizardLib;
@@ -94,8 +95,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
-                    mElementsList.CollectionChanged += ElementsListCollectionChanged;
-                    InitilizePomElementsMappingPage();
+                    if (!mWizard.ManualElementConfiguration)
+                    {
+                        mElementsList.CollectionChanged += ElementsListCollectionChanged;
+                        InitilizePomElementsMappingPage();
+                    }
                     break;
 
                 case EventType.Active:
@@ -106,8 +110,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         pomAllElementsPage.SetWindowExplorer(mWizard.IWindowExplorerDriver);
                     }
 
-                    mSelectedElementTypesList = mWizard.AutoMapElementTypesList.Where(x => x.Selected == true).Select(x =>x.ElementType).ToList();
-                    Learn();
+                    if (mWizard.ManualElementConfiguration)
+                    {
+                        xReLearnButton.Visibility = Visibility.Hidden;
+                        pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
+                    }
+                    else
+                    {
+                        xReLearnButton.Visibility = Visibility.Visible;
+                        mWizard.IWindowExplorerDriver.UnHighLightElements();
+                        mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
+                        mSelectedElementTypesList = mWizard.AutoMapElementTypesList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
+                        Learn();
+                    }
                     break;
             }
         }

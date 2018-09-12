@@ -36,7 +36,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         static PowerBuilderPlatform mPowerBuilderPlatform = new PowerBuilderPlatform();
         static WindowsPlatform mWindowsPlatform = new WindowsPlatform();
         internal List<eElementType> mElementsTypeList = null;
-        internal List<ElementTypeOperations> mPlatformElementTypeOperations = null;
+        internal List<ElementTypeData> mPlatformElementTypeOperations = null;
         internal List<eLocateBy> mElementLocatorsTypeList = null;
 
         public abstract ePlatformType PlatformType();
@@ -74,11 +74,12 @@ namespace GingerCore.Platforms.PlatformsInfo
             return PB.GetPlatformUIElementsType();
         }
 
-        public class ElementTypeOperations
+        public class ElementTypeData
         {
             public eElementType ElementType;
             public Type ActionType;
             public List<Enum> ElementOperationsList = new List<Enum>();
+            public bool IsCommonElementType = false;
         }
 
         internal static List<eLocateBy> GetPlatformUIElementLocatorsList(ePlatformType Platform)

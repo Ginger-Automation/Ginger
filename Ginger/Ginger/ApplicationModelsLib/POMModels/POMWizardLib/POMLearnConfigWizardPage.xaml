@@ -12,13 +12,28 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="100"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
-        
-        <agents:ucAgentControl x:Name="xAgentControlUC"></agents:ucAgentControl>
 
-        <Expander x:Name="xAutoMapElementTypesExpander" Margin="0,20,0,0" Grid.Row="1" Visibility="Visible" IsExpanded="False" >
+        <Grid Margin="10,10,0,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Page Elements Settings Method:"/>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <RadioButton x:Name="xManualElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup" Style="{StaticResource @InputRadioButtonStyle}" IsChecked="False" Checked="xAutomaticElementConfigurationRadioButton_Checked" Content="Manual Setup"></RadioButton>
+                <RadioButton x:Name="xAutomaticElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup"  Style="{StaticResource @InputRadioButtonStyle}" IsChecked="True" Checked="xAutomaticElementConfigurationRadioButton_Checked" Margin="10,0,0,0" Content="Automatic Learning"></RadioButton>
+            </StackPanel>
+        </Grid>
+
+        <agents:ucAgentControl x:Name="xAgentControlUC" Grid.Row="1"></agents:ucAgentControl>
+
+        <Expander x:Name="xAutoMapElementTypesExpander" Margin="0,20,0,0" Grid.Row="2" Visibility="Visible" IsExpanded="False" >
             <Expander.Header>
                 <Label x:Name="PropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
                     <Label.Content>

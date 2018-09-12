@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using Ginger.WizardLib;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System;
@@ -42,6 +43,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
         public ObservableList<Agent> OptionalAgentsList = null;
         private Agent mAgent = null;
+        public bool ManualElementConfiguration;
+
         public Agent Agent
         {
             get
@@ -74,7 +77,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             POM = new ApplicationPOMModel();
 
-            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new POMIntroductionWizardPage());
+            //AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new POMIntroductionWizardPage());
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/POMModels/POMWizardLib/AddPOMIntro.md"));
 
             AddPage(Name: "General Details", Title: "General Details", SubTitle: "New Page Objects Model General Details", Page: new POMGeneralDetailsWizardPage());
 
