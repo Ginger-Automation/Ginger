@@ -120,9 +120,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 xSearchNullText.Visibility = Visibility.Visible;
                 xSearchClearBtn.Visibility = Visibility.Collapsed;
                 List<TreeViewItem> pathNodes = new List<TreeViewItem>();
-                if (xTreeViewTree.mlastSelectedTVI!=null)
+                if (xTreeViewTree.MlastSelectedTVI!=null)
                 {
-                    pathNodes = getSelecetdItemPathNodes(xTreeViewTree.mlastSelectedTVI);
+                    pathNodes = getSelecetdItemPathNodes(xTreeViewTree.MlastSelectedTVI);
                 }
                 CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
                 return;

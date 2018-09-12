@@ -44,7 +44,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public Tuple<string, string> TreeNodesFilterByField { get; set; } 
 
         
-        public TreeViewItem mlastSelectedTVI = null;
+        private TreeViewItem mlastSelectedTVI;
+
+        public TreeViewItem  MlastSelectedTVI
+        {
+            get { return mlastSelectedTVI; }
+            set { mlastSelectedTVI = value; }
+
+        }
+
 
         public ItemCollection TreeItemsCollection
         {
