@@ -151,7 +151,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }            
         }
 
-        public List<TreeViewItem> getSelecetdItemPathNodes(TreeViewItem SelectedItem)
+        public static List<TreeViewItem> getSelecetdItemPathNodes(TreeViewItem SelectedItem)
         {
             List<TreeViewItem> pathNodes = new List<TreeViewItem>();
             object ParentItem = getParentItem(SelectedItem);            
