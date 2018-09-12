@@ -164,8 +164,12 @@ namespace Amdocs.Ginger.Repository
 
         public void SaveBackup()
         {
-            if (mBackupDic == null)
-            {            
+            if (DirtyStatus != eDirtyStatus.NoChange) 
+            {
+                CreateBackup();                
+            }
+            else
+            {
                 CreateBackup(true);
             }
         }
@@ -206,18 +210,10 @@ namespace Amdocs.Ginger.Repository
                 {
                     v = this.GetType().GetField(mi.Name).GetValue(this);
                 }
-                
-                
-                
-                //else
-                //{
-                    // TODO: add List<string>
-                //}
-                // Save it
 
                 if (!isLocalBackup)
                 {
-                    mBackupDic.Add(mi.Name, v);                  
+                    mBackupDic.Add(mi.Name, v);
                 }
 
                 if (v is IObservableList)
