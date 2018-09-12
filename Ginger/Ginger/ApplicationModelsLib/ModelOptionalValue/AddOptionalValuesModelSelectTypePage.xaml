@@ -77,33 +77,18 @@
                     </StackPanel>
 
                     <DockPanel Grid.Row="0" Grid.Column="2">
-                        <usercontrols:ucButton x:Name="xBrowseButton" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="OpenFolder" Click="xBrowseButton_Click" VerticalAlignment="Bottom" Margin="0,0,0,-10">
-                            <usercontrols:ucButton.ToolTip>
-                                <GingerCore:ucTextDicResource Text="Browse File"/>
-                            </usercontrols:ucButton.ToolTip>
-                        </usercontrols:ucButton>
-                        <usercontrols:ucButton x:Name="xCreateTemplateExcelButton" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="ExcelFile" Click="xCreateTemplateExcelButton_Click" VerticalAlignment="Bottom" Margin="-10,0,0,-10">
-                            <usercontrols:ucButton.ToolTip>
-                                <GingerCore:ucTextDicResource Text="Create Template"/>
-                            </usercontrols:ucButton.ToolTip>
-                        </usercontrols:ucButton>
+                        <usercontrols:ucButton x:Name="xBrowseButton" ToolTip="Browse File" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="OpenFolder" Click="xBrowseButton_Click" VerticalAlignment="Bottom" Margin="0,0,0,-10" />
+                        <usercontrols:ucButton x:Name="xCreateTemplateExcelButton" ToolTip="Create Template" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="ExcelFile" Click="xCreateTemplateExcelButton_Click" VerticalAlignment="Bottom" Margin="-10,0,0,-10" />
                     </DockPanel>
+
                     <Label Grid.Row="1" Name="xSaveExcelLable" Style="{StaticResource @LabelStyle}"  Content="Please save and close Excel after editing it." VerticalAlignment="Bottom" Margin="0,10,0,0" />
                     <DockPanel Grid.Row="2" Grid.ColumnSpan="3">
                         <StackPanel >
                             <Label Name="xSheetLable"   HorizontalAlignment="Left" Content="Sheet:" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"  />
                             <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"  Margin="5,0,0,0"  VerticalAlignment="Center" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
                         </StackPanel>
-                        <usercontrols:ucButton x:Name="RefreshBtn" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="Refresh" Click="RefreshButton_Click" VerticalAlignment="Bottom" Margin="0,20,0,0">
-                            <usercontrols:ucButton.ToolTip>
-                                <GingerCore:ucTextDicResource Text="Refresh Sheets"/>
-                            </usercontrols:ucButton.ToolTip>
-                        </usercontrols:ucButton>
-                        <usercontrols:ucButton x:Name="xExcelViewDataButton" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="View" Click="xExcelViewDataButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,20,0,0">
-                            <usercontrols:ucButton.ToolTip>
-                                <GingerCore:ucTextDicResource Text="View All Data"/>
-                            </usercontrols:ucButton.ToolTip>
-                        </usercontrols:ucButton>
+                        <usercontrols:ucButton x:Name="RefreshBtn" ToolTip="Refresh Sheets" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="Refresh" Click="RefreshButton_Click" VerticalAlignment="Bottom" Margin="0,20,0,0" />
+                        <usercontrols:ucButton x:Name="xExcelViewDataButton" ToolTip="View All Data" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="View" Click="xExcelViewDataButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,20,0,0" />
                     </DockPanel>
 
                     <DockPanel Grid.Row="3" Grid.ColumnSpan="3">
@@ -111,11 +96,7 @@
                             <Label Name="xSelectRowLable"  Style="{StaticResource @InputFieldLabelStyle}"  Content="Select Row(s) Where:" VerticalAlignment="Center"  />
                             <TextBox x:Name="xSelectRowTextBox" Background="White" Margin="5,0,0,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger'."  Style="{StaticResource @MultiRowsTextBoxStyle}" Text ="" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" IsEnabled="true"/>
                         </StackPanel>
-                        <usercontrols:ucButton x:Name="xExcelViewWhereButton" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageType="Filter" Click="xExcelViewWhereButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,25,0,0">
-                            <usercontrols:ucButton.ToolTip>
-                                <GingerCore:ucTextDicResource Text="View Filtered Data"/>
-                            </usercontrols:ucButton.ToolTip>
-                        </usercontrols:ucButton>
+                        <usercontrols:ucButton x:Name="xExcelViewWhereButton" ToolTip="View Filtered Data" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageType="Filter" Click="xExcelViewWhereButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,25,0,0" />
                     </DockPanel>
 
                     <GridSplitter x:Name="xExcelGridSplitter" Grid.ColumnSpan="3" Grid.Row="4" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource @Skin1_ColorA}" IsEnabled="False" Margin="0,5,0,5" />

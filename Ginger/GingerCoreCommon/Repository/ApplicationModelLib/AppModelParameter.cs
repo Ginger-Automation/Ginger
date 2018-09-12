@@ -128,22 +128,5 @@ namespace Amdocs.Ginger.Repository
         /// Added for backward support- do not use
         /// </summary>
         public string DataType { get; set; }
-
-
-
-    }
-
-    /// <summary>
-    /// This class is used in the Export Process
-    /// </summary>
-    public class AppParameters
-    {     
-        public string ItemName { get; set; }
-
-        public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
-        
-        public string OptionalValuesString { get; set; }
-
-        public string Description { get; set; }
-    }
+    }   
 }

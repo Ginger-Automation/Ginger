@@ -174,7 +174,5 @@ namespace Amdocs.Ginger.Common.Enums
         DataSource,
         PluginPackage,
         PlusSquare,
-        Th,
-        ThLarge
     }
 }

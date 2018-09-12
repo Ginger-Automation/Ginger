@@ -530,12 +530,6 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.PlusSquare:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PlusSquare);
                     break;
-                case eImageType.Th:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThList);
-                    break;
-                case eImageType.ThLarge:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThLarge);
-                    break;
                 #endregion
 
 
