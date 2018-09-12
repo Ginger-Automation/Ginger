@@ -33,6 +33,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerWPF.TreeViewItemsLib
 {
@@ -45,13 +46,15 @@ namespace GingerWPF.TreeViewItemsLib
             if (item is RepositoryItemBase)
             {
                 RepositoryItemBase RI = (RepositoryItemBase)item;
-                if (saveOnlyIfDirty && RI.IsDirty == false) return false;//no need to Save because not Dirty
+                if (saveOnlyIfDirty && RI.DirtyStatus != eDirtyStatus.Modified)
+                {
+                    return false;//no need to Save because not Dirty
+                }
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, RI.ItemName, "item");
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(RI);
                 Reporter.CloseGingerHelper();               
 
-                //refresh node header               
-                mTreeView.Tree.SelectParentItem((ITreeViewItem)this);//to allow catch isDirty again when user will select this item again so we move to parent
+                //refresh node header                               
                 PostSaveTreeItemHandler();
                 return true;
             }
@@ -77,9 +80,9 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override bool ItemIsDirty(object item)
         {
-            if (item is RepositoryItemBase)
+            if (item is RepositoryItemBase && ((RepositoryItemBase)item).DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
             {
-                return ((RepositoryItemBase)item).IsDirty;
+                return true;
             }
 
             return false;
@@ -213,8 +216,7 @@ namespace GingerWPF.TreeViewItemsLib
                     RepositoryItemBase RI = (RepositoryItemBase)node.NodeObject();
                     if (RI != null)
                     {
-                        if ((RI.DirtyStatus == eDirtyStatus.NoTracked && RI.IsDirty) 
-                                || (RI.DirtyStatus == eDirtyStatus.Modified))
+                        if (RI.DirtyStatus == eDirtyStatus.Modified)
                         {
                             // Try to save only items with file name = standalone xml, avoid items like env app                            
                             if (!string.IsNullOrEmpty(RI.ContainingFolder))
@@ -232,10 +234,10 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Nothing found to Save.");               
             }
-            else
-            {
-                mTreeView.Tree.SelectItem((ITreeViewItem)this);//in case the event was called from diffrent class                                                             
-            }
+            //else
+            //{
+            //    mTreeView.Tree.SelectItem((ITreeViewItem)this);//in case the event was called from diffrent class                                                             
+            //}
         }
         
         public override void RefreshTreeFolder(Type itemType, string path)

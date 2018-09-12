@@ -125,7 +125,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (item is RepositoryItem)
             {
                 RepositoryItem RI = (RepositoryItem)item;
-                if (saveOnlyIfDirty && RI.IsDirty == false) return false;//no need to Save because not Dirty
+                if (saveOnlyIfDirty && RI.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified) return false;//no need to Save because not Dirty
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, RI.GetNameForFileName(), "item");
                 RI.Save();                
                 Reporter.CloseGingerHelper();
@@ -158,9 +158,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool ItemIsDirty(object item)
         {
-            if (item is RepositoryItem)
+            if (item is RepositoryItem && ((RepositoryItem)item).DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
             {
-                return ((RepositoryItem)item).IsDirty;
+                return true;
             }
 
             return false;

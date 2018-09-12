@@ -163,7 +163,7 @@ namespace Ginger
 
         public static ITreeViewItem CurrentSelectedTreeItem { get; set; }
 
-        public static ObservableList<RepositoryItemBase> ItemstoSave = new ObservableList<RepositoryItemBase>();
+        //public static ObservableList<RepositoryItemBase> ItemstoSave = new ObservableList<RepositoryItemBase>();
 
         public static string RecoverFolderPath = null;
         public static IEnumerable<object> CurrentFolderItem { get; set; }
@@ -1064,60 +1064,41 @@ namespace Ginger
             App.AutomateTabGingerRunner.UpdateApplicationAgents();
         }
 
-        public static void AddItemToSaveAll(RepositoryItemBase itemToSave =null)
-        {
-            if (itemToSave == null)
-                if (CurrentRepositoryItem != null && CurrentSelectedTreeItem != null)
-                    itemToSave = App.CurrentRepositoryItem;
+        //public static void AddItemToSaveAll(RepositoryItemBase itemToSave =null)
+        //{
+        //    if (itemToSave == null)
+        //        if (CurrentRepositoryItem != null && CurrentSelectedTreeItem != null)
+        //            itemToSave = App.CurrentRepositoryItem;
 
-            if (itemToSave != null)
-                try
-                {
-                    //if (itemToSave is DataSourceTable)
-                    //{
-                    //    DataSourceBase DS = ((DataSourceTableTreeItem)CurrentSelectedTreeItem).DSDetails;
-                    //    if (DS.DSC == null)
-                    //    {
-                    //        if (DS.FilePath.StartsWith("~"))
-                    //        {
-                    //            DS.FileFullPath = DS.FilePath.Replace("~", "");
-                    //            DS.FileFullPath = App.UserProfile.Solution.Folder + DS.FileFullPath;
-                    //        }
-                    //        DS.Init(DS.FileFullPath);
-                    //    }
-                    //    itemToSave = DS;                                 
-                    //}
-                    //else if (itemToSave is EnvApplication)
-                    //{
-                    //    itemToSave = ((EnvApplicationTreeItem)CurrentSelectedTreeItem).ProjEnvironment; //adding the Env parent if not in list
-                    //}
+        //    if (itemToSave != null)
+        //        try
+        //        {
+        //            if (App.ItemstoSave.Where(x => x.Guid == itemToSave.Guid).FirstOrDefault() == null)
+        //            {
+        //                BackupAndSaveItem(itemToSave);
+        //            }
+        //            else
+        //            {
+        //                var itemToRemove = App.ItemstoSave.SingleOrDefault(x => x.Guid == itemToSave.Guid);
+        //                if (itemToRemove != null)
+        //                {
+        //                    App.ItemstoSave.Remove(itemToRemove);
+        //                    BackupAndSaveItem(itemToSave);
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Reporter.ToLog(eLogLevel.ERROR, "Failed to add the item '" + CurrentRepositoryItem.FileName + "' to Save All list after it was selected on the tree", ex);
+        //        }
+        //}
 
-                    if (App.ItemstoSave.Where(x => x.Guid == itemToSave.Guid).FirstOrDefault() == null)
-                    {
-                        BackupAndSaveItem(itemToSave);
-                    }
-                    else
-                    {
-                        var itemToRemove = App.ItemstoSave.SingleOrDefault(x => x.Guid == itemToSave.Guid);
-                        if (itemToRemove != null)
-                        {
-                            App.ItemstoSave.Remove(itemToRemove);
-                            BackupAndSaveItem(itemToSave);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to add the item '" + CurrentRepositoryItem.FileName + "' to Save All list after it was selected on the tree", ex);
-                }
-        }
-
-        private static void BackupAndSaveItem(RepositoryItemBase itemToSave)
-        {
-            if (itemToSave.IsDirty == false)
-                itemToSave.SaveBackup();
-            App.ItemstoSave.Add(itemToSave);
-        }
+        //private static void BackupAndSaveItem(RepositoryItemBase itemToSave)
+        //{
+        //    if (itemToSave.IsDirty == false)
+        //        itemToSave.SaveBackup();
+        //    App.ItemstoSave.Add(itemToSave);
+        //}
 
         private static void BetaFeatureChanged(object sender, PropertyChangedEventArgs e)
         {

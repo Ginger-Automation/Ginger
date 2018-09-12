@@ -499,8 +499,8 @@ namespace Ginger.Variables
                             {
                                 bool changedwasDone = false;
                                 VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name,ref changedwasDone);
-                                if (changedwasDone == true && bfl.IsDirty == false)
-                                    bfl.SaveBackup();
+                                //if (changedwasDone == true && bfl.IsDirty == false)
+                                //    bfl.SaveBackup();
                             }
                     }
                     break;
@@ -513,8 +513,8 @@ namespace Ginger.Variables
                         {
                             bool changedwasDone = false;
                             VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
-                            if (changedwasDone == true && bf.IsDirty == false)
-                                bf.SaveBackup();
+                            //if (changedwasDone == true && bf.IsDirty == false)
+                            //    bf.SaveBackup();
                         }
                     break;
 

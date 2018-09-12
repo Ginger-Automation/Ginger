@@ -114,15 +114,16 @@ namespace Ginger.SolutionWindows
                 foreach (TargetApplication bfApp in bf.TargetApplications)
                 {
                     if (bfApp.AppName == app.NameBeforeEdit)
-                    {
-                        App.AddItemToSaveAll(bf);
+                    {                        
                         bfApp.AppName = app.AppName;
 
                         //update the bf activities
                         foreach (Activity activity in bf.Activities)
                         {
                             if (activity.TargetApplication == app.NameBeforeEdit)
+                            {
                                 activity.TargetApplication = app.AppName;
+                            }
                         }
 
                         numOfAfectedBFs++;

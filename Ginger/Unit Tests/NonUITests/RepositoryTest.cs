@@ -161,11 +161,7 @@ namespace UnitTests.NonUITests
             // Assert
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
             BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), TempFilepath);
-            //BF2.isDirty();
-
-            Assert.IsFalse(BF2.IsDirty);
-
-
+            Assert.IsTrue(BF2.DirtyStatus != Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified);
         }
         
         [TestMethod]
@@ -320,12 +316,9 @@ namespace UnitTests.NonUITests
             // Assert
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
             BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), TempFilepath);
-            BF2.SaveBackup();//dirty now just indicate if backup exist
+            BF2.StartDirtyTracking();
             BF2.Description = "aaa";
-
-            Assert.IsTrue(BF2.IsDirty);
-
-
+            Assert.IsTrue(BF2.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified);
         }
 
         [TestMethod]
@@ -344,7 +337,7 @@ namespace UnitTests.NonUITests
             ARC1.BusinessFlowsRunList.Add(BFR);
             RSC.GingerRunners.Add(ARC1);
 
-            RSC.SaveToFile(TempFilepath);
+            RSC.RepositorySerializer.SaveToFile(RSC, TempFilepath);
 
             //Assert
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
@@ -699,7 +692,7 @@ namespace UnitTests.NonUITests
             //Act            
             string FileName = TestResources.GetTempFile("RunSetConfig1.xml");
 
-            RSC.SaveToFile(FileName);
+            RSC.RepositorySerializer.SaveToFile(RSC, FileName);
 
             //
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();

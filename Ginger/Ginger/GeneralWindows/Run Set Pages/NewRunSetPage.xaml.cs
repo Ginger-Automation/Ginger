@@ -1005,11 +1005,11 @@ namespace Ginger.Run
                     xRunsetPageGrid.Visibility = Visibility.Collapsed;
 
                     runSetConfig.SaveBackup();
+                    runSetConfig.StartDirtyTracking();
 
                     mRunSetConfig = runSetConfig;
                     App.RunsetExecutor.RunSetConfig = RunSetConfig;
                     
-
                     //Init Run Set Details Section
                     InitRunSetInfoSection();
                 });

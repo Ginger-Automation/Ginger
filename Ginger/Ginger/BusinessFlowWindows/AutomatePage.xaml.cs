@@ -631,16 +631,14 @@ namespace Ginger
             if (App.BusinessFlow.Activities.Where(x => x.AddDynamicly == true).FirstOrDefault() != null)
             {
                 if (Reporter.ToUser(eUserMsgKeys.WarnOnDynamicActivities) == MessageBoxResult.No)
+                {
                     return;
+                }
             }
 
             Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.BusinessFlow.Name,
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(App.BusinessFlow);
-
-            App.AddItemToSaveAll(App.BusinessFlow);
-
             Reporter.CloseGingerHelper();
         }
 

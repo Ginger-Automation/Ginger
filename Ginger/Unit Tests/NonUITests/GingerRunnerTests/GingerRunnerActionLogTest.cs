@@ -294,7 +294,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             businessFlowWrite.Activities.Add(activity);
 
             //Act            
-            businessFlowWrite.SaveToFile(fileName);
+            businessFlowWrite.RepositorySerializer.SaveToFile(businessFlowWrite, fileName);
             BusinessFlow businessFlowRead = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), fileName);
             ActDummy actDummyRead = (ActDummy)businessFlowRead.Activities[0].Acts[0];
 
