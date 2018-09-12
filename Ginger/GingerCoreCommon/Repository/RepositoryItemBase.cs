@@ -571,7 +571,7 @@ namespace Amdocs.Ginger.Repository
 
                 // we drill down to ObservableList
                 if (typeof(IObservableList).IsAssignableFrom(PI.FieldType))
-                {
+                {                    
                     IObservableList obj = (IObservableList)PI.GetValue(item);
                     if (obj == null) return;
                     List<object> items = ((IObservableList)obj).ListItems;
@@ -980,11 +980,11 @@ namespace Amdocs.Ginger.Repository
         #endregion Dirty
 
 
-        public RepositoryItemBase CreateInstance(bool originFromShredRepo = false)
+        public RepositoryItemBase CreateInstance(bool originFromSharedRepository = false)
         {
             RepositoryItemBase copiedItem = (RepositoryItemBase)this.CreateCopy();
             copiedItem.ParentGuid = this.Guid;
-            if (originFromShredRepo)
+            if (originFromSharedRepository) 
             {
                 copiedItem.IsSharedRepositoryInstance = true;
                 copiedItem.ExternalID = this.ExternalID;
