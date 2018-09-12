@@ -182,7 +182,9 @@ namespace Amdocs.Ginger.Common
                 {
                     string prefix = localNamespace.Key;
                     if (string.IsNullOrEmpty(prefix))
+                    {
                         prefix = "DEFAULT";
+                    }
 
                     result.AddNamespace(prefix, localNamespace.Value);
                 }
@@ -300,7 +302,7 @@ namespace Amdocs.Ginger.Common
 
 
 
-            string regex = @"^\/([a-zA-Z])*:([a-zA-Z])*(\[(\d)*\]|\/)";
+             const string regex = @"^\/([a-zA-Z])*:([a-zA-Z])*(\[(\d)*\]|\/)";
             if (GetXmlNode().NodeType.ToString().ToUpper() == "TEXT")
             {
                 string removeme = Regex.Match(xpath, @"text\[(\d|\d\d|\d\d\d)\]$").Value;
@@ -346,18 +348,24 @@ namespace Amdocs.Ginger.Common
         private string GetRelativeXpath()
         {
             if (ParentNode == null)
+            {
                 return XN.Name;
+            }
             if (XN.NodeType == XmlNodeType.Document)
                 return string.Empty;
 
             int i = 1;
             foreach (XmlNode node in ParentNode.GetXmlNode().ChildNodes)
             {
-                if (node.Name != XN.Name) continue;
+                if (node.Name != XN.Name)
+                {
+                    continue;
+                }
 
                 if (node == this.XN)
+                {
                     break;
-
+                }
                 i++;
             }
 
@@ -368,8 +376,9 @@ namespace Amdocs.Ginger.Common
         {
             List<XMLDocExtended> childNodesList = this.GetChildNodes();
             if (childNodesList.Count == 0)
+            {
                 return;
-
+            }
             if (childNodesList.Count > 1)
             {
                 for (int i = 0; i < childNodesList.Count; i++)
@@ -388,7 +397,9 @@ namespace Amdocs.Ginger.Common
             }
 
             foreach (XMLDocExtended child in childNodesList)
+            {
                 child.RemoveDuplicatesNodes();
+            }
         }
 
         #endregion
