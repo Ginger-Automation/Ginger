@@ -203,7 +203,7 @@ namespace Amdocs.Ginger.Repository
 
 
                     RIAttr rIAttr = new RIAttr() { Name = mi.Name, ttt = tt, value = value, attrIS = isSerialziedAttr };
-                    if (value is IObservableList || value is List<string>) 
+                    if (value is IObservableList || value is List<string> || value is RepositoryItemBase) 
                     {
                         
                         ListAttrs.Add(rIAttr);
