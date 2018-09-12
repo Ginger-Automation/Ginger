@@ -346,7 +346,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             mAddModelOptionalValuesWizard.ProcessStarted();
             mAddModelOptionalValuesWizard.ImportOptionalValues.ExcelFileName = xPathTextBox.Text;
-            List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets();
+            List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets(true);
             GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);            
             mAddModelOptionalValuesWizard.ProcessEnded();
         }
@@ -376,7 +376,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             
             mAddModelOptionalValuesWizard.ImportOptionalValues.ExcelFileName = xPathTextBox.Text;
-            List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets();
+            List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets(true);
             GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
             mAddModelOptionalValuesWizard.ProcessEnded();
         }       
@@ -450,7 +450,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets();
+            List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets(true);
             GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
         }
     }

@@ -161,7 +161,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             Tuple<string, string> tuple = new Tuple<string, string>(XDN.LocalName, XDN.XPath);
             string Value = XDN.Value;
-            
+
             if (OptionalValuesPerParameterDict.ContainsKey(tuple))
             {
                 OptionalValuesPerParameterDict[tuple].Add(Value);
@@ -182,9 +182,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     OptionalValuesPerParameterDict[attributetuple].Add(attributeValue);
                 }
                 else
-               
+
                     OptionalValuesPerParameterDict.Add(attributetuple, new List<string> { attributeValue });
-                
+
 
             }
         }
@@ -698,24 +698,35 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <summary>
         /// This method is used to get the sheets list
         /// </summary>
+        /// <param name="validateSheet"></param>
         /// <returns></returns>
-        public List<string> GetSheets()
+        public List<string> GetSheets(bool validateSheet)
         {
             List<string> lst = new List<string>();
-            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(ExcelFileName, false))
+            if (!string.IsNullOrEmpty(ExcelFileName))
             {
-                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-                IEnumerable<WorksheetPart> worksheetPart = workbookPart.WorksheetParts;
-                foreach (var item in workbookPart.Workbook.Descendants<Sheet>())
+                using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(ExcelFileName, false))
                 {
-                    string sheetName = item.Name;
-                    DataTable dt = GetExcelSheetDataBySheetName(sheetName);
-                    bool isValid = CheckIsSheetDataValid(dt);
-                    if (isValid)
+                    WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+                    IEnumerable<WorksheetPart> worksheetPart = workbookPart.WorksheetParts;
+                    foreach (var item in workbookPart.Workbook.Descendants<Sheet>())
                     {
-                        lst.Add(sheetName); 
+                        string sheetName = item.Name;
+                        DataTable dt = GetExcelSheetDataBySheetName(sheetName);
+                        if (validateSheet)
+                        {
+                            bool isValid = CheckIsSheetDataValid(dt);
+                            if (isValid)
+                            {
+                                lst.Add(sheetName);
+                            } 
+                        }
+                        else
+                        {
+                            lst.Add(sheetName);
+                        }
                     }
-                }
+                } 
             }
             return lst;
         }
@@ -1102,8 +1113,90 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 par.OptionalValuesList = prms.OptionalValuesList;
                 par.OptionalValuesString = prms.OptionalValuesString;
                 par.Description = prms.Description;
-                parameters.Add(par); 
+                parameters.Add(par);
             }
+        }
+
+        /// <summary>
+        /// This method is used to get the excel sheet data
+        /// </summary>
+        /// <returns></returns>
+        public DataSet GetExcelAllSheetData(string sheetName)
+        {
+            DataSet ds = new DataSet();
+            if (!string.IsNullOrEmpty(ExcelFileName))
+            {
+                using (SpreadsheetDocument spreadSheetDocument = SpreadsheetDocument.Open(ExcelFileName, false))
+                {
+                    try
+                    {
+                        WorkbookPart workbookPart = spreadSheetDocument.WorkbookPart;
+                        foreach (Sheet sheet in workbookPart.Workbook.Descendants<Sheet>().Where(s => s.Name == sheetName))
+                        {
+                            if (sheet != null)
+                            {
+                                DataTable dt = new DataTable(sheet.Name);
+                                string relId = sheet.Id;
+                                WorksheetPart worksheetPart = (WorksheetPart)spreadSheetDocument.WorkbookPart.GetPartById(relId);
+                                if (worksheetPart != null)
+                                {
+                                    SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+                                    if (sheetData != null)
+                                    {
+                                        IEnumerable<Row> rows = sheetData.Descendants<Row>();
+                                        if (rows != null && rows.Count() > 0)
+                                        {
+                                            foreach (Cell cell in rows.ElementAt(0))
+                                            {
+                                                dt.Columns.Add(GetCellValue(spreadSheetDocument, cell));
+                                            }
+
+                                            foreach (Row row in rows)
+                                            {
+                                                DataRow tempRow = dt.NewRow();
+                                                int i = 0;
+                                                int preColIndx = 0;
+                                                foreach (Cell cel in row.Descendants<Cell>())
+                                                {
+                                                    int curColIndx = GetColumnIndexFromColumnName(cel.CellReference);
+                                                    if ((preColIndx + 1) < curColIndx)
+                                                    {
+                                                        i++;
+                                                    }
+                                                    tempRow[i] = GetCellValue(spreadSheetDocument, cel);
+                                                    preColIndx = curColIndx;
+                                                    i++;
+                                                }
+                                                dt.Rows.Add(tempRow);
+                                            }
+                                            dt.Rows.RemoveAt(0);
+                                            ds.Tables.Add(dt);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        switch (ex.Message)
+                        {
+                            case "Syntax error in FROM clause.":
+                                break;
+                            case "No value given for one or more required parameters.":
+                                if (ShowMessage)
+                                    Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                                break;
+                            default:
+                                if (ShowMessage)
+                                    System.Windows.MessageBox.Show(ex.Message);
+                                break;
+                        }
+                        return null;
+                    }
+                } 
+            }
+            return ds;
         }
 
         #endregion

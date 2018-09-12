@@ -19,22 +19,26 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.APIModels;
+using Ginger;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
+using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 
 namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 {
@@ -146,7 +150,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             ModelParametersGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteParams_Clicked));
             ModelParametersGrid.SetbtnClearAllHandler(new RoutedEventHandler(ClearAllParams_Clicked));
             ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Optional Values For Parameters", new RoutedEventHandler(ExportOptionalValuesForParameters));
+            ModelParametersGrid.AddToolbarTool(eImageType.DataSource, "Export Parameters to DataSource", new RoutedEventHandler(ExportParametersToDataSource));
         }
+
         private void ImportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {            
             WizardWindow.ShowWizard(new AddModelOptionalValuesWizard((ApplicationModelBase)mApplicationModel));
@@ -155,14 +161,92 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void ExportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {
-            ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-            List<AppParameters> parameters = new List<AppParameters>();
-            foreach (var prms in mApplicationModel.AppModelParameters)
+            try
             {
-                im.AddNewParameterToList(parameters, prms);
+                ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                List<AppParameters> parameters = new List<AppParameters>();
+                foreach (var prms in mApplicationModel.AppModelParameters)
+                {
+                    im.AddNewParameterToList(parameters, prms);
+                }
+                string filePath = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mApplicationModel.Name));
+                Process.Start(filePath);
             }
-            string filePath = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mApplicationModel.Name));
-            Process.Start(filePath);
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to Export the Parameters To DataSource
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExportParametersToDataSource(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>());
+                SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
+                List<object> selectedRunSet = mDataSourceSelectionPage.ShowAsWindow();
+                if (selectedRunSet != null && selectedRunSet.Count > 0)
+                {
+                    //AccessDataSource mDSDetails = new AccessDataSource();
+                    //mDSDetails.FileFullPath = Path.Combine(App.UserProfile.Solution.Folder, Path.Combine("DataSources", mAAMB.Name + ".mdb"));
+
+                    //if (!Directory.Exists(Path.GetDirectoryName(mDSDetails.FileFullPath)))
+                    //{ Reporter.ToUser(eUserMsgKeys.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); return; }
+
+                    //mDSDetails.FilePath = mDSDetails.FileFullPath;
+
+                    //if (File.Exists(mDSDetails.FileFullPath) == false)
+                    //{
+                    //    byte[] obj = Ginger.Properties.Resources.GingerDataSource;
+                    //    System.IO.FileStream fs = new System.IO.FileStream(mDSDetails.FileFullPath, System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                    //    fs.Write(obj, 0, obj.Count());
+                    //    fs.Close();
+                    //    fs.Dispose();
+
+                    //    if (File.Exists(mDSDetails.FileFullPath))
+                    //    {
+
+                    //    }
+                    //}
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to get the columnList for exporting the parameters to datasource
+        /// </summary>
+        /// <returns></returns>
+        private string GetColumnNameListForTableCreation()
+        {
+            StringBuilder colList = new StringBuilder();
+            try
+            {
+                string PARAMETER_NAME = "Parameter Name";
+                string DESCRIPTION = "Description";
+
+                int max = mApplicationModel.AppModelParameters.Max(p => p.OptionalValuesList.Count);
+                colList.Append("[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text,");
+                colList.Append(string.Format("[{0}] Text,", PARAMETER_NAME));
+                colList.Append(string.Format("[{0}] Text,", DESCRIPTION));
+                for (int i = 1; i <= max; i++)
+                {
+                    colList.Append(string.Format("[Value {0}] Text,", i));
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+            return colList.ToString();
         }
 
         private void UploadToGlobalParam(object sender, RoutedEventArgs e)
@@ -198,7 +282,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     AddGlobalParametertoAPIGlobalParameterList(APIGlobalParamList, GAMP);
                 }
         }
-
+        
         private void DeleteParams_Clicked(object sender, RoutedEventArgs e)
         {
             DeleteParams(false);
