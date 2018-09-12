@@ -161,25 +161,26 @@ namespace GingerWPFUnitTest.POMs
         public EnvironmentsPOM GotoEnvironments()
         {
             Environments = null;
-            Execute(() => {                
-                ClickConfigurationsRibbon();
+            Execute(() => {
+                ClickResourcesRibbon();
                 Frame f = (Frame)mMainWindow.FindName("MainFrame");
-                TwoLevelMenuPage configurationsPage = (TwoLevelMenuPage)f.Content;
+                TwoLevelMenuPage resourcesPage = (TwoLevelMenuPage)f.Content;
 
-                ListView lv = (ListView)configurationsPage.FindName("xMainNavigationListView");
-                foreach(ListViewItem lvi in lv.Items)
+                ListView lv = (ListView)resourcesPage.FindName("xMainNavigationListView");                
+                foreach (TopMenuItem topMenuItem in lv.Items)
                 {
-                    if (AutomationProperties.GetAutomationId(lvi) == "Environemnts_AID")
+                    if (topMenuItem.AutomationID == "Environemnts_AID")
                     {
-                        lv.SelectedItem = lvi;
+                        lv.SelectedItem = topMenuItem;
                         SleepWithDoEvents(100);
-                        Frame f1 = (Frame)FindElementByName(configurationsPage, "xSelectedItemFrame");
+                        Frame f1 = (Frame)FindElementByName(resourcesPage, "xSelectedItemFrame");
                         SingleItemTreeViewExplorerPage itemExplorerPage = (SingleItemTreeViewExplorerPage)f1.Content;
                         while (!itemExplorerPage.IsVisible)
                         {
                             SleepWithDoEvents(100);
                         }
-                        Environments = new EnvironmentsPOM(itemExplorerPage);                        
+                        Environments = new EnvironmentsPOM(itemExplorerPage);
+                        break;
                     }
                 }
             });
