@@ -189,7 +189,7 @@ namespace GingerCore.Actions
                         newAct.ElementAction = ActUIElement.eElementAction.GetTextLength;
                         break;
                     default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ActionType.ToString().TrimStart("TextBox:".ToCharArray()).ToString());
+                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.TextBoxAction.ToString());
                         break;
                 }
             }
