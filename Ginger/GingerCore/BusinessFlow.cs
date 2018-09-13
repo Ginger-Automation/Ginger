@@ -254,22 +254,22 @@ namespace GingerCore
         //@ Run info 
 
 
-        // private ObservableList<Activity> mActivities;
+        private ObservableList<Activity> mActivities;
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Activity> Activities;
-        //{
-        //    get
-        //    {
-        //        if (mActivities.LazyLoad)
-        //        {
-        //            var x = mActivities.ListItems;
-        //        }
-        //        return mActivities;
-        //    }
-        //    set { mActivities = value; }
-        //}
-        //DO NOT USE  { get; set; } it will break repo serializer - Fixed with New
+        public ObservableList<Activity> Activities
+        {
+            get
+            {
+                if (mActivities == null) mActivities = new ObservableList<Activity>();
+                if (mActivities.LazyLoad)
+                {
+                    mActivities.GetItemsInfo();
+                }
+                return mActivities;
+            }
+            set { mActivities = value; }
+        }        
 
         [IsSerializedForLocalRepository]
         public new string ExternalID { get; set; } // will use it for QC ID or other external ID

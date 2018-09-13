@@ -313,7 +313,7 @@ namespace Amdocs.Ginger.Common
 
         bool loadingata = false;        
 
-        private void GetItemsInfo()
+        public void GetItemsInfo()
         {
             if (!mLazyLoad) return;
             if (loadingata) // //since several functions can call in parallel we might enter when status is already loadingdata, so we wait for it to complete, then return

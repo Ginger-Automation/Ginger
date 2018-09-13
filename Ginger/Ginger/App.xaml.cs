@@ -494,7 +494,7 @@ namespace Ginger
             //list.Add("GingerCore.BusinessFlow", typeof(BusinessFlow));
 
             // Put back for Lazy load of BF.Acitvities
-            // NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
 
             
             // Verify the old name used in XML
