@@ -35,7 +35,7 @@ using GingerTestHelper;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
 
-namespace UnitTests.NonUITests.GingerRunnerFlowControlTest
+namespace UnitTests.NonUITests.GingerRunnerTests
 {
     [TestClass]
     [Level1]
@@ -48,10 +48,7 @@ namespace UnitTests.NonUITests.GingerRunnerFlowControlTest
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-
-
             // Create a simple BF with simple Actions
-
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Flow Control";
