@@ -380,7 +380,18 @@ namespace Amdocs.Ginger.Common
                 return Items.Cast<object>().ToList();
             }
         }
-      
+
+        public ObservableList<NewType> ListItemsCast<NewType>()
+        {
+            ObservableList<NewType> list = new ObservableList<NewType>();
+            var v = Items.Cast<NewType>().ToList();            
+            foreach (NewType item in v)
+            {
+                list.Add(item);
+            }
+            return list;           
+        }
+
 
     } 
 }
