@@ -1010,11 +1010,9 @@ namespace Amdocs.Ginger.Repository
             NewRepositorySerializer repoSer = new NewRepositorySerializer(); 
 
             string sourceObjXml = repoSer.SerializeToString(sourceObj);
-            NewRepositorySerializer RS = new NewRepositorySerializer();
-            //TODO: FIXME !!!
-            throw new NotImplementedException();
- 
-            //RS.DeserializeFromTextWithTargetObj(sourceObj.GetType(), sourceObjXml, targetObj);
+            NewRepositorySerializer RS = new NewRepositorySerializer();            
+
+            RS.DeserializeFromTextWithTargetObj(sourceObj.GetType(), sourceObjXml, targetObj);
          }
 
         public virtual void UpdateItemFieldForReposiotryUse()
