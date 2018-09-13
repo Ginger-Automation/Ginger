@@ -30,6 +30,10 @@ using System.Collections.Generic;
 using System;
 using System.Text;
 using Ginger.SolutionWindows.TreeViewItems;
+using Amdocs.Ginger.ValidationRules;
+using System.Windows.Media;
+using System.Windows.Data;
+using GingerWPF;
 
 namespace Ginger.DataSource
 {
@@ -38,10 +42,21 @@ namespace Ginger.DataSource
     /// </summary>
     public partial class ImportDataSourceFromExcelFile : Page
     {
+        public DataSourceBase DSDetails { get; set; }
         ImportOptionalValuesForParameters impParams;
         GenericWindow _pageGenericWin = null;
         DataSet ExcelImportData = null;
-        
+
+        /// <summary>
+        /// Gets sets the File path
+        /// </summary>
+        public string Path { get; set; }
+
+        /// <summary>
+        /// Gets sets the SheetName
+        /// </summary>
+        public string SheetName { get; set; }
+
         /// <summary>
         /// Constrtuctor for ImportDataSourceFromExcelFile class
         /// </summary>
@@ -50,6 +65,15 @@ namespace Ginger.DataSource
             InitializeComponent();
             impParams = new ImportOptionalValuesForParameters();
             ShowRelevantPanel();
+
+            xSheetNameComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
+
+            xPathTextBox.BindControl(this, nameof(Path));
+            xPathTextBox.AddValidationRule(new EmptyValidationRule());
+
+            xSheetNameComboBox.BindControl(this, nameof(SheetName));
+            xSheetNameComboBox.AddValidationRule(new EmptyValidationRule());
+            xPathTextBox.Focus();
         }
 
         /// <summary>
@@ -84,7 +108,20 @@ namespace Ginger.DataSource
         {
             try
             {
-                _pageGenericWin.Close();
+                bool errorsFound = false;
+                ValidationDetails.Instance.SearchValidationsRecursive(this, ref errorsFound);
+                if (!errorsFound)
+                {
+                    if (ExcelImportData == null || ExcelImportData.Tables.Count <= 0)
+                    {
+                        ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked));
+                    }
+                    string cols = GetColumnNameListForTableCreation(ExcelImportData.Tables[0]);
+                    string fileName = CreateTale(ExcelImportData.Tables[0].TableName, cols);
+                    ((AccessDataSource)(DSDetails)).Init(fileName);
+                    ((AccessDataSource)(DSDetails)).SaveTable(ExcelImportData.Tables[0]);
+                    _pageGenericWin.Close();
+                }
             }
             catch (System.Exception ex)
             {
@@ -151,8 +188,8 @@ namespace Ginger.DataSource
             {
                 if (xSheetNameComboBox.SelectedValue != null)
                 {
-                    impParams.ExcelSheetName = xSheetNameComboBox.SelectedValue.ToString();
-                    if (!string.IsNullOrEmpty(xSheetNameComboBox.SelectedValue.ToString()))
+                    impParams.ExcelSheetName = SheetName;
+                    if (!string.IsNullOrEmpty(SheetName))
                     {
                         xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
                         xExcelViewDataButton.Visibility = Visibility.Visible;
@@ -194,7 +231,7 @@ namespace Ginger.DataSource
         {
             try
             {
-                ExcelImportData = impParams.GetExcelAllSheetData(Convert.ToString(xSheetNameComboBox.Text));
+                ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked));
                 if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
                 {
                     if (ExcelImportData.Tables.Count == 1)
@@ -258,5 +295,34 @@ namespace Ginger.DataSource
             return cols;
         }
 
+        /// <summary>
+        /// This method is used to create the table
+        /// </summary>
+        /// <param name="query"></param>
+        private string CreateTale(string name, string query)
+        {
+            string fileName = string.Empty;
+            try
+            {
+                DataSourceTable dsTableDetails = new DataSourceTable();
+                if (dsTableDetails != null)
+                {
+                    dsTableDetails.Name = name;
+                    dsTableDetails.DSC = DSDetails.DSC;
+                    DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
+                    DSTTI.DSTableDetails = dsTableDetails;
+                    DSTTI.DSDetails = DSDetails;
+                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, query);
+                    DSDetails.DSTableList.Add(dsTableDetails);
+
+                    fileName = DSDetails.FileFullPath;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+            return fileName;
+        }
     }
 }

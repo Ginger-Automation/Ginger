@@ -1121,7 +1121,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// This method is used to get the excel sheet data
         /// </summary>
         /// <returns></returns>
-        public DataSet GetExcelAllSheetData(string sheetName)
+        public DataSet GetExcelAllSheetData(string sheetName, bool isFirstRowHeader)
         {
             DataSet ds = new DataSet();
             if (!string.IsNullOrEmpty(ExcelFileName))
@@ -1146,18 +1146,33 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                         IEnumerable<Row> rows = sheetData.Descendants<Row>();
                                         if (rows != null && rows.Count() > 0)
                                         {
+                                            int i = 1;
                                             foreach (Cell cell in rows.ElementAt(0))
                                             {
-                                                dt.Columns.Add(GetCellValue(spreadSheetDocument, cell));
+                                                if (isFirstRowHeader)
+                                                {
+                                                    dt.Columns.Add(GetCellValue(spreadSheetDocument, cell)); 
+                                                }
+                                                else
+                                                {
+                                                    dt.Columns.Add(string.Format("Field_{0}", i));
+                                                }
+                                                i++;
                                             }
-
+                                            
                                             foreach (Row row in rows)
                                             {
                                                 DataRow tempRow = dt.NewRow();
-                                                int i = 0;
+                                                i = 0;
                                                 int preColIndx = 0;
                                                 foreach (Cell cel in row.Descendants<Cell>())
                                                 {
+                                                    if(dt.Columns.Count <= i)
+                                                    {
+                                                        int cnt = dt.Columns.Count + 1;
+                                                        dt.Columns.Add(string.Format("Field_{0}", cnt));
+                                                    }
+
                                                     int curColIndx = GetColumnIndexFromColumnName(cel.CellReference);
                                                     if ((preColIndx + 1) < curColIndx)
                                                     {
@@ -1169,7 +1184,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                                 }
                                                 dt.Rows.Add(tempRow);
                                             }
-                                            dt.Rows.RemoveAt(0);
+                                            if (isFirstRowHeader) dt.Rows.RemoveAt(0);
                                             ds.Tables.Add(dt);
                                         }
                                     }

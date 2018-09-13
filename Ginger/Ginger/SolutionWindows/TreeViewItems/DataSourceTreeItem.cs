@@ -122,8 +122,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             TreeViewUtils.AddSubMenuItem(importMenu, "Add New Customized Table", AddNewCustomizedTable, null, "@Add_16x16.png");
             TreeViewUtils.AddSubMenuItem(importMenu, "Add New Key Value Table", AddNewKeyValueTable, null, "@Add_16x16.png");
-            TreeViewUtils.AddSubMenuItem(importMenu, "Add New Table from Excel", AddNewTableFromExcel, null, eImageType.ExcelFile);
-
+            
             TreeViewUtils.AddMenuItem(mContextMenu, "Commit All", CommitAll,null, "@Commit_16x16.png");
             TV.AddToolbarTool("@Commit_16x16.png", "Commit All", new RoutedEventHandler(CommitAll));
 
@@ -135,6 +134,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
             TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
+
+            TreeViewUtils.AddMenuItem(mContextMenu, "Import from Excel", AddNewTableFromExcel, null, eImageType.ExcelFile);
 
             AddSourceControlOptions(mContextMenu);
         }
@@ -149,58 +150,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 ImportDataSourceFromExcelFile im = new ImportDataSourceFromExcelFile();
+                im.DSDetails = DSDetails;
                 im.ShowAsWindow(eWindowShowStyle.Dialog);
-                //System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-                //dlg.Multiselect = false;
-                //dlg.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
-                //System.Windows.Forms.DialogResult result = dlg.ShowDialog();
-                //if (result == System.Windows.Forms.DialogResult.OK)
-                //{
-                //    ImportOptionalValuesForParameters impval = new ImportOptionalValuesForParameters();
-                //    impval.ExcelFileName = dlg.FileName;
-                //    DataSet ds = impval.GetExcelAllSheetData();
-                //    if (ds != null && ds.Tables.Count > 0)
-                //    {
-                //        foreach (DataTable dt in ds.Tables)
-                //        {
-                //            string cols = GetColumnNameListForTableCreation(dt);
-                //            string fileName = CreateTale(dt.TableName, cols);
-                //            ((AccessDataSource)(this.DSDetails)).Init(fileName);
-                //            ((AccessDataSource)(this.DSDetails)).SaveTable(dt);
-                //        }
-                //    }
-                //    RefreshTreeItems();
-                //}                
+                RefreshTreeItems();
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
-        }
-
-        /// <summary>
-        /// This method is used to get the columnList for exporting the parameters to datasource
-        /// </summary>
-        /// <returns></returns>
-        private string GetColumnNameListForTableCreation(DataTable dt)
-        {
-            string cols = string.Empty;
-            try
-            {
-                StringBuilder colList = new StringBuilder();
-                colList.Append("[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text,");
-                foreach (DataColumn col in dt.Columns)
-                {
-                    colList.Append(string.Format("[{0}] Text,", col.ColumnName));
-                }
-
-                cols = colList.ToString().Remove(colList.ToString().LastIndexOf(","), 1);
-            }
-            catch (System.Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
-            }
-            return cols;
         }
 
         /// <summary>
@@ -221,7 +178,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
-            }          
+            }
         }
 
         /// <summary>

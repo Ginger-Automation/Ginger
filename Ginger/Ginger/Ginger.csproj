@@ -479,6 +479,7 @@
     </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
+    <Compile Include="WizardLib\ValidationDetails.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
     <Compile Include="GeneralValidationRules\GridValidationRule.cs" />
     <Compile Include="MenusLib\ConfigurationsMenu.cs" />
