@@ -37,6 +37,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using System.Diagnostics;
 using DocumentFormat.OpenXml;
 using amdocs.ginger.GingerCoreNET;
+using System.Text;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -472,14 +473,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
                         if (string.IsNullOrEmpty(str))
                         {
-                            tuple.y.OptionalValuesList.Add(new OptionalValue() { Value = CURRENT_VAL_PARAMETER, IsDefault = true });
+                            tuple.y.OptionalValuesList.Add(new OptionalValue { Value = CURRENT_VAL_PARAMETER, IsDefault = true });
                         }
                         
                         foreach (string val in ParameterValuesByNameDic[tuple.y.ItemName])
                         {
                             if (!string.IsNullOrEmpty(val))
                             {
-                                OptionalValue OptionalValue = new OptionalValue()
+                                OptionalValue OptionalValue = new OptionalValue
                                 {
                                     Value = val.Replace("*", "")
                                 };
@@ -643,8 +644,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     value = stringTablePart.SharedStringTable.ChildElements[Int32.Parse(value)].InnerText;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return value;
         }
@@ -656,7 +658,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <returns></returns>
         private string RemoveIntegerFromColumnName(string columnName)
         {
-            string cName = string.Empty;
+            StringBuilder cName = new StringBuilder();
             try
             {
                 columnName = columnName.Replace("#", "");
@@ -669,7 +671,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     }
                     else
                     {
-                        cName = cName + Convert.ToString(ch);
+                        cName.Append(Convert.ToString(ch));
                     }
                 }
             }
@@ -677,7 +679,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
-            return cName;
+            return cName.ToString();
         }
 
         /// <summary>
@@ -703,8 +705,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     mul *= 26;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return res;
         }
@@ -719,7 +722,6 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(ExcelFileName, false))
             {
                 WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-                IEnumerable<WorksheetPart> worksheetPart = workbookPart.WorksheetParts;
                 foreach (var item in workbookPart.Workbook.Descendants<Sheet>())
                 {
                     string sheetName = item.Name;
@@ -766,6 +768,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return isValid;
         }
@@ -957,12 +960,16 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     }
                     dtTemplate.Rows.Add(dr);
                 }
-
-                filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName + ".xlsx");
+                                
                 if (!string.IsNullOrEmpty(fPath))
                 {
                     filePath = fPath;
                 }
+                else
+                {
+                    filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName + ".xlsx");
+                }
+
                 bool isExportSuccess = ExportToExcel(dtTemplate, filePath, dtTemplate.TableName);
                 if (isExportSuccess && ShowMessage)
                 {
@@ -1031,7 +1038,6 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 if (oSheet != null)
                 {
                     sSheetName += "_" + sheets.Elements<Sheet>().Count();
-                    //oSheet.Remove();
                 }
 
                 if (sheets.Elements<Sheet>().Count() > 0)
@@ -1100,18 +1106,18 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
             Fonts fonts = new Fonts(
                 new Font( // Index 0 - default
-                    new FontSize() { Val = 11 }
+                    new FontSize { Val = 11 }
 
                 ),
                 new Font( // Index 1 - header
-                    new FontSize() { Val = 11 },
+                    new FontSize { Val = 11 },
                     new Bold()
 
                 ));
 
             Fills fills = new Fills(
-                    new Fill(new PatternFill() { PatternType = PatternValues.None }), // Index 0 - default
-                    new Fill(new PatternFill() { PatternType = PatternValues.None })
+                    new Fill(new PatternFill { PatternType = PatternValues.None }), // Index 0 - default
+                    new Fill(new PatternFill { PatternType = PatternValues.None })
                 );
 
             Borders borders = new Borders(
