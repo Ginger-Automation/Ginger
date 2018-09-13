@@ -81,6 +81,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 case ".json":
                     currentParser = new JSONTemplateParser();
                     break;
+                default:
+                    currentParser = null;
+                    break;
             }
         }
         public APIConfigurationsDocumentParserBase CurrentParser
@@ -182,10 +185,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     OptionalValuesPerParameterDict[attributetuple].Add(attributeValue);
                 }
                 else
-               
+                {
                     OptionalValuesPerParameterDict.Add(attributetuple, new List<string> { attributeValue });
-                
-
+                }
             }
         }
         /// <summary>
@@ -248,7 +250,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
                     string VAXBXPath = string.Empty;
                     if (!string.IsNullOrEmpty(result))
-                        VAXBXPath = tuple.y.Path.Replace(result, "//*[name()='vaxb:VAXB']/vaxb:");
+                    { VAXBXPath = tuple.y.Path.Replace(result, "//*[name()='vaxb:VAXB']/vaxb:"); }
 
                     Tuple<string, string> tupleKey = new Tuple<string, string>(tuple.y.TagName, tuple.y.Path);
                     Tuple<string, string> relativePathTuple = new Tuple<string, string>(tuple.y.TagName, VAXBXPath);
@@ -268,7 +270,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
             }
             if (ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParametersCounter);
+            { Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParametersCounter); }
         }
         #endregion
 
@@ -283,9 +285,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     AddJSONValueToOptionalValuesPerParameterDict(optionalValuesPerParameterDict, JTN.GetToken());
                 }
-                catch
+                catch(Exception ex)
                 {
-
+                    Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
                 }
             }
         }
@@ -435,7 +437,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
 
                 if (IsUpdate)
-                    UpdatedParameters++;
+                { UpdatedParameters++; }
             }
             
             if (ShowMessage)
@@ -530,7 +532,19 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         public string ExcelWhereCondition { get; set; }
 
         private DataTable dtCurrentExcelTable;
-        public DataTable GetExceSheetlData(bool WithWhere = false)
+        public DataTable GetExceSheetlData(bool WithWhere)
+        {
+            DataTable dt = GetDataFromSheet(WithWhere);
+            return dt;
+        }
+
+        public DataTable GetExceSheetlData()
+        {
+            DataTable dt = GetDataFromSheet(false);
+            return dt;
+        }
+
+        private DataTable GetDataFromSheet(bool WithWhere)
         {
             DataTable dt = new DataTable();
             if (!string.IsNullOrEmpty(ExcelFileName))
@@ -605,7 +619,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         }
                         return null;
                     }
-                } 
+                }
             }
             return dt;
         }
@@ -661,7 +675,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                throw ex;
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return cName;
         }
@@ -867,12 +881,39 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <param name="parameters"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public string ExportParametersToExcelFile(List<AppParameters> parameters, string fileName, string fPath = "")
+        public string ExportParametersToExcelFile(List<AppParameters> parameters, string fileName)
         {
             string filePath = string.Empty;
+            filePath = ExportParametersToFile(parameters, fileName, string.Empty, filePath);
+            return filePath;
+        }
+
+        /// <summary>
+        /// This method is used to export the parameter values to export
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public string ExportParametersToExcelFile(List<AppParameters> parameters, string fileName, string fPath)
+        {
+            string filePath = string.Empty;
+            filePath = ExportParametersToFile(parameters, fileName, fPath, filePath);
+            return filePath;
+        }
+
+        /// <summary>
+        /// This is sub method used handle the export process
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="fileName"></param>
+        /// <param name="fPath"></param>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        private string ExportParametersToFile(List<AppParameters> parameters, string fileName, string fPath, string filePath)
+        {
             try
-            {                
-                int colCount = 100;                
+            {
+                int colCount = 100;
                 foreach (var paramVal in parameters)
                 {
                     if (paramVal.OptionalValuesString.Contains(CURRENT_VAL_PARAMETER))
@@ -910,7 +951,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                             if (!item.Value.StartsWith(CURRENT_VAL_PARAMETER))
                             {
                                 dr[index] = item.IsDefault ? Convert.ToString(item.Value) + "*" : Convert.ToString(item.Value);
-                                index++; 
+                                index++;
                             }
                         }
                     }
@@ -918,7 +959,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
 
                 filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName + ".xlsx");
-                if(!string.IsNullOrEmpty(fPath))
+                if (!string.IsNullOrEmpty(fPath))
                 {
                     filePath = fPath;
                 }
@@ -932,9 +973,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
+
             return filePath;
         }
-        
+
         public bool ExportTemplateExcelFileForImportOptionalValues(List<AppModelParameter> Parameters,string PathToExport)
         {
             DataTable dtTemplate = new DataTable(ParameterType.ToString());
