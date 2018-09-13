@@ -81,16 +81,16 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
             System.Diagnostics.Process.Start(devicesDashboard);
 
             //Get List of devices available in Perfecto
-            XmlDocument XmlListOfDevices = new XmlDocument();
-            String urlToGetDevicesList = "https://" + Perfecto_Host_URL + "/services/handsets?operation=list&user=" + Perfecto_User_Name + "&password=" + Perfecto_Password + "&status=connected";
+            //XmlDocument XmlListOfDevices = new XmlDocument();
+            //String urlToGetDevicesList = "https://" + Perfecto_Host_URL + "/services/handsets?operation=list&user=" + Perfecto_User_Name + "&password=" + Perfecto_Password + "&status=connected";
             //XmlListOfDevices.Load(urlToGetDevicesList);
             //ShowListOfDevices(XmlListOfDevices);
 
             DesiredCapabilities capabilities = new DesiredCapabilities(browserName, string.Empty, new Platform(PlatformType.Any));
 
             capabilities.SetCapability("user", Perfecto_User_Name);
-            //capabilities.SetCapability("password", Perfecto_Password);
-            capabilities.SetCapability("securityToken", Perfecto_Password);
+            capabilities.SetCapability("password", Perfecto_Password);
+            //capabilities.SetCapability("securityToken", Perfecto_Password);
             capabilities.SetCapability("deviceName", Perfecto_Device_ID);
             capabilities.SetPerfectoLabExecutionId(Perfecto_Host_URL);
           
