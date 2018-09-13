@@ -214,7 +214,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 Reporter.ToUser(eUserMsgKeys.NoConvertibleActionSelected);
                 return;
-            }   
+            }
 
             if (!DoExistingPlatformCheck(lstActionToBeConverted))
             {
@@ -223,102 +223,113 @@ namespace Ginger.Actions.ActionConversion
             }
             else
             {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-
-                // setting the conversion status label as visible
-                lblConversionStatus.Visibility = Visibility.Visible;
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.BusinessFlowConversion, null, mBusinessFlow.Name );
-
-                // create a new converted activity
-                if ((bool)radNewActivity.IsChecked)
+                try
                 {
-                    Activity newActivity = new Activity() { Active = true };
-                    foreach (Activity oldActivity in mBusinessFlow.Activities.ToList())
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+                    // setting the conversion status label as visible
+                    lblConversionStatus.Visibility = Visibility.Visible;
+                    Reporter.ToGingerHelper(eGingerHelperMsgKey.BusinessFlowConversion, null, mBusinessFlow.Name);
+
+                    // create a new converted activity
+                    if ((bool)radNewActivity.IsChecked)
                     {
-                        // check if the activity is selected for conversion and it contains actions that are obsolete (of type, IObsolete)
-                        if (oldActivity.SelectedForConversion && oldActivity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
+                        Activity newActivity = new Activity() { Active = true };
+                        foreach (Activity oldActivity in mBusinessFlow.Activities.ToList())
                         {
-                            newActivity = (Activity)oldActivity.CreateCopy(false);
-                            newActivity.ActivityName = "New - " + oldActivity.ActivityName;
-                            mBusinessFlow.Activities.Add(newActivity);
-                            mBusinessFlow.Activities.Move(mBusinessFlow.Activities.Count() - 1, mBusinessFlow.Activities.IndexOf(oldActivity)+1);
-                            
-                            foreach (Act oldAct in oldActivity.Acts.ToList())
+                            // check if the activity is selected for conversion and it contains actions that are obsolete (of type, IObsolete)
+                            if (oldActivity.SelectedForConversion && oldActivity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
                             {
-                                if (oldAct is IObsoleteAction && lstActionToBeConverted.Where(act => act.SourceActionType == oldAct.GetType() && act.Selected && act.TargetActionType == ((IObsoleteAction)oldAct).TargetAction()).FirstOrDefault() != null)
+                                newActivity = (Activity)oldActivity.CreateCopy(false);
+                                newActivity.ActivityName = "New - " + oldActivity.ActivityName;
+                                mBusinessFlow.Activities.Add(newActivity);
+                                mBusinessFlow.Activities.Move(mBusinessFlow.Activities.Count() - 1, mBusinessFlow.Activities.IndexOf(oldActivity) + 1);
+
+                                foreach (Act oldAct in oldActivity.Acts.ToList())
                                 {
-                                    // convert the old action
-                                    Act newAct = ((IObsoleteAction)oldAct).GetNewAction();
-                                    int oldActionIndex =newActivity.Acts.IndexOf( newActivity.Acts.Where(x=>x.Guid==oldAct.Guid).FirstOrDefault());
-                                    newActivity.Acts.RemoveAt(oldActionIndex);
-                                    newActivity.Acts.Add(newAct);
-                                    newActivity.Acts.Move(newActivity.Acts.Count()-1, oldActionIndex);
-                                }
-                            }
-
-                            // check if the old activity was active or not and accordingly set Active field for the new activity
-                            if (!oldActivity.Active)
-                            {
-                                newActivity.Active = false;
-                            }
-                            else
-                                newActivity.Active = true;
-
-                            // by default, set the old activity as inactive
-                            oldActivity.Active = false;
-
-                            // if the user has not chosen any target application in the combobox then, we set it as empty
-                            if ((Boolean)chkDefaultTargetApp.IsChecked && cmbTargetApp.SelectedIndex != -1)
-                            {
-                                newActivity.TargetApplication = cmbTargetApp.SelectedValue.ToString();
-                            }
-                            else
-                                newActivity.TargetApplication = string.Empty;
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (Activity activity in mBusinessFlow.Activities)
-                    {
-                        if (activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
-                        {
-
-                            foreach (Act act in activity.Acts.ToList())
-                            {
-                                if (act is IObsoleteAction && lstActionToBeConverted.Where(a => a.SourceActionType == act.GetType() && a.Selected && a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
-                                {
-                                    // get the index of the action that is being converted 
-                                    int selectedActIndex = activity.Acts.IndexOf(act);
-
-                                    // convert the old action
-                                    activity.Acts.Add(((IObsoleteAction)act).GetNewAction());
-
-                                    if (selectedActIndex >= 0)
+                                    if (oldAct is IObsoleteAction && lstActionToBeConverted.Where(act => act.SourceActionType == oldAct.GetType() && act.Selected && act.TargetActionType == ((IObsoleteAction)oldAct).TargetAction()).FirstOrDefault() != null)
                                     {
-                                        activity.Acts.Move(activity.Acts.Count - 1, selectedActIndex + 1);
+                                        // convert the old action
+                                        Act newAct = ((IObsoleteAction)oldAct).GetNewAction();
+                                        int oldActionIndex = newActivity.Acts.IndexOf(newActivity.Acts.Where(x => x.Guid == oldAct.Guid).FirstOrDefault());
+                                        newActivity.Acts.RemoveAt(oldActionIndex);
+                                        newActivity.Acts.Add(newAct);
+                                        newActivity.Acts.Move(newActivity.Acts.Count() - 1, oldActionIndex);
                                     }
+                                }
 
-                                    // set obsolete action in the activity as inactive
-                                    act.Active = false;
+                                // check if the old activity was active or not and accordingly set Active field for the new activity
+                                if (!oldActivity.Active)
+                                {
+                                    newActivity.Active = false;
                                 }
                                 else
-                                {
-                                    act.Active = true;
-                                }
-                            }
+                                    newActivity.Active = true;
 
-                            // if the user has not chosen any target application in the combobox then, we set it as empty
-                            if ((Boolean)chkDefaultTargetApp.IsChecked && cmbTargetApp.SelectedIndex != -1)
-                            {
-                                activity.TargetApplication = cmbTargetApp.SelectedValue.ToString();
+                                // by default, set the old activity as inactive
+                                oldActivity.Active = false;
+
+                                // if the user has not chosen any target application in the combobox then, we set it as empty
+                                if ((Boolean)chkDefaultTargetApp.IsChecked && cmbTargetApp.SelectedIndex != -1)
+                                {
+                                    newActivity.TargetApplication = cmbTargetApp.SelectedValue.ToString();
+                                }
+                                else
+                                    newActivity.TargetApplication = string.Empty;
                             }
-                            else
-                                activity.TargetApplication = string.Empty;
+                        }
+                    }
+                    else
+                    {
+                        foreach (Activity activity in mBusinessFlow.Activities)
+                        {
+                            if (activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
+                            {
+
+                                foreach (Act act in activity.Acts.ToList())
+                                {
+                                    if (act is IObsoleteAction && lstActionToBeConverted.Where(a => a.SourceActionType == act.GetType() && a.Selected && a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
+                                    {
+                                        // get the index of the action that is being converted 
+                                        int selectedActIndex = activity.Acts.IndexOf(act);
+
+                                        // convert the old action
+                                        activity.Acts.Add(((IObsoleteAction)act).GetNewAction());
+
+                                        if (selectedActIndex >= 0)
+                                        {
+                                            activity.Acts.Move(activity.Acts.Count - 1, selectedActIndex + 1);
+                                        }
+
+                                        // set obsolete action in the activity as inactive
+                                        act.Active = false;
+                                    }
+                                    else
+                                    {
+                                        act.Active = true;
+                                    }
+                                }
+
+                                // if the user has not chosen any target application in the combobox then, we set it as empty
+                                if ((Boolean)chkDefaultTargetApp.IsChecked && cmbTargetApp.SelectedIndex != -1)
+                                {
+                                    activity.TargetApplication = cmbTargetApp.SelectedValue.ToString();
+                                }
+                                else
+                                    activity.TargetApplication = string.Empty;
+                            }
                         }
                     }
                 }
-                Mouse.OverrideCursor = null;
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert activities - ", ex);
+                    Reporter.ToUser(eUserMsgKeys.ActivitiesConversionFailed);
+                }
+                finally
+                {
+                    Mouse.OverrideCursor = null;
+                }
             }
             lblConversionStatus.Visibility = Visibility.Hidden;
             Reporter.CloseGingerHelper();
@@ -328,7 +339,6 @@ namespace Ginger.Actions.ActionConversion
             {
                 _pageGenericWin.Close();
             }
-
         }
 
         private void btnShowConvertibleActionTypes_Click(object sender, RoutedEventArgs e)
