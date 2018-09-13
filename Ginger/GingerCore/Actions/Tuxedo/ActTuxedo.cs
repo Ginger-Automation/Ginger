@@ -220,7 +220,7 @@ namespace GingerCore.Actions.Tuxedo
             
             foreach(ActInputValue AIV in DynamicUDElements)
             {
-                txt += AIV.Param + "\t"+ AIV.Value+"\n";  // Add \t for tab and \r for new line
+                txt += AIV.Param + "\t"+ AIV.ValueForDriver+"\n";  // Add \t for tab and \r for new line
             
             }
             txt += "\n";
