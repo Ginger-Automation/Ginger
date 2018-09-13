@@ -50,7 +50,7 @@
                         <TextBlock x:Name="xMappedElementsTextBlock"  VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Frame x:Name="xMappedElementsFrame" HorizontalAlignment="Stretch"/>
+                <Frame x:Name="xMappedElementsFrame" HorizontalAlignment="Stretch" />
             </TabItem>
             <TabItem  x:Name="xUnmappedElementsTab" >
                 <TabItem.Header>

@@ -6302,7 +6302,7 @@ namespace GingerCore.Drivers
             return true;
         }
 
-        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        bool IWindowExplorer.TestElementLocators(ObservableList<ElementLocator> elementLocators)
         {
             foreach (ElementLocator el in elementLocators)
                 el.LocateStatus = ElementLocator.eLocateStatus.Pending;
