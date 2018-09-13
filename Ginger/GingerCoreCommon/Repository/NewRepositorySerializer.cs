@@ -1323,8 +1323,35 @@ namespace Amdocs.Ginger.Repository
             DeserializeFromText(txt, repositoryItem, filePath: repositoryItem.FilePath);                        
         }
 
+
+        public object DeserializeFromTextWithTargetObj(Type t, string xml, RepositoryItemBase targetObj = null)
+        {            
+            string encoding = "utf-8";
+            var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml));
+            var xdrs = new XmlReaderSettings()
+            {
+                IgnoreComments = true,
+                IgnoreWhitespace = true,
+                CloseInput = true
+            };
+
+            XmlReader xdr = XmlReader.Create(ms, xdrs);
+            // Skip the header
+            xdr.Read();
+            xdr.Read();            
+            xdr.Read();
+            xdr.Read();
+
+            object RootObj = xmlReadObject(null, xdr, targetObj);
+
+            return RootObj;
+        }
+
+
     }
 
+
+    //TODO: move to seperate file
     public class NewRepositorySerilizerEventArgs
     {
         public enum eEventType
@@ -1345,4 +1372,8 @@ namespace Amdocs.Ginger.Repository
             this.TargetObj = TargetObj;
         }
     }
+
+    
+
+
 }
