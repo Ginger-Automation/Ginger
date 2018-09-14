@@ -100,58 +100,6 @@ namespace Ginger.AnalyzerLib
                 ABF.mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = SAN });
                 ABF.Status = eStatus.Fixed;
             }
-        }
-
-        public static List<AnalyzerItemBase> getUnusedVariables(BusinessFlow BusinessFlow, List<string> usedVariables)
-        {            
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();                        
-            ObservableList<VariableBase> totalBFVariables = BusinessFlow.Variables;
-
-            foreach(VariableBase var in totalBFVariables)
-            {
-                if(!usedVariables.Contains(var.Name))
-                {
-                    AnalyzeAction aa = new AnalyzeAction();
-                    aa.Status = AnalyzerItemBase.eStatus.NeedFix;
-                    aa.ItemName = var.Name;                                        
-                    aa.mBusinessFlow = BusinessFlow;                    
-                    aa.Description = var + " is Unused in " + BusinessFlow.Name;
-                    //aa.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and put " + a.ActionDescription + " Action in a separate " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-                    aa.CanAutoFix = AnalyzerItemBase.eCanFix.No;    // we can autofix by delete, but don't want to                
-                    aa.IssueType = eType.Error;                    
-                    aa.Severity = eSeverity.Medium;
-                    IssuesList.Add(aa);
-                }
-            }            
-            return IssuesList;
-                
-        }
-
-        public static List<AnalyzerItemBase> getUnusedVariablesFromSolution(BusinessFlow BusinessFlow, List<string> usedVariables)
-        {
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
-            ObservableList<VariableBase> totalBFVariables = BusinessFlow.SolutionVariables;
-
-            foreach (VariableBase var in totalBFVariables)
-            {
-                if (!usedVariables.Contains(var.Name))
-                {
-                    AnalyzeAction aa = new AnalyzeAction();
-                    aa.Status = AnalyzerItemBase.eStatus.NeedFix;
-                    aa.ItemName = var.Name;
-                    aa.mBusinessFlow = BusinessFlow;
-                    aa.Description = var + " is Unused in " + BusinessFlow.Name;
-                    //aa.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and put " + a.ActionDescription + " Action in a separate " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-                    aa.CanAutoFix = AnalyzerItemBase.eCanFix.No;    // we can autofix by delete, but don't want to                
-                    aa.IssueType = eType.Error;
-                    aa.Severity = eSeverity.Medium;
-                    IssuesList.Add(aa);
-                }
-            }
-            return IssuesList;
-
-        }
-
-
+        }        
     }
 }
