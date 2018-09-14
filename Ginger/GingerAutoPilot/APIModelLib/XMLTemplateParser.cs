@@ -68,6 +68,7 @@ namespace Amdocs.Ginger.Repository
             AAM.RequestBody = XDE.XMLString;
             AAM.AppModelParameters = AMPList;
             AAMSList.Add(AAM);
+            AllPlaceHolders.Clear();
             return AAMSList;
         }
 
