@@ -43,7 +43,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
         public ObservableList<Agent> OptionalAgentsList = null;
         private Agent mAgent = null;
-        public bool ManualElementConfiguration;
+        private bool mManualElementConfiguration;
+
+        public bool ManualElementConfiguration { get { return mManualElementConfiguration; } set { mManualElementConfiguration = value; } }
 
         public Agent Agent
         {
