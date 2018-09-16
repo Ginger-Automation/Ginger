@@ -21,6 +21,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.Actions.UserControls;
 using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Platforms;
@@ -28,9 +29,11 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using static Ginger.ExtensionMethods;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
@@ -41,6 +44,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     public partial class POMGeneralDetailsWizardPage : Page, IWizardPage
     {
         AddPOMWizard mWizard;
+        ScreenShotViewPage mScreenshotPage;
 
         public POMGeneralDetailsWizardPage()
         {
@@ -59,16 +63,59 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                     xDescriptionTextBox.BindControl(mWizard.POM, nameof(ApplicationPOMModel.Description));
                     xTagsViewer.Init(mWizard.POM.TagsKeys);
-
-                    ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList());
-                    xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
-                    xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
-
-                    if (xTargetApplicationComboBox.Items != null && xTargetApplicationComboBox.Items.Count > 0)
-                    {
-                        xTargetApplicationComboBox.SelectedIndex = 0;
-                    }
                     break;
+                case EventType.Active:
+                    ShowScreenShot();
+                    //mWizard.
+                    break;
+            }
+        }
+
+        public void ShowScreenShot()
+        {
+            //mWizard.IWindowExplorerDriver.UnHighLightElements();
+            //mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
+            mScreenshotPage = new ScreenShotViewPage(mWizard.POM.Name, mWizard.ScreenShot);
+            xScreenShotFrame.Content = mScreenshotPage;
+        }
+
+        private void TakeScreenShotButtonClicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ShowScreenShot();
+        }
+
+        private void BrowseImageButtonClicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
+            op.Title = "Select a picture";
+            op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
+            op.ShowDialog();
+            var fileLength = new FileInfo(op.FileName).Length;
+            if (fileLength <= 30000)
+            {
+                if ((op.FileName != null) && (op.FileName != string.Empty))
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        BitmapImage bi = new BitmapImage(new Uri(op.FileName));
+                        Tuple<int, int> sizes = Ginger.Reports.GingerExecutionReport.ExtensionMethods.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
+
+                        BitmapImage bi_resized = new BitmapImage();
+                        bi_resized.BeginInit();
+                        bi_resized.UriSource = new Uri(op.FileName);
+                        bi_resized.DecodePixelHeight = sizes.Item2;
+                        bi_resized.DecodePixelWidth = sizes.Item1;
+                        bi_resized.EndInit();
+                        mWizard.ScreenShot = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(bi_resized);
+                        mWizard.POM.ScreenShotImage = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(mWizard.ScreenShot);
+                        mScreenshotPage = new ScreenShotViewPage(mWizard.POM.Name, mWizard.ScreenShot);
+                        xScreenShotFrame.Content = mScreenshotPage;
+                    }
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKeys.ImageSize);
             }
         }
     }

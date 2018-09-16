@@ -346,6 +346,10 @@ namespace Ginger
             {
                 bd = frameworkElement.GetBindingExpression(ucAgentControl.SelectedAgentProperty);
             }
+            else if(frameworkElement is ComboBox)
+            {
+                bd = frameworkElement.GetBindingExpression(ComboBox.SelectedValueProperty);
+            }
 
             if (bd != null)
             {

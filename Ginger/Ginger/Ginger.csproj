@@ -572,9 +572,6 @@
     <Compile Include="ApplicationModelsLib\ModelParams Pages\ModelsGlobalParamsPage.xaml.cs">
       <DependentUpon>ModelsGlobalParamsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMIntroductionWizardPage.xaml.cs">
-      <DependentUpon>POMIntroductionWizardPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\AddPOMWizard.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml.cs">
       <DependentUpon>POMLearnConfigWizardPage.xaml</DependentUpon>
@@ -2643,10 +2640,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ApplicationModelsLib\ModelParams Pages\ModelsGlobalParamsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMIntroductionWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -79,7 +79,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             public eElementType ElementType;
             public Type ActionType;
             public List<Enum> ElementOperationsList = new List<Enum>();
-            public bool IsCommonElementType = false;
+            public bool IsCommonElementType;
         }
 
         internal static List<eLocateBy> GetPlatformUIElementLocatorsList(ePlatformType Platform)

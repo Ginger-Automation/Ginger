@@ -38,11 +38,19 @@ namespace GingerWPF.WizardLib
 
         List<ValidationError> mValidationErrors = new List<ValidationError>();
 
-        public static void ShowWizard(WizardBase wizard, double width = 800)
+        public static void ShowWizard(WizardBase wizard, double width = 800, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Width = width;
-           wizardWindow.ShowDialog();
+            if(windowStyle == eWindowShowStyle.Dialog)
+            {
+                wizardWindow.ShowDialog();
+            }
+            else
+            {
+                wizardWindow.Topmost = true;
+                wizardWindow.Show();
+            }
         }
 
         public WizardWindow(WizardBase wizard)
@@ -131,13 +139,13 @@ namespace GingerWPF.WizardLib
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             bool bErrors = HasValidationsIssues();
-            UpdateFinishButton();
             if (bErrors)
             {                
                 return;
-            }            
+            }
 
             mWizard.Next();
+            UpdateFinishButton();
             UpdatePrevNextButton();
 
             RefreshCurrentPage();
@@ -240,7 +248,7 @@ namespace GingerWPF.WizardLib
         {
             mWizard.Prev();
             UpdatePrevNextButton();
-
+            UpdateFinishButton();
             RefreshCurrentPage();
         }
 

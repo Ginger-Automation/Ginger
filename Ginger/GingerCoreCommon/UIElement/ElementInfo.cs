@@ -55,6 +55,8 @@ namespace Amdocs.Ginger.Common.UIElement
         [IsSerializedForLocalRepository]
         public bool Mandatory { get; set; }
 
+        public bool IsAutoLearned { get; set; }
+
         public object ElementObject { get; set; }
         public Boolean IsExpandable { get; set; }
 

@@ -77,16 +77,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             POM = new ApplicationPOMModel();
 
-            //AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new POMIntroductionWizardPage());
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/POMModels/POMWizardLib/AddPOMIntro.md"));
-
-            AddPage(Name: "General Details", Title: "General Details", SubTitle: "New Page Objects Model General Details", Page: new POMGeneralDetailsWizardPage());
 
             AddPage(Name: "Learning Configurations", Title: "Learning Configurations", SubTitle: "Page Objects Learning Configurations", Page: new POMLearnConfigWizardPage());
 
             AddPage(Name: "Learned Objects Mapping", Title: "Learned Objects Mapping", SubTitle: "Map Learned Page Objects", Page: new POMObjectsMappingWizardPage());
 
-            AddPage(Name: "Page Screenshot", Title: "Page Screenshot", SubTitle: "Application Page Screenshot", Page: new POMScreenShotWizardPage());
+            AddPage(Name: "General Details", Title: "General Details", SubTitle: "New Page Objects Model General Details", Page: new POMGeneralDetailsWizardPage());
         }
 
         public override string Title { get { return "Add POM Wizard"; } }

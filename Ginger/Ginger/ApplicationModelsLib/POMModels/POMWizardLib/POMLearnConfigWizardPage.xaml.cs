@@ -74,13 +74,24 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
-                    //In case 
+
+                    ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList());
+                    xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
+                    xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
+
+                    if (xTargetApplicationComboBox.Items != null && xTargetApplicationComboBox.Items.Count > 0)
+                    {
+                        xTargetApplicationComboBox.SelectedIndex = 0;
+                    }
+
                     if (mWizard.POM.TargetApplicationKey != null)
-                         mAppPlatform = GetTargetApplicationPlatform();
+                        mAppPlatform = GetTargetApplicationPlatform();
+
                     mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
                     xAgentControlUC.Init(mWizard.OptionalAgentsList);
                     App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard, nameof(mWizard.Agent));
                     xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
+
                     AddValidations();
                     ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();                    
@@ -106,7 +117,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 {
                     case ePlatformType.Web:
                         foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in new WebPlatform().GetPlatformElementTypesData().ToList())
+                        {
                             mWizard.AutoMapElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
+                        }
                         break;
                 }
             }

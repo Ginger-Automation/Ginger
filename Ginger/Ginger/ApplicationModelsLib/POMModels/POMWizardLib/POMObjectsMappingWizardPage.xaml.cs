@@ -65,7 +65,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             EI.Properties = mWizard.IWindowExplorerDriver.GetElementProperties(EI);
             EI.ElementName = GetBestElementName(EI);
             EI.WindowExplorer = mWizard.IWindowExplorerDriver;
-
+            EI.IsAutoLearned = true;
 
             if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
             {
@@ -84,7 +84,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (pomAllElementsPage == null)
             {
                 pomAllElementsPage = new PomAllElementsPage(mWizard.POM, mWizard.IWindowExplorerDriver);
-                pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
                 xPomElementsMappingPageFrame.Content = pomAllElementsPage;
             }
         }
@@ -117,6 +116,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     }
                     else
                     {
+                        pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
+                        pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
+
                         xReLearnButton.Visibility = Visibility.Visible;
                         mWizard.IWindowExplorerDriver.UnHighLightElements();
                         mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
