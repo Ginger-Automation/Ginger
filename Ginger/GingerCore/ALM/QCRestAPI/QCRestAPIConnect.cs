@@ -209,7 +209,7 @@ namespace GingerCore.ALM.QCRestAPI
             return testlabPathList;
         }
 
-        //get test set explorer(tree view)
+        // get test set explorer(tree view)
         public static List<QCTestSetSummary> GetTestSetExplorer(string PathNode)
         {
             List<QCTestSetSummary> testlabPathList = new List<QCTestSetSummary>();
