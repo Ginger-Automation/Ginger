@@ -8,7 +8,7 @@
       xmlns:h="clr-namespace:Ginger.Help"
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
-      d:DesignHeight="800" d:DesignWidth="800"      
+      d:DesignHeight="800" d:DesignWidth="1154"      
 	  Title="ActUIElementEditPage">
     <Grid>
 
@@ -32,15 +32,16 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="154"/>
                     <ColumnDefinition Width="194" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Label Content="Locate By:"  Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}" Grid.Row="0" Grid.Column="0"/>
                 <ComboBox  x:Name="ElementLocateByComboBox" SelectionChanged="ElementLocateByComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" 
                                                   ToolTip="How to Locate the Element on the screen"  Grid.Row="0" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
 
-
-                <Label Content="Locate Value:" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}" Grid.Row="1" Grid.Column="0"  />
-                <Frame x:Name="LocateValueEditFrame"  Grid.Row="1" Grid.Column="1" BorderBrush="Black" Margin="0,0,-403,0" RenderSize="657,30"/>
-
+                <StackPanel  Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="3">
+                    <Label x:Name="LocateValueLable" Content="Locate Value:" Width="154" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}"/>
+                    <Frame x:Name="LocateValueEditFrame" Width="254" Margin="0,3,0,0" NavigationUIVisibility="Hidden" BorderBrush="Black"/>
+                </StackPanel>
 
                 <StackPanel  Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
                     <Label  VerticalAlignment="Top" Content="Element Type:" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}"/>
