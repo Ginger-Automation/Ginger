@@ -77,12 +77,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xScreenShotFrame.Content = mScreenshotPage;
         }
 
-        private void TakeScreenShotButtonClicked(object sender, System.Windows.RoutedEventArgs e)
+        private void xTakeScreenShotLoadButton_Click(object sender, RoutedEventArgs e)
         {
             ShowScreenShot();
         }
 
-        private void BrowseImageButtonClicked(object sender, System.Windows.RoutedEventArgs e)
+        private void xBrowseImageLoadButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
             op.Title = "Select a picture";
