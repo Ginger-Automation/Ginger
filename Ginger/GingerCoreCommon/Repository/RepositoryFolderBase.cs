@@ -142,27 +142,26 @@ namespace Amdocs.Ginger.Repository
         public abstract void MoveItem(RepositoryItemBase repositoryItem, RepositoryFolderBase repositoryFolder);
              
         private static ISourceControl SourceControl;
-        
+
+        private eImageType? mSourceControlStatus = eImageType.Pending;
+
         public eImageType? SourceControlStatus
         {
             get
             {
-                if (SourceControl != null)
-                {                    
-                    eImageType st = SourceControl.GetFileStatusForRepositoryItemPath(FolderFullPath);                                    
-                    return st;
-                }
-                else
-                {
-                    return null;
-                }
+                return mSourceControlStatus;
+            }
+            set
+            {
+                mSourceControlStatus = value;
+                OnPropertyChanged(nameof(SourceControlStatus));
             }
         }
 
-        public void RefreshSourceControlStatus()
+        public async void SetSourceControlStatus()
         {
-            OnPropertyChanged(nameof(SourceControlStatus));
-        }
+            SourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(FolderFullPath);
+        }        
 
         public static void SetSourceControl(ISourceControl sourceControl)
         {

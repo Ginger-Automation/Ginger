@@ -369,22 +369,52 @@ namespace Amdocs.Ginger.Repository
             RepositoryItemBase repoItem = null;
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
-                if (Path.GetDirectoryName(path).Contains(folder.FolderFullPath))                
-                {                    
+                if(Path.GetDirectoryName(path).Equals(folder.FolderFullPath))
+                {               
                     ObservableList<RepositoryItemBase> repoItemList = folder.GetFolderRepositoryItems();
-                    repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(path)).FirstOrDefault();
-                    if (repoItem == null)
-                    {
-                        RepositoryFolderBase subfolder = folder.GetSubFolderByName(folder.FolderRelativePath + "\\" + Path.GetFileName(Path.GetDirectoryName(path)), true);
-                        if (subfolder.FolderFullPath.Contains(Path.GetDirectoryName(path)))
-                        {
-                            ObservableList<RepositoryItemBase> test2 = subfolder.GetFolderRepositoryItems();
-                            repoItem = test2.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(path)).FirstOrDefault();
-                        }
-                    }
+                    repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(path)).FirstOrDefault();                    
+                }
+                else if(Path.GetDirectoryName(path).Contains(folder.FolderFullPath))
+                {
+                    Uri fullPath = new Uri(path, UriKind.Absolute);
+                    Uri relRoot = new Uri(folder.FolderFullPath, UriKind.Absolute);
+                    string relPath = relRoot.MakeRelativeUri(fullPath).ToString();
+                    RepositoryFolderBase subfolder = folder.GetSubFolderByName("~\\" + Path.GetDirectoryName(relPath), true);                                        
+                    ObservableList<RepositoryItemBase> repoItemList = subfolder.GetFolderRepositoryItems();
+                    repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(path)).FirstOrDefault();                                     
                 }
             });
             return repoItem;
+        }
+
+        public RepositoryFolderBase GetRepositoryFolderByPath(string path)
+        {
+            RepositoryFolderBase repoFolder = null;
+            Parallel.ForEach(mSolutionRootFolders, folder =>
+            {
+                if (path==folder.FolderFullPath)
+                {
+                    repoFolder = folder;
+                }
+                else if (path.Contains(folder.FolderFullPath))
+                {
+                    Uri fullPath = new Uri(path, UriKind.Absolute);
+                    Uri relRoot = new Uri(folder.FolderFullPath, UriKind.Absolute);
+                    string relPath = relRoot.MakeRelativeUri(fullPath).ToString().Replace("/", "\\");
+                    repoFolder = folder.GetSubFolderByName("~\\" + relPath, true);                    
+                }
+            });
+            return repoFolder;
+        }
+
+        public void RefreshFolders(string path)
+        {
+            RepositoryFolderBase repoFolder = GetRepositoryFolderByPath(path);            
+            if (repoFolder != null)
+            {
+                repoFolder.SetSourceControlStatus();
+                RefreshFolders(Directory.GetParent(path).FullName);
+            }
         }
 
         private void VerifyOrCreateSolutionFolders(string folder)

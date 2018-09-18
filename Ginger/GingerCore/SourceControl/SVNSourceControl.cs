@@ -27,6 +27,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -90,8 +91,9 @@ namespace GingerCore.SourceControl
             return true;
         }
 
-       
+
         // Get Source Control one file info
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems, ref string error)
         {
             if (Path == null ||  Path.Length == 0) return SourceControlFileInfo.eRepositoryItemStatus.Unknown;
@@ -111,7 +113,7 @@ namespace GingerCore.SourceControl
                         return SourceControlFileInfo.eRepositoryItemStatus.LockedByMe;
                     else if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner != SourceControlUser)
                         return SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser;
-                }
+                }               
 
                 client.GetStatus(Path, out statuses);
 
@@ -617,7 +619,7 @@ namespace GingerCore.SourceControl
         {
             try
             {
-                client = new SvnClient();
+                client = new SvnClient();                
                 client.Authentication.Clear();
                 client.Authentication.DefaultCredentials = new System.Net.NetworkCredential(SourceControlUser, SourceControlPass);
                 client.Conflict += Client_Conflict;

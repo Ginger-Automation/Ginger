@@ -544,8 +544,9 @@ namespace GingerWPF.TreeViewItemsLib
             if (WorkSpace.Instance.SourceControl != null)
             {
                 // Source control image
-                ImageMakerControl sourceControlImage = new ImageMakerControl();                
-                sourceControlImage.BindControl(RI, nameof(RepositoryItemBase.SourceControlStatus));
+                ImageMakerControl sourceControlImage = new ImageMakerControl();
+                RI.SetSourceControlStatus();
+                sourceControlImage.BindControl(RI, nameof(RepositoryItemBase.SourceControlStatus));                
                 sourceControlImage.Width = 10;
                 sourceControlImage.Height = 10;
                 stack.Children.Add(sourceControlImage);

@@ -82,8 +82,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             {
                 try
                 {                    
-                    ImageMakerControl sourceControlIcon = new ImageMakerControl();
-                    sourceControlIcon.ImageType = itemSourceControlStateIcon;
+                    ImageMakerControl sourceControlIcon = new ImageMakerControl();                    
+                    ((RepositoryFolderBase)itemObj).SetSourceControlStatus();
                     sourceControlIcon.BindControl((RepositoryFolderBase)itemObj, nameof(RepositoryFolderBase.SourceControlStatus));
                     sourceControlIcon.Height = 10;
                     sourceControlIcon.Width = 10;                   

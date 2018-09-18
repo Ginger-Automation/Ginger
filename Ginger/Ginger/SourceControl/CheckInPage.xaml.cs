@@ -287,19 +287,36 @@ namespace Ginger.SourceControl
         {
             foreach (SourceControlFileInfo fi in selectedFiles)
             {
-                RepositoryItemBase repoItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(fi.Path);                
-                //Refresh repository item folder source control status icon 
-                WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(repoItem).RefreshSourceControlStatus();
-                //Refresh repository item root folder source control status icon 
-                WorkSpace.Instance.SolutionRepository.GetItemRepositoryRootFolder(repoItem).RefreshSourceControlStatus();
-                if (repoItem != null)
+                FileAttributes attr = FileAttributes.Normal;
+                if (fi.Status != SourceControlFileInfo.eRepositoryItemStatus.Deleted)
                 {
-                    //Refresh repository item source control status icon 
-                    repoItem.RefreshSourceControlStatus();
+                    attr = File.GetAttributes(fi.Path);
+                }
+                
+                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    RepositoryFolderBase repoFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(fi.Path);
+                    if(repoFolder!=null)
+                    {
+                        foreach (RepositoryItemBase ri in repoFolder.GetFolderRepositoryItems())
+                        {
+                            ri.SetSourceControlStatus();
+                        }
+                    }
+                    WorkSpace.Instance.SolutionRepository.RefreshFolders(fi.Path);
+                }
+                else
+                {
+                    RepositoryItemBase repoItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(fi.Path);
+                    if(repoItem!=null)
+                    {
+                        repoItem.SetSourceControlStatus();
+                    }                    
+                    WorkSpace.Instance.SolutionRepository.RefreshFolders(Path.GetDirectoryName(fi.Path));
                 }
             }                        
         }
-
+       
         private void AfterCommitProcess(bool CommitSuccess, bool conflictHandled)
         {
             this.Dispatcher.BeginInvoke(

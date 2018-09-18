@@ -431,27 +431,23 @@ namespace Amdocs.Ginger.Repository
 
         private void HandleFileChange(FileSystemEventArgs e)
         {            
-            RepositoryItemBase item = null;
-            RepositoryFolderBase folderItem = null;
+            RepositoryItemBase item = null;            
             switch (e.ChangeType)
-            {
+            {                
                 case WatcherChangeTypes.Changed:
                     WaitforFileIsReadable(e.FullPath);
                     // reLoad the object to mem updating fields
                     item = GetItemFromCacheByFileName(e.FullPath);
-                    folderItem = GetSubFolder(Path.GetDirectoryName(e.FullPath));
-                    folderItem.RefreshSourceControlStatus();
-                    folderItem.OnPropertyChanged(nameof(RepositoryItemBase.SourceControlStatus));
+                    SolutionRepository.RefreshFolders(Path.GetDirectoryName(e.FullPath));
                     NewRepositorySerializer.ReloadObjectFromFile(item);
-                    item.RefreshSourceControlStatus();
-                    //Trigger so source control item can update if needed
-                    item.OnPropertyChanged(nameof(RepositoryItemBase.SourceControlStatus));
+                    item.SetSourceControlStatus();                                   
 
                     break;
                 case WatcherChangeTypes.Deleted:
                     //remove from cache and list
                     item = GetItemFromCacheByFileName(e.FullPath);
-                    RemoveItemFromLists((RepositoryItemBase)item);
+                    SolutionRepository.RefreshFolders(Path.GetDirectoryName(e.FullPath));
+                    RemoveItemFromLists(item);                    
                     break;
                 case WatcherChangeTypes.Created:
                     WaitforFileIsReadable(e.FullPath);
@@ -459,7 +455,8 @@ namespace Amdocs.Ginger.Repository
                     T newItem = LoadItemfromFile<T>(e.FullPath, Path.GetDirectoryName(e.FullPath));
                     AddItemtoCache(e.FullPath, newItem);
                     mFolderItemsList.Add(newItem);
-                    break;
+                    SolutionRepository.RefreshFolders(Path.GetDirectoryName(e.FullPath));
+                    break;              
             }
         }
 
