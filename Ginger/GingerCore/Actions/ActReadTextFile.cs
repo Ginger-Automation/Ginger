@@ -177,10 +177,16 @@ namespace GingerCore.Actions
                     {
                         int.TryParse(GetInputParamCalculatedValue(Fields.AppendLineNumber), out lineNum);
                     }
+
                     if(lineNum>0)
+                    {
                         LinesfromFile.Insert(lineNum - 1, GetInputParamCalculatedValue(Fields.TextToWrite));
+                    }                        
                     else
+                    {
                         LinesfromFile.Add(GetInputParamCalculatedValue(Fields.TextToWrite));
+                    }
+                        
                     WriteLinesWithEncoding(calculatedFilePath, (IEnumerable<string>)LinesfromFile);                    
                 }
             }
