@@ -378,15 +378,15 @@ namespace Ginger.AnalyzerLib
             }
             else
             {
-                BusinessFlow businessFlow = AA.mBusinessFlow;
+                BusinessFlow BFlow= AA.mBusinessFlow;
+                //BFlow = AA.mBusinessFlow;
                 if (AA.Details.Equals("BusinessFlow"))
                 {                    
-                    businessFlow = AA.mBusinessFlow;
-                    foreach (VariableBase var in businessFlow.Variables)
+                    foreach (VariableBase var in BFlow.Variables)
                     {
                         if (var.Name.Equals(AA.ItemName))
                         {
-                            businessFlow.Variables.Remove(var);
+                            BFlow.Variables.Remove(var);
                             AA.Status = eStatus.Fixed;                            
                         }
                     }
