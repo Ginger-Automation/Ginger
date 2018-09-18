@@ -14,17 +14,17 @@
       d:DesignHeight="1000" d:DesignWidth="2000"
       Title="Runset"  Loaded="Page_loaded">
 
-    <Grid Background="{StaticResource $BackgroundGray}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <StackPanel x:Name="xRunSetLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
             <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="118" Visibility="Visible" Height="62" />
-            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $DarkBlue}">
+            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
                 <Label.Content>
                     <GingerCore:ucTextDicResource Text="Loading [RunSet]..."/>
                 </Label.Content>
             </Label>
         </StackPanel>
 
-        <Grid Name="xRunsetPageGrid" Background="{StaticResource $BackgroundGray}" Visibility="Visible" >
+        <Grid Name="xRunsetPageGrid" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Visible" >
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="RunSetInfoz" Height="120"/>
                 <RowDefinition x:Name="ExecutionButtons" Height="40"/>
@@ -36,7 +36,7 @@
                 <ColumnDefinition Width="30"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <Grid x:Name="xRunsetInfoSectionGrid" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundGray}" >
+            <Grid x:Name="xRunsetInfoSectionGrid" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundColor_LightGray}" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="60"/>
                     <RowDefinition Height="60*"/>
@@ -49,7 +49,7 @@
                     
                     <Label x:Name="xRunSetNameLbl" HorizontalAlignment="Left" Style="{StaticResource $MainHeaderLabelStyle}" Content="Run Set Name" Height="40" Margin="-5,0,0,0"></Label>
                 </StackPanel>
-                <TextBlock x:Name="xRunsetDescriptionTextBlock" Grid.Row="1" Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,10,200,0" Text="Description: this is my butifual runset" VerticalAlignment="Stretch" HorizontalAlignment="Left" Style="{StaticResource $TextBlockStyle}" FontSize="16" Foreground="{StaticResource $DarkBlue}"  ></TextBlock>
+                <TextBlock x:Name="xRunsetDescriptionTextBlock" Grid.Row="1" Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,10,200,0" Text="Description: this is my butifual runset" VerticalAlignment="Stretch" HorizontalAlignment="Left" Style="{StaticResource $TextBlockStyle}" FontSize="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}"  ></TextBlock>
                 <StackPanel x:Name="xRunSetOperationsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 40 0">
                     <usercontrols:ucButton x:Name="xRunsetSaveBtn"  ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xRunsetSaveBtn_Click">
                         <usercontrols:ucButton.ToolTip>
@@ -123,7 +123,7 @@
 
 
             <!--ToDo: Replace existing tab logic with listview as Tab-->
-            <ListView x:Name="xMainNavigationListView" DockPanel.Dock="Left" Height="30" Background="{StaticResource $BackgroundGray}" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
+            <ListView x:Name="xMainNavigationListView" DockPanel.Dock="Left" Height="30" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"></StackPanel>
@@ -157,7 +157,7 @@
                 </usercontrols:ucButton>
             </DockPanel>
             <!---->
-        <TabControl DockPanel.Dock="Left" SelectionChanged="TabControl_SelectionChanged" x:Name="RunTab" Background="{StaticResource $BackgroundGray}" Grid.Row="2" Grid.Column="1" BorderThickness="1" BorderBrush="{StaticResource $BackgroundGray}"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <TabControl DockPanel.Dock="Left" SelectionChanged="TabControl_SelectionChanged" x:Name="RunTab" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="2" Grid.Column="1" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <TabItem x:Name="xRunnersTab" Style="{StaticResource $CoolTab}" TabIndex="1">
                 <TabItem.Header>
                     <Border BorderThickness="0 0 0 4"  Margin="0" x:Name="RunnerBorder" >
@@ -186,25 +186,25 @@
                 <RowDefinition x:Name="Row3" Height="200*" />
             </Grid.RowDefinitions>
              
-            <DockPanel Grid.Row="0" Background="{StaticResource $BackgroundGray}" >
+            <DockPanel Grid.Row="0" Background="{StaticResource $BackgroundColor_LightGray}" >
                <DockPanel Margin="40 0 0 0" >
                     <usercontrols:ucButton x:Name="xRunnerDetailViewBtn" ToolTip="Expand / Collapse All Runners" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Click="xRunnerDetailView_Click" Visibility="Visible" />                 
              </DockPanel>
-                <DockPanel x:Name="controls" HorizontalAlignment="Left" Margin="0,0,0,0" Background="{StaticResource $BackgroundGray}">                    
-                    <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $amdocsPink}" Margin="10 0 10 0"/>     
+                <DockPanel x:Name="controls" HorizontalAlignment="Left" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}">                    
+                    <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $SelectionColor_Pink}" Margin="10 0 10 0"/>     
                     <usercontrols:ucButton x:Name="xRunnersActiveBtn" ToolTip="Active / Inactive All Runners" ButtonFontImageSize="17" ButtonImageWidth="17" ButtonImageHeight="17" ButtonType="CircleImageButton" ButtonImageType="ActiveAll" Click="xRunnersActive_Click" />
                     <usercontrols:ucButton x:Name="xAddRunnerBtn" ToolTip="Add Runner" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="17" ButtonImageHeight="17" ButtonImageType="Add" Click="addRunner_Click"></usercontrols:ucButton>                    
                     <usercontrols:ucButton x:Name="xClearAllRunnerBtn" ToolTip="Delete All Runners" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="17" ButtonImageHeight="17"  ButtonImageType="Delete" Click="clearAllRunner_Click"></usercontrols:ucButton>                    
                     <usercontrols:ucButton x:Name="xMoveRunnerLeftBtn" ToolTip="Shift Runner Left" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="17" ButtonImageHeight="17"  ButtonImageType="MoveLeft" Click="MoveRunnerLeft_Click" />
                     <usercontrols:ucButton x:Name="xMoveRunnerRightBtn" ToolTip="Shift Runner Right" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="17" ButtonImageHeight="17"  ButtonImageType="MoveRight" Click="MoveRunnerRight_Click"/>
-                    <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $amdocsPink}" Margin="10 0 10 0"/>                                                            
-                    <Label Content="Environment :" x:Name="xEnvironmentCombolbl" Foreground="{StaticResource $DarkBlue}" ></Label>      
+                    <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $SelectionColor_Pink}" Margin="10 0 10 0"/>                                                            
+                    <Label Content="Environment :" x:Name="xEnvironmentCombolbl" Foreground="{StaticResource $BackgroundColor_DarkBlue}" ></Label>      
                     <DockPanel Margin="0,0,0,0"  HorizontalAlignment="Left">
                             <ComboBox x:Name="xRunsetEnvironmentCombo" ToolTip="Environment" ContextMenu="{x:Null}" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,5,5,3"></ComboBox>
                     </DockPanel>                      
                     <usercontrols:ucButton x:Name="xExecutionModeBtn" ToolTip="Sequential Execution" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="SequentialExecution" Click="executionMode_Click"></usercontrols:ucButton>
                 </DockPanel>   
-                  <StackPanel  HorizontalAlignment="Right" Background="{StaticResource $BackgroundGray}" Margin="0,0,-3,0">
+                  <StackPanel  HorizontalAlignment="Right" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,-3,0">
                     <DockPanel Margin="0,0,0,0" x:Name="xOtherControlsDocPanel">                            
                          <usercontrols:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Runner Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="17" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"></usercontrols:ucButton>
                          <z:ZoomPanel x:Name="xZoomPanel"></z:ZoomPanel>
@@ -213,9 +213,9 @@
             </DockPanel>
          
         <Frame Name="xRunnersFrame" HorizontalAlignment="Left"  Background="White" Grid.Row="1" Margin="0 0 0 0" />
-          <DockPanel  HorizontalAlignment="Stretch" Panel.ZIndex="1" VerticalAlignment="Top"  Background="{StaticResource $BackgroundGray}" Grid.Row="2" >
-                <Label x:Name="xRunnerNamelbl" VerticalAlignment="Top" Margin="40 0 0 0" Content="Runner Name"  HorizontalAlignment="Left" FontSize="20" Foreground="{StaticResource $amdocsPink}" />
-                <ComboBox x:Name="xRunnersCombo" ToolTip="Runners"  Validation.ErrorTemplate="{x:Null}" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="40,5,5,3" Visibility="Collapsed"  FontSize="20" FontWeight="Bold" Height="30" Foreground="{StaticResource $amdocsPink}"></ComboBox>
+          <DockPanel  HorizontalAlignment="Stretch" Panel.ZIndex="1" VerticalAlignment="Top"  Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="2" >
+                <Label x:Name="xRunnerNamelbl" VerticalAlignment="Top" Margin="40 0 0 0" Content="Runner Name"  HorizontalAlignment="Left" FontSize="20" Foreground="{StaticResource $SelectionColor_Pink}" />
+                <ComboBox x:Name="xRunnersCombo" ToolTip="Runners"  Validation.ErrorTemplate="{x:Null}" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="40,5,5,3" Visibility="Collapsed"  FontSize="20" FontWeight="Bold" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"></ComboBox>
                 <DockPanel HorizontalAlignment="Right" x:Name="xRunnerInfoDocPanel" Visibility="Collapsed">
                      
                 <DockPanel x:Name="xRunnerButtonsDocPanel">
@@ -223,8 +223,8 @@
                     <usercontrols:ucButton x:Name="xStopRunnerBtn" ToolTip="Stop Runner Execution" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Stop" Click="xStopRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
                     <usercontrols:ucButton x:Name="xContinueRunnerBtn"  ToolTip="Continue Runner Execution from Last Stopped Action" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xContinueRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
                 </DockPanel>
-                     <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $amdocsPink}" Margin="10 0 10 0"/>               
-                    <Label x:Name="xRuntimeLbl" Content="00:00:00" Width="90" Height="32" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource $LightBlue}" />                    
+                     <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $SelectionColor_Pink}" Margin="10 0 10 0"/>               
+                    <Label x:Name="xRuntimeLbl" Content="00:00:00" Width="90" Height="32" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource $SelectionColor_LightBlue}" />                    
                     <state:StatusItem x:Name="xStatus" Margin="0 2 2 0" HorizontalAlignment="Right" SetStatusIcon="True"></state:StatusItem>                                       
                     <StackPanel>
 
@@ -405,7 +405,7 @@
                     </DockPanel>
                 </Border>
             </TabItem.Header>
-            <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Background="{StaticResource $BackgroundGray}">
+            <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Background="{StaticResource $BackgroundColor_LightGray}">
                 <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,0,0,0">Name:</Label>
                 <TextBox x:Name="xRunSetNameTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="25" FontWeight="Bold"></TextBox>
                 <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,5,0,0">Description:</Label>

@@ -198,26 +198,10 @@ namespace GingerCore.Actions.Tuxedo
 
         private void ParseResult(string Result)
         {
-            string[] lines = Result.Split('\n');
-            foreach (string s in lines)
-            {
-                if (s.Equals("\r")) continue;
-                string s1 = s.Trim();
-                int firstSpace = s1.IndexOf("\t");
-                string Param;
-                string Value;
-                if (firstSpace > 0)
-                {
-                    Param = s1.Substring(0, firstSpace);
-                    Value = s1.Substring(firstSpace).Trim();
-                }
-                else
-                {
-                    Param = s;
-                    Value = "";
-                }
-                AddOrUpdateReturnParamActual(Param, Value);                
-            }
+            Result = Result.Replace("\r", "");
+            Result = Result.Replace("\t", "");
+            
+            AddOrUpdateReturnParamActual("Actual", Result);            
         }
 
         private void UploadUDFile(string UnixUDfileName, string LocalTempUDFileName)
@@ -236,7 +220,7 @@ namespace GingerCore.Actions.Tuxedo
             
             foreach(ActInputValue AIV in DynamicUDElements)
             {
-                txt += AIV.Param + "\t"+ AIV.Value+"\n";  // Add \t for tab and \r for new line
+                txt += AIV.Param + "\t"+ AIV.ValueForDriver+"\n";  // Add \t for tab and \r for new line
             
             }
             txt += "\n";
@@ -305,7 +289,7 @@ namespace GingerCore.Actions.Tuxedo
             shell.Write(Command + "\n");
             cmdResult = reader.ReadToEnd();
             int iCount = 1;
-            Regex regExp = new Regex(@"ENTER ...|continue ...|option :|\> |\$ |\% |\.");
+            Regex regExp = new Regex(@"ENTER ...|continue ...|option :|\> |\$ |\%");
             while (regExp.Matches(cmdResult.ToString()).Count == 0 && iCount<20)
             {
                 cmdResult += reader.ReadToEnd();

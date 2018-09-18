@@ -47,6 +47,7 @@ namespace Ginger.ALM
             this.almConectStyle = almConnectStyle;
 
             App.ObjFieldBinding(ServerURLTextBox, TextBox.TextProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMServerURL));
+            App.ObjFieldBinding(RestAPICheckBox, CheckBox.IsCheckedProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.UseRest));
             App.ObjFieldBinding(UserNameTextBox, TextBox.TextProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMUserName));
             App.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMDomain));
             App.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, ALMIntegration.Instance.AlmConfigurations, nameof(ALMIntegration.Instance.AlmConfigurations.ALMProjectName));
@@ -57,6 +58,14 @@ namespace Ginger.ALM
                 RallyRadioButton.Visibility = Visibility.Hidden;
                 if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RALLY)
                     App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.QC;
+            }
+
+            if (!WorkSpace.Instance.BetaFeatures.RestAPI)
+            {
+                RestAPICheckBox.Visibility = Visibility.Hidden;
+                App.UserProfile.Solution.UseRest = false;
+                RestAPICheckBox.IsChecked = false;
+                RestAPICheckBox.IsEnabled = false;
             }
 
             if (almConnectStyle != ALMIntegration.eALMConnectType.Silence)
@@ -88,6 +97,7 @@ namespace Ginger.ALM
             if (isServerDetailsCorrect)
             {
                 QCRadioButton.IsEnabled = false;
+                RestAPICheckBox.IsEnabled = false;
                 RQMRadioButton.IsEnabled = false;
                 RallyRadioButton.IsEnabled = false;
                 RQMLoadConfigPackageButton.IsEnabled = false;
@@ -103,12 +113,17 @@ namespace Ginger.ALM
             else
             {
                 QCRadioButton.IsEnabled = true;
+                RestAPICheckBox.IsEnabled = true;
                 RQMRadioButton.IsEnabled = true;
                 RallyRadioButton.IsEnabled = true;
                 RQMLoadConfigPackageButton.IsEnabled = true;
                 if (App.UserProfile.Solution.AlmType == ALMIntegration.eALMType.RQM)
                     ServerURLTextBox.IsEnabled = false;
-                else ServerURLTextBox.IsEnabled = true;
+                else
+                {
+                    ServerURLTextBox.IsEnabled = true;
+                    ServerURLTextBox.IsReadOnly = false;
+                }
                 UserNameTextBox.IsEnabled = true;
                 PasswordTextBox.IsEnabled = true;
                 if (isConnWin)
@@ -170,8 +185,9 @@ namespace Ginger.ALM
             ProjectComboBox.SelectedItem = null;
             ProjectComboBox.SelectedValue = null;
             ProjectComboBox.Items.Clear();
+            RestAPICheckBox.IsChecked = false;
 
-           ALMIntegration.Instance.SyncConfigurations();
+            ALMIntegration.Instance.SyncConfigurations();
         }
 
         private bool GetProjectsDetails()
@@ -334,7 +350,8 @@ namespace Ginger.ALM
                     {
                         ServerURLTextBox.IsEnabled = true;
                         ServerURLTextBox.IsReadOnly = false;
-                    }else
+                    }
+                    else
                     {
                         ServerURLTextBox.IsEnabled = false;
                         ServerURLTextBox.IsReadOnly = true;
@@ -346,6 +363,10 @@ namespace Ginger.ALM
                     RallyRadioButton.FontWeight = FontWeights.Regular;
                     RallyRadioButton.Foreground = Brushes.Black;
                     RallyRadioButton.IsChecked = false;
+                    if (WorkSpace.Instance.BetaFeatures.RestAPI)
+                    {
+                        RestAPICheckBox.Visibility = Visibility.Visible;
+                    }
                     break;
                 case ALMIntegration.eALMType.RQM:
                     RQMRadioButton.IsChecked = true;
@@ -364,8 +385,9 @@ namespace Ginger.ALM
                     RallyRadioButton.FontWeight = FontWeights.Regular;
                     RallyRadioButton.Foreground = Brushes.Black;
                     RallyRadioButton.IsChecked = false;
+                    RestAPICheckBox.Visibility = Visibility.Hidden;
                     break;
-                case ALMIntegration.eALMType.RALLY:     
+                case ALMIntegration.eALMType.RALLY:
                     RallyRadioButton.IsChecked = true;
                     RallyRadioButton.FontWeight = FontWeights.ExtraBold;
                     RallyRadioButton.Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
@@ -390,6 +412,7 @@ namespace Ginger.ALM
                     RQMRadioButton.FontWeight = FontWeights.Regular;
                     RQMRadioButton.Foreground = Brushes.Black;
                     RQMRadioButton.IsChecked = false;
+                    RestAPICheckBox.Visibility = Visibility.Hidden;
                     break;
             }
         }
@@ -436,13 +459,13 @@ namespace Ginger.ALM
                             SetLoadPackageButtonContent();
                         }
                         break;
-                    case "RallyRadioButton":            
+                    case "RallyRadioButton":
                         if (App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RALLY)
                         {
                             App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.RALLY;
                             ClearALMConfigs();
                         }
-                        break;                        
+                        break;
                 }
                 ALMIntegration.Instance.UpdateALMType(App.UserProfile.Solution.AlmType);
                 StyleRadioButtons();
@@ -456,7 +479,7 @@ namespace Ginger.ALM
             {
                 RQMLoadConfigPackageButton.Content = "Replace";
                 ExampleURLHint.Content = "and click Replace to change RQM Configuration Package";
-                
+
             }
             else
             {
@@ -520,6 +543,18 @@ namespace Ginger.ALM
         {
             System.Diagnostics.Process.Start(@"http://ginger/Downloads/Other");
             e.Handled = true;
+        }
+
+        private void RestAPICheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            App.UserProfile.Solution.UseRest = true;
+            ExampleURLHint.Content = "Example: http://server:8080/";
+        }
+
+        private void RestAPICheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            App.UserProfile.Solution.UseRest = false;
+            ExampleURLHint.Content = "Example: http://server:8080/almbin";
         }
     }
 }

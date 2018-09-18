@@ -308,64 +308,69 @@ namespace GingerCore.Drivers
                         break;
 
                     case eBrowserType.FireFox:
-                        //--To be used for Selenium 3.4 or above with Firefox version 54 or above
                         string geckoDriverExePath2 = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\geckodriver.exe";
                         System.Environment.SetEnvironmentVariable("webdriver.gecko.driver", geckoDriverExePath2, EnvironmentVariableTarget.Process);
-                        FirefoxProfile ffProfile2 = new FirefoxProfile();
+
+                        FirefoxOptions FirefoxOption= new FirefoxOptions();
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                         {
+                            FirefoxProfile ffProfile2 = new FirefoxProfile();
                             ffProfile2 = new FirefoxProfile(UserProfileFolderPath);
+
+                            FirefoxOption.Profile = ffProfile2;
                         }
                         else
                         {
-                            ffProfile2 = new FirefoxProfile("AutomationProfile");
-                            if (AutoDetect)
-                                ffProfile2.SetPreference("network.proxy.type", (int)ProxyKind.AutoDetect); //needed beacuse otherwise surfing in not working 
-                            ffProfile2.AcceptUntrustedCertificates = true;
-                            ffProfile2.AssumeUntrustedCertificateIssuer = true;
-                        }
-                        FirefoxOptions ffOptions2 = new FirefoxOptions();
-                        if (SeleniumUserArgs != null)
-                            ffOptions2.AddArguments(SeleniumUserArgs);
-                        ffOptions2.Profile = ffProfile2;
-                        ffOptions2.Proxy = mProxy;
-
-                        if (ProxyKind.Manual.Equals(mProxy.Kind))
-                        {
-                            ffProfile2.SetPreference("network.proxy.type", (int)ProxyKind.Manual);
-                            string[] proxyNodes = mProxy.HttpProxy.Split(':');
-
-                            if (proxyNodes.Length == 2)
+                            FirefoxOption.Proxy = new Proxy();
+                            switch(mProxy.Kind)
                             {
-                                // DriverOptions.Proxy is not supproted currently for firfox driver , so setting proxy using profiler
-                                ffProfile2.SetPreference("network.proxy.http", proxyNodes[0]);
-                                ffProfile2.SetPreference("network.proxy.http_port", Convert.ToInt32(proxyNodes[1]));
-                                ffProfile2.SetPreference("network.proxy.ssl", proxyNodes[0]);
-                                ffProfile2.SetPreference("network.proxy.ssl_port", Convert.ToInt32(proxyNodes[1]));
-                                ffProfile2.SetPreference("network.proxy.ftp", proxyNodes[0]);
-                                ffProfile2.SetPreference("network.proxy.ftp_port", Convert.ToInt32(proxyNodes[1]));
-                                ffProfile2.SetPreference("network.proxy.socks", proxyNodes[0]);
-                                ffProfile2.SetPreference("network.proxy.socks_port", Convert.ToInt32(proxyNodes[1]));
+                                case ProxyKind.Manual:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.Manual;
+                                    FirefoxOption.Proxy.HttpProxy = mProxy.HttpProxy;
+                                  FirefoxOption.Proxy.SslProxy = mProxy.SslProxy;
+                                    //TODO: GETTING ERROR LAUNCHING BROWSER 
+                                  //  FirefoxOption.Proxy.SocksProxy = mProxy.SocksProxy;
+                                    break;
+
+                                case ProxyKind.ProxyAutoConfigure:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.ProxyAutoConfigure;
+                                    FirefoxOption.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;                            
+                                    break;
+
+                                case ProxyKind.Direct:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.Direct;
+                                                   break;
+
+                                case ProxyKind.AutoDetect:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.AutoDetect;
+                      
+                                    break;
+
+                                case ProxyKind.System:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.System;
+
+                                    break;
+
+                                default:
+                                    FirefoxOption.Proxy.Kind = ProxyKind.System;
+                           
+                                    break;
+
                             }
-                            else
-                            {
-                                Reporter.ToLog(eLogLevel.WARN, "Invalid proxy format" + mProxy);
-                            }
+                     
+
                         }
-                        if (ProxyKind.ProxyAutoConfigure.Equals(mProxy.Kind))
-                        {
-                            ffProfile2.SetPreference("network.proxy.type", (int)ProxyKind.ProxyAutoConfigure);
-                            ffProfile2.SetPreference("network.proxy.autoconfig_url", mProxy.ProxyAutoConfigUrl);
-                        }
+
                         if (Convert.ToInt32(HttpServerTimeOut) > 60)
                         {
                             FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
-                            Driver = new FirefoxDriver(service, ffOptions2, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            Driver = new FirefoxDriver(service, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
                         else
                         {
-                            Driver = new FirefoxDriver(ffOptions2);
+                            Driver = new FirefoxDriver(FirefoxOption);
                         }
+                
                         break;
 
                     case eBrowserType.Chrome:
@@ -5361,13 +5366,16 @@ namespace GingerCore.Drivers
 
         private void HandleActUIElement(ActUIElement act)
         {
+            IWebElement e = null;
 
-            IWebElement e = LocateElement(act);
-
-            if (e == null)
+            if (act.ElementLocateBy != eLocateBy.NA)
             {
-                //TODO: if multiple props the message needs to be different... or by X,Y
-                act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                e = LocateElement(act);
+                if (e == null)
+                {
+                    //TODO: if multiple props the message needs to be different... or by X,Y
+                    act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                }
             }
 
             switch (act.ElementAction)
@@ -5482,26 +5490,38 @@ namespace GingerCore.Drivers
                     }
                     break;
 
-                case ActUIElement.eElementAction.RunJavaScript:
-                    e = LocateElement(act);
+                case ActUIElement.eElementAction.RunJavaScript:                    
                     string script = act.GetInputParamCalculatedValue("Value");
                     try
                     {
-                        object a = null;
-                        if (!script.ToUpper().StartsWith("RETURN"))
+                        if (string.IsNullOrEmpty(script))
                         {
-                            script = "return " + script;
+                            act.Error = "Script is empty";
                         }
-                        if (script.ToLower().Contains("arguments[0]") && e != null)
-                            a = ((IJavaScriptExecutor)Driver).ExecuteScript(script, e);
                         else
-                            a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
-                        if (a != null)
-                            act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                        {
+                            object a = null;
+                            if (!script.ToUpper().StartsWith("RETURN"))
+                            {
+                                script = "return " + script;
+                            }
+                            if (act.ElementLocateBy != eLocateBy.NA)
+                            {
+                                if (script.ToLower().Contains("arguments[0]") && e != null)
+                                    a = ((IJavaScriptExecutor)Driver).ExecuteScript(script, e);
+                            }
+                            else
+                            {
+                                a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
+                            }
+
+                            if (a != null)
+                                act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                        }
                     }
                     catch (Exception ex)
                     {
-                        act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "'";
+                        act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "', if element need to be embbeded in the script so make sure you use the 'arguments[0]' place holder for it.";
                     }
                     break;
                     

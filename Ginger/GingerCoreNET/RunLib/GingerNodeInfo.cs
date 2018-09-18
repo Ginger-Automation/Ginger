@@ -25,6 +25,10 @@ namespace GingerCoreNET.RunLib
     {
         public Guid SessionID { get; set; }
         public string Name { get; set; }
+        // public string PluginId { get; set; }
+        // DO we want version?
+
+        public string ServiceId { get; set; }
         public string IP { get; set; }
         public string Host { get; set; }
         public string OS { get; set; }
@@ -34,9 +38,19 @@ namespace GingerCoreNET.RunLib
             get { return mPing; }
             set { if (mPing != value) { mPing = value; OnPropertyChanged(nameof(Ping)); } } }
 
-        public string Status { get; set; }
+        // TOdo change to enum
+        private string mStatus;        
+        public string Status { get { return mStatus; } set { if (mStatus != value) { mStatus = value; OnPropertyChanged(nameof(Status)); } } }  
         
         public event PropertyChangedEventHandler PropertyChanged;
+
+        int mActionCount = 0;
+        public int ActionCount { get { return mActionCount;  } }
+        public void IncreaseActionCount()
+        {
+            mActionCount++;
+            OnPropertyChanged(nameof(ActionCount));
+        }
 
         public void OnPropertyChanged(string name)
         {

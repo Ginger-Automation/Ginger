@@ -41,6 +41,7 @@ namespace GingerCore
         TestCompleted, CantFindObject, WarnOnDynamicActivities,
         QcConnectSuccess,
         QcConnectFailure,
+        QcConnectFailureRestAPI,
         ALMConnectFailureWithCurrSettings,
         ALMOperationFailed,
         QcLoginSuccess,
@@ -114,7 +115,8 @@ namespace GingerCore
         InitializeBrowser,LoseChangesWarn, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
         VisualTestingFailedToDeleteOldBaselineImage,ApplitoolsLastExecutionResultsNotExists,ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
         FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
-        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported
+        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported,
+        POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus
     }
 
     public static class UserMessagesPool
@@ -404,6 +406,7 @@ namespace GingerCore
             #region ALM
             Reporter.UserMessagesPool.Add(eUserMsgKeys.QcConnectSuccess, new UserMessage(eMessageType.INFO, "QC/ALM Connection", "QC/ALM connection successful!", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.QcConnectFailure, new UserMessage(eMessageType.WARN, "QC/ALM Connection Failed", "QC/ALM connection failed." + System.Environment.NewLine + "Please make sure that the credentials you use are correct and that QC/ALM Client is registered on your machine." + System.Environment.NewLine + System.Environment.NewLine + "For registering QC/ALM Client- please follow below steps:" + System.Environment.NewLine + "1. Launch Internet Explorer as Administrator" + System.Environment.NewLine + "2. Go to http://<QCURL>/qcbin" + System.Environment.NewLine + "3. Click on 'Add-Ins Page' link" + System.Environment.NewLine + "4. In next page, click on 'HP ALM Client Registration'" + System.Environment.NewLine + "5. In next page click on 'Register HP ALM Client'" + System.Environment.NewLine + "6. Restart Ginger and try to reconnect", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.QcConnectFailureRestAPI, new UserMessage(eMessageType.WARN, "QC/ALM Connection Failed", "QC/ALM connection failed." + System.Environment.NewLine + "Please make sure that the server url and the credentials you use are correct." , MessageBoxButton.OK, MessageBoxResult.None));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ALMConnectFailureWithCurrSettings, new UserMessage(eMessageType.WARN, "ALM Connection Failed", "ALM Connection Failed, Please make sure credentials are correct.", MessageBoxButton.OK, MessageBoxResult.None));
 
@@ -438,13 +441,23 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.WrongDateValueInserted, new UserMessage(eMessageType.INFO, "Profiles Saving", "Please, insert Date in format 'yyyy-mm-dd'\n(Field '{0}', Defect Profile '{1}')", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ALMDefectsWereOpened, new UserMessage(eMessageType.INFO, "ALM Defects Opening", "{0} ALM Defects were opened", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AskALMDefectsOpening, new UserMessage(eMessageType.QUESTION, "ALM Defects Opening", "Are you sure that you want to open {0} ALM Defects?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            #endregion ALM
 
             #region ALM External Items Fields Messages
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfToDownloadPossibleValuesShortProcesss, new UserMessage(eMessageType.QUESTION, "ALM External Items Fields", "Would you like to download and save possible values for Categories Items? ", MessageBoxButton.YesNo, MessageBoxResult.No));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfToDownloadPossibleValues, new UserMessage(eMessageType.QUESTION, "ALM External Items Fields", "Would you like to download and save possible values for Categories Items? " + Environment.NewLine + "This process could take up to several hours.", MessageBoxButton.YesNo, MessageBoxResult.No));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.SelectAndSaveCategoriesValues, new UserMessage(eMessageType.QUESTION, "ALM External Items Fields", "Please select values for each Category Item and click on Save", MessageBoxButton.OK, MessageBoxResult.None));
             #endregion ALM External Items Fields Messages
-            #endregion ALM
+
+            #region POM
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMSearchByGUIDFailed, new UserMessage(eMessageType.WARN, "POM not found", "Previously saved POM not found. Please choose another one.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMElementSearchByGUIDFailed, new UserMessage(eMessageType.WARN, "POM Element not found", "Previously saved POM Element not found. Please choose another one.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.NoRelevantAgentInRunningStatus, new UserMessage(eMessageType.WARN, "No Relevant Agent In Running Status", "Relevant Agent In should be up and running in order to see the highlighted element.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardFailedToLearnElement, new UserMessage(eMessageType.WARN, "Learn Elements Failed", "Error occured while learning the elements." + Environment.NewLine + "Error Details:" + Environment.NewLine + "'{0}'", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements, new UserMessage(eMessageType.WARN, "Re-Learn Elements", "Re-Learn Elements will delete all existing elements" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMDriverIsBusy, new UserMessage(eMessageType.WARN, "Driver Is Busy", "Operation cannot be complete because the Driver is busy with learning operation" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.OK, MessageBoxResult.OK));
+            #endregion POM
+
 
             #region UnitTester Messages
             Reporter.UserMessagesPool.Add(eUserMsgKeys.TestCompleted, new UserMessage(eMessageType.INFO, "Test Completed", "Test completed successfully.", MessageBoxButton.OK, MessageBoxResult.None));
@@ -604,11 +617,6 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceListIsEmpty, new UserMessage(eMessageType.WARN, "List is Empty", "No items were found hence nothing can be replaced", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceNoItemsToRepalce, new UserMessage(eMessageType.WARN, "No Suitable Items", "No suitable items selected to replace.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FindAndReplaceViewRunSetNotSupported, new UserMessage(eMessageType.INFO, "View Run Set", "View RunSet is not supported.", MessageBoxButton.OK, MessageBoxResult.None));
-
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardFailedToLearnElement, new UserMessage(eMessageType.WARN, "Learn Elements Failed", "Error occured while learning the elements." + Environment.NewLine + "Error Details:" + Environment.NewLine + "'{0}'", MessageBoxButton.OK, MessageBoxResult.None));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMWizardReLearnWillDeleteAllElements, new UserMessage(eMessageType.WARN, "Re-Learn Elements", "Re-Learn Elements will delete all existing elements" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.YesNo, MessageBoxResult.No));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMDriverIsBusy, new UserMessage(eMessageType.WARN, "Driver Is Busy", "Operation cannot be complete because the Driver is busy with learning operation" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.OK, MessageBoxResult.OK));
-
         }
     }
 }

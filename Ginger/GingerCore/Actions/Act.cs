@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -56,7 +57,6 @@ namespace GingerCore.Actions
             Yellow = 2,
             Red = 3
         }
-
 
         public enum eWindowsToCapture
         {
@@ -141,10 +141,20 @@ namespace GingerCore.Actions
             public static string SupportSimulation = "SupportSimulation";
         }
 
+
+
         #region Serialized Attributes
         // -----------------------------------------------------------------------------------------------------------------------------------------------
         // All serialized Attributes - Start
         // -----------------------------------------------------------------------------------------------------------------------------------------------
+
+        [IsSerializedForLocalRepository]
+        public ActionLogConfig ActionLogConfig;
+
+        private bool mEnableActionLogConfig;
+        [IsSerializedForLocalRepository]
+        public bool EnableActionLogConfig { get { return mEnableActionLogConfig; } set { mEnableActionLogConfig = value; OnPropertyChanged(nameof(EnableActionLogConfig)); } }
+
 
         private bool mActive;
         [IsSerializedForLocalRepository]
@@ -362,8 +372,6 @@ namespace GingerCore.Actions
         public string LocateValueCalculated { get; set; }
 
 
-
-
         // show image base on Act type near the line number
         public virtual System.Drawing.Image Image { get { return Resources.Act; } }
 
@@ -438,13 +446,8 @@ namespace GingerCore.Actions
         [DoNotBackup]
         public abstract void ActionUserRecommendedUseCase(TextBlockHelper TBH);
 
-
-
         // No need to serialze
         public int RetryMechanismCount { get; set; }
-
-
-
 
         public long ElapsedTicks { get; set; }
 
@@ -545,8 +548,6 @@ namespace GingerCore.Actions
                 return FlowControls;
             }
         }
-
-
 
 
         #region ActInputValues
@@ -845,7 +846,6 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateReturnParamActual(outputValuePair.Key, outputValuePair.Value);
             }
-
         }
 
         public void ParseJSONToOutputValues(string ResponseMessage, int i)// added i especially for cassandra, for retreiving path , other cases give i=1
@@ -1104,6 +1104,7 @@ namespace GingerCore.Actions
 
             return ARC.StoreToValue;
         }
+
         protected void AddAllPlatforms()
         {
             foreach (object v in Enum.GetValues(typeof(ePlatformType)))
@@ -1111,7 +1112,6 @@ namespace GingerCore.Actions
                 mPlatforms.Add((ePlatformType)v);
             }
         }
-
 
         /// <summary>
         ///  this function is called after the action was executed by the driver
@@ -1320,6 +1320,7 @@ namespace GingerCore.Actions
                     newInstance.ParentGuid = actInstance.ParentGuid;
                     newInstance.ExternalID = actInstance.ExternalID;
                     newInstance.Active = actInstance.Active;
+                    newInstance.VariablesDependencies = actInstance.VariablesDependencies;
                     if (ePartToUpdate == eItemParts.Details)
                     {
                         //keep other parts

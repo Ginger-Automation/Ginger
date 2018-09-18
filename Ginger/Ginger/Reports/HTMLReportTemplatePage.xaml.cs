@@ -264,25 +264,30 @@ namespace Ginger.Reports
             ObservableList<HTMLReportConfigFieldToSelect> savedFieldSelections = (ObservableList<HTMLReportConfigFieldToSelect>)HTMLReportConfiguration.GetType().GetField(fieldsToSelectListName.ToString()).GetValue(HTMLReportConfiguration);
             ObservableList<HTMLReportConfigFieldToSelect> referenceFieldSelections = GetReportLevelMembers(reportType);
             // swap should be done between two below lists. Previose saved selection should be performed on the referenceFieldSelections
-            foreach (var reference_item in referenceFieldSelections)
+            foreach (var saved_item in savedFieldSelections)
             {
-                foreach (var saved_item in savedFieldSelections)
+                var savedref_item = referenceFieldSelections.Where(x => x.FieldKey == saved_item.FieldKey).FirstOrDefault();
+                if (savedref_item != null)
                 {
-                    if (reference_item.FieldKey == saved_item.FieldKey)
-                    {
-                        if (!reference_item.IsNotMandatory)     // if field is mandatory
-                        {                                       // select it anyway
-                            reference_item.IsSelected = true;
-                        }
-                        else
-                        {
-                            reference_item.IsSelected = saved_item.IsSelected;
-                            reference_item.IsSectionCollapsed = saved_item.IsSectionCollapsed;
-                        }
+                    if (!savedref_item.IsNotMandatory)     // if field is mandatory
+                    {                                       // select it anyway
+                        saved_item.IsSelected = true;
                     }
+                    saved_item.FieldName = savedref_item.FieldName;
+                    saved_item.FieldType = savedref_item.FieldType;
+                    saved_item.IsNotMandatory = savedref_item.IsNotMandatory;
                 }
             }
-            return referenceFieldSelections;
+            //adding missing fields
+            foreach (var reference_item in referenceFieldSelections)
+            {
+                var savedref_item = savedFieldSelections.Where(x => x.FieldKey == reference_item.FieldKey).FirstOrDefault();
+                if (savedref_item == null)
+                {
+                    savedFieldSelections.Add(reference_item);
+                }
+            }
+            return savedFieldSelections;
         }
 
         private void SetControls()
@@ -743,10 +748,13 @@ namespace Ginger.Reports
 
         private void SetIsDefualtImage()
         {
-            if (_HTMLReportConfiguration.IsDefault)
-                xDefualtImage.Visibility = Visibility.Visible;
-            else
-                xDefualtImage.Visibility = Visibility.Collapsed;
+            this.Dispatcher.Invoke(() =>
+            {
+                if (_HTMLReportConfiguration.IsDefault)
+                    xDefualtImage.Visibility = Visibility.Visible;
+                else
+                    xDefualtImage.Visibility = Visibility.Collapsed;
+            });
         }
 
         private void _HTMLReportConfiguration_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

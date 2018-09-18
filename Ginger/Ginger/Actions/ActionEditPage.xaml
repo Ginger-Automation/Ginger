@@ -239,9 +239,10 @@
                 <Grid   x:Name="xActionOutputGrid" Background="{StaticResource @Skin1_ColorC}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30" Name="DataSourceRow"/>
+                        <RowDefinition Height="33" Name="ActionLogRow"/>
                         <RowDefinition Height="30*"/>
                     </Grid.RowDefinitions>
-                    <Expander  x:Name="DataSourceExpander" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource @ExpanderLightStyle}" Expanded="DataSourceExpander_Expanded" Collapsed="DataSourceExpander_Collapsed">
+                    <Expander  x:Name="xDataSourceExpander" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource @ExpanderLightStyle}" Expanded="xDataSourceExpander_Expanded" Collapsed="xDataSourceExpander_Collapsed">
                         <Expander.Header>
                             <Label x:Name="DataSourceExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
                                 <Label.Content>
@@ -278,7 +279,35 @@
                             </Grid>
                         </Expander.Content>
                     </Expander>
-                    <Ginger:ucGrid x:Name="OutputValuesGrid" Grid.Row="1" Margin="0,10,0,0" Title="Output Value(s)" ShowTitle="Collapsed" />
+
+                    <Expander  x:Name="ActionLogConfigExpander" ExpandDirection="Down" IsExpanded="False" Grid.Row="1" Style="{StaticResource @ExpanderLightStyle}" Expanded="ActionLogConfigExpander_Expanded"  Collapsed="ActionLogConfigExpander_Collapsed">
+                        <Expander.Header>
+                            <Label x:Name="ActionLogConfigExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                                <Label.Content>
+                                    <GingerCore:ucTextDicResource Text="Action Log" Width="585"/>
+                                </Label.Content>
+                            </Label>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <Grid x:Name="ActionLogGrid" Background="{StaticResource @Skin1_ColorC}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="170" Name="ActionLogConfigRow"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Name="ActionLogStackPanel"  Grid.Row="0" Margin="5,5,0,0">
+                                    <CheckBox x:Name="EnableActionLogConfigCheckBox" Content="Enable Action Log" HorizontalAlignment="Left" FontWeight="Bold" Style="{StaticResource @CheckBoxStyle}" Checked="EnableActionLogConfigCheckBox_Checked" Unchecked="EnableActionLogConfigCheckBox_UnChecked"/>
+                                </StackPanel>
+                                <StackPanel x:Name="ActionLogDetailsStackPanel" Grid.Row="1" Margin="5,5,0,0">
+                                    <Frame x:Name="ActionLogConfigFrame">
+                                    </Frame>
+                                </StackPanel>
+                            </Grid>
+                        </Expander.Content>
+                    </Expander>
+
+                    <Ginger:ucGrid x:Name="OutputValuesGrid" Grid.Row="3" Margin="0,10,0,0" Title="Output Value(s)" ShowTitle="Collapsed" />
+
                 </Grid>
             </TabItem>
 
@@ -346,8 +375,9 @@
                     <Label Content="Error Details:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource @InputFieldLabelStyle}"/>
                     <TextBox x:Name="RTErrorLabel" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="14" Foreground="Red" FontWeight="Bold" Style="{StaticResource @MultiRowsTextBoxStyle}" Background="{StaticResource @Skin1_ColorC}"></TextBox>
                 </Grid>
-
             </TabItem>
+
+
 
             <TabItem x:Name="HelpTab" Margin="32,0,-36,0"  >
                 <TabItem.Header>

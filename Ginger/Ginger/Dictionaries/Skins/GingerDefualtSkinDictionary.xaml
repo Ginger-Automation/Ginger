@@ -2,14 +2,24 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ New Design 2018 - START -->
-    <SolidColorBrush x:Key="$BackgroundGray" Color="#EDEFF5" />
-    <SolidColorBrush x:Key="$DarkGray" Color="#333333" />
-    <SolidColorBrush x:Key="$LightBlue" Color="#3EA7FC" />
-    <SolidColorBrush x:Key="$DarkBlue" Color="#3E3E5D" />
-    <SolidColorBrush x:Key="$amdocsPink" Color="#F67270" />
-    <SolidColorBrush x:Key="$DarkPurple" Color="#363656"/>
-    <SolidColorBrush x:Key="$LightPurple" Color="#576D91"/>
-    <SolidColorBrush x:Key="$BlackOpacity" Color="Black" Opacity="0.2"/>
+    <!--Background Colors-->
+    <SolidColorBrush x:Key="$BackgroundColor_VeryDarkBlue" Color="#152B37" />
+    <SolidColorBrush x:Key="$BackgroundColor_DarkBlue" Color="#3E3E5D" />
+    <SolidColorBrush x:Key="$BackgroundColor_Gray" Color="LightGray" />
+    <SolidColorBrush x:Key="$BackgroundColor_LightGray" Color="#EDEFF5" />
+    <SolidColorBrush x:Key="$BackgroundColor_White" Color="White" />
+
+    <!--Selection Colors-->
+    <SolidColorBrush x:Key="$SelectionColor_Pink" Color="#F26F6F" />
+    <SolidColorBrush x:Key="$SelectionColor_LightBlue" Color="#3EA7FC" />
+
+    <!--Highlight Colors-->
+    <SolidColorBrush x:Key="$HighlightColor_Purple" Color="#D00D90" />
+    <SolidColorBrush x:Key="$HighlightColor_Red" Color="#C21807"/>
+    <SolidColorBrush x:Key="$HighlightColor_Orange" Color="#FF8C00"/>
+    <SolidColorBrush x:Key="$HighlightColor_Yellow" Color="#EAB330" />
+    
+    <!--Execution Status Colors-->
     <SolidColorBrush x:Key="$PassedStatusColor" Color="#54A81B"/>
     <SolidColorBrush x:Key="$FailedStatusColor" Color="#E31123"/>
     <SolidColorBrush x:Key="$PendingStatusColor" Color="#FF8C00"/>
@@ -17,17 +27,13 @@
     <SolidColorBrush x:Key="$StoppedStatusColor" Color="#ED5588"/>
     <SolidColorBrush x:Key="$SkippedStatusColor" Color="#737373"/>
     <SolidColorBrush x:Key="$BlockedStatusColor" Color="#A21025"/>
-    <SolidColorBrush x:Key="$ProcessingColor" Color="#FF8C00"/>
-    <SolidColorBrush x:Key="$White" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="$LightGray" Color="#808080"/>
-    <SolidColorBrush x:Key="$VeryLightGray" Color="#DCDCDC"/>
-    <SolidColorBrush x:Key="$RedColor" Color="#C21807"/>
+
 
     <LinearGradientBrush x:Key="$amdocsLogoLinarGradientBrush"
 		StartPoint="0,0" EndPoint="0.99,1" 
 		SpreadMethod="Pad" ColorInterpolationMode="SRgbLinearInterpolation" >
-        <GradientStop Color="#FFCD3B82" Offset="0" />
-        <GradientStop Color="#FFE68071" Offset="1" />
+        <GradientStop Color="#FFE68071" Offset="0" />
+        <GradientStop Color="#FFCD3B82" Offset="1" />
     </LinearGradientBrush>
 
     <RadialGradientBrush x:Key="$amdocsLogoRadialGradientBrush"
@@ -39,7 +45,7 @@
 
     <Style TargetType="Label" x:Key="$MainHeaderLabelStyle">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="FontSize" Value="25" />
         <Setter Property="FontWeight" Value="Bold" />
@@ -47,7 +53,7 @@
 
     <Style TargetType="Label" x:Key="$SubHeaderLabelStyle">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="FontSize" Value="12" />
     </Style>
@@ -56,12 +62,12 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontFamily" Value="Open Sans"/>
         <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Foreground" Value="{DynamicResource $DarkBlue}"/>
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
     </Style>
     
     <Style TargetType="Label" x:Key="$InputLabelStyle_NoFill">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="25" />
         <Setter Property="FontSize" Value="12" />
@@ -79,7 +85,7 @@
 
     <Style TargetType="Button" x:Key="$ImageButtonStyle">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -103,10 +109,8 @@
         </Setter>
     </Style>
 
-
     <Style TargetType="Button" x:Key="$ImageButtonStyle_Disabled">
-        <!--<Setter Property="Background" Value="LightGray" />-->
-        <!--<Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />-->
+      
         <Setter Property="Foreground" Value="Gray" />
         <Setter Property="Template">
             <Setter.Value>
@@ -133,7 +137,33 @@
 
     <Style TargetType="Button" x:Key="$ImageButtonStyle_Execution">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $LightBlue}" />
+        <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_LightBlue}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="Transparent" BorderThickness="1">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+                            <Setter Property="Background" Value="Transparent" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="$ImageButtonStyle_Menu">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_Gray}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -159,7 +189,7 @@
 
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="20" />
         <Setter Property="FontSize" Value="12" />
@@ -169,7 +199,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{DynamicResource $DarkBlue}" BorderThickness="1" CornerRadius="15">
+                                BorderBrush="{DynamicResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="15">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"
@@ -179,7 +209,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{DynamicResource $DarkBlue}" />
+                            <Setter Property="Background" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
@@ -190,8 +220,6 @@
     </Style>
 
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_Disabled">
-        <!--<Setter Property="Background" Value="WhiteSmoke" />-->
-        <!--<Setter Property="Foreground" Value="{DynamicResource $BlackOpacity}" />-->
         <Setter Property="Foreground" Value="Gray" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="20" />
@@ -212,7 +240,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{DynamicResource $DarkBlue}" />
+                            <Setter Property="Background" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
@@ -224,7 +252,7 @@
 
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_Execution">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $LightBlue}" />
+        <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_LightBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="20" />
         <Setter Property="FontSize" Value="12" />
@@ -234,7 +262,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{DynamicResource $LightBlue}" BorderThickness="1" CornerRadius="15">
+                                BorderBrush="{DynamicResource $SelectionColor_LightBlue}" BorderThickness="1" CornerRadius="15">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"
@@ -244,7 +272,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{DynamicResource $LightBlue}" />
+                            <Setter Property="Background" Value="{DynamicResource $SelectionColor_LightBlue}" />
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
@@ -255,8 +283,7 @@
     </Style>
 
     <Style TargetType="Button" x:Key="$CircleImageButtonStyle_Disabled">
-        <!--<Setter Property="Background" Value="LightGray" />-->
-        <!--<Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />-->
+
         <Setter Property="Foreground" Value="Gray" />
         <Setter Property="Template">
             <Setter.Value>
@@ -283,7 +310,7 @@
 
     <Style TargetType="Button" x:Key="$CircleImageButtonStyle">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $DarkBlue}" />
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -308,7 +335,7 @@
     </Style>
 
     <Style TargetType="Button" x:Key="$CircleImageLightButtonStyle">
-        <Setter Property="Background" Value="{DynamicResource $DarkBlue}"/>
+        <Setter Property="Background" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
         <Setter Property="Foreground" Value= "White"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -344,7 +371,7 @@
             <Path 
                   x:Name="Arrow"
                   Grid.Column="1"     
-                  Fill="{StaticResource $LightBlue}"
+                  Fill="{StaticResource $SelectionColor_LightBlue}"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center"
                   Data="M0,0 L0,2 L4,6 L8,2 L8,0 L4,4 z"
@@ -441,12 +468,174 @@
     </Style>
 
     <Style TargetType="CheckBox" x:Key="$CeckBoxStyle" >
-        <Setter Property="Foreground" Value="{StaticResource $DarkBlue}"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
         <Setter Property="Background" Value="White"/>
-        <Setter Property="BorderBrush" Value="{StaticResource $DarkBlue}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
         <Setter Property="BorderThickness" Value="1" />
     </Style>
-   
+
+    <Style TargetType="MenuItem" x:Key="$MenuItemStyle">
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Style.Triggers>
+            <Trigger Property="Role" Value="SubmenuItem">
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="MenuItem" x:Key="$MenuItemStyle_Main">
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="MenuItem" x:Key="$MenuItemStyle_ButtonMenu">
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
+        <Setter Property="Height" Value="35" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="MenuItem" x:Key="$MenuItemStyle_ButtonMenuItem">
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_Gray}" />
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
+        <Setter Property="Height" Value="30" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="RibbonTabHeader" x:Key="$RibbonTabHeaderStyle">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="FontSize" Value="1" />
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkBlue}" />
+        <Setter Property="Padding" Value="0,0,0,0" />
+        <Setter Property="BorderThickness" Value="0,0,0,0" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Visibility" Value="Collapsed" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RibbonTabHeader">
+                    <ControlTemplate.Resources>
+                        <SolidColorBrush x:Key="BackgroundColor" Color="White" />
+                    </ControlTemplate.Resources>
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" 
+						        BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Center" VerticalAlignment="Center" 
+							    ContentSource="{Binding Label}" RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsRibbonTabSelected" Value="True">
+                            <Setter Property="Background" Value="White" />
+                            <Setter Property="BorderBrush" Value="White" />
+                            <Setter Property="FontWeight" Value="Bold"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsRibbonTabSelected" Value="False" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="White" />
+                            <Setter Property="BorderBrush" Value="White" />
+                            <Setter Property="Foreground" Value="White" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="RibbonGroup" x:Key="$RibbonGroupStyle">
+        <Setter Property="Background" Value="White" />
+    </Style>
+
+    <Style TargetType="ListViewItem" x:Key="$MainListViewItemStyle">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Margin" Value="25,0,0,0" />
+        <Setter Property="Padding" Value="0,0,0,0" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <Border Name="Border" BorderThickness="0 0 0 3" >
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+
+                            <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="ListViewItem" x:Key="$ListViewItemStyle">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="Gray" />
@@ -470,7 +659,7 @@
                             <Setter Property="Foreground" Value="Gray" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
-                            <Setter Property="Foreground" Value="{StaticResource $amdocsPink}" />
+                            <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -497,16 +686,16 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource $amdocsLogoLinarGradientBrush}" />
-                            <Setter Property="Foreground" Value="{DynamicResource $DarkPurple}" />
+                            <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
                             <Setter Property="FontWeight" Value="Bold" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="false">
-                            <Setter Property="Foreground" Value="{DynamicResource $DarkPurple}" />
+                            <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
                             <Setter  TargetName="Border"  Property="BorderBrush" Value="{DynamicResource $amdocsLogoLinarGradientBrush}" />
                             <Setter Property="FontWeight" Value="Bold" />
-                            <Setter Property="Foreground" Value="{DynamicResource $DarkPurple}" />
+                            <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -548,12 +737,12 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="{x:Type MenuItem}" x:Key="$MenuItemStyle">
+    <!--<Style TargetType="{x:Type MenuItem}" x:Key="$MenuItemStyle2">
         <Setter Property="Background"
-                Value="{StaticResource $BackgroundGray}"></Setter>
+                Value="{StaticResource $BackgroundColor_LightGray}"></Setter>
         <Setter Property="Foreground"
-                Value="{StaticResource $DarkBlue}"></Setter>
-        <Setter Property="BorderBrush" Value="{StaticResource $DarkBlue}"></Setter>
+                Value="{StaticResource $BackgroundColor_DarkBlue}"></Setter>
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkBlue}"></Setter>
         <Style.Triggers>
             <Trigger Property="Role" Value="SubmenuItem">
 
@@ -561,17 +750,17 @@
             <Trigger Property="IsHighlighted"
                      Value="True">
                 <Setter Property="Background"
-                        Value="{DynamicResource $DarkPurple}"></Setter>
-                <Setter Property="Foreground" Value="{DynamicResource $amdocsPink}"></Setter>
+                        Value="{DynamicResource $HighlightColor_Purple}"></Setter>
+                <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_Pink}"></Setter>
             </Trigger>
             <Trigger Property="IsMouseOver"
                      Value="True">
                 <Setter Property="Background"
-                        Value="{DynamicResource $DarkPurple}"></Setter>
-                <Setter Property="Foreground" Value="{DynamicResource $amdocsPink}"></Setter>
+                        Value="{DynamicResource $HighlightColor_Purple}"></Setter>
+                <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_Pink}"></Setter>
             </Trigger>
         </Style.Triggers>
-    </Style>
+    </Style>-->
 
     <Style TargetType="TabItem" x:Key="$CoolTab">
         <Setter Property="Template">
@@ -580,7 +769,7 @@
                     <ControlTemplate.Resources>
                         <SolidColorBrush x:Key="MouseOverBackground" Color="#DFE9F5" />
                     </ControlTemplate.Resources>
-                    <Border Name="Border" BorderThickness="0 0 1 0" Background="{StaticResource $BackgroundGray}" BorderBrush="{StaticResource $DarkPurple}">
+                    <Border Name="Border" BorderThickness="0 0 1 0" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $SelectionColor_Pink}">
                         <ContentPresenter x:Name="ContentSite"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
@@ -591,7 +780,7 @@
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="FontWeight" Value="Bold"/>
                             <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="{DynamicResource $DarkPurple}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
                             <Setter TargetName="Border" Property="VerticalAlignment"  Value="Top" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -599,7 +788,7 @@
                         <Trigger Property="IsSelected" Value="False">
                             <Setter Property="FontWeight" Value="Normal"/>
                             <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="Foreground" Value="{DynamicResource $LightPurple}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -2339,7 +2528,7 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="@InputComboBoxStyle" TargetType="{x:Type ComboBox}">
+        <Style x:Key="@InputComboBoxStyle" TargetType="{x:Type ComboBox}">
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
