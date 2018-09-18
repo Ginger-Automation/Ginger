@@ -278,14 +278,15 @@ namespace Ginger.AnalyzerLib
                     List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
                     usedVariablesInActivity.AddRange(tempList);
                 }
-                List<AnalyzerItemBase> unusedActivityVariables = ReportUnusedVariables(activity, usedVariablesInActivity);
-                AddIssues(unusedActivityVariables);
+                // List<AnalyzerItemBase> unusedActivityVariables = ReportUnusedVariables(activity, usedVariablesInActivity);
+                //AddIssues(unusedActivityVariables);
+                ReportUnusedVariables(activity, usedVariablesInActivity);
                 usedVariablesInBF.AddRange(usedVariablesInActivity);
                 usedVariablesInActivity.Clear();
             }
-            List<AnalyzerItemBase> unusedBFVariables = ReportUnusedVariables(businessFlow, usedVariablesInBF);
-            AddIssues(unusedBFVariables);
-
+            //List<AnalyzerItemBase> unusedBFVariables = ReportUnusedVariables(businessFlow, usedVariablesInBF);
+            //AddIssues(unusedBFVariables);
+            ReportUnusedVariables(businessFlow, usedVariablesInBF);
 
             if (markCompletion)
                 SetAnalayzeProceesAsCompleted();
@@ -294,7 +295,7 @@ namespace Ginger.AnalyzerLib
 
         }
 
-        public static List<AnalyzerItemBase> ReportUnusedVariables(object obj, List<string> usedVariables)
+        public void ReportUnusedVariables(object obj, List<string> usedVariables)
         {
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
             Activity activity = null;
@@ -354,10 +355,11 @@ namespace Ginger.AnalyzerLib
                     aa.FixItHandler = DeleteUnusedVariables;
                     aa.Severity = eSeverity.Medium;
                     IssuesList.Add(aa);
-
+                    
                 }
             }
-            return IssuesList;
+            //return IssuesList;
+            AddIssues(IssuesList);
         }
         private static void DeleteUnusedVariables(object sender, EventArgs e)
         {
@@ -452,9 +454,9 @@ namespace Ginger.AnalyzerLib
                     List<string> tempList=RunBusinessFlowAnalyzer(BF, false);
                     usedVariablesInSolution.AddRange(tempList);                    
                 }
-                List<AnalyzerItemBase> unusedSolutionVariables = ReportUnusedVariables(mSolution, usedVariablesInSolution);
-                AddIssues(unusedSolutionVariables);
-
+                //List<AnalyzerItemBase> unusedSolutionVariables = ReportUnusedVariables(mSolution, usedVariablesInSolution);
+                //AddIssues(unusedSolutionVariables);
+                ReportUnusedVariables(mSolution, usedVariablesInSolution);
 
                 SetAnalayzeProceesAsCompleted();
             });            

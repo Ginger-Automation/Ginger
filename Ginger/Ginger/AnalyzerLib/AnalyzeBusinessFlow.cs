@@ -22,8 +22,6 @@ using System.Linq;
 using Ginger.Environments;
 using GingerCore;
 using GingerCore.Platforms;
-using Amdocs.Ginger.Common;
-using GingerCore.Variables;
 
 namespace Ginger.AnalyzerLib
 {
