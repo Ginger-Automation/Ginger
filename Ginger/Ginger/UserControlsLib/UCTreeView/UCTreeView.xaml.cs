@@ -39,11 +39,20 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public event EventHandler ItemDoubleClick;
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DI);
-        public bool TreeItemDoubleClicked = false;
+        public bool TreeItemDoubleClicked = false;        
 
         public Tuple<string, string> TreeNodesFilterByField { get; set; } 
 
-        TreeViewItem mlastSelectedTVI = null;
+        
+        private TreeViewItem mlastSelectedTVI;
+
+        public TreeViewItem  MlastSelectedTVI
+        {
+            get { return mlastSelectedTVI; }
+            set { mlastSelectedTVI = value; }
+
+        }
+
 
         public ItemCollection TreeItemsCollection
         {
@@ -436,7 +445,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         /// <param name="txt"></param>
         public void FilterItemsByText(ItemCollection itemCollection, string txt)
         {
-            // Filter not working for new TVI
+            // Filter not working for new TVI            
             foreach (TreeViewItem tvi in itemCollection)
             {
                 // Need to expand to get all lazy loading
@@ -445,7 +454,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 ITreeViewItem ITVI = (ITreeViewItem)tvi.Tag;
 
                 // Find the label in the header, this is label child of the Header Stack Panel
-                StackPanel SP = (StackPanel)tvi.Header;
+                StackPanel SP = (StackPanel)tvi.Header;                     
 
                 //Ccombine text of all label childs of the header Stack panel
                 string HeaderTXT = "";
@@ -472,24 +481,24 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     {
                         tviParent = (TreeViewItem)tviParent.Parent;
                         tviParent.Visibility = System.Windows.Visibility.Visible;
-                    }
+                    }                    
                 }
                 else
                 {
-                    tvi.Visibility = System.Windows.Visibility.Collapsed;
+                    tvi.Visibility = System.Windows.Visibility.Collapsed;                    
                 }
 
                 // Goto sub items
                 if (tvi.HasItems)
-                {
+                {                    
                     FilterItemsByText(tvi.Items, txt);
                 }
             }
             //Show the root item
                 ((TreeViewItem)Tree.Items[0]).Visibility = System.Windows.Visibility.Visible;
-
+            
         }       
-
+                
         public void SetBtnImage(Button btn, string imageName)
         {
             Image image = new Image();
