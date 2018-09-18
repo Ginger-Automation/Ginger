@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common.Enums;
 using GingerCoreNET.SolutionRepositoryLib;
 using GingerWPF.TreeViewItemsLib;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -108,7 +109,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
 
         private void xSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
+        {             
             if (xSearchTextBox.Text.Length > 0)
             {
                 xSearchNullText.Visibility= Visibility.Collapsed;
@@ -118,12 +119,54 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             {
                 xSearchNullText.Visibility = Visibility.Visible;
                 xSearchClearBtn.Visibility = Visibility.Collapsed;
+                List<TreeViewItem> pathNodes = new List<TreeViewItem>();
+                if (xTreeViewTree.MlastSelectedTVI!=null)
+                {
+                    pathNodes = getSelecetdItemPathNodes(xTreeViewTree.MlastSelectedTVI);
+                }
+                CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
+                return;
             }
 
-            string txt = xSearchTextBox.Text;
+            string txt = xSearchTextBox.Text;            
             xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, txt);
         }
+        
+        private static void CollapseUnselectedTreeNodes(ItemCollection itemCollection,List<TreeViewItem> pathNodes)
+        {                     
+            foreach (TreeViewItem tvItem in itemCollection)
+            {                                                
+                if (tvItem.HasItems)
+                {
+                    CollapseUnselectedTreeNodes(tvItem.Items, pathNodes);
+                    foreach (TreeViewItem item in tvItem.Items)
+                    {                        
+                        if (!(pathNodes != null && pathNodes.Contains(item)))
+                        {
+                            item.IsExpanded = false;
+                            item.Visibility = Visibility.Visible;
+                        }                                                
+                    }
+                }                
+            }            
+        }
 
+        public static List<TreeViewItem> getSelecetdItemPathNodes(TreeViewItem SelectedItem)
+        {
+            List<TreeViewItem> pathNodes = new List<TreeViewItem>();
+            object ParentItem = getParentItem(SelectedItem);            
+            while (ParentItem.GetType() == typeof(TreeViewItem))
+            {
+                pathNodes.Add((TreeViewItem)ParentItem);                                
+                ParentItem = getParentItem(ParentItem);                
+            }
+            return pathNodes;
+        }        
+
+        public static object getParentItem(object tvi)
+        {
+            return ((TreeViewItem)tvi).Parent;
+        }        
         private void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
         {
             xSearchTextBox.Text = "";
