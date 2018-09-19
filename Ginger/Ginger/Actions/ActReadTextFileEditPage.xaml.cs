@@ -66,7 +66,7 @@ namespace Ginger.Actions
 
         private void FileActionMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((ActReadTextFile.eTextFileActionMode)((ComboBox)sender).SelectedValue == ActReadTextFile.eTextFileActionMode.Append || (ActReadTextFile.eTextFileActionMode)FileActionMode.SelectedValue == ActReadTextFile.eTextFileActionMode.Write)
+            if ((ActReadTextFile.eTextFileActionMode)FileActionMode.SelectedValue == ActReadTextFile.eTextFileActionMode.Append || (ActReadTextFile.eTextFileActionMode)FileActionMode.SelectedValue == ActReadTextFile.eTextFileActionMode.Write)
             {
                 PanelToWrite.Visibility = Visibility.Visible;
             }
@@ -86,7 +86,7 @@ namespace Ginger.Actions
 
         private void TextFileAppendType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((ActReadTextFile.eAppendAt)((ComboBox)sender).SelectedValue == ActReadTextFile.eAppendAt.SpecificLine)
+            if ((ActReadTextFile.eAppendAt)TextFileAppendType.SelectedValue == ActReadTextFile.eAppendAt.SpecificLine)
             {                
                 PanelAppendLine.Visibility = Visibility.Visible;
             }
