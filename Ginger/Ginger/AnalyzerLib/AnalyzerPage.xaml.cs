@@ -277,15 +277,11 @@ namespace Ginger.AnalyzerLib
                     AddIssues(actionissues);
                     List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
                     usedVariablesInActivity.AddRange(tempList);
-                }
-                // List<AnalyzerItemBase> unusedActivityVariables = ReportUnusedVariables(activity, usedVariablesInActivity);
-                //AddIssues(unusedActivityVariables);
+                }                
                 ReportUnusedVariables(activity, usedVariablesInActivity);
                 usedVariablesInBF.AddRange(usedVariablesInActivity);
                 usedVariablesInActivity.Clear();
-            }
-            //List<AnalyzerItemBase> unusedBFVariables = ReportUnusedVariables(businessFlow, usedVariablesInBF);
-            //AddIssues(unusedBFVariables);
+            }            
             ReportUnusedVariables(businessFlow, usedVariablesInBF);
 
             if (markCompletion)
@@ -357,8 +353,7 @@ namespace Ginger.AnalyzerLib
                     IssuesList.Add(aa);
                     
                 }
-            }
-            //return IssuesList;
+            }            
             AddIssues(IssuesList);
         }
         private static void DeleteUnusedVariables(object sender, EventArgs e)
@@ -380,8 +375,7 @@ namespace Ginger.AnalyzerLib
             }
             else
             {
-                BusinessFlow BFlow= AA.mBusinessFlow;
-                //BFlow = AA.mBusinessFlow;
+                BusinessFlow BFlow= AA.mBusinessFlow;                
                 if (AA.Details.Equals("BusinessFlow"))
                 {                    
                     foreach (VariableBase var in BFlow.Variables)
@@ -453,9 +447,7 @@ namespace Ginger.AnalyzerLib
                 {
                     List<string> tempList=RunBusinessFlowAnalyzer(BF, false);
                     usedVariablesInSolution.AddRange(tempList);                    
-                }
-                //List<AnalyzerItemBase> unusedSolutionVariables = ReportUnusedVariables(mSolution, usedVariablesInSolution);
-                //AddIssues(unusedSolutionVariables);
+                }                
                 ReportUnusedVariables(mSolution, usedVariablesInSolution);
 
                 SetAnalayzeProceesAsCompleted();
