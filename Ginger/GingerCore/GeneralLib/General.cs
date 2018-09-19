@@ -1102,7 +1102,8 @@ namespace GingerCore
         {
             string[] fileEntries = Directory.EnumerateFiles(filepath, "*.*", SearchOption.AllDirectories)
                     .Where(s => s.ToLower().EndsWith(extension)).ToArray();
-            return fileEntries;
+            
+                return fileEntries;
         }
         public static ObservableList<T> ConvertListToObservableList<T>(List<T> List)
         {
