@@ -98,6 +98,6 @@ namespace Ginger.AnalyzerLib
                 ABF.mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = SAN });
                 ABF.Status = eStatus.Fixed;
             }
-        }
+        }        
     }
 }
