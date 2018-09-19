@@ -111,8 +111,9 @@ namespace Ginger.SolutionAutoSaveAndRecover
                         ri.Status =  eRecoveredItemStatus.RecoveredFailed;
                         return;
                     }
-
-                    File.Replace(ri.RecoveredItemObject.FileName, originalItem.FileName,originalItem.FilePath + ".bac");
+                    File.Delete(originalItem.FileName);
+                    File.Move(ri.RecoveredItemObject.FileName, originalItem.FileName);
+                    //File.Replace(ri.RecoveredItemObject.FileName, originalItem.FileName,originalItem.FilePath + ".bac");
 
                     ri.Status = eRecoveredItemStatus.Recovered;
 
