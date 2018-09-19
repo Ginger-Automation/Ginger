@@ -39,6 +39,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using System;
 
 namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 {
@@ -164,11 +165,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             try
             {
                 ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-                List<AppParameters> parameters = new List<AppParameters>();
-                foreach (var prms in mApplicationModel.AppModelParameters)
-                {
-                    im.AddNewParameterToList(parameters, prms);
-                }
+                List<AppParameters> parameters = GetParameterList(im);
                 string filePath = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mApplicationModel.Name));
                 Process.Start(filePath);
             }
@@ -176,6 +173,28 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
+        }
+
+        /// <summary>
+        /// This method is used to Get Parameter List
+        /// </summary>
+        /// <param name="im"></param>
+        /// <returns></returns>
+        private List<AppParameters> GetParameterList(ImportOptionalValuesForParameters im)
+        {
+            List<AppParameters> parameters = new List<AppParameters>();
+            try
+            {
+                foreach (var prms in mApplicationModel.AppModelParameters)
+                {
+                    im.AddNewParameterToList(parameters, prms);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+            return parameters;
         }
 
         /// <summary>
@@ -192,28 +211,53 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 List<object> selectedRunSet = mDataSourceSelectionPage.ShowAsWindow();
                 if (selectedRunSet != null && selectedRunSet.Count > 0)
                 {
-                    //AccessDataSource mDSDetails = new AccessDataSource();
-                    //mDSDetails.FileFullPath = Path.Combine(App.UserProfile.Solution.Folder, Path.Combine("DataSources", mAAMB.Name + ".mdb"));
+                    AccessDataSource mDSDetails = (AccessDataSource)(((DataSourceTable)selectedRunSet[0]).DSC);
+                    mDSDetails.FileFullPath = mDSDetails.CurrentFilePath;
+                    string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
 
-                    //if (!Directory.Exists(Path.GetDirectoryName(mDSDetails.FileFullPath)))
-                    //{ Reporter.ToUser(eUserMsgKeys.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); return; }
+                    if (File.Exists(mDSDetails.FileFullPath))
+                    {
+                        ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                        List<AppParameters> parameters = GetParameterList(im);
+                        List<string> colList = mDSDetails.GetColumnList(tableName);
+                        List<string> defColList = GetDefaultColumnNameListForTableCreation();
+                        foreach (string colName in colList)
+                        {
+                            if (!defColList.Contains(colName))
+                            {
+                                mDSDetails.RemoveColumn(tableName, colName); 
+                            }
+                        }
+                        mDSDetails.AddColumn(tableName, "ItemName", "Text");
+                        mDSDetails.AddColumn(tableName, "Description", "Text");
+                        mDSDetails.AddColumn(tableName, "OptionalValuesString", "Text");
 
-                    //mDSDetails.FilePath = mDSDetails.FileFullPath;
-
-                    //if (File.Exists(mDSDetails.FileFullPath) == false)
-                    //{
-                    //    byte[] obj = Ginger.Properties.Resources.GingerDataSource;
-                    //    System.IO.FileStream fs = new System.IO.FileStream(mDSDetails.FileFullPath, System.IO.FileMode.Create, System.IO.FileAccess.Write);
-                    //    fs.Write(obj, 0, obj.Count());
-                    //    fs.Close();
-                    //    fs.Dispose();
-
-                    //    if (File.Exists(mDSDetails.FileFullPath))
-                    //    {
-
-                    //    }
-                    //}
+                        foreach (AppParameters parms in parameters)
+                        {
+                            InsertParameterData(mDSDetails, tableName, parms.ItemName, parms.Description, parms.OptionalValuesString);
+                        }
+                    }
                 }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to insert the data parameter data in table
+        /// </summary>
+        /// <param name="mDSDetails"></param>
+        /// <param name="itemName"></param>
+        /// <param name="description"></param>
+        /// <param name="optionalValuesString"></param>
+        private void InsertParameterData(AccessDataSource mDSDetails, string tableName, string itemName, string description, string optionalValuesString)
+        {
+            try
+            {
+                string query = GetInsertQueryForParameter(tableName, itemName, description, optionalValuesString);
+                mDSDetails.RunQuery(query);
             }
             catch (System.Exception ex)
             {
@@ -225,28 +269,32 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         /// This method is used to get the columnList for exporting the parameters to datasource
         /// </summary>
         /// <returns></returns>
-        private string GetColumnNameListForTableCreation()
+        private string GetInsertQueryForParameter(string tableName, string itemName, string description, string optionalValuesString)
         {
-            StringBuilder colList = new StringBuilder();
+            string query = string.Format("INSERT INTO {0} (GINGER_USED, GINGER_LAST_UPDATED_BY, GINGER_LAST_UPDATE_DATETIME, ItemName, Description, OptionalValuesString) " 
+                                       + " VALUES ('True', '{1}', '{2}', '{3}', '{4}', '{5}')", tableName, System.Environment.UserName, DateTime.Now.ToString(), itemName, description, optionalValuesString);
+            return query;
+        }
+
+        /// <summary>
+        /// This method is used to get the default columnList for exporting the parameters to datasource
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetDefaultColumnNameListForTableCreation()
+        {
+            List<string> defColList = new List<string>();
             try
             {
-                string PARAMETER_NAME = "Parameter Name";
-                string DESCRIPTION = "Description";
-
-                int max = mApplicationModel.AppModelParameters.Max(p => p.OptionalValuesList.Count);
-                colList.Append("[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text,");
-                colList.Append(string.Format("[{0}] Text,", PARAMETER_NAME));
-                colList.Append(string.Format("[{0}] Text,", DESCRIPTION));
-                for (int i = 1; i <= max; i++)
-                {
-                    colList.Append(string.Format("[Value {0}] Text,", i));
-                }
+                defColList.Add("GINGER_ID");
+                defColList.Add("GINGER_USED");    
+                defColList.Add("GINGER_LAST_UPDATED_BY");
+                defColList.Add("GINGER_LAST_UPDATE_DATETIME");
             }
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
-            return colList.ToString();
+            return defColList;
         }
 
         private void UploadToGlobalParam(object sender, RoutedEventArgs e)

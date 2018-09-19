@@ -33,6 +33,14 @@ namespace GingerCore.DataSource
         OleDbConnection myAccessConn;
         string mFilePath = "";
 
+        public string CurrentFilePath
+        {
+            get
+            {
+                return mFilePath;
+            }
+        }
+
         public override void Init(string sFilePath,string sMode="Read")
         {
             string strAccessConn = "";
@@ -73,8 +81,8 @@ namespace GingerCore.DataSource
         }
 
         public override ObservableList<DataSourceTable> GetTablesList()
-        {            
-           
+        {         
+            
             ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
             try
             {

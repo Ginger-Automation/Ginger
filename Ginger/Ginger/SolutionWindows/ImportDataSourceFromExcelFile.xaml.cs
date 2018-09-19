@@ -117,7 +117,8 @@ namespace Ginger.DataSource
                         ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked));
                     }
                     string cols = GetColumnNameListForTableCreation(ExcelImportData.Tables[0]);
-                    string fileName = CreateTale(ExcelImportData.Tables[0].TableName, cols);
+                    AddDefaultColumn(ExcelImportData.Tables[0]);
+                    string fileName = CreateTable(ExcelImportData.Tables[0].TableName, cols);
                     ((AccessDataSource)(DSDetails)).Init(fileName);
                     ((AccessDataSource)(DSDetails)).SaveTable(ExcelImportData.Tables[0]);
                     _pageGenericWin.Close();
@@ -127,7 +128,7 @@ namespace Ginger.DataSource
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
-        }
+        }               
 
         /// <summary>
         /// This method is used to show the window
@@ -188,6 +189,7 @@ namespace Ginger.DataSource
             {
                 if (xSheetNameComboBox.SelectedValue != null)
                 {
+                    SheetName = Convert.ToString(xSheetNameComboBox.SelectedValue);
                     impParams.ExcelSheetName = SheetName;
                     if (!string.IsNullOrEmpty(SheetName))
                     {
@@ -296,10 +298,45 @@ namespace Ginger.DataSource
         }
 
         /// <summary>
+        /// This method is used to add the defaul columns to the table
+        /// </summary>
+        /// <param name="dataTable"></param>
+        private void AddDefaultColumn(DataTable dataTable)
+        {
+            try
+            {
+                if(!dataTable.Columns.Contains("GINGER_ID"))
+                {
+                    dataTable.Columns.Add("GINGER_ID");
+                }
+                if (!dataTable.Columns.Contains("GINGER_USED"))
+                {
+                    dataTable.Columns.Add("GINGER_USED");
+                }
+                if (!dataTable.Columns.Contains("GINGER_LAST_UPDATED_BY"))
+                {
+                    dataTable.Columns.Add("GINGER_LAST_UPDATED_BY");
+                }
+                if (!dataTable.Columns.Contains("GINGER_LAST_UPDATE_DATETIME"))
+                {
+                    dataTable.Columns.Add("GINGER_LAST_UPDATE_DATETIME");
+                }
+                foreach (DataRow dr in dataTable.Rows)
+                {
+                    dr["GINGER_USED"] = "True";
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+            }
+        }
+
+        /// <summary>
         /// This method is used to create the table
         /// </summary>
         /// <param name="query"></param>
-        private string CreateTale(string name, string query)
+        private string CreateTable(string name, string query)
         {
             string fileName = string.Empty;
             try
