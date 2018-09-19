@@ -47,8 +47,8 @@ namespace GingerCore.Actions
             public static string FileActionMode = "FileActionMode";
             public static string TextToWrite = "TextToWrite";
             public static string TextFileEncoding = "TextFileEncoding";
-            public static string AppendAt = "AppendAt";
-            public static string AppendLineNumber = "AppendLineNumber";
+            public static readonly string AppendAt = "AppendAt";
+            public static readonly string AppendLineNumber = "AppendLineNumber";
 
         }
 
