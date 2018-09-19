@@ -285,7 +285,9 @@ namespace Ginger.AnalyzerLib
             ReportUnusedVariables(businessFlow, usedVariablesInBF);
 
             if (markCompletion)
+            {
                 SetAnalayzeProceesAsCompleted();
+            }
 
             return usedVariablesInBF;
 
