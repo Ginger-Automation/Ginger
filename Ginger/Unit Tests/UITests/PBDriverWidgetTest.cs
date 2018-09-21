@@ -173,7 +173,8 @@ namespace UnitTests.UITests.PBDriverTest
             {
 
                 actBrowser.LocateBy = eLocateBy.ByXPath;
-                actBrowser.LocateValue = @"/[AutomationId:1000]/[LocalizedControlType:pane]/[LocalizedControlType:pane]/file:&#x2F&#x2FC:\Ginger workspace\Devs\GingerNextVer_Dev\UnitTests\bin\Debug\TestResources\PBTestApp\Browser.html";     //\Documents\PBTestApp\Browser.html";
+                actBrowser.LocateValue = @"/[AutomationId:1000]/[LocalizedControlType:pane]/[LocalizedControlType:pane]/file:&#x2F&#x2FC:\Users\sandesba\Source\Repos\Ginger\Ginger\Unit Tests\bin\Debug\TestResources\PBTestApp\Browser.html";    //\Documents\PBTestApp\Browser.html";   // @"/[AutomationId:1000]/[LocalizedControlType:pane]/[LocalizedControlType:pane]/file:&#x2F&#x2FC:\Ginger workspace\Devs\GingerNextVer_Dev\UnitTests\bin\Debug\TestResources\PBTestApp\Browser.html";
+                                                                                                                                                                                                                                                 
                 actBrowser.ControlAction = ActBrowserElement.eControlAction.InitializeBrowser;
                 actBrowser.Wait = 2;
                 actBrowser.Timeout = 10;
@@ -741,7 +742,8 @@ namespace UnitTests.UITests.PBDriverTest
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
-            string expected = @"file://C:\Ginger workspace\Devs\GingerNextVer_Dev\UnitTests\bin\Debug\TestResources\PBTestApp\Browser.html"; // Documents\PBTestApp\Browser.html";
+            string expected = @"file://C:\Users\sandesba\Source\Repos\Ginger\Ginger\Unit Tests\bin\Debug\TestResources\PBTestApp\Browser.html";  //@"file://C:\Ginger workspace\Devs\GingerNextVer_Dev\UnitTests\bin\Debug\TestResources\PBTestApp\Browser.html";            
+
             Assert.AreEqual(actual, expected, "True");
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
