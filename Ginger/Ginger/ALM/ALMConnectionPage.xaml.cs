@@ -363,7 +363,10 @@ namespace Ginger.ALM
                     RallyRadioButton.FontWeight = FontWeights.Regular;
                     RallyRadioButton.Foreground = Brushes.Black;
                     RallyRadioButton.IsChecked = false;
-                    RestAPICheckBox.Visibility = Visibility.Visible;
+                    if (WorkSpace.Instance.BetaFeatures.RestAPI)
+                    {
+                        RestAPICheckBox.Visibility = Visibility.Visible;
+                    }
                     break;
                 case ALMIntegration.eALMType.RQM:
                     RQMRadioButton.IsChecked = true;
