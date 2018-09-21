@@ -33,6 +33,7 @@ using System.Text;
 
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Run
 {
@@ -64,6 +65,8 @@ namespace Ginger.Run
         public static Ginger.Reports.RunSetReport RunSetReport;
 
         public int ExecutionLogBusinessFlowsCounter = 0;
+
+        GingerRunnerLogger mGingerRunnerLogger;
 
         public ExecutionLoggerConfiguration Configuration
         {
@@ -631,6 +634,17 @@ namespace Ginger.Run
 
         public void ActionEnd(Activity Activity, Act act, bool offlineMode = false)
         {
+            // if user set special action log in output
+            if (act.EnableActionLogConfig)
+            {                                             
+                if (mGingerRunnerLogger == null)
+                {
+                    string loggerFile = Path.Combine(ExecutionLogfolder, FileSystem.AppendTimeStamp("GingerLog.txt"));
+                    mGingerRunnerLogger = new GingerRunnerLogger(loggerFile);
+                }
+                mGingerRunnerLogger.LogAction(act);
+            }
+            
             try
             {
                 string executionLogFolder = string.Empty;
@@ -766,7 +780,7 @@ namespace Ginger.Run
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception occured in ExecutionLogger Action end" ,ex);
-            }
+            }                   
         }
 
         private static void AddExecutionDetailsToLog(eExecutionPahse objExecutionPhase, string objType, string objName, object obj)
