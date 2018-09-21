@@ -330,7 +330,7 @@ namespace Ginger.AnalyzerLib
                     AvailableAllVariables = solution.Variables;
                     variableSourceType = "Solution";
                     variableSourceName = solution.Name;
-                    BusinessFlow = App.LocalRepository.GetSolutionBusinessFlows()[0];
+                    BusinessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()[0];
 
                 }
             }
