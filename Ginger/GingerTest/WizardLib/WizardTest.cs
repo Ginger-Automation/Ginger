@@ -20,14 +20,13 @@ namespace GingerTest.WizardLib
         public static void ClassInit(TestContext TC)
         {
             //Arrange
-            mGingerAutomator = new GingerAutomator();
-            mGingerAutomator.StartGinger();
+            mGingerAutomator = GingerAutomator.StartSession();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mGingerAutomator.CloseGinger();
+            GingerAutomator.EndSession();
         }
 
         [TestInitialize]
@@ -60,7 +59,7 @@ namespace GingerTest.WizardLib
             return wizardPOM;
         }
 
-
+        [Level3]
         [TestMethod]
         public void VerifyButtonsOnStartThenCancel()
         {
@@ -82,7 +81,7 @@ namespace GingerTest.WizardLib
             Assert.IsFalse(WizardOpen, "Wizard was closed");            
         }
 
-
+        [Level3]
         [TestMethod]
         public void CreateMyWizardItem()
         {
@@ -103,7 +102,8 @@ namespace GingerTest.WizardLib
             Assert.IsFalse(WizardOpen, "Wizard was closed");
         }
 
-
+        [Level3]
+        [Ignore] //TODO FIXME
         [TestMethod]
         public void WizardWithWindowWidth()
         {
