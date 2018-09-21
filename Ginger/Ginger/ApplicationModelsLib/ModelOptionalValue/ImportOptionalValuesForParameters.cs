@@ -1131,7 +1131,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     try
                     {
                         WorkbookPart workbookPart = spreadSheetDocument.WorkbookPart;
-                        foreach (Sheet sheet in workbookPart.Workbook.Descendants<Sheet>().Where(s => s.Name == sheetName))
+                        IEnumerable<Sheet> sheets = workbookPart.Workbook.Descendants<Sheet>();
+                        if (!string.IsNullOrEmpty(sheetName) && sheetName != "-- All --")
+                        {
+                            sheets = workbookPart.Workbook.Descendants<Sheet>().Where(s => s.Name == sheetName);
+                        }
+                        foreach (Sheet sheet in sheets)
                         {
                             if (sheet != null)
                             {

@@ -140,6 +140,12 @@ namespace GingerWPF.WizardLib
             Pages.Add(wp1);
         }
 
+        public void AddPage(string Name, String Title, string SubTitle, IWizardPage Page, IWizardPage AlternatePage)
+        {
+            WizardPage wp1 = new WizardPage() { Name = Name, Title = Title, SubTitle = SubTitle, Page = Page, AlternatePage = AlternatePage };
+            Pages.Add(wp1);
+        }
+
         //internal void ShowWizard(int width = 800)
         //{
         //    WizardEventArgs WizardEventArgs = new WizardEventArgs(this, EventType.Init);
@@ -147,7 +153,7 @@ namespace GingerWPF.WizardLib
         //    {
         //        wp.Page.WizardEvent(WizardEventArgs);
         //    }
-            
+
         //    mWizardWindow.ShowDialog(width);                          // /TODO: pass the width
         //}
 

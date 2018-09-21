@@ -479,6 +479,16 @@
     </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
+    <Compile Include="SolutionWindows\ImportDataSourceDisplayAllData.xaml.cs">
+      <DependentUpon>ImportDataSourceDisplayAllData.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionWindows\ImportDataSourceDisplayData.xaml.cs">
+      <DependentUpon>ImportDataSourceDisplayData.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionWindows\ImportDataSourceSheetSelection.xaml.cs">
+      <DependentUpon>ImportDataSourceSheetSelection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionWindows\ImportDataSourceFromExcelWizard.cs" />
     <Compile Include="WizardLib\ValidationDetails.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
     <Compile Include="GeneralValidationRules\GridValidationRule.cs" />
@@ -617,8 +627,8 @@
     </Compile>
     <Compile Include="MenusLib\ResourcesMenu.cs" />
     <Compile Include="Run\GingerRunnerLogger.cs" />
-    <Compile Include="SolutionWindows\ImportDataSourceFromExcelFile.xaml.cs">
-      <DependentUpon>ImportDataSourceFromExcelFile.xaml</DependentUpon>
+    <Compile Include="SolutionWindows\ImportDataSourceBrowseFile.xaml.cs">
+      <DependentUpon>ImportDataSourceBrowseFile.xaml</DependentUpon>
     </Compile>
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
@@ -2788,7 +2798,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SolutionWindows\ImportDataSourceFromExcelFile.xaml">
+    <Page Include="SolutionWindows\ImportDataSourceDisplayAllData.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SolutionWindows\ImportDataSourceDisplayData.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SolutionWindows\ImportDataSourceSheetSelection.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SolutionWindows\ImportDataSourceBrowseFile.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

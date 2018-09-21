@@ -79,7 +79,7 @@ namespace GingerWPF.WizardLib
         {
             FinishButton.IsEnabled = false;
             if (mValidationErrors.Count > 0) return;
-            FinishButton.IsEnabled = true;
+            if (mWizard.IsLastPage()) FinishButton.IsEnabled = true;
         }
 
         ~WizardWindow()
@@ -91,7 +91,19 @@ namespace GingerWPF.WizardLib
         void RefreshCurrentPage()
         {
             WizardPage page = mWizard.GetCurrentPage();
-            PageFrame.Content = page.Page;
+            IWizardPage pg = mWizard.GetCurrentPage().Page;
+            if (!pg.IsAlternatePageToLoad())
+            {
+                PageFrame.Content = page.Page; 
+            }
+            else
+            {
+                if (page.AlternatePage != null)
+                {
+                    PageFrame.Content = page.AlternatePage; 
+                }
+            }           
+
             tbSubTitle.Text = page.SubTitle;
             // sync the list too
             NavigationList.SelectedItem = page;
@@ -222,6 +234,7 @@ namespace GingerWPF.WizardLib
             if (mWizard.IsLastPage())
             {
                 NextButton.IsEnabled = false;
+                FinishButton.IsEnabled = true;
             }
             else
             {

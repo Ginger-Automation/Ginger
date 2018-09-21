@@ -61,5 +61,14 @@ namespace GingerWPF.SolutionLib
                 SolutionFolderTextBox.Text = dlg.SelectedPath;
             }
         }
+
+        /// <summary>
+        /// This method is used to cehck whether alternate page is required to load
+        /// </summary>
+        /// <returns></returns>
+        public bool IsAlternatePageToLoad()
+        {
+            return false;
+        }
     }
 }

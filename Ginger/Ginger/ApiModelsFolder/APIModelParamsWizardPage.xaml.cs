@@ -153,11 +153,7 @@ namespace Ginger.ApiModelsFolder
                 }
             }
         }
-
-       
-
-        
-
+              
         private void SetParamsGrid()
         {
             xAPIModelParamsValueUCGrid.Title = "API Parameters Consolidation";
@@ -180,6 +176,15 @@ namespace Ginger.ApiModelsFolder
             EnhancedActInputValue AIV = (EnhancedActInputValue)xAPIModelParamsValueUCGrid.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
             VEEW.ShowAsWindow();
+        }
+
+        /// <summary>
+        /// This method is used to cehck whether alternate page is required to load
+        /// </summary>
+        /// <returns></returns>
+        public bool IsAlternatePageToLoad()
+        {
+            return false;
         }
     }
 }

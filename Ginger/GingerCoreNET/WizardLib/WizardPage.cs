@@ -26,5 +26,6 @@ namespace GingerWPF.WizardLib
         public string SubTitle { get; set; }
         public IWizardPage Page { get; set; }
         public bool HasErrors { get; set; }
+        public IWizardPage AlternatePage { get; set; }
     }
 }

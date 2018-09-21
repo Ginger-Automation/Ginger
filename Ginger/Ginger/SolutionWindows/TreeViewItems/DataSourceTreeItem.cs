@@ -21,7 +21,6 @@ using Ginger.DataSource;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
 using GingerCore.DataSource;
-using GingerCore.SourceControl;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -31,10 +30,8 @@ using Amdocs.Ginger.Common.Enums;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
-using Ginger.ApplicationModelsLib.ModelOptionalValue;
-using System.Data;
-using System.Text;
-using System.Threading;
+using GingerWPF.WizardLib;
+using GingerWPF.SolutionLib;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -149,9 +146,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             try
             {
-                ImportDataSourceFromExcelFile im = new ImportDataSourceFromExcelFile();
-                im.DSDetails = DSDetails;
-                im.ShowAsWindow(eWindowShowStyle.Dialog);
+                WizardWindow.ShowWizard(new ImportDataSourceFromExcelWizard(DSDetails));
+                //ImportDataSourceFromExcelFile im = new ImportDataSourceFromExcelFile();
+                //im.DSDetails = DSDetails;
+                //im.ShowAsWindow(eWindowShowStyle.Dialog);
                 RefreshTreeItems();
             }
             catch (Exception ex)
