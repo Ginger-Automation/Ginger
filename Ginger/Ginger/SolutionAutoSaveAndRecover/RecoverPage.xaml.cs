@@ -113,7 +113,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
                     }
                     File.Delete(originalItem.FileName);
                     File.Move(ri.RecoveredItemObject.FileName, originalItem.FileName);
-                    //File.Replace(ri.RecoveredItemObject.FileName, originalItem.FileName,originalItem.FilePath + ".bac");
+                    
 
                     ri.Status = eRecoveredItemStatus.Recovered;
 
