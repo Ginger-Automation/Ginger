@@ -389,7 +389,15 @@ namespace Ginger.AnalyzerLib
                 }
             }
         }
+
+        public static List<string> GetUsedVariableFromAction(Act action)
+        {
+            List<string> ActivityUsedVariables = new List<string>();
+            VariableBase.GetListOfUsedVariables(action, ref ActivityUsedVariables);
+            return ActivityUsedVariables;
+        }
         
+
         private static void FixFlowControlWrongActionMapping(object sender, EventArgs e)
         {
             //look for Action with same name and re-map the Flow Control            

@@ -117,6 +117,7 @@ namespace Amdocs.Ginger.Common.Enums
         Info,
         Exchange,
         Export,
+        Filter,
         #endregion
 
 
@@ -147,6 +148,7 @@ namespace Amdocs.Ginger.Common.Enums
         Camera,
 
         Power,
+        ExcelFile,
 
         #endregion
 
@@ -171,5 +173,6 @@ namespace Amdocs.Ginger.Common.Enums
         Bug,
         DataSource,
         PluginPackage,
+        PlusSquare,
     }
 }
