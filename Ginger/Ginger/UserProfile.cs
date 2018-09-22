@@ -160,8 +160,7 @@ namespace Ginger
                 {
                     try
                     {
-                        Solution sol = (Solution)RepositoryItem.LoadFromFile(typeof(Solution), SolutionFile);
-                        sol.Folder = s;
+                        Solution sol = Solution.LoadSolution(SolutionFile, false);                                                
                         mRecentSolutionsAsObjects.Add(sol);
                     }
                     catch (Exception ex)

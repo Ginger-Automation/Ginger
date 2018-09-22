@@ -60,15 +60,14 @@ namespace Ginger.BusinessFlowWindows
 
         private void Reset()
         {
-            mBusFlowsPage = null;
-            //mAutomatePage = null
-            App.BusinessFlow = null;
+            mBusFlowsPage = null;            
+            //App.BusinessFlow = null;
             ShiftToBusinessFlowView();
         }
 
         private void ShiftToBusinessFlowView()
         {
-            if(mBusFlowsPage == null)
+            if(mBusFlowsPage == null && App.UserProfile.Solution != null)
             {
                 BusinessFlowsFolderTreeItem busFlowsRootFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
                 mBusFlowsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.BusinessFlows), eImageType.BusinessFlow, busFlowsRootFolder, busFlowsRootFolder.SaveAllTreeFolderItemsHandler, busFlowsRootFolder.AddItemHandler, treeItemDoubleClickHandler: BusinessFlowsTree_ItemDoubleClick);

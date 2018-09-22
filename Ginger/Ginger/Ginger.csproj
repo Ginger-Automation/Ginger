@@ -622,6 +622,9 @@
     <Compile Include="MenusLib\RunMenu.cs" />
     <Compile Include="RunSetLib\RunSetOperations.cs" />
     <Compile Include="Run\RunSetConfig.cs" />
+    <Compile Include="SolutionLibNew\LoadingSolutionPage.xaml.cs">
+      <DependentUpon>LoadingSolutionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
       <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
     </Compile>
@@ -2794,6 +2797,10 @@
     <Page Include="GeneralLib\TestWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SolutionLibNew\LoadingSolutionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SolutionWindows\TargetApplicationsPage.xaml">
       <SubType>Designer</SubType>

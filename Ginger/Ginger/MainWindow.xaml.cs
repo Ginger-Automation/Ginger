@@ -37,7 +37,6 @@ using GingerCoreNET.SourceControl;
 using GingerWPF;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -49,6 +48,7 @@ using Amdocs.Ginger.IO;
 using Ginger.ConfigurationsLib;
 using Ginger.MenusLib;
 using Amdocs.Ginger;
+using Ginger.SolutionLibNew;
 
 namespace Ginger
 {
@@ -56,8 +56,7 @@ namespace Ginger
     {        
         public enum eSolutionTabType { None,BusinessFlows,Run,Configurations,Resources};
         public eSolutionTabType SelectedSolutionTab;
-
-        private List<Page> mPageList = new List<Page>();// Keeps all the open pages 
+        
         GingerHelperWindow Helper;
 
         private bool mAskUserIfToClose = true;
@@ -65,65 +64,78 @@ namespace Ginger
 
         public MainWindow()
         {
-            InitializeComponent();
-
-            Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
-            Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;          
-            App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
-            App.PageList = mPageList;
-            App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
-
-            SetMainWindowUi();
-        }
-
-        private void SetMainWindowUi()
-        {
-            //General
-            this.WindowState = System.Windows.WindowState.Maximized;
-
-            //Solution Top Menu Section            
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAutoLoadLastSolutionMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToUpgradeMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xShowBFSaveWarnMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AskToSaveBusinessFlow));
-            SetRecentSolutionsMenu();
-            SetSolutionDependedUIElements();            
-
-            //Status Bar section
-            //App.AppProgressBar.ProgressBarControl = pbStatus;
-            //App.AppProgressBar.ProgressBarTextControl = pbText;
-            ErrorsLabel.Visibility = Visibility.Collapsed;
-            lblBetaFeatures.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.UsingStatus));
-            lblVersion.Content = "Version " + Ginger.App.AppVersion;
+            InitializeComponent();            
         }
 
         public void Init()
         {
             try
             {
+                //General
+                this.WindowState = System.Windows.WindowState.Maximized;
+
+                //App
+                App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
+
+                //User Profile
+                App.PropertyChanged += App_PropertyChanged;
+                App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
+                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAutoLoadLastSolutionMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
+                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToUpgradeMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
+                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xShowBFSaveWarnMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AskToSaveBusinessFlow));
+                if (App.UserProfile.GingerStatus == eGingerStatus.Active)
+                {
+                    Reporter.ToGingerHelper(eGingerHelperMsgKey.ExitMode);
+                }
+                App.UserProfile.GingerStatus = eGingerStatus.Active;
+                App.UserProfile.SaveUserProfile();
+
+                //Reporter
+                Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
+                Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
+
+                //Status Bar            
+                ErrorsLabel.Visibility = Visibility.Collapsed;
+                lblBetaFeatures.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.UsingStatus));
+                lblVersion.Content = "Version " + Ginger.App.AppVersion;
+
+                //Solution                     
+                SetRecentSolutionsMenu();
+                SetSolutionDependedUIElements();
                 if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false && App.RunningFromUnitTest == false)
                 {
                     AutoLoadLastSolution();
                 }
 
-                if (App.UserProfile.GingerStatus == eGingerStatus.Active)
-                {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.ExitMode);
-                }
-
-                App.UserProfile.GingerStatus = eGingerStatus.Active;
-                App.UserProfile.SaveUserProfile();
-                
+                //Messages
                 if (App.UserProfile.NewHelpLibraryMessgeShown == false)
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.GingerHelpLibrary);
                     App.UserProfile.NewHelpLibraryMessgeShown = true;
                 }
-
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 App.AppSplashWindow.Close();
-                Reporter.ToUser(eUserMsgKeys.ApplicationInitError, e.Message);
+                Reporter.ToUser(eUserMsgKeys.ApplicationInitError, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Init Main Window", ex);
+            }
+        }
+
+        private void App_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(App.LoadingSolution))
+            {
+                if (App.LoadingSolution)
+                {
+                    xMainWindowFrame.Content = new LoadingSolutionPage();
+                    xMainWindowFrame.Visibility = Visibility.Visible;
+                    GingerCore.General.DoEvents();
+                }
+                else if (xMainWindowFrame.Content is LoadingSolutionPage)
+                {
+                    xMainWindowFrame.Visibility= Visibility.Collapsed;
+                }
             }
         }
 
@@ -182,7 +194,9 @@ namespace Ginger
             {
                 if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
-                    App.SetSolution(App.UserProfile.RecentSolutionsAsObjects[0].Folder);                    
+                    App.SetSolution(App.UserProfile.RecentSolutionsAsObjects[0].Folder);
+                    xSolutionTopNavigationListView.SelectedItem = null;
+                    xSolutionTopNavigationListView.SelectedItem = xBusinessFlowsListItem;
                 }
             }
             catch (Exception ex)
@@ -200,12 +214,14 @@ namespace Ginger
                 SetSolutionDependedUIElements();
                 if (App.UserProfile.Solution == null)
                 {
+                    xSolutionTopNavigationListView.SelectedItem = null;
                     xSolutionNameTextBlock.Text = "Please Load Solution";
                 }
                 else
                 {
                     App.LastBusinessFlow = null;                  
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty, App.UserProfile.Solution, nameof(Solution.Name));
+                    xSolutionTopNavigationListView.SelectedItem = null;
                     xSolutionTopNavigationListView.SelectedItem = xBusinessFlowsListItem;
                 }
             }
@@ -292,22 +308,20 @@ namespace Ginger
 
         private void xSolutionTopNavigationListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xSolutionTopNavigationListView.SelectedItem == null || xMainWindowFrame == null)
+            if (xMainWindowFrame == null)
             {
-                if (xMainWindowFrame != null && xMainWindowFrame.Content != null)
-                {
-                    xMainWindowFrame.Content = null;
-                    SelectedSolutionTab = eSolutionTabType.None;
-                }
                 return;
             }
 
+            SelectedSolutionTab = eSolutionTabType.None;
+            if (!(xMainWindowFrame.Content is LoadingSolutionPage))
+            {
+                xMainWindowFrame.Visibility = Visibility.Collapsed;
+            }
             ListViewItem selectedTopListItem = (ListViewItem)xSolutionTopNavigationListView.SelectedItem;
 
             if (selectedTopListItem != null)
             {
-                xMainWindowFrame.Content = null;
-
                 if (selectedTopListItem == xBusinessFlowsListItem)
                 {
                     if (xBusinessFlowsListItem.Tag == null)
@@ -342,6 +356,7 @@ namespace Ginger
                 }
 
                 xMainWindowFrame.Content = selectedTopListItem.Tag;
+                xMainWindowFrame.Visibility = Visibility.Visible;
             }
         }
 

@@ -623,18 +623,28 @@ namespace Ginger
                 getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
         }
 
+
+        public static bool LoadingSolution;
+
         public static bool SetSolution(string SolutionFolder)
         {
             //clear existing solution data
             try
             {
+                LoadingSolution = true;
+                OnPropertyChanged(nameof(LoadingSolution));
+
                 // Cleanup last loaded solution 
                 //WorkSpace.Instance.LocalGingerGrid.Reset();  //Temp
                 AppSolutionAutoSave.SolutionAutoSaveEnd();
+
+                //Cleanup
                 App.UserProfile.Solution = null;
                 App.AutomateTabGingerRunner.ClearAgents();
                 App.BusinessFlow = null;
                 AutoLogProxy.SetAccount("");
+
+                WorkSpace.Instance.SolutionRepository = null;
                 WorkSpace.Instance.SourceControl = null;
                 RepositoryItemBase.SourceControl = null;
 
@@ -662,14 +672,29 @@ namespace Ginger
                     Solution sol = Solution.LoadSolution(SolFile);
 
                     if (sol != null)
-                    {
-                        sol.Folder = SolutionFolder;
+                    {                        
+                        WorkSpace.Instance.SolutionRepository = CreateGingerSolutionRepository();
+                        WorkSpace.Instance.SolutionRepository.Open(SolutionFolder);
+
+                        HandleSolutionLoadSourceControl(sol);
+                        HandleAutomateRunner(sol);
+                        
                         ValueExpression.SolutionFolder = SolutionFolder;
+                        BusinessFlow.SolutionVariables = sol.Variables;
+
+                        App.UserProfile.Solution = sol;
+                        App.UserProfile.Solution.SetReportsConfigurations();
+                        App.UserProfile.LoadRecentAppAgentMapping();
+                        AutoLogProxy.SetAccount(sol.Account);
+                        
+                        LoadRecentBusinessFlow();
+
+                        if (!App.RunningFromConfigFile)
+                            DoSolutionAutoSaveAndRecover();
 
                         //Offer to upgrade Solution items to current version
                         if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false && RunningFromUnitTest == false)
-                        {
-                            //TODO: think if it safe to use Async upgrade offer while already started to load the solution
+                        {                            
                             ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
                             if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
                             {
@@ -677,30 +702,6 @@ namespace Ginger
                                 solutionUpgradePage.ShowAsWindow();
                             }
                         }
-
-                        HandelSolutionLoadSourceControl(sol);
-                        App.UserProfile.Solution = sol;
-
-                        WorkSpace.Instance.SolutionRepository = CreateGingerSolutionRepository();
-                        WorkSpace.Instance.SolutionRepository.Open(SolutionFolder);
-
-                        App.UserProfile.LoadRecentAppAgentMapping();
-
-                        App.AutomateTabGingerRunner.SolutionFolder = SolutionFolder;
-                        App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                        App.AutomateTabGingerRunner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
-                        App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                        App.AutomateTabGingerRunner.CurrentSolution = sol;
-
-                        App.UserProfile.Solution.SetReportsConfigurations();
-
-                        AutoLogProxy.SetAccount(sol.Account);
-                        BusinessFlow.SolutionVariables = sol.Variables;
-
-                        LoadRecentBusinessFlow();
-
-                        if (!App.RunningFromConfigFile)
-                            DoSolutionAutoSaveAndRecover();
                     }
                     else
                     {
@@ -720,9 +721,14 @@ namespace Ginger
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while loading the solution", ex);
                 throw ex;
             }
+            finally
+            {
+                LoadingSolution = false;
+                OnPropertyChanged(nameof(LoadingSolution));
+            }
         }
 
-        private static void HandelSolutionLoadSourceControl(Solution solution)
+        private static void HandleSolutionLoadSourceControl(Solution solution)
         {
             string RepositoryRootFolder = string.Empty;
             switch (SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref RepositoryRootFolder))
@@ -769,6 +775,15 @@ namespace Ginger
                 WorkSpace.Instance.SourceControl = solution.SourceControl;
                 RepositoryItemBase.SourceControl = solution.SourceControl;
             }
+        }
+
+        private static void HandleAutomateRunner(Solution solution)
+        {
+            App.AutomateTabGingerRunner.SolutionFolder = solution.Folder;
+            App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+            App.AutomateTabGingerRunner.SolutionApplications = solution.ApplicationPlatforms;
+            App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            App.AutomateTabGingerRunner.CurrentSolution = solution;
         }
 
         private static void DoSolutionAutoSaveAndRecover()

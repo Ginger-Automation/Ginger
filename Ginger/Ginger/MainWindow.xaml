@@ -9,7 +9,7 @@
         Height="600" Width="1000" WindowState="Normal" 
         Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown">
     
-    <Grid Background="{StaticResource $BackgroundColor_White}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
             <RowDefinition Height="200*"/>

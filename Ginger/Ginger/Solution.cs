@@ -54,6 +54,7 @@ namespace Ginger.SolutionGeneral
             txt = txt.Replace("Ginger.Environments.Solution", "Ginger.SolutionGeneral.Solution");//changed the namespace so need to handle old xml's
             Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
             solution.FilePath = solutionFileName;
+            solution.Folder = Path.GetDirectoryName(solutionFileName);
             if (startDirtyTracking)
             {
                 solution.StartDirtyTracking();
