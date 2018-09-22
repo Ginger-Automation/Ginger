@@ -17,7 +17,7 @@ namespace Ginger.ConfigurationsLib
         public static TwoLevelMenu twoLevelMenu;
 
         private static TwoLevelMenuPage mMenusPage = null;
-        public static TwoLevelMenuPage menusPage
+        public static TwoLevelMenuPage MenusPage
         {
             get
             {
@@ -34,7 +34,7 @@ namespace Ginger.ConfigurationsLib
         {
             if (e.PropertyName == nameof(UserProfile.Solution))
             {
-                menusPage.Reset();
+                MenusPage.Reset();
             }
         }
 

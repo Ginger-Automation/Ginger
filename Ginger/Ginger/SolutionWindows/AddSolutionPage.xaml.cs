@@ -110,9 +110,7 @@ namespace Ginger.SolutionWindows
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
                 App.UpdateApplicationsAgentsMapping();
                 AddDefaultDataSource();
-                AddDeafultReportTemplate();
-                //Refersh the solution loaded in the solution tab
-                App.UserProfile.AddsolutionToRecent(mSolution);
+                AddDeafultReportTemplate();                
 
                 //show success message to user
                 Mouse.OverrideCursor = null;

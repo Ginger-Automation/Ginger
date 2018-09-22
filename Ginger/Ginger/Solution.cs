@@ -210,9 +210,21 @@ namespace Ginger.SolutionGeneral
         //    return false;
         //}
 
+        string mName;
         [IsSerializedForLocalRepository]
-        public string Name { get; set; }
-                
+        public string Name
+        {
+            get
+            {
+                return mName;
+            }
+            set
+            {
+                mName = value;
+                OnPropertyChanged(Name);
+            }
+        }
+
         public string Folder { get; set; }        
 
         [IsSerializedForLocalRepository]

@@ -301,6 +301,13 @@ namespace Amdocs.Ginger.Repository
             // TODO: return sorted list
             return fileEntries.ToArray();
         }
+
+        public static string NormalizePath(string path)
+        {
+            return Path.GetFullPath(new Uri(path).LocalPath)
+                       .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                       .ToUpperInvariant();
+        }
         #endregion Public Functions
 
         #region Private Functions        

@@ -82,55 +82,124 @@ namespace Ginger
         
         public List<UserProfileGrid> Grids = new List<UserProfileGrid>();
 
+        bool mAutoLoadLastSolution;
         [IsSerializedForLocalRepository]
-        public bool AutoLoadLastSolution { get; set; }
+        public bool AutoLoadLastSolution
+        {
+            get
+            {
+                return mAutoLoadLastSolution;
+            }
+            set
+            {
+                mAutoLoadLastSolution = value;
+                OnPropertyChanged(nameof(AutoLoadLastSolution));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public eGingerStatus GingerStatus { get; set; }
-        
-        public ObservableList<Solution> RecentSolutionsObjects = new ObservableList<Solution>();
-        public void SetRecentSolutionsObjects()
-        {
-            try
-            {
-                int counter = 0;
-                foreach (string s in RecentSolutions)
-                {
-                    string SolutionFile = s + @"\Ginger.Solution.xml";
-                    if (File.Exists(SolutionFile))
-                    {
-                        Solution sol = Solution.LoadSolution(SolutionFile, false);
-                        sol.Folder = s;
-                        RecentSolutionsObjects.Add(sol);
-
-                        counter++;
-                        if (counter >= 10) break; // only first latest 10 solutions
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to set Recent Solutions Objects", ex);
-            }
-        }
-
-        public void AddsolutionToRecent(Solution s)
-        {
-            App.UserProfile.RecentSolutions.Remove(s.Folder);
-            // Add it first place 
-            App.UserProfile.RecentSolutions.Insert(0, s.Folder);
-        }
-
-        public void AddsolutionToRecent(string solutionFolder)
-        {
-            App.UserProfile.RecentSolutions.Remove(solutionFolder);
-            // Add it first place 
-            App.UserProfile.RecentSolutions.Insert(0, solutionFolder);
-        }
 
         // Keep the folder names of last solutions opened
         [IsSerializedForLocalRepository]
         public List<string> RecentSolutions = new List<string>();
+
+        private void CleanRecentSolutionsList()
+        {
+            try
+            {
+                //Clean not exist Solutions
+                for (int i = 0; i < RecentSolutions.Count; i++)
+                    if (Directory.Exists(RecentSolutions[i]) == false)
+                    {
+                        RecentSolutions.RemoveAt(i);
+                        i--;
+                    }
+
+                //clean resent solutions list from duplications caused due to bug
+                for (int i = 0; i < RecentSolutions.Count; i++)
+                    for (int j = i + 1; j < RecentSolutions.Count; j++)
+                        if (SolutionRepository.NormalizePath(RecentSolutions[i]) == SolutionRepository.NormalizePath(RecentSolutions[j]))
+                        {
+                            RecentSolutions.RemoveAt(j);
+                            j--;
+                        }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Recent Solutions list clean up", ex);
+            }
+        }
+
+        private ObservableList<Solution> mRecentSolutionsAsObjects = null;
+        public ObservableList<Solution> RecentSolutionsAsObjects
+        {
+            get
+            {
+                if (mRecentSolutionsAsObjects == null)
+                    LoadRecentSolutionsAsObjects();
+                return mRecentSolutionsAsObjects;
+            }
+            set
+            {
+                RecentSolutionsAsObjects = value;
+            }
+        }
+
+        private ObservableList<Solution> LoadRecentSolutionsAsObjects()
+        {
+
+            CleanRecentSolutionsList();
+
+            mRecentSolutionsAsObjects = new ObservableList<Solution>();
+            int counter = 0;
+            foreach (string s in RecentSolutions)
+            {
+                string SolutionFile = Path.Combine(s, @"Ginger.Solution.xml");
+                if (File.Exists(SolutionFile))
+                {
+                    try
+                    {
+                        Solution sol = (Solution)RepositoryItem.LoadFromFile(typeof(Solution), SolutionFile);
+                        sol.Folder = s;
+                        mRecentSolutionsAsObjects.Add(sol);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to to load the recent solution which in path '{0}'", s), ex);
+                    }
+
+                    counter++;
+                    if (counter >= 10) break; // only first latest 10 solutions
+                }
+            }
+
+            return mRecentSolutionsAsObjects;
+        }
+
+        public void AddsolutionToRecent(Solution loadedSolution)
+        {
+            //remove existing similar folder path
+            for (int indx = 0; indx < RecentSolutions.Count; indx++)
+                if (SolutionRepository.NormalizePath(RecentSolutions[indx]) == SolutionRepository.NormalizePath(loadedSolution.Folder))
+                {
+                    //Move to first place
+                    RecentSolutions.RemoveAt(indx);
+                    RecentSolutions.Insert(0, loadedSolution.Folder);
+
+                    Solution sol = mRecentSolutionsAsObjects.Where(x => SolutionRepository.NormalizePath(x.Folder) == SolutionRepository.NormalizePath(loadedSolution.Folder)).FirstOrDefault();
+                    if (sol != null)
+                        mRecentSolutionsAsObjects.Move(mRecentSolutionsAsObjects.IndexOf(sol), 0);
+
+                    return;
+                }
+
+            // Add it in first place 
+            RecentSolutions.Insert(0, loadedSolution.Folder);
+            mRecentSolutionsAsObjects.AddToFirstIndex(loadedSolution);
+            if (mRecentSolutionsAsObjects.Count > 10)
+                mRecentSolutionsAsObjects.RemoveAt(10);//to keep list of 10
+        }
 
         [IsSerializedForLocalRepository]
         public List<string> RecentAppAgentsMapping = new List<string>();
@@ -378,12 +447,14 @@ namespace Ginger
                     }
                     return up;
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKeys.UserProfileLoadError, e.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the User Profile at:" + UserProfilePath, ex);
                 }
             }
-            
+
+            Reporter.ToLog(eLogLevel.INFO, "Creating new User Profile");
+
             UserProfile up2 = new UserProfile();
             up2.LoadDefaults();
             if (UserConfigdictObj != null)
@@ -467,11 +538,39 @@ namespace Ginger
             }
         }
 
+        bool mDoNotAskToUpgradeSolutions = false;
         [IsSerializedForLocalRepository]
-        public bool DoNotAskToUpgradeSolutions { get; set; }
+        public bool DoNotAskToUpgradeSolutions
+        {
+            get
+            {
+                return mDoNotAskToUpgradeSolutions;
+            }
+            set
+            {
+                mDoNotAskToUpgradeSolutions = value;
+                OnPropertyChanged(nameof(DoNotAskToUpgradeSolutions));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public bool NewHelpLibraryMessgeShown { get; set; }
+
+
+        bool mAskToSaveBusinessFlow = true;
+        [IsSerializedForLocalRepository]
+        public bool AskToSaveBusinessFlow
+        {
+            get
+            {
+                return mAskToSaveBusinessFlow;
+            }
+            set
+            {
+                mAskToSaveBusinessFlow = value;
+                OnPropertyChanged(nameof(AskToSaveBusinessFlow));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public bool DoNotAskToRecoverSolutions { get; set; }

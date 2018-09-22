@@ -278,7 +278,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Cog);
                     break;
                 case eImageType.Edit:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PencilSquareOutline);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Pencil);
                     break;
                 case eImageType.Save:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Save);
@@ -388,6 +388,18 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.View:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Search);
                     break;
+                case eImageType.Download:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CloudDownload);
+                    break;
+                case eImageType.GetLatest:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
+                    break;
+                case eImageType.CheckIn:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Upload);
+                    break;
+                case eImageType.Fix:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Wrench);
+                    break;
                 case eImageType.Expand:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ChevronDown);
                     break;
@@ -402,9 +414,6 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.ActiveAll:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Check);
-                    break;
-                case eImageType.Info:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.InfoCircle);
                     break;
                 case eImageType.Export:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ShareAlt);
@@ -426,10 +435,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.ShareExternal:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ShareSquareOutline);
-                    break;
-                case eImageType.Download:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
-                    break;              
+                    break;             
                 #endregion
 
 
@@ -489,6 +495,45 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.History:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.History);
+                    break;
+                case eImageType.ChevronDown:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ChevronCircleDown);
+                    break;
+                case eImageType.Question:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.QuestionCircle);
+                    break;
+                case eImageType.Help:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.LifeRing);
+                    break;
+                case eImageType.Screen:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Desktop);
+                    break;
+                case eImageType.User:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.UserOutline);
+                    break;
+                case eImageType.Info:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.InfoCircle);
+                    break;
+                case eImageType.Text:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Adn);
+                    break;
+                case eImageType.Globe:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Globe);
+                    break;
+                case eImageType.Service:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Headphones);
+                    break;
+                case eImageType.Ticket:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Tag);
+                    break;
+                case eImageType.FileVideo:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileVideoOutline);
+                    break;
+                case eImageType.Window:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
+                    break;
+                case eImageType.Email:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.EnvelopeOutline);
                     break;
                 case eImageType.SourceControlNew:
                     SetAsStaticImage("SourceControlItemAdded_10x10.png");

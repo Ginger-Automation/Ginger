@@ -137,7 +137,7 @@ namespace Ginger
             if (mObj != null && mObj.GetType() == typeof(FlowControl))
             {   
                 //Added for Business Flow Control in RunSet
-                if (App.MainWindow.MainRibbonSelectedTab == eRibbonTab.Run.ToString())
+                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.Run)
                 {
                     AddBusinessFlowControlConditions();
                 }

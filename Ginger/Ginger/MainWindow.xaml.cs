@@ -30,10 +30,8 @@ using Ginger.GeneralLib;
 using Ginger.Reports;
 using Ginger.SolutionWindows;
 using Ginger.SourceControl;
-using Ginger.Support;
 using Ginger.UserConfig;
 using GingerCore;
-using GingerCore.Environments;
 using GingerCore.Repository.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
@@ -43,66 +41,114 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Ribbon;
 using System.Windows.Input;
-using System.Windows.Media;
-using Amdocs.Ginger.UserControls;
 using Amdocs.Ginger.IO;
-using Amdocs.Ginger.Common.Enums;
 using Ginger.ConfigurationsLib;
 using Ginger.MenusLib;
 using Amdocs.Ginger;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger
 {
-    public enum eRibbonTab
-    {
-        Home, Solution, Automate, Run, Support
-    }
+    public partial class MainWindow : Window
+    {        
+        public enum eSolutionTabType { None,BusinessFlows,Run,Configurations,Resources};
+        public eSolutionTabType SelectedSolutionTab;
 
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    // public partial class MainWindow  : RibbonWindow   {
-    public partial class MainWindow : RibbonWindow
-    {
-        // Keep all the open pages 
-        private List<Page> mPageList = new List<Page>();
-
-        GingerHelperWindow Helper = null;
+        private List<Page> mPageList = new List<Page>();// Keeps all the open pages 
+        GingerHelperWindow Helper;
 
         private bool mAskUserIfToClose = true;
-
         private long _currentClickedTabIndex = -1;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            this.WindowState = System.Windows.WindowState.Maximized;
-
-            //Make sure msgbox will apear running from Main Window STA
-            Reporter.MainWindowDispatcher = this.Dispatcher;
-            Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
-            
-            lblBetaFeatures.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.UsingStatus));
-            ErrorsLabel.Visibility = Visibility.Collapsed;
-
-            btnRefresh.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.Refresh, 32);
-            btnRefresh.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.Refresh, 16);
-
-            btnRecover.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, 32);
-            btnRecover.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, 16);
-
+            Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
+            Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;          
+            App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
+            App.PageList = mPageList;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
+
+            SetMainWindowUi();
         }
 
+        private void SetMainWindowUi()
+        {
+            //General
+            this.WindowState = System.Windows.WindowState.Maximized;
 
+            //Solution Top Menu Section            
+            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAutoLoadLastSolutionMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
+            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToUpgradeMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
+            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xShowBFSaveWarnMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AskToSaveBusinessFlow));
+            SetRecentSolutionsMenu();
+            SetSolutionDependedUIElements();            
+
+            //Status Bar section
+            //App.AppProgressBar.ProgressBarControl = pbStatus;
+            //App.AppProgressBar.ProgressBarTextControl = pbText;
+            ErrorsLabel.Visibility = Visibility.Collapsed;
+            lblBetaFeatures.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.UsingStatus));
+            lblVersion.Content = "Version " + Ginger.App.AppVersion;
+        }
+
+        public void Init()
+        {
+            try
+            {
+                if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false && App.RunningFromUnitTest == false)
+                {
+                    AutoLoadLastSolution();
+                }
+
+                if (App.UserProfile.GingerStatus == eGingerStatus.Active)
+                {
+                    Reporter.ToGingerHelper(eGingerHelperMsgKey.ExitMode);
+                }
+
+                App.UserProfile.GingerStatus = eGingerStatus.Active;
+                App.UserProfile.SaveUserProfile();
+                
+                if (App.UserProfile.NewHelpLibraryMessgeShown == false)
+                {
+                    Reporter.ToGingerHelper(eGingerHelperMsgKey.GingerHelpLibrary);
+                    App.UserProfile.NewHelpLibraryMessgeShown = true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                App.AppSplashWindow.Close();
+                Reporter.ToUser(eUserMsgKeys.ApplicationInitError, e.Message);
+            }
+        }
+
+        private void SetRecentSolutionsMenu()
+        {
+            xRecentSolutionsMenuItem.Items.Clear();
+
+            foreach (Solution sol in App.UserProfile.RecentSolutionsAsObjects)
+            {
+                MenuItem mi = new MenuItem();
+                mi.Header = sol.Name;
+                mi.ToolTip = sol.Folder;
+                mi.Tag = sol;
+                mi.Click += RecentSolutionSelection_Click;
+                xRecentSolutionsMenuItem.Items.Add(mi);
+            }
+
+            App.UserProfile.RecentSolutionsAsObjects.CollectionChanged -= RecentSolutionsObjects_CollectionChanged;
+            App.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
+        }
+
+        private void RecentSolutionsObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            SetRecentSolutionsMenu();
+        }
 
         private async void Reporter_HandlerGingerHelperEvent(GingerHelperEventArgs e)
         {
@@ -128,62 +174,15 @@ namespace Ginger
                     }
                 }
             });
-        }
-
-        public void Init()
-        {
-            try
-            {
-                App.PageList = mPageList;
-
-                //TODO: load from User Profile - screen combo                
-                App.PropertyChanged += AppPropertychanged;
-                App.AppProgressBar.ProgressBarControl = pbStatus;
-                App.AppProgressBar.ProgressBarTextControl = pbText;
-                //Moved to below in order to avoid multiple calls to ResetSolutionDependedTabs
-                App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
-
-                //Disable solution tabs till a solution will be loaded
-                ResetSolutionDependedUIElements(false);
-                SetUserTypeButtons();
-
-                if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false && App.RunningFromUnitTest == false)
-                {
-                    AutoLoadLastSolution();
-                }
-
-                if (App.UserProfile.GingerStatus == eGingerStatus.Active)
-                {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.ExitMode);
-                }
-
-                App.UserProfile.GingerStatus = eGingerStatus.Active;
-                App.UserProfile.SaveUserProfile();
-
-                lblVersion.Content = "Version " + Ginger.App.AppVersion;
-
-                if (App.UserProfile.NewHelpLibraryMessgeShown == false)
-                {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.GingerHelpLibrary);
-                    App.UserProfile.NewHelpLibraryMessgeShown = true;
-                }
-                
-            }
-            catch (Exception e)
-            {
-                App.AppSplashWindow.Close();
-                Reporter.ToUser(eUserMsgKeys.ApplicationInitError, e.Message);
-            }
-        }
+        }       
 
         internal void AutoLoadLastSolution()
         {
             try
             {
-                if (App.UserProfile.RecentSolutionsObjects.Count > 0)
+                if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
-                    App.SetSolution(App.UserProfile.RecentSolutionsObjects[0].Folder);
-                    App.UserProfile.AddsolutionToRecent(App.UserProfile.RecentSolutionsObjects[0]);
+                    App.SetSolution(App.UserProfile.RecentSolutionsAsObjects[0].Folder);                    
                 }
             }
             catch (Exception ex)
@@ -192,71 +191,41 @@ namespace Ginger
             }
         }
 
-        private void SetUserTypeButtons()
-        {
-            if (App.UserProfile.UserType == eUserType.Business && App.UserProfile.Solution != null)
-            {
-                SolutionGherkin.Visibility = Visibility.Visible;
-                ImportFeatureFile.Visibility = Visibility.Visible;
-                CreateFeatureFile.Visibility = Visibility.Visible;
-            }
-        }
-
-        public string MainRibbonSelectedTab
-        {
-            get
-            {
-                return ((RibbonTab)MainRibbon.SelectedItem).Header.ToString();
-            }
-            set
-            {
-                foreach (RibbonTab tab in MainRibbon.Items)
-                {
-                    if ((tab != null) && (value != null) &&
-                           (tab.Header.ToString().ToUpper().Trim() == value.ToString().ToUpper().Trim()))
-                    {
-                        MainRibbon.SelectedItem = tab;
-                    }
-                }
-            }
-        }
-
-
         public void UserProfilePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // Handle Solution change
             //TODO: cleanup close current biz flow etc...
             if (e.PropertyName == nameof(UserProfile.Solution))
-            {               
+            {
+                SetSolutionDependedUIElements();
                 if (App.UserProfile.Solution == null)
                 {
-                    ResetSolutionDependedUIElements(false);
-                    lblSolution.Content = "No Solution";
-                    return;
+                    xSolutionNameTextBlock.Text = "Please Load Solution";
                 }
-
-                ResetSolutionDependedUIElements(true);
-                App.LastBusinessFlow = null;
-                lblSolution.Content = App.UserProfile.Solution.Name;
+                else
+                {
+                    App.LastBusinessFlow = null;                  
+                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty, App.UserProfile.Solution, nameof(Solution.Name));
+                    xSolutionTopNavigationListView.SelectedItem = xBusinessFlowsListItem;
+                }
             }
         }
 
+        //private void ShowBizFlowInfo()
+        //{
+        //    if (App.BusinessFlow != null)
+        //        lblBizFlow.Content = App.BusinessFlow.Name;
+        //    else
+        //        lblBizFlow.Content = "No " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+        //}
 
-        private void ShowBizFlowInfo()
-        {
-            if (App.BusinessFlow != null)
-                lblBizFlow.Content = App.BusinessFlow.Name;
-            else
-                lblBizFlow.Content = "No " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-        }
-
-        private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(App.BusinessFlow))
-            {
-                ShowBizFlowInfo();
-            }
-        }
+        //private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    if (e.PropertyName == nameof(App.BusinessFlow))
+        //    {
+        //        ShowBizFlowInfo();
+        //    }
+        //}
 
         public void CloseWithoutAsking()
         {
@@ -264,7 +233,7 @@ namespace Ginger
             this.Close();
         }
 
-        private void RibbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             //To Clear the AutoSave Directory Folder
             if (Directory.Exists(App.AppSolutionAutoSave.AutoSaveFolderPath))
@@ -273,9 +242,9 @@ namespace Ginger
                 {
                     Directory.Delete(App.AppSolutionAutoSave.AutoSaveFolderPath, true);
                 }
-                catch
+                catch(Exception ex)
                 {
-
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Auto Save folder", ex);
                 }
             }
             if (Directory.Exists(App.AppSolutionRecover.RecoverFolderPath))
@@ -284,9 +253,9 @@ namespace Ginger
                 {
                     Directory.Delete(App.AppSolutionRecover.RecoverFolderPath, true);
                 }
-                catch
+                catch (Exception ex)
                 {
-
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Recover folder", ex);
                 }
             }
             if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKeys.AskIfSureWantToClose) == MessageBoxResult.Yes)
@@ -294,7 +263,9 @@ namespace Ginger
                 AppCleanUp();
             }
             else
+            {
                 e.Cancel = true;
+            }
         }
 
         private void AppCleanUp()
@@ -319,141 +290,73 @@ namespace Ginger
             CW.Close();
         }
 
-        private void btnStart_Click(object sender, RoutedEventArgs e)
+        private void xSolutionTopNavigationListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            LoadOrShowPage(typeof(StartPage));
-        }
-
-        private void btnNews_Click(object sender, RoutedEventArgs e)
-        {
-            LoadOrShowPage(typeof(NewsPage));
-        }
-
-        private void MainRibbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            RibbonTab rt = (RibbonTab)MainRibbon.SelectedItem;
-            ToggleMainWindow();
-            if (rt != null && rt.Tag != null)
+            if (xSolutionTopNavigationListView.SelectedItem == null || xMainWindowFrame == null)
             {
-                MainFrame.Content = rt.Tag;
-                return;
-            }
-
-            //Canoot do switch so we do if and return 
-            if (MainRibbon.SelectedItem == HomeRibbon)
-            {
-                LoadOrShowPage(typeof(StartPage));
-                return;
-            }
-
-            if (MainRibbon.SelectedItem == xRun)
-            {
-                ShowPage(RunMenu.MenusPage);
-                return;
-            }
-
-            if (MainRibbon.SelectedItem == SupportRibbon)
-            {
-                LoadOrShowPage(typeof(WebSupportPage));
-                return;
-            }
-
-            if (MainRibbon.SelectedItem == SolutionRibbon)
-            {
-
-                LoadOrShowPage(typeof(SolutionPage));
-                return;
-            }
-
-            if (MainRibbon.SelectedItem == xResources)
-            {
-                ShowPage(ResourcesMenu.menusPage);
-                return;
-            }
-
-            if (MainRibbon.SelectedItem == xConfigurations)
-            {
-
-                ShowPage(ConfigurationsMenu.menusPage);
-                return;
-            }
-
-            if (MainRibbon.SelectedItem == xBusinessFlows)
-            {
-                ShowPage(new BusinessFlowsAutomatePage());
-                return;
-            }
-        }
-
-        public void ToggleMainWindow()
-        {
-            if (MainRibbon.SelectedItem != xRun && MainRibbon.SelectedItem != xResources && MainRibbon.SelectedItem != xConfigurations && MainRibbon.SelectedItem != xBusinessFlows)
-            {
-                MainFrame.Margin = new Thickness(0, 0, 0, 0);
-            }
-            else
-            {
-                MainFrame.Margin = new Thickness(0, -90, 0, 0);
-            }
-        }
-
-        private void LoadOrShowPage(Type PageType)
-        {
-            Page p = (from p1 in mPageList where p1.GetType() == PageType select p1).SingleOrDefault();
-
-            // Page not found so create
-            if (p == null)
-            {
-                try
+                if (xMainWindowFrame != null && xMainWindowFrame.Content != null)
                 {
-                    // TODO: show loading message with spinner
-                    p = (Page)Activator.CreateInstance(PageType);
+                    xMainWindowFrame.Content = null;
+                    SelectedSolutionTab = eSolutionTabType.None;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                    return;
-                }
-                mPageList.Add(p);
+                return;
             }
 
-            ShowPage(p);
+            ListViewItem selectedTopListItem = (ListViewItem)xSolutionTopNavigationListView.SelectedItem;
+
+            if (selectedTopListItem != null)
+            {
+                xMainWindowFrame.Content = null;
+
+                if (selectedTopListItem == xBusinessFlowsListItem)
+                {
+                    if (xBusinessFlowsListItem.Tag == null)
+                    {
+                        xBusinessFlowsListItem.Tag = new BusinessFlowsAutomatePage();
+                    }
+                    SelectedSolutionTab = eSolutionTabType.BusinessFlows;
+                }
+                else if (selectedTopListItem == xRunListItem)
+                {
+                    if (xRunListItem.Tag == null)
+                    {
+                        xRunListItem.Tag = RunMenu.MenusPage;
+                    }
+                    SelectedSolutionTab = eSolutionTabType.Run;
+                }
+                else if (selectedTopListItem == xConfigurationsListItem)
+                {
+                    if (xConfigurationsListItem.Tag == null)
+                    {
+                        xConfigurationsListItem.Tag = ConfigurationsMenu.MenusPage;
+                    }
+                    SelectedSolutionTab = eSolutionTabType.Configurations;
+                }
+                else
+                {
+                    if (xResourcesListItem.Tag == null)
+                    {
+                        xResourcesListItem.Tag = ResourcesMenu.MenusPage;
+                    }
+                    SelectedSolutionTab = eSolutionTabType.Resources;
+                }
+
+                xMainWindowFrame.Content = selectedTopListItem.Tag;
+            }
         }
 
-        private void ShowPage(Page page)
-        {
-            RibbonTab rt = (RibbonTab)MainRibbon.SelectedItem;
-            MainFrame.Content = page;
-            // save the current page in the tag, so can return it back in tab click
-            rt.Tag = page;
-        }
-
-    
-        
-        private void btnOpenSolutions_Click(object sender, RoutedEventArgs e)
-        {
-            OpenSolution();
-        }
-
-        private void btnNewSolutions_Click(object sender, RoutedEventArgs e)
-        {
-            Solution s1 = new Solution();
-            AddSolutionPage addSol = new AddSolutionPage(s1);
-            addSol.ShowAsWindow();
-        }
-
-        private void OpenSolution()
+        private void xOpenSolutionMenuItem_Click(object sender, RoutedEventArgs e)
         {
             string solutionFolder = General.OpenSelectFolderDialog("Select Ginger Solution Folder");
             if (solutionFolder != null)
             {
                 string solutionFileName = solutionFolder + @"\Ginger.Solution.xml";
-                //string realPath = Path.GetFullPath(SoFileName);
-                //string ll = PathHelper.GetLongPath(realPath);
                 if (System.IO.File.Exists(PathHelper.GetLongPath(solutionFileName)))
                 {
                     if (App.SetSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder))))
-                        App.UserProfile.AddsolutionToRecent(Path.GetDirectoryName(solutionFolder));
+                    {
+                        App.UserProfile.AddsolutionToRecent(App.UserProfile.Solution);
+                    }
                 }
                 else
                 {
@@ -462,96 +365,79 @@ namespace Ginger
             }
         }
 
-        public void ResetSolutionDependedUIElements(bool enableTabs)
+        private void xCreateNewSolutionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (enableTabs)
+            Solution s1 = new Solution();
+            AddSolutionPage addSol = new AddSolutionPage(s1);
+            addSol.ShowAsWindow();
+        }
+
+        public void SetSolutionDependedUIElements()
+        {
+            if (App.UserProfile.Solution != null)
             {
+                xSolutionTopNavigationListView.Visibility = Visibility.Visible;
                 if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
                 {
-                    //AutomateRibbon.Visibility = Visibility.Visible;
-                    xRun.Visibility = Visibility.Visible;
+                    xRunListItem.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    //AutomateRibbon.Visibility = Visibility.Collapsed;
-                    xRun.Visibility = Visibility.Collapsed;
+                    xRunListItem.Visibility = Visibility.Collapsed;
                 }
 
-                if (App.UserProfile.UserTypeHelper.IsSupportAnalyzer)
-                    AnalyzerButton.Visibility = Visibility.Visible;
-                else
-                    AnalyzerButton.Visibility = Visibility.Collapsed;
+                //TODO: Fix with all solution operations
+                //if (App.UserProfile.UserTypeHelper.IsSupportAnalyzer)
+                //    AnalyzerButton.Visibility = Visibility.Visible;
+                //else
+                //    AnalyzerButton.Visibility = Visibility.Collapsed;
 
-                if (App.UserProfile.UserTypeHelper.IsSupportALM)
-                    ALMConfigurationsGroup.Visibility = Visibility.Visible;
-                else
-                    ALMConfigurationsGroup.Visibility = Visibility.Collapsed;
+                //if (App.UserProfile.UserTypeHelper.IsSupportALM)
+                //    ALMConfigurationsGroup.Visibility = Visibility.Visible;
+                //else
+                //    ALMConfigurationsGroup.Visibility = Visibility.Collapsed;
 
-                if (App.UserProfile.UserTypeHelper.IsSupportSupport)
-                    SupportRibbon.Visibility = Visibility.Visible;
-                else
-                    SupportRibbon.Visibility = Visibility.Collapsed;
-               
-                btnUpgrade.Visibility = Visibility.Visible;               
-                ViewSolutionFiles.Visibility = Visibility.Visible;
-                xFindAndReplaceSolutionPageButton.Visibility = Visibility.Visible;
-                xResources.Visibility = Visibility.Visible;
-                xBusinessFlows.Visibility = Visibility.Visible;
-                xConfigurations.Visibility = Visibility.Visible;
-                btnRecover.Visibility = Visibility.Visible;
-                AnalyzerButton.Visibility = Visibility.Visible;
-                ALMConfigurationsGroup.Visibility = Visibility.Visible;
+                //if (App.UserProfile.Solution.SourceControl != null)
+                //{
+                //    CheckInSolutionBtn.Visibility = Visibility.Visible;
+                //    GetLatestSolutionBtn.Visibility = Visibility.Visible;
+                //    ResolveConflictsBtn.Visibility = Visibility.Visible;
+                //    ConnectionDetailsBtn.Visibility = Visibility.Visible;
+                //    RepositoryDetailsBtn.Visibility = Visibility.Visible;
+                //    SourceControlSolutioRibbonGroup.Visibility = Visibility.Visible;
+                //}
+
             }
             else
             {
-                //AutomateRibbon.Visibility = Visibility.Collapsed;
-                xRun.Visibility = Visibility.Collapsed;
-                xResources.Visibility = Visibility.Collapsed;
-                xBusinessFlows.Visibility = Visibility.Collapsed;
-                xConfigurations.Visibility = Visibility.Collapsed;               
-                btnUpgrade.Visibility = Visibility.Collapsed;
-                btnRecover.Visibility = Visibility.Collapsed;
-                ViewSolutionFiles.Visibility = Visibility.Collapsed;
-                xFindAndReplaceSolutionPageButton.Visibility = Visibility.Collapsed;
-                AnalyzerButton.Visibility = Visibility.Collapsed;
-                ALMConfigurationsGroup.Visibility = Visibility.Collapsed;
+                xSolutionTopNavigationListView.Visibility = Visibility.Collapsed;
+                xSolutionOperationsMenu.Visibility = Visibility.Collapsed;
             }
-
         }
 
-        private void NewTicketbutton_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("NewTicketbutton_Click");
+        
+          
 
-            try
-            {
-                WebBrowser WB = ((WebSupportPage)mPageList.Where(p => p.GetType() == typeof(WebSupportPage)).FirstOrDefault()).ViewWebBrowser;
-                WB.Navigate("http://ginger/Ticket/Create");
-            }
-            catch (Exception)
-            {
-                //TODO: add different flow for offline click of New Ticket
-            }
-            AutoLogProxy.UserOperationEnd();
-        }
-
-        //Support tab back button for web page
-        private void btnBack_Click(object sender, RoutedEventArgs e)
+        private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            try
+            //if (e.Key == Key.S && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) && (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)))
+            //{
+            //    throw new NotImplementedException();                
+            //}
+            //else if (e.Key == Key.S && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+            //{
+            //    SaveAppCurrentItem();
+            //}
+            // Alt + CTRL + Shift + G = show beta features
+            if (e.Key == Key.G && Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift) && Keyboard.IsKeyDown(Key.LeftAlt))
             {
-                ((WebSupportPage)mPageList.Where(p => p.GetType() == typeof(WebSupportPage)).FirstOrDefault()).ViewWebBrowser.GoBack();
+                BetaFeaturesPage p = new BetaFeaturesPage();
+                p.ShowAsWindow();
             }
-            catch (Exception) { }
-        }
-
-        private void btnRefresh_Click(object sender, RoutedEventArgs e)
-        {
-            try
+            else if (e.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
-                ((WebSupportPage)mPageList.Where(p => p.GetType() == typeof(WebSupportPage)).FirstOrDefault()).ViewWebBrowser.Refresh();
+                SolutionFindAndReplace();
             }
-            catch (Exception) { }
         }
 
         private void ALMConfigButton_Click(object sender, RoutedEventArgs e)
@@ -568,70 +454,6 @@ namespace Ginger
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
         {
             ALMIntegration.Instance.ALMDefectsProfilesPage();
-        }
-
-        public void SaveAppCurrentItem()
-        {
-
-            RepositoryItemBase RIS = null;
-            bool OnRunPage = false;
-
-            RibbonTab Selectedtab = MainRibbon.SelectedItem as RibbonTab;
-            switch (Selectedtab.Header.ToString())
-            {
-
-                case "Solution":
-                    RIS = App.CurrentRepositoryItem;
-                    break;
-                case "Automate":
-                    RIS = App.BusinessFlow;
-                    break;
-                default:
-                    Reporter.ToUser(eUserMsgKeys.CtrlSMissingItemToSave);
-                    break;
-            }
-
-            if (!OnRunPage)
-            {
-                if (RIS == null)
-                    Reporter.ToUser(eUserMsgKeys.CtrlSMissingItemToSave);
-
-                else if (RIS is EnvApplication)
-                {
-                    Reporter.ToUser(eUserMsgKeys.CtrlSsaveEnvApp);
-                    return;
-                }
-
-                else
-                {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, RIS.GetNameForFileName(), "item");
-                    RIS.RepositorySerializer.SaveToFile(RIS, RIS.FileName);
-                    Reporter.CloseGingerHelper();
-                }
-            }
-        }
-
-        private void RibbonWindow_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.S && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) && (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)))
-            {
-                throw new NotImplementedException();
-                //   App.LocalRepository.SaveAllSolutionDirtyItems(true);
-            }
-            else if (e.Key == Key.S && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
-            {
-                SaveAppCurrentItem();
-            }
-            // Alt + CTRL + Shift + G = show beta features
-            else if (e.Key == Key.G && Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift) && Keyboard.IsKeyDown(Key.LeftAlt))
-            {
-                BetaFeaturesPage p = new BetaFeaturesPage();
-                p.ShowAsWindow();
-            }
-            else if (e.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
-            {
-                SolutionFindAndReplace();
-            }
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
@@ -656,34 +478,13 @@ namespace Ginger
                 Process.Start(App.UserProfile.Solution.Folder);
         }
 
-        public void RefreshSolutionTabRibbon()
-        {
-            //handle solution ribbon tools
-            if (App.UserProfile.Solution == null)
-            {                
-                ViewSolutionFiles.IsEnabled = false;
-                CheckInSolutionBtn.IsEnabled = false;
-                GetLatestSolutionBtn.IsEnabled = false;
-                btnUpgrade.IsEnabled = false;
-            }
-            else
-            {                
-                ViewSolutionFiles.IsEnabled = true;
-                CheckInSolutionBtn.IsEnabled = true;
-                GetLatestSolutionBtn.IsEnabled = true;
-                btnUpgrade.IsEnabled = true;
-            }
-        }
-
-     
-
         private void btnSourceControlConnectionDetails_Click(object sender, RoutedEventArgs e)
         {
             SourceControlConnDetailsPage p = new SourceControlConnDetailsPage();
             p.ShowAsWindow(eWindowShowStyle.Dialog);
         }
 
-        private void btnSourceControlDownloadSolution_Click(object sender, RoutedEventArgs e)
+        private void xDownloadSolutionMenuItem_Click(object sender, RoutedEventArgs e)
         {
             SourceControlProjectsPage p = new SourceControl.SourceControlProjectsPage();
             p.ShowAsWindow();
@@ -718,12 +519,7 @@ namespace Ginger
             AutoLogProxy.UserOperationEnd();
         }
 
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            Application.Current.Shutdown();
-        }
+      
 
         private void AnalyzerButton_Click(object sender, RoutedEventArgs e)
         {
@@ -781,67 +577,7 @@ namespace Ginger
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
             General.ShowGingerHelpWindow();
-        }
-
-        private void MainRibbon_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            // check where click was done
-            Point pt = e.GetPosition((UIElement)sender);
-            HitTestResult result = VisualTreeHelper.HitTest(this, pt);
-            if (result != null)
-            {
-                var element = result.VisualHit;
-                while (element != null && !(element is RibbonTabHeader))
-                {
-                    element = VisualTreeHelper.GetParent(element);
-                }
-                if (element != null)
-                {
-                    // meaning here - click was done at RibbonTabHeader!
-                    if (MainRibbon.SelectedIndex == _currentClickedTabIndex)
-                    {
-                        ((RibbonTab)MainRibbon.Items[MainRibbon.SelectedIndex]).Ribbon.IsMinimized = false; // meaning - third click done on same tab - IsMinimized may be used by WPF - to override it
-                        //  MainFrame.Margin = new Thickness(0, 85, 0, 0);
-                        _currentClickedTabIndex = -1;
-                    }
-                    else
-                    {
-                        //  MainFrame.Margin = new Thickness(0, 0, 0, 0);
-                        _currentClickedTabIndex = MainRibbon.SelectedIndex; // meaning - second click done on same tab
-                    }
-                }
-            }
-        }
-
-        private void MainRibbon_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            // check where click was done
-            Point pt = e.GetPosition((UIElement)sender);
-            HitTestResult result = VisualTreeHelper.HitTest(this, pt);
-            if (result != null)
-            {
-                var element = result.VisualHit;
-                while (element != null && !(element is RibbonTabHeader))
-                {
-                    element = VisualTreeHelper.GetParent(element);
-                }
-                if (element != null)
-                {
-                    // meaning here - click was done at RibbonTabHeader!
-                    if (MainRibbon.SelectedIndex == _currentClickedTabIndex)
-                    {
-                        ((RibbonTab)MainRibbon.Items[MainRibbon.SelectedIndex]).Ribbon.IsMinimized = false; // meaning - third click done on same tab - IsMinimized may be used by WPF - to override it
-                        //  MainFrame.Margin = new Thickness(0, 85, 0, 0);
-                        _currentClickedTabIndex = -1;                      // meaning - third click done on same tab - IsMinimized may be used by WPF - to override it
-                    }
-                    else
-                    {
-                        //  MainFrame.Margin = new Thickness(0, 0, 0, 0);
-                        _currentClickedTabIndex = MainRibbon.SelectedIndex; // meaning - second click done on same tab
-                    }
-                }
-            }
-        }
+        }            
 
         private void btnUpgrade_Click(object sender, RoutedEventArgs e)
         {
@@ -885,27 +621,7 @@ namespace Ginger
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Ginger log file was not found in the Path:'" + mLogFilePath + "'");
             }
-        }
-
-        //public void CheckIfUserWantToSaveCurrentBF(BusinessFlow newBF)
-        //{
-        //    if (newBF != App.BusinessFlow)
-        //    {
-        //        //check if Automate tab was used before
-        //        bool automateTabExist = false;
-        //        foreach (Page page in mPageList)
-        //            if (page.GetType() == typeof(AutomatePage)) automateTabExist = true;
-        //        if (!automateTabExist) return;
-
-        //        if ((newBF != null) && App.BusinessFlow != null && Reporter.ToUser(eUserMsgKeys.IFSaveChangesOfBF, App.BusinessFlow.Name) == MessageBoxResult.Yes)
-        //        {
-        //            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.BusinessFlow.Name,
-        //                          GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-        //            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(App.BusinessFlow);
-        //            Reporter.CloseGingerHelper();
-        //        }
-        //    }
-        //}
+        }      
 
         private void btnSourceControlRepositoryDetails_Click(object sender, RoutedEventArgs e)
         {
@@ -914,25 +630,7 @@ namespace Ginger
             SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIInfoDetails);
             SCIIP.ShowAsWindow();
         }
-
-        private void GingerForum(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("NewTicketbutton_Click");
-
-            try
-            {
-                WebBrowser WB = ((WebSupportPage)mPageList.Where(p => p.GetType() == typeof(WebSupportPage)).FirstOrDefault()).ViewWebBrowser;
-                WB.Navigate("http://ginger:81");
-
-            }
-            catch (Exception)
-            {
-                //TODO: add different flow for offline click of New Ticket
-            }
-
-            AutoLogProxy.UserOperationEnd();
-        }
-
+     
         private void btnViewLogLocation_Click(object sender, RoutedEventArgs e)
         {
             string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
@@ -946,58 +644,17 @@ namespace Ginger
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Ginger log file folder was not found in the path: '" + folder + "'");
             }
         }
-
-        private void SupportSitebutton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                WebBrowser WB = ((WebSupportPage)mPageList.Where(p => p.GetType() == typeof(WebSupportPage)).FirstOrDefault()).ViewWebBrowser;
-                WB.Navigate("http://ginger/");
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
-            }
-        }
-
+        
         private void ImportFeatureFile_Click(object sender, RoutedEventArgs e)
         {
             BDDIntegration BDDI = new BDDIntegration();
             bool imported = BDDI.ImportFeatureFile();
-
-            //Page SolutionPage = App.PageList.Where(x => x.Title == "Solution Explorer").FirstOrDefault();
-            ////((SolutionExplorerPage)SolutionPage).LoadSoultionTree2();
-            //object o = ((SolutionExplorerPage)SolutionPage).SolutionTreeView.Tree.GetItemAt(0);
-            //((TreeViewItem)((TreeViewItem)o).Items[0]).IsSelected = true;
-            //foreach (TreeViewItem item in ((ItemCollection)((TreeViewItem)o).Items))
-            //{
-            //    if (item.Tag is BusinessFlowsFolderTreeItem)
-            //    {
-            //        ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Business Flows", Refresh: true, ExpandAll: false);
-            //        ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Documents", Refresh: true, ExpandAll: true);
-            //        ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Features", Refresh: true, ExpandAll: true);
-            //    }
-            //}
-
         }
 
         private void CreateFeatureFile_Click(object sender, RoutedEventArgs e)
         {
             BDDIntegration BDDI = new BDDIntegration();
             BDDI.CreateFeatureFile();
-            //RefreshSolutionPage();
-            //Page SolutionPage = App.PageList.Where(x => x.Title == "Solution Explorer").FirstOrDefault();
-            ////((SolutionExplorerPage)SolutionPage).LoadSoultionTree2();
-            //object o = ((SolutionExplorerPage)SolutionPage).SolutionTreeView.Tree.GetItemAt(0);
-            //((TreeViewItem)((TreeViewItem)o).Items[0]).IsSelected = true;
-            //foreach (TreeViewItem item in ((ItemCollection)((TreeViewItem)o).Items))
-            //{
-            //    if (item.Tag is BusinessFlowsFolderTreeItem)
-            //    {
-            //        ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Documents", Refresh: true, ExpandAll: true);
-            //        ((Ginger.SolutionWindows.TreeViewItems.BusinessFlowsFolderTreeItem)item.Tag).mTreeView.Tree.ExpandTreeNodeByName("Features", Refresh: true, ExpandAll: true);
-            //    }
-            //}
         }
 
         private void btnLaunchConsole_Click(object sender, RoutedEventArgs e)
@@ -1012,8 +669,7 @@ namespace Ginger
         }
 
         private void ErrorsLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            // DebugConsoleWindow.Show();
+        {           
             ShowGingerLog();
         }
                 
@@ -1030,33 +686,96 @@ namespace Ginger
                 mfindAndReplacePageSolution = new FindAndReplacePage(FindAndReplacePage.eContext.SolutionPage);
             }
             mfindAndReplacePageSolution.ShowAsWindow();
-
-            //else if (MainRibbon.SelectedItem == xRun)
-            //{
-            //    NewRunSetPage runSetPage = (NewRunSetPage)(from p1 in mPageList where p1.GetType() == typeof(NewRunSetPage) select p1).SingleOrDefault();
-            //    runSetPage.ShowFindAndReplacePage();
-            //}
         }
-
-
-        
-
-
-        //public void AutomateBusinessFlow(BusinessFlow businessFlowToAutomate, bool loadAutomateTab = true)
-        //{
-        //    //App.MainWindow.CheckIfUserWantToSaveCurrentBF(businessFlowToAutomate);
-            
-        //}
 
         private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
         {
             if (args.EventType == AutomateEventArgs.eEventType.Automate)
             {
                 //TODO: load Business Flows tab
-                MainRibbon.SelectedItem = xBusinessFlows;
+                xSolutionTopNavigationListView.SelectedItem = xBusinessFlowsListItem;
                 App.BusinessFlow = (BusinessFlow)args.Object;
                 App.BusinessFlow.SaveBackup();
             }
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            Application.Current.Shutdown();
+        }
+
+
+
+        private void xSolutionEditBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string newName = App.UserProfile.Solution.Name;
+            if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Solution Rename", "New Solution Name:", ref newName, System.IO.Path.GetInvalidPathChars()))
+            {
+                App.UserProfile.Solution.Name = newName;
+                //App.UserProfile.Solution.Save();
+            }
+        }
+
+        private void xSolutionChangeBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void xSolutionCheckInBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void xSolutionGetLatestBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void xLoadSupportSiteMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://ilrnaginger01/");
+        }
+
+        private void xLoadForumSiteMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://ilrnaginger01:81/");
+        }
+
+        private void xOpenTicketMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://ilrnaginger01/Ticket/Create");
+        }
+
+        private void xSupportTeamMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("mailto:AmdocsTestingGingerDVCISupport@int.amdocs.com");
+        }
+
+        private void xCoreTeamMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("mailto:GingerCoreTeam@int.amdocs.com");
+        }
+
+        private void RecentSolutionSelection_Click(object sender, RoutedEventArgs e)
+        {
+            Solution selectedSol = (Solution)((MenuItem)sender).Tag;
+
+            if (selectedSol != null && Directory.Exists(selectedSol.Folder))
+            {
+                App.SetSolution(selectedSol.Folder);
+            }
+            else
+                Reporter.ToUser(eUserMsgKeys.SolutionLoadError, "Selected Solution was not found");
+
+            e.Handled = true;
+        }
+
     }
 }

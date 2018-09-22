@@ -392,6 +392,11 @@ namespace Amdocs.Ginger.Common
             return list;           
         }
 
+        public void AddToFirstIndex(T obj)
+        {
+            Add(obj);
+            Move(Count - 1, 0);
+        }
 
     } 
 }
