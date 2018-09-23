@@ -132,7 +132,7 @@ namespace Ginger
                     xMainWindowFrame.Visibility = Visibility.Visible;
                     GingerCore.General.DoEvents();
                 }
-                else if (xMainWindowFrame.Content is LoadingSolutionPage)
+                else if (xMainWindowFrame.Content is LoadingSolutionPage && SelectedSolutionTab == eSolutionTabType.None)
                 {
                     xMainWindowFrame.Visibility= Visibility.Collapsed;
                 }
@@ -220,7 +220,7 @@ namespace Ginger
                 else
                 {
                     App.LastBusinessFlow = null;                  
-                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty, App.UserProfile.Solution, nameof(Solution.Name));
+                    GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty, App.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
                     xSolutionTopNavigationListView.SelectedItem = null;
                     xSolutionTopNavigationListView.SelectedItem = xBusinessFlowsListItem;
                 }
@@ -368,10 +368,7 @@ namespace Ginger
                 string solutionFileName = solutionFolder + @"\Ginger.Solution.xml";
                 if (System.IO.File.Exists(PathHelper.GetLongPath(solutionFileName)))
                 {
-                    if (App.SetSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder))))
-                    {
-                        App.UserProfile.AddsolutionToRecent(App.UserProfile.Solution);
-                    }
+                    App.SetSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder)));
                 }
                 else
                 {

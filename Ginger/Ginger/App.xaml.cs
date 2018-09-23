@@ -702,6 +702,8 @@ namespace Ginger
                                 solutionUpgradePage.ShowAsWindow();
                             }
                         }
+
+                        App.UserProfile.AddSolutionToRecent(sol);
                     }
                     else
                     {

@@ -176,28 +176,28 @@ namespace Ginger
             return mRecentSolutionsAsObjects;
         }
 
-        public void AddsolutionToRecent(Solution loadedSolution)
+        public void AddSolutionToRecent(Solution loadedSolution)
         {
             //remove existing similar folder path
-            for (int indx = 0; indx < RecentSolutions.Count; indx++)
-                if (SolutionRepository.NormalizePath(RecentSolutions[indx]) == SolutionRepository.NormalizePath(loadedSolution.Folder))
+            string solPath = RecentSolutions.Where(x => SolutionRepository.NormalizePath(x) == SolutionRepository.NormalizePath(loadedSolution.Folder)).FirstOrDefault();
+            if (solPath != null)
+            {
+                RecentSolutions.Remove(solPath);
+                Solution sol = mRecentSolutionsAsObjects.Where(x => SolutionRepository.NormalizePath(x.Folder) == SolutionRepository.NormalizePath(loadedSolution.Folder)).FirstOrDefault();
+                if (sol != null)
                 {
-                    //Move to first place
-                    RecentSolutions.RemoveAt(indx);
-                    RecentSolutions.Insert(0, loadedSolution.Folder);
-
-                    Solution sol = mRecentSolutionsAsObjects.Where(x => SolutionRepository.NormalizePath(x.Folder) == SolutionRepository.NormalizePath(loadedSolution.Folder)).FirstOrDefault();
-                    if (sol != null)
-                        mRecentSolutionsAsObjects.Move(mRecentSolutionsAsObjects.IndexOf(sol), 0);
-
-                    return;
+                    mRecentSolutionsAsObjects.Remove(sol);
                 }
-
+            }            
+         
             // Add it in first place 
             RecentSolutions.Insert(0, loadedSolution.Folder);
             mRecentSolutionsAsObjects.AddToFirstIndex(loadedSolution);
-            if (mRecentSolutionsAsObjects.Count > 10)
-                mRecentSolutionsAsObjects.RemoveAt(10);//to keep list of 10
+
+            while (RecentSolutions.Count > 10)//to keep list of 10
+            {
+                RecentSolutions.RemoveAt(10);
+            }
         }
 
         [IsSerializedForLocalRepository]
