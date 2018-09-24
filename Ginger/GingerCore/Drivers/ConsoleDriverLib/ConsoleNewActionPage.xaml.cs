@@ -71,8 +71,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 mBF.AddAct(ACC);
             }
             else
-            {
-                MessageBox.Show("Please select " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)); ;
+            {                
+                Reporter.ToUser(eUserMsgKeys.AskToSelectBusinessflow);
             }
         }
 

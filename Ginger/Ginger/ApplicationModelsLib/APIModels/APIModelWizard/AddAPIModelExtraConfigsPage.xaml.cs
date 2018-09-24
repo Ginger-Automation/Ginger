@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Extensions;
+using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.BindingLib;
 using GingerWPF.WizardLib;
@@ -52,9 +53,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     AddAPIModelWizard.TargetApplicationKey = key;
                 }
                 else
-                {
-                    //TODO: Fix with New Reporter (on GingerWPF)
-                    System.Windows.MessageBox.Show(string.Format("The mapped '{0}' Target Application was not found, please select new Target Application", AddAPIModelWizard.TargetApplicationKey.Key), "Missing Target Application", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.MissingTargetApplication, "The mapped " + AddAPIModelWizard.TargetApplicationKey.Key + " Target Application was not found, please select new Target Application");
                 }
             }
             xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms.AsCollectionViewOrderBy(nameof(ApplicationPlatform.AppName));
