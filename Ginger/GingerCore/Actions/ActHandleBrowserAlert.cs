@@ -99,7 +99,7 @@ namespace GingerCore.Actions
 
         ePlatformType IObsoleteAction.GetTargetPlatform()
         {
-            return ePlatformType.NA;
+            return ePlatformType.Web;
         }
         Type IObsoleteAction.TargetAction()
         {

@@ -250,7 +250,6 @@ namespace GingerCore.Actions
                 case eGenElementAction.Enabled:
                 case eGenElementAction.XYClick:
                 case eGenElementAction.Focus:
-                case eGenElementAction.SetAttributeUsingJs:
                 case eGenElementAction.RunJavaScript:
                     currentType =  typeof(ActUIElement);
                     break;
