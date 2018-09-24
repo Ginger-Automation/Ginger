@@ -514,20 +514,21 @@
     </Style>
 
     <Style TargetType="MenuItem" x:Key="$MenuItemStyle_ButtonMenu">
-        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
-        <Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
         <Setter Property="Height" Value="35" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
                 <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -536,7 +537,28 @@
         <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_Gray}" />
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
+        <Setter Property="FontSize" Value="16" />
         <Setter Property="Height" Value="30" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="MenuItem" x:Key="$MenuItemStyle_ButtonSubMenuItem">
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Height" Value="25" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>

@@ -171,7 +171,7 @@ namespace Amdocs.Ginger.Common.Enums
         Camera,
         Wrench,
         Power,
-
+        ArrowDown,
         #endregion
 
 

@@ -571,6 +571,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Wrench:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Wrench);
                     break;
+                case eImageType.ArrowDown:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDown);
+                    break;
                 #endregion
 
 

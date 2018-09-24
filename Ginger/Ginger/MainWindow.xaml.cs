@@ -89,19 +89,21 @@ namespace Ginger
                 }
                 App.UserProfile.GingerStatus = eGingerStatus.Active;
                 App.UserProfile.SaveUserProfile();
+                App.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
                 //Reporter
                 Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
                 Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
+
+                //Main Menu                
+                SetSolutionDependedUIElements();
 
                 //Status Bar            
                 ErrorsLabel.Visibility = Visibility.Collapsed;
                 lblBetaFeatures.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.UsingStatus));
                 lblVersion.Content = "Version " + Ginger.App.AppVersion;
 
-                //Solution                     
-                SetRecentSolutionsMenu();
-                SetSolutionDependedUIElements();
+                //Solution                                    
                 if (App.UserProfile.AutoLoadLastSolution && App.RunningFromConfigFile == false && App.RunningFromUnitTest == false)
                 {
                     AutoLoadLastSolution();
@@ -139,27 +141,56 @@ namespace Ginger
             }
         }
 
-        private void SetRecentSolutionsMenu()
+        private void SetRecentSolutionsAsMenuItems()
         {
-            xRecentSolutionsMenuItem.Items.Clear();
-
-            foreach (Solution sol in App.UserProfile.RecentSolutionsAsObjects)
+            //delete all shown Recent Solutions menu items
+            for (int i = 0; i < xSolutionSelectionMainMenuItem.Items.Count; i++)
             {
-                MenuItem mi = new MenuItem();
-                mi.Header = sol.Name;
-                mi.ToolTip = sol.Folder;
-                mi.Tag = sol;
-                mi.Click += RecentSolutionSelection_Click;
-                xRecentSolutionsMenuItem.Items.Add(mi);
+                if (((MenuItem)xSolutionSelectionMainMenuItem.Items[i]).Tag is Solution)
+                {
+                    xSolutionSelectionMainMenuItem.Items.RemoveAt(i);
+                    i--;
+                }
             }
 
-            App.UserProfile.RecentSolutionsAsObjects.CollectionChanged -= RecentSolutionsObjects_CollectionChanged;
-            App.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
+            if (xRecentSolutionsMenuItem.Tag != null)
+            {
+                //Insert
+                int insertIndex = xSolutionSelectionMainMenuItem.Items.IndexOf(xRecentSolutionsMenuItem) + 1;
+                foreach (Solution sol in App.UserProfile.RecentSolutionsAsObjects)
+                {
+                    MenuItem mi = new MenuItem();
+                    mi.Style = (Style)TryFindResource("$MenuItemStyle_ButtonSubMenuItem");
+                    mi.Header = sol.Name;
+                    mi.ToolTip = sol.Folder;
+                    mi.Tag = sol;
+                    mi.Click += RecentSolutionSelection_Click;
+                    xSolutionSelectionMainMenuItem.Items.Insert(insertIndex, mi);
+                    insertIndex++;
+                }
+            }
         }
 
         private void RecentSolutionsObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            SetRecentSolutionsMenu();
+            if (xRecentSolutionsMenuItem.Tag != null) //means it is expanded
+            {
+                SetRecentSolutionsAsMenuItems();
+            }
+        }
+
+        private void xRecentSolutionsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (xRecentSolutionsMenuItem.Tag == null)
+            {
+                xRecentSolutionsMenuItem.Tag = true;//expanded
+            }
+            else
+            {
+                xRecentSolutionsMenuItem.Tag = null;
+            }
+
+            SetRecentSolutionsAsMenuItems();
         }
 
         private async void Reporter_HandlerGingerHelperEvent(GingerHelperEventArgs e)
@@ -789,5 +820,6 @@ namespace Ginger
             e.Handled = true;
         }
 
+       
     }
 }

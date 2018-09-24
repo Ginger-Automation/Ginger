@@ -35,14 +35,14 @@
             <DockPanel Grid.Column="1">
                 <StackPanel x:Name="xSolutionSelectionPnl" Orientation="Horizontal" DockPanel.Dock="Left" >
                     <TextBlock x:Name="xSolutionNameTextBlock" TextTrimming="CharacterEllipsis" MaxWidth="300"  TextWrapping="NoWrap" Margin="0,0,0,0" Text="Please Load Solution" VerticalAlignment="Center" HorizontalAlignment="Left" FontFamily="Open Sans" FontSize="20" FontWeight="Normal" Foreground="{StaticResource $SelectionColor_Pink}"   ></TextBlock>
-                    <Menu x:Name="xSolutionSelectionMenu" Background="{StaticResource $BackgroundColor_VeryDarkBlue}"  Margin="5,0,0,0" VerticalAlignment="Center" >
-                        <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Solution Selection" Margin="0,0,0,0">
+                    <Menu x:Name="xSolutionSelectionMenu" Background="{StaticResource $BackgroundColor_VeryDarkBlue}"  Margin="5,0,0,0" VerticalAlignment="Center">
+                        <MenuItem x:Name="xSolutionSelectionMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Solution Selection" Margin="0,0,0,0"  StaysOpenOnClick="True">
                             <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="25" ImageType="EllipsisH" Width="25" Height="25" Margin="0,0,0,0"/>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="20" ImageType="ArrowDown" Width="20" Height="20" Margin="0,0,0,0"/>
                             </MenuItem.Icon>
-                            <MenuItem x:Name="xRecentSolutionsMenuItem" Header="Recent Solutions" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" >
+                            <MenuItem x:Name="xRecentSolutionsMenuItem" Header="Recent Solutions" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xRecentSolutionsMenuItem_Click" StaysOpenOnClick="True" >
                                 <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Search"  Margin="0,0,0,0"/>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="History"  Margin="0,0,0,0"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem x:Name="xOpenSolutionMenuItem" Header="Open Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xOpenSolutionMenuItem_Click">
