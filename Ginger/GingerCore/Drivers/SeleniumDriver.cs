@@ -4210,18 +4210,18 @@ namespace GingerCore.Drivers
             string id = e.GetAttribute("id");
             if (!string.IsNullOrEmpty(id))
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByID, LocateValue = id, Help = "Very Recommended (usually unique)", Active = true });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByID, LocateValue = id, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
             }
             string name = e.GetAttribute("name");
             if (!string.IsNullOrEmpty(name))
             {
                 list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended (usually unique)", Active = true });
             }
-            list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended (sensitive to page design changes)", Active = true });
+            list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended (sensitive to page design changes)", Active = true, IsAutoLearned = true });
             string eClass = e.GetAttribute("class");
             if (!string.IsNullOrEmpty(eClass) && eClass != "GingerHighlight")
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByClassName, LocateValue = eClass, Help = "Not Recommended (usually not unique)", Active = true });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByClassName, LocateValue = eClass, Help = "Not Recommended (usually not unique)", Active = true, IsAutoLearned = true });
             }
 
             return list;

@@ -38,18 +38,19 @@ namespace GingerWPF.WizardLib
 
         List<ValidationError> mValidationErrors = new List<ValidationError>();
 
-        public static void ShowWizard(WizardBase wizard, double width = 800, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        public static void ShowWizard(WizardBase wizard, double width = 800, bool DoNotShowAsDialog = false)
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Width = width;
-            if(windowStyle == eWindowShowStyle.Dialog)
-            {
-                wizardWindow.ShowDialog();
-            }
-            else
+            
+            if(DoNotShowAsDialog)
             {
                 wizardWindow.Topmost = true;
                 wizardWindow.Show();
+            }
+            else
+            {
+                wizardWindow.ShowDialog();
             }
         }
 

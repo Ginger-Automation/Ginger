@@ -62,7 +62,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             foreach (ElementInfo EI in ItemsToAddList)
             {
                 EI.Selected = false;
-                EI.IsAutoLearned = false;
                 mPOM.MappedUIElements.Add(EI);
                 mPOM.UnMappedUIElements.Remove(EI);
             }

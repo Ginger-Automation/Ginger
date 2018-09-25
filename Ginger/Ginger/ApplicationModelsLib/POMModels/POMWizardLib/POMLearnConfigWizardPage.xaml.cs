@@ -106,7 +106,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void RemoveValidations()
         {
-            xAgentControlUC.RemoveValidations();
+            xAgentControlUC.RemoveValidations(ucAgentControl.SelectedAgentProperty);
         }
 
         private void SetAutoMapElementTypes()

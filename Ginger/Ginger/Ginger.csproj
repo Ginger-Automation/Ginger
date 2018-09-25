@@ -579,9 +579,6 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml.cs">
       <DependentUpon>POMObjectsMappingWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMScreenShotWizardPage.xaml.cs">
-      <DependentUpon>POMScreenShotWizardPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\ScanPageWizardPage.xaml.cs">
       <DependentUpon>ScanPageWizardPage.xaml</DependentUpon>
     </Compile>
@@ -2648,10 +2645,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMScreenShotWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
