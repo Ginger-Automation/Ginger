@@ -151,11 +151,16 @@ namespace Ginger.Activities
         private void grdActivitiesGroups_ItemDropped(object sender, EventArgs e)
         {
             object droppedItem = ((DragInfo)sender).Data;
+            Activity previousActivity = null;
+            if (((ActivitiesGroup)((Ginger.ucGrid)((GingerWPF.DragDropLib.DragInfo)sender).DragTarget).CurrentItem) != null)
+            {
+                previousActivity = ((ActivitiesGroup)((Ginger.ucGrid)((GingerWPF.DragDropLib.DragInfo)sender).DragTarget).CurrentItem).ActivitiesIdentifiers[((GingerCore.Activities.ActivitiesGroup)((Ginger.ucGrid)((GingerWPF.DragDropLib.DragInfo)sender).DragTarget).CurrentItem).ActivitiesIdentifiers.Count - 1].IdentifiedActivity;
+            }
             if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
                 mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, App.LocalRepository.GetSolutionRepoActivities(), false);
+                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, App.LocalRepository.GetSolutionRepoActivities(), false,false,previousActivity);
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
 
                 int selectedActIndex = -1;
