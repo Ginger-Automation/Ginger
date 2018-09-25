@@ -66,22 +66,7 @@
             <Expander.Content>
                 <Grid>
 
-                    <TabControl x:Name="POMModelTabs" Grid.Row="1" Background="{StaticResource @Skin1_ColorC}"  HorizontalAlignment="Stretch" >
-                        <TabControl.Resources>
-                            <Style TargetType="{x:Type TabItem}">
-                                <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
-                                <Setter Property="Height" Value="25"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="False" >
-                                        <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
-                                    </Trigger>
-                                    <Trigger Property="IsSelected" Value="True" >
-                                        <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-
-                        </TabControl.Resources>
+                    <TabControl x:Name="POMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch" >
 
                         <TabItem Margin="0,0,0,0" >
                             <TabItem.Header>

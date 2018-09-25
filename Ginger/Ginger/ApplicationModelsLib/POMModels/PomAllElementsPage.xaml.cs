@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger.UserControls;
 using GingerCore;
 using System;
@@ -86,6 +87,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void MappedUIElements_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             MappedUIElementsUpdate();
+        }
+
+        public ucButton TestAllElementsButton
+        {
+            get
+            {
+                return xTestAllElements;
+            }
         }
 
         private void MappedUIElementsUpdate()
@@ -263,14 +272,29 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         public async void TestAllElementsAsync()
         {
+            xTestAllElements.Visibility = Visibility.Collapsed;
+            xStopTestAllElements.Visibility = Visibility.Visible;
+            mStopProcess = false;
             await Task.Run(() => TestAllElements());
+            xTestAllElements.Visibility = Visibility.Visible;
+            xStopTestAllElements.Visibility = Visibility.Collapsed;
         }
 
         private void TestAllElements()
         {
+            int TotalElements = mPOM.MappedUIElements.Count;
+            int TotalFails = 0;
+
+            bool WarnErrorOccured = false;
+            foreach (ElementInfo EI in mPOM.MappedUIElements)
+                EI.ElementStatus = ElementInfo.eElementStatus.Pending;
+
             foreach (ElementInfo EI in mPOM.MappedUIElements)
             {
-                if (mWinExplorer.TestElementLocators(EI.Locators))
+                if (mStopProcess)
+                    return;
+
+                if (mWinExplorer.TestElementLocators(EI.Locators,true))
                 {
                     //TODO: Add Error frm locators
                     //EI.ElementStatus = EI.Locators.Where(x=>x.StatusError)
@@ -278,14 +302,27 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 else
                 {
+                    TotalFails++;
                     EI.ElementStatus = ElementInfo.eElementStatus.Failed;
                 }
 
-                int Total = EI.Locators.Count;
-                int Failed = EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).Count();
-                int Passed = EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count();
-
+                if (!WarnErrorOccured && ((double)TotalFails / TotalElements) > 0.2)
+                {
+                    WarnErrorOccured = true;
+                    if (Reporter.ToUser(eUserMsgKeys.POMNotOnThePageWarn, TotalFails, TotalElements) == MessageBoxResult.No)
+                    {
+                        return;
+                    }
+                }
             }
+        }
+
+        private bool mStopProcess = false;
+
+        private void StopTestAllElementsClicked(object sender, RoutedEventArgs e)
+        {
+            mStopProcess = true;
+            xStopTestAllElements.Visibility = Visibility.Collapsed;
         }
 
 

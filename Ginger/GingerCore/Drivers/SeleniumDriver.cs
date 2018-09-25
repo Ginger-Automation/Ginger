@@ -4386,6 +4386,7 @@ namespace GingerCore.Drivers
                     count++;
                 }
                 if (IWE.Equals(childElement))
+                //if (IWE == childElement)
                 {
                     return GenerateXpathForIWebElement(parentElement, "/" + IWE.TagName + "[" + count + "]" + current);
                 }
@@ -6302,34 +6303,50 @@ namespace GingerCore.Drivers
             return true;
         }
 
-        bool IWindowExplorer.TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        bool IWindowExplorer.TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
         {
-            foreach (ElementLocator el in elementLocators)
-                el.LocateStatus = ElementLocator.eLocateStatus.Pending;
+            try
+            {
 
+                foreach (ElementLocator el in elementLocators)
+                    el.LocateStatus = ElementLocator.eLocateStatus.Pending;
 
-            List<ElementLocator> activesElementLocators = elementLocators.Where(x => x.Active == true).ToList();
-            foreach (ElementLocator el in activesElementLocators)
-            {                
-                if (LocateElementByLocator(el, true) != null)
+                List<ElementLocator> activesElementLocators = elementLocators.Where(x => x.Active == true).ToList();
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                foreach (ElementLocator el in activesElementLocators)
                 {
-                    el.StatusError = string.Empty;
-                    el.LocateStatus = ElementLocator.eLocateStatus.Passed;                   
+                    if (LocateElementByLocator(el, true) != null)
+                    {
+                        el.StatusError = string.Empty;
+                        el.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                        if (GetOutAfterFoundElement)
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        el.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                    }
+                }
+
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+
+                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                {
+                    return true;
                 }
                 else
                 {
-                    el.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                    return false;
                 }
             }
-
-            if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+            catch (Exception ex)
             {
-                return true;
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+                throw ex;
             }
-            else
-            {
-                return false;
-            }
+            
         }
     }
 }

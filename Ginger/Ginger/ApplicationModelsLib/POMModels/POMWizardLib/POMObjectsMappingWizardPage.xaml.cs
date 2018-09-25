@@ -83,6 +83,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (pomAllElementsPage == null)
             {
                 pomAllElementsPage = new PomAllElementsPage(mWizard.POM);
+                pomAllElementsPage.TestAllElementsButton.Visibility = Visibility.Collapsed;
                 pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
                 xPomElementsMappingPageFrame.Content = pomAllElementsPage;
             }

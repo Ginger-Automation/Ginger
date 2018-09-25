@@ -50,6 +50,6 @@ namespace Amdocs.Ginger.Common.UIElement
 
         bool IsElementObjectValid(object obj);
 
-        bool TestElementLocators(ObservableList<ElementLocator> elementLocators);
+        bool TestElementLocators(ObservableList<ElementLocator> elementLocators,bool GetOutAfterFoundElement = false);
     }
 }
