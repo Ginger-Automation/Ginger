@@ -308,8 +308,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 ModelParametersGrid.DataSourceList.Move(ModelParametersGrid.DataSourceList.Count - 1, selctedIndex);
 
                 //Update all places with new placeholder merged param name                            
-                if (Reporter.ToUser(eUserMsgKeys.ParameterMerge) == System.Windows.MessageBoxResult.Yes)
+                if(Reporter.ToUser(eUserMsgKeys.ParameterMerge) == MessageBoxResult.Yes)
+                {
                     mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, placeHoldersToReplace, newParamName);
+                }
+                    
             }
         }
 

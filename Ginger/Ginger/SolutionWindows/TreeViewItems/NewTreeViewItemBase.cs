@@ -87,11 +87,16 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            if (item is RepositoryItemBase)
+            var repoItem = item as RepositoryItemBase;
+            if (repoItem != null)
             {
-                if (!deleteWithoutAsking)                    
-                    if (Reporter.ToUser(eUserMsgKeys.DeleteItem, ((RepositoryItemBase)item).GetNameForFileName()) == System.Windows.MessageBoxResult.No)                
+                if(!deleteWithoutAsking)
+                {
+                    if(Reporter.ToUser(eUserMsgKeys.DeleteItem, repoItem.GetNameForFileName()) == MessageBoxResult.No)
+                    {
                         return false;
+                    }                        
+                }                   
 
                 WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem((RepositoryItemBase)item);               
                 return true;
@@ -101,7 +106,9 @@ namespace GingerWPF.TreeViewItemsLib
                 //implement for other item types              
                 string filePath = string.Empty;
                 if (item == null)
+                {
                     filePath = this.NodePath();
+                }                    
                 else
                 {                     
                     filePath = ((RepositoryItemBase)item).FilePath;
