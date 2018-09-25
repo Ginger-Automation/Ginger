@@ -68,11 +68,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         {
             XmlTextReader reader = new XmlTextReader(URL);
 
-            //NetworkCredential nc = new NetworkCredential("zachig", "89232010", "http://10.124.1.80/");
-            //XmlUrlResolver resolver = new XmlUrlResolver();
-            //resolver.Credentials = nc;
-
-            //reader.XmlResolver = resolver;
             ServiceDescription sd = ServiceDescription.Read(reader);
             mServiceDescriptionsList.Add(sd);
         }
