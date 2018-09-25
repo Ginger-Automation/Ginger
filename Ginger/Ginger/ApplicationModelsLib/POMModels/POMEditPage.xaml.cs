@@ -168,9 +168,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     mPOM.TargetApplicationKey = key;
                 }
                 else
-                {
-                    //TODO: Fix with New Reporter (on GingerWPF)
-                    System.Windows.MessageBox.Show(string.Format("The mapped '{0}' Target Application was not found, please select new Target Application", mPOM.Key.ItemName), "Missing Target Application", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.MissingTargetApplication, "The mapped" + mPOM.Key.ItemName + "Target Application was not found, please select new Target Application");
+
                 }
             }
             xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms;

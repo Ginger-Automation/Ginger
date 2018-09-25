@@ -154,8 +154,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PayLoad rcAC = Send(plAC);
                 string status = rcAC.GetValueString();
 
-                //TODO: do check version with server version make sure protocol match - should be same Gigner version on both sides
-                // MessageBox.Show(s);
+                //TODO: do check version with server version make sure protocol match - should be same Gigner version on both sides                
                 if (status!= "Done")
                 {
                     //TODO: Err
@@ -169,8 +168,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PayLoad rc = Send(pl);
                 string s = rc.GetValueString();
 
-                //TODO: do check version with server version make sure protocol match - should be same Gigner version on both sides
-                // MessageBox.Show(s);
+                //TODO: do check version with server version make sure protocol match - should be same Gigner version on both sides                
                 if (s != "v2.0.0")
                 {
                     //TODO: Err
@@ -1869,8 +1867,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad Response = Send(plInitialize);
 
             if (Response.IsErrorPayLoad())
-            {             
-                MessageBox.Show("Failed to Initialize JEditor Element");
+            {                
+                Reporter.ToUser(eUserMsgKeys.FailedToInitiate, "JEditor Element");
                 return;
             }
         }
@@ -1895,9 +1893,9 @@ namespace GingerCore.Drivers.JavaDriverLib
             General.DoEvents();
             PayLoad Response = Send(PL);
             if (Response.IsErrorPayLoad())
-            {                
-                //TODO:: Handle exception 
-                MessageBox.Show("Failed to Initialize Browser Element");
+            {
+                //TODO:: Handle exception                 
+                Reporter.ToUser(eUserMsgKeys.FailedToInitiate, "Browser Element");
                 return;
             }
         }
@@ -2291,8 +2289,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                 return AW;
             }
             else
-            {
-                MessageBox.Show("Error in GetActiveForm - " );
+            {                
+                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in GetActiveForm");
                 return null;
             }
         }
@@ -2312,8 +2310,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                 return list;
             }
             catch (Exception ex)
-            {
-                MessageBox.Show("Error in GetHTMLElements - " + ex.Message);
+            {                
+                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in GetHTMLElements - " + ex.Message);
                 return null;
             }
         }

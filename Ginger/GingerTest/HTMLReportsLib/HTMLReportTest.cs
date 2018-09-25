@@ -17,10 +17,11 @@ using System.Threading.Tasks;
 namespace GingerTest.HTMLReportsLib
 {
     [TestClass]
+    [Level3]
     public class HTMLReportTest
     {
         static GingerAutomator mGingerAutomator;
-        //static SolutionRepository mSolutionRepository;
+        
         
         static string solutionFolder;
 
@@ -29,21 +30,15 @@ namespace GingerTest.HTMLReportsLib
         {
             CreateTestSolution();
 
-            // Init SR
-            mGingerAutomator = new GingerAutomator();
-            mGingerAutomator.StartGinger();
+            mGingerAutomator = GingerAutomator.StartSession();
             mGingerAutomator.OpenSolution(solutionFolder);
 
-            // WorkSpace.Instance.SolutionRepository.Open(solutionFolder);
-            // mSolutionRepository = Ginger.App.CreateGingerSolutionRepository();
-            // Ginger.App.InitClassTypesDictionary();            
-            // mSolutionRepository.Open(solutionFolder);
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mGingerAutomator.CloseGinger();
+            GingerAutomator.EndSession();
         }
 
         private static void CreateTestSolution()
@@ -70,7 +65,7 @@ namespace GingerTest.HTMLReportsLib
         }
 
 
-
+        
         [TestMethod]
         public void AddHTMLReport()
         {

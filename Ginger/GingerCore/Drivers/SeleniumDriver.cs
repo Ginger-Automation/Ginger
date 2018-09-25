@@ -1576,8 +1576,8 @@ namespace GingerCore.Drivers
                     break;
 
                 case ActGenElement.eGenElementAction.MsgBox: //TODO: FIXME: This action should not be part of GenElement
-                    string msg = act.GetInputParamCalculatedValue("Value");
-                    MessageBox.Show(msg, "Script is paused!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    string msg = act.GetInputParamCalculatedValue("Value");                    
+                    Reporter.ToUser(eUserMsgKeys.ScriptPaused);
                     break;
 
                 case ActGenElement.eGenElementAction.GetStyle:
@@ -4487,8 +4487,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
-                //MessageBox.Show(ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");                
             }
         }
 

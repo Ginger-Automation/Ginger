@@ -42,14 +42,14 @@ namespace GingerCoreNETUnitTest.GeneralLib.XML
             XDE = new XMLDocExtended(XDoc);
         }
 
-
+        [Level2]
         [TestMethod]
         public void XMLDocGetAllNodesTest()
 
         {
             Assert.AreEqual(191, XDE.GetAllNodes().Count);
         }
-
+        [Level2]
         [TestMethod]
         public void XMLDocGetTerminalNodesTest()
 
@@ -67,7 +67,7 @@ namespace GingerCoreNETUnitTest.GeneralLib.XML
             Assert.AreEqual(308, lXD.Count);
         }
 
-
+        [Level2]
         [TestMethod]
         public void XMLDocExtendedValidateXpathGenerated()
 

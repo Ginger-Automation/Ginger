@@ -209,17 +209,24 @@ namespace GingerCore.Actions.REST
         {
             get
             {
-                if (IsInputParamExist(Fields.UseLegacyJSONParsing) == false && ReturnValues.Count > 0)
+                if (!IsInputParamExist(Fields.UseLegacyJSONParsing) && ReturnValues.Count > 0)
+                {
                     AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "True");//old action- for backward support- for not breaking existing validations using old parsing
-
-                if (IsInputParamExist(Fields.UseLegacyJSONParsing) == false)
+                }
+                if (!IsInputParamExist(Fields.UseLegacyJSONParsing))
+                {
                     AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "False"); //as defualt use new JSON parser
-
+                }
                 bool eVal = true;
                 if (bool.TryParse(GetInputParamValue(Fields.UseLegacyJSONParsing), out eVal))
+
+                {
                     return eVal;
+                }
                 else
+                {
                     return false;  //default value          
+                }
             }
             set
             {
@@ -281,6 +288,9 @@ namespace GingerCore.Actions.REST
 
             switch (SecurityType)
             {
+                case eSercurityType.None:
+                    
+                    break;
                 case eSercurityType.Ssl3:
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
                     break;
@@ -295,6 +305,8 @@ namespace GingerCore.Actions.REST
                 case eSercurityType.Tls12:
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                     break;
+                default:
+                    throw new NotSupportedException("The Configured secutrity type is not supported");
 
             }
   
@@ -385,6 +397,8 @@ namespace GingerCore.Actions.REST
                     case eCookieMode.New:
                         _sessionCokkiesDic.Clear();
                         break;
+                    default:
+                        throw new NotSupportedException("Configured mode is not supported");
                 }
 
                 //Not sending data on a get request 
@@ -405,12 +419,14 @@ namespace GingerCore.Actions.REST
                     
                    
                     string req = HttpUtility.UrlEncode(RequestBody.Value);
-                    if(ReqHttpVersion==eHttpVersion.HTTPV10)
+                    if (ReqHttpVersion == eHttpVersion.HTTPV10)
                     {
                         WebReq.ProtocolVersion = HttpVersion.Version10;
                     }
                     else
+                    {
                         WebReq.ProtocolVersion = HttpVersion.Version11;
+                    }
                     WebReq.ContentLength = dataByte.Length;
 
                     Stream Webstream = WebReq.GetRequestStream();
@@ -658,17 +674,23 @@ namespace GingerCore.Actions.REST
                     xmlDoc.Save(DirectoryPath+ "\\"+ fileName + ".xml");                   
                 }
                 catch (Exception e)
-                {
-                    System.Windows.MessageBox.Show(e.Message);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.FileOperationError, e.Message);
                 }
         }
             else
             {
                 if (CT == eContentType.JSon)
+
+                {
                     fileName += ".json";
+                }
+
                 else
+                {
                     fileName += ".txt";
-                //string getFolderPath = GetValueForDriverParam(Fields.SaveRequestResponseFolderPath);
+                }
+                
 
                 System.IO.File.WriteAllText(DirectoryPath + "\\" + fileName, fileContent);
             }
@@ -712,14 +734,31 @@ namespace GingerCore.Actions.REST
                     Ve.Value=httpHeader.Value;
                     httpHeader.ValueForDriver=Ve.ValueCalculated;
                 }
-                if (httpHeader.Param.ToUpper() == "DATE")
+
+                switch(httpHeader.Param.ToUpper())
                 {
-                    WebReq.Date = DateTime.Parse(httpHeader.ValueForDriver);
+                    case "DATE":
+                        WebReq.Date = DateTime.Parse(httpHeader.ValueForDriver);
+                        break;
+                    case "CONTENT-TYPE":
+                        WebReq.ContentType = httpHeader.ValueForDriver;
+                        break;
+                    case "ACCEPT":
+                        WebReq.Accept = httpHeader.ValueForDriver;
+                    break;
+                    case "REFERER":
+                        WebReq.Referer = httpHeader.ValueForDriver;
+                        break;
+                    case "":
+
+                        break;
+                    default:
+                        WebReq.Headers.Add(httpHeader.Param, httpHeader.ValueForDriver);
+                        break;
                 }
-                else
-                {
-                    WebReq.Headers.Add(httpHeader.Param, httpHeader.ValueForDriver);
-                }
+                
+      
+        
             }
            
         }
