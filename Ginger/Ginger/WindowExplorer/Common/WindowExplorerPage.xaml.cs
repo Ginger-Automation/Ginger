@@ -593,14 +593,14 @@ namespace Ginger.WindowExplorer
                     ShowControlActions(mCurrentControlTreeViewItem);
                 }
                 else
-                {
-                    MessageBox.Show("Selected Object is not available", "Object Un-available", MessageBoxButton.OK);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.ObjectUnavailable);
                 }
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);
-                MessageBox.Show("Not able to load the object details", "Object Load", MessageBoxButton.OK);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);                
+                Reporter.ToUser(eUserMsgKeys.ObjectLoad);
             }
         }        
 
@@ -743,8 +743,8 @@ namespace Ginger.WindowExplorer
                     MFTI.Path = AW.Path;
                     InitTree (MFTI);
                     break;
-                default:
-                    MessageBox.Show("Unknown Window type:" + AW.WindowType);
+                default:                    
+                    Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Unknown Window type:" + AW.WindowType);
                     break;
             }            
       

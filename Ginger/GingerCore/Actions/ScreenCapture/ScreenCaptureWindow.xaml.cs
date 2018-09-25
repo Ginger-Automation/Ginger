@@ -262,8 +262,8 @@ namespace GingerCore.Actions.ScreenCapture
                     Directory.CreateDirectory(f.SolutionFolder + @"Documents\ExpectedImages\");
             }
             catch (Exception e)
-            {
-                MessageBox.Show("Error: " + e.Message);
+            {                
+                Reporter.ToUser(eUserMsgKeys.FolderOperationError, e.Message);
             }
             //return f.SolutionFolder + @"Documents\ExpectedImages\"+Guid.NewGuid().ToString()+".png";
             return @"~\Documents\ExpectedImages\" + Guid.NewGuid().ToString() + ".png";
@@ -286,8 +286,8 @@ namespace GingerCore.Actions.ScreenCapture
                 f.EndY = f.StartY + (int)dragRect.Height;
             }
             catch (Exception e)
-            {
-                MessageBox.Show("Error: " + e.Message);
+            {                
+                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, e.Message);
             }
             
             return (f.StartX + ", " + f.StartY + ", " + f.EndX + ", " + f.EndY); 

@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerCore.Helpers;
 using Newtonsoft.Json.Linq;
 using System;
@@ -277,8 +278,8 @@ namespace Ginger.ApplicationModelsLib.APIModels
                 GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { btnDeleteParamsAndBodyNodes, btnDeleteOnlyParams },closeBtnText: "Cancel");
             }
             else
-            {
-                System.Windows.MessageBox.Show("Can't parse API Model Request Body, please check it's syntax is valid.", "Error while parsing request body", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.ParsingError, "Can't parse API Model Request Body, please check it's syntax is valid.");
             }
         }
     }
