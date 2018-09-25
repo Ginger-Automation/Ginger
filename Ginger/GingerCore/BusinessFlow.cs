@@ -501,17 +501,20 @@ namespace GingerCore
             }
         }
 
-        public void AddActivity(Activity a, bool setAfterCurrentActivity = false)
+        public void AddActivity(Activity a, bool setAfterCurrentActivity = false, Activity currentActivity = null)
         {
             if (a == null)
                 return;
-
-            if (CurrentActivity != null && setAfterCurrentActivity)
+            if(currentActivity == null)
+            {
+                currentActivity = CurrentActivity;
+            }
+            if (currentActivity != null && setAfterCurrentActivity)
             {
                 int selectedActivityIndex = -1;
-                if (CurrentActivity != null)
+                if (currentActivity != null)
                 {
-                    selectedActivityIndex = Activities.IndexOf(CurrentActivity);
+                    selectedActivityIndex = Activities.IndexOf(currentActivity);
                 }
 
                 if (selectedActivityIndex >= 0)
@@ -622,9 +625,8 @@ namespace GingerCore
                 counter++;
             activitiesGroup.Name = activitiesGroup.Name + "_" + counter.ToString();
         }
-
         public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,
-                                                                        ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false)
+                                                                        ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false, Activity previousActivity = null)
         {
             string missingActivities = string.Empty;
 
@@ -646,8 +648,16 @@ namespace GingerCore
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
                         if (keepOriginalTargetApplicationMapping == false)
                             SetActivityTargetApplication(actInstance);
-                        this.AddActivity(actInstance);
+                        if(previousActivity == null && ActivitiesGroups.Count > 1)
+                        {
+                            this.AddActivity(actInstance, (CurrentActivity != null), CurrentActivity);
+                        }
+                        else
+                        {
+                            this.AddActivity(actInstance, (CurrentActivity != null), previousActivity);
+                        }
                         actIdent.IdentifiedActivity = actInstance;
+                        previousActivity = actInstance;
                     }
                     else
                     {
