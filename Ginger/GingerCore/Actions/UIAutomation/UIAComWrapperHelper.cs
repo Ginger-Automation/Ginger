@@ -1326,8 +1326,8 @@ namespace GingerCore.Drivers
                     element = elementList[index];
                 }
                 catch (IndexOutOfRangeException)
-                {
-                    MessageBox.Show("Invalid Index value:" + index + "\n\n Valid Index should be between 0 to " + (elementList.Count - 1));
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.InvalidIndexValue, index + "\n\n Valid Index should be between 0 to " + (elementList.Count - 1));
                 }
             }
             return element;
@@ -3029,8 +3029,8 @@ namespace GingerCore.Drivers
                         if (AddChildToSelection(element, nodeNames[nodeNames.Count - 1]) == false)
                             return nodeNames[nodeNames.Count - 1] + "not found" + value;
                         break;
-                    default:
-                        MessageBox.Show("Action is not implemented yet for control type " + controlType);
+                    default:                        
+                        Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
                         break;
 
                 }
@@ -3299,7 +3299,7 @@ namespace GingerCore.Drivers
                     }
                     break;
                 default:
-                   MessageBox.Show("Action is not implemented yet for control type " + _controlType);
+                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
                     break;
             }
         }
@@ -3341,7 +3341,7 @@ namespace GingerCore.Drivers
                     }
                     break;
                 default:
-                    MessageBox.Show("Action is not implemented yet for control type " + _controlType);
+                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
                     break;
             }
         }
@@ -3771,7 +3771,7 @@ namespace GingerCore.Drivers
                     break;
 
                 default:
-                    MessageBox.Show("Action is not implemented yet for control type " + controlType);
+                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
                     break;
             }
             return "not found";
@@ -3816,8 +3816,7 @@ namespace GingerCore.Drivers
                     }
 
                 default:
-                    MessageBox.Show("Action is not implemented yet for control type " + controlType);
-
+                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
                     break;
 
             }
@@ -5579,8 +5578,8 @@ namespace GingerCore.Drivers
                 }                
             }
             else
-            {
-                MessageBox.Show("Selected Object is not available", "Object Un-available", MessageBoxButton.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.ObjectUnavailable, "Selected Object is not available");
             }
             return list;
         }
@@ -6127,8 +6126,8 @@ namespace GingerCore.Drivers
                     break;
 
 
-                default:
-                    MessageBox.Show("Pattern not handled yet - " + PatternType);
+                default:                    
+                    Reporter.ToUser(eUserMsgKeys.PatternNotHandled, "Pattern not handled yet - " + PatternType);
                     break;
             }
         }

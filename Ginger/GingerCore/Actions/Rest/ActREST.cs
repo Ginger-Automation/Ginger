@@ -674,8 +674,8 @@ namespace GingerCore.Actions.REST
                     xmlDoc.Save(DirectoryPath+ "\\"+ fileName + ".xml");                   
                 }
                 catch (Exception e)
-                {
-                    System.Windows.MessageBox.Show(e.Message);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.FileOperationError, e.Message);
                 }
         }
             else

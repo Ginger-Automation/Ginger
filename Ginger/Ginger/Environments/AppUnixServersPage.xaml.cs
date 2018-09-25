@@ -21,6 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Ginger.UserControls;
 using GingerCore.Environments;
+using GingerCore;
 
 namespace Ginger.Environments
 {
@@ -44,8 +45,8 @@ namespace Ginger.Environments
         #region Events
         private void TestUnixConnection(object sender, RoutedEventArgs e)
         {
-            //TODO: 
-            MessageBox.Show("Not implemented yet");
+            //TODO:             
+            Reporter.ToUser(eUserMsgKeys.MissingImplementation);
         }
 
         private void AddUnixSvr(object sender, RoutedEventArgs e)
