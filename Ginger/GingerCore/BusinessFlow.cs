@@ -501,20 +501,20 @@ namespace GingerCore
             }
         }
 
-        public void AddActivity(Activity a, bool setAfterCurrentActivity = false, Activity currentActivity = null)
+        public void AddActivity(Activity a, bool setAfterCurrentActivity = false, Activity indexActivity = null)
         {
             if (a == null)
                 return;
-            if(currentActivity == null)
+            if(indexActivity == null)
             {
-                currentActivity = CurrentActivity;
+                indexActivity = CurrentActivity;
             }
-            if (currentActivity != null && setAfterCurrentActivity)
+            if (indexActivity != null && setAfterCurrentActivity)
             {
                 int selectedActivityIndex = -1;
-                if (currentActivity != null)
+                if (indexActivity != null)
                 {
-                    selectedActivityIndex = Activities.IndexOf(currentActivity);
+                    selectedActivityIndex = Activities.IndexOf(indexActivity);
                 }
 
                 if (selectedActivityIndex >= 0)
@@ -626,7 +626,7 @@ namespace GingerCore
             activitiesGroup.Name = activitiesGroup.Name + "_" + counter.ToString();
         }
         public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,
-                                                                        ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false, Activity previousActivity = null)
+                                                                        ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false, Activity indexActivity = null)
         {
             string missingActivities = string.Empty;
 
@@ -648,16 +648,16 @@ namespace GingerCore
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
                         if (keepOriginalTargetApplicationMapping == false)
                             SetActivityTargetApplication(actInstance);
-                        if(previousActivity == null && ActivitiesGroups.Count > 1)
+                        if(indexActivity == null && ActivitiesGroups.Count > 1)
                         {
                             this.AddActivity(actInstance, (CurrentActivity != null), CurrentActivity);
                         }
                         else
                         {
-                            this.AddActivity(actInstance, (CurrentActivity != null), previousActivity);
+                            this.AddActivity(actInstance, (CurrentActivity != null), indexActivity);
                         }
                         actIdent.IdentifiedActivity = actInstance;
-                        previousActivity = actInstance;
+                        indexActivity = actInstance;
                     }
                     else
                     {

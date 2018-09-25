@@ -152,9 +152,9 @@ namespace Ginger.Activities
         {
             object droppedItem = ((DragInfo)sender).Data;
             Activity previousActivity = null;
-            if (((ActivitiesGroup)((Ginger.ucGrid)((GingerWPF.DragDropLib.DragInfo)sender).DragTarget).CurrentItem) != null)
+            if ((ActivitiesGroup)grdActivitiesGroups.CurrentItem != null && ((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers.Count > 0)
             {
-                previousActivity = ((ActivitiesGroup)((Ginger.ucGrid)((GingerWPF.DragDropLib.DragInfo)sender).DragTarget).CurrentItem).ActivitiesIdentifiers[((GingerCore.Activities.ActivitiesGroup)((Ginger.ucGrid)((GingerWPF.DragDropLib.DragInfo)sender).DragTarget).CurrentItem).ActivitiesIdentifiers.Count - 1].IdentifiedActivity;
+                previousActivity = ((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers[((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers.Count - 1].IdentifiedActivity;
             }
             if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {
