@@ -1093,8 +1093,8 @@ namespace GingerCore.Drivers.AndroidADB
         }
 
         internal void LostConenction()
-        {
-            MessageBox.Show("Lost connection with the device");
+        {            
+            Reporter.ToUser(eUserMsgKeys.LostConnection, "Lost connection with the device");
             CloseWindow();
         }
     }
