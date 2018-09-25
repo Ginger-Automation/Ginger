@@ -489,8 +489,8 @@ namespace Ginger
                     p = (Page)Activator.CreateInstance(PageType);
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.PageLoadError, "" , ex.Message);
                     return;
                 }
                 mPageList.Add(p);

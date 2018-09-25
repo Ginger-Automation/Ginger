@@ -777,8 +777,8 @@ namespace GingerCore.Actions
                         case "No value given for one or more required parameters.":
                             Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
                             break;
-                        default:
-                            MessageBox.Show(ex.Message);
+                        default:                            
+                            Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, ex.Message);
                             break;
                     }
                     return null;

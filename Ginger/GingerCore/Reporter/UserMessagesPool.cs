@@ -116,7 +116,10 @@ namespace GingerCore
         VisualTestingFailedToDeleteOldBaselineImage,ApplitoolsLastExecutionResultsNotExists,ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
         FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
         POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported,
-        POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus
+        POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus,InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
+        ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, ValueIssue, MissingTargetApplication,
+        ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty, 
+        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad
     }
 
     public static class UserMessagesPool
@@ -162,6 +165,48 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.CtrlSMissingItemToSave, new UserMessage(eMessageType.WARN, "Missing Item to Save", "Please select individual item to save or use menu toolbar to save all the items.", MessageBoxButton.OK, MessageBoxResult.None));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.StaticErrorMessage, new UserMessage(eMessageType.ERROR, "Error Message", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidIndexValue, new UserMessage(eMessageType.ERROR, "Invalid index value", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.FileOperationError, new UserMessage(eMessageType.ERROR, "Error occured during file operation", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.FolderOperationError, new UserMessage(eMessageType.ERROR, "Error occured during folder operation", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ObjectUnavailable, new UserMessage(eMessageType.ERROR, "Object Unavailable", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.PatternNotHandled, new UserMessage(eMessageType.ERROR, "Pattern not handled", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.LostConnection, new UserMessage(eMessageType.ERROR, "Lost Connection", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.AskToSelectBusinessflow, new UserMessage(eMessageType.INFO, "Select Businessflow", "Please select " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.MissingFileLocation, new UserMessage(eMessageType.INFO, "Missing file location", "Please select a location for the file.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ScriptPaused, new UserMessage(eMessageType.INFO, "Script Paused", "Script is paused!", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ElementNotFound, new UserMessage(eMessageType.ERROR, "Element Not Found", "Element not found", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.TextNotFound, new UserMessage(eMessageType.ERROR, "Text Not Found", "Text not found", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ProvideSearchString, new UserMessage(eMessageType.ERROR, "Provide Search String", "Please provide search string", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.NoTextOccurrence, new UserMessage(eMessageType.ERROR, "No Text Occurrence", "No more text occurrence", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.FailedToInitiate, new UserMessage(eMessageType.ERROR, "Failed to initiate", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.FailedToCreateRequestResponse, new UserMessage(eMessageType.ERROR, "Failed to create Request / Response", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ActionNotImplemented, new UserMessage(eMessageType.ERROR, "Action is not implemented yet for control type ", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ValueIssue, new UserMessage(eMessageType.ERROR, "Value Issue", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.JSExecutionFailed, new UserMessage(eMessageType.ERROR, "Error Executing JS", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.MissingTargetApplication, new UserMessage(eMessageType.ERROR, "Missing target ppplication", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ThreadError, new UserMessage(eMessageType.ERROR, "Thread Exception", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ParsingError, new UserMessage(eMessageType.ERROR, "Error while parsing", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.SpecifyUniqueValue, new UserMessage(eMessageType.WARN, "Please specify unique value", "Optional value already exists", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ParameterAlreadyExists, new UserMessage(eMessageType.WARN, "Cannot upload the selected parameter", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.DeleteNodesFromRequest, new UserMessage(eMessageType.WARN, "Delete nodes from request body?", "Do you want to delete also nodes from request body that contain those parameters?", MessageBoxButton.YesNo, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ParameterMerge, new UserMessage(eMessageType.WARN, "Models Parameters Merge", "Do you want to update the merged instances on all model configurations?", MessageBoxButton.YesNo, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ParameterEdit, new UserMessage(eMessageType.WARN, "Global Parameter Edit", "Global Parameter Place Holder cannot be edit.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ParameterUpdate, new UserMessage(eMessageType.WARN, "Update Global Parameter Value Expression Instances", "{0}", MessageBoxButton.YesNo, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ParameterDelete, new UserMessage(eMessageType.WARN, "Delete Parameter", "{0}", MessageBoxButton.YesNo, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.SaveAll, new UserMessage(eMessageType.WARN, "Save All", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.SaveSelected, new UserMessage(eMessageType.WARN, "Save Selected", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.CopiedErrorInfo, new UserMessage(eMessageType.INFO, "Copied Error information", "Error Information copied to Clipboard", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.RepositoryNameCantEmpty, new UserMessage(eMessageType.WARN, "QTP to Ginger Converter", "Object Repository name cannot be empty", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ExcelProcessingError, new UserMessage(eMessageType.ERROR, "Excel processing error", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.EnterValidBusinessflow, new UserMessage(eMessageType.WARN, "Enter valid businessflow", "Please enter a Valid " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.DeleteItem, new UserMessage(eMessageType.WARN, "Delete Item", "Are you sure you want to delete '{0}' item ?", MessageBoxButton.YesNo, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.RefreshFolder, new UserMessage(eMessageType.WARN, "Refresh Folder", "Un saved items changes under the refreshed folder will be lost, to continue with refresh?", MessageBoxButton.YesNo, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.RefreshFailed, new UserMessage(eMessageType.ERROR, "Refresh Failed", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ReplaceAll, new UserMessage(eMessageType.QUESTION, "Replace All", "{0}", MessageBoxButton.OKCancel, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ItemSelection, new UserMessage(eMessageType.WARN, "Item Selection", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.DifferentItemType, new UserMessage(eMessageType.WARN, "Not Same Item Type", "The source item type do not match to the destination folder type", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.CopyCutOperation, new UserMessage(eMessageType.INFO, "Copy/Cut Operation", "Please select Copy/Cut operation first.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ObjectLoad, new UserMessage(eMessageType.ERROR, "Object Load", "Not able to load the object details", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.StaticWarnMessage, new UserMessage(eMessageType.WARN, "Warning Message", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.StaticInfoMessage, new UserMessage(eMessageType.INFO, "Info Message", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfSureWantToClose, new UserMessage(eMessageType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", MessageBoxButton.YesNo, MessageBoxResult.No));

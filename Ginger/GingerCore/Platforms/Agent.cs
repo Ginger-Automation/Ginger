@@ -424,8 +424,8 @@ namespace GingerCore
                     }
                 }
                 catch (Exception e)
-                {
-                    System.Windows.MessageBox.Show(e.Message);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, e.Message);
                 }
                 Driver.BusinessFlow = this.BusinessFlow;            
                 SetDriverConfiguration();
