@@ -657,8 +657,8 @@ namespace GingerCore.Repository
                 xdr.MoveToNextAttribute();
             }
             catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
+            {                
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
             }
         }
 

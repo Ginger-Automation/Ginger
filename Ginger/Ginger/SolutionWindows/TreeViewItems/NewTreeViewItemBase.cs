@@ -87,12 +87,16 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            if (item is RepositoryItemBase)
+            var repoItem = item as RepositoryItemBase;
+            if (repoItem != null)
             {
-                if (!deleteWithoutAsking)
-                    //TODO: Fix with New Reporter (on GingerWPF)
-                    if (System.Windows.MessageBox.Show(string.Format("Are you sure you want to delete '{0}' item ?", ((RepositoryItemBase)item).GetNameForFileName()), "Delete", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.No) == System.Windows.MessageBoxResult.No)                
+                if(!deleteWithoutAsking)
+                {
+                    if(Reporter.ToUser(eUserMsgKeys.DeleteItem, repoItem.GetNameForFileName()) == MessageBoxResult.No)
+                    {
                         return false;
+                    }                        
+                }                   
 
                 WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem((RepositoryItemBase)item);               
                 return true;
@@ -102,7 +106,9 @@ namespace GingerWPF.TreeViewItemsLib
                 //implement for other item types              
                 string filePath = string.Empty;
                 if (item == null)
+                {
                     filePath = this.NodePath();
+                }                    
                 else
                 {                     
                     filePath = ((RepositoryItemBase)item).FilePath;
@@ -242,7 +248,7 @@ namespace GingerWPF.TreeViewItemsLib
         {
             try
             {
-                if (System.Windows.MessageBox.Show("Un saved items changes under the refreshed folder will be lost, to continue with refresh?", "Refresh Folder", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.No) == System.Windows.MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.RefreshFolder) == System.Windows.MessageBoxResult.Yes)
                 {
                     mBulkOperationIsInProcess = true;
                     //refresh cache
@@ -257,9 +263,8 @@ namespace GingerWPF.TreeViewItemsLib
                 }
             }
             catch (Exception ex)
-            {
-                //TODO: Fix with New Reporter (on GingerWPF)
-                System.Windows.MessageBox.Show(String.Format("Failed to refresh the item type cache for the folder: '{0}'", path), "Refresh Failed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.RefreshFailed, "Failed to refresh the item type cache for the folder: " + path);
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 mBulkOperationIsInProcess = false;
             }
@@ -358,8 +363,8 @@ namespace GingerWPF.TreeViewItemsLib
         }
 
         public override void AddTreeItem()
-        {
-            System.Windows.MessageBox.Show("Functionality was not yet implemented", "Not Implemented", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+        {            
+            Reporter.ToUser(eUserMsgKeys.MissingImplementation);
         }
 
         public virtual ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)

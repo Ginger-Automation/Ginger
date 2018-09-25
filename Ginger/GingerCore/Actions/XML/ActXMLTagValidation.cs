@@ -259,8 +259,7 @@ namespace GingerCore.Actions.XML
 
                         }
                     }
-
-                    //System.Windows.MessageBox.Show(aiv.ValueForDriver);
+                    
                 }
             }
 
