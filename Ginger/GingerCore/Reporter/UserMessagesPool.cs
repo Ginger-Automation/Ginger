@@ -108,7 +108,7 @@ namespace GingerCore
         GherkinAskToSaveFeatureFile, GherkinScenariosGenerated, GherkinNotifyFeatureFileExists, GherkinNotifyFeatureFileSelectedFromTheSolution, GherkinNotifyBFIsNotExistForThisFeatureFile, GherkinFileNotFound, GherkinColumnNotExist, GherkinActivityNotFound, GherkinBusinessFlowNotCreated, GherkinFeatureFileImportedSuccessfully, GherkinFeatureFileImportOnlyFeatureFileAllowedErrorMessage,
         AskIfSureWantToDeLink,AnalyzerFoundIssues,AnalyzerSaveRunSet,
         AskIfSureWantToUndoChange,
-        MissingTargetPlatformForConversion, NoConvertibleActionsFound, NoConvertibleActionSelected, SuccessfulConversionDone, NoActivitySelectedForConversion,
+        MissingTargetPlatformForConversion, NoConvertibleActionsFound, NoConvertibleActionSelected, SuccessfulConversionDone, NoActivitySelectedForConversion, ActivitiesConversionFailed,
         CurrentActionNotSaved,
         FileExtensionNotSupported, NotifyFileSelectedFromTheSolution, FileImportedSuccessfully, CompilationErrorOccured, CompilationSucceed, Failedtosaveitems, SaveItemParentWarning, SaveAllItemsParentWarning,
         APIParametersListUpdated, APIMappedToActionIsMissing, NoAPIExistToMappedTo, CreateRunset, DeleteRunners, DeleteRunner,DeleteBusinessflow, DeleteBusinessflows, MissingErrorHandler,CantDeleteRunner, AllItemsSaved, APIModelAlreadyContainsReturnValues,
@@ -634,6 +634,7 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.SuccessfulConversionDone, new UserMessage(eMessageType.INFO, "Obsolete actions converted successfully", "The obsolete actions have been converted successfully!"
                + Environment.NewLine + "Do you want to convert more actions?" , MessageBoxButton.YesNo, MessageBoxResult.No));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.NoActivitySelectedForConversion, new UserMessage(eMessageType.WARN, "No Activity Selected", "Please select an " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " that you want to convert.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ActivitiesConversionFailed, new UserMessage(eMessageType.WARN, "Activities Conversion Failed", "Activities Conversion Failed.", MessageBoxButton.OK, MessageBoxResult.None));
             #endregion ActionConversion
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.CopiedVariableSuccessfully, new UserMessage(eMessageType.INFO, "Info Message", "'{0}' Business Flows Affected." + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", MessageBoxButton.OK, MessageBoxResult.None));
