@@ -6,6 +6,7 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,7 +53,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         }
 
-        public static bool DriverIsBusy { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+
 
         public PomElementsPage mappedUIElementsPage;
         public PomElementsPage unmappedUIElementsPage;
@@ -63,6 +66,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM = POM;
             mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
+
+
 
             mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped);
             xMappedElementsFrame.Content = mappedUIElementsPage;
@@ -93,13 +98,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             MappedUIElementsUpdate();
         }
 
-        public ucButton TestAllElementsButton
+        public Visibility ShowTestAllElementsButton
         {
-            get
-            {
-                return xTestAllElements;
-            }
+            get { return xTestAllElements.Visibility; }
+            set { xTestAllElements.Visibility = value; }
         }
+
 
         private void MappedUIElementsUpdate()
         {
@@ -131,7 +135,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void LiveSpyHandler(object sender, RoutedEventArgs e)
         {
-            if (DriverIsBusy)
+            if (mAgent.Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
@@ -243,7 +247,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             //Change Grid View
             
-            if (PomAllElementsPage.DriverIsBusy)
+            if (mAgent.Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;

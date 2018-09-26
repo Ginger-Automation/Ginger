@@ -40,20 +40,12 @@
             </DataTemplate>
             
         </Grid.Resources>
-        
+
         <Grid.RowDefinitions>
-            <!--<RowDefinition x:Name="Row0" Height="10" MinHeight="40"/>-->
             <RowDefinition x:Name="Row1" Height="76*" MinHeight="35"/>
             <RowDefinition  x:Name="Row2" Height="8*" MinHeight="20"/>
         </Grid.RowDefinitions>
 
-        <!--<StackPanel x:Name="xSpyPanel" HorizontalAlignment="Left" Orientation="Horizontal" Grid.Row="0">
-            <ToggleButton x:Name="LiveSpyButton" Click="LiveSpyHandler"  ToolTip="Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key" Width="24" Height="24" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}">
-                <Image Source="{StaticResource @Spy_24x24}"/>
-            </ToggleButton>
-            <Label x:Name="xStatusLable" Content="Spying off" ></Label>
-            <UserControls:ucButton x:Name="xCreateNewElement" ButtonType="RoundTextAndImageButton" ButtonText="Create New Element" ButtonImageType="New" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed"  Click="CreateNewElemetClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-        </StackPanel>-->
 
         <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" RowChangedEvent="MappedElementsGrid_RowChangedEvent" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" />
 

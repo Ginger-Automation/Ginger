@@ -3294,6 +3294,8 @@ namespace GingerCore.Drivers
         }
         private int exceptioncount = 0;
 
+
+
         public override bool IsRunning()
         {
             if (Driver != null)
@@ -3446,19 +3448,30 @@ namespace GingerCore.Drivers
 
         List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
-            UnhighlightLast();
+            IsDriverBusy = true;
 
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
-            List<ElementInfo> list = new List<ElementInfo>();            
-            Driver.SwitchTo().DefaultContent();
+            try
+            {
+                UnhighlightLast();
 
-            list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList)));
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                List<ElementInfo> list = new List<ElementInfo>();
+                Driver.SwitchTo().DefaultContent();
 
-            CurrentFrame = "";
-            Driver.SwitchTo().DefaultContent();
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
-            return list;
+                list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList)));
+
+                CurrentFrame = "";
+                Driver.SwitchTo().DefaultContent();
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+                return list;
+            }
+            finally
+            {
+                IsDriverBusy = false;
+            }
+
         }
+
 
         private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
@@ -4104,11 +4117,21 @@ namespace GingerCore.Drivers
             if (!String.IsNullOrEmpty(ElementInfo.Value))
                 list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
 
-            //Learn more properties
+
             IWebElement el = null;
-            if (string.IsNullOrEmpty(ElementInfo.XPath))
-                ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
-            el = Driver.FindElement(By.XPath(ElementInfo.XPath));
+            if (ElementInfo.ElementObject != null)
+            {
+                el = (IWebElement)ElementInfo.ElementObject;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(ElementInfo.XPath))
+                    ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                el = Driver.FindElement(By.XPath(ElementInfo.XPath));
+            }
+
+            //Learn more properties
+            
             if (el != null)
             {
                 //Learn optional values
@@ -4116,6 +4139,7 @@ namespace GingerCore.Drivers
                 {                   
                     foreach (IWebElement value in el.FindElements(By.XPath("*")))
                         ElementInfo.OptionalValues.Add(value.Text);
+                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
                     list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
                 }
 
@@ -4205,7 +4229,20 @@ namespace GingerCore.Drivers
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
         {
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
-            IWebElement e = Driver.FindElement(By.XPath(ElementInfo.XPath));
+            IWebElement e = null;
+
+            if (ElementInfo.ElementObject != null)
+            {
+                e = (IWebElement)ElementInfo.ElementObject;
+            }
+            else
+            {
+                //e = LocateElementByLocators(ElementInfo.Locators);
+                e = Driver.FindElement(By.XPath(ElementInfo.XPath)); 
+            }
+
+
+            
             // Organize based on better locators at start
             string id = e.GetAttribute("id");
             if (!string.IsNullOrEmpty(id))
@@ -4385,11 +4422,26 @@ namespace GingerCore.Drivers
                 {
                     count++;
                 }
-                if (IWE.Equals(childElement))
-                //if (IWE == childElement)
+                try
                 {
-                    return GenerateXpathForIWebElement(parentElement, "/" + IWE.TagName + "[" + count + "]" + current);
+                    //if (IWE.Equals(childElement))
+                    if (IWE.Equals(childElement))
+                    {
+                        return GenerateXpathForIWebElement(parentElement, "/" + IWE.TagName + "[" + count + "]" + current);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    if (mBrowserTpe == eBrowserType.FireFox && ex.Message != null && ex.Message.Contains("did not match a known command"))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }
+
             }
             return "";
         }
@@ -6086,6 +6138,7 @@ namespace GingerCore.Drivers
 
         string IXPath.GetElementProperty(ElementInfo ElementInfo, string PropertyName)
         {
+
             IWebElement el = Driver.FindElement(By.XPath(ElementInfo.XPath));
             string elementProperty = el.GetAttribute(PropertyName);
             return elementProperty;
@@ -6340,10 +6393,9 @@ namespace GingerCore.Drivers
                     return false;
                 }
             }
-            catch (Exception ex)
+            finally
             {
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
-                throw ex;
             }
             
         }

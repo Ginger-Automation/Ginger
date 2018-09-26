@@ -55,25 +55,42 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             InitializeComponent();                       
         }
 
+        int i = 0;
+
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             ElementInfo EI = ((ObservableList<ElementInfo>)sender).Last();
 
-            mWizard.IWindowExplorerDriver.UpdateElementInfoFields(EI);
-            EI.Locators = mWizard.IWindowExplorerDriver.GetElementLocators(EI);
-            EI.Properties = mWizard.IWindowExplorerDriver.GetElementProperties(EI);
-            EI.ElementName = GetBestElementName(EI);
-            EI.WindowExplorer = mWizard.IWindowExplorerDriver;
+            if (i == 20)
+            {
+
+            }
+
+            try
+            {
+                mWizard.IWindowExplorerDriver.UpdateElementInfoFields(EI);
+                EI.Locators = mWizard.IWindowExplorerDriver.GetElementLocators(EI);
+                EI.Properties = mWizard.IWindowExplorerDriver.GetElementProperties(EI);
+                EI.ElementName = GetBestElementName(EI);
+                EI.WindowExplorer = mWizard.IWindowExplorerDriver;
 
 
-            if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
-            {
-                mWizard.POM.MappedUIElements.Add(EI);
+                if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
+                {
+                    mWizard.POM.MappedUIElements.Add(EI);
+                }
+                else
+                {
+                    mWizard.POM.UnMappedUIElements.Add(EI);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                mWizard.POM.UnMappedUIElements.Add(EI);
+
             }
+
+
+            i++;
         }
 
         PomAllElementsPage pomAllElementsPage = null;
@@ -83,7 +100,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (pomAllElementsPage == null)
             {
                 pomAllElementsPage = new PomAllElementsPage(mWizard.POM);
-                pomAllElementsPage.TestAllElementsButton.Visibility = Visibility.Collapsed;
+                pomAllElementsPage.ShowTestAllElementsButton = Visibility.Collapsed;
                 pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
                 xPomElementsMappingPageFrame.Content = pomAllElementsPage;
             }
@@ -119,7 +136,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (!mWizard.IsLearningWasDone)
             {
                 mWizard.ProcessStarted();
-                PomAllElementsPage.DriverIsBusy = true;
+                mWizard.Agent.Driver.IsDriverBusy = true;
                 xStopLoadButton.Visibility = Visibility.Visible;
                 xReLearnButton.Visibility = Visibility.Collapsed;
                
@@ -129,7 +146,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mWizard.IsLearningWasDone = await GetElementsFromPage();
                 xStopLoadButton.Visibility = Visibility.Collapsed;
                 xReLearnButton.Visibility = Visibility.Visible;
-                PomAllElementsPage.DriverIsBusy = false;
+                mWizard.Agent.Driver.IsDriverBusy = false;
                 mWizard.ProcessEnded();
             }
         }

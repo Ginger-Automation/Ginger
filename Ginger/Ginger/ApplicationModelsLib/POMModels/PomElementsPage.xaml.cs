@@ -6,6 +6,7 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,6 +75,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         }
 
+
         private void Properties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             Dispatcher.Invoke(() =>
@@ -92,7 +94,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (PomAllElementsPage.DriverIsBusy)
+            if (mAgent.Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
@@ -108,7 +110,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void RemoveButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (PomAllElementsPage.DriverIsBusy)
+            if (mAgent.Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
@@ -188,7 +190,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void DeleteUnMappedElementRow(object sender, RoutedEventArgs e)
         {
-            if (PomAllElementsPage.DriverIsBusy)
+            if (mAgent.Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
@@ -200,7 +202,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddMappedElementRow(object sender, RoutedEventArgs e)
         {
-            if (PomAllElementsPage.DriverIsBusy)
+            if (mAgent.Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
@@ -214,7 +216,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddUnMappedElementRow(object sender, RoutedEventArgs e)
         {
-            if (PomAllElementsPage.DriverIsBusy)
+            if (mAgent.Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
@@ -317,13 +319,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 foreach (ControlProperty CP in SelectedElement.Properties)
                     mProperties.Add(CP);
 
-                //ObservableList<ControlProperty> ElementsProperties = SelectedElement.GetElementProperties();
-                //if (mWinExplorer != null)
-                //{
-                //    ObservableList<ControlProperty> ElementsProperties = mWinExplorer.GetElementProperties(SelectedElement);
-                //    foreach (ControlProperty CP in ElementsProperties)
-                //        mProperties.Add(CP);
-                //}
 
             }
             else
@@ -352,7 +347,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
-            if (PomAllElementsPage.DriverIsBusy)
+            if (mAgent.Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
@@ -381,7 +376,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void TestElementButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (PomAllElementsPage.DriverIsBusy)
+            if (mAgent.Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
@@ -400,7 +395,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void TestAllElementsLocators(object sender, RoutedEventArgs e)
         {
-            if (PomAllElementsPage.DriverIsBusy)
+            if (mAgent.Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
