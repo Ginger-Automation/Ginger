@@ -101,7 +101,6 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override ObservableList<Act> GetPlatformElementActions(ElementInfo elementInfo)
         {
             ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
-
             ElementTypeOperations elementTypeOperations = GetElementTypesWithOperations().Where(x => x.ElementType == elementInfo.ElementTypeEnum).FirstOrDefault();
             if ((elementTypeOperations != null) && ((elementTypeOperations.ElementOperationsList != null)) && (elementTypeOperations.ElementOperationsList.Count > 0))
             {
@@ -124,9 +123,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                             {
                                 Description = ((EnumValueDescriptionAttribute[])typeof(ActUIElement.eElementAction).GetField(z.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription + " : " + elementInfo.ElementTitle,
                                 ElementAction = (ActUIElement.eElementAction)z,
-                                ElementType = elementTypeOperations.ElementType,
-                                // ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), z.ToString()),
-                                // Value = "true"   // to check what to do with this
+                                ElementType = elementInfo.ElementTypeEnum,
                             }));
                     }
                 }
