@@ -12,14 +12,16 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="59*"/>
-            <RowDefinition Height="37*"/>
-            <RowDefinition Height="204*"/>
+            <RowDefinition Height="93*"/>
+            <RowDefinition Height="148*"/>
         </Grid.RowDefinitions>
         <!--<Label x:Name="NoConfigLabel" Content="This action doesn't require any configuration" />-->
         <Label x:Name="LoadErrorLbl" HorizontalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Foreground="Red" Content="Failed To Load The PlugIn Action Edit Page"  Visibility="Collapsed" Margin="150,0" Grid.RowSpan="3" Width="0"/>
         <Frame x:Name="EditFrame" VerticalAlignment="Top" Content="Plugin Edit action Frame" Grid.Row="0" HorizontalAlignment="Stretch" Height="16"/>
 
-        <UserControls:UCDataColGrid HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Grid.RowSpan="3"/>
+        <!--<UserControls:UCDataColGrid HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Grid.RowSpan="3"/>-->
+        <Grid x:Name="ActionConfigGrid" Grid.Row="1"/>
+
         <DataGrid x:Name="InputGrid" Grid.Row="2" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Param" Binding="{Binding Param}" Width="80"></DataGridTextColumn>
