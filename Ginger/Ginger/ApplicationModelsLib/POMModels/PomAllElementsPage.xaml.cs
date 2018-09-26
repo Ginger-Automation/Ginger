@@ -238,7 +238,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        private void TestAllElementsClicked(object sender, RoutedEventArgs e)
+        private async Task TestAllElementsClicked(object sender, RoutedEventArgs e)
         {
 
             //Change Grid View
@@ -258,11 +258,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             mappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
-            TestAllElementsAsync();
+            await TestAllElementsAsync();
         }
 
 
-        public async void TestAllElementsAsync()
+        public async Task TestAllElementsAsync()
         {
             xTestAllElements.Visibility = Visibility.Collapsed;
             xStopTestAllElements.Visibility = Visibility.Visible;
@@ -322,19 +322,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         }
 
 
-        //private void CompareAllElementsClicked(object sender, RoutedEventArgs e)
-        //{
-        //    foreach (ElementInfo EI in mPOM.MappedUIElements)
-        //    {
-        //        mWinExplorer.TestElementLocators(EI.Locators);
 
-        //        int Total = EI.Locators.Count;
-        //        int Failed = EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).Count();
-        //        int Passed = EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count();
-
-
-
-        //    }
-        //}
     }
 }
