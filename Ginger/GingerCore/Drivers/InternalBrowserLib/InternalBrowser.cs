@@ -642,8 +642,8 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     break;
 
                 case ActGenElement.eGenElementAction.MsgBox:
-                    string msg = act.GetInputParamCalculatedValue("Value");
-                    MessageBox.Show(msg, "Script is paused!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    string msg = act.GetInputParamCalculatedValue("Value");                    
+                    Reporter.ToUser(eUserMsgKeys.ScriptPaused);
                     break;
 
                 default:

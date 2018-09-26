@@ -24,6 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Markup;
 using System.IO;
+using GingerCore;
 
 namespace Ginger.Reports
 {
@@ -59,8 +60,8 @@ namespace Ginger.Reports
                 FlowDocumentReader.DataContext = ReportInfo;
             }
             catch (Exception ex)
-            {
-                MessageBox.Show("Error in Customized report XML - " + ex.Message);
+            {                
+                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in Customized report XML - " + ex.Message);
             }
         }
 

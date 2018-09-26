@@ -157,7 +157,7 @@ namespace Ginger.GeneralWindows
 
         private void Page_KeyDown(object sender, KeyEventArgs e)
         {            
-            // MessageBox.Show(e.Key.ToString());            
+            
         }
     }
 }

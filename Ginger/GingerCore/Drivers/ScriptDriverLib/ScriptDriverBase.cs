@@ -50,9 +50,9 @@ namespace GingerCore.Drivers.ScriptDriverLib
         protected virtual string RunScript(string cmd) { return cmd; }
        
         protected void Process_Exited(object sender, EventArgs e)
-        {
-            System.Windows.MessageBox.Show("Data=" + DataBuffer);
-            System.Windows.MessageBox.Show("Error=" + ErrorBuffer);
+        {            
+            Reporter.ToLog(eLogLevel.INFO, "Data=" + DataBuffer);
+            Reporter.ToLog(eLogLevel.INFO, "Error=" + ErrorBuffer);
         }
 
         protected void AddError(string outLine)
