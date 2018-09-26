@@ -50,14 +50,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            //Deleting until we will know how exactly to integrate POM in Automation Flow
-            //TBH.AddFormattedText("How to Integrate POM in Automation Flow?", foregroundColor, true);
-            //TBH.AddLineBreak();
-            //TBH.AddFormattedText("After creating the POM Use the Element Action to perform operation on a spesific Page Element", foregroundColor);
-            //TBH.AddLineBreak();
-            //TBH.AddLineBreak();
-            //TBH.AddLineBreak();
-
 
         }
 

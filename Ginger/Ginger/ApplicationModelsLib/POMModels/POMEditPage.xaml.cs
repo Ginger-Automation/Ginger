@@ -65,16 +65,20 @@ namespace Ginger.ApplicationModelsLib.POMModels
             get
             {
                 if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
+                {
                     return mAgent.Driver as IWindowExplorer;
+                }
                 else
+                {
                     return null;
+                }
             }
-
         }
 
 
         ScreenShotViewPage pd;
-        PomAllElementsPage pomAllElementsPage;
+
+        readonly PomAllElementsPage pomAllElementsPage;
         public POMEditPage(ApplicationPOMModel POM)
         {
             InitializeComponent();
@@ -92,23 +96,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xAgentControlUC.Init(optionalAgentsList);
             App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
 
-            //xAgentControlUC.xAgentStatusBtn.Click += StartAgentButtonClicked;
-
             BitmapSource source = null;
             if (mPOM.ScreenShotImage != null)
             {
                 source = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.ScreenShotImage.ToString()));
             }
 
-            //Bitmap ScreenShot = BitmapFromSource(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.LogoBase64Image.ToString())));
-
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.Content = mScreenShotViewPage;
 
-            //PomElementsMappingPage mappedUIElementsPage = new PomElementsMappingPage(mPOM,null);
             pomAllElementsPage = new PomAllElementsPage(mPOM);
-            //pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
-            //pomAllElementsPage.unmappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
             xUIElementsFrame.Content = pomAllElementsPage;
 
             UIElementTabTextBlockUpdate();
@@ -152,10 +149,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
 
 
-        //private void StartAgentButtonClicked(object sender, RoutedEventArgs e)
-        //{
-        //    pomAllElementsPage.SetWindowExplorer(xAgentControlUC.IWindowExplorerDriver);
-        //}
 
         private void FillTargetAppsComboBox()
         {
@@ -259,16 +252,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             
         }
 
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        //private void InitControlPropertiesGrid()
-        //{
-        //    string[] list = new string[] {"Name=ABC", "Mandatory=No", "FontColor=Black" };
-        //    ControlPropertiesGrid.ItemsSource = list;
-        //}
 
         //double MX = -1;
         //double MY = -1;

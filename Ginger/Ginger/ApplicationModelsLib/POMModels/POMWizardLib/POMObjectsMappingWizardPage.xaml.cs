@@ -119,8 +119,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (!mWizard.IsLearningWasDone)
             {
                 mWizard.ProcessStarted();
-                //pomAllElementsPage.unmappedUIElementsPage.DriverIsBusy = true;
-                //pomAllElementsPage.mappedUIElementsPage.DriverIsBusy = true;
                 PomAllElementsPage.DriverIsBusy = true;
                 xStopLoadButton.Visibility = Visibility.Visible;
                 xReLearnButton.Visibility = Visibility.Collapsed;

@@ -106,7 +106,6 @@ namespace Amdocs.Ginger.Common.UIElement
                     case eElementStatus.Failed:
                         return eImageType.Failed;
                     case eElementStatus.Pending:
-                        return eImageType.Pending;
                     default:
                         return eImageType.Pending;
                 }

@@ -33,20 +33,23 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public ObservableList<ControlProperty> mProperties = new ObservableList<ControlProperty>();
         GenericWindow _GenWin;
         
-        public Agent mAgent;
+        private Agent mAgent;
         public IWindowExplorer mWinExplorer
         {
             get
             {
                 if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
-                     return mAgent.Driver as IWindowExplorer;
+                {
+                    return mAgent.Driver as IWindowExplorer;
+                }
                 else
-                     return null;
+                {
+                    return null;
+                }
             }
 
         }
 
-        //public bool DriverIsBusy { get; set; }
 
         public PomAllElementsPage.eElementsContext mContext;
 
@@ -120,10 +123,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        //internal void SetWindowExplorer(IWindowExplorer windowExplorerDriver)
-        //{
-        //    mWinExplorer = windowExplorerDriver;
-        //}
 
         internal void SetAgent(Agent agent)
         {

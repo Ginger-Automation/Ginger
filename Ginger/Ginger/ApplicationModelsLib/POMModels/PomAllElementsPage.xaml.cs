@@ -32,9 +32,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             get
             {
                 if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
+                {
                     return mAgent.Driver as IWindowExplorer;
+                }
                 else
+                {
                     return null;
+                }
             }
 
         }
@@ -105,27 +109,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             });
         }
 
-        private void ActionTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-        }
-
-        //public void SetWindowExplorer(IWindowExplorer windowExplorerDriver)
-        //{
-        //    mWinExplorer = windowExplorerDriver;
-        //    mappedUIElementsPage.SetWindowExplorer(windowExplorerDriver);
-        //    unmappedUIElementsPage.SetWindowExplorer(windowExplorerDriver);
-        //}
-
         public void SetAgent(Agent agent)
         {
             mAgent = agent;
             mappedUIElementsPage.SetAgent(mAgent);
             unmappedUIElementsPage.SetAgent(mAgent);
 
-            //if (mAgent.Status == Agent.eStatus.Running)
-            //{
-            //    SetWindowExplorer((IWindowExplorer)mAgent.Driver);
-            //}
         }
 
         private void CreateNewElemetClicked(object sender, RoutedEventArgs e)
@@ -210,7 +199,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void FocusSpyItemOnElementsGrid()
         {
             bool elementfocused = false;
-            if (mSpyElement == null) return;
+            if (mSpyElement == null)
+            {
+                return;
+            } 
             foreach (ElementInfo EI in mPOM.MappedUIElements)
             {
                 mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
@@ -275,7 +267,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTestAllElements.Visibility = Visibility.Collapsed;
             xStopTestAllElements.Visibility = Visibility.Visible;
             mStopProcess = false;
-            await Task.Run(() => TestAllElements());
+            await Task.Run(() => TestAllElements()).ConfigureAwait(false);
             xTestAllElements.Visibility = Visibility.Visible;
             xStopTestAllElements.Visibility = Visibility.Collapsed;
         }
@@ -287,13 +279,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             bool WarnErrorOccured = false;
             foreach (ElementInfo EI in mPOM.MappedUIElements)
+            {
                 EI.ElementStatus = ElementInfo.eElementStatus.Pending;
+            }
 
             foreach (ElementInfo EI in mPOM.MappedUIElements)
             {
                 if (mStopProcess)
+                {
                     return;
-
+                }
+                    
                 if (mWinExplorer.TestElementLocators(EI.Locators,true))
                 {
                     //TODO: Add Error frm locators

@@ -28,7 +28,7 @@
 
 
 
-        <TabControl x:Name="POMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" >
+        <TabControl x:Name="POMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch"  >
 
             <TabItem Margin="0,0,0,0" x:Name="xMappedElementsTab" >
                 <TabItem.Header>

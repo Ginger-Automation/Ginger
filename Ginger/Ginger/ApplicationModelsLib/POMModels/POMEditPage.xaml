@@ -56,7 +56,7 @@
                 </Grid>
             </StackPanel>
 
-            <TabControl Grid.Row="1" SelectionChanged="TabControl_SelectionChanged">
+            <TabControl Grid.Row="1" >
                 <TabItem >
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
