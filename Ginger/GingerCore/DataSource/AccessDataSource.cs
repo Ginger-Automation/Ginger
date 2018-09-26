@@ -230,6 +230,18 @@ namespace GingerCore.DataSource
             Init(mFilePath, "Read");
         }
 
+        public void EmptyTable(string tableName)
+        {
+            myAccessConn.Close();
+            Init(mFilePath, "Write");
+            OleDbCommand myCommand = new OleDbCommand();
+            myCommand.Connection = myAccessConn;
+            myCommand.CommandText = "DELETE FROM " + tableName;
+            myCommand.ExecuteNonQuery();
+            myAccessConn.Close();
+            Init(mFilePath, "Read");
+        }
+
         public override void AddTable(string TableName,string columnlist="")
         {
             myAccessConn.Close();

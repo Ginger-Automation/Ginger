@@ -26,8 +26,10 @@ using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
+using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -138,18 +140,54 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         private void ExportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {
             ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-            List<AppParameters> parameters = new List<AppParameters>();
-            foreach (var prms in mModelsGlobalParamsList)
-            {
-                im.AddNewParameterToList(parameters, prms);
-            }
+            List<AppParameters> parameters = GetParameterList();
             string filePath = im.ExportParametersToExcelFile(parameters, "GlobalParameters");
             Process.Start(filePath);
         }
 
         private void ExportParametersToDataSource(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>());
+                SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
+                List<object> selectedRunSet = mDataSourceSelectionPage.ShowAsWindow();
+                if (selectedRunSet != null && selectedRunSet.Count > 0)
+                {
+                    ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                    AccessDataSource mDSDetails = (AccessDataSource)(((DataSourceTable)selectedRunSet[0]).DSC);
+                    string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
+                    List<AppParameters> parameters = GetParameterList();
+                    im.ExportSelectedParametersToDataSouce(parameters, mDSDetails, tableName);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+        }
 
+        /// <summary>
+        /// This method is used to Get Parameter List
+        /// </summary>
+        /// <param name="im"></param>
+        /// <returns></returns>
+        private List<AppParameters> GetParameterList()
+        {
+            ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+            List<AppParameters> parameters = new List<AppParameters>();
+            try
+            {
+                foreach (var prms in mModelsGlobalParamsList)
+                {
+                    im.AddNewParameterToList(parameters, prms);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+            return parameters;
         }
 
         string PlaceholderBeforeEdit = string.Empty;

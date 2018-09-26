@@ -38,6 +38,7 @@ using System.Diagnostics;
 using DocumentFormat.OpenXml;
 using amdocs.ginger.GingerCoreNET;
 using System.Text;
+using GingerCore.DataSource;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -1268,6 +1269,102 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 } 
             }
             return ds;
+        }
+
+        /// <summary>
+        /// This method will export the parameters to DataSource
+        /// </summary>
+        /// <param name="parameters"></param>
+        public void ExportSelectedParametersToDataSouce(List<AppParameters> parameters, AccessDataSource mDSDetails, string tableName)
+        {
+            try
+            {
+                if (mDSDetails != null)
+                {
+                    mDSDetails.FileFullPath = mDSDetails.CurrentFilePath;
+
+                    if (File.Exists(mDSDetails.FileFullPath))
+                    {
+                        ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                        List<string> colList = mDSDetails.GetColumnList(tableName);
+                        List<string> defColList = GetDefaultColumnNameListForTableCreation();
+                        foreach (string colName in colList)
+                        {
+                            if (!defColList.Contains(colName))
+                            {
+                                mDSDetails.RemoveColumn(tableName, colName);
+                            }
+                        }
+                        mDSDetails.AddColumn(tableName, "ItemName", "Text");
+                        mDSDetails.AddColumn(tableName, "Description", "Text");
+                        mDSDetails.AddColumn(tableName, "OptionalValuesString", "Text");
+
+                        mDSDetails.EmptyTable(tableName);
+
+                        foreach (AppParameters parms in parameters)
+                        {
+                            InsertParameterData(mDSDetails, tableName, parms.ItemName, parms.Description, parms.OptionalValuesString);
+                        }
+                        Reporter.ToUser(eUserMsgKeys.ExportExcelFileDetails); 
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to get the default columnList for exporting the parameters to datasource
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetDefaultColumnNameListForTableCreation()
+        {
+            List<string> defColList = new List<string>();
+            try
+            {
+                defColList.Add("GINGER_ID");
+                defColList.Add("GINGER_USED");
+                defColList.Add("GINGER_LAST_UPDATED_BY");
+                defColList.Add("GINGER_LAST_UPDATE_DATETIME");
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+            return defColList;
+        }
+
+        /// <summary>
+        /// This method is used to insert the data parameter data in table
+        /// </summary>
+        /// <param name="mDSDetails"></param>
+        /// <param name="itemName"></param>
+        /// <param name="description"></param>
+        /// <param name="optionalValuesString"></param>
+        private void InsertParameterData(AccessDataSource mDSDetails, string tableName, string itemName, string description, string optionalValuesString)
+        {
+            try
+            {
+                string query = GetInsertQueryForParameter(tableName, itemName, description, optionalValuesString);
+                mDSDetails.RunQuery(query);
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to get the columnList for exporting the parameters to datasource
+        /// </summary>
+        /// <returns></returns>
+        private string GetInsertQueryForParameter(string tableName, string itemName, string description, string optionalValuesString)
+        {
+            string query = string.Format("INSERT INTO {0} (GINGER_USED, GINGER_LAST_UPDATED_BY, GINGER_LAST_UPDATE_DATETIME, ItemName, Description, OptionalValuesString) "
+                                       + " VALUES ('True', '{1}', '{2}', '{3}', '{4}', '{5}')", tableName, System.Environment.UserName, DateTime.Now.ToString(), itemName, description, optionalValuesString);
+            return query;
         }
 
         #endregion
