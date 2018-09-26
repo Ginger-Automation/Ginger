@@ -199,6 +199,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.ComboBox,
+                    IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SelectByIndex,
                                                                 ActUIElement.eElementAction.Select,

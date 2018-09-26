@@ -24,6 +24,7 @@ using Ginger;
 using Ginger.Actions.UserControls;
 using Ginger.WindowExplorer;
 using GingerCore;
+using GingerCore.Actions.VisualTesting;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
@@ -66,7 +67,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     break;
                 case EventType.Active:
                     ShowScreenShot();
-                    //mWizard.
+                    if (mWizard.ManualElementConfiguration)
+                    {
+                        xTakeScreenShotLoadButton.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        xTakeScreenShotLoadButton.Visibility = Visibility.Visible;
+                    }
                     break;
             }
         }
@@ -79,6 +87,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void xTakeScreenShotLoadButton_Click(object sender, RoutedEventArgs e)
         {
+            mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
             ShowScreenShot();
         }
 
@@ -87,33 +96,35 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
             op.Title = "Select a picture";
             op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
-            op.ShowDialog();
-            var fileLength = new FileInfo(op.FileName).Length;
-            if (fileLength <= 30000)
+            if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                if ((op.FileName != null) && (op.FileName != string.Empty))
+                var fileLength = new FileInfo(op.FileName).Length;
+                if (fileLength <= 30000)
                 {
-                    using (var ms = new MemoryStream())
+                    if ((op.FileName != null) && (op.FileName != string.Empty))
                     {
-                        BitmapImage bi = new BitmapImage(new Uri(op.FileName));
-                        Tuple<int, int> sizes = Ginger.Reports.GingerExecutionReport.ExtensionMethods.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
+                        using (var ms = new MemoryStream())
+                        {
+                            BitmapImage bi = new BitmapImage(new Uri(op.FileName));
+                            Tuple<int, int> sizes = Ginger.Reports.GingerExecutionReport.ExtensionMethods.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
 
-                        BitmapImage bi_resized = new BitmapImage();
-                        bi_resized.BeginInit();
-                        bi_resized.UriSource = new Uri(op.FileName);
-                        bi_resized.DecodePixelHeight = sizes.Item2;
-                        bi_resized.DecodePixelWidth = sizes.Item1;
-                        bi_resized.EndInit();
-                        mWizard.ScreenShot = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(bi_resized);
-                        mWizard.POM.ScreenShotImage = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(mWizard.ScreenShot);
-                        mScreenshotPage = new ScreenShotViewPage(mWizard.POM.Name, mWizard.ScreenShot);
-                        xScreenShotFrame.Content = mScreenshotPage;
+                            BitmapImage bi_resized = new BitmapImage();
+                            bi_resized.BeginInit();
+                            bi_resized.UriSource = new Uri(op.FileName);
+                            bi_resized.DecodePixelHeight = sizes.Item2;
+                            bi_resized.DecodePixelWidth = sizes.Item1;
+                            bi_resized.EndInit();
+                            mWizard.ScreenShot = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(bi_resized);
+                            mWizard.POM.ScreenShotImage = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(mWizard.ScreenShot);
+                            mScreenshotPage = new ScreenShotViewPage(mWizard.POM.Name, mWizard.ScreenShot);
+                            xScreenShotFrame.Content = mScreenshotPage;
+                        }
                     }
                 }
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKeys.ImageSize);
+                else
+                {
+                    Reporter.ToUser(eUserMsgKeys.ImageSize);
+                }
             }
         }
     }

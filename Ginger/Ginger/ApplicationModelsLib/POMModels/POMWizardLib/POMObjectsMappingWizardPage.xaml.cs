@@ -142,6 +142,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mWizard.POM.MappedUIElements.Clear();
                 mWizard.POM.UnMappedUIElements.Clear();
 
+                mWizard.POM.Name = mWizard.IWindowExplorerDriver.GetActiveWindow().Title;
+
                 //mRequestedElementTypesDict = SeleniumDriver.GetFilteringCreteriaDict(mWizard.AutoMapElementTypesList);//TODO: need to be done diffrently- talk with Eliran
                 //mRequestedElementTagList = mRequestedElementTypesDict.Keys.Select(x => x.ToUpper()).ToList();
 

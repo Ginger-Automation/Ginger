@@ -96,6 +96,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();                    
                     break;
+
+                case EventType.LeavingForNextPage:
+                    //mWizard.POM.Name = ((AppWindow)xAgentControlUC.xAgentWindowsComboBox.SelectedItem).Title;
+                    break;
             }
         }
 
@@ -184,6 +188,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             xAutoMapElementTypesExpander.IsExpanded = true;
             xAutoMapElementTypesExpander.IsEnabled = true;
+            xAgentControlUC.xAgentConfigsExpander.IsExpanded = false;
+
             SetAutoMapElementTypes();
             xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
         }
