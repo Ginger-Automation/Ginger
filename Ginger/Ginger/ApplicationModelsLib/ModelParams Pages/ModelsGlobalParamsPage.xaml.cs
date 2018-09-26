@@ -180,14 +180,14 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 string NameAfterEdit = selectedGlobalAppModelParameter.PlaceHolder;
                 if (PlaceholderBeforeEdit != NameAfterEdit)
                 {
-                    if (System.Windows.MessageBox.Show("The Global Parameter name may be used in Solution items Value Expression, Do you want to automatically update all those Value Expression instances with the parameter name change?", "Update Global Parameter Value Expression Instances", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No) == MessageBoxResult.Yes)
+                    if (Reporter.ToUser(eUserMsgKeys.ParameterUpdate, "The Global Parameter name may be used in Solution items Value Expression, Do you want to automatically update all those Value Expression instances with the parameter name change?") == MessageBoxResult.Yes)
                     {
                         await Task.Run(() =>
                         {
                             List<string> ListObj = new List<string>() { PlaceholderBeforeEdit, NameAfterEdit };
                             UpdateModelGlobalParamVeWithNameChange(ListObj);
-                        });
-                        MessageBox.Show("Update finished successfully." + Environment.NewLine + "Please do not forget to save all modified Business Flows", "Update Global Parameter Value Expression Instances", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information, System.Windows.MessageBoxResult.OK);
+                        });                        
+                        Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Update finished successfully." + Environment.NewLine + "Please do not forget to save all modified Business Flows");
                     }
                 }
             }
@@ -276,8 +276,8 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             {
                 if (GAMP != CurrentGAMP && GAMP.PlaceHolder == CurrentGAMP.PlaceHolder)
                 {
-                    CurrentGAMP.PlaceHolder = PlaceholderBeforeEdit;
-                    System.Windows.MessageBox.Show("Please specify unique value", "Optional Value Already Exists", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                    CurrentGAMP.PlaceHolder = PlaceholderBeforeEdit;                    
+                    Reporter.ToUser(eUserMsgKeys.SpecifyUniqueValue);
                     return true;
                 }
             }
@@ -358,7 +358,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             if (xModelsGlobalParamsGrid.Grid.SelectedItems.Count > 0)
             {
                 string message = "After deletion there will be no way to restore deleted parameters.\nAre you sure that you want to delete the selected parameters?";
-                if (System.Windows.MessageBox.Show(message, "Delete", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.No) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.ParameterDelete, message) == MessageBoxResult.Yes)
                 {
                     List<GlobalAppModelParameter> selectedItemsToDelete = new List<GlobalAppModelParameter>();
                     foreach (GlobalAppModelParameter selectedParam in xModelsGlobalParamsGrid.Grid.SelectedItems)
@@ -374,7 +374,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             if (xModelsGlobalParamsGrid.Grid.Items.Count > 0)
             {
                 string message = "After deletion there will be no way to restore deleted parameters.\nAre you sure that you want to delete All parameters?";
-                if (System.Windows.MessageBox.Show(message, "Delete", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.No) == MessageBoxResult.Yes)
+                if (Reporter.ToUser(eUserMsgKeys.ParameterDelete, message) == MessageBoxResult.Yes)
                     while (xModelsGlobalParamsGrid.Grid.SelectedItems.Count > 0)
                         DeleteGlobalParam((RepositoryItemBase)xModelsGlobalParamsGrid.Grid.SelectedItems[0]);
             }
@@ -419,18 +419,18 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
             if (itemsSavedCount == 0)
             {
-                if(saveAll)
-                    System.Windows.MessageBox.Show("Nothing found to Save.", "Save All", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
-                else
-                    System.Windows.MessageBox.Show("Nothing found to Save from the selected Global Parameters.", "Save Selected Parameters", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                if (saveAll)                    
+                    Reporter.ToUser(eUserMsgKeys.SaveAll, "Nothing found to Save.");
+                else                    
+                    Reporter.ToUser(eUserMsgKeys.SaveSelected, "Nothing found to Save from the selected Global Parameters.");
 
             }
             else
             {
-                if (saveAll)
-                    System.Windows.MessageBox.Show("All Global Parameters have been saved", "Save All", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information, System.Windows.MessageBoxResult.OK);
-                else
-                    System.Windows.MessageBox.Show("Selected Global Parameter/s have been saved", "Save Selected", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information, System.Windows.MessageBoxResult.OK);
+                if (saveAll)                    
+                    Reporter.ToUser(eUserMsgKeys.SaveAll, "All Global Parameters have been saved");
+                else                    
+                    Reporter.ToUser(eUserMsgKeys.SaveSelected, "Selected Global Parameter/s have been saved");
             }
         }
 

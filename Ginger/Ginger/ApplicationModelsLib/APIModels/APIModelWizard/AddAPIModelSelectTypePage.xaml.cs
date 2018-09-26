@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Ginger.UserControls;
+using GingerCore;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
 using GingerWPF.BindingLib;
@@ -412,8 +413,8 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 // AddAPIModelWizard.NextEnabled = true;
             }
             catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "General Error Occurred", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
+            {                
+                Reporter.ToUser(eUserMsgKeys.FileOperationError, ex.Message);
                 error = error + Environment.NewLine + ex.Message;
                 xPreviewButton.Visibility = Visibility.Collapsed;
                 SourceRviewLable.Visibility = Visibility.Collapsed;
@@ -425,8 +426,8 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 AddAPIModelWizard.ProcessEnded();
                 xBrowseLoadButton.IsEnabled = true;
             }
-            if (string.IsNullOrEmpty(error))
-                System.Windows.MessageBox.Show("The File Loaded successfully", "Success", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information, System.Windows.MessageBoxResult.None);
+            if (string.IsNullOrEmpty(error))                
+                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Success : The File Loaded successfully");
         }
 
         private XmlDocument PreviewContent = null;

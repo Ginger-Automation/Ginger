@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -73,8 +74,8 @@ namespace Ginger.UserControlsLib.VisualFlow
         private void GraphEdge_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //TODO: move to Canvas to handle
-            SetHighlight(true);
-            MessageBox.Show("conn click");            
+            SetHighlight(true);                    
+            Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Conn click");
         }
 
         public void Draw()

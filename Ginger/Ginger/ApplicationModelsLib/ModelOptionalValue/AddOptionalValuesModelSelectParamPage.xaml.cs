@@ -132,7 +132,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     temp.CurrentValue = string.Empty;
                     temp.PlaceHolder = parm.Key;
                     temp.Description = string.Empty;
-                    temp.OptionalValuesList = new ObservableList<OptionalValue>() { new OptionalValue() { Value = "{Current Value}", IsDefault = true } };
+                    temp.OptionalValuesList = new ObservableList<OptionalValue>() { new OptionalValue { Value = "{Current Value}", IsDefault = true } };
                     SetOptionalValueList(parm, temp);
                     AddModelOptionalValuesWizard.GlobalParamsList.Add(temp);
                 }
@@ -150,7 +150,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 foreach (var val in parm.Value)
                 {
-                    temp.OptionalValuesList.Add(new OptionalValue() { Value = val });
+                    temp.OptionalValuesList.Add(new OptionalValue { Value = val });
                 }
             }            
         }

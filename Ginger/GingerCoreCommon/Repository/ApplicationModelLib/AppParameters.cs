@@ -9,7 +9,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib
     {
         public string ItemName { get; set; }
 
-        public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
+        public ObservableList<OptionalValue> OptionalValuesList { get; set; }
 
         public string OptionalValuesString { get; set; }
 

@@ -48,10 +48,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ePlatformType ActivityPlatform = GetActionPlatform();
             mPlatform = PlatformInfoBase.GetPlatformImpl(ActivityPlatform);
             ElementTypeComboBox.BindControl(mAction, ActUIElement.Fields.ElementType, mPlatform.GetPlatformUIElementsType());
-            ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, mPlatform.GetPlatformUIElementLocatorsList());
-            ElementLocateByComboBox.SelectedValue = Enum.GetName(typeof(eLocateBy), eLocateBy.POMElement);
+            ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, mPlatform.GetPlatformUIElementLocatorsList());           
             ShowPlatformSpecificPage();
             ShowControlSpecificPage();
+
+            if ((act.ElementType == eElementType.Unknown) && (act.ElementAction == ActUIElement.eElementAction.Unknown))
+            {
+                ElementLocateByComboBox.SelectedValue = Enum.GetName(typeof(eLocateBy), eLocateBy.POMElement);
+            }
         }
 
         private ePlatformType GetActionPlatform()

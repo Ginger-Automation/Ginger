@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using GingerCore;
 using GingerCoreNET.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
@@ -164,8 +165,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     AAMCompletedList=AAMTempList;
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "Failed to Parse the Swagger File" + AddAPIModelWizard.URL, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
+                {               
+                    Reporter.ToUser(eUserMsgKeys.ParsingError, "Failed to Parse the Swagger File" + AddAPIModelWizard.URL);
                     GingerCoreNET.ReporterLib.Reporter.ToLog(GingerCoreNET.ReporterLib.eLogLevel.ERROR, "Error Details: " + ex.Message + " Failed to Parse the Swagger file " + AddAPIModelWizard.URL);
                     parseSuccess = false;
                 }
@@ -197,8 +198,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     AAMCompletedList.Add(AAMTempList[0]);
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "Failed to Parse the XML" + XTF.FilePath, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
+                {                   
+                    Reporter.ToUser(eUserMsgKeys.ParsingError, "Failed to Parse the XML" + XTF.FilePath);
                     GingerCoreNET.ReporterLib.Reporter.ToLog(GingerCoreNET.ReporterLib.eLogLevel.ERROR, "Error Details: " + ex.Message + "Failed to Parse the XML" + XTF.FilePath);
                     parseSuccess = false;
                 }
@@ -229,8 +230,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     AAMCompletedList.Add(AAMTempList[0]);
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "Failed to Parse the JSon" + XTF.FilePath, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.ParsingError, "Failed to Parse the JSon" + XTF.FilePath);
                     GingerCoreNET.ReporterLib.Reporter.ToLog(GingerCoreNET.ReporterLib.eLogLevel.ERROR,"Error Details: " + ex.Message + " Failed to Parse the JSon " + XTF.FilePath);
                     parseSuccess = false;
                 }
@@ -253,8 +254,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 AAMSList = await Task.Run(() => WSDLP.ParseDocument(AddAPIModelWizard.URL));
             }
             catch (Exception ex)
-            {
-                MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "Failed to Parse the WSDL", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
+            {                
+                Reporter.ToUser(eUserMsgKeys.ParsingError, "Failed to Parse the WSDL");
                 parseSuccess = false;
             }
 
@@ -316,7 +317,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void IsSelected_FieldSelection_Click(object sender, RoutedEventArgs e)
         {
-            ObservableList<ApplicationAPIModel> CheckedList = General.ConvertListToObservableList(AddAPIModelWizard.AAMList.Where(x => x.IsSelected == true).ToList());
+            ObservableList<ApplicationAPIModel> CheckedList = GingerCore.General.ConvertListToObservableList(AddAPIModelWizard.AAMList.Where(x => x.IsSelected == true).ToList());
             //if(CheckedList.Count > 0)
             //    AddAPIModelWizard.NextEnabled = true;
             //else

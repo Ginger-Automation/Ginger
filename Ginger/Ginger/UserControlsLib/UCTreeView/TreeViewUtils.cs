@@ -177,9 +177,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + ImageFile));
             }
             catch
-            {
-                MessageBox.Show("Missing Image");
-
+            {               
+                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Missing Header Image");
             }
 
             //Image 2 i.e.: Source Control Image
