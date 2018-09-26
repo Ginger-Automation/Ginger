@@ -52,32 +52,36 @@ namespace GingerCore.ALM.QCRestAPI
 
             foreach (QCTestInstance testInstance in testInstances)
             {
-                testSet.Tests.Add(ImportTSTest(QCRestAPIConnect.GetTestCases(new List<string>() { testInstance.TestId })[0]));
+                testSet.Tests.Add(ImportTSTest(testInstance));
             }
 
             return testSet;
         }
 
-        public static QC.QCTSTest ImportTSTest(QCTestCase testCase)
+        public static QC.QCTSTest ImportTSTest(QCTestInstance testInstance)
         {
             QC.QCTSTest newTSTest = new QC.QCTSTest();
+            QCTestCase testCase = QCRestAPIConnect.GetTestCases(new List<string>() { testInstance.TestId })[0];
             string linkedTest = CheckLinkedTSTestName(testCase);
 
-            //Get the TC general details
-            if (linkedTest != null)
+            if (testInstance != null)
             {
-                //Linked TC
-                string[] linkTest = linkedTest.Split(';');
-                newTSTest.TestID = testCase.Id;
-                newTSTest.TestName = linkTest[0];
-                newTSTest.LinkedTestID = linkTest[1];
-            }
-            else
-            {
-                //Regular TC
-                newTSTest.TestID = testCase.Id;
-                newTSTest.TestName = testCase.Name;
-                newTSTest.LinkedTestID = testCase.TestId;
+                //Get the TC general details
+                if (linkedTest != null)
+                {
+                    //Linked TC
+                    string[] linkTest = linkedTest.Split(';');
+                    newTSTest.TestID = testInstance.Id;
+                    newTSTest.TestName = linkTest[0];
+                    newTSTest.LinkedTestID = linkTest[1];
+                }
+                else
+                {
+                    //Regular TC
+                    newTSTest.TestID = testInstance.Id;
+                    newTSTest.TestName = testInstance.Name;
+                    newTSTest.LinkedTestID = testInstance.TestId;
+                }
             }
 
             //Get the TC design steps
@@ -1071,16 +1075,15 @@ namespace GingerCore.ALM.QCRestAPI
         {
             QCTestCaseColl testCase = QCRestAPIConnect.GetTestCases(new List<string>() { testInstance.TestId });
 
-            if (testCase.Count >= 0)
+            string linkedTest = CheckLinkedTSTestName(testCase[0]);
+            if (linkedTest != null)
             {
-                QCTestCaseStepsColl testCaseSteps = GetListTSTestSteps(testCase[0]);
-
-                if (testCaseSteps.Count >= 0)
-                    return testCaseSteps[0].ElementsField["link-test"].ToString();
-                return "";
+                //Linked TC
+                string[] linkTest = linkedTest.Split(';');
+                return linkTest[1];
             }
-
-            return "";
+            else
+                return "";
         }
 
         private static QCRunColl GetListTSTestRuns(QCTestCase testCase)
