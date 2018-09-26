@@ -31,6 +31,7 @@ using Ginger.Reports;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCore;
 
 namespace Ginger.WindowExplorer
 {
@@ -168,8 +169,8 @@ namespace Ginger.WindowExplorer
         private void AddActionButton_Click(object sender, RoutedEventArgs e)
         {
             if (mActions.CurrentItem == null)
-            {
-                MessageBox.Show("Please select action to add from the list of available actions");
+            {                
+                Reporter.ToUser(eUserMsgKeys.AskToSelectAction);
                 return;
             }
 

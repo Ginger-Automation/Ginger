@@ -129,8 +129,8 @@ namespace GingerCore.Drivers.WindowsLib
 
                     break;
 
-                default:
-                    MessageBox.Show("Action is not implemented yet for control type " + controlType);
+                default:                    
+                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
                     break;
 
             }
