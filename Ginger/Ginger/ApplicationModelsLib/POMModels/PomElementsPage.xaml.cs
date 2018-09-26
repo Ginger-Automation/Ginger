@@ -358,8 +358,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            //if (!SetmWinExplorer())
-            //    return;
 
             if (mWinExplorer == null)
             {
@@ -389,8 +387,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            //if (!SetmWinExplorer())
-            //    return;
 
             if (mWinExplorer == null)
             {
@@ -409,9 +405,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
             }
-
-            //if (!SetmWinExplorer())
-            //    return;
 
             if (mWinExplorer == null)
             {

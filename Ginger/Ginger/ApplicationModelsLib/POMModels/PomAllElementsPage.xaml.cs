@@ -258,7 +258,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             mappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
-            await TestAllElementsAsync();
+            await TestAllElementsAsync().ConfigureAwait(false);
         }
 
 
