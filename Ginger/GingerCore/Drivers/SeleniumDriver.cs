@@ -4215,7 +4215,7 @@ namespace GingerCore.Drivers
             string name = e.GetAttribute("name");
             if (!string.IsNullOrEmpty(name))
             {
-                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended (usually unique)", Active = true });
+                list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
             }
             list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended (sensitive to page design changes)", Active = true, IsAutoLearned = true });
             string eClass = e.GetAttribute("class");
