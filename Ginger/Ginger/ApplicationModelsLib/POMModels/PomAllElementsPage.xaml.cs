@@ -238,13 +238,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        private async Task TestAllElementsClicked(object sender, RoutedEventArgs e)
+        private void TestAllElementsClicked(object sender, RoutedEventArgs e)
         {
 
             //Change Grid View
             
-
-
             if (PomAllElementsPage.DriverIsBusy)
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
@@ -258,7 +256,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             mappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
-            await TestAllElementsAsync().ConfigureAwait(false);
+            TestAllElementsAsync().ConfigureAwait(false);
         }
 
 
