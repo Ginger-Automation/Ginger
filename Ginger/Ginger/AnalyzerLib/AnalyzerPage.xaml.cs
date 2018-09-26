@@ -338,81 +338,104 @@ namespace Ginger.AnalyzerLib
             foreach (VariableBase var in AvailableAllVariables)
             {
                 if (usedVariables != null && (!usedVariables.Contains(var.Name)))
-                {
-                    AnalyzeAction aa = new AnalyzeAction();
-                    aa.Status = AnalyzerItemBase.eStatus.NeedFix;
-                    aa.ItemName = var.Name;
-                    aa.Description = var + " is Unused in Activity" + var.Description;
-                    aa.Details = variableSourceType;
-                    aa.mActivity = activity;
-                    aa.mBusinessFlow = BusinessFlow;
-                    aa.ItemParent = variableSourceName;                    
+                {                    
+                    if (obj.GetType().Equals(typeof(BusinessFlow)))
+                    {
+                        AnalyzeBusinessFlow aa = new AnalyzeBusinessFlow();
+                        aa.Status = AnalyzerItemBase.eStatus.NeedFix;
+                        aa.ItemName = var.Name;
+                        aa.Description = var + " is Unused in Business Flow : " + BusinessFlow.Name;
+                        aa.Details = variableSourceType;                        
+                        aa.mBusinessFlow = BusinessFlow;
+                        aa.ItemParent = variableSourceName;
 
-                    aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;    // we can autofix by delete, but don't want to                
-                    aa.IssueType = eType.Error;
-                    aa.FixItHandler = DeleteUnusedVariables;
-                    aa.Severity = eSeverity.Medium;
-                    IssuesList.Add(aa);
-                    
+                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;    // we can autofix by delete, but don't want to                
+                        aa.IssueType = eType.Error;
+                        aa.FixItHandler = DeleteUnusedVariables;
+                        aa.Severity = eSeverity.Medium;
+                        IssuesList.Add(aa);
+                    }                        
+                    else if (obj.GetType().Equals(typeof(Solution)))
+                    {
+                        AnalyzeSolution aa = new AnalyzeSolution();
+                        aa.Status = AnalyzerItemBase.eStatus.NeedFix;
+                        aa.ItemName = var.Name;
+                        aa.Description = var + " is Unused in Solution";
+                        aa.Details = variableSourceType;                       
+                        aa.ItemParent = variableSourceName;
+
+                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;    // we can autofix by delete, but don't want to                
+                        aa.IssueType = eType.Error;
+                        aa.FixItHandler = DeleteUnusedVariables;
+                        aa.Severity = eSeverity.Medium;
+                        IssuesList.Add(aa);
+                    }                        
+                    else
+                    {
+                        AnalyzeActivity aa = new AnalyzeActivity();                        
+                        aa.Status = AnalyzerItemBase.eStatus.NeedFix;
+                        aa.ItemName = var.Name;
+                        aa.Description = var + " is Unused in Activity : " + activity.ActivityName;
+                        aa.Details = variableSourceType;
+                        aa.mActivity = activity;
+                        aa.mBusinessFlow = BusinessFlow;
+                        aa.ItemParent = variableSourceName;
+
+                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;    // we can autofix by delete, but don't want to                
+                        aa.IssueType = eType.Error;
+                        aa.FixItHandler = DeleteUnusedVariables;
+                        aa.Severity = eSeverity.Medium;
+                        IssuesList.Add(aa);
+                    }                    
                 }
             }            
             AddIssues(IssuesList);
         }
         private static void DeleteUnusedVariables(object sender, EventArgs e)
         {
-            AnalyzeAction AA = (AnalyzeAction)sender;
+           // AnalyzeActivity AA = (AnalyzeActivity)sender;
 
-            if (AA.Details.Equals("Activity"))
+            if (sender.GetType().Equals(typeof(AnalyzeActivity)))
             {
-                Activity activity = AA.mActivity;
+                Activity activity = ((AnalyzeActivity)sender).mActivity;
                 foreach (VariableBase var in activity.Variables)
                 {
-                    if (var.Name.Equals(AA.ItemName))
+                    if (var.Name.Equals(((AnalyzeActivity)sender).ItemName))
                     {
                         activity.Variables.Remove(var);
                         activity.RefreshVariablesNames();
-                        AA.Status = eStatus.Fixed;
+                        ((AnalyzeActivity)sender).Status = eStatus.Fixed;
+                        break;
                     }
                 }
             }
-            else
+            else if(sender.GetType().Equals(typeof(AnalyzeBusinessFlow)))
             {
-                BusinessFlow BFlow= AA.mBusinessFlow;                
-                if (AA.Details.Equals("BusinessFlow"))
-                {                    
-                    foreach (VariableBase var in BFlow.Variables)
+                BusinessFlow BFlow= ((AnalyzeBusinessFlow)sender).mBusinessFlow;                                                   
+                foreach (VariableBase var in BFlow.Variables)
+                {
+                    if (var.Name.Equals(((AnalyzeBusinessFlow)sender).ItemName))
                     {
-                        if (var.Name.Equals(AA.ItemName))
-                        {
-                            BFlow.Variables.Remove(var);
-                            AA.Status = eStatus.Fixed;                            
-                        }
-                    }
-                }
-                else
-                {                 
-                    foreach (VariableBase var in BusinessFlow.SolutionVariables)
-                    {
-                        if (var.Name.Equals(AA.ItemName))
-                        {
-                            BusinessFlow.SolutionVariables.Remove(var);
-                            AA.Status = eStatus.Fixed;                                                                                    
-                        }
+                        BFlow.Variables.Remove(var);
+                        ((AnalyzeBusinessFlow)sender).Status = eStatus.Fixed;
+                        break;
                     }
                 }
             }
+            else if (sender.GetType().Equals(typeof(AnalyzeSolution)))
+            {                 
+                foreach (VariableBase var in BusinessFlow.SolutionVariables)
+                {
+                    if (var.Name.Equals(((AnalyzeSolution)sender).ItemName))
+                    {
+                        BusinessFlow.SolutionVariables.Remove(var);
+                        ((AnalyzeSolution)sender).Status = eStatus.Fixed;
+                        break;
+                    }
+                }
+            }            
         }
     
-
-
-        
-
-
-
-
-
-
-
         private void SetStatus(string txt)
         {
             // GingerCore.General.DoEvents();
