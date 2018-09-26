@@ -479,6 +479,9 @@
     </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
+    <Compile Include="SolutionWindows\ImportDataSourceFinishPage.xaml.cs">
+      <DependentUpon>ImportDataSourceFinishPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SolutionWindows\ImportDataSourceDisplayAllData.xaml.cs">
       <DependentUpon>ImportDataSourceDisplayAllData.xaml</DependentUpon>
     </Compile>
@@ -489,6 +492,9 @@
       <DependentUpon>ImportDataSourceSheetSelection.xaml</DependentUpon>
     </Compile>
     <Compile Include="SolutionWindows\ImportDataSourceFromExcelWizard.cs" />
+    <Compile Include="SolutionWindows\GridPage.xaml.cs">
+      <DependentUpon>GridPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WizardLib\ValidationDetails.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
     <Compile Include="GeneralValidationRules\GridValidationRule.cs" />
@@ -2798,6 +2804,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="SolutionWindows\ImportDataSourceFinishPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SolutionWindows\ImportDataSourceDisplayAllData.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2813,6 +2823,10 @@
     <Page Include="SolutionWindows\ImportDataSourceBrowseFile.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SolutionWindows\GridPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TestLib\WizardLib\MyWizardDetailsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -4320,6 +4334,7 @@
     <Resource Include="TestLib\WizardLib\Intro.md">
       <Generator>MSBuild:Compile</Generator>
     </Resource>
+    <Resource Include="SolutionWindows\ImportDataSourceIntro.md" />
     <None Include="UserControlsLib\TextEditor\Gherkin\GherkinHighlighting.xshd">
       <SubType>Designer</SubType>
     </None>

@@ -64,6 +64,7 @@ namespace GingerWPF.WizardLib
             {                
                 // send init event
                 ((IWizardPage)page.Page).WizardEvent(WizardEventArgs);
+                if((IWizardPage)page.AlternatePage != null) ((IWizardPage)page.AlternatePage).WizardEvent(WizardEventArgs);
 
                 // TODO: attach validation error handler
                 ((Page)page.Page).AddHandler(Validation.ErrorEvent, new RoutedEventHandler(ValidationErrorHandler));
@@ -153,6 +154,7 @@ namespace GingerWPF.WizardLib
             UpdatePrevNextButton();
 
             RefreshCurrentPage();
+            mWizard.AfterLoadEvent();
         }
 
 
@@ -320,9 +322,12 @@ namespace GingerWPF.WizardLib
         private void NavigationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mWizard.Pages.CurrentItem = NavigationList.SelectedItem;
-            tbSubTitle.Text= ((WizardPage)mWizard.Pages.CurrentItem).SubTitle;
-            UpdatePrevNextButton();
-            RefreshCurrentPage();
+            if (!HasValidationsIssues())
+            {
+                tbSubTitle.Text = ((WizardPage)mWizard.Pages.CurrentItem).SubTitle;
+                UpdatePrevNextButton();
+                RefreshCurrentPage(); 
+            }
         }
 
         public void ProcessStarted()

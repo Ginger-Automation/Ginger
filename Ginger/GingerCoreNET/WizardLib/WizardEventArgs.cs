@@ -31,7 +31,8 @@ namespace GingerWPF.WizardLib
         Finish,  // called after user click Finish and all pages passed validation
         Active, // The page became active can be from next/prev or click on the list of pages
         LeavingForNextPage,
-        Cancel// The page became active can be from next/prev or click on the list of pages
+        Cancel, // The page became active can be from next/prev or click on the list of pages
+        AfterLoad, // When the page is loaded then to perform activity
     }
    
     public class WizardEventArgs : EventArgs

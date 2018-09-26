@@ -16,92 +16,96 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
+using System;
+using System.Data;
+using System.Reflection;
+using System.Text;
 using System.Windows.Controls;
+using System.Windows.Input;
+using Ginger.ApplicationModelsLib.ModelOptionalValue;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerCore.DataSource;
-using System.Reflection;
-using Ginger.ApplicationModelsLib.ModelOptionalValue;
-using System.Data;
-using System.Collections.Generic;
-using System;
-using System.Text;
-using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.WizardLib;
 
 namespace Ginger.SolutionWindows
 {
     /// <summary>
-    /// Interaction logic for ImportDataSourceDisplayAllData.xaml
+    /// Interaction logic for ImportDataSourceFinishPage.xaml
     /// </summary>
-    public partial class ImportDataSourceDisplayAllData : Page, IWizardPage
+    public partial class ImportDataSourceFinishPage : Page, IWizardPage
     {
         public DataSourceBase DSDetails { get; set; }
-        ImportOptionalValuesForParameters impParams;
-        DataSet ExcelImportData = null;
-
-        /// <summary>
-        /// Gets sets the File path
-        /// </summary>
-        public string Path { get; set; }
-
-        /// <summary>
-        /// Gets sets the SheetName
-        /// </summary>
-        public string SheetName { get; set; }
-
-        /// <summary>
-        /// Gets sets the HeadingRow
-        /// </summary>
-        public bool HeadingRow
-        {
-            get
-            {
-                return Convert.ToBoolean(chkHeadingRow.IsChecked);
-            }
-        }
 
         /// <summary>
         /// This method is default wizard action event
         /// </summary>
         /// <param name="WizardEventArgs"></param>
-        public void WizardEvent(WizardEventArgs mWizardEventArgs)
+        public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            switch (mWizardEventArgs.EventType)
+            switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
                     break;
-                case EventType.Active:
-                    Path = ((ImportDataSourceBrowseFile)(mWizardEventArgs.Wizard.Pages[1].Page)).Path;
-                    SheetName = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).SheetName;
-
-                    impParams.ExcelFileName = Path;
-                    impParams.ExcelSheetName = SheetName;
+                case EventType.Active:                    
+                    FinishImport(WizardEventArgs);
+                    xLable.Content = "Data Imported Successfully!";
                     break;
             }
         }
 
         /// <summary>
-        /// Constrtuctor for ImportDataSourceDisplayAllData class
+        /// Constrtuctor for ImportDataSourceFinishPage class
         /// </summary>
-        public ImportDataSourceDisplayAllData()
+        public ImportDataSourceFinishPage(DataSourceBase mDSDetails)
         {           
             InitializeComponent();
-            impParams = new ImportOptionalValuesForParameters();
-            ShowRelevantPanel();
+            DSDetails = mDSDetails;
         }
 
         /// <summary>
-        /// This method is used to ShowRelevantPanel
+        /// This method is the final FinishImport method
         /// </summary>
-        /// <param name="FileType"></param>
-        private void ShowRelevantPanel()
+        public void FinishImport(WizardEventArgs WizardEventArgs)
         {
             try
             {
-                xExcelFileStackPanel.Visibility = Visibility.Visible;
-                xExcelViewDataButton.Visibility = Visibility.Visible;
-                xExcelGridSplitter.Visibility = Visibility.Collapsed;
+                Mouse.OverrideCursor = Cursors.Wait;
+                WizardEventArgs.Wizard.ProcessStarted();
+
+                ImportOptionalValuesForParameters impParams = new ImportOptionalValuesForParameters();
+                string path = ((ImportDataSourceBrowseFile)(WizardEventArgs.Wizard.Pages[1].Page)).Path;
+                string sheetName = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).SheetName;
+                bool headingRow = false;
+
+                if (((ImportDataSourceDisplayData)(WizardEventArgs.Wizard.Pages[3]).Page).IsAlternatePageToLoad())
+                {
+                    headingRow = ((ImportDataSourceDisplayAllData)(WizardEventArgs.Wizard.Pages[3]).AlternatePage).HeadingRow;
+                }
+                else
+                {
+                    headingRow = ((ImportDataSourceDisplayData)(WizardEventArgs.Wizard.Pages[3]).Page).HeadingRow;
+                }
+
+                impParams.ExcelFileName = path;
+                impParams.ExcelSheetName = sheetName;
+
+                DataSet ExcelImportData = ((ImportDataSourceDisplayData)(WizardEventArgs.Wizard.Pages[3]).Page).ExcelImportData;
+                if (ExcelImportData == null || ExcelImportData.Tables.Count <= 0)
+                {
+                    ExcelImportData = impParams.GetExcelAllSheetData(sheetName, headingRow);
+                }
+                foreach (DataTable dt in ExcelImportData.Tables)
+                {
+                    string cols = GetColumnNameListForTableCreation(dt);
+                    AddDefaultColumn(dt);
+                    string fileName = CreateTable(dt.TableName, cols);
+                    ((AccessDataSource)(DSDetails)).Init(fileName);
+                    ((AccessDataSource)(DSDetails)).SaveTable(dt); 
+                }
+
+                WizardEventArgs.Wizard.ProcessEnded();
+                Mouse.OverrideCursor = Cursors.Arrow;
             }
             catch (System.Exception ex)
             {
@@ -109,56 +113,6 @@ namespace Ginger.SolutionWindows
             }
         }
         
-        /// <summary>
-        /// This event is used to view the data from excel
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void xExcelViewDataButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {              
-                ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked));
-                if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
-                {
-                    _tabItems = new List<TabItem>();
-                    foreach (DataTable dt in ExcelImportData.Tables)
-                    {
-                        AddTabItem(dt.TableName, dt);
-                    }
-                    // bind tab control
-                    tabDynamic.DataContext = _tabItems;
-                    tabDynamic.SelectedIndex = 0;
-                }
-            }
-            catch (System.Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
-            }
-        }
-
-        private List<TabItem> _tabItems;
-        /// <summary>
-        /// This method will return the tab
-        /// </summary>
-        /// <returns></returns>
-        private TabItem AddTabItem(string name, DataTable dt)
-        {
-            int count = _tabItems.Count;
-
-            // create new tab item
-            TabItem tab = new TabItem();
-            tab.Header = string.Format("{0}", name);
-            tab.Name = string.Format("{0}", name);
-
-            var stackPanel = new StackPanel();
-            stackPanel.Children.Add(new GridPage() { ExcelData = dt });
-            tab.Content = stackPanel;
-
-            _tabItems.Add(tab);
-            return tab;
-        }
-
         /// <summary>
         /// This method is used to get the columnList for exporting the parameters to datasource
         /// </summary>
@@ -192,7 +146,7 @@ namespace Ginger.SolutionWindows
         {
             try
             {
-                if(!dataTable.Columns.Contains("GINGER_ID"))
+                if (!dataTable.Columns.Contains("GINGER_ID"))
                 {
                     dataTable.Columns.Add("GINGER_ID");
                 }
@@ -248,7 +202,7 @@ namespace Ginger.SolutionWindows
             }
             return fileName;
         }
-               
+
         /// <summary>
         /// This method is used to cehck whether alternate page is required to load
         /// </summary>

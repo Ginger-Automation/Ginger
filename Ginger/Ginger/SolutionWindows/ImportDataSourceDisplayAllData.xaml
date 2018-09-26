@@ -1,4 +1,4 @@
-﻿<Page x:Class="Ginger.DataSource.ImportDataSourceDisplayAllData"
+﻿<Page x:Class="Ginger.SolutionWindows.ImportDataSourceDisplayAllData"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -35,28 +35,16 @@
                 </Grid.ColumnDefinitions>
                 
                 <DockPanel Grid.Row="0" Grid.ColumnSpan="3">
-                    <CheckBox VerticalAlignment="Center" x:Name="chkHeadingRow" Content="Sheet first row as Column name" IsChecked="True" Margin="5,23,20,0" />
-                    <usercontrols:ucButton x:Name="xExcelViewDataButton" ToolTip="View All Data" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="View" Click="xExcelViewDataButton_Click"  HorizontalAlignment="Left"  Margin="0,20,0,0"/>
+                    <CheckBox VerticalAlignment="Center" x:Name="chkHeadingRow" Content="Sheet first row as Column name" IsChecked="True"  />
+                    <usercontrols:ucButton x:Name="xExcelViewDataButton" ToolTip="View All Data" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="View" Click="xExcelViewDataButton_Click"  HorizontalAlignment="Left"  />
                 </DockPanel>
 
-                <GridSplitter x:Name="xExcelGridSplitter" Grid.Row="1" Grid.ColumnSpan="3" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource @Skin1_ColorA}" IsEnabled="False" Margin="0,5,0,5" />
+                <GridSplitter x:Name="xExcelGridSplitter" Grid.Row="1" Grid.ColumnSpan="3" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource @Skin1_ColorA}" IsEnabled="False" Margin="0,0,0,5" />
 
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">
-                    <DockPanel x:Name="xExcelDataGridDockPanel" Margin="0,5,5,5">
-                        <Label Style ="{StaticResource @InputFieldLabelStyle}" Content="Excel Data:" DockPanel.Dock="Left"></Label>
-                        <DataGrid x:Name="xExcelDataGrid" DockPanel.Dock="Top" Height="180" VerticalScrollBarVisibility="Visible" >
-                            <DataGrid.ColumnHeaderStyle>
-                                <Style TargetType="{x:Type DataGridColumnHeader}">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="DataGridColumnHeader">
-                                                <ContentPresenter RecognizesAccessKey="False"></ContentPresenter>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </DataGrid.ColumnHeaderStyle>
-                        </DataGrid>
+                    <DockPanel x:Name="xExcelDataGridDockPanel" Margin="0,5,5,5">                        
+                        <TabControl Name="tabDynamic" Height="340" ItemsSource="{Binding}" >
+                        </TabControl>
                     </DockPanel>
                 </StackPanel>
             </Grid>

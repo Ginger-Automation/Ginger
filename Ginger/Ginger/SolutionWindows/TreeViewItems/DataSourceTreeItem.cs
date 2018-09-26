@@ -147,9 +147,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 WizardWindow.ShowWizard(new ImportDataSourceFromExcelWizard(DSDetails));
-                //ImportDataSourceFromExcelFile im = new ImportDataSourceFromExcelFile();
-                //im.DSDetails = DSDetails;
-                //im.ShowAsWindow(eWindowShowStyle.Dialog);
                 RefreshTreeItems();
             }
             catch (Exception ex)

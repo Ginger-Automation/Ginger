@@ -16,27 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.IO;
 using GingerCore;
 using GingerCore.DataSource;
 using System.Reflection;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using System.Data;
-using System.Collections.Generic;
 using System;
-using System.Text;
-using Ginger.SolutionWindows.TreeViewItems;
-using Amdocs.Ginger.ValidationRules;
-using System.Windows.Media;
-using System.Windows.Data;
-using GingerWPF;
 using GingerWPF.WizardLib;
+using System.Windows.Input;
 
-namespace Ginger.DataSource
+namespace Ginger.SolutionWindows
 {
     /// <summary>
     /// Interaction logic for ImportDataSourceDisplayData.xaml
@@ -46,6 +37,7 @@ namespace Ginger.DataSource
         public DataSourceBase DSDetails { get; set; }
         ImportOptionalValuesForParameters impParams;
         public DataSet ExcelImportData = null;
+        WizardEventArgs mWizardEventArgs;
 
         /// <summary>
         /// Gets sets the File path
@@ -74,13 +66,16 @@ namespace Ginger.DataSource
         /// <param name="WizardEventArgs"></param>
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
+            mWizardEventArgs = WizardEventArgs;
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
                     break;
-                case EventType.Active:
-                    Path = ((ImportDataSourceBrowseFile)(WizardEventArgs.Wizard.Pages[0].Page)).Path;
-                    SheetName = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[1].Page)).SheetName;
+                case EventType.Active:                    
+                    Path = ((ImportDataSourceBrowseFile)(WizardEventArgs.Wizard.Pages[1].Page)).Path;
+                    SheetName = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).SheetName;                    
+                    break;
+                case EventType.AfterLoad:
                     DisplayData();
                     break;
             }
@@ -139,6 +134,9 @@ namespace Ginger.DataSource
         {
             try
             {
+                Mouse.OverrideCursor = Cursors.Wait;
+                mWizardEventArgs.Wizard.ProcessStarted();
+
                 impParams.ExcelFileName = Path;
                 impParams.ExcelSheetName = SheetName;
                 ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked));
@@ -150,6 +148,9 @@ namespace Ginger.DataSource
                         xExcelDataGridDockPanel.Visibility = Visibility.Visible;
                     }
                 }
+
+                mWizardEventArgs.Wizard.ProcessEnded();
+                Mouse.OverrideCursor = Cursors.Arrow;
             }
             catch (System.Exception ex)
             {

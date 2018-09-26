@@ -32,7 +32,7 @@ using Amdocs.Ginger.ValidationRules;
 using GingerWPF;
 using GingerWPF.WizardLib;
 
-namespace Ginger.DataSource
+namespace Ginger.SolutionWindows
 {
     /// <summary>
     /// Interaction logic for ImportDataSourceBrowseFile.xaml

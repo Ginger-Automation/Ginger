@@ -36,7 +36,7 @@ using System.Windows.Data;
 using GingerWPF;
 using GingerWPF.WizardLib;
 
-namespace Ginger.DataSource
+namespace Ginger.SolutionWindows
 {
     /// <summary>
     /// Interaction logic for ImportDataSourceSheetSelection.xaml
@@ -66,7 +66,7 @@ namespace Ginger.DataSource
                 case EventType.Init:                    
                     break;
                 case EventType.Active:
-                    Path = ((ImportDataSourceBrowseFile)(WizardEventArgs.Wizard.Pages[0].Page)).Path;
+                    Path = ((ImportDataSourceBrowseFile)(WizardEventArgs.Wizard.Pages[1].Page)).Path;
                     if (!string.IsNullOrEmpty(Path))
                     {
                         impParams.ExcelFileName = Path;
