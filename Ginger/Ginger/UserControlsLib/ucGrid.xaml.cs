@@ -1992,7 +1992,6 @@ public void RemoveCustomView(string viewName)
         {
             CantBeEmpty,
             OnlyOneItem,
-            AtLeastOneItemIsSelected,
         }
 
         public List<eUcGridValidationRules> ValidationRules = new List<eUcGridValidationRules>();
@@ -2010,19 +2009,6 @@ public void RemoveCustomView(string viewName)
 
                     case eUcGridValidationRules.OnlyOneItem:
                         if (Grid.Items.Count != 1) validationRes= true;
-                        break;
-
-                    case eUcGridValidationRules.AtLeastOneItemIsSelected:
-                        bool hasAtLeaseOneSelectedItem = false;
-                        foreach(var item in DataSourceList)
-                        {
-                            if (item is UIElementFilter && ((UIElementFilter)item).Selected)
-                            {
-                                hasAtLeaseOneSelectedItem = true;
-                                break;
-                            }
-                        }
-                        validationRes = !hasAtLeaseOneSelectedItem;
                         break;
                 }
             }

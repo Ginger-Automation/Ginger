@@ -102,14 +102,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void AddValidations()
         {
             xAgentControlUC.AddValidationRule(new AgentControlValidationRule(AgentControlValidationRule.eAgentControlValidationRuleType.AgentIsMappedAndRunning));
-            xAutoMapElementTypesGrid.ValidationRules.Clear();
-            xAutoMapElementTypesGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.AtLeastOneItemIsSelected);
         }
 
         private void RemoveValidations()
         {
             xAgentControlUC.RemoveValidations(ucAgentControl.SelectedAgentProperty);
-            xAutoMapElementTypesGrid.ValidationRules.Clear();
         }
 
         private void SetAutoMapElementTypes()
