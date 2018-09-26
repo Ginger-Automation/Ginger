@@ -295,9 +295,9 @@ namespace Ginger.AnalyzerLib
 
         public void ReportUnusedVariables(object obj, List<string> usedVariables)
         {
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
-            Activity activity = null;
-            BusinessFlow BusinessFlow = null;
+            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();            
+            BusinessFlow BusinessFlow = App.BusinessFlow;
+            Activity activity = BusinessFlow.Activities[0];
             string variableSourceType = "";
             string variableSourceName = "";
             ObservableList<VariableBase> AvailableAllVariables = new ObservableList<VariableBase>();
@@ -308,31 +308,28 @@ namespace Ginger.AnalyzerLib
                 {
                     AvailableAllVariables = BusinessFlow.Variables;
                     variableSourceType = "BusinessFlow";
-                    variableSourceName = BusinessFlow.Name;
+                    variableSourceName = BusinessFlow.Name;                    
+                }
+            }
+            else if (typeof(Activity).Equals(obj.GetType()))
+            {
+                activity = (Activity)obj;
+                if (activity.Variables.Count > 0)
+                {
+                    AvailableAllVariables = activity.Variables;
+                    variableSourceType = "Activity";
+                    variableSourceName = activity.ActivityName;                    
                 }
             }
             else
             {
-                if (typeof(Activity).Equals(obj.GetType()))
-                {
-                    activity = (Activity)obj;
-                    if (activity.Variables.Count > 0)
-                    {
-                        AvailableAllVariables = activity.Variables;
-                        variableSourceType = "Activity";
-                        variableSourceName = activity.ActivityName;
-                    }
-                }
-                else
-                {
-                    Solution solution = (Solution)obj;
-                    AvailableAllVariables = solution.Variables;
-                    variableSourceType = "Solution";
-                    variableSourceName = solution.Name;
-                    BusinessFlow = App.LocalRepository.GetSolutionBusinessFlows()[0];
-
-                }
+                Solution solution = (Solution)obj;
+                AvailableAllVariables = solution.Variables;
+                variableSourceType = "Solution";
+                variableSourceName = solution.Name;                
+                activity = BusinessFlow.Activities[0];
             }
+            
 
 
             foreach (VariableBase var in AvailableAllVariables)
@@ -393,8 +390,6 @@ namespace Ginger.AnalyzerLib
         }
         private static void DeleteUnusedVariables(object sender, EventArgs e)
         {
-           // AnalyzeActivity AA = (AnalyzeActivity)sender;
-
             if (sender.GetType().Equals(typeof(AnalyzeActivity)))
             {
                 Activity activity = ((AnalyzeActivity)sender).mActivity;
@@ -655,11 +650,12 @@ namespace Ginger.AnalyzerLib
         private void SaveAllFixedItems()
         {
             Dictionary<BusinessFlow, List<AnalyzerItemBase>> itemsWhichWereSaved = new Dictionary<BusinessFlow, List<AnalyzerItemBase>>();
+            Solution solution = null;
             foreach (AnalyzerItemBase AI in mIssues)
             {
                 if (AI.Status == AnalyzerItemBase.eStatus.Fixed)
                 {
-                    BusinessFlow bs = null;
+                    BusinessFlow bs = null;                    
                     if (AI.GetType() == typeof(AnalyzeBusinessFlow))
                     {
                         bs = ((AnalyzeBusinessFlow)AI).mBusinessFlow;
@@ -671,17 +667,18 @@ namespace Ginger.AnalyzerLib
                     else if (AI.GetType() == typeof(AnalyzeAction))
                     {
                         bs = ((AnalyzeAction)AI).mBusinessFlow;
-                    }
+                    }                   
                     //TODO: add support for Run Set save
-
-                    //using Dic so each BF will be saved only once
-                    if (itemsWhichWereSaved.ContainsKey(bs) == false)
-                        itemsWhichWereSaved.Add(bs, new List<AnalyzerItemBase>() { AI });
-                    else
-                        itemsWhichWereSaved[bs].Add(AI);
+                    //using Dic so each BF will be saved only once  
+                    if(bs!=null)
+                    {
+                        if (itemsWhichWereSaved.ContainsKey(bs) == false)
+                            itemsWhichWereSaved.Add(bs, new List<AnalyzerItemBase>() { AI });
+                        else
+                            itemsWhichWereSaved[bs].Add(AI);
+                    }
                 }
-            }
-
+            }            
             //do Bf's Save
             foreach (KeyValuePair<BusinessFlow, List<AnalyzerItemBase>> bfToSave in itemsWhichWereSaved)
             {
@@ -693,6 +690,8 @@ namespace Ginger.AnalyzerLib
                         ai.Status = AnalyzerItemBase.eStatus.FixedSaved;
                 }
             }
+            
+
         }
 
         private void FixSelectedItems()
