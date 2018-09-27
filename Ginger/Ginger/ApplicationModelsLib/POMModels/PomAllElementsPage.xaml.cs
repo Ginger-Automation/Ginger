@@ -53,10 +53,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-
-
         public PomElementsPage mappedUIElementsPage;
         public PomElementsPage unmappedUIElementsPage;
 

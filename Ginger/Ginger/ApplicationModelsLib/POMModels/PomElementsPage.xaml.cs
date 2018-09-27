@@ -347,19 +347,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
-            if (mAgent.Driver.IsDriverBusy)
+            if (!ValidateDriverAvalability())
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
             }
-
-
-            if (mWinExplorer == null)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
-                return;
-            }
-                
 
             mWinExplorer.HighLightElement(mMainElementsGridCurrentItem, true);
         }
@@ -376,16 +367,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void TestElementButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (mAgent.Driver.IsDriverBusy)
+            if (!ValidateDriverAvalability())
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-
-
-            if (mWinExplorer == null)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
                 return;
             }
 
@@ -395,19 +378,30 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void TestAllElementsLocators(object sender, RoutedEventArgs e)
         {
-            if (mAgent.Driver.IsDriverBusy)
+            if (!ValidateDriverAvalability())
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-
-            if (mWinExplorer == null)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
                 return;
             }
 
             mWinExplorer.TestElementLocators(mLocators);
+        }
+
+        private bool ValidateDriverAvalability()
+        {
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                return false;
+            }
+
+            if (mAgent.Driver.IsDriverBusy)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                return false;
+            }
+
+            return true;
+
         }
 
     }

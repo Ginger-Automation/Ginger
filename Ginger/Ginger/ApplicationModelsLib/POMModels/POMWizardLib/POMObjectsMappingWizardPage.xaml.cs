@@ -61,32 +61,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             ElementInfo EI = ((ObservableList<ElementInfo>)sender).Last();
 
-            if (i == 20)
-            {
+            mWizard.IWindowExplorerDriver.UpdateElementInfoFields(EI);
+            EI.Locators = mWizard.IWindowExplorerDriver.GetElementLocators(EI);
+            EI.Properties = mWizard.IWindowExplorerDriver.GetElementProperties(EI);
+            EI.ElementName = GetBestElementName(EI);
+            EI.WindowExplorer = mWizard.IWindowExplorerDriver;
 
+
+            if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
+            {
+                mWizard.POM.MappedUIElements.Add(EI);
             }
-
-            try
+            else
             {
-                mWizard.IWindowExplorerDriver.UpdateElementInfoFields(EI);
-                EI.Locators = mWizard.IWindowExplorerDriver.GetElementLocators(EI);
-                EI.Properties = mWizard.IWindowExplorerDriver.GetElementProperties(EI);
-                EI.ElementName = GetBestElementName(EI);
-                EI.WindowExplorer = mWizard.IWindowExplorerDriver;
-
-
-                if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
-                {
-                    mWizard.POM.MappedUIElements.Add(EI);
-                }
-                else
-                {
-                    mWizard.POM.UnMappedUIElements.Add(EI);
-                }
-            }
-            catch (Exception ex)
-            {
-
+                mWizard.POM.UnMappedUIElements.Add(EI);
             }
 
 
@@ -136,7 +124,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (!mWizard.IsLearningWasDone)
             {
                 mWizard.ProcessStarted();
-                mWizard.Agent.Driver.IsDriverBusy = true;
                 xStopLoadButton.Visibility = Visibility.Visible;
                 xReLearnButton.Visibility = Visibility.Collapsed;
                
@@ -146,7 +133,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mWizard.IsLearningWasDone = await GetElementsFromPage();
                 xStopLoadButton.Visibility = Visibility.Collapsed;
                 xReLearnButton.Visibility = Visibility.Visible;
-                mWizard.Agent.Driver.IsDriverBusy = false;
                 mWizard.ProcessEnded();
             }
         }

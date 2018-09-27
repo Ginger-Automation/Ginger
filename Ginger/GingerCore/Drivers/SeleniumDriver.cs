@@ -3448,7 +3448,7 @@ namespace GingerCore.Drivers
 
         List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
-            IsDriverBusy = true;
+            mIsDriverBusy = true;
 
             try
             {
@@ -3467,7 +3467,7 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                IsDriverBusy = false;
+                mIsDriverBusy = false;
             }
 
         }
@@ -6316,6 +6316,7 @@ namespace GingerCore.Drivers
 
         ElementInfo IXPath.GetNextSibling(ElementInfo EI)
         {
+            mIsDriverBusy = true;
             SwitchFrameFromCurrent(EI);
             IWebElement childElement = Driver.FindElement(By.XPath(EI.XPath));
             IWebElement parentElement = childElement.FindElement(By.XPath(".."));
