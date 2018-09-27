@@ -384,16 +384,11 @@ public class XPathHelper
 			return null;
 		}
 		Container container =currentWindow;
-		String [] pathNodes=multipleProperties.split("/");
-		
-		for(String node:pathNodes)
-		{
-			if(node.equals(currentWindow.getName()) || node.isEmpty()) continue;
-			if(node.startsWith("[["))
+
+		if(multipleProperties.startsWith("[["))
 			{
-				container=(Container)GetNodeComponent(container,"ByMultiProperty",node);
+				container=(Container)GetNodeComponent(container,"ByMultiProperty",multipleProperties);
 			}
-		}
 		
 		return container;
 	}
