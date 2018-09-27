@@ -84,13 +84,6 @@ namespace GingerWPF.WizardLib
             CurrentWizardWindow = this;            
         }
 
-        //private void UpdateFinishButton()
-        //{
-        //    FinishButton.IsEnabled = false;
-        //    if (mValidationErrors.Count > 0) return;
-        //    FinishButton.IsEnabled = true;
-        //}
-
         ~WizardWindow()
         {
             CurrentWizardWindow = null;
