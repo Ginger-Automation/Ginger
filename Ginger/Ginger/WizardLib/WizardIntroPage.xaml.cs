@@ -38,14 +38,21 @@ namespace Ginger.WizardLib
             string txt = GetMarkDown(location);
             string[] lines = txt.Split(Environment.NewLine.ToCharArray());
             TextBlockHelper TBH = new TextBlockHelper(xIntroTextBlock);
+            TBH.AddLineBreak();
             SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorA")).ToString());
             foreach (string line in lines)
             {
                 string l = line.Replace("```$GingerCore.eTermResKey.BusinessFlow$```", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
 
+                //Remove BOM (byte-order mark) Char if exists
+                if (l.StartsWith(Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble()), StringComparison.Ordinal))
+                {
+                    l = l.Replace(Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble()), "");
+                }
+
                 if (l.StartsWith("### "))
                 {
-                    l = line.Substring(4);
+                    l = l.Substring(4);
                     TBH.AddFormattedText(l, foregroundColor, true);
                 }
                 else if(l.Length == 0)
@@ -56,10 +63,7 @@ namespace Ginger.WizardLib
                 {
                     TBH.AddFormattedText(l, foregroundColor);
                 }
-                
             }
-            
-            // xIntroTextBlock.Text = GetMarkDown(location);
         }
 
         public string GetMarkDown(string location)
