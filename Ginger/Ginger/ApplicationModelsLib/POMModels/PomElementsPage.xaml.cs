@@ -209,6 +209,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             ElementInfo EI = new ElementInfo();
+            EI.IsAutoLearned = false;
             mPOM.MappedUIElements.Add(EI);
             mPOM.MappedUIElements.CurrentItem = EI;
             xMainElementsGrid.ScrollToViewCurrentItem();

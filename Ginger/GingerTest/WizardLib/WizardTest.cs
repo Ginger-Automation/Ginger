@@ -77,7 +77,7 @@ namespace GingerTest.WizardLib
             //Assert
             Assert.IsTrue(nextButtonEnabled, "Next button is enabled");
             Assert.IsFalse(prevButtonEnabled, "Prev button is disabled");
-            Assert.IsFalse(finishButtonEnabled, "Finish button is disabled");
+            Assert.IsTrue(finishButtonEnabled, "Finish button is enabled");
             Assert.IsFalse(WizardOpen, "Wizard was closed");            
         }
 
