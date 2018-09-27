@@ -2993,6 +2993,7 @@
     </Content>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_16x16.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_32x32.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>

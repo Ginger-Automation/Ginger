@@ -96,6 +96,7 @@ namespace Ginger
                 Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
 
                 //Main Menu                
+                xGingerIconImg.ToolTip = App.AppFullProductName + Environment.NewLine + "Version " + App.AppVersion;
                 SetSolutionDependedUIElements();
 
                 //Status Bar            
@@ -157,22 +158,36 @@ namespace Ginger
             {
                 //Insert
                 int insertIndex = xSolutionSelectionMainMenuItem.Items.IndexOf(xRecentSolutionsMenuItem) + 1;
-                foreach (Solution sol in App.UserProfile.RecentSolutionsAsObjects)
+                if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
-                    MenuItem mi = new MenuItem();
-                    mi.Style = (Style)TryFindResource("$MenuItemStyle_ButtonSubMenuItem");
-                    mi.Header = sol.Name;
-                    mi.ToolTip = sol.Folder;
-                    mi.Tag = sol;
-                    mi.Click += RecentSolutionSelection_Click;
-                    xSolutionSelectionMainMenuItem.Items.Insert(insertIndex, mi);
-                    insertIndex++;
+                    xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
+
+                    foreach (Solution sol in App.UserProfile.RecentSolutionsAsObjects)
+                    {
+                        MenuItem mi = new MenuItem();
+                        mi.Style = (Style)TryFindResource("$MenuItemStyle_ButtonSubMenuItem");
+                        mi.Header = sol.Name;
+                        mi.ToolTip = sol.Folder;
+                        mi.Tag = sol;
+                        mi.Click += RecentSolutionSelection_Click;
+                        xSolutionSelectionMainMenuItem.Items.Insert(insertIndex, mi);
+                        insertIndex++;
+                    }
+                }
+                else
+                {
+                    xRecentSolutionsMenuItem.Visibility = Visibility.Collapsed;
                 }
             }
         }
 
         private void RecentSolutionsObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
+            {
+                xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
+            }
+
             if (xRecentSolutionsMenuItem.Tag != null) //means it is expanded
             {
                 SetRecentSolutionsAsMenuItems();
