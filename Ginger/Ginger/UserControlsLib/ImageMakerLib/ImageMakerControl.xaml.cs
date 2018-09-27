@@ -436,9 +436,6 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.ShareExternal:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ShareSquareOutline);
                     break;
-                case eImageType.Download:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
-                    break;
                 case eImageType.Filter:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Filter);
                     break;

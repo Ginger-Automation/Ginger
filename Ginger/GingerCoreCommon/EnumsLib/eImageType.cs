@@ -194,9 +194,7 @@ namespace Amdocs.Ginger.Common.Enums
         Application,
         OpenFolder,
         Check,
-        Bug,
-        DataSource,
-        PluginPackage,
+        Bug,                
         PlusSquare,
     }
 }
