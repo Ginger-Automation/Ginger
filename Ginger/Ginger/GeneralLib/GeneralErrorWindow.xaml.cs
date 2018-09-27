@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore;
 using System;
 using System.Windows;
 
@@ -56,8 +57,8 @@ namespace Ginger.GeneralLib
 
         private void CopyToClipboardButton_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(FullInfoTextBox.Text);
-            MessageBox.Show("Error Information copied to Clipboard");
+            Clipboard.SetText(FullInfoTextBox.Text);            
+            Reporter.ToUser(eUserMsgKeys.CopiedErrorInfo);
         }
     }
 }
