@@ -1714,11 +1714,12 @@ private TreePath SearchTreeNodes(String locateValue, JTree tree) {
 	int startNodeNumber = 0;
 	boolean nodeFound = false; 
 	String[] nodes = locateValue.split("/");					
-	for (String node : nodes)
+	for (int nodeNumber = 0; nodeNumber <= nodes.length - 1; nodeNumber++)
 	{
+		String node = nodes[nodeNumber];
 		startNodeNumber = (treePath == null ? 0 : (tree).getRowForPath(treePath));
 		(tree).expandRow(startNodeNumber);
-		for(int i = startNodeNumber; i <= ((tree).getRowCount() - 1); i++)
+		for(int row = startNodeNumber; row <= ((tree).getRowCount() - 1); row++)
 		{
 			if(nodeFound)
 			{
@@ -1726,15 +1727,33 @@ private TreePath SearchTreeNodes(String locateValue, JTree tree) {
 			}
 			else
 			{
-				treePath = (tree).getNextMatch(node.trim(), i, Position.Bias.Forward);
+				treePath = (tree).getNextMatch(node.trim(), row, Position.Bias.Forward);
 				
 				if(treePath != null)
 				{
 					DefaultMutableTreeNode treeNode =(DefaultMutableTreeNode) treePath.getPath()[1];
 					String userObject =(String) treeNode.getUserObject();
-					if(userObject.equals(locateValue))
+					if(userObject.equalsIgnoreCase(node))
 					{
 						nodeFound = true;
+						if(nodes.length > 1)
+						{
+							String nextNode = nodes[nodeNumber+1];
+							TreeNode childNodes = (TreeNode) treePath.getLastPathComponent();
+							Enumeration<?> children =  childNodes.children();
+							while(children.hasMoreElements())
+							{
+								DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
+								userObject = (String) child.getUserObject();
+								if(userObject.equalsIgnoreCase(nextNode))
+								{
+									(tree).expandRow((tree).getRowForPath(treePath));
+								 	Object[] nodePath = child.getPath();
+								 	treePath = new TreePath(nodePath);
+								}
+							}
+						}
+						
 					}
 					else
 					{
@@ -1744,7 +1763,7 @@ private TreePath SearchTreeNodes(String locateValue, JTree tree) {
 						{
 							DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
 							userObject = (String) child.getUserObject();
-							if(userObject.equals(locateValue))
+							if(userObject.equalsIgnoreCase(node))
 							{
 								nodeFound = true;
 								(tree).expandRow((tree).getRowForPath(treePath));
@@ -1752,8 +1771,8 @@ private TreePath SearchTreeNodes(String locateValue, JTree tree) {
 							 	treePath = new TreePath(nodePath);
 							}
 						}
-						
 					}
+
 				}
 				
 			}
