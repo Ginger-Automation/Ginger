@@ -1,9 +1,9 @@
 ﻿### What is Agent?
             
-"Agent are serving as proxy with the application being automated or application under test.", foregroundColor);           
+Agents are serving as proxy with the application being automated or application under test."
                        
            
-### How Agents Been Defined?", foregroundColor, true);
+### How Agents Been Defined?
             
 Agents are separated by their Platform (like: Web, Mobile, Java, etc.) and each Agent is supposed to be used for different type of tested application under the same Platform type.
             

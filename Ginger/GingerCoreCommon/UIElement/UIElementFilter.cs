@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -23,9 +23,9 @@ namespace Amdocs.Ginger.Common.UIElement
     public class UIElementFilter: INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public UIElementFilter(eElementType elementType, string elementExtraInfo)
+        public UIElementFilter(eElementType elementType, string elementExtraInfo, bool isSelected = false)
         {
-            Selected = false;
+            Selected = isSelected;
             ElementType = elementType;
             ElementExtraInfo = elementExtraInfo;
         }
