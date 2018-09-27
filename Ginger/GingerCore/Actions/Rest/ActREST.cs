@@ -115,6 +115,15 @@ namespace GingerCore.Actions.REST
 
         public bool mUseTemplateFile = true;
 
+        private HttpWebResponse WebReqResponse = null;
+        public HttpStatusCode ResponseCode
+        {
+            get
+            {
+              return  WebReqResponse.StatusCode;
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public bool UseTemplateFile
         {
@@ -435,7 +444,6 @@ namespace GingerCore.Actions.REST
                 // Write the data bytes in the request stream
 
 
-                HttpWebResponse WebReqResponse = null;
                 //Get response from server
                 try
                 {
@@ -458,6 +466,7 @@ namespace GingerCore.Actions.REST
                     base.Status=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     base.Error = WE.Message;
                 }
+                  
 
                 }
                 if (CookieMode != eCookieMode.None)
