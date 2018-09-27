@@ -244,15 +244,7 @@ namespace GingerCore.Drivers
                         {
                       
                             ((mshtml.HTMLAreaElement)el).attachEvent("onclick", h);
-                        }
-                        //else
-                        //{
-                        //    //Replacing msgbox with Reporter.ToUser
-                        //        //System.Windows.MessageBox.Show("Unknown link type");
-                        //   // Reporter.ToUser(eUserMsgKeys.HookLinkEventError);
-                        //    //End
-                        //    //TODO: handle if messgae apear
-                        //}
+                        }                       
                     }
             }
         }
@@ -2054,8 +2046,8 @@ namespace GingerCore.Drivers
         private void SaveMHTButton_Click(object sender, RoutedEventArgs e)
         {
             if(String.IsNullOrEmpty(SavedMHTFilePath))
-            {
-                System.Windows.MessageBox.Show("Please select a location for the file.", "Missing file location", MessageBoxButton.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.MissingFileLocation);
             }
             else
                 {
@@ -2148,8 +2140,8 @@ namespace GingerCore.Drivers
             }
             else
             {
-                //TODO: reporter
-                System.Windows.MessageBox.Show("Element not found");
+                //TODO: reporter                
+                Reporter.ToUser(eUserMsgKeys.ElementNotFound);
             }
         }
 
@@ -2266,10 +2258,10 @@ namespace GingerCore.Drivers
             {
                 string temp = frmHTML.Text;
                 frmHTML.Focus();
-               int Searchposition= temp.IndexOf(search);
-                if(Searchposition==-1)
-                {
-                    System.Windows.MessageBox.Show("Text not found");
+                int Searchposition = temp.IndexOf(search);
+                if (Searchposition == -1)
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.TextNotFound);
                     return;
                 }
                 frmHTML.SelectionStart = Searchposition;
@@ -2279,7 +2271,7 @@ namespace GingerCore.Drivers
                 btnPrevSearchSource.IsEnabled = false;
             }
             else
-                System.Windows.MessageBox.Show("Please provide a search string");
+                Reporter.ToUser(eUserMsgKeys.ProvideSearchString);         
         }
 
         private void btnSearchSourceNext_Clik(object sender, RoutedEventArgs e)
@@ -2290,8 +2282,8 @@ namespace GingerCore.Drivers
                 string temp = frmHTML.Text;
                 int Searchposition = temp.IndexOf(search, (CurrentSearchPosition+search.Length));
                 if (Searchposition == -1)
-                {
-                    System.Windows.MessageBox.Show("No more text occurrence");
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.NoTextOccurrence);
                     return;
                 }
                 frmHTML.SelectionStart = Searchposition;
@@ -2301,7 +2293,7 @@ namespace GingerCore.Drivers
                 btnPrevSearchSource.IsEnabled = true;
             }
             else
-                System.Windows.MessageBox.Show("Please provide a search string");
+                Reporter.ToUser(eUserMsgKeys.ProvideSearchString);            
         }
 
         private void btnSearchSourcePrevious_Click(object sender, RoutedEventArgs e)
@@ -2312,8 +2304,8 @@ namespace GingerCore.Drivers
                 string temp = frmHTML.Text;
                 int Searchposition = temp.LastIndexOf(search,CurrentSearchPosition);
                 if (Searchposition == -1)
-                {
-                    System.Windows.MessageBox.Show("No more text occurrence");
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.NoTextOccurrence);
                     return;
                 }
                 frmHTML.SelectionStart = Searchposition;
@@ -2322,8 +2314,8 @@ namespace GingerCore.Drivers
                 CurrentSearchPosition = Searchposition;
                 btnPrevSearchSource.IsEnabled = true;
             }
-            else
-                System.Windows.MessageBox.Show("Please provide a search string");
+            else                
+                Reporter.ToUser(eUserMsgKeys.ProvideSearchString);
         }
     }
 

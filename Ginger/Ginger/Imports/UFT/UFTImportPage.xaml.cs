@@ -286,8 +286,8 @@ namespace Ginger.Imports.UFT
                 CalendarBusFunction.SelectedIndex = 0;
             }
             else
-            {
-                MessageBox.Show("Please Enter a Valid Calendar path !!");
+            {                
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please Enter a Valid Calendar path !!");
             }
         }
 
@@ -419,13 +419,13 @@ namespace Ginger.Imports.UFT
                     ResultsDataGrid.DataSourceList = mCCL;
                 }
                 else
-                {
-                    MessageBox.Show("No GUI functions fetched, Click CONVERT, to convert other actions in BUS function");
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "No GUI functions fetched, Click CONVERT, to convert other actions in BUS function");
                 }
             }
             else
-            {
-                MessageBox.Show("Please enter a Valid " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name");
+            {                
+                Reporter.ToUser(eUserMsgKeys.EnterValidBusinessflow);
             }
         }
 

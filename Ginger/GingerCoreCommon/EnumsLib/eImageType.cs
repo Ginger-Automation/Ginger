@@ -126,6 +126,7 @@ namespace Amdocs.Ginger.Common.Enums
         ActiveAll,        
         Exchange,
         Export,
+        Filter,
         ImportFile,
         #endregion
 
@@ -172,6 +173,8 @@ namespace Amdocs.Ginger.Common.Enums
         Wrench,
         Power,
         ArrowDown,
+        ExcelFile,
+
         #endregion
 
 
@@ -192,6 +195,8 @@ namespace Amdocs.Ginger.Common.Enums
         OpenFolder,
         Check,
         Bug,
-       
+        DataSource,
+        PluginPackage,
+        PlusSquare,
     }
 }

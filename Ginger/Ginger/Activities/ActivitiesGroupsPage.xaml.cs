@@ -153,12 +153,17 @@ namespace Ginger.Activities
         private void grdActivitiesGroups_ItemDropped(object sender, EventArgs e)
         {
             object droppedItem = ((DragInfo)sender).Data;
+            Activity previousActivity = null;
+            if ((ActivitiesGroup)grdActivitiesGroups.CurrentItem != null && ((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers.Count > 0)
+            {
+                previousActivity = ((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers[((ActivitiesGroup)grdActivitiesGroups.CurrentItem).ActivitiesIdentifiers.Count - 1].IdentifiedActivity;
+            }
             if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
                 mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
+                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();                
+                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false, false, previousActivity);
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
 
                 int selectedActIndex = -1;

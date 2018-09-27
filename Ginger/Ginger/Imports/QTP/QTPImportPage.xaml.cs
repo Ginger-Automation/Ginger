@@ -156,8 +156,8 @@ namespace Ginger.Imports.QTP
         private void ProcessUFTObjectRepository()
         {
             if (UFTObjectRepositoryTextBox.Text.Trim().Length == 0)
-            {
-                MessageBox.Show("Object Repository name cannot be empty", "QTP to Ginger Converter", MessageBoxButton.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.RepositoryNameCantEmpty);
                 return;
             }
 

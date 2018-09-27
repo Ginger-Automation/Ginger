@@ -46,6 +46,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger
 {

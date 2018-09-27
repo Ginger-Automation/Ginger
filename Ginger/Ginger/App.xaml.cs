@@ -441,8 +441,8 @@ namespace Ginger
                     return;
                 }
             }
-            Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occured on stand alone thread(non UI) - " + e.ExceptionObject.ToString());
-            MessageBox.Show("Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
+            Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occured on stand alone thread(non UI) - " + e.ExceptionObject.ToString());            
+            Reporter.ToUser(eUserMsgKeys.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
             App.AppSolutionAutoSave.DoAutoSave();
 
             /// if (e.IsTerminating)...
@@ -522,6 +522,7 @@ namespace Ginger
             string phase = "Running in Automatic Execution Mode";
             Reporter.ToLog(eLogLevel.INFO, phase);
             Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
+            Reporter.SetRunConfigMode(true);
             AutoLogProxy.LogAppOpened();
             AppSplashWindow.LoadingInfo(phase);
 

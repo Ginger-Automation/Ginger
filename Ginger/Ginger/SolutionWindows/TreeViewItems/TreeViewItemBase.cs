@@ -408,9 +408,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
             }
             if (itemsSavedCount == 0)
-            {
-                //TODO: Fix with New Reporter (on GingerWPF)
-                System.Windows.MessageBox.Show("Nothing found to Save.", "Save All", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.SaveAll, "Nothing found to Save.");
             }
             else
             {
@@ -421,9 +420,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public override void RefreshTreeFolder(Type itemType, string path)
         {
             try
-            {
-                //TODO: Fix with New Reporter (on GingerWPF)
-                if (System.Windows.MessageBox.Show("Un saved items changes under the refreshed folder will be lost, to continue with refresh?", "Refresh Folder", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.No) == MessageBoxResult.Yes)
+            {                
+                if (Reporter.ToUser(eUserMsgKeys.RefreshFolder) == MessageBoxResult.Yes)
                 {
                     //App.LocalRepository.RefreshCacheByItemType(itemType, path);
 
@@ -477,9 +475,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, (ITreeViewItem)folderItem);
             }
             else
-            {
-            //    TODO: Fix with New Reporter(on GingerWPF)
-                MessageBox.Show("Failed to create sub folder.", "Folder Creation Failed", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.FolderOperationError, "Folder Creation Failed");
             }
 
             return (ITreeViewItem)folderItem;

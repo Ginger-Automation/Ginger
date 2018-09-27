@@ -263,8 +263,8 @@ namespace GingerCore.Actions.ScreenCapture
                     Directory.CreateDirectory(f.SolutionFolder + @"Documents\ExpectedImages\");
             }
             catch (Exception e)
-            {
-                MessageBox.Show("Error: " + e.Message);
+            {                
+                Reporter.ToUser(eUserMsgKeys.FolderOperationError, e.Message);
             }
             //return f.SolutionFolder + @"Documents\ExpectedImages\"+Guid.NewGuid().ToString()+".png";
             return @"~\Documents\ExpectedImages\" + Guid.NewGuid().ToString() + ".png"; 

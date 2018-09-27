@@ -189,8 +189,5 @@ namespace Amdocs.Ginger.Repository
         /// Added for backward support- do not use
         /// </summary>
         public string DataType { get; set; }
-
-
-
-    }
+    }   
 }

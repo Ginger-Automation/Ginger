@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Windows;
+using GingerCore;
 using GingerCore.Helpers;
 
 namespace Ginger.Imports.UFT
@@ -84,8 +85,8 @@ namespace Ginger.Imports.UFT
                     return dt;
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.ExcelProcessingError, ex.Message);
                     return null;
                 }
             }  
@@ -173,8 +174,8 @@ namespace Ginger.Imports.UFT
                     return Value;
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.ExcelProcessingError, ex.Message);
                     return null;
                 }
             }  
