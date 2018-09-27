@@ -151,6 +151,10 @@ namespace Ginger.Actions.PlugIns
 
         private void AutoCreateEditPage()
         {
+
+            ServiceIdLabel.Content = mAct.GetInputParamValue("ServiceId");  //TODO: use const
+            ActionIdLabel.Content = mAct.GetInputParamValue("GingerActionID");  //TODO: use const
+
             int rows = mAct.InputValues.Count;
             for (int i = 0; i < rows; i++)
             {
@@ -163,6 +167,10 @@ namespace Ginger.Actions.PlugIns
             int rnum = 0;
             foreach (ActInputValue param in mAct.InputValues)
             {
+                if (param.Param == "ServiceId" || param.Param == "GingerActionID" || param.Param == "GA")  // TODO: use const
+                {
+                    continue;
+                }
                 Label l = new Label() { Content = param.Param };
                 ActionConfigGrid.Children.Add(l);
                 l.Style = App.GetStyle("@InputFieldLabelStyle");
