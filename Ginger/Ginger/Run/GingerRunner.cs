@@ -1906,7 +1906,7 @@ namespace Ginger.Run
                 // TODO: use const
                 NewPayLoad p = new NewPayLoad("P");   // To save network trafic we send just one letter
                 p.AddValue(AP.Param);
-                p.AddValue(AP.Value.ToString());
+                p.AddValue(AP.ValueForDriver.ToString());
                 p.ClosePackage();
                 Params.Add(p);
             }
