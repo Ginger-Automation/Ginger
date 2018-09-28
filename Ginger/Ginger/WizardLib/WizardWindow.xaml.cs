@@ -87,9 +87,9 @@ namespace GingerWPF.WizardLib
 
         private void UpdateFinishButton()
         {
-            FinishButton.IsEnabled = false;
+            xFinishButton.IsEnabled = false;
             if (mValidationErrors.Count > 0) return;
-            if (mWizard.IsLastPage()) FinishButton.IsEnabled = true;
+            if (mWizard.IsLastPage()) xFinishButton.IsEnabled = true;
         }
 
         ~WizardWindow()
@@ -247,8 +247,8 @@ namespace GingerWPF.WizardLib
             if (mWizard.IsLastPage())
             {
                 xNextButton.IsEnabled = false;
-                NextButton.IsEnabled = false;
-                FinishButton.IsEnabled = true;
+                xNextButton.IsEnabled = false;
+                xFinishButton.IsEnabled = true;
             }
             else
             {
