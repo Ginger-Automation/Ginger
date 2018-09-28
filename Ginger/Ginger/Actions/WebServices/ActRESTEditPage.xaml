@@ -29,7 +29,7 @@
             <RowDefinition Height="55"/>
             <RowDefinition Height="55"/>
             <RowDefinition Height="190"/>
-            <RowDefinition Height="140"/>
+            <RowDefinition Height="150"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
@@ -120,11 +120,11 @@
         </StackPanel>
 
         <StackPanel Grid.Row="5" >
-            <Ginger:ucGrid x:Name="HttpHeadersGrid" Title="Http Headers" MaxHeight="250"/>
+            <Ginger:ucGrid x:Name="HttpHeadersGrid" Title="Http Headers" MaxHeight="250" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
         </StackPanel>
 
         <StackPanel Grid.Row="6" >
-            <Ginger:ucGrid x:Name="DynamicElementsGrid" Title="Dynamic Elements" MaxHeight="250"/>
+            <Ginger:ucGrid x:Name="DynamicElementsGrid" Title="Dynamic Elements" MaxHeight="250" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
         </StackPanel>
     </Grid>
 </Page>
