@@ -72,19 +72,19 @@ namespace Ginger.Actions
 
         private void FillScriptNameCombo()
         {
-            ScriptNameComboBox.Items.Clear();
-            if (!Directory.Exists(SHFilesPath))
-                Directory.CreateDirectory(SHFilesPath);
-            string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-            .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
+                ScriptNameComboBox.ItemsSource = null;
+                if (!Directory.Exists(SHFilesPath))
+                    Directory.CreateDirectory(SHFilesPath);
+                string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
+                .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
 
-            foreach (string file in fileEntries)
-            {
-                string s = file.Replace(SHFilesPath, "");
-                ScriptNameComboBox.Items.Add(s);
+                foreach (string file in fileEntries)
+                {
+                    string s = file.Replace(SHFilesPath, "");
+                    ScriptNameComboBox.Items.Add(s);
+                }
             }
-        }
-
+          
         private void ScriptNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string ScriptFile = SHFilesPath + ScriptNameComboBox.SelectedValue;
@@ -156,6 +156,8 @@ namespace Ginger.Actions
                 InterpreterPanel.Visibility = Visibility.Collapsed;
                 if (string.IsNullOrEmpty(f.ScriptName) || !f.ScriptName.EndsWith(".vbs") )
                 {
+                    InterpreterPanel.Visibility = Visibility.Visible;
+                    InterpreterPanelLabel.Visibility = Visibility.Collapsed;
                     ScriptNameComboBox.ItemsSource = null;
                     if (!Directory.Exists(SHFilesPath))
                         Directory.CreateDirectory(SHFilesPath);
@@ -168,6 +170,8 @@ namespace Ginger.Actions
             {
                 if (string.IsNullOrEmpty(f.ScriptName) || !f.ScriptName.EndsWith(".js"))
                 {
+                    InterpreterPanel.Visibility = Visibility.Visible;
+                    InterpreterPanelLabel.Visibility = Visibility.Collapsed;
                     ScriptNameComboBox.ItemsSource = null;
                     if (!Directory.Exists(SHFilesPath))
                         Directory.CreateDirectory(SHFilesPath);
@@ -177,20 +181,15 @@ namespace Ginger.Actions
                 }
 
             }
-            //if (changeFileNamesList)
-            //{
-                fileEntries= fileEntries.Select(q => q.Replace(SHFilesPath, "")).ToArray();
+          
+            if (fileEntries != null)
+            {
+                fileEntries = fileEntries.Select(q => q.Replace(SHFilesPath, "")).ToArray();
                 ScriptNameComboBox.Items.Clear();
                 ScriptNameComboBox.ItemsSource = fileEntries;
-            ScriptNameComboBox.SelectedValue = f.ScriptName;
-            //}
-            //else
-            //{
-            //    ScriptNameComboBox.SelectedValue = f.ScriptName;
-            //}
-
-
-
+                ScriptNameComboBox.SelectedValue = f.ScriptName;
+            }
+            
         }
 
         private void ScriptInterpreterComboBox_Loaded(object sender, RoutedEventArgs e)
