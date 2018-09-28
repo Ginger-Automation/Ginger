@@ -58,6 +58,8 @@ namespace Ginger.SolutionWindows
                     break;
                 case EventType.Active:
                     break;
+                default:
+                    break;
             }
         }
 

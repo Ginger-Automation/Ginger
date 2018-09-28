@@ -51,6 +51,8 @@ namespace Ginger.SolutionWindows
                     FinishImport(WizardEventArgs);
                     xLable.Content = "Data Imported Successfully!";
                     break;
+                default:
+                    break;
             }
         }
 

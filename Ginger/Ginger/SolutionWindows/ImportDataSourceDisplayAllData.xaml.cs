@@ -78,6 +78,8 @@ namespace Ginger.SolutionWindows
                     impParams.ExcelFileName = Path;
                     impParams.ExcelSheetName = SheetName;
                     break;
+                default:
+                    break;
             }
         }
 

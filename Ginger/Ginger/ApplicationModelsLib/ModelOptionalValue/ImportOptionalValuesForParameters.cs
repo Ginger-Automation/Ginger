@@ -1241,7 +1241,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                                 }
                                                 dt.Rows.Add(tempRow);
                                             }
-                                            if (isFirstRowHeader) dt.Rows.RemoveAt(0);
+                                            if (isFirstRowHeader) {
+                                                dt.Rows.RemoveAt(0);
+                                            }
                                             ds.Tables.Add(dt);
                                         }
                                     }

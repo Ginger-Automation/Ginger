@@ -78,6 +78,8 @@ namespace Ginger.SolutionWindows
                 case EventType.AfterLoad:
                     DisplayData();
                     break;
+                default:
+                    break;
             }
         }
 

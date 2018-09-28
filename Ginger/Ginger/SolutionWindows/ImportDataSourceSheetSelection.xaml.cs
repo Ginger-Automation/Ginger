@@ -76,6 +76,8 @@ namespace Ginger.SolutionWindows
                     }
                     
                     break;
+                default:
+                    break;
             }
         }
 
