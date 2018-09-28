@@ -38,11 +38,20 @@ namespace GingerWPF.WizardLib
 
         List<ValidationError> mValidationErrors = new List<ValidationError>();
 
-        public static void ShowWizard(WizardBase wizard, double width = 800)
+        public static void ShowWizard(WizardBase wizard, double width = 800, bool DoNotShowAsDialog = false)
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Width = width;
-           wizardWindow.ShowDialog();
+            
+            if(DoNotShowAsDialog)
+            {
+                wizardWindow.Topmost = true;
+                wizardWindow.Show();
+            }
+            else
+            {
+                wizardWindow.ShowDialog();
+            }
         }
 
         public WizardWindow(WizardBase wizard)
@@ -54,7 +63,7 @@ namespace GingerWPF.WizardLib
             this.Title = wizard.Title;
 
             // UpdateFinishButton();
-            FinishButton.IsEnabled = false;
+            //xFinishButton.IsEnabled = false;
 
             SetterBaseCollection SBC = NavigationList.ItemContainerStyle.Setters;
             ((System.Windows.Setter)SBC[0]).Value = true;                        
@@ -73,13 +82,6 @@ namespace GingerWPF.WizardLib
             NavigationList.ItemsSource = mWizard.Pages;
 
             CurrentWizardWindow = this;            
-        }
-
-        private void UpdateFinishButton()
-        {
-            FinishButton.IsEnabled = false;
-            if (mValidationErrors.Count > 0) return;
-            FinishButton.IsEnabled = true;
         }
 
         ~WizardWindow()
@@ -122,7 +124,7 @@ namespace GingerWPF.WizardLib
 
 
             // mWizard.UpdateButtons();
-            UpdateFinishButton();
+            //UpdateFinishButton();
         }
 
 
@@ -131,26 +133,28 @@ namespace GingerWPF.WizardLib
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             bool bErrors = HasValidationsIssues();
-            UpdateFinishButton();
             if (bErrors)
             {                
                 return;
-            }            
+            }
 
             mWizard.Next();
+            //UpdateFinishButton();
             UpdatePrevNextButton();
-
             RefreshCurrentPage();
         }
 
 
         // Need to be in base
-        private bool HasValidationsIssues()
+        private bool HasValidationsIssues(Page pageToScan=null)
         {
             //Scan all controls with validations
-
-            errorsFound = false;            
-            SearchValidationsRecursive((Page)PageFrame.Content);
+            errorsFound = false;     
+            if (pageToScan == null)
+            {
+                pageToScan = (Page)PageFrame.Content;
+            }
+            SearchValidationsRecursive(pageToScan);
 
             return errorsFound; 
         }
@@ -221,20 +225,20 @@ namespace GingerWPF.WizardLib
             
             if (mWizard.IsLastPage())
             {
-                NextButton.IsEnabled = false;
+                xNextButton.IsEnabled = false;
             }
             else
             {
-                NextButton.IsEnabled = true;
+                xNextButton.IsEnabled = true;
             }
             
             if (mWizard.IsFirstPage())
             {
-                PrevButton.IsEnabled = false;
+                xPrevButton.IsEnabled = false;
             }
             else
             {
-                PrevButton.IsEnabled = true;
+                xPrevButton.IsEnabled = true;
             }
 
         }
@@ -244,7 +248,7 @@ namespace GingerWPF.WizardLib
         {
             mWizard.Prev();
             UpdatePrevNextButton();
-
+            //UpdateFinishButton();
             RefreshCurrentPage();
         }
 
@@ -260,12 +264,16 @@ namespace GingerWPF.WizardLib
             foreach (WizardPage p in mWizard.Pages)
             {
                 errorsFound = false;
-                SearchValidationsRecursive((Page)p.Page);                 
-                if (mValidationErrors.Count > 0 || errorsFound)// TODO: focus on the item and highlight
+                if (VisualTreeHelper.GetChildrenCount((Page)p.Page) == 0)
                 {
-                    mWizard.Pages.CurrentItem = p;
-                    UpdatePrevNextButton();
-                    RefreshCurrentPage();
+                    JumpToPage(p);
+                }                
+                if (HasValidationsIssues((Page)p.Page))// TODO: focus on the item and highlight
+                {
+                    if (mWizard.Pages.CurrentItem != p)
+                    {
+                        JumpToPage(p);
+                    }
                     return;
                 }
             }
@@ -293,6 +301,15 @@ namespace GingerWPF.WizardLib
             //    RefreshCurrentPage();
             //    NavigationList.SelectionChanged += NavigationList_SelectionChanged;
             //}
+        }
+
+        private void JumpToPage(WizardPage pageToJumpTo)
+        {
+            mWizard.Pages.CurrentItem = pageToJumpTo;
+            pageToJumpTo.Page.WizardEvent(new WizardEventArgs(mWizard, EventType.Active));
+            UpdatePrevNextButton();
+            RefreshCurrentPage();
+            GingerCore.General.DoEvents();
         }
 
         private void CloseWizard()
@@ -325,7 +342,7 @@ namespace GingerWPF.WizardLib
 
         void IWizardWindow.NextButton(bool isEnabled)
         {
-            NextButton.IsEnabled = isEnabled;
+            xNextButton.IsEnabled = isEnabled;
         }
     }
 }
