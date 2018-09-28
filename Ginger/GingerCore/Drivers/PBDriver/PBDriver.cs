@@ -943,7 +943,7 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetListOfDriverAppWindows();
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             return mUIAutomationHelper.GetVisibleControls();
         }
@@ -959,7 +959,7 @@ namespace GingerCore.Drivers.PBDriver
             return true;
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             HighLightElement(ElementInfo);
             
@@ -1029,12 +1029,6 @@ namespace GingerCore.Drivers.PBDriver
         {
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
             return mUIAutomationHelper.IsWindowValid(obj);
@@ -1048,6 +1042,16 @@ namespace GingerCore.Drivers.PBDriver
         public override void StopRecording()
         {
             
+        }
+
+        void IWindowExplorer.UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        {
+            throw new NotImplementedException();
         }
     }
 }

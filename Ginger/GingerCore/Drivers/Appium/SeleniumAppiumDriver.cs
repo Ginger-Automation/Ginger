@@ -36,6 +36,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace GingerCore.Drivers.Appium
@@ -800,7 +801,7 @@ namespace GingerCore.Drivers.Appium
                                         act.AddOrUpdateReturnParamActual("Actual", e.TagName);
                                         return;
                                     case "source":
-                                        act.AddOrUpdateReturnParamActual ("source", this.GetPageSource ());
+                                        act.AddOrUpdateReturnParamActual ("source", this.GetPageSource ().Result);
                                         return;
 
                                     case "x":
@@ -816,7 +817,7 @@ namespace GingerCore.Drivers.Appium
                                         if (act.LocateBy == eLocateBy.ByXPath)
                                         {
                                             XmlDocument PageSourceXml = new XmlDocument ();
-                                            PageSourceXml.LoadXml (this.GetPageSource ());
+                                            PageSourceXml.LoadXml (this.GetPageSource ().Result);
                                             XmlNode node = PageSourceXml.SelectSingleNode (act.LocateValueCalculated);
 
                                             foreach(XmlAttribute XA in node.Attributes)
@@ -1101,9 +1102,14 @@ namespace GingerCore.Drivers.Appium
             }
         }
 
-        public string GetPageSource()
+        public async Task<string> GetPageSource()
         {
-            return Driver.PageSource;                  
+            string Pagesource = String.Empty;
+            await Task.Run(() =>
+             {
+                 Pagesource = Driver.PageSource;
+             });
+            return Pagesource;                  
         }
 
         public void SwipeScreen(eSwipeSide side)
@@ -1202,7 +1208,7 @@ namespace GingerCore.Drivers.Appium
             //NA
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             Dispatcher.Invoke(() =>
             {
@@ -1236,7 +1242,7 @@ namespace GingerCore.Drivers.Appium
         {
             return null;
         }
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             List<ElementInfo> list = new List<ElementInfo>();
 
@@ -1487,15 +1493,19 @@ namespace GingerCore.Drivers.Appium
         {
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         public bool IsElementObjectValid(object obj)
         {
             return ((IWindowExplorer)mSeleniumDriver).IsElementObjectValid(obj);
+        }
+
+        public void UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        {
+            throw new NotImplementedException();
         }
     }
 }

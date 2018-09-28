@@ -720,7 +720,7 @@ namespace Ginger
             App.AutomateTabGingerRunner.SolutionFolder = App.UserProfile.Solution.Folder;
             App.AutomateTabGingerRunner.DSList = App.LocalRepository.GetSolutionDataSources();
             App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-            App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+            //App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
             App.AutomateTabGingerRunner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
 
             SetGingerRunnerSpeed();
@@ -1173,7 +1173,7 @@ namespace Ginger
         }
 
         private void SaveBizFlowButton_Click(object sender, RoutedEventArgs e)
-        {
+         {
             //warn in case dynamic shared reposiotry Activities are included and going to be deleted
             if (App.BusinessFlow.Activities.Where(x=>x.AddDynamicly == true).FirstOrDefault() != null)
             {
@@ -1184,7 +1184,10 @@ namespace Ginger
             Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, App.BusinessFlow.Name,
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
 
+
             App.BusinessFlow.Save();
+               
+            App.AddItemToSaveAll(App.BusinessFlow);
 
             Reporter.CloseGingerHelper();
         }

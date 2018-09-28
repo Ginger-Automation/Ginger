@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using GingerCore.Actions;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ using System.Windows.Controls;
 
 namespace UnitTests.UITests
 {
+    [Level2]
     [TestClass]
     public class ActionEditPageTests
     {

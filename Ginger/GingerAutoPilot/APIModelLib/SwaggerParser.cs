@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
              orignaljson=   System.IO.File.ReadAllText(FileName);
             }
             {
-                orignaljson= GeneralLib.HttpUtilities.DownloadFileAsync(url).Result;
+                orignaljson = GeneralLib.HttpUtilities.Download(url);
 
             }
            try
@@ -74,8 +74,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                 FinalFileName = tempfile;
             }
 
-            ResolvedJson = System.IO.File.ReadAllText(FinalFileName);
-            Swaggerdoc = SwaggerDocument.FromJsonAsync(ResolvedJson).Result;
+
+            Swaggerdoc = SwaggerDocument.FromJsonAsync(orignaljson).Result;
            foreach (var paths in Swaggerdoc.Paths)
             {
                 SwaggerPathItem SPi = paths.Value;

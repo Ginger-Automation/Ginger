@@ -34,12 +34,14 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
+using GingerTestHelper;
 
 namespace UnitTests.NonUITests
 {
     // Test all statues after execution: Action, Action Return Value (Expected vs Actual), Activity, BF.
 
     [TestClass]
+    [Level1]
     public class StatusResultTest 
     {
 

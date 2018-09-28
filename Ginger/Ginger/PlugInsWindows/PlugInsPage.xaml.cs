@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,8 +39,7 @@ namespace Ginger.PlugInsWindows
 
         public void SetGrids()
         {
-            SetPlugInsGridView();
-            RefreshGridDataHandler(null, null);
+            SetPlugInsGridView();            
         }
 
         private void SetPlugInsGridView()
@@ -51,25 +52,20 @@ namespace Ginger.PlugInsWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = "Name",Header = "Name", WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "PlugInType", Header = "Type", WidthWeight = 300, BindingMode = BindingMode.OneWay }); 
-            view.GridColsView.Add(new GridColView() { Field = "PlugInVersion", Header = "Plugin Version", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.PluginID) ,Header = "Plugin ID", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.Folder ), Header = "Folder", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.PluginPackageVersion ), Header = "Version", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            //view.GridColsView.Add(new GridColView() { Field = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            //view.GridColsView.Add(new GridColView() { Field = "PlugInType", Header = "Type", WidthWeight = 300, BindingMode = BindingMode.OneWay }); 
             
+
             PlugInsGrid.SetAllColumnsDefaultView(view);
-            PlugInsGrid.InitViewItems();
-            PlugInsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGridDataHandler));
+            PlugInsGrid.InitViewItems();            
+            PlugInsGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
         }
 
-        private void RefreshGridDataHandler(object sender, RoutedEventArgs e)
-        {
-            PlugInsGrid.DataSourceList = App.LocalRepository.GetSolutionPlugIns();
-        }
+        
 
-        public void ShowAsWindow()
-        {
-            GenericWindow genWin = null;
-            GingerCore.General.LoadGenericWindow(ref genWin, null, Ginger.eWindowShowStyle.Free, "Plug Ins", this, null);
-        }
+        
     }
 }

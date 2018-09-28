@@ -30,8 +30,31 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
     {
         public static string GetLocalHostIP()
         {
-            IPAddress ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);            
-            return ipAddress.ToString(); ;
+            IPHostEntry ii = Dns.GetHostEntry(Dns.GetHostName());
+            List<IPAddress> IPList = (from x in ii.AddressList where x.AddressFamily == AddressFamily.InterNetwork select x).ToList();
+            if (IPList.Count() == 1)
+            {
+                // if we have only one return it
+                return IPList[0].ToString(); ;
+            }
+
+            if (IPList.Count() > 1)
+            {
+                // prefer local router/hub first usually 192, we will add GG config later to select
+                foreach (IPAddress ip in IPList)
+                {
+                    if (ip.ToString().StartsWith("192"))
+                    {
+                        return ip.ToString();
+                    }
+                }
+
+                // return the first in the list
+                return IPList[0].ToString(); 
+            }
+
+            //TODO: throw
+            return null; 
         }
 
         //TODO: think if we want to have multiple display - enable set for this value

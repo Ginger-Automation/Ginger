@@ -18,6 +18,7 @@ limitations under the License.
 
 using GingerCoreNET.RunLib;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -41,7 +42,10 @@ namespace Ginger.GingerGridLib
 
         private void NodeList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            ShowNodes();
+            this.Dispatcher.Invoke(()=> {
+                ShowNodes();
+            });
+
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -65,8 +69,8 @@ namespace Ginger.GingerGridLib
         private void ShowNodeList()
         {
             DataGrid DG = new DataGrid();
-            DG.IsReadOnly = true;
-            DG.ItemsSource = mGingerGrid.NodeList;
+            DG.IsReadOnly = true;            
+            DG.ItemsSource = mGingerGrid.NodeList.ToList();
             GingersGrid.Children.Add(DG);
         }
 
@@ -78,7 +82,7 @@ namespace Ginger.GingerGridLib
 
             foreach (GingerNodeInfo GNI in mGingerGrid.NodeList)
             {
-                GingerNodeProxy GNA = mGingerGrid.CreateGingerNodeAgent(GNI);
+                GingerNodeProxy GNA = new GingerNodeProxy(GNI);
                 GingerGridNodePage p = new GingerGridNodePage(GNA);
                 // Connect to LiveView Channel - this is not via Run act
                 Frame f = new Frame();
@@ -151,6 +155,11 @@ namespace Ginger.GingerGridLib
                 GNI.Ping = rc;
                 GNA.Disconnect();
             }
+        }
+
+        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            mGingerGrid.NodeList.Clear();
         }
     }
 }

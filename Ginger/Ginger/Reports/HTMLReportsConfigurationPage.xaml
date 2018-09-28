@@ -9,7 +9,7 @@
       MinHeight="300" MinWidth="785"
 	Title="General HTML Reports Configurations">
 
-    <Grid Background="{StaticResource $BackgroundGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <StackPanel>
             <StackPanel x:Name="htmlReportFolderPnl" Margin="10,10,0,0" HorizontalAlignment="Left">
                 <Label Content="HTML Report Folder" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>

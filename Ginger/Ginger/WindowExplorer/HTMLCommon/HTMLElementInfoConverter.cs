@@ -23,103 +23,99 @@ using Amdocs.Ginger.Common.UIElement;
 namespace Ginger.WindowExplorer.HTMLCommon
 {
     public class HTMLElementInfoConverter 
-    {
-        //Move from here
+    {       
         internal static ITreeViewItem GetHTMLElementTreeItem(ElementInfo EI)
         {
-            if (EI.ElementType.ToUpper() == "INPUT.TEXT" || EI.ElementType.ToUpper() == "TEXTAREA" || EI.ElementType.ToUpper() == "INPUT.UNDEFINED" || EI.ElementType.ToUpper() == "INPUT.PASSWORD" || EI.ElementType.ToUpper() == "INPUT.EMAIL")  // HTML text 
+            if (EI.ElementTypeEnum == eElementType.TextBox)
             {
                 HTMLTextBoxTreeItem HTBTI = new HTMLTextBoxTreeItem();
                 HTBTI.ElementInfo = EI;
                 return HTBTI;
             }
-            else if (EI.ElementType.ToUpper() == "INPUT.BUTTON" || EI.ElementType.ToUpper() == "BUTTON" || EI.ElementType.ToUpper() == "INPUT.IMAGE" || EI.ElementType.ToUpper() == "LINK" || EI.ElementType.ToUpper() == "INPUT.SUBMIT")  // HTML Button
+            else if (EI.ElementTypeEnum == eElementType.Button)
             {
                 HTMLButtonTreeItem HTBTI = new HTMLButtonTreeItem();
                 HTBTI.ElementInfo = EI;
                 return HTBTI;
             }
-            else if (EI.ElementType.ToUpper() == "TD" || EI.ElementType.ToUpper() == "TH")
+            else if (EI.ElementTypeEnum == eElementType.TableItem)
             {
                 HTMLTDTreeItem HTBTI = new HTMLTDTreeItem();
                 HTBTI.ElementInfo = EI;
                 return HTBTI;
-
             }
-            else if (EI.ElementType.ToUpper() == "LINK" || EI.ElementType.ToUpper() == "A")  // HTML Link
+            else if (EI.ElementTypeEnum == eElementType.HyperLink)
             {
                 HTMLLinkTreeItem HTLII = new HTMLLinkTreeItem();
                 HTLII.ElementInfo = EI;
                 return HTLII;
             }
-            else if (EI.ElementType == "LABEL")  // HTML Label
+            else if (EI.ElementTypeEnum == eElementType.Label)
             {
                 HTMLLabelTreeItem HTBTI = new HTMLLabelTreeItem();
                 HTBTI.ElementInfo = EI;
                 return HTBTI;
             }
-            else if (EI.ElementType == "SELECT")  // HTML Select/ComboBox
+            else if (EI.ElementTypeEnum == eElementType.ComboBox)
             {
                 HTMLComboBoxTreeItem HCBTI = new HTMLComboBoxTreeItem();
                 HCBTI.ElementInfo = EI;
                 return HCBTI;
             }
-            else if (EI.ElementType.ToUpper() == "TABLE")  // HTML Table
+            else if (EI.ElementTypeEnum == eElementType.Table)
             {
                 HTMLTableTreeItem HTTI = new HTMLTableTreeItem();
                 HTTI.ElementInfo = EI;
                 return HTTI;
             }
-            else if (EI.ElementType.ToUpper() == "JEDITOR.TABLE")
+            else if (EI.ElementTypeEnum == eElementType.EditorPane)
             {
                 JEditorHTMLTableTreeItem HTTI = new JEditorHTMLTableTreeItem();
                 HTTI.ElementInfo = EI;
                 return HTTI;
             }
-            else if (EI.ElementType == "DIV")  // DIV Element
+            else if (EI.ElementTypeEnum == eElementType.Div)
             {
                 HTMLDivTreeItem HTTI = new HTMLDivTreeItem();
                 HTTI.ElementInfo = EI;
                 return HTTI;
             }
-            else if (EI.ElementType == "SPAN")  // SPAN Element
+            else if (EI.ElementTypeEnum == eElementType.Span)
             {
                 HTMLSpanTreeItem HTTI = new HTMLSpanTreeItem();
                 HTTI.ElementInfo = EI;
                 return HTTI;
             }
-            else if (EI.ElementType == "IMG")  // IMG Element
+            else if (EI.ElementTypeEnum == eElementType.Image)
             {
                 HTMLImgTreeItem HTTI = new HTMLImgTreeItem();
                 HTTI.ElementInfo = EI;
                 return HTTI;
             }
-            else if (EI.ElementType == "INPUT.checkbox" || EI.ElementType == "INPUT.CHECKBOX")  // Check Box Element
+            else if (EI.ElementTypeEnum == eElementType.CheckBox)
             {
                 HTMLCheckBoxTreeItem HCBTI = new HTMLCheckBoxTreeItem();
                 HCBTI.ElementInfo = EI;
                 return HCBTI;
             }
-            else if (EI.ElementType.ToUpper() == "INPUT.RADIO")  // HTML Radio
+            else if (EI.ElementTypeEnum == eElementType.RadioButton)
             {
                 HTMLRadioButtonTreeItem HTRBI = new HTMLRadioButtonTreeItem();
                 HTRBI.ElementInfo = EI;
                 return HTRBI;
             }
-            else if (EI.ElementType.ToUpper() == "IFRAME")  // HTML IFRAME
+            else if (EI.ElementTypeEnum == eElementType.Iframe)
             {
                 HTMLFrameTreeItem HTFI = new HTMLFrameTreeItem();
                 HTFI.ElementInfo = EI;
                 return HTFI;
             }
-            else if (EI.ElementType.ToUpper() == "CANVAS")  // HTML Radio
+            else if (EI.ElementTypeEnum == eElementType.Canvas)
             {
                 HTMLCanvasTreeItem HTFI = new HTMLCanvasTreeItem();
                 HTFI.ElementInfo = EI;
                 return HTFI;
             }
-
-            // TODO: add all the rest
             else
             {
                 // If not in above then put generic base

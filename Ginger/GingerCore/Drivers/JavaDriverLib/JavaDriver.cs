@@ -317,6 +317,8 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         bool SocketConnected(TcpClient s)
         {
+            if (s == null)
+                return false;
             //Keep this part as sometime bad discoonect happend and the below s.connected will still report true!!
             bool part1 = s.Client.Poll(1000, SelectMode.SelectRead);
             bool part2 = (s.Client.Available == 0);
@@ -356,12 +358,16 @@ namespace GingerCore.Drivers.JavaDriverLib
                     clientSocket.Client.Disconnect(true);
                 }
                 clientSocket.Close();
-                clientSocket = null;
-                mConnected = false;
+               
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Ginger Java Agent Driver - " + ex.Message);
+            }
+            finally
+            {
+                clientSocket = null;
+                mConnected = false;
             }
         }
 
@@ -1744,7 +1750,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return list;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(ObservableList<UIElementFilter> filteringCriterias, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             List<ElementInfo> list = new List<ElementInfo>();
 
@@ -1971,7 +1977,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return true;
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             if(ElementInfo.GetType() == typeof(JavaElementInfo))
             {
@@ -2743,12 +2749,6 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         }
 
-        ObservableList<UIElementFilter> IWindowExplorer.GetFilteringCreteriaDict()
-        {
-            //DOTO add grid view filtering creteria list
-            return new ObservableList<UIElementFilter>();
-        }
-
         //copy from the act handler temp beacuse I didn't want to mess with the above, TODO: fix both to use shared method
         Bitmap GetWindowScreenShot()
         {
@@ -2786,6 +2786,16 @@ namespace GingerCore.Drivers.JavaDriverLib
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
             return true;
+        }
+
+        void IWindowExplorer.UnHighLightElements()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        {
+            throw new NotImplementedException();
         }
     }
 }
