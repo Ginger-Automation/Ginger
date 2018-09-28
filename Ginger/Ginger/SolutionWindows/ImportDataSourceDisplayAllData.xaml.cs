@@ -28,6 +28,7 @@ using System;
 using System.Text;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.WizardLib;
+using System.Windows.Input;
 
 namespace Ginger.SolutionWindows
 {
@@ -38,7 +39,8 @@ namespace Ginger.SolutionWindows
     {
         public DataSourceBase DSDetails { get; set; }
         ImportOptionalValuesForParameters impParams;
-        DataSet ExcelImportData = null;
+        public DataSet ExcelImportData = null;
+        WizardEventArgs WizardEventArgs;
 
         /// <summary>
         /// Gets sets the File path
@@ -75,6 +77,7 @@ namespace Ginger.SolutionWindows
                     Path = ((ImportDataSourceBrowseFile)(mWizardEventArgs.Wizard.Pages[1].Page)).Path;
                     SheetName = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).SheetName;
 
+                    WizardEventArgs = mWizardEventArgs;
                     impParams.ExcelFileName = Path;
                     impParams.ExcelSheetName = SheetName;
                     break;
@@ -119,7 +122,10 @@ namespace Ginger.SolutionWindows
         private void xExcelViewDataButton_Click(object sender, RoutedEventArgs e)
         {
             try
-            {              
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                WizardEventArgs.Wizard.ProcessStarted();
+
                 ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked));
                 if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
                 {
@@ -132,6 +138,9 @@ namespace Ginger.SolutionWindows
                     tabDynamic.DataContext = _tabItems;
                     tabDynamic.SelectedIndex = 0;
                 }
+
+                WizardEventArgs.Wizard.ProcessEnded();
+                Mouse.OverrideCursor = null;
             }
             catch (System.Exception ex)
             {

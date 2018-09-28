@@ -136,23 +136,26 @@ namespace Ginger.SolutionWindows
         {
             try
             {
-                Mouse.OverrideCursor = Cursors.Wait;
-                mWizardEventArgs.Wizard.ProcessStarted();
-
-                impParams.ExcelFileName = Path;
-                impParams.ExcelSheetName = SheetName;
-                ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked));
-                if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
+                if (!IsAlternatePageToLoad())
                 {
-                    if (ExcelImportData.Tables.Count == 1)
-                    {
-                        xExcelDataGrid.ItemsSource = ExcelImportData.Tables[0].AsDataView();
-                        xExcelDataGridDockPanel.Visibility = Visibility.Visible;
-                    }
-                }
+                    Mouse.OverrideCursor = Cursors.Wait;
+                    mWizardEventArgs.Wizard.ProcessStarted();
 
-                mWizardEventArgs.Wizard.ProcessEnded();
-                Mouse.OverrideCursor = Cursors.Arrow;
+                    impParams.ExcelFileName = Path;
+                    impParams.ExcelSheetName = SheetName;
+                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked));
+                    if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
+                    {
+                        if (ExcelImportData.Tables.Count == 1)
+                        {
+                            xExcelDataGrid.ItemsSource = ExcelImportData.Tables[0].AsDataView();
+                            xExcelDataGridDockPanel.Visibility = Visibility.Visible;
+                        }
+                    }
+
+                    mWizardEventArgs.Wizard.ProcessEnded();
+                    Mouse.OverrideCursor = null; 
+                }
             }
             catch (System.Exception ex)
             {
@@ -169,6 +172,9 @@ namespace Ginger.SolutionWindows
         {
             try
             {
+                Mouse.OverrideCursor = Cursors.Wait;
+                mWizardEventArgs.Wizard.ProcessStarted();
+
                 impParams.ExcelFileName = Path;
                 impParams.ExcelSheetName = SheetName;
                 impParams.ExcelWhereCondition = Convert.ToString(xSelectRowTextBox.Text);
@@ -178,6 +184,9 @@ namespace Ginger.SolutionWindows
                     xExcelDataGrid.ItemsSource = dt.AsDataView();
                     xExcelDataGridDockPanel.Visibility = Visibility.Visible;
                 }
+
+                mWizardEventArgs.Wizard.ProcessEnded();
+                Mouse.OverrideCursor = null;
             }
             catch (System.Exception ex)
             {

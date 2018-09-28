@@ -59,6 +59,7 @@ namespace Ginger.SolutionWindows
         /// </summary>
         public override void Finish()
         {
+            ((ImportDataSourceFinishPage)(Pages[4].Page)).FinishImport();
         }
     }
 }

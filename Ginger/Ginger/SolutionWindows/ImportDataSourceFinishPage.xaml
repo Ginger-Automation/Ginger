@@ -19,6 +19,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width ="Auto"/>
         </Grid.ColumnDefinitions>
-        <Label Name="xLable" Grid.Row="1" Style="{StaticResource @InputFieldLabelStyle}" Content="" VerticalAlignment="Top" Margin="43,0,-43,0"  />
+        <Label Name="xLable" Grid.Row="1" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Top" Margin="43,0,-43,0"  />
     </Grid>
 </Page>

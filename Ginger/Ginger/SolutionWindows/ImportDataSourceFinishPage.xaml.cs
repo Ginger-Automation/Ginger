@@ -36,6 +36,7 @@ namespace Ginger.SolutionWindows
     public partial class ImportDataSourceFinishPage : Page, IWizardPage
     {
         public DataSourceBase DSDetails { get; set; }
+        public WizardEventArgs mWizardEventArgs;
 
         /// <summary>
         /// This method is default wizard action event
@@ -47,9 +48,9 @@ namespace Ginger.SolutionWindows
             {
                 case EventType.Init:
                     break;
-                case EventType.Active:                    
-                    FinishImport(WizardEventArgs);
-                    xLable.Content = "Data Imported Successfully!";
+                case EventType.Active:
+                    mWizardEventArgs = WizardEventArgs;
+                    xLable.Content = "Proceed for Data Import, Click Finish!";
                     break;
                 default:
                     break;
@@ -68,31 +69,41 @@ namespace Ginger.SolutionWindows
         /// <summary>
         /// This method is the final FinishImport method
         /// </summary>
-        public void FinishImport(WizardEventArgs WizardEventArgs)
+        public void FinishImport()
         {
             try
             {
+                xLable.Content = "Data Importing...";
                 Mouse.OverrideCursor = Cursors.Wait;
-                WizardEventArgs.Wizard.ProcessStarted();
+                mWizardEventArgs.Wizard.ProcessStarted();
 
                 ImportOptionalValuesForParameters impParams = new ImportOptionalValuesForParameters();
-                string path = ((ImportDataSourceBrowseFile)(WizardEventArgs.Wizard.Pages[1].Page)).Path;
-                string sheetName = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).SheetName;
+                string path = ((ImportDataSourceBrowseFile)(mWizardEventArgs.Wizard.Pages[1].Page)).Path;
+                string sheetName = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).SheetName;
                 bool headingRow = false;
 
-                if (((ImportDataSourceDisplayData)(WizardEventArgs.Wizard.Pages[3]).Page).IsAlternatePageToLoad())
+                if (((ImportDataSourceDisplayData)(mWizardEventArgs.Wizard.Pages[3]).Page).IsAlternatePageToLoad())
                 {
-                    headingRow = ((ImportDataSourceDisplayAllData)(WizardEventArgs.Wizard.Pages[3]).AlternatePage).HeadingRow;
+                    headingRow = ((ImportDataSourceDisplayAllData)(mWizardEventArgs.Wizard.Pages[3]).AlternatePage).HeadingRow;
                 }
                 else
                 {
-                    headingRow = ((ImportDataSourceDisplayData)(WizardEventArgs.Wizard.Pages[3]).Page).HeadingRow;
+                    headingRow = ((ImportDataSourceDisplayData)(mWizardEventArgs.Wizard.Pages[3]).Page).HeadingRow;
                 }
 
                 impParams.ExcelFileName = path;
                 impParams.ExcelSheetName = sheetName;
 
-                DataSet ExcelImportData = ((ImportDataSourceDisplayData)(WizardEventArgs.Wizard.Pages[3]).Page).ExcelImportData;
+                DataSet ExcelImportData = new DataSet();
+                if(!((ImportDataSourceDisplayData)(mWizardEventArgs.Wizard.Pages[3]).Page).IsAlternatePageToLoad())
+                {
+                    ExcelImportData = ((ImportDataSourceDisplayData)(mWizardEventArgs.Wizard.Pages[3]).Page).ExcelImportData;
+                }
+                else
+                {
+                    ExcelImportData = ((ImportDataSourceDisplayAllData)(mWizardEventArgs.Wizard.Pages[3]).AlternatePage).ExcelImportData;
+                }
+
                 if (ExcelImportData == null || ExcelImportData.Tables.Count <= 0)
                 {
                     ExcelImportData = impParams.GetExcelAllSheetData(sheetName, headingRow);
@@ -106,8 +117,9 @@ namespace Ginger.SolutionWindows
                     ((AccessDataSource)(DSDetails)).SaveTable(dt); 
                 }
 
-                WizardEventArgs.Wizard.ProcessEnded();
-                Mouse.OverrideCursor = Cursors.Arrow;
+                mWizardEventArgs.Wizard.ProcessEnded();
+                Mouse.OverrideCursor = null;
+                xLable.Content = "Data Imported Successfully!";
             }
             catch (System.Exception ex)
             {
