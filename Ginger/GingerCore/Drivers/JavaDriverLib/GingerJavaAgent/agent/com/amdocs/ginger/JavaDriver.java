@@ -1709,14 +1709,18 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		}
 	}
 
-private TreePath SearchTreeNodes(String locateValue, JTree tree) {
+private TreePath SearchTreeNodes(String locateValue, JTree tree) 
+{
 	TreePath treePath = null;
 	int startNodeNumber = 0;
 	boolean nodeFound = false; 
 	String[] nodes = locateValue.split("/");					
-	for (int nodeNumber = 0; nodeNumber <= nodes.length - 1; nodeNumber++)
+	for (String node: nodes)
 	{
-		String node = nodes[nodeNumber];
+		if(nodeFound)
+		{
+			break;
+		}
 		startNodeNumber = (treePath == null ? 0 : (tree).getRowForPath(treePath));
 		(tree).expandRow(startNodeNumber);
 		for(int row = startNodeNumber; row <= ((tree).getRowCount() - 1); row++)
@@ -1738,19 +1742,11 @@ private TreePath SearchTreeNodes(String locateValue, JTree tree) {
 						nodeFound = true;
 						if(nodes.length > 1)
 						{
-							String nextNode = nodes[nodeNumber+1];
-							TreeNode childNodes = (TreeNode) treePath.getLastPathComponent();
-							Enumeration<?> children =  childNodes.children();
-							while(children.hasMoreElements())
+							treePath = SearchChildNodes(tree, treePath, nodes);
+							if(treePath == null)
 							{
-								DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
-								userObject = (String) child.getUserObject();
-								if(userObject.equalsIgnoreCase(nextNode))
-								{
-									(tree).expandRow((tree).getRowForPath(treePath));
-								 	Object[] nodePath = child.getPath();
-								 	treePath = new TreePath(nodePath);
-								}
+								nodeFound = false;
+								break;
 							}
 						}
 						
@@ -1780,6 +1776,36 @@ private TreePath SearchTreeNodes(String locateValue, JTree tree) {
 		}
 	}
 	return treePath;
+}
+
+private TreePath SearchChildNodes(JTree tree, TreePath treePath, String[] nodes) 
+{
+	boolean nodeFound = false;
+	for (int i = 0; i < nodes.length - 1; i++)
+	{
+		nodeFound = false;
+		String nextNode = nodes[i+1];
+		TreeNode childNodes = (TreeNode) treePath.getLastPathComponent();
+		Enumeration<?> children =  childNodes.children();
+		while(children.hasMoreElements())
+		{
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
+			String userObject = (String) child.getUserObject();
+			if(userObject.equalsIgnoreCase(nextNode))
+			{
+				nodeFound = true;
+				(tree).expandRow((tree).getRowForPath(treePath));
+			 	Object[] nodePath = child.getPath();
+			 	treePath = new TreePath(nodePath);
+			 	break;
+			}
+		}
+	}
+	if(nodeFound)
+	{
+		return treePath;
+	}
+	return null;
 }
 
 	
