@@ -98,18 +98,24 @@ namespace GingerCore.Actions.WebAPI
             {
                 for (int i = 0; i < mAct.HttpHeaders.Count(); i++)
                 {
-                    //Below condition for a workarownd to add different content type to SOAP
-                    if (mAct.HttpHeaders[i].Param != "Content-Type")
-                    {
-                        string key = mAct.HttpHeaders[i].ItemName.ToString();
-                        string value = mAct.HttpHeaders[i].ValueForDriver;
-                        Client.DefaultRequestHeaders.Add(key, value);
-                    }
+
                     if (mAct.HttpHeaders[i].Param == "Content-Type")
                     {
                         string key = mAct.HttpHeaders[i].ItemName.ToString();
                         string value = mAct.HttpHeaders[i].ValueForDriver;
                         ContentType = value;
+                    }
+                    else if (mAct.HttpHeaders[i].Param.ToUpper() == "DATE")
+                    {
+
+                        Client.DefaultRequestHeaders.Date =System.DateTime.Parse(mAct.HttpHeaders[i].ValueForDriver);
+                    }
+
+                    else
+                    {
+                        string key = mAct.HttpHeaders[i].ItemName.ToString();
+                        string value = mAct.HttpHeaders[i].ValueForDriver;
+                        Client.DefaultRequestHeaders.Add(key, value);
                     }
                 }
             }

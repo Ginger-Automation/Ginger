@@ -40,7 +40,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
     {
         ActUIElement mAction;
         PlatformInfoBase mPlatform;
-        
+
         public ActUIElementEditPage(ActUIElement act)
         {
             InitializeComponent();
@@ -48,9 +48,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ePlatformType ActivityPlatform = GetActionPlatform();
             mPlatform = PlatformInfoBase.GetPlatformImpl(ActivityPlatform);
             ElementTypeComboBox.BindControl(mAction, ActUIElement.Fields.ElementType, mPlatform.GetPlatformUIElementsType());
-            ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, mPlatform.GetPlatformUIElementLocatorsList());
+            ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, mPlatform.GetPlatformUIElementLocatorsList());           
             ShowPlatformSpecificPage();
             ShowControlSpecificPage();
+
+            if ((act.ElementType == eElementType.Unknown) && (act.ElementAction == ActUIElement.eElementAction.Unknown))
+            {
+                ElementLocateByComboBox.SelectedValue = Enum.GetName(typeof(eLocateBy), eLocateBy.POMElement);
+            }
         }
 
         private ePlatformType GetActionPlatform()
@@ -80,11 +85,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
             Page p = GetLocateValueEditPage(SelectedLocType);
             LocateValueEditFrame.Content = p;
             UpdateActionInfo(mAction.ElementAction);
+            if (SelectedLocType != eLocateBy.POMElement)
+                ElementTypeComboBox.IsEnabled = true;
         }
 
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // ElementActionComboBox.Items.Clear();
             ElementLocateByComboBox.IsEnabled = true;
             if (!String.IsNullOrEmpty(ElementTypeComboBox.SelectionBoxItem.ToString()))
             {
@@ -96,7 +102,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     }
                 }
             }
-            mAction.ElementType = (eElementType)ElementTypeComboBox.SelectedValue;
             List<ActUIElement.eElementAction> list = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
             ElementTypeImage.Source = GetImageSource(mAction.Image);
             ElementActionComboBox.BindControlWithGrouping(mAction, ActUIElement.Fields.ElementAction, list);
@@ -106,6 +111,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 ShowControlSpecificPage();
             }
+            ElementTypeComboBox.Refresh();
         }
 
         private void ElementActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -412,9 +418,18 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             switch (SelectedLocType)
             {
+                case eLocateBy.POMElement:
+                    LocateValueLable.Visibility = Visibility.Collapsed;
+                    LocateValueEditFrame.Width = 1035;
+                    ElementTypeComboBox.IsEnabled = false;
+                    return new LocateByPOMElement(mAction);
                 case eLocateBy.ByXY:
+                    LocateValueLable.Visibility = Visibility.Visible;
+                    LocateValueEditFrame.Width = 254;
                     return new LocateByXYEditPage(mAction);
                 default:
+                    LocateValueLable.Visibility = Visibility.Visible;
+                    LocateValueEditFrame.Width = 254;
                     return new LocateValueEditPage(mAction);
             }
         }

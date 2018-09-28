@@ -20,9 +20,10 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.ApplicationModelsLib.APIModels;
 using Ginger.Extensions;
 using Ginger.UserControls;
-using GingerCoreNET.ReporterLib;
+using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using GingerWPF.BindingLib;
@@ -35,6 +36,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using static GingerWPF.ApplicationModelsLib.APIModelWizard.ModelParamsPage;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels
 {
@@ -57,6 +59,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             WorkSpace.Instance.RefreshGlobalAppModelParams(mApplicationAPIModel);
             page = new ModelParamsPage(mApplicationAPIModel);
             xDynamicParamsFrame.Content = page;
+
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel);
             xOutputTemplateFrame.Content = outputTemplatePage;
 
@@ -134,9 +137,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     mApplicationAPIModel.TargetApplicationKey = key;
                 }
                 else
-                {
-                    //TODO: Fix with New Reporter (on GingerWPF)
-                    System.Windows.MessageBox.Show(string.Format("The mapped '{0}' Target Application was not found, please select new Target Application", mApplicationAPIModel.Key.ItemName), "Missing Target Application", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                {                                        
+                    Reporter.ToUser(eUserMsgKeys.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
             xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms;
@@ -763,7 +765,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == GingerCoreNET.ReporterLib.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
             {
                 UndoChangesAndClose();
             }

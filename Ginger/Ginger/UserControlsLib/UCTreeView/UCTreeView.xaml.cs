@@ -24,6 +24,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GingerWPF.DragDropLib;
+using System.Reflection;
+using System.Linq;
+using Amdocs.Ginger.Repository;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -36,9 +39,20 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public event EventHandler ItemDoubleClick;
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DI);
-        public bool TreeItemDoubleClicked = false;
+        public bool TreeItemDoubleClicked = false;        
 
-        TreeViewItem mlastSelectedTVI = null;
+        public Tuple<string, string> TreeNodesFilterByField { get; set; } 
+
+        
+        private TreeViewItem mlastSelectedTVI;
+
+        public TreeViewItem  MlastSelectedTVI
+        {
+            get { return mlastSelectedTVI; }
+            set { mlastSelectedTVI = value; }
+
+        }
+
 
         public ItemCollection TreeItemsCollection
         {
@@ -187,16 +201,61 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             {
                 ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;
 
-                List<ITreeViewItem> Childs = ITVI.Childrens();
+                List<ITreeViewItem> Childs = null;
+                Childs = ITVI.Childrens();
+                    
                 TVI.Items.Clear();
                 if (Childs != null)
                 {
-                    foreach (ITreeViewItem c in Childs)
+                    foreach (ITreeViewItem item in Childs)
                     {
-                        AddItem(c, TVI);
+                        if (TreeNodesFilterByField != null)
+                        {
+                            if (IsTreeItemFitsFilter(item))
+                            {
+                                AddItem(item, TVI);
+                            }
+                        }
+                        else
+                        {
+                            AddItem(item, TVI);
+                        }
+
                     }
                 }
             }
+        }
+
+        private bool IsTreeItemFitsFilter(ITreeViewItem treeItemToCheck)
+        {
+            object treeItemToCheckObject = treeItemToCheck.NodeObject();
+            if (treeItemToCheckObject is RepositoryFolderBase)
+            {
+                return true;
+            }
+
+            //get the object to filter by
+            List<string> filterByfieldHierarchyList = TreeNodesFilterByField.Item1.ToString().Split('.').ToList();
+            object filterByObject = treeItemToCheckObject;
+            foreach (string hierarchyElement in filterByfieldHierarchyList)
+            {
+                PropertyInfo pInfo = filterByObject.GetType().GetProperty(hierarchyElement);
+                if (pInfo is null)
+                {
+                    break;
+                }
+                else
+                {
+                    filterByObject = pInfo.GetValue(filterByObject, null);
+                }
+            }
+
+            //compare the value
+            string filterbyValue = TreeNodesFilterByField.Item2.ToString();
+            if (filterbyValue == filterByObject.ToString())
+                return true;
+
+            return false;
         }
 
         private void RemoveDummyNode(TreeViewItem node)
@@ -386,7 +445,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         /// <param name="txt"></param>
         public void FilterItemsByText(ItemCollection itemCollection, string txt)
         {
-            // Filter not working for new TVI
+            // Filter not working for new TVI            
             foreach (TreeViewItem tvi in itemCollection)
             {
                 // Need to expand to get all lazy loading
@@ -395,7 +454,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 ITreeViewItem ITVI = (ITreeViewItem)tvi.Tag;
 
                 // Find the label in the header, this is label child of the Header Stack Panel
-                StackPanel SP = (StackPanel)tvi.Header;
+                StackPanel SP = (StackPanel)tvi.Header;                     
 
                 //Ccombine text of all label childs of the header Stack panel
                 string HeaderTXT = "";
@@ -422,24 +481,24 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     {
                         tviParent = (TreeViewItem)tviParent.Parent;
                         tviParent.Visibility = System.Windows.Visibility.Visible;
-                    }
+                    }                    
                 }
                 else
                 {
-                    tvi.Visibility = System.Windows.Visibility.Collapsed;
+                    tvi.Visibility = System.Windows.Visibility.Collapsed;                    
                 }
 
                 // Goto sub items
                 if (tvi.HasItems)
-                {
+                {                    
                     FilterItemsByText(tvi.Items, txt);
                 }
             }
             //Show the root item
                 ((TreeViewItem)Tree.Items[0]).Visibility = System.Windows.Visibility.Visible;
-
+            
         }       
-
+                
         public void SetBtnImage(Button btn, string imageName)
         {
             Image image = new Image();

@@ -306,8 +306,8 @@ namespace GingerCore.Drivers.Common
                 HighlightRect(r, scr, WEI); 
             }
             else
-            {
-                MessageBox.Show("Selected Object is not available, cannot highlight the element", "Selected Object Un-Available", MessageBoxButton.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.ObjectUnavailable, "Selected Object is not available, cannot highlight the element");
             }
         }
 
@@ -376,8 +376,8 @@ namespace GingerCore.Drivers.Common
         }
         public  void StartRecording()
         {
-            //TODO : make available recording function for PBDriver and Windows Driver
-            MessageBox.Show("Recording Feature is not implemented yet for this driver..");
+            //TODO : make available recording function for PBDriver and Windows Driver            
+            Reporter.ToUser(eUserMsgKeys.MissingImplementation, "Recording");
         }
     }
 }

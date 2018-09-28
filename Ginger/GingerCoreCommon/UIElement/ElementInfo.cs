@@ -55,6 +55,9 @@ namespace Amdocs.Ginger.Common.UIElement
         [IsSerializedForLocalRepository]
         public bool Mandatory { get; set; }
 
+        [IsSerializedForLocalRepository]
+        public bool IsAutoLearned { get; set; }
+
         public object ElementObject { get; set; }
         public Boolean IsExpandable { get; set; }
 
@@ -125,6 +128,20 @@ namespace Amdocs.Ginger.Common.UIElement
                 return mElementTypeEnum;
             }
             set { mElementTypeEnum = value; }
+        }
+
+        public string ElementTypeEnumDescription
+        {
+            get
+            {
+                string enumDescription = mElementTypeEnum.ToString();
+                try
+                {
+                    enumDescription = ((EnumValueDescriptionAttribute[])typeof(eElementType).GetField(mElementTypeEnum.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
+                }
+                catch { }
+                return enumDescription;
+            }
         }
 
         [IsSerializedForLocalRepository]
@@ -289,6 +306,8 @@ namespace Amdocs.Ginger.Common.UIElement
         ByModelName,
         [EnumValueDescription("By CSS Selector")]
         ByCSSSelector,
+        [EnumValueDescription("Page Objects Model Element")]
+        POMElement,
     }
 
     public enum eElementType

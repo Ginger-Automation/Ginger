@@ -387,7 +387,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.EyeSlash);
                     break;
                 case eImageType.View:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Search);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Eye);
                     break;
                 case eImageType.Expand:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ChevronDown);
@@ -427,7 +427,10 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Download:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
-                    break;              
+                    break;
+                case eImageType.Filter:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Filter);
+                    break;
                 #endregion
 
 
@@ -520,6 +523,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Camera:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Camera);
+                    break;
+                case eImageType.ExcelFile:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileExcelOutline);
+                    break;
+                case eImageType.PlusSquare:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlusSquare);
                     break;
                 #endregion
 

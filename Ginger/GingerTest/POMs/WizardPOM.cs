@@ -81,7 +81,7 @@ namespace GingerWPFUnitTest.POMs
         {
             get
             {
-                return GetButton("NextButton");
+                return GetButton("xNextButton");
             }
         }
 
@@ -89,7 +89,7 @@ namespace GingerWPFUnitTest.POMs
         {
             get
             {
-                return GetButton("PrevButton");
+                return GetButton("xPrevButton");
             }
         }
 
@@ -97,7 +97,7 @@ namespace GingerWPFUnitTest.POMs
         {
             get
             {
-                return GetButton("FinishButton");
+                return GetButton("xFinishButton");
             }
         }
 
@@ -105,7 +105,7 @@ namespace GingerWPFUnitTest.POMs
         {
             get
             {
-                return GetButton("CancelButton");
+                return GetButton("xCancelButton");
             }
         }
 

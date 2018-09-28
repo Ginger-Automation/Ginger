@@ -25,10 +25,17 @@ namespace GingerCore.ALM.QCRestAPI
 
         public static bool ConnectQCServer(string qcServerUrl, string qcUserName, string qcPassword)
         {
-            if (QcRestClient == null || qcServerUrl != ServerURL || qcUserName != UserName || qcPassword != Password)
-                QcRestClient = new QCClient(qcServerUrl, qcUserName, qcPassword);
+            string validateQcServerUrl = qcServerUrl;
+            if (validateQcServerUrl.ToLowerInvariant().EndsWith("qcbin"))
+            {
+                validateQcServerUrl = qcServerUrl.Remove(qcServerUrl.Length - 5);
+            }  
+            if (QcRestClient == null || validateQcServerUrl != ServerURL || qcUserName != UserName || qcPassword != Password)
+            {
+                QcRestClient = new QCClient(validateQcServerUrl, qcUserName, qcPassword);
+            }
 
-            ServerURL = qcServerUrl;
+            ServerURL = validateQcServerUrl;
             UserName = qcUserName;
             Password = qcPassword;
 
@@ -150,7 +157,7 @@ namespace GingerCore.ALM.QCRestAPI
             return int.Parse(separatePath.Last());
         }
 
-        //get test plan explorer(tree view)
+        // get test plan explorer(tree view)
         public static List<string> GetTestPlanExplorer(string PathNode)
         {
             string[] separatePath = PathNode.Split('\\');
@@ -202,7 +209,7 @@ namespace GingerCore.ALM.QCRestAPI
             return testlabPathList;
         }
 
-        //get test set explorer(tree view)
+        // get test set explorer(tree view)
         public static List<QCTestSetSummary> GetTestSetExplorer(string PathNode)
         {
             List<QCTestSetSummary> testlabPathList = new List<QCTestSetSummary>();
@@ -352,6 +359,19 @@ namespace GingerCore.ALM.QCRestAPI
             try
             {
                 return QcRestClient.GetTestInstanceParams(id);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test instances with REST API", ex);
+                return null;
+            }
+        }
+
+        public static QCTestInstance GetTestInstanceWithTestCaseId(string testCaseId)
+        {
+            try
+            {
+                return QcRestClient.GetTestInstanceWithTestCase(testCaseId);
             }
             catch (Exception ex)
             {

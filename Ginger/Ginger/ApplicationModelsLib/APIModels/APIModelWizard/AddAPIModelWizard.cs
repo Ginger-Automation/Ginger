@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
+using Ginger.WizardLib;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System;
@@ -75,6 +76,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         public AddAPIModelWizard(RepositoryFolder<ApplicationAPIModel> APIModelsFolder)
         {
             APIModelFolder = APIModelsFolder;
+            
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "API Model Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/APIModels/APIModelWizard/AddAPIModelIntro.md"));
 
             AddPage(Name: "Select Document", Title: "API's Import Source", SubTitle: "Set API's Import Source/s", Page: new AddAPIModelSelectTypePage());
 
