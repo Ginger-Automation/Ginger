@@ -589,18 +589,12 @@
     <Compile Include="ApplicationModelsLib\ModelParams Pages\ModelsGlobalParamsPage.xaml.cs">
       <DependentUpon>ModelsGlobalParamsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMIntroductionWizardPage.xaml.cs">
-      <DependentUpon>POMIntroductionWizardPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\AddPOMWizard.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml.cs">
       <DependentUpon>POMLearnConfigWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml.cs">
       <DependentUpon>POMObjectsMappingWizardPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMScreenShotWizardPage.xaml.cs">
-      <DependentUpon>POMScreenShotWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\ScanPageWizardPage.xaml.cs">
       <DependentUpon>ScanPageWizardPage.xaml</DependentUpon>
@@ -1985,6 +1979,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Resource Include="PluginsLibNew\AddPluginWizardLib\AddPluginIntro.md" />
+    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\AddPOMIntro.md" />
+    <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
     <None Include="Ginger.ruleset" />
     <None Include="Resources\VBSTemplate.bmp" />
     <None Include="Resources\VBSTemplate.vbs" />
@@ -2664,19 +2660,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMIntroductionWizardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMScreenShotWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

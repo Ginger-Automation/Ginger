@@ -33,6 +33,7 @@ using Ginger.WindowExplorer.HTMLCommon;
 using Ginger.WindowExplorer.Java;
 using Ginger.WindowExplorer.Mainframe;
 using GingerCore;
+using GingerCore.Actions.Common;
 using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers;
 using GingerCore.Drivers.AndroidADB;
@@ -73,36 +74,54 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
-                    //In case 
+
+                    ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(App.UserProfile.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList());
+                    xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
+                    xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
+
+                    if (xTargetApplicationComboBox.Items != null && xTargetApplicationComboBox.Items.Count > 0)
+                    {
+                        xTargetApplicationComboBox.SelectedIndex = 0;
+                    }
+
                     if (mWizard.POM.TargetApplicationKey != null)
-                         mAppPlatform = GetTargetApplicationPlatform();
+                        mAppPlatform = GetTargetApplicationPlatform();
+
                     mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
                     xAgentControlUC.Init(mWizard.OptionalAgentsList);
                     App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard, nameof(mWizard.Agent));
-                    xAgentControlUC.AddValidationRule(new AgentControlValidationRule(AgentControlValidationRule.eAgentControlValidationRuleType.AgentIsMappedAndRunning));
                     xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
+                    AddValidations();
                     ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();                    
                     break;
             }
         }
 
+        private void AddValidations()
+        {
+            xAgentControlUC.AddValidationRule(new AgentControlValidationRule(AgentControlValidationRule.eAgentControlValidationRuleType.AgentIsMappedAndRunning));
+        }
+
+        private void RemoveValidations()
+        {
+            xAgentControlUC.RemoveValidations(ucAgentControl.SelectedAgentProperty);
+        }
+
         private void SetAutoMapElementTypes()
         {
             if (mWizard.AutoMapElementTypesList.Count == 0)
-            {                
-                List<eElementType> UIElementsTypeList = null;
+            {
                 switch (mAppPlatform)
                 {
                     case ePlatformType.Web:
-                        WebPlatform webPlatformInfo = new WebPlatform();
-                        UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
+                        foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in new WebPlatform().GetPlatformElementTypesData().ToList())
+                        {
+                            mWizard.AutoMapElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
+                        }
                         break;
                 }
-
-                foreach (eElementType eET in UIElementsTypeList)                
-                    mWizard.AutoMapElementTypesList.Add(new UIElementFilter(eET, string.Empty));                
             }
         }
 
@@ -165,6 +184,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             xAutoMapElementTypesExpander.IsExpanded = true;
             xAutoMapElementTypesExpander.IsEnabled = true;
+            xAgentControlUC.xAgentConfigsExpander.IsExpanded = false;
+
             SetAutoMapElementTypes();
             xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
         }
@@ -176,6 +197,27 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public bool IsAlternatePageToLoad()
         {
             return false;
+        }
+
+        private void xAutomaticElementConfigurationRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (mWizard != null)
+            {
+                if ((bool)xManualElementConfigurationRadioButton.IsChecked)
+                {
+                    mWizard.ManualElementConfiguration = true;
+                    RemoveValidations();
+                    xAgentControlUC.Visibility = Visibility.Hidden;
+                    xAutoMapElementTypesExpander.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    mWizard.ManualElementConfiguration = false;
+                    AddValidations();
+                    xAgentControlUC.Visibility = Visibility.Visible;
+                    xAutoMapElementTypesExpander.Visibility = Visibility.Visible;
+                }
+            }
         }
     }
 }

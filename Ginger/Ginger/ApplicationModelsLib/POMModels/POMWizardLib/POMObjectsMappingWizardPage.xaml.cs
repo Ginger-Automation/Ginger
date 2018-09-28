@@ -23,6 +23,7 @@ using Ginger.Actions.UserControls;
 using Ginger.UserControls;
 using Ginger.WindowExplorer;
 using GingerCore;
+using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerCore.Platforms;
 using GingerWPF.WizardLib;
@@ -64,7 +65,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             EI.Properties = mWizard.IWindowExplorerDriver.GetElementProperties(EI);
             EI.ElementName = GetBestElementName(EI);
             EI.WindowExplorer = mWizard.IWindowExplorerDriver;
-
+            EI.IsAutoLearned = true;
 
             if (mSelectedElementTypesList.Contains(EI.ElementTypeEnum))
             {
@@ -83,7 +84,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (pomAllElementsPage == null)
             {
                 pomAllElementsPage = new PomAllElementsPage(mWizard.POM, mWizard.IWindowExplorerDriver);
-                pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
                 xPomElementsMappingPageFrame.Content = pomAllElementsPage;
             }
         }
@@ -94,8 +94,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
-                    mElementsList.CollectionChanged += ElementsListCollectionChanged;
-                    InitilizePomElementsMappingPage();
+                    if (!mWizard.ManualElementConfiguration)
+                    {
+                        mElementsList.CollectionChanged += ElementsListCollectionChanged;
+                        InitilizePomElementsMappingPage();
+                    }
                     break;
 
                 case EventType.Active:
@@ -106,8 +109,22 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         pomAllElementsPage.SetWindowExplorer(mWizard.IWindowExplorerDriver);
                     }
 
-                    mSelectedElementTypesList = mWizard.AutoMapElementTypesList.Where(x => x.Selected == true).Select(x =>x.ElementType).ToList();
-                    Learn();
+                    if (mWizard.ManualElementConfiguration)
+                    {
+                        xReLearnButton.Visibility = Visibility.Hidden;
+                        pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
+                    }
+                    else
+                    {
+                        pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
+                        pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
+
+                        xReLearnButton.Visibility = Visibility.Visible;
+                        mWizard.IWindowExplorerDriver.UnHighLightElements();
+                        mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
+                        mSelectedElementTypesList = mWizard.AutoMapElementTypesList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
+                        Learn();
+                    }
                     break;
             }
         }
@@ -124,6 +141,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                
                 mWizard.POM.MappedUIElements.Clear();
                 mWizard.POM.UnMappedUIElements.Clear();
+
+                mWizard.POM.Name = mWizard.IWindowExplorerDriver.GetActiveWindow().Title;
 
                 //mRequestedElementTypesDict = SeleniumDriver.GetFilteringCreteriaDict(mWizard.AutoMapElementTypesList);//TODO: need to be done diffrently- talk with Eliran
                 //mRequestedElementTagList = mRequestedElementTypesDict.Keys.Select(x => x.ToUpper()).ToList();

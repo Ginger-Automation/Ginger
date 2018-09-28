@@ -30,16 +30,15 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
         public string Folder { get; set; }
         public AddPluginPackageWizard()
         {
-            
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Plugin Introduction", Page: new WizardIntroPage("/PluginsLibNew/AddPluginWizardLib/AddPluginIntro.md"));
 
             AddPage(Name: "Select Plugin Type", Title: "Select Plugin Type", SubTitle: "Choose ...", Page: new SelectPluginPackageTypePage());
 
-            AddPage(Name: "SelectPluginFolderPage", Title: "SelectPluginFolderPage", SubTitle: "SelectPluginFolderPage ...", Page: new SelectPlugPackageinFolderPage());
+            AddPage(Name: "Select Plugin Folder Page", Title: "Select Plugin Folder Page", SubTitle: "Select Plugin Folder Page ...", Page: new SelectPlugPackageinFolderPage());
 
-            AddPage(Name: "PluginInfoPage", Title: "PluginInfoPage", SubTitle: "PluginInfoPage ...", Page: new PlugPackageinInfoPage());            
+            AddPage(Name: "Plugin Info Page", Title: "Plugin Info Page", SubTitle: "Plugin Info Page ...", Page: new PlugPackageinInfoPage());            
 
-            AddPage(Name: "AddPluginToSolutionPage", Title: "AddPluginToSolutionPage", SubTitle: "AddPluginToSolutionPage ...", Page: new AddPluginPackageToSolutionPage());
+            AddPage(Name: "Add Plugin to Solution Page", Title: "Add Plugin to Solution Page", SubTitle: "Add Plugin to Solution Page ...", Page: new AddPluginPackageToSolutionPage());
         }
 
         public override string Title { get { return "Add Plugin Package Wizard"; } }
