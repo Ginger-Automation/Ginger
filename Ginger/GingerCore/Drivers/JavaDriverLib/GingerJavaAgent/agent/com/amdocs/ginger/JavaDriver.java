@@ -1733,6 +1733,12 @@ private TreePath SearchTreeNodes(String locateValue, JTree tree)
 			{
 				treePath = (tree).getNextMatch(node.trim(), row, Position.Bias.Forward);
 				
+				if(treePath.getParentPath() == null && nodes.length == 1)
+				{
+					nodeFound = true;
+					break;
+				}
+				
 				if(treePath != null)
 				{
 					DefaultMutableTreeNode treeNode =(DefaultMutableTreeNode) treePath.getPath()[1];
