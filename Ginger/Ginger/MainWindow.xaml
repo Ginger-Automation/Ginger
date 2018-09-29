@@ -43,7 +43,7 @@
                             </MenuItem.Icon>
                             <MenuItem x:Name="xRecentSolutionsMenuItem" Header="Recent Solutions" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xRecentSolutionsMenuItem_Click" StaysOpenOnClick="True" Visibility="Collapsed" >
                                 <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="History"  Margin="0,0,0,0"/>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="History"  Margin="0,0,0,0"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem x:Name="xOpenSolutionMenuItem" Header="Open Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xOpenSolutionMenuItem_Click">
@@ -58,13 +58,13 @@
                             </MenuItem>
                             <MenuItem x:Name="xCreateNewSolutionMenuItem" Header="Create New Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xCreateNewSolutionMenuItem_Click">
                                 <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Add"  Margin="0,0,0,0"/>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Add"  Margin="0,0,0,0"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                         </MenuItem>
                     </Menu>
                 </StackPanel>
-                
+
                 <!--Main Menu- Solution Tabs-->
                 <ListView x:Name="xSolutionTopNavigationListView" Background="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" SelectionChanged="xSolutionTopNavigationListView_SelectionChanged" Margin="0,5,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" >
                     <ListView.ItemsPanel>
@@ -86,7 +86,7 @@
                 <Menu x:Name="xSolutionOperationsMenu"  DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="20,0,0,0" Background="{StaticResource $BackgroundColor_VeryDarkBlue}"  VerticalAlignment="Center" >
                     <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Solution Operations">
                         <MenuItem.Icon>
-                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="25" ImageType="EllipsisH" Width="25" Height="25" Margin="0,0,0,0"/>
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="20" ImageType="EllipsisH" Width="20" Height="20" Margin="0,0,0,0"/>
                         </MenuItem.Icon>
                         <MenuItem x:Name="xSolutionCheckInMenuItem" Header="Check-In Solution Changes" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xSolutionCheckInBtn_Click">
                             <MenuItem.Icon>
@@ -120,7 +120,7 @@
                         </MenuItem.Icon>
                         <MenuItem x:Name="xUserProfileMenuItem" Header="User Profile" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xUserProfileMenuItem_Click" >
                             <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="UserProfile"  Margin="0,0,0,0"/>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="UserProfile"  Margin="0,0,0,0"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem x:Name="xUserSettingsMenuItem" Header="User Settings" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xUserSettingsMenuItem_Click">
@@ -137,110 +137,36 @@
                 </Menu>
             </DockPanel>
 
-            <!--Main Menu- Application Configurations/Operations-->
-            <StackPanel Orientation="Horizontal" Grid.Column="3">
-                <Menu x:Name="xMainConfigurationsMenu"  HorizontalAlignment="Right" VerticalAlignment="Center" Background="{StaticResource $BackgroundColor_VeryDarkBlue}" ToolTip="Application Configurations" Margin="0,0,0,0">
-                    <MenuItem Style="{StaticResource $MenuItemStyle_Main}" FlowDirection="RightToLeft">
+            <!--Main Menu- Extra Operations-->
+            <DockPanel Grid.Column="3" VerticalAlignment="Center">
+                <Menu x:Name="xExtraOperationsMenu" DockPanel.Dock="Left" Background="Transparent"  Margin="5,0,0,0" VerticalAlignment="Center">
+                    <MenuItem x:Name="xExtraOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Solution Selection" Margin="0,0,0,0"  StaysOpenOnClick="True">
                         <MenuItem.Icon>
-                            <usercontrols:ImageMakerControl ImageType="Config" SetAsFontImageWithSize="18" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="EllipsisH" Width="18" Height="18" Margin="0,0,0,0"/>
                         </MenuItem.Icon>
-                        <!--<MenuItem x:Name="GingerCoreNET" Header="Ginger Core NET Tester" Style="{StaticResource $MenuItemStyle}" Visibility="Collapsed" Click="GingerCoreNET_Click" />-->
-                        <MenuItem Header="UI Configurations" Style="{StaticResource $MenuItemStyle}" >
+                        <MenuItem  Header="Ginger Help Library" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="HelpButton_Click">
                             <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl ImageType="Screen" SetAsFontImageWithSize="14" HorizontalAlignment="Left"/>
+                                <usercontrols:ImageMakerControl ImageType="FileVideo" Width="16" SetAsFontImageWithSize="16"/>
                             </MenuItem.Icon>
-                            <MenuItem x:Name="btnSetTerminologyType" Header="Set Terminology Type" Click="btnSetTerminologyType_Click" Style="{StaticResource $MenuItemStyle}">
-                                <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl ImageType="Text" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem x:Name="btnSetUserType" Header="Set User Type" Click="btnSetUserType_Click" Style="{StaticResource $MenuItemStyle}">
-                                <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl ImageType="User" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
                         </MenuItem>
-                        <MenuItem  Header="General Configurations" Style="{StaticResource $MenuItemStyle}">
+                        <MenuItem x:Name="xSupportOptionsMenuItem" Header="Support" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xSupportOptionsMenuItem_Click">
                             <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl ImageType="Fix" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Help" Margin="0,0,0,0"/>
                             </MenuItem.Icon>
-                            <MenuItem x:Name="xAutoLoadLastSolutionMenuItem" Header="Auto Load Last Solution" IsCheckable="True" />
-                            <MenuItem x:Name="xAskToUpgradeMenuItem" Header="Do Not Ask To Upgrade Solution" IsCheckable="True" />
-                            <MenuItem x:Name="xShowBFSaveWarnMenuItem" Header="Show Business Flow Change Save Warning" IsCheckable="True" />
                         </MenuItem>
-                        <MenuItem  Header="Ginger Log" Style="{StaticResource $MenuItemStyle}">
+                        <MenuItem x:Name="xContactOptionsMenuItem" Header="Contact" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xContactOptionsMenuItem_Click">
                             <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl ImageType="File" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Email" Margin="0,0,0,0"/>
                             </MenuItem.Icon>
-                            <MenuItem x:Name="btnSetLoggingLevel" Header="Set Logging Level" Click="btnSetLoggingLevel_Click" Style="{StaticResource $MenuItemStyle}">
-                                <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl ImageType="Config" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem x:Name="btnViewLog" Header="Open Log" Click="btnViewLog_Click" Style="{StaticResource $MenuItemStyle}">
-                                <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl ImageType="File" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem x:Name="btnViewLogLocation" Header="Open Log Folder" Click="btnViewLogLocation_Click" Style="{StaticResource $MenuItemStyle}">
-                                <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl ImageType="Open" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem x:Name="btnLaunchConsole" Header="Open Debug Console" Click="btnLaunchConsole_Click" Style="{StaticResource $MenuItemStyle}">
-                                <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl ImageType="Window" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem  Header="About" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnAbout_Click">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl ImageType="Info" Width="16" SetAsFontImageWithSize="16"/>
+                            </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
                 </Menu>
-
-                <Menu x:Name="xSupportMenu"  HorizontalAlignment="Right" VerticalAlignment="Center" Background="{StaticResource $BackgroundColor_VeryDarkBlue}" ToolTip="Support" Margin="0,5,0,0">
-                    <MenuItem Style="{StaticResource $MenuItemStyle_Main}">
-                        <MenuItem.Icon>
-                            <usercontrols:ImageMakerControl ImageType="Help" SetAsFontImageWithSize="15" HorizontalAlignment="Center" Margin="0,0,-10,0"/>
-                        </MenuItem.Icon>
-                        <MenuItem  Header="Ginger Help Library" Style="{StaticResource $MenuItemStyle}" Click="HelpButton_Click">
-                            <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl ImageType="FileVideo" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem x:Name="xLoadSupportSiteMenuItem" Header="Ginger Support Site" Style="{StaticResource $MenuItemStyle}" Click="xLoadSupportSiteMenuItem_Click">
-                            <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl ImageType="Globe" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem x:Name="xLoadForumSiteMenuItem" Header="Ginger Q&amp;A Fourm Site" Style="{StaticResource $MenuItemStyle}" Click="xLoadForumSiteMenuItem_Click">
-                            <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl ImageType="Question" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem x:Name="xOpenTicketMenuItem" Header="Raise Ticket to Core Team" Style="{StaticResource $MenuItemStyle}" Click="xOpenTicketMenuItem_Click">
-                            <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl ImageType="Tag" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="Support Contacts" Style="{StaticResource $MenuItemStyle}">
-                            <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl ImageType="Service" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                            </MenuItem.Icon>
-                            <MenuItem x:Name="xSupportTeamMenuItem"  Header="Ginger Support Team: AmdocsTestingGingerDVCISupport@int.amdocs.com" Style="{StaticResource $MenuItemStyle}" Click="xSupportTeamMenuItem_Click">
-                                <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl ImageType="Email" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem x:Name="xCoreTeamMenuItem" Header="Ginger Core Team: GingerCoreTeam@int.amdocs.com" Style="{StaticResource $MenuItemStyle}" Click="xCoreTeamMenuItem_Click">
-                                <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl ImageType="Email" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                        </MenuItem>
-                    </MenuItem>
-                </Menu>
-
-                <usercontrols:ucButton x:Name="xAboutBtn" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Info" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" Click="btnAbout_Click" ToolTip="About" Margin="0,0,0,0"/>
-            </StackPanel>
+            </DockPanel>
         </Grid>
 
         <!--<Ribbon>-->

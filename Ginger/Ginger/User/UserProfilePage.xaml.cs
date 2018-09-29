@@ -15,7 +15,7 @@ namespace Ginger.User
     /// </summary>
     public partial class UserProfilePage : Page
     {
-        GenericWindow _pageGenericWin = null;
+        GenericWindow _pageGenericWin;
         eUserType mOriginalUserType;
 
         public UserProfilePage()
@@ -40,7 +40,7 @@ namespace Ginger.User
             mOriginalUserType = App.UserProfile.UserType;
             xUserTypeComboBox.BindControl(App.UserProfile, nameof(UserProfile.UserType));
             xUserTypeNoteLbl.Visibility = Visibility.Collapsed;
-            xUserRoleTxtBox.BindControl(App.UserProfile, nameof(UserProfile.UserRole));
+            xUserRoleComboBox.BindControl(App.UserProfile, nameof(UserProfile.UserRole));
             App.ObjFieldBinding(xUserDepartmentTxtBox, TextBox.TextProperty, App.UserProfile, nameof(UserProfile.UserDepartment));
 
             App.ObjFieldBinding(xUserEmailAddressTxtBox, TextBox.TextProperty, App.UserProfile, nameof(UserProfile.UserEmail));
@@ -106,10 +106,10 @@ namespace Ginger.User
             App.UserProfile.SaveBackup();
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
-            Button SaveBtn = new Button();
-            SaveBtn.Content = "Save & Close";
-            SaveBtn.Click += new RoutedEventHandler(SaveBtn_Click);
-            winButtons.Add(SaveBtn);
+            //Button SaveBtn = new Button();
+            //SaveBtn.Content = "Save & Close";
+            //SaveBtn.Click += new RoutedEventHandler(SaveBtn_Click);
+            //winButtons.Add(SaveBtn);
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
@@ -124,11 +124,11 @@ namespace Ginger.User
             _pageGenericWin.Close();
         }
 
-        private void SaveBtn_Click(object sender, RoutedEventArgs e)
-        {
-            App.UserProfile.SaveUserProfile();
-            _pageGenericWin.Close();
-        }
+        //private void SaveBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    App.UserProfile.SaveUserProfile();
+        //    _pageGenericWin.Close();
+        //}
 
     }
 }

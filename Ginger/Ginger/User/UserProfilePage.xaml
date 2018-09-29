@@ -41,7 +41,7 @@
             <ComboBox x:Name="xUserTypeComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xUserTypeComboBox_SelectionChanged"/>
             <Label x:Name="xUserTypeNoteLbl" Content="Note: Role type selection change will effect offered functionalities on UI, changes will fully take effect only after Ginger re-start." Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" FontSize="9" />
             <Label Content="Role:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" />
-            <ComboBox x:Name="xUserRoleTxtBox" Style="{StaticResource $FlatInputComboBoxStyle}"/>
+            <ComboBox x:Name="xUserRoleComboBox" Style="{StaticResource $FlatInputComboBoxStyle}"/>
             <Label Content="Department:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left"/>
             <TextBox x:Name="xUserDepartmentTxtBox" Style="{StaticResource $TextBoxStyle}"/>
                         

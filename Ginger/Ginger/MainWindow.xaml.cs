@@ -82,10 +82,7 @@ namespace Ginger
 
                 //User Profile
                 App.PropertyChanged += App_PropertyChanged;
-                App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
-                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAutoLoadLastSolutionMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
-                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToUpgradeMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
-                GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xShowBFSaveWarnMenuItem, MenuItem.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AskToSaveBusinessFlow));
+                App.UserProfile.PropertyChanged += UserProfilePropertyChanged;                
                 if (App.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.ExitMode);
@@ -168,14 +165,7 @@ namespace Ginger
 
                     foreach (Solution sol in App.UserProfile.RecentSolutionsAsObjects)
                     {
-                        MenuItem mi = new MenuItem();
-                        mi.Style = (Style)TryFindResource("$MenuItemStyle_ButtonSubMenuItem");
-                        mi.Header = sol.Name;
-                        mi.ToolTip = sol.Folder;
-                        mi.Tag = sol;
-                        mi.Click += RecentSolutionSelection_Click;
-                        xSolutionSelectionMainMenuItem.Items.Insert(insertIndex, mi);
-                        insertIndex++;
+                        AddSubMenuItem(xSolutionSelectionMainMenuItem, sol.Name, sol, RecentSolutionSelection_Click, insertIndex++, sol.Folder);                        
                     }
                 }
                 else
@@ -839,14 +829,15 @@ namespace Ginger
             e.Handled = true;
         }
 
-        private void xLogOptionsMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
+        UserSettingsPage mUserSettingsPage;
         private void xUserSettingsMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (mUserSettingsPage == null)
+            {
+                mUserSettingsPage = new UserSettingsPage();
+            }
 
+            mUserSettingsPage.ShowAsWindow();
         }
 
         UserProfilePage mUserProfilePage;
@@ -879,8 +870,131 @@ namespace Ginger
             else
             {
                 xUserNameLbl.Content = App.UserProfile.UserFirstName;
+            }            
+        }
+
+        private void xLogOptionsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (xLogOptionsMenuItem.Tag == null)
+            {
+                xLogOptionsMenuItem.Tag = true;//expanded
             }
-            
+            else
+            {
+                xLogOptionsMenuItem.Tag = null;
+            }
+
+            SetLogOptionsMenuItems();
+        }
+
+        private void SetLogOptionsMenuItems()
+        {
+            //delete all shown Log options sub menu items
+            for (int i = 0; i < xUserOperationsMainMenuItem.Items.Count; i++)
+            {
+                if (((MenuItem)xUserOperationsMainMenuItem.Items[i]).Tag == "Log")
+                {
+                    xUserOperationsMainMenuItem.Items.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            if (xLogOptionsMenuItem.Tag != null)
+            {
+                //Insert
+                int insertIndex = xUserOperationsMainMenuItem.Items.IndexOf(xLogOptionsMenuItem) + 1;
+               
+                AddSubMenuItem(xUserOperationsMainMenuItem, "View Log", "Log", btnViewLog_Click, insertIndex++);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log Location Folder", "Log", btnViewLogLocation_Click, insertIndex++);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Debug Console", "Log", btnLaunchConsole_Click, insertIndex);                
+            }
+        }
+
+        private void AddSubMenuItem(MenuItem parentMenuItem, string itemHeader, object itemTag, RoutedEventHandler clickEventHandler, int insertIndex, string toolTip="")
+        {
+            MenuItem subMenuItem = new MenuItem();
+            subMenuItem.Style = (Style)TryFindResource("$MenuItemStyle_ButtonSubMenuItem");
+            subMenuItem.Header = itemHeader;
+            subMenuItem.Tag = itemTag;
+            subMenuItem.Click += clickEventHandler;
+            if(!string.IsNullOrEmpty(toolTip))
+            {
+                subMenuItem.ToolTip = toolTip;
+            }
+            parentMenuItem.Items.Insert(insertIndex, subMenuItem);
+        }
+
+        private void xSupportOptionsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (xSupportOptionsMenuItem.Tag == null)
+            {
+                xSupportOptionsMenuItem.Tag = true;//expanded
+            }
+            else
+            {
+                xSupportOptionsMenuItem.Tag = null;
+            }
+
+            SetSupportOptionsMenuItems();
+        }
+
+        private void SetSupportOptionsMenuItems()
+        {
+            //delete all Support options Sub menu items
+            for (int i = 0; i < xExtraOperationsMainMenuItem.Items.Count; i++)
+            {
+                if (((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Support")
+                {
+                    xExtraOperationsMainMenuItem.Items.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            if (xSupportOptionsMenuItem.Tag != null)
+            {
+                //Insert
+                int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xSupportOptionsMenuItem) + 1;
+
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Support Site", "Support", xLoadSupportSiteMenuItem_Click, insertIndex++);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Q&A Fourm Site", "Support", xLoadForumSiteMenuItem_Click, insertIndex++);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Ticket to Core Team", "Support", xOpenTicketMenuItem_Click, insertIndex);                
+            }
+        }
+
+        private void xContactOptionsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (xContactOptionsMenuItem.Tag == null)
+            {
+                xContactOptionsMenuItem.Tag = true;//expanded
+            }
+            else
+            {
+                xContactOptionsMenuItem.Tag = null;
+            }
+
+            SetContactOptionsMenuItems();
+        }
+
+        private void SetContactOptionsMenuItems()
+        {
+            //delete all Support options Sub menu items
+            for (int i = 0; i < xExtraOperationsMainMenuItem.Items.Count; i++)
+            {
+                if (((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Contact")
+                {
+                    xExtraOperationsMainMenuItem.Items.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            if (xContactOptionsMenuItem.Tag != null)
+            {
+                //Insert
+                int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xContactOptionsMenuItem) + 1;
+
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Support Team", "Contact", xSupportTeamMenuItem_Click, insertIndex++, "AmdocsTestingGingerDVCISupport@int.amdocs.com");
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Core Team", "Contact", xCoreTeamMenuItem_Click, insertIndex, "GingerCoreTeam@int.amdocs.com");                              
+            }
         }
     }
 }

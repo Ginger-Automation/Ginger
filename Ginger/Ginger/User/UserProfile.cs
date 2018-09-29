@@ -357,15 +357,20 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public string EncryptedALMPassword { get; set; }
 
+        Amdocs.Ginger.Core.eTerminologyDicsType mTerminologyDictionaryType;
         [IsSerializedForLocalRepository]
-        public Amdocs.Ginger.Core.eTerminologyDicsType TerminologyDictionaryType { get; set; }
+        public Amdocs.Ginger.Core.eTerminologyDicsType TerminologyDictionaryType
+        {
+            get { return mTerminologyDictionaryType; }
+            set { mTerminologyDictionaryType = value; OnPropertyChanged(nameof(TerminologyDictionaryType)); }
+        }
 
         eAppLogLevel mAppLogLevel;
         [IsSerializedForLocalRepository]
         public eAppLogLevel AppLogLevel
         {
             get { return mAppLogLevel; }
-            set { mAppLogLevel = value; Reporter.CurrentAppLogLevel = mAppLogLevel; }
+            set { mAppLogLevel = value; Reporter.CurrentAppLogLevel = mAppLogLevel; OnPropertyChanged(nameof(AppLogLevel)); }
         }
 
         eUserType mUserType;

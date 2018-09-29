@@ -18,21 +18,21 @@
         <Image Grid.Row="0"  Source="{StaticResource @GingerLogo}" DockPanel.Dock="Top" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" Margin="0,0,0,0" />
         
         <DockPanel Grid.Row="1">            
-            <Label Content="Application Details:" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
+            <Label Content="Application Details:" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
             <ScrollViewer DockPanel.Dock="Top" Margin="0,10,0,10">
                 <TextBlock x:Name="txtBlkApplicationInfo" Text="Application Details:" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}"></TextBlock>
             </ScrollViewer>
         </DockPanel>
 
         <DockPanel Grid.Row="2">
-            <Label Content="Credit:" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
+            <Label Content="Credit:" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
             <ScrollViewer DockPanel.Dock="Top" Margin="0,10,0,10">
                 <TextBlock x:Name="txtCredit" Text="Credit:" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" ></TextBlock>
             </ScrollViewer>
         </DockPanel>
         
         <DockPanel Grid.Row="3">
-            <Label Content="Support:" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
+            <Label Content="Support:" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
             <ScrollViewer DockPanel.Dock="Top" Margin="0,10,0,10">
                 
                 <TextBlock x:Name="txtSupport" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" >
