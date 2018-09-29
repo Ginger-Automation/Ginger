@@ -62,6 +62,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontFamily" Value="Open Sans"/>
         <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="-5,0,0,0"/>
         <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
     </Style>
     
@@ -77,6 +78,15 @@
         </Style.Triggers>
     </Style>
 
+    <Style TargetType="TextBox" x:Key="$TextBoxStyle" >
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+        
     <Style TargetType="TextBlock"  x:Key="$TextBlockStyle" >
         <Setter Property="FontFamily" Value="Open Sans"/>
         <Setter Property="FontSize" Value="12"/>

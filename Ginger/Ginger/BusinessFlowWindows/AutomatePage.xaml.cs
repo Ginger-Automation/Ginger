@@ -97,8 +97,8 @@ namespace Ginger
             {
                 //xToBusinessFlowsListBtn.ButtonText = string.Format("To {0} List", GingerCore.GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
                 xToBusinessFlowsListBtn.Visibility = Visibility.Visible;
-                xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, 32);
-                xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, 16);
+                xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 32);
+                xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 16);
                 xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
                 xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
                 xToBusinessFlowsListBtn.Click += value;
@@ -117,11 +117,11 @@ namespace Ginger
             //Ribbon
             btnRunActivity.Label = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
             ContinuteRunActiviy.Header = "Continue Run from Current " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-            btnResetStatus.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, 32);
-            btnResetStatus.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, 16);
-            btnResetFlow.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, 14);
-            btnResetFromCurrentActivity.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, 14);
-            btnResetFromCurrentAction.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, 14);
+            btnResetStatus.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 32);
+            btnResetStatus.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 16);
+            btnResetFlow.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
+            btnResetFromCurrentActivity.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
+            btnResetFromCurrentAction.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
             cboSpeed.Text = "0";
             App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, App.AutomateTabGingerRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
             AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(App.AutomateTabGingerRunner);

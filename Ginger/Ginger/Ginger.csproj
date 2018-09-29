@@ -994,6 +994,9 @@
     <Compile Include="UserControlsLib\VisualFlow\ZoomPanel.xaml.cs">
       <DependentUpon>ZoomPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="User\UserProfilePage.xaml.cs">
+      <DependentUpon>UserProfilePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Variables\VariablePasswordStringPage.xaml.cs">
       <DependentUpon>VariablePasswordStringPage.xaml</DependentUpon>
     </Compile>
@@ -1906,7 +1909,7 @@
       <DependentUpon>ucGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\UIHelpers.cs" />
-    <Compile Include="UserProfile.cs" />
+    <Compile Include="User\UserProfile.cs" />
     <Compile Include="Variables\AddVariablePage.xaml.cs">
       <DependentUpon>AddVariablePage.xaml</DependentUpon>
     </Compile>
@@ -2945,6 +2948,10 @@
     <Page Include="UserControlsLib\VisualFlow\ZoomPanel.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="User\UserProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Variables\VariablePasswordStringPage.xaml">
       <SubType>Designer</SubType>

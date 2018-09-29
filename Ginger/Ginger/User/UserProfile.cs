@@ -34,16 +34,57 @@ using System.Reflection;
 
 namespace Ginger
 {
-    public enum eGingerStatus{
-        Closed,Active,AutomaticallyClosed
+    public enum eGingerStatus {
+        Closed, Active, AutomaticallyClosed
     }
-  
-    public class UserProfile : RepositoryItem
+
+    public enum eUserType
+    {
+        Regular,
+        Business
+    }
+
+    public enum eUserRole
+    {
+        None,
+        [EnumValueDescription("Product Owner")]
+        ProductOwner,
+        [EnumValueDescription("Scrum Master")]
+        ScrumMaster,
+        Developer,
+        Tester,
+        [EnumValueDescription("Technical Writer")]
+        TechnicalWriter,
+        [EnumValueDescription("User Experience")]
+        UserExperience,
+        [EnumValueDescription("Release Manager")]
+        ReleaseManager,
+        [EnumValueDescription("SW Architect")]
+        SWArchitect,
+        [EnumValueDescription("RM Scoping")]
+        RMScoping,
+        [EnumValueDescription("Service Partner")]
+        ServicePartner,
+        PMO,
+        [EnumValueDescription("Dev Manager")]
+        DevManager,
+        [EnumValueDescription("Program Manager")]
+        ProgramManager,
+        Architect,
+        [EnumValueDescription("Project Manager")]
+        ProjectManager,
+        [EnumValueDescription("Testing Manager")]
+        TestingManager,
+        [EnumValueDescription("Dev Expert")]
+        DevExpert
+    }
+
+    public class UserProfile : RepositoryItemBase
     {
         //Move it to UCGridLib
         public class UserProfileGrid
         {
-            public string GridId {get; set;}
+            public string GridId { get; set; }
             public List<UserProfileGridCol> Cols = new List<UserProfileGridCol>();
         }
 
@@ -56,7 +97,7 @@ namespace Ginger
         public new static class Fields
         {
             public static string AutoLoadLastSolution = "AutoLoadLastSolution";
-            public static string ReportTemplate ="ReportTemplate";
+            public static string ReportTemplate = "ReportTemplate";
             public static string DoNotAskToUpgradeSolutions = "DoNotAskToUpgradeSolutions";
             public static string SourceControlURL = "SourceControlURL"; //represent the source control SERVER url
             public static string SourceControlType = "SourceControlType";   //represent the last used source control type
@@ -79,7 +120,7 @@ namespace Ginger
                 OnPropertyChanged(nameof(Solution));
             }
         }
-        
+
         public List<UserProfileGrid> Grids = new List<UserProfileGrid>();
 
         bool mAutoLoadLastSolution;
@@ -142,7 +183,7 @@ namespace Ginger
             }
             set
             {
-                RecentSolutionsAsObjects = value;
+                mRecentSolutionsAsObjects = value;
             }
         }
 
@@ -160,7 +201,7 @@ namespace Ginger
                 {
                     try
                     {
-                        Solution sol = Solution.LoadSolution(SolutionFile, false);                                                
+                        Solution sol = Solution.LoadSolution(SolutionFile, false);
                         mRecentSolutionsAsObjects.Add(sol);
                     }
                     catch (Exception ex)
@@ -188,8 +229,8 @@ namespace Ginger
                 {
                     mRecentSolutionsAsObjects.Remove(sol);
                 }
-            }            
-         
+            }
+
             // Add it in first place 
             RecentSolutions.Insert(0, loadedSolution.Folder);
             mRecentSolutionsAsObjects.AddToFirstIndex(loadedSolution);
@@ -250,7 +291,7 @@ namespace Ginger
 
         [IsSerializedForLocalRepository]
         public string ReportTemplateName { get; set; }
-        
+
         public string SourceControlPass
         {
             get
@@ -295,9 +336,9 @@ namespace Ginger
 
         [IsSerializedForLocalRepository]
         public string ALMUserName { get; set; }
-        
-        public string ALMPassword 
-        { 
+
+        public string ALMPassword
+        {
             get
             {
                 bool res = false;
@@ -309,36 +350,48 @@ namespace Ginger
             }
             set
             {
-                bool res=false;
+                bool res = false;
                 EncryptedALMPassword = EncryptionHandler.EncryptString(value, ref res);
             }
         }
         [IsSerializedForLocalRepository]
         public string EncryptedALMPassword { get; set; }
-        
+
         [IsSerializedForLocalRepository]
         public Amdocs.Ginger.Core.eTerminologyDicsType TerminologyDictionaryType { get; set; }
 
         eAppLogLevel mAppLogLevel;
-       [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public eAppLogLevel AppLogLevel
         {
             get { return mAppLogLevel; }
             set { mAppLogLevel = value; Reporter.CurrentAppLogLevel = mAppLogLevel; }
         }
 
+        eUserType mUserType;
         [IsSerializedForLocalRepository]
-        public eUserType UserType { get; set; }
+        public eUserType UserType
+        { 
+            get
+            {
+                return mUserType;
+            }
+            set
+            {
+                mUserType = value;
+                OnPropertyChanged(nameof(UserType));
+            }
+        }
 
         public UserTypeHelper UserTypeHelper { get; set; }
-        
+
         public static string getUserProfileFileName()
         {
             //we just save and load serialized UserProfile objct
             string s = App.LocalApplicationData + @"\Ginger.UserProfile.xml";
             return s;
         }
-        
+
         public void SaveUserProfile()
         {
             try
@@ -348,7 +401,7 @@ namespace Ginger
             catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
 
             string UserProfileFileName = getUserProfileFileName();
-            this.SaveToFile(UserProfileFileName);
+            RepositorySerializer.SaveToFile(this, UserProfileFileName);
         }
 
         public void SaveRecentAppAgentsMapping()
@@ -356,16 +409,16 @@ namespace Ginger
             if (mSolution != null)
             {
                 //remove last saved mapping for this solution
-                string existingSolMapping= RecentAppAgentsMapping.Where(x=> x.Contains(mSolution.Name + "***")==true).FirstOrDefault();
-                if(string.IsNullOrEmpty(existingSolMapping) ==false)                
+                string existingSolMapping = RecentAppAgentsMapping.Where(x => x.Contains(mSolution.Name + "***") == true).FirstOrDefault();
+                if (string.IsNullOrEmpty(existingSolMapping) == false)
                     RecentAppAgentsMapping.Remove(existingSolMapping);
 
                 //create new save to this solution
-                existingSolMapping= mSolution.Name + "***";                
+                existingSolMapping = mSolution.Name + "***";
                 foreach (ApplicationPlatform ap in mSolution.ApplicationPlatforms)
                 {
                     if (string.IsNullOrEmpty(ap.LastMappedAgentName) == false)
-                        existingSolMapping+= ap.AppName + "," + ap.LastMappedAgentName + "#";
+                        existingSolMapping += ap.AppName + "," + ap.LastMappedAgentName + "#";
                 }
                 RecentAppAgentsMapping.Add(existingSolMapping);
             }
@@ -382,7 +435,7 @@ namespace Ginger
                 else
                 {
                     string solName = mSolution.Name + "***";
-                    existingSolMapping = existingSolMapping.Replace(solName,string.Empty);
+                    existingSolMapping = existingSolMapping.Replace(solName, string.Empty);
                     List<string> appAgentMapping = existingSolMapping.Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries).ToList();
                     Dictionary<string, string> mappingDic = new Dictionary<string, string>();
                     foreach (string mapping in appAgentMapping)
@@ -402,7 +455,7 @@ namespace Ginger
                             if (mappingDic.Keys.Contains(ap.AppName))
                             {
                                 if (ap != null && WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Count > 0)
-                                {    
+                                {
                                     List<Agent> platformAgents = (from p in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where p.Platform == ap.Platform select p).ToList();
                                     Agent matchingAgent = platformAgents.Where(x => x.Name == mappingDic[ap.AppName]).FirstOrDefault();
                                     if (matchingAgent != null)
@@ -438,7 +491,10 @@ namespace Ginger
             {
                 try
                 {
-                    UserProfile up = (UserProfile)RepositoryItem.LoadFromFile(typeof(UserProfile), UserProfilePath);
+                    //UserProfile up = (UserProfile)RepositoryItem.LoadFromFile(typeof(UserProfile), UserProfilePath);
+                    string userProfileTxt = File.ReadAllText(UserProfilePath);
+                    UserProfile up = (UserProfile)NewRepositorySerializer.DeserializeFromText(userProfileTxt);
+                    up.FilePath = UserProfilePath;                 
                     if (DateTime.Compare(UserProfileDT, InstallationDT) < 0)
                     {
                         if (UserConfigdictObj != null)
@@ -505,16 +561,16 @@ namespace Ginger
             AutoLoadLastSolution = true; //#Task 160
             SetDefaultWorkingFolder();
         }
-        
+
         public void SetDefaultWorkingFolder()
         {
             LocalWorkingFolder = App.LocalApplicationData + @"\WorkingFolder";
             Directory.CreateDirectory(LocalWorkingFolder);
         }
-        
+
         internal string GetDefaultReport()
         {
-            if(!string.IsNullOrEmpty(ReportTemplateName))
+            if (!string.IsNullOrEmpty(ReportTemplateName))
             {
                 return ReportTemplateName;
             }
@@ -573,5 +629,134 @@ namespace Ginger
 
         [IsSerializedForLocalRepository]
         public bool DoNotAskToRecoverSolutions { get; set; }
+
+        string mProfileImage;
+        [IsSerializedForLocalRepository]
+        public string ProfileImage
+        {
+            get
+            {
+                return mProfileImage;
+            }
+            set
+            {
+                if (mProfileImage != value)
+                {
+                    mProfileImage = value;
+                    OnPropertyChanged(nameof(ProfileImage));
+                }
+            }
+        }
+
+        public string UserName
+        {
+            get { return Environment.UserName; }
+        }
+
+        string mUserFirstName;
+        [IsSerializedForLocalRepository]
+        public string UserFirstName
+        {
+            get
+            {
+                return mUserFirstName;
+            }
+            set
+            {
+                mUserFirstName = value;
+                OnPropertyChanged(nameof(UserFirstName));
+            }
+        }
+
+        string mUserMiddleName;
+        [IsSerializedForLocalRepository]
+        public string UserMiddleName
+        {
+            get
+            {
+                return mUserMiddleName;
+            }
+            set
+            {
+                mUserMiddleName = value;
+                OnPropertyChanged(nameof(UserMiddleName));
+            }
+        }
+
+        string mUserLastName;
+        [IsSerializedForLocalRepository]
+        public string UserLastName
+        {
+            get
+            {
+                return mUserLastName;
+            }
+            set
+            {
+                mUserLastName = value;
+                OnPropertyChanged(nameof(UserLastName));
+            }
+        }
+
+        string mUserEmail;
+        [IsSerializedForLocalRepository]
+        public string UserEmail
+        {
+            get
+            {
+                return mUserEmail;
+            }
+            set
+            {
+                mUserEmail = value;
+                OnPropertyChanged(nameof(UserEmail));
+            }
+        }
+
+        string mUserPhone;
+        [IsSerializedForLocalRepository]
+        public string UserPhone
+        {
+            get
+            {
+                return mUserPhone;
+            }
+            set
+            {
+                mUserPhone = value;
+                OnPropertyChanged(nameof(UserPhone));
+            }
+        }
+
+        eUserRole mUserRole;
+        [IsSerializedForLocalRepository]
+        public eUserRole UserRole
+        {
+            get
+            {
+                return mUserRole;
+            }
+            set
+            {
+                mUserRole = value;
+                OnPropertyChanged(nameof(UserRole));
+            }
+        }
+
+        string mUserDepartment;
+        [IsSerializedForLocalRepository]
+        public string UserDepartment
+        {
+            get
+            {
+                return mUserDepartment;
+            }
+            set
+            {
+                mUserDepartment = value;
+                OnPropertyChanged(nameof(UserDepartment));
+            }
+        }
+
     }
 }

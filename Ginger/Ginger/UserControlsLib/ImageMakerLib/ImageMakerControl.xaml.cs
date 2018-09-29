@@ -513,10 +513,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Screen:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Desktop);
-                    break;
-                case eImageType.User:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.UserOutline);
-                    break;
+                    break;                
                 case eImageType.Info:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.InfoCircle);
                     break;
@@ -585,6 +582,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.ArrowDown:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDown);
+                    break;
+                case eImageType.User:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.UserCircleOutline);
+                    break;
+                case eImageType.UserProfile:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.UserMd);
                     break;
                 #endregion
 
@@ -664,12 +667,13 @@ namespace Amdocs.Ginger.UserControls
             return new BitmapImage(new Uri("pack://application:,,,/Ginger;component/UserControlsLib/ImageMakerLib/Images/" + imageName));
         }
 
-        public static ImageSource GetImageSource(eImageType imageType, double width = 0.0, bool SetBorder = false)
+        public static ImageSource GetImageSource(eImageType imageType, SolidColorBrush foreground = null, double spinDuration = 0, string toolTip = null, double width = 0.0, bool SetBorder = false)
         {
             ImageMakerControl IM = new ImageMakerControl();
             IM.ImageType = imageType;
-            IM.Width = width;
             IM.SetBorder = SetBorder;
+            IM.SetAsFontAwesomeIcon(IM.xFAImage.Icon, foreground, spinDuration, toolTip);            
+            IM.Width = width;            
 
             if (IM.xFAImage.Visibility == Visibility.Visible)
                 return IM.xFAImage.Source;

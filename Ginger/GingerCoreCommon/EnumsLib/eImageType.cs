@@ -161,8 +161,7 @@ namespace Amdocs.Ginger.Common.Enums
         Question,
         Help,
         Info,
-        Screen,
-        User,
+        Screen,        
         Text,
         Globe,
         Service,
@@ -175,7 +174,8 @@ namespace Amdocs.Ginger.Common.Enums
         Power,
         ArrowDown,
         ExcelFile,
-
+        User,
+        UserProfile,       
         #endregion
 
 

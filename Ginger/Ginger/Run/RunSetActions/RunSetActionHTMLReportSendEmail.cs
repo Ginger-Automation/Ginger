@@ -382,7 +382,7 @@ namespace Ginger.Run.RunSetActions
             HTMLReportConfiguration currentTemplate = new HTMLReportConfiguration();
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
             currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault();
-            System.Drawing.Image CustomerLogo = Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(currentTemplate.LogoBase64Image.ToString());
+            System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
             CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
             if (currentTemplate == null)
             {

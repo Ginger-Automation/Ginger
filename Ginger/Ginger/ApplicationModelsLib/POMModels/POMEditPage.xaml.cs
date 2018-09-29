@@ -56,7 +56,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             BitmapSource source = null;
             if (mPOM.ScreenShotImage != null)
             {
-                source = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.ScreenShotImage.ToString()));
+                source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mPOM.ScreenShotImage.ToString()));
             }
 
             //Bitmap ScreenShot = BitmapFromSource(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.LogoBase64Image.ToString())));

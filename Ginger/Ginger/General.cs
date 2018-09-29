@@ -30,6 +30,7 @@ using GingerCore.GeneralFunctions;
 using Ginger.Help;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using System.Drawing;
 
 namespace Ginger
 {
@@ -55,9 +56,9 @@ namespace Ginger
         }
 
         //TODO: we need all places to use this one or something which will be checked at compile time
-        internal static Image GetImage(string ImageFileName)
+        internal static System.Windows.Controls.Image GetImage(string ImageFileName)
         {
-            Image image = new Image();
+            System.Windows.Controls.Image image = new System.Windows.Controls.Image();
             image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + ImageFileName));
             return image;
         }
@@ -382,7 +383,7 @@ namespace Ginger
                 return App.Current.TryFindResource("$SkippedStatusColor") as SolidColorBrush;
             }
 
-            return Brushes.Black;
+            return System.Windows.Media.Brushes.Black;
         }
 
         public static T GetVisualChild<T>(Visual parent) where T : Visual
@@ -413,10 +414,10 @@ namespace Ginger
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        public static Image GetImage(string imageName, int width = -1, int height = -1)
+        public static System.Windows.Controls.Image GetImage(string imageName, int width = -1, int height = -1)
         {
             //TODO: replace all places where we have pack://application:,,,/Ginger;component/Images/ with below function
-            Image img = new Image();
+            System.Windows.Controls.Image img = new System.Windows.Controls.Image();
             img.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + imageName));
             if (width > 0)
                 img.Width = width;
@@ -425,5 +426,103 @@ namespace Ginger
             return img;
         }
 
+
+        public static BitmapSource GetImageStream(System.Drawing.Image myImage)
+        {
+            var bitmap = new Bitmap(myImage);
+            IntPtr bmpPt = bitmap.GetHbitmap();
+            BitmapSource bitmapSource =
+             System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                   bmpPt,
+                   IntPtr.Zero,
+                   Int32Rect.Empty,
+                   BitmapSizeOptions.FromEmptyOptions());
+
+            //freeze bitmapSource and clear memory to avoid memory leaks
+            bitmapSource.Freeze();
+            DeleteObject(bmpPt);
+            bitmap.Dispose();
+            return bitmapSource;
+        }
+
+        public static System.Drawing.Image Base64StringToImage(string base64String)
+        {
+            // Convert base 64 string to byte[]
+            byte[] imageBytes = Convert.FromBase64String(base64String);
+            // Convert byte[] to Image
+            using (var ms = new MemoryStream(imageBytes, 0, imageBytes.Length))
+            {
+                System.Drawing.Image image = System.Drawing.Image.FromStream(ms, true);
+                return image;
+            }
+        }
+
+        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
+
+        public static string BitmapToBase64(Bitmap bImage)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                byte[] byteImage = ms.ToArray();
+                return Convert.ToBase64String(byteImage).ToString(); //Get Base64
+            }
+        }
+
+        public static Tuple<int, int> GetImageHeightWidth(string path)
+        {
+            Tuple<int, int> a;
+            using (Stream stream = File.OpenRead(path))
+            {
+                using (System.Drawing.Image sourceImage = System.Drawing.Image.FromStream(stream, false, false))
+                {
+                    a = new Tuple<int, int>(sourceImage.Width, sourceImage.Height);
+                }
+            }
+            return a;
+        }
+        public static Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
+        {
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
+                enc.Save(outStream);
+                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
+
+                return new Bitmap(bitmap);
+            }
+        }
+
+        //For Screenshots
+        public static Tuple<int, int> RecalculatingSizeWithKeptRatio(Tuple<int, int> a, int boxWidth, int boxHight)
+        {
+            //calculate the ratio
+            double dbl = (double)a.Item1 / (double)a.Item2;
+            if ((int)((double)boxHight * dbl) <= boxWidth)
+            {
+                return new Tuple<int, int>((int)((double)boxHight * dbl), boxHight);
+            }
+            else
+            {
+                return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
+            }
+        }
+
+        //For logos
+        public static Tuple<int, int> RecalculatingSizeWithKeptRatio(BitmapSource source, int boxWidth, int boxHight)
+        {
+            //calculate the ratio
+            double dbl = (double)source.Width / (double)source.Height;
+            if ((int)((double)boxHight * dbl) <= boxWidth)
+            {
+                return new Tuple<int, int>((int)((double)boxHight * dbl), boxHight);
+            }
+            else
+            {
+                return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
+            }
+        }
     }         
 }

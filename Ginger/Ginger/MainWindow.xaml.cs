@@ -49,6 +49,9 @@ using Ginger.ConfigurationsLib;
 using Ginger.MenusLib;
 using Amdocs.Ginger;
 using Ginger.SolutionLibNew;
+using Ginger.User;
+using Amdocs.Ginger.UserControls;
+using System.Drawing;
 
 namespace Ginger
 {
@@ -98,6 +101,7 @@ namespace Ginger
                 //Main Menu                
                 xGingerIconImg.ToolTip = App.AppFullProductName + Environment.NewLine + "Version " + App.AppVersion;
                 SetSolutionDependedUIElements();
+                UpdateUserDetails();
 
                 //Status Bar            
                 ErrorsLabel.Visibility = Visibility.Collapsed;
@@ -835,6 +839,48 @@ namespace Ginger
             e.Handled = true;
         }
 
-       
+        private void xLogOptionsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void xUserSettingsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        UserProfilePage mUserProfilePage;
+        private void xUserProfileMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (mUserProfilePage == null)
+            {
+                mUserProfilePage = new UserProfilePage();
+            }
+
+            mUserProfilePage.ShowAsWindow();
+            UpdateUserDetails();
+        }
+
+        private void UpdateUserDetails()
+        {
+            if (string.IsNullOrEmpty(App.UserProfile.ProfileImage))
+            {
+                xProfileImageImgBrush.ImageSource = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_LightGray"), width: 50);
+            }
+            else
+            {
+                xProfileImageImgBrush.ImageSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(App.UserProfile.ProfileImage));
+            }
+
+            if (String.IsNullOrEmpty(App.UserProfile.UserFirstName))
+            {
+                xUserNameLbl.Content = App.UserProfile.UserName;               
+            }
+            else
+            {
+                xUserNameLbl.Content = App.UserProfile.UserFirstName;
+            }
+            
+        }
     }
 }
