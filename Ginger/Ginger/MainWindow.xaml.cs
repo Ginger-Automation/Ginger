@@ -235,8 +235,8 @@ namespace Ginger
                 if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
                     App.SetSolution(App.UserProfile.RecentSolutionsAsObjects[0].Folder);
-                    xSolutionTopNavigationListView.SelectedItem = null;
-                    xSolutionTopNavigationListView.SelectedItem = xBusinessFlowsListItem;
+                    xSolutionTabsListView.SelectedItem = null;
+                    xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 }
             }
             catch (Exception ex)
@@ -254,15 +254,15 @@ namespace Ginger
                 SetSolutionDependedUIElements();
                 if (App.UserProfile.Solution == null)
                 {
-                    xSolutionTopNavigationListView.SelectedItem = null;
+                    xSolutionTabsListView.SelectedItem = null;
                     xSolutionNameTextBlock.Text = "Please Load Solution";
                 }
                 else
                 {
                     App.LastBusinessFlow = null;                  
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty, App.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
-                    xSolutionTopNavigationListView.SelectedItem = null;
-                    xSolutionTopNavigationListView.SelectedItem = xBusinessFlowsListItem;
+                    xSolutionTabsListView.SelectedItem = null;
+                    xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 }
             }
         }
@@ -358,7 +358,7 @@ namespace Ginger
             {
                 xMainWindowFrame.Visibility = Visibility.Collapsed;
             }
-            ListViewItem selectedTopListItem = (ListViewItem)xSolutionTopNavigationListView.SelectedItem;
+            ListViewItem selectedTopListItem = (ListViewItem)xSolutionTabsListView.SelectedItem;
 
             if (selectedTopListItem != null)
             {
@@ -428,7 +428,7 @@ namespace Ginger
         {
             if (App.UserProfile.Solution != null)
             {
-                xSolutionTopNavigationListView.Visibility = Visibility.Visible;
+                xLoadedSolutionMenusPnl.Visibility = Visibility.Visible;
                 if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
                 {
                     xRunListItem.Visibility = Visibility.Visible;
@@ -437,33 +437,41 @@ namespace Ginger
                 {
                     xRunListItem.Visibility = Visibility.Collapsed;
                 }
+                if (App.UserProfile.Solution.SourceControl != null)
+                {
+                    xSolutionSourceControlMenu.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xSolutionSourceControlMenu.Visibility = Visibility.Collapsed;
+                }
 
-                //TODO: Fix with all solution operations
-                //if (App.UserProfile.UserTypeHelper.IsSupportAnalyzer)
-                //    AnalyzerButton.Visibility = Visibility.Visible;
-                //else
-                //    AnalyzerButton.Visibility = Visibility.Collapsed;
 
-                //if (App.UserProfile.UserTypeHelper.IsSupportALM)
-                //    ALMConfigurationsGroup.Visibility = Visibility.Visible;
-                //else
-                //    ALMConfigurationsGroup.Visibility = Visibility.Collapsed;
+                    //TODO: Fix with all solution operations
+                    //if (App.UserProfile.UserTypeHelper.IsSupportAnalyzer)
+                    //    AnalyzerButton.Visibility = Visibility.Visible;
+                    //else
+                    //    AnalyzerButton.Visibility = Visibility.Collapsed;
 
-                //if (App.UserProfile.Solution.SourceControl != null)
-                //{
-                //    CheckInSolutionBtn.Visibility = Visibility.Visible;
-                //    GetLatestSolutionBtn.Visibility = Visibility.Visible;
-                //    ResolveConflictsBtn.Visibility = Visibility.Visible;
-                //    ConnectionDetailsBtn.Visibility = Visibility.Visible;
-                //    RepositoryDetailsBtn.Visibility = Visibility.Visible;
-                //    SourceControlSolutioRibbonGroup.Visibility = Visibility.Visible;
-                //}
+                    //if (App.UserProfile.UserTypeHelper.IsSupportALM)
+                    //    ALMConfigurationsGroup.Visibility = Visibility.Visible;
+                    //else
+                    //    ALMConfigurationsGroup.Visibility = Visibility.Collapsed;
 
-            }
+                    //if (App.UserProfile.Solution.SourceControl != null)
+                    //{
+                    //    CheckInSolutionBtn.Visibility = Visibility.Visible;
+                    //    GetLatestSolutionBtn.Visibility = Visibility.Visible;
+                    //    ResolveConflictsBtn.Visibility = Visibility.Visible;
+                    //    ConnectionDetailsBtn.Visibility = Visibility.Visible;
+                    //    RepositoryDetailsBtn.Visibility = Visibility.Visible;
+                    //    SourceControlSolutioRibbonGroup.Visibility = Visibility.Visible;
+                    //}
+
+                }
             else
             {
-                xSolutionTopNavigationListView.Visibility = Visibility.Collapsed;
-                xSolutionOperationsMenu.Visibility = Visibility.Collapsed;
+                xLoadedSolutionMenusPnl.Visibility = Visibility.Collapsed;                
             }
         }
 
@@ -725,7 +733,7 @@ namespace Ginger
             ShowGingerLog();
         }
                 
-        private void FindAndReplaceSolutionPageButton_Click(object sender, RoutedEventArgs e)
+        private void xFindAndReplaceSolutionButton_Click(object sender, RoutedEventArgs e)
         {
             SolutionFindAndReplace();
         }
@@ -745,7 +753,7 @@ namespace Ginger
             if (args.EventType == AutomateEventArgs.eEventType.Automate)
             {
                 //TODO: load Business Flows tab
-                xSolutionTopNavigationListView.SelectedItem = xBusinessFlowsListItem;
+                xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 App.BusinessFlow = (BusinessFlow)args.Object;
                 App.BusinessFlow.SaveBackup();
             }

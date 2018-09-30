@@ -18,15 +18,17 @@
             <Label Content="Loging Level:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="-5,5,0,0"/>
             <ComboBox x:Name="xLoggingLevelComboBox" Style="{StaticResource $FlatInputComboBoxStyle}"/>
             
-            <CheckBox x:Name="xAutoLoadLastSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto Load Last Solution"  Margin="0,10,0,0"/>
+            <CheckBox x:Name="xAutoLoadLastSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto load last Solution"  Margin="0,10,0,0"/>
             
-            <CheckBox x:Name="xAskToUpgradeSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do Not Ask To Upgrade Solution"  Margin="0,5,0,0"/>
+            <CheckBox x:Name="xAskToUpgradeSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do not ask to upgrade Solution"  Margin="0,5,0,0"/>
             
-            <CheckBox x:Name="xShowBFSaveWarnCheckBox" Style="{StaticResource $CeckBoxStyle}"  Margin="0,5,0,0">
+            <CheckBox x:Name="xAskToRecoverSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do not offer to recover un-saved items"  Margin="0,5,0,0"/>
+            
+            <!--<CheckBox x:Name="xShowBFSaveWarnCheckBox" Style="{StaticResource $CeckBoxStyle}"  Margin="0,5,0,0">
                 <CheckBox.Content>
-                    <GingerCore:ucTextDicResource Text="Show [BusinessFlow] Change Save Warning"/>
+                    <GingerCore:ucTextDicResource Text="Show [BusinessFlow] change save warning when shifting to automate other [BusinessFlow]"/>
                 </CheckBox.Content>
-            </CheckBox>
+            </CheckBox>-->
 
         </StackPanel>
     </ScrollViewer>

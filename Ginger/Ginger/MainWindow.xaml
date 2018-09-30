@@ -8,7 +8,7 @@
         Icon="GingerIconNew.ico"        
         Height="600" Width="1000" WindowState="Normal" 
         Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown">
-    
+
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -31,7 +31,7 @@
                 <GridSplitter Width="1" Height="40" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" Margin="10,0,10,0"/>
             </DockPanel>
 
-            <!--Main Menu- Loaded Solution Main Navigation-->
+            <!--Main Menu- Solution Menu's-->
             <DockPanel Grid.Column="1" VerticalAlignment="Center">
                 <!--Main Menu- Solution Selection-->
                 <StackPanel x:Name="xSolutionSelectionPnl" Orientation="Horizontal" DockPanel.Dock="Left" >
@@ -65,43 +65,73 @@
                     </Menu>
                 </StackPanel>
 
-                <!--Main Menu- Solution Tabs-->
-                <ListView x:Name="xSolutionTopNavigationListView" Background="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" SelectionChanged="xSolutionTopNavigationListView_SelectionChanged" Margin="0,5,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" >
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"></StackPanel>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListViewItem x:Name="xBusinessFlowsListItem" Style="{StaticResource $TopListViewItemStyle}" IsSelected="True">
-                        <ListViewItem.Content>
-                            <GingerCore:ucTextDicResource Text="[BusinessFlows]" Typography.Capitals="AllSmallCaps" FontSize="20" Margin="0,0,0,3"/>
-                        </ListViewItem.Content>
-                    </ListViewItem>
-                    <ListViewItem x:Name="xRunListItem" Style="{StaticResource $TopListViewItemStyle}" >RUN</ListViewItem>
-                    <ListViewItem x:Name="xConfigurationsListItem" Style="{StaticResource $TopListViewItemStyle}">CONFIGURATIONS</ListViewItem>
-                    <ListViewItem x:Name="xResourcesListItem" Style="{StaticResource $TopListViewItemStyle}">RESOURCES</ListViewItem>
-                </ListView>
+                <!--Main Menu- Loaded Solution Menu's-->
+                <DockPanel x:Name="xLoadedSolutionMenusPnl" DockPanel.Dock="Left" VerticalAlignment="Center">
+                    <!--Main Menu- Solution Tabs-->
+                    <ListView x:Name="xSolutionTabsListView" Background="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" SelectionChanged="xSolutionTopNavigationListView_SelectionChanged" Margin="0,5,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" >
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListViewItem x:Name="xBusinessFlowsListItem" Style="{StaticResource $TopListViewItemStyle}" IsSelected="True">
+                            <ListViewItem.Content>
+                                <GingerCore:ucTextDicResource Text="[BusinessFlows]" Typography.Capitals="AllSmallCaps" FontSize="20" Margin="0,0,0,3"/>
+                            </ListViewItem.Content>
+                        </ListViewItem>
+                        <ListViewItem x:Name="xRunListItem" Style="{StaticResource $TopListViewItemStyle}" >RUN</ListViewItem>
+                        <ListViewItem x:Name="xConfigurationsListItem" Style="{StaticResource $TopListViewItemStyle}">CONFIGURATIONS</ListViewItem>
+                        <ListViewItem x:Name="xResourcesListItem" Style="{StaticResource $TopListViewItemStyle}">RESOURCES</ListViewItem>
+                    </ListView>
 
-                <!--Main Menu- Solution Operations-->
-                <Menu x:Name="xSolutionOperationsMenu"  DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="20,0,0,0" Background="{StaticResource $BackgroundColor_VeryDarkBlue}"  VerticalAlignment="Center" >
-                    <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Solution Operations">
-                        <MenuItem.Icon>
-                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="20" ImageType="EllipsisH" Width="20" Height="20" Margin="0,0,0,0"/>
-                        </MenuItem.Icon>
-                        <MenuItem x:Name="xSolutionCheckInMenuItem" Header="Check-In Solution Changes" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xSolutionCheckInBtn_Click">
+                    <!--Main Menu- Solution Operations-->
+                    <Menu x:Name="xSolutionSourceControlMenu" Background="{StaticResource $BackgroundColor_VeryDarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                        <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Source Control Operations">
                             <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="CheckIn"  Margin="0,0,0,0"/>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="SourceControl" Margin="0,0,0,0"/>
                             </MenuItem.Icon>
+                            <MenuItem Header="Get Latest Solution Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlGetLatest_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="GetLatest"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Check-In Solution Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlCheckIn_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="CheckIn"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="View Repository Details" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlRepositoryDetails_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="View"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Resolve Conflicts" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Fix"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                                <MenuItem Header="Keep Local Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsLocalMenuItem_Click">
+                                    <!--<MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="CheckIn"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>-->
+                                </MenuItem>
+                                <MenuItem Header="Accept Server Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsServerMenuItem_Click">
+                                    <!--<MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="CheckIn"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>-->
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem Header="Source Control Settings" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlConnectionDetails_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Parameter"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
                         </MenuItem>
-                        <MenuItem x:Name="xSolutionGetLatestMenuItem" Header="Get Latest Solution Changes" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xSolutionGetLatestBtn_Click">
-                            <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="GetLatest"  Margin="0,0,0,0"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                    </MenuItem>
-                </Menu>
+                    </Menu>
+
+                    <usercontrols:ucButton x:Name="xFindAndReplaceBtn" ButtonType="ImageButton" ToolTip="Find and Replace in Solution"  ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Search" Click="xFindAndReplaceSolutionButton_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                </DockPanel>
             </DockPanel>
-
+            
             <!--Main Menu- User Operations-->
             <DockPanel Grid.Column="2" VerticalAlignment="Center">
                 <GridSplitter Width="1" Height="40" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" Margin="10,0,10,0"/>

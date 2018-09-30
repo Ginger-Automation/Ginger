@@ -538,6 +538,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Email:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.EnvelopeOutline);
                     break;
+                case eImageType.SourceControl:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cloud);
+                    break;
                 case eImageType.SourceControlNew:
                     SetAsStaticImage("SourceControlItemAdded_10x10.png");
                     break;

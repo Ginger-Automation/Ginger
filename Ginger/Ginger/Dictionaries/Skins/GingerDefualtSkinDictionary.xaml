@@ -120,7 +120,6 @@
     </Style>
 
     <Style TargetType="Button" x:Key="$ImageButtonStyle_Disabled">
-      
         <Setter Property="Foreground" Value="Gray" />
         <Setter Property="Template">
             <Setter.Value>
@@ -173,7 +172,7 @@
 
     <Style TargetType="Button" x:Key="$ImageButtonStyle_Menu">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_Gray}" />
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_LightGray}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">

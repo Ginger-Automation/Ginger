@@ -175,11 +175,12 @@ namespace Amdocs.Ginger.Common.Enums
         ArrowDown,
         ExcelFile,
         User,
-        UserProfile,       
+        UserProfile,
         #endregion
 
 
-        #region Source control Images        
+        #region Source control Images     
+        SourceControl,
         SourceControlNew,
         SourceControlModified,
         SourceControlDeleted,
