@@ -17,30 +17,25 @@ limitations under the License.
 #endregion
 
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
+using System.Collections.Generic;
+using Amdocs.Ginger.Common.Actions;
+using Newtonsoft.Json;
 
-namespace Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common
+namespace Amdocs.Ginger.Common
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class StandAloneAction
-    {                
-        public ObservableList<ActInputValue> InputValues = new ObservableList<ActInputValue>();
-                        
-        //public override string ActionType => throw new NotImplementedException();
-
-        //public override string ActionDescription => throw new NotImplementedException();
-
-        //public override bool ObjectLocatorConfigsNeeded => throw new NotImplementedException();
-
-        //public override bool ValueConfigsNeeded => throw new NotImplementedException();
-
-        //public override List<Platform.ePlatformType> Platforms => throw new NotImplementedException();
-
-        //public override string ActionEditPage => throw new NotImplementedException();
-
-        //public override string ActionUserDescription => throw new NotImplementedException();
+    {
+        [JsonProperty]
         public string ID { get; internal set; }
+        [JsonProperty]
         public string PluginID { get; internal set; }
+        [JsonProperty]
+        public string ServiceID { get; internal set; }
+        [JsonProperty]
         public string Description { get; internal set; }
+
+        [JsonProperty]
+        public List<ActionInputValueInfo> InputValues = new List<ActionInputValueInfo>();
     }
 }

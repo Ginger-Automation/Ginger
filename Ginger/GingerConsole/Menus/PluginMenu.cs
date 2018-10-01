@@ -16,10 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RosLynLib;
-using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
-using Amdocs.Ginger.Repository;
 using System;
 
 namespace Amdocs.Ginger.GingerConsole
