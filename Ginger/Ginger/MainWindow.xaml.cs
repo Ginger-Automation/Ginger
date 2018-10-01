@@ -506,7 +506,7 @@ namespace Ginger
             almConnPage.ShowAsWindow();
         }
 
-        private void QCFieldConfiguration_Click(object sender, RoutedEventArgs e)
+        private void ALMFieldsConfiguration_Click(object sender, RoutedEventArgs e)
         {
             ALMIntegration.Instance.OpenALMItemsFieldsPage();
         }
@@ -1003,6 +1003,11 @@ namespace Ginger
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Support Team", "Contact", xSupportTeamMenuItem_Click, insertIndex++, "AmdocsTestingGingerDVCISupport@int.amdocs.com");
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Core Team", "Contact", xCoreTeamMenuItem_Click, insertIndex, "GingerCoreTeam@int.amdocs.com");                              
             }
+        }
+
+        private void EditSolutionDetailsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

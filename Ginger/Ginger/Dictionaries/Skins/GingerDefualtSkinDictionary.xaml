@@ -533,11 +533,13 @@
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
                 <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
                 <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -553,11 +555,13 @@
                 <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
                 <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -573,11 +577,13 @@
                 <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
                 <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -654,6 +660,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
+                            <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />

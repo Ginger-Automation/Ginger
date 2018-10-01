@@ -129,6 +129,8 @@ namespace Amdocs.Ginger.Common.Enums
         Export,
         Filter,
         ImportFile,
+        Upgrade,
+        Recover,
         #endregion
 
 

@@ -395,10 +395,10 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CloudDownload);
                     break;
                 case eImageType.GetLatest:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CloudDownload);
                     break;
                 case eImageType.CheckIn:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Upload);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CloudUpload);
                     break;
                 case eImageType.Fix:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Wrench);
@@ -441,6 +441,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Filter:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Filter);
+                    break;
+                case eImageType.Upgrade:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowCircleUp);
+                    break;
+                case eImageType.Recover:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Recycle);
                     break;
                 #endregion
 
