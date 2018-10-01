@@ -38,6 +38,7 @@ namespace Ginger.SolutionWindows
     /// </summary>
     public partial class SolutionPage : Page
     {
+        GenericWindow _pageGenericWin;
         Solution mSolution;
         ucGrid ApplicationGrid;
 
@@ -84,9 +85,37 @@ namespace Ginger.SolutionWindows
         }
 
 
-        private void xSaveButton_Click(object sender, RoutedEventArgs e)
+        //private void xSaveButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    mSolution.SaveSolution(true, Solution.eSolutionItemToSave.GeneralDetails);
+        //}
+
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
-            mSolution.SaveSolution(true,Solution.eSolutionItemToSave.GeneralDetails);
+            mSolution.SaveBackup();
+
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+            Button SaveBtn = new Button();
+            SaveBtn.Content = "Save";
+            SaveBtn.Click += new RoutedEventHandler(SaveBtn_Click);
+            winButtons.Add(SaveBtn);
+            Button undoBtn = new Button();
+            undoBtn.Content = "Undo & Close";
+            undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
+            winButtons.Add(undoBtn);
+
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, startupLocationWithOffset: startupLocationWithOffset);
+        }
+
+        private void UndoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mSolution.RestoreFromBackup(true);
+            _pageGenericWin.Close();
+        }
+
+        private void SaveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mSolution.SaveSolution(true, Solution.eSolutionItemToSave.GeneralDetails);
         }
     }
 }

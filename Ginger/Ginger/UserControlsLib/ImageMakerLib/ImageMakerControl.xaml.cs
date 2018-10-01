@@ -172,7 +172,7 @@ namespace Amdocs.Ginger.UserControls
                 #region Repository Items Images
                 //############################## Repository Items Images:
                 case eImageType.Solution:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThLarge);
                     break;
                 case eImageType.BusinessFlow:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
@@ -597,6 +597,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.UserProfile:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.UserMd);
+                    break;
+                case eImageType.Forum:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Comment);
+                    break;
+                case eImageType.Website:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Laptop);
                     break;
                 #endregion
 

@@ -178,6 +178,8 @@ namespace Amdocs.Ginger.Common.Enums
         ExcelFile,
         User,
         UserProfile,
+        Forum,
+        Website,
         #endregion
 
 

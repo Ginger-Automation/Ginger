@@ -4,11 +4,10 @@
         xmlns:h="clr-namespace:Ginger.Help"
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
-        Title="Amdocs BEAT Ginger Automation"    
-        Icon="GingerIconNew.ico"        
+        Title="Amdocs BEAT Ginger Automation"                
         Height="600" Width="1000" WindowState="Normal" 
         Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown">
-
+    <!--Icon="GingerIconNew.ico"-->
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -105,7 +104,7 @@
                                     <usercontrols:ImageMakerControl ImageType="Recover" Width="16" SetAsFontImageWithSize="16"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem  Header="Edit Solution Details" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="EditSolutionDetailsMenuItem_Click">
+                            <MenuItem  Header="View/Edit Solution Details" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="EditSolutionDetailsMenuItem_Click">
                                 <MenuItem.Icon>
                                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Edit" />
                                 </MenuItem.Icon>
@@ -225,7 +224,7 @@
 
             <!--Main Menu- Extra Operations-->
             <DockPanel Grid.Column="3" VerticalAlignment="Center">
-                <Menu x:Name="xExtraOperationsMenu" DockPanel.Dock="Left" Background="Transparent"  Margin="5,0,0,0" VerticalAlignment="Center">
+                <Menu x:Name="xExtraOperationsMenu" DockPanel.Dock="Left" Background="Transparent"  Margin="0,0,0,0" VerticalAlignment="Center">
                     <MenuItem x:Name="xExtraOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Extra Application Functionalities" Margin="0,0,0,0"  StaysOpenOnClick="True">
                         <MenuItem.Icon>
                             <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="EllipsisH" Width="18" Height="18" Margin="0,0,0,0"/>

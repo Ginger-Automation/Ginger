@@ -92,18 +92,21 @@ namespace Ginger.SolutionGeneral
                 }
                 if (solutionItemToSave != eSolutionItemToSave.ReportsSettings)
                 {
-                    if (ExecutionLoggerConfigurationSetList.Count != lastSavedSolution.ExecutionLoggerConfigurationSetList.Count || HTMLReportsConfigurationSetList.Count != lastSavedSolution.HTMLReportsConfigurationSetList.Count)
+                    if (ExecutionLoggerConfigurationSetList != null && (ExecutionLoggerConfigurationSetList.Count != lastSavedSolution.ExecutionLoggerConfigurationSetList.Count || HTMLReportsConfigurationSetList.Count != lastSavedSolution.HTMLReportsConfigurationSetList.Count))
                     {
                         extraChangedItems += "Reports Settings, ";
                     }
                     else
                     {
-                        foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
+                        if (ExecutionLoggerConfigurationSetList != null)
                         {
-                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
                             {
-                                extraChangedItems += "Reports Settings, ";
-                                break;
+                                if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                                {
+                                    extraChangedItems += "Reports Settings, ";
+                                    break;
+                                }
                             }
                         }
                         if (!extraChangedItems.Contains("Reports Settings"))
