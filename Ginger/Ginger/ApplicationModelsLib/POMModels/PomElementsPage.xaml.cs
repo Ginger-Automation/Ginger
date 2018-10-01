@@ -276,6 +276,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             ElementInfo EI = new ElementInfo();
+            EI.IsAutoLearned = false;
             mPOM.MappedUIElements.Add(EI);
             mPOM.MappedUIElements.CurrentItem = EI;
             xMainElementsGrid.ScrollToViewCurrentItem();
@@ -459,6 +460,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void CreateNewElemetClicked(object sender, RoutedEventArgs e)
         {
+            mSpyElement.IsAutoLearned = false;
             if (mContext == PomAllElementsPage.eElementsContext.Mapped)
             {
                 mPOM.MappedUIElements.Add(mSpyElement);

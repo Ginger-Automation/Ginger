@@ -531,7 +531,12 @@ namespace Ginger.GherkinLib
                 Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\","") + mBizFlow.Name, "Updated");
             }
 
-            App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.RefreshTreeFolder ,typeof(BusinessFlowsFolderTreeItem));            
+            App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.RefreshTreeFolder ,typeof(BusinessFlowsFolderTreeItem));
+            if(App.BusinessFlow == mBizFlow)
+            {
+                App.BusinessFlow = mBizFlow;
+                App.BusinessFlow.SaveBackup();                
+            }            
         }
 
 

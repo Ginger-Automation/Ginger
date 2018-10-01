@@ -2020,8 +2020,8 @@ namespace Ginger.Run
                         switch (FC.FlowControlAction)
                         {
                             case FlowControl.eFlowControlAction.MessageBox:
-                                VE.Value = FC.Value;
-                                MessageBox.Show(VE.ValueCalculated);
+                                VE.Value = FC.Value;                                
+                                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, VE.ValueCalculated);
                                 break;
                             case FlowControl.eFlowControlAction.GoToAction:
                                 if (GotoAction(FC, act))
