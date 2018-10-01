@@ -69,6 +69,15 @@ namespace GingerCoreNET.DriversLib
         public delegate void GingerNodeMessageEvent(GingerNode gingerNode, eGingerNodeEventType GingerNodeEventType);
         public event GingerNodeMessageEvent GingerNodeMessage;
 
+        public void StartGingerNode(string configFileName)
+        {
+            NodeConfigFile nodeConfigFile = new NodeConfigFile(configFileName);
+            
+            StartGingerNode(nodeConfigFile.Name, nodeConfigFile.GingerGridHost, nodeConfigFile.GingerGridPort);
+        }
+
+        
+
         public void StartGingerNode(string Name, string HubIP, int HubPort)
         {
             Console.WriteLine("Starting Ginger Node");

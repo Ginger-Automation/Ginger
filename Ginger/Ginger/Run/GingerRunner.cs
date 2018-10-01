@@ -1816,6 +1816,18 @@ namespace Ginger.Run
             if (GNI == null)
             {
                 // call plugin to start service and wait for ready
+                WorkSpace.Instance.PlugInsManager.StartService2(actPlugin.PluginId);  
+
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                while (GNI == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
+                {
+                    Thread.Sleep(500);
+                    GNI = GetGingerNode(actPlugin);
+                }
+                if (GNI == null)
+                {
+                    throw new Exception("Timeout waiting for service to start");
+                }
             }
 
             GNI.Status = "Reserved";
@@ -1897,7 +1909,7 @@ namespace Ginger.Run
         {
             // Here we decompose the GA and create Payload to transfer it to the agent
             NewPayLoad PL = new NewPayLoad("RunAction");
-            PL.AddValue(ActPlugIn.GingerActionID);
+            PL.AddValue(ActPlugIn.GingerActionId);
             List<NewPayLoad> Params = new List<NewPayLoad>();
             foreach (ActInputValue AP in ActPlugIn.InputValues)
             {
