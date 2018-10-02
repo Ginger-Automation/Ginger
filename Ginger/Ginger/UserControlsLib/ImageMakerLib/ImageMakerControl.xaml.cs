@@ -604,6 +604,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Website:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Laptop);
                     break;
+                case eImageType.Beta:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Android, Brushes.Orange);
+                    break;
                 #endregion
 
 

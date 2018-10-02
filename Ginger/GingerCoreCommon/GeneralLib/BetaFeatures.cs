@@ -118,14 +118,14 @@ namespace Amdocs.Ginger.Common
             //hook prop change
             foreach (BetaFeature f in mFeatures)
             {
-                f.PropertyChanged += selectionChanged;
+                f.PropertyChanged += SelectionChanged;
             }
         }
 
-        private void selectionChanged(object sender, PropertyChangedEventArgs e)
+        private void SelectionChanged(object sender, PropertyChangedEventArgs e)
         {
             OnPropertyChanged(e.PropertyName);
-            OnPropertyChanged(nameof(UsingStatus));
+            OnPropertyChanged(nameof(IsUsingBetaFeatures));
         }
 
         
@@ -158,23 +158,7 @@ namespace Amdocs.Ginger.Common
                 return false;                
             }
         }
-
-        public string UsingStatus
-        {
-            get
-            {
-                if (IsUsingBetaFeatures)
-                {
-                    return "with Beta Features...";
-                }
-                else
-                {
-                    return "";
-                }
-            }
-        }
-
-        
+     
 
         public IEnumerable Features { get { return mFeatures; } }
 

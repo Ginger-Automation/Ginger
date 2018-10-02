@@ -180,6 +180,7 @@ namespace Amdocs.Ginger.Common.Enums
         UserProfile,
         Forum,
         Website,
+        Beta,
         #endregion
 
 

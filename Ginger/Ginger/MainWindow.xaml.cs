@@ -103,7 +103,9 @@ namespace Ginger
 
                 //Status Bar            
                 ErrorsLabel.Visibility = Visibility.Collapsed;
-                lblBetaFeatures.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.UsingStatus));
+                //lblBetaFeatures.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.UsingStatus));
+                WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatures_PropertyChanged;
+                SetBetaFlagIconVisibility();
                 lblVersion.Content = "Version " + Ginger.App.AppVersion;
 
                 //Solution                                    
@@ -124,6 +126,26 @@ namespace Ginger
                 App.AppSplashWindow.Close();
                 Reporter.ToUser(eUserMsgKeys.ApplicationInitError, ex.Message);
                 Reporter.ToLog(eLogLevel.ERROR, "Error in Init Main Window", ex);
+            }
+        }
+
+        private void BetaFeatures_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(WorkSpace.Instance.BetaFeatures.IsUsingBetaFeatures))
+            {
+                SetBetaFlagIconVisibility();
+            }
+        }
+
+        private void SetBetaFlagIconVisibility()
+        {
+            if (WorkSpace.Instance.BetaFeatures.IsUsingBetaFeatures)
+            {
+                xBetaFeaturesIcon.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xBetaFeaturesIcon.Visibility = Visibility.Collapsed;
             }
         }
 

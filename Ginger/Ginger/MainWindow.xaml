@@ -12,7 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
             <RowDefinition Height="200*"/>
-            <RowDefinition Height="32"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
         <!--Main Menu -->
@@ -387,9 +387,9 @@
            
         </Ribbon>-->
 
-        <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
+        <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderThickness="1" />
 
-        <StatusBar x:Name="xMainWindowStatusBar" 
+        <!--<StatusBar x:Name="xMainWindowStatusBar" 
                    Grid.ColumnSpan="3"   
                    Grid.Row="2" 
                    HorizontalAlignment="Stretch"
@@ -407,22 +407,14 @@
             <Label x:Name="lblBetaFeatures" DockPanel.Dock="Right" Content="with/out beta features" VerticalAlignment="Center" Height="25"  Style="{StaticResource @LabelStyle}" Foreground="Orange" FontWeight="Bold" MouseLeftButtonDown="lblBetaFeatures_MouseLeftButtonDown" ToolTip="Click to view which Beta features are selected"/>
             <Label Content="|" DockPanel.Dock="Right" Height="25" Width="15" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}"/>
             <Label x:Name="ErrorsLabel" DockPanel.Dock="Right" Content="Errors(3)" VerticalAlignment="Center" Height="25"  Style="{StaticResource @LabelStyle}" Foreground="Red" FontWeight="Bold" MouseLeftButtonDown="ErrorsLabel_MouseLeftButtonDown"  ToolTip="Click to view erros"/>
-            <!--<Label Content="|" DockPanel.Dock="Right" Height="25" Width="15" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}"/>-->
-            <!--<Label x:Name="lblStatus" AutomationProperties.AutomationId="QA-StatusLabel" DockPanel.Dock="Right"  Content="Loading" Height="25" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}"/>
-            <Label Content="|" DockPanel.Dock="Right" Height="25" Width="15" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}"/>
-            <Label x:Name="lblSolution" DockPanel.Dock="Right" Content="No Solution" VerticalAlignment="Center" Height="25"  Style="{StaticResource @LabelStyle}"/>
-            <Label Content="|" DockPanel.Dock="Right" Height="25" Width="15" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}"/>
-            <Label x:Name="lblBizFlow" DockPanel.Dock="Right" VerticalAlignment="Center" Height="25"  Style="{StaticResource @LabelStyle}">
-                <Label.Content>
-                    <GingerCore:ucTextDicResource Text="No [BusinessFlow]"/>
-                </Label.Content>
-            </Label>
-            <StatusBarItem DockPanel.Dock="Right">
-                <Grid  VerticalAlignment="Center">
-                    <ProgressBar x:Name="pbStatus" Width="300" Height="18" Margin="0,0,5,1" />
-                    <TextBlock x:Name="pbText" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource @Skin1_ColorA}" FontSize="8">%</TextBlock>
-                </Grid>
-            </StatusBarItem>-->
-        </StatusBar>
+           
+        </StatusBar>-->
+        <Border Grid.Row="2" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderThickness="1" >
+            <DockPanel VerticalAlignment="Center">
+                <usercontrols:ImageMakerControl x:Name="xBetaFeaturesIcon" ImageType="Beta" ToolTip="Running With Beta Features" SetAsFontImageWithSize="16" Foreground="OrangeRed" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                <Label x:Name="ErrorsLabel" DockPanel.Dock="Left" Content="Errors" Style="{StaticResource $LabelStyle}" Foreground="Red" FontWeight="Bold" MouseLeftButtonDown="ErrorsLabel_MouseLeftButtonDown" ToolTip="Click to view erros"/>
+                <Label x:Name="lblVersion" DockPanel.Dock="Right"  Content="Version" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Right" Margin="0,0,5,0"/>
+            </DockPanel>
+        </Border>
     </Grid>
 </Window>
