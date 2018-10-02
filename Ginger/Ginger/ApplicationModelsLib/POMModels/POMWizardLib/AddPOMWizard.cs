@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using Ginger.WizardLib;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System;
@@ -42,6 +43,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
         public ObservableList<Agent> OptionalAgentsList = null;
         private Agent mAgent = null;
+        private bool mManualElementConfiguration;
+
+        public bool ManualElementConfiguration { get { return mManualElementConfiguration; } set { mManualElementConfiguration = value; } }
+
         public Agent Agent
         {
             get
@@ -74,15 +79,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             POM = new ApplicationPOMModel();
 
-            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new POMIntroductionWizardPage());
-
-            AddPage(Name: "General Details", Title: "General Details", SubTitle: "New Page Objects Model General Details", Page: new POMGeneralDetailsWizardPage());
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Page Objects Model Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/POMModels/POMWizardLib/AddPOMIntro.md"));
 
             AddPage(Name: "Learning Configurations", Title: "Learning Configurations", SubTitle: "Page Objects Learning Configurations", Page: new POMLearnConfigWizardPage());
 
             AddPage(Name: "Learned Objects Mapping", Title: "Learned Objects Mapping", SubTitle: "Map Learned Page Objects", Page: new POMObjectsMappingWizardPage());
 
-            AddPage(Name: "Page Screenshot", Title: "Page Screenshot", SubTitle: "Application Page Screenshot", Page: new POMScreenShotWizardPage());
+            AddPage(Name: "General Details", Title: "General Details", SubTitle: "New Page Objects Model General Details", Page: new POMGeneralDetailsWizardPage());
         }
 
         public override string Title { get { return "Add POM Wizard"; } }

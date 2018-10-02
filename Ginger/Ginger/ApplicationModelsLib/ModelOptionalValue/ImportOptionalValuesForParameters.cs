@@ -822,7 +822,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             default:
                                 if (ShowMessage)
-                                    System.Windows.MessageBox.Show(ex.Message);
+                                {
+                                    Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, ex.Message);
+                                }
                                 break;
                         }
                         return null;

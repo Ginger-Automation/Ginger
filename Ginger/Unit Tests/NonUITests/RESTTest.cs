@@ -47,27 +47,34 @@ namespace UnitTests.NonUITests
         public void WebServices_RestAction()
         {
 
-            
-        
-
-
             ActREST a2 = new ActREST();
-            a2.RequestType = ActREST.eRequestType.GET;
-            a2.ReqHttpVersion = ActREST.eHttpVersion.HTTPV11;
-            a2.ContentType = ActREST.eContentType.JSon;
-            a2.CookieMode = ActREST.eCookieMode.None;
-            a2.SecurityType = ActREST.eSercurityType.None;
-            a2.EndPointURL.ValueForDriver = "https://reqres.in/api/users/2";
-
-            //Act
-            a2.AddNewReturnParams = true;
-            a2.Execute();
-
-            Assert.AreEqual(17,a2.ReturnValues.Count);
+            try
+            {
 
 
-            Assert.AreEqual("Weaver", a2.ReturnValues.Where(x => x.Param == "last_name").First().Actual);
-          
+
+                a2.RequestType = ActREST.eRequestType.GET;
+                a2.ReqHttpVersion = ActREST.eHttpVersion.HTTPV11;
+                a2.ContentType = ActREST.eContentType.JSon;
+                a2.CookieMode = ActREST.eCookieMode.None;
+                a2.SecurityType = ActREST.eSercurityType.None;
+                a2.EndPointURL.ValueForDriver = "https://reqres.in/api/users/2";
+
+                //Act
+                a2.AddNewReturnParams = true;
+                a2.Execute();
+            }
+            finally
+            {
+                //running validation only in case of sucess
+                if (((int)a2.ResponseCode).ToString().StartsWith("2"))
+                {
+                    Assert.AreEqual(17, a2.ReturnValues.Count);
+
+
+                    Assert.AreEqual("Weaver", a2.ReturnValues.Where(x => x.Param == "last_name").First().Actual);
+                }
+            }
         }
 
     }
