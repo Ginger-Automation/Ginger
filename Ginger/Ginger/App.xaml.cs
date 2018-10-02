@@ -255,16 +255,16 @@ namespace Ginger
             return p;
         }
 
-        public static string LocalApplicationData
-        {
-            get
-            {
-                //TODO: check where it goes - not roaming,.,
-                string s = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                s = s + @"\amdocs\" + App.AppName;
-                return s;
-            }
-        }
+        //public static string LocalApplicationData
+        //{
+        //    get
+        //    {
+        //        //TODO: check where it goes - not roaming,.,
+        //        string s = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        //        s = s + @"\amdocs\" + App.AppName;
+        //        return s;
+        //    }
+        //}
 
         public static bool RunningFromConfigFile = false;
 

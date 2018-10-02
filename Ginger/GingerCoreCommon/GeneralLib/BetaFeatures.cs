@@ -178,10 +178,12 @@ namespace Amdocs.Ginger.Common
 
         public IEnumerable Features { get { return mFeatures; } }
 
-        static string UserPrefFileName()
+        static string UserBetaFeaturesConfigFilePath
         {
-            string s = Path.Combine(Environment.CurrentDirectory, "Ginger Beta Feature Config.json");
-            return s;
+            get
+            {
+                return Path.Combine(General.LocalUserApplicationDataFolderPath, "Ginger Beta Feature Config.json");
+            }
         }
 
         public static BetaFeatures LoadUserPref()
@@ -189,10 +191,10 @@ namespace Amdocs.Ginger.Common
             // always create new so we get latest beta features to select from
             BetaFeatures betaFeatures = new BetaFeatures();
             
-            if (System.IO.File.Exists(UserPrefFileName()))
+            if (System.IO.File.Exists(UserBetaFeaturesConfigFilePath))
             {
                 // Read user selection and merge with updated feature list
-                string s = System.IO.File.ReadAllText(UserPrefFileName());
+                string s = System.IO.File.ReadAllText(UserBetaFeaturesConfigFilePath);
                 BetaFeatures bUser = Newtonsoft.Json.JsonConvert.DeserializeObject<BetaFeatures>(s);
 
                 betaFeatures.ShowDebugConsole = bUser.ShowDebugConsole;
@@ -214,7 +216,7 @@ namespace Amdocs.Ginger.Common
         public void SaveUserPref()
         {
             string s = Newtonsoft.Json.JsonConvert.SerializeObject(this);
-            System.IO.File.WriteAllText(UserPrefFileName(), s);
+            System.IO.File.WriteAllText(UserBetaFeaturesConfigFilePath, s);
         }
 
         public void OnPropertyChanged(string name)

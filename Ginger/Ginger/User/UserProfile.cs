@@ -390,11 +390,12 @@ namespace Ginger
 
         public UserTypeHelper UserTypeHelper { get; set; }
 
-        public static string getUserProfileFileName()
+        public static string UserProfileFilePath
         {
-            //we just save and load serialized UserProfile objct
-            string s = App.LocalApplicationData + @"\Ginger.UserProfile.xml";
-            return s;
+            get
+            {
+                return Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Ginger.UserProfile.xml");
+            }
         }
 
         public void SaveUserProfile()
@@ -404,9 +405,8 @@ namespace Ginger
                 SaveRecentAppAgentsMapping();
             }
             catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
-
-            string UserProfileFileName = getUserProfileFileName();
-            RepositorySerializer.SaveToFile(this, UserProfileFileName);
+            
+            RepositorySerializer.SaveToFile(this, UserProfileFilePath);
         }
 
         public void SaveRecentAppAgentsMapping()
@@ -476,12 +476,10 @@ namespace Ginger
         public static UserProfile LoadUserProfile()
         {
             if (General.isDesignMode()) return null;
-
-            string UserProfilePath = getUserProfileFileName();
+            
             string InstallationConfigurationPath = System.Reflection.Assembly.GetExecutingAssembly().Location.Replace("Ginger.exe", "Ginger.InstallationConfiguration.Json");
             DateTime InstallationDT = File.GetLastWriteTime(InstallationConfigurationPath);
-            DateTime UserProfileDT = File.GetLastWriteTime(UserProfilePath);
-
+            
             string UserConfigJsonString = string.Empty;
             JObject UserConfigJsonObj = null;
             Dictionary<string, string> UserConfigdictObj = null;
@@ -492,14 +490,15 @@ namespace Ginger
                 UserConfigdictObj = UserConfigJsonObj.ToObject<Dictionary<string, string>>();
             }
 
-            if (File.Exists(UserProfilePath))
+            if (File.Exists(UserProfileFilePath))
             {
                 try
                 {
-                    Reporter.ToLog(eLogLevel.INFO, string.Format("Loading existing User Profile at '{0}'", UserProfilePath));
-                    string userProfileTxt = File.ReadAllText(UserProfilePath);
+                    DateTime UserProfileDT = File.GetLastWriteTime(UserProfileFilePath);
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("Loading existing User Profile at '{0}'", UserProfileFilePath));
+                    string userProfileTxt = File.ReadAllText(UserProfileFilePath);
                     UserProfile up = (UserProfile)NewRepositorySerializer.DeserializeFromText(userProfileTxt);
-                    up.FilePath = UserProfilePath;                 
+                    up.FilePath = UserProfileFilePath;                 
                     if (DateTime.Compare(UserProfileDT, InstallationDT) < 0)
                     {
                         if (UserConfigdictObj != null)
@@ -511,7 +510,7 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to load the existing User Profile at '{0}'", UserProfilePath), ex);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to load the existing User Profile at '{0}'", UserProfileFilePath), ex);
                 }
             }
 
@@ -564,14 +563,15 @@ namespace Ginger
         public void LoadDefaults()
         {
             AutoLoadLastSolution = true; //#Task 160
-            SetDefaultWorkingFolder();
+            //SetDefaultWorkingFolder();
+            string defualtFolder= WorkSpace.Instance.DefualtUserLocalWorkingFolder;//calling it so it will be created
         }
 
-        public void SetDefaultWorkingFolder()
-        {
-            LocalWorkingFolder = App.LocalApplicationData + @"\WorkingFolder";
-            Directory.CreateDirectory(LocalWorkingFolder);
-        }
+        //public void SetDefaultWorkingFolder()
+        //{
+        //    LocalWorkingFolder = App.LocalApplicationData + @"\WorkingFolder";
+        //    Directory.CreateDirectory(LocalWorkingFolder);
+        //}
 
         internal string GetDefaultReport()
         {
