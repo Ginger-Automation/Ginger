@@ -65,7 +65,16 @@
         <Setter Property="Margin" Value="-5,0,0,0"/>
         <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
     </Style>
-    
+
+    <Style TargetType="Label"  x:Key="$HeaderStyle" >
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FontFamily" Value="Open Sans"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Margin" Value="-5,0,0,0"/>
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
+    </Style>
+
     <Style TargetType="Label" x:Key="$InputLabelStyle_NoFill">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
@@ -424,7 +433,7 @@
                                 VerticalAlignment="Center" 
                                 Margin="4,0,4,0"
                                 Focusable="False"                                 
-                                Foreground="{DynamicResource @Skin1_ColorA}"
+                                Foreground="{DynamicResource $BackgroundColor_DarkBlue}"
                                 Visibility="Hidden"
                                 IsReadOnly="{TemplateBinding IsReadOnly}"/>
                         <Popup 
@@ -442,7 +451,7 @@
                                         x:Name="DropDownBorder"
                                         Background="White"
                                         BorderThickness="1"
-                                        BorderBrush="{DynamicResource @Skin1_ColorA}"/>
+                                        BorderBrush="{DynamicResource $BackgroundColor_DarkBlue}"/>
                                 <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
                                     <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                 </ScrollViewer>
@@ -524,21 +533,21 @@
 
     <Style TargetType="MenuItem" x:Key="$MenuItemStyle_ButtonMenu">
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
         <Setter Property="Height" Value="35" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="Transparent"/>
+                <!--<Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>-->
                 <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
-                <Setter Property="BorderBrush" Value="Transparent"/>
+                <!--<Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>-->
                 <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter Property="Background" Value="Transparent"/>
+                <!--<Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>-->
                 <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
-                <Setter Property="BorderBrush" Value="Transparent"/>
+                <!--<Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>-->
                 <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
         </Style.Triggers>
@@ -587,7 +596,16 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
+        
+    <Style TargetType="Label" x:Key="$ucGridTitleLightStyle">
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+        
     <Style TargetType="RibbonTabHeader" x:Key="$RibbonTabHeaderStyle">
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontFamily" Value="Open Sans" />
@@ -741,7 +759,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="false">
-                            <Setter  TargetName="Border"  Property="BorderBrush" Value="{DynamicResource @Skin1_ColorA}" />
+                            <Setter  TargetName="Border"  Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkBlue}" />
                             <Setter  TargetName="Border"  Property="BorderThickness" Value="1" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
@@ -1670,14 +1688,7 @@
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
     </Style>
-    <Style TargetType="Label" x:Key="@ucGridTitleLightStyle">
-        <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}"/>
-        <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="Background" Value="{DynamicResource @Skin1_ColorC}"/>
-        <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-    </Style>
+    
     <Style TargetType="Label" x:Key="@ucGridTitleTransparentBackground">
         <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}"/>
         <Setter Property="FontWeight" Value="Bold"/>

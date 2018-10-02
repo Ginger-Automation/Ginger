@@ -13,8 +13,8 @@
     </UserControl.Resources>
     <DockPanel x:Name="mainDockPanel"  HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}">
         <!-- Grid Title -->
-        <Border x:Name="xSimpleHeader" DockPanel.Dock="Top" Visibility="{Binding  ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource @Skin1_ColorA}"  >
-            <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource @ucTitleStyle_3}">Grid Title</Label>
+        <Border x:Name="xSimpleHeader" DockPanel.Dock="Top" Visibility="{Binding  ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}"  >
+            <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource $ucGridTitleLightStyle}">Grid Title</Label>
         </Border>
         <DockPanel x:Name="xEnhancedHeader" DockPanel.Dock="Top" VerticalAlignment="Center" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="5,5,5,0">
@@ -29,9 +29,9 @@
         </DockPanel>
 
         <!-- Grid Tools Bar -->
-        <Border DockPanel.Dock="Top" Visibility="{Binding  ElementName=ToolsTray, Path=Visibility}" BorderThickness="1" BorderBrush="{StaticResource @Skin1_ColorA}" Background="{StaticResource @Skin1_ColorA}" >
-            <ToolBarTray x:Name="ToolsTray"  >
-                <ToolBar x:Name="toolbar" ToolBarTray.IsLocked="True" Band="1"
+        <Border DockPanel.Dock="Top" Visibility="{Binding  ElementName=ToolsTray, Path=Visibility}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" Background="{StaticResource $BackgroundColor_LightGray}" >
+            <ToolBarTray x:Name="ToolsTray" Background="{StaticResource $BackgroundColor_LightGray}"  >
+                <ToolBar x:Name="toolbar" ToolBarTray.IsLocked="True" Band="1" Background="{StaticResource $BackgroundColor_LightGray}"
                      IsHitTestVisible="True" ScrollViewer.CanContentScroll="True" Width="{Binding ElementName=ToolsTray,Path=ActualWidth}">
                     <Button x:Name="btnMarkAll" ToolTip="Mark All As InActive"  Visibility="Collapsed" Click="Btn_MarkUnMarkAll">
                         <Image Source="{DynamicResource @UnCheckAllColumn_16x16.png}"/>
@@ -105,7 +105,7 @@
                   ColumnHeaderStyle="{DynamicResource @DataGridColumnHeader}" CellStyle="{DynamicResource @DataGridCellStyle}" 
                   AlternationCount="2" AlternatingRowBackground="#F6F6F6"
                   LoadingRow="grdMain_LoadingRow" 
-                  Background="#FFFFFF"
+                  Background="{StaticResource $BackgroundColor_White}"
                   BorderBrush="{DynamicResource @Skin1_ColorA}"
                   BorderThickness="1"    
                   ScrollViewer.VerticalScrollBarVisibility="Auto"                  

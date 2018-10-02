@@ -225,7 +225,7 @@ namespace Ginger.SolutionGeneral
             set
             {
                 mName = value;
-                OnPropertyChanged(Name);
+                OnPropertyChanged(nameof(Name));
             }
         }
 

@@ -341,7 +341,7 @@ namespace Ginger.ALM
                 case ALMIntegration.eALMType.QC:
                     QCRadioButton.IsChecked = true;
                     QCRadioButton.FontWeight = FontWeights.ExtraBold;
-                    QCRadioButton.Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                    QCRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
@@ -371,7 +371,7 @@ namespace Ginger.ALM
                 case ALMIntegration.eALMType.RQM:
                     RQMRadioButton.IsChecked = true;
                     RQMRadioButton.FontWeight = FontWeights.ExtraBold;
-                    RQMRadioButton.Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                    RQMRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
                     DownloadPackageLink.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 1);
@@ -390,7 +390,7 @@ namespace Ginger.ALM
                 case ALMIntegration.eALMType.RALLY:
                     RallyRadioButton.IsChecked = true;
                     RallyRadioButton.FontWeight = FontWeights.ExtraBold;
-                    RallyRadioButton.Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                    RallyRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);

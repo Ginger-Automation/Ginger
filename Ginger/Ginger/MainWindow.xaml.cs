@@ -1023,9 +1023,7 @@ namespace Ginger
                 mSolutionPage = new SolutionPage();
             }
 
-            mSolutionPage.ShowAsWindow();
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty, App.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty, App.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
+            mSolutionPage.ShowAsWindow();           
         }
     }
 }

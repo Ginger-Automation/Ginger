@@ -55,7 +55,7 @@ namespace Ginger
             App.InitApp();         
             InitDone = true;
 
-            CheckShowNews();            
+            //CheckShowNews();            
         }
 
         private void CheckShowNews()
@@ -66,21 +66,21 @@ namespace Ginger
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {           
-            switch (lblLoading.Content.ToString())
-            {
-                case "Loading...":
-                    lblLoading.Content = "Loading   ";
-                    break;
-                case "Loading   ":
-                    lblLoading.Content = "Loading.  ";
-                    break;
-                case "Loading.  ":
-                    lblLoading.Content = "Loading.. ";
-                    break;
-                case "Loading.. ":
-                    lblLoading.Content = "Loading...";
-                    break;
-            }
+            //switch (lblLoading.Content.ToString())
+            //{
+            //    case "Loading...":
+            //        lblLoading.Content = "Loading   ";
+            //        break;
+            //    case "Loading   ":
+            //        lblLoading.Content = "Loading.  ";
+            //        break;
+            //    case "Loading.  ":
+            //        lblLoading.Content = "Loading.. ";
+            //        break;
+            //    case "Loading.. ":
+            //        lblLoading.Content = "Loading...";
+            //        break;
+            //}
             counter++;
 
 
@@ -97,8 +97,6 @@ namespace Ginger
                 dispatcherTimer.Stop();
                 dispatcherTimer = null;
                 this.Close();
-
-               
             }
             
             //close after 5 sec - since there might be error hiding below

@@ -632,6 +632,7 @@ namespace Ginger
             //clear existing solution data
             try
             {
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
                 LoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
 
@@ -657,29 +658,36 @@ namespace Ginger
                     IEnumerable<string> solutionFiles = Solution.SolutionFiles(SolutionFolder);
 
                     //check if Ginger Upgrade is needed for loading this Solution
-                    Reporter.ToLog(eLogLevel.INFO, "Checking if Ginger upgrade is needed for loading the Solution");
-                    ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
-                    if (higherVersionFiles.Count > 0)
+                    try
                     {
-                        if (App.RunningFromConfigFile == false && RunningFromUnitTest == false)
+                        Reporter.ToLog(eLogLevel.INFO, "Checking if Ginger upgrade is needed for loading the Solution");
+                        ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
+                        if (higherVersionFiles.Count > 0)
                         {
-                            UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
-                            gingerUpgradePage.ShowAsWindow();
+                            if (App.RunningFromConfigFile == false && RunningFromUnitTest == false)
+                            {
+                                UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
+                                gingerUpgradePage.ShowAsWindow();
+                            }
+                            Reporter.ToLog(eLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
+                            return false;
                         }
-                        Reporter.ToLog(eLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
-                        return false;
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking if Solution requires Ginger Upgrade", ex);
                     }
 
                     Solution sol = Solution.LoadSolution(SolFile);
 
                     if (sol != null)
-                    {                        
+                    {
                         WorkSpace.Instance.SolutionRepository = CreateGingerSolutionRepository();
                         WorkSpace.Instance.SolutionRepository.Open(SolutionFolder);
 
                         HandleSolutionLoadSourceControl(sol);
                         HandleAutomateRunner(sol);
-                        
+
                         ValueExpression.SolutionFolder = SolutionFolder;
                         BusinessFlow.SolutionVariables = sol.Variables;
 
@@ -687,21 +695,28 @@ namespace Ginger
                         App.UserProfile.Solution.SetReportsConfigurations();
                         App.UserProfile.LoadRecentAppAgentMapping();
                         AutoLogProxy.SetAccount(sol.Account);
-                        
+
                         LoadRecentBusinessFlow();
 
                         if (!App.RunningFromConfigFile)
                             DoSolutionAutoSaveAndRecover();
 
                         //Offer to upgrade Solution items to current version
-                        if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false && RunningFromUnitTest == false)
-                        {                            
-                            ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
-                            if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
+                        try
+                        {
+                            if (App.UserProfile.DoNotAskToUpgradeSolutions == false && App.RunningFromConfigFile == false && RunningFromUnitTest == false)
                             {
-                                UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
-                                solutionUpgradePage.ShowAsWindow();
+                                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
+                                if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
+                                {
+                                    UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
+                                    solutionUpgradePage.ShowAsWindow();
+                                }
                             }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking if Solution files should be Upgraded", ex);
                         }
 
                         App.UserProfile.AddSolutionToRecent(sol);
@@ -717,6 +732,8 @@ namespace Ginger
                     Reporter.ToUser(eUserMsgKeys.BeginWithNoSelectSolution);
                     return false;
                 }
+
+                
                 return true;
             }
             catch (Exception ex)
@@ -728,6 +745,7 @@ namespace Ginger
             {
                 LoadingSolution = false;
                 OnPropertyChanged(nameof(LoadingSolution));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", SolutionFolder));
             }
         }
 

@@ -400,10 +400,13 @@ namespace Ginger
 
         public void UpdateTitleStyle()
         {
-            if (SetTitleLightStyle)
-                xSimpleHeaderTitle.Style = (Style)TryFindResource("@ucGridTitleLightStyle");
-            else
-                xSimpleHeaderTitle.Style = (Style)TryFindResource("@ucTitleStyle_3");
+            //if (SetTitleLightStyle)
+            //    xSimpleHeaderTitle.Style = (Style)TryFindResource("@ucGridTitleLightStyle");
+            //else
+            //    xSimpleHeaderTitle.Style = (Style)TryFindResource("@ucTitleStyle_3");
+
+            xSimpleHeaderTitle.Style = (Style)TryFindResource("$ucGridTitleLightStyle");
+           
         }
 
         public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName= "",  RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null)

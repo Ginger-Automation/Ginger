@@ -164,6 +164,8 @@ namespace Ginger.Activities
             undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
             winButtons.Add(undoBtn);
 
+            this.Height = 800;
+            this.Width = 800;
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
         }
 

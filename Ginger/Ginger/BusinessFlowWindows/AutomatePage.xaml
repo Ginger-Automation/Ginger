@@ -145,7 +145,7 @@
 
         <Expander x:Name="CurrentBusExpander" Grid.Row="2" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="True" Expanded="CurrentBusExpander_Expanded" Collapsed="CurrentBusExpander_Collapsed" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource @Skin1_ColorA}">
             <Expander.Header>
-                <Label x:Name="CurrentBusExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource @Skin1_ColorB}">
+                <Label x:Name="CurrentBusExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $SelectionColor_Pink}">
                     <Label.Content>
                         <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
                     </Label.Content>

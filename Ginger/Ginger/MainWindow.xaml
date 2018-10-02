@@ -35,22 +35,22 @@
                 <!--Main Menu- Solution Selection-->
                 <StackPanel x:Name="xSolutionSelectionPnl" Orientation="Horizontal" DockPanel.Dock="Left" >
                     <TextBlock x:Name="xSolutionNameTextBlock" TextTrimming="CharacterEllipsis" MaxWidth="300"  TextWrapping="NoWrap" Margin="0,0,0,0" Text="Please Load Solution" VerticalAlignment="Center" HorizontalAlignment="Left" FontFamily="Open Sans" FontSize="20" FontWeight="Normal" Foreground="{StaticResource $SelectionColor_Pink}"   ></TextBlock>
-                    <Menu x:Name="xSolutionSelectionMenu" Background="{StaticResource $BackgroundColor_VeryDarkBlue}"  Margin="5,0,0,0" VerticalAlignment="Center">
+                    <Menu x:Name="xSolutionSelectionMenu" Background="{StaticResource $BackgroundColor_VeryDarkBlue}"  Margin="5,0,0,0" VerticalAlignment="Center" >
                         <MenuItem x:Name="xSolutionSelectionMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Solution Selection" Margin="0,0,0,0"  StaysOpenOnClick="True">
                             <MenuItem.Icon>
                                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="20" ImageType="ArrowDown" Width="20" Height="20" Margin="0,0,0,0"/>
                             </MenuItem.Icon>
-                            <MenuItem x:Name="xRecentSolutionsMenuItem" Header="Recent Solutions" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xRecentSolutionsMenuItem_Click" StaysOpenOnClick="True" Visibility="Collapsed" >
+                            <MenuItem x:Name="xRecentSolutionsMenuItem" Header="Recent Used Solutions" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xRecentSolutionsMenuItem_Click" StaysOpenOnClick="True" Visibility="Collapsed" >
                                 <MenuItem.Icon>
                                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="History"  Margin="0,0,0,0"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem x:Name="xOpenSolutionMenuItem" Header="Open Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xOpenSolutionMenuItem_Click">
+                            <MenuItem x:Name="xOpenSolutionMenuItem" Header="Open Existing Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xOpenSolutionMenuItem_Click">
                                 <MenuItem.Icon>
                                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="16"  ImageType="OpenFolder"  Margin="0,0,0,0" HorizontalAlignment="Center"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem x:Name="xDownloadSolutionMenuItem" Header="Download Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xDownloadSolutionMenuItem_Click">
+                            <MenuItem x:Name="xDownloadSolutionMenuItem" Header="Download Existing Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xDownloadSolutionMenuItem_Click">
                                 <MenuItem.Icon>
                                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Download"  Margin="0,0,0,0"/>
                                 </MenuItem.Icon>
@@ -118,7 +118,7 @@
                     </Menu>
 
                     <Menu x:Name="xSolutionALMMenu" Background="{StaticResource $BackgroundColor_VeryDarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" >
-                        <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="ALM Operations">
+                        <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Share Operations">
                             <MenuItem.Icon>
                                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Share" Margin="0,0,0,0"/>
                             </MenuItem.Icon>
@@ -132,7 +132,7 @@
                                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="ListGroup"  Margin="0,0,0,0"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="View ALM Defect's Profiles" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ALMDefectsProfiles_Click">
+                            <MenuItem Header="ALM Defect's Profiles" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ALMDefectsProfiles_Click">
                                 <MenuItem.Icon>
                                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Bug"  Margin="0,0,0,0"/>
                                 </MenuItem.Icon>
@@ -225,7 +225,7 @@
             <!--Main Menu- Extra Operations-->
             <DockPanel Grid.Column="3" VerticalAlignment="Center">
                 <Menu x:Name="xExtraOperationsMenu" DockPanel.Dock="Left" Background="Transparent"  Margin="0,0,0,0" VerticalAlignment="Center">
-                    <MenuItem x:Name="xExtraOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Extra Application Functionalities" Margin="0,0,0,0"  StaysOpenOnClick="True">
+                    <MenuItem x:Name="xExtraOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Extra Operations" Margin="0,0,0,0"  StaysOpenOnClick="True">
                         <MenuItem.Icon>
                             <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="EllipsisH" Width="18" Height="18" Margin="0,0,0,0"/>
                         </MenuItem.Icon>

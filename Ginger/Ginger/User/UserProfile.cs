@@ -496,20 +496,22 @@ namespace Ginger
             {
                 try
                 {
-                    //UserProfile up = (UserProfile)RepositoryItem.LoadFromFile(typeof(UserProfile), UserProfilePath);
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("Loading existing User Profile at '{0}'", UserProfilePath));
                     string userProfileTxt = File.ReadAllText(UserProfilePath);
                     UserProfile up = (UserProfile)NewRepositorySerializer.DeserializeFromText(userProfileTxt);
                     up.FilePath = UserProfilePath;                 
                     if (DateTime.Compare(UserProfileDT, InstallationDT) < 0)
                     {
                         if (UserConfigdictObj != null)
+                        {
                             up.AddUserConfigProperties(UserConfigdictObj);
+                        }
                     }
                     return up;
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the User Profile at:" + UserProfilePath, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to load the existing User Profile at '{0}'", UserProfilePath), ex);
                 }
             }
 
@@ -518,8 +520,10 @@ namespace Ginger
             UserProfile up2 = new UserProfile();
             up2.LoadDefaults();
             if (UserConfigdictObj != null)
+            {
                 up2.AddUserConfigProperties(UserConfigdictObj);
-            up2.ValidateProfile();
+            }
+            
             return up2;
         }
 
@@ -555,10 +559,6 @@ namespace Ginger
                     TerminologyDictionaryType = Amdocs.Ginger.Core.eTerminologyDicsType.Gherkin;
                     break;
             }
-        }
-
-        public void ValidateProfile()
-        {
         }
 
         public void LoadDefaults()

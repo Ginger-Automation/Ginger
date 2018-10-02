@@ -822,6 +822,8 @@ namespace Ginger.Actions
                     break;
             }
 
+            this.Height = 800;
+            this.Width = 800;
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
             SwitchingInputValueBoxAndGrid(mAction);
             return saveWasDone;
