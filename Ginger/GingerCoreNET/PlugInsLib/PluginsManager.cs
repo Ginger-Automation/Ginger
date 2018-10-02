@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Newtonsoft.Json;
 using System;
@@ -205,7 +206,9 @@ namespace Amdocs.Ginger.Repository
 
         
 
-       
+
+
+
         //public void Execute(string PluginId, string ServiceId, NewPayLoad payLoad)
         //{            
         //    GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
@@ -218,11 +221,11 @@ namespace Amdocs.Ginger.Repository
         //        // GA.AddError("Execute", "Plugin id not found: " + PID);
         //        // return;
         //    }
-            
+
         //    //TODO: use nameof after ActPlugin move to common
         //    // string serviceID = GA.InputParams["PluginActionID"].GetValueAsString();
 
-            
+
         //    GingerNodeInfo GNI = (from x in gingerGrid.NodeList where x.Name == p.PluginID select x).FirstOrDefault();
         //    //run script only if service is not up            
         //    if (GNI == null)
@@ -232,7 +235,7 @@ namespace Amdocs.Ginger.Repository
         //        // hard coded!!!!!!!!!!  - use ServiceId
         //        script += CommandProcessor.CreateStartServiceScript("PACTService", p.PluginID, SocketHelper.GetLocalHostIP(), gingerGrid.Port);
         //        // script += CommandProcessor.CreateStartServiceScript("ExcelService", p.PluginID, SocketHelper.GetLocalHostIP(), gingerGrid.Port);
-                
+
 
         //        Task t = new Task(() =>
         //        {
@@ -242,7 +245,7 @@ namespace Amdocs.Ginger.Repository
         //        });
         //        t.Start();
         //    }                
-             
+
         //    int counter = 0;
         //    while (GNI == null && counter < 30)
         //    {
@@ -339,7 +342,7 @@ namespace Amdocs.Ginger.Repository
         //        }
 
 
-        public void StartService2(string PluginId)
+        public void StartService(string PluginId)
         {
             if (string.IsNullOrEmpty(PluginId))
             {
@@ -369,6 +372,13 @@ namespace Amdocs.Ginger.Repository
             //TODO: delete the temp file - or create temp files tracker with auto delete 
         }
 
-        
+
+        public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
+        {
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
+            StandAloneAction standAloneAction = (from x in pluginPackage.LoadServicesInfoFromFile() where x.ServiceID == serviceId && x.ID == actionId select x).SingleOrDefault();
+            return standAloneAction.InputValues;
+        }
+
     }
 }

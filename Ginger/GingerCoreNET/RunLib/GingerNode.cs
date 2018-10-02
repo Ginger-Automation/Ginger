@@ -302,7 +302,7 @@ namespace GingerCoreNET.DriversLib
             PLRC.AddValue(NGA.Errors);
             
 
-            PLRC.AddListPayLoad(GetOutpuValuesPayLoad(NGA.Output.Values));
+            PLRC.AddListPayLoad(GetOutpuValuesPayLoad(NGA.Output.OutputValues));
 
 
             PLRC.ClosePackage();

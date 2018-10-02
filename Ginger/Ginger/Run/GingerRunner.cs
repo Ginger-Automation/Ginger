@@ -1810,13 +1810,13 @@ namespace Ginger.Run
         private void ExecutePlugInAction(ActPlugIn actPlugin)     
         {
             // first verify we have service ready or start service
-            
+            Stopwatch st = Stopwatch.StartNew();
             GingerNodeInfo GNI = GetGingerNode(actPlugin);
 
             if (GNI == null)
             {
                 // call plugin to start service and wait for ready
-                WorkSpace.Instance.PlugInsManager.StartService2(actPlugin.PluginId);  
+                WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId);  
 
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 while (GNI == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
@@ -1889,7 +1889,10 @@ namespace Ginger.Run
 
             GNI.IncreaseActionCount();
             GNI.Status = "Ready";
-             
+
+            st.Stop();
+            long millis = st.ElapsedMilliseconds;
+            actPlugin.ExInfo += Environment.NewLine + millis;
         }
 
         private GingerNodeInfo GetGingerNode(ActPlugIn actPlugin)
