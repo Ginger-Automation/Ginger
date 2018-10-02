@@ -21,6 +21,8 @@
         <Frame x:Name="EditFrame" VerticalAlignment="Top" Content="Plugin Edit action Frame" Grid.Row="0" HorizontalAlignment="Stretch" Height="16"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Label Style="{StaticResource @SubInputFieldLabelStyle}">Plugin Id</Label>
+            <Label x:Name="PluginIdLabel" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold">P ID</Label>
             <Label Style="{StaticResource @SubInputFieldLabelStyle}">Service Id</Label>
             <Label x:Name="ServiceIdLabel" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold">S ID</Label>
             <Label Style="{StaticResource @SubInputFieldLabelStyle}">Action Id</Label>

@@ -17,12 +17,14 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore;
 using GingerCore.Actions.PlugIns;
 using GingerPlugIns.ActionsLib;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -152,8 +154,12 @@ namespace Ginger.Actions.PlugIns
         private void AutoCreateEditPage()
         {
 
-            ServiceIdLabel.Content = mAct.GetInputParamValue("ServiceId");  //TODO: use const
-            ActionIdLabel.Content = mAct.GetInputParamValue("GingerActionID");  //TODO: use const
+            string pluginId = mAct.GetInputParamValue("PluginId");  //TODO: use const
+            string serviceId = mAct.GetInputParamValue("ServiceId");  //TODO: use const
+            string actionId = mAct.GetInputParamValue("GingerActionId");  //TODO: use const
+            PluginIdLabel.Content = pluginId;
+            ServiceIdLabel.Content = serviceId;
+            ActionIdLabel.Content = actionId;
 
             int rows = mAct.InputValues.Count;
             for (int i = 0; i < rows; i++)
@@ -165,17 +171,26 @@ namespace Ginger.Actions.PlugIns
             ActionConfigGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(70, GridUnitType.Star) });
 
             int rnum = 0;
+
+            List <ActionInputValueInfo> list = WorkSpace.Instance.PlugInsManager.GetActionEditInfo(pluginId, serviceId, actionId);
+
+
             foreach (ActInputValue param in mAct.InputValues)
-            {
-                if (param.Param == "ServiceId" || param.Param == "GingerActionID" || param.Param == "GA")  // TODO: use const
+            {                
+                if (param.Param == "PluginId" ||  param.Param == "ServiceId" || param.Param == "GingerActionId" || param.Param == "GA")  // TODO: use const
                 {
                     continue;
                 }
+
+                // update the type based on the info json of the plugin
+                param.ParamType = (from x in list where x.Param == param.Param select x.ParamType).SingleOrDefault();
+
                 Label l = new Label() { Content = param.Param };
                 ActionConfigGrid.Children.Add(l);
                 l.Style = App.GetStyle("@InputFieldLabelStyle");
                 Grid.SetRow(l, rnum);
 
+                
 
                 //TODO: based on the param type create textbox, check box, combo, etc...
 
