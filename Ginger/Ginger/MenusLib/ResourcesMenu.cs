@@ -69,8 +69,10 @@ namespace Ginger.MenusLib
             ApplicationModelsMenu.Add(eImageType.APIModel, "API Models", APIModels, ConsoleKey.A, "API Templates Repository","AID");
             //TODO: bind visible to Beta feature or use WorkSpace.Instance.BetaFeatures.PropertyChanged
             // meanwhile show/hide per current status
-            if (WorkSpace.Instance.BetaFeatures.ShowPOMInResourcesTab)            
-                ApplicationModelsMenu.Add(eImageType.ApplicationPOMModel, "Page Objects Models", POMModels, ConsoleKey.P, "Page UI elemetns Modeling", "AID");                            
+            if (WorkSpace.Instance.BetaFeatures.ShowPOMInResourcesTab)
+            {
+                ApplicationModelsMenu.Add(eImageType.ApplicationPOMModel, "Page Objects Models", POMModels, ConsoleKey.P, "Page UI elemetns Modeling", "AID");
+            }
             ApplicationModelsMenu.Add(eImageType.Parameter, "Models Global Parameters", ModelsGlobalParameters, ConsoleKey.P, "Add or Edit Models Global Parameters", "AID");
             twoLevelMenu.Add(ApplicationModelsMenu);
 
