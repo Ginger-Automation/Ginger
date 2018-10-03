@@ -16,13 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using GingerWPF.DragDropLib;
+using Amdocs.Ginger.Plugin.Core;
 using Ginger.UserControlsLib.TextEditor.Common;
 using GingerCore;
+using GingerPlugIns.TextEditorLib;
+using GingerWPF.DragDropLib;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,9 +33,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Threading;
 using System.Windows.Input;
-using GingerPlugIns.TextEditorLib;
+using System.Windows.Threading;
 
 namespace Ginger.UserControlsLib.TextEditor
 {
@@ -238,11 +238,51 @@ namespace Ginger.UserControlsLib.TextEditor
             // Add tools in toolbar
             if (TE.Tools != null)
             {
-                foreach (TextEditorToolBarItem t in TE.Tools)
+                foreach (ITextEditorToolBarItem t in TE.Tools)
                 {
-                    AddToolbarTool(t.Image, t.clickHandler, t.toolTip, t.toolVisibility);
+                    if (t is TextEditorToolBarItem)
+                    {
+                        TextEditorToolBarItem textEditorToolBarItem = (TextEditorToolBarItem)t;
+                        AddToolbarTool(textEditorToolBarItem.Image, textEditorToolBarItem.clickHandler, textEditorToolBarItem.toolTip, textEditorToolBarItem.toolVisibility);
+                    }
+                    else
+                    {
+                        // Plugin text editor
+                        AddPluginToolbarTool(t);
+                    }
+                    
                 }
             }
+        }
+
+        public void AddPluginToolbarTool(ITextEditorToolBarItem t)
+        {
+            Button tool = new Button();            
+            tool.ToolTip = t.ToolTip;
+            tool.Content = t.ToolText;
+            tool.Tag = t;            
+            tool.Click += ToolBarItemClick;
+            
+
+            //To keep the tools before the search control we do remove and then add
+            //DO NOT Delete
+            // toolbar.Items.Remove(lblSearch);
+            //  toolbar.Items.Remove(txtSearch);
+            //  toolbar.Items.Remove(btnClearSearch);
+            toolbar.Items.Remove(lblView);
+            toolbar.Items.Remove(comboView);
+            toolbar.Items.Add(tool);
+            //   toolbar.Items.Add(lblSearch);
+            //   toolbar.Items.Add(txtSearch);
+            //   toolbar.Items.Add(btnClearSearch);
+            toolbar.Items.Add(lblView);
+            toolbar.Items.Add(comboView);
+        }
+
+        private void ToolBarItemClick(object sender, RoutedEventArgs e)
+        {
+            ITextEditorToolBarItem tool = (ITextEditorToolBarItem)((Button)sender).Tag;            
+            tool.Execute((ITextEditor)mTextEditor);
         }
 
         //TODO: looks liek too many calls, even the the caret didn't move, can first check if pos cheanged otherwise return - keep last
