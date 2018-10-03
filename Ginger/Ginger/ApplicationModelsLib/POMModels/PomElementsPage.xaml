@@ -38,7 +38,11 @@
                     </DataTrigger>
                 </DataTemplate.Triggers>    
             </DataTemplate>
-            
+
+            <DataTemplate x:Key="xDynamicEnabledDisabledTextField">
+                <TextBox Background="Transparent" BorderThickness="0" IsEnabled="{Binding IsAutoLearned, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"/>
+            </DataTemplate>
+
         </Grid.Resources>
         
         <Grid.RowDefinitions>

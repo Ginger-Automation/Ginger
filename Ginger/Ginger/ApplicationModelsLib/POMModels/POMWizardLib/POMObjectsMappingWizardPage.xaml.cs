@@ -60,8 +60,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             ElementInfo EI = ((ObservableList<ElementInfo>)sender).Last();
 
+            EI.IsAutoLearned = true;
+
             mWizard.IWindowExplorerDriver.UpdateElementInfoFields(EI);
             EI.Locators = mWizard.IWindowExplorerDriver.GetElementLocators(EI);
+            foreach (ElementLocator EL in EI.Locators)
+            {
+                EL.IsAutoLearned = true;
+            }
+            
             EI.Properties = mWizard.IWindowExplorerDriver.GetElementProperties(EI);
             EI.ElementName = GetBestElementName(EI);
             EI.WindowExplorer = mWizard.IWindowExplorerDriver;
@@ -102,8 +109,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     break;
 
                 case EventType.Active:
-                    //if (xPomElementsMappingPageFrame.Content == null)
-                    //    InitilizePomElementsMappingPage();
                     if (pomAllElementsPage.mWinExplorer == null)
                     {
                         pomAllElementsPage.SetWindowExplorer(mWizard.IWindowExplorerDriver);
@@ -178,7 +183,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void GetElementFromPageTask()
         {
-            mWizard.IWindowExplorerDriver.GetVisibleControls(null, mElementsList);
+            mWizard.IWindowExplorerDriver.GetVisibleControls(mWizard.AutoMapElementTypesList.Where(z => z.Selected == true).Select(z => z.ElementType).ToList(), mElementsList);
         }
 
         string GetBestElementName(ElementInfo EI)
