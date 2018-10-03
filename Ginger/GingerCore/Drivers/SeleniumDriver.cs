@@ -4035,44 +4035,55 @@ namespace GingerCore.Drivers
 
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
+
             HighlightElement(ElementInfo, null, locateElementByItLocators);
         }
 
         private void HighlightElement(ElementInfo ElementInfo, IWebElement el=null,  bool locateElementByItLocators = false)
         {
-            UnhighlightLast();
-
-            Driver.SwitchTo().DefaultContent();
-            SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
-
-            //Find element 
-            if (el == null)
+            try
             {
-                if (locateElementByItLocators)
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                UnhighlightLast();
+
+                Driver.SwitchTo().DefaultContent();
+                SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
+
+                //Find element 
+                if (el == null)
                 {
-                    el = LocateElementByLocators(ElementInfo.Locators);
+                    if (locateElementByItLocators)
+                    {
+                        el = LocateElementByLocators(ElementInfo.Locators);
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(ElementInfo.XPath))
+                            ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                        el = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                    }
                 }
+                if (el == null) return;
+
+                //Highlight element
+                IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
+                string highlightJavascript = string.Empty;
+
+                //if (ElementInfo.ElementType == "INPUT.CHECKBOX" || ElementInfo.ElementType == "TR" || ElementInfo.ElementType == "TBODY")
+                if (ElementInfo.ElementTypeEnum == eElementType.CheckBox || ElementInfo.ElementTypeEnum == eElementType.TableItem || ElementInfo.ElementType == "TBODY")
+                    highlightJavascript = "arguments[0].style.outline='3px dashed red'";
                 else
-                {
-                    if (string.IsNullOrEmpty(ElementInfo.XPath))
-                        ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
-                    el = Driver.FindElement(By.XPath(ElementInfo.XPath));
-                }
+                    highlightJavascript = "arguments[0].style.border='3px dashed red'";
+                javascriptDriver.ExecuteScript(highlightJavascript, new object[] { el });
+
+                LastHighLightedElement = el;
             }
-            if (el == null) return;
+            finally
+            {
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+            }
 
-            //Highlight element
-            IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
-            string highlightJavascript = string.Empty;
-
-            //if (ElementInfo.ElementType == "INPUT.CHECKBOX" || ElementInfo.ElementType == "TR" || ElementInfo.ElementType == "TBODY")
-            if (ElementInfo.ElementTypeEnum == eElementType.CheckBox || ElementInfo.ElementTypeEnum == eElementType.TableItem || ElementInfo.ElementType == "TBODY")
-                highlightJavascript = "arguments[0].style.outline='3px dashed red'";
-            else
-                highlightJavascript = "arguments[0].style.border='3px dashed red'";
-            javascriptDriver.ExecuteScript(highlightJavascript, new object[] { el });
-
-            LastHighLightedElement = el;
+            
         }
 
 
@@ -4128,6 +4139,7 @@ namespace GingerCore.Drivers
                 if (string.IsNullOrEmpty(ElementInfo.XPath))
                     ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
                 el = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                ElementInfo.ElementObject = el;
             }
 
             //Learn more properties
@@ -4238,7 +4250,8 @@ namespace GingerCore.Drivers
             else
             {
                 //e = LocateElementByLocators(ElementInfo.Locators);
-                e = Driver.FindElement(By.XPath(ElementInfo.XPath)); 
+                e = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                ElementInfo.ElementObject = e;
             }
 
 
@@ -4424,7 +4437,6 @@ namespace GingerCore.Drivers
                 }
                 try
                 {
-                    //if (IWE.Equals(childElement))
                     if (IWE.Equals(childElement))
                     {
                         return GenerateXpathForIWebElement(parentElement, "/" + IWE.TagName + "[" + count + "]" + current);
@@ -6316,7 +6328,6 @@ namespace GingerCore.Drivers
 
         ElementInfo IXPath.GetNextSibling(ElementInfo EI)
         {
-            mIsDriverBusy = true;
             SwitchFrameFromCurrent(EI);
             IWebElement childElement = Driver.FindElement(By.XPath(EI.XPath));
             IWebElement parentElement = childElement.FindElement(By.XPath(".."));

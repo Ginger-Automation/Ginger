@@ -56,7 +56,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             InitializeComponent();                       
         }
 
-        int i = 0;
 
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -78,8 +77,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mWizard.POM.UnMappedUIElements.Add(EI);
             }
 
-
-            i++;
         }
 
         PomAllElementsPage pomAllElementsPage = null;

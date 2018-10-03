@@ -119,6 +119,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void CreateNewElemetClicked(object sender, RoutedEventArgs e)
         {
+            mSpyElement.IsAutoLearned = false;
             mPOM.MappedUIElements.Add(mSpyElement);
             mPOM.MappedUIElements.CurrentItem = mSpyElement;
             mappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
@@ -182,9 +183,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xCreateNewElement.Visibility = Visibility.Collapsed;
                 GingerCore.General.DoEvents();
                 mSpyElement = mWinExplorer.GetControlFromMousePosition();
+
+                mWinExplorer.UpdateElementInfoFields(mSpyElement);
+                mSpyElement.Locators = mWinExplorer.GetElementLocators(mSpyElement);
+                mSpyElement.Properties = mWinExplorer.GetElementProperties(mSpyElement);
+                mSpyElement.WindowExplorer = mWinExplorer;
+                mSpyElement.IsAutoLearned = true;
+
                 if (mSpyElement != null)
                 {
                     xStatusLable.Content = "Element found";
+
                     FocusSpyItemOnElementsGrid();
                     mWinExplorer.HighLightElement(mSpyElement);
                 }
@@ -205,9 +214,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             } 
             foreach (ElementInfo EI in mPOM.MappedUIElements)
             {
-                mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
+                ///*mWinExplorer.UpdateElementInfoFields(EI);/*//Not sure if needed
 
-                if (EI.XPath == mSpyElement.XPath && EI.Path == mSpyElement.Path)
+                if (IsTheSameElement(EI, mSpyElement))
                 {
                     xMappedElementsTab.Focus();
                     elementfocused = true;
@@ -219,9 +228,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             foreach (ElementInfo EI in mPOM.UnMappedUIElements)
             {
-                mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
+                //mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
 
-                if (EI.XPath == mSpyElement.XPath && EI.Path == mSpyElement.Path)
+                if (IsTheSameElement(EI, mSpyElement))
                 {
                     xUnmappedElementsTab.Focus();
                     elementfocused = true;
@@ -235,6 +244,28 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 xStatusLable.Content = "Element has not been found on the list, Click here to create new Element ";
                 xCreateNewElement.Visibility = Visibility.Visible;
+            }
+        }
+
+        private bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
+        {
+            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && firstEI.Path == secondEI.Path;
+
+            bool HasSimilarLocators = true;
+            foreach (ElementLocator EL in firstEI.Locators)
+            {
+                ElementLocator SimilarLocator = secondEI.Locators.Where(x => x.LocateBy == EL.LocateBy && x.LocateValue == EL.LocateValue).FirstOrDefault();
+                if (SimilarLocator == null)
+                    HasSimilarLocators = false;
+            }
+
+            if (HasSimilarXpath && HasSimilarLocators)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
