@@ -84,11 +84,12 @@ namespace GingerCore.Actions.PlugIns
             }
         }
 
-        // public string PlugInName { get; set; }
+        
+        public string PluginId { get { return this.GetInputParamValue(nameof(PluginId)); } }
 
         public string ServiceId { get { return this.GetInputParamValue(nameof(ServiceId)); } }
 
-        public string GingerActionID { get { return this.GetInputParamValue(nameof(GingerActionID)); } }
+        public string GingerActionId { get { return this.GetInputParamValue(nameof(GingerActionId)); } }
 
         
         
