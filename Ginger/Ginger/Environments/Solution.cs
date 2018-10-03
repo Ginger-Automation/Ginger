@@ -457,5 +457,19 @@ namespace Ginger.Environments
         
         [IsSerializedForLocalRepository]
         public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();
+
+        public ePlatformType GetTargetApplicationPlatform(RepositoryItemKey TargetApplicationKey)
+        {
+            if (TargetApplicationKey != null)
+            {
+                string targetapp = TargetApplicationKey.ItemName;
+                ePlatformType platform = (from x in ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+                return platform;
+            }
+            return ePlatformType.Web;
+        }
+
     }
+
+
 }
