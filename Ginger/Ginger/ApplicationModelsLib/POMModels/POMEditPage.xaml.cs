@@ -173,7 +173,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             mWinExplorer.UnHighLightElements();
             Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mAgent.Driver).GetScreenShot();
-            mPOM.ScreenShotImage = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(ScreenShotBitmap);
+            mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
             xScreenShotFrame.Content = mScreenShotViewPage;
         }
@@ -194,7 +194,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                         using (var ms = new MemoryStream())
                         {
                             BitmapImage bi = new BitmapImage(new Uri(op.FileName));
-                            Tuple<int, int> sizes = Ginger.Reports.GingerExecutionReport.ExtensionMethods.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
+                            Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
 
                             BitmapImage bi_resized = new BitmapImage();
                             bi_resized.BeginInit();
@@ -202,8 +202,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                             bi_resized.DecodePixelHeight = sizes.Item2;
                             bi_resized.DecodePixelWidth = sizes.Item1;
                             bi_resized.EndInit();
-                            Bitmap ScreenShotBitmap = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(bi_resized);
-                            mPOM.ScreenShotImage = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(ScreenShotBitmap);
+                            Bitmap ScreenShotBitmap = Ginger.General.BitmapImage2Bitmap(bi_resized);
+                            mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
                             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
                             xScreenShotFrame.Content = mScreenShotViewPage;
                         }
