@@ -254,7 +254,11 @@ namespace Amdocs.Ginger.Common.UIElement
                 if (mXPath == null) mXPath = GetAbsoluteXpath();
                 return mXPath;
             }
-            set { mXPath = value; }
+            set
+            {
+                mXPath = value;
+                OnPropertyChanged(nameof(this.XPath));  // fix for 6342
+            }
         }
 
         public bool Selected { get; set; }
