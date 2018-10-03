@@ -85,8 +85,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     }
 
                     if (mWizard.POM.TargetApplicationKey != null)
-                        mAppPlatform = GetTargetApplicationPlatform();
-
+                        mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(mWizard.POM.TargetApplicationKey);
                     mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
                     xAgentControlUC.Init(mWizard.OptionalAgentsList);
                     App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard, nameof(mWizard.Agent));
@@ -125,13 +124,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
-        private ePlatformType GetTargetApplicationPlatform()
-        {
-            string targetapp = mWizard.POM.TargetApplicationKey.ItemName;
-            ePlatformType platform = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
-            return platform;
 
-        }
 
         private void SetAutoMapElementTypesGridView()
         {
