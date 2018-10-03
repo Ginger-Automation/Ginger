@@ -124,9 +124,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                             {
                                 Description = ((EnumValueDescriptionAttribute[])typeof(ActUIElement.eElementAction).GetField(z.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription + " : " + elementInfo.ElementTitle,
                                 ElementAction = (ActUIElement.eElementAction)z,
-                                ElementType = elementTypeOperations.ElementType,
-                                // ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), z.ToString()),
-                                // Value = "true"   // to check what to do with this
+                                ElementType = elementInfo.ElementTypeEnum,
                             }));
                     }
                 }

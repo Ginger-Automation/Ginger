@@ -21,6 +21,7 @@ using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.Enums;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -73,6 +74,58 @@ namespace Amdocs.Ginger.Common.UIElement
                 return mElementTitle;
             }
             set { mElementTitle = value; }
+        }
+
+        public enum eElementStatus
+        {
+            Pending,
+            Passed,
+            Failed
+        }
+
+        eElementStatus mElementStatus;
+        public eElementStatus ElementStatus
+        {
+            get
+            {
+                return mElementStatus;
+            }
+            set
+            {
+                mElementStatus = value;
+                OnPropertyChanged(nameof(StatusError));
+                OnPropertyChanged(nameof(StatusIcon));
+            }
+        }
+
+        public eImageType StatusIcon
+        {
+            get
+            {
+                switch (ElementStatus)
+                {
+                    case eElementStatus.Passed:
+                        return eImageType.Passed;
+                    case eElementStatus.Failed:
+                        return eImageType.Failed;
+                    case eElementStatus.Pending:
+                    default:
+                        return eImageType.Pending;
+                }
+            }
+        }
+
+        private string mLocateStatusError;
+        public string StatusError
+        {
+            get
+            {
+                return mLocateStatusError;
+            }
+            set
+            {
+                mLocateStatusError = value;
+            }
         }
 
 
@@ -201,7 +254,11 @@ namespace Amdocs.Ginger.Common.UIElement
                 if (mXPath == null) mXPath = GetAbsoluteXpath();
                 return mXPath;
             }
-            set { mXPath = value; }
+            set
+            {
+                mXPath = value;
+                OnPropertyChanged(nameof(this.XPath));  // fix for 6342
+            }
         }
 
         public bool Selected { get; set; }
@@ -351,4 +408,7 @@ namespace Amdocs.Ginger.Common.UIElement
         Span,
         Form
     }
+
+
+   
 }
