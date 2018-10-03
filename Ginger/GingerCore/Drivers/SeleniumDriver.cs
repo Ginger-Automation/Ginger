@@ -3453,6 +3453,7 @@ namespace GingerCore.Drivers
             Driver.SwitchTo().DefaultContent();
 
             list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList)));
+            // list.ForEach(z => z.XPath = GenerateXpathForIWebElement((IWebElement)z.ElementObject, "")); //  also can be fix for 6342 - to discuss
 
             CurrentFrame = "";
             Driver.SwitchTo().DefaultContent();
@@ -3520,7 +3521,10 @@ namespace GingerCore.Drivers
             }
             else if ((EL != null) && (JSType == null))
             {
-                tagName = EL.TagName;
+                if ((EL.TagName != null) && (EL.TagName != string.Empty))
+                    tagName = EL.TagName.ToUpper();
+                else
+                    tagName = "INPUT";
                 type = EL.GetAttribute("type");
             }
             else
@@ -3528,7 +3532,7 @@ namespace GingerCore.Drivers
                 return elementType;
             }
 
-            if ((tagName.ToUpper() == "INPUT" && (type.ToUpper() == "UNDEFINED" || type.ToUpper() == "PASSWORD" || type.ToUpper() == "EMAIL")) ||
+            if ((tagName.ToUpper() == "INPUT" && (type.ToUpper() == "UNDEFINED" || type.ToUpper() == "TEXT" || type.ToUpper() == "PASSWORD" || type.ToUpper() == "EMAIL")) ||
                  tagName.ToUpper() == "TEXTAREA" || tagName.ToUpper() == "TEXT")
             {
                 elementType = eElementType.TextBox;
@@ -3574,7 +3578,7 @@ namespace GingerCore.Drivers
             {
                 elementType = eElementType.Image;
             }
-            else if (tagName.ToUpper() == "INPUT" && type.ToUpper() == "CHECKBOX")
+            else if ((tagName.ToUpper() == "INPUT" && type.ToUpper() == "CHECKBOX") || (tagName.ToUpper() == "CHECKBOX"))
             {
                 elementType = eElementType.CheckBox;
             }
@@ -3582,7 +3586,7 @@ namespace GingerCore.Drivers
             {
                 return eElementType.ComboBoxOption;
             }
-            else if (tagName.ToUpper() == "INPUT" && type.ToUpper() == "RADIO")
+            else if ((tagName.ToUpper() == "INPUT" && type.ToUpper() == "RADIO") || (tagName.ToUpper() == "RADIO"))
             {
                 elementType = eElementType.RadioButton;
             }
