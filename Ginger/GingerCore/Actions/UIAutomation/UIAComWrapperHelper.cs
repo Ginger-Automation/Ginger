@@ -1937,7 +1937,6 @@ namespace GingerCore.Drivers
             }
             return "true";
         }
-
         public bool LocateAndValidateElement(eLocateBy LocateBy, string LocateValue, string elementType, ActUIElement.eElementAction actionType,string validationValue="")
         {
             int? tempLoadTimeout = mLoadTimeOut;
@@ -1985,6 +1984,123 @@ namespace GingerCore.Drivers
 
         }
 
+        public override string SelectAndValidateHandler(object obj, ActUIElement act)
+        {
+            AutomationElement AE = (AutomationElement)obj;
+
+            bool DefineHandleAction = false;
+            if ((act.GetInputParamValue(ActUIElement.Fields.DefineHandleAction).ToString()) == "True")
+                DefineHandleAction = true;
+            eLocateBy handleElementLocateby = eLocateBy.ByAutomationID;
+            string handleElementLocateValue = "";
+            ActUIElement.eElementAction handleActionType = ActUIElement.eElementAction.Click;
+
+            if (DefineHandleAction == true)
+            {
+                if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.HandleElementLocateBy).ToString(), out handleElementLocateby) == false)
+                {
+                    act.Error = "Unkown Handle Element Locate By";
+                    return "false";
+                }
+                handleElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.HandleElementLocatorValue);
+                handleActionType = act.HandleActionType;
+            }
+
+            //ActUIElement.eElementAction validationType;
+            //if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
+            //{
+            //    act.Error = "Unkown Validation Type";
+            //    return "false";
+            //}
+            string subElementType = act.GetInputParamValue(ActUIElement.Fields.SubElementType);
+
+            eLocateBy subElementLocateby;
+            if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.SubElementLocateBy).ToString(), out subElementLocateby) == false)
+            {
+                act.Error = "Unkown Validation Element Locate By";
+                return "false";
+            }
+            string subElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.SubElementLocatorValue);
+            //string validationValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.ValidationElementValue);
+
+            object subElement = FindElementByLocator(subElementLocateby, subElementLocateValue);
+
+            string Value = act.GetInputParamCalculatedValue(ActUIElement.Fields.Value).ToString();
+
+
+            bool flag = false;
+            int iLoop = 0;
+            if(subElementType == ActUIElement.eSubElementType.Pane.ToString())
+            {
+                ClickElement(AE);
+                while (flag == false && iLoop < 20)
+                {                                        
+                    if (DefineHandleAction == true)
+                    {
+                       // LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, validationElementType, handleActionType);
+                    }
+                    //flag = LocateAndValidateElement(validationElementLocateby, validattionElementLocateValue, validationElementType, validationType, validationValue);
+
+                    if (flag)
+                    {
+                        return "true";
+                    }
+                    iLoop++;
+                    if ((!flag) && (iLoop >= 20))
+                    {
+                        return "Validation Failed";
+                    }
+                }           
+            }
+            return flag.ToString();
+        }
+
+        public bool SelectFromPane(eLocateBy LocateBy, string LocateValue, string elementType, ActUIElement.eElementAction actionType, string validationValue = "")
+        {
+            int? tempLoadTimeout = mLoadTimeOut;
+            if (actionType == ActUIElement.eElementAction.NotExist)
+                mLoadTimeOut = -1;
+            object obj = FindElementByLocator(LocateBy, LocateValue);
+            mLoadTimeOut = tempLoadTimeout;
+
+            AutomationElement AE = (AutomationElement)obj;
+
+            switch (actionType)
+            {
+                case ActUIElement.eElementAction.IsEnabled:
+                    string result = IsEnabledControl(AE);
+                    if (result.Equals("true"))
+                    {
+                        return true;
+                    }
+                    break;
+
+                case ActUIElement.eElementAction.Exist:
+                    if (AE != null)
+                    {
+                        return true;
+                    }
+
+                    break;
+
+                case ActUIElement.eElementAction.NotExist:
+                    if (AE == null)
+                    {
+                        return true;
+                    }
+                    break;
+                case ActUIElement.eElementAction.GetValue:
+                    if (AE == null)
+                    {
+                        return false;
+                    }
+                    if (GetControlValue(AE) == validationValue)
+                        return true;
+                    break;
+            }
+            return false;
+
+        }
         public override Boolean IsElementExist(eLocateBy LocateBy, string LocateValue)
         {
             AutomationElement AE = null;

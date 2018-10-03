@@ -406,6 +406,9 @@
     <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml.cs">
       <DependentUpon>LocateByPOMElement.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\_Common\ActUIElementLib\UIElementSelectAndValidate.xaml.cs">
+      <DependentUpon>UIElementSelectAndValidate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\_Common\ActUIElementLib\UIElementSendKeysAndValidate.xaml.cs">
       <DependentUpon>UIElementSendKeysAndValidate.xaml</DependentUpon>
     </Compile>
@@ -2527,6 +2530,10 @@
     <Page Include="Actions\ActionLogConfigPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Actions\_Common\ActUIElementLib\UIElementSelectAndValidate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="AgentsNew\NewAgentEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>

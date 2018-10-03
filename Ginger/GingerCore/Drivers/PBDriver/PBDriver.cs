@@ -303,6 +303,18 @@ namespace GingerCore.Drivers.PBDriver
                         actUIPBC.AddOrUpdateReturnParamActual("Actual", status1);
                     }
                     break;
+                case ActUIElement.eElementAction.SelectandValidate:
+                    string statusSel = mUIAutomationHelper.SendKeysAndValidateHandler(AE, actUIPBC);
+                    if (!statusSel.Contains("true"))
+                    {
+                        actUIPBC.Error += statusSel;
+                    }
+                    else
+                    {
+                        actUIPBC.ExInfo += statusSel;
+                        actUIPBC.AddOrUpdateReturnParamActual("Actual", statusSel);
+                    }
+                    break;
                 default:
                     actUIPBC.Error = "Unable to perform operation";
                     break;
