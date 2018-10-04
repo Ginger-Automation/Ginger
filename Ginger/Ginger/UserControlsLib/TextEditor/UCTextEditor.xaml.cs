@@ -41,7 +41,7 @@ namespace Ginger.UserControlsLib.TextEditor
     /// <summary>
     /// Interaction logic for UCTextEditor.xaml
     /// </summary>
-    public partial class UCTextEditor : UserControl , IDragDrop
+    public partial class UCTextEditor : UserControl , IDragDrop, ITextHandler
     {
         TextEditorBase mTextEditor = null;        
         GridLength mLastEditPageRowHeight = new GridLength(150);
@@ -169,6 +169,11 @@ namespace Ginger.UserControlsLib.TextEditor
         {
             mTextEditor = TextEditor;
 
+            if (mTextEditor is ITextEditor)
+            {
+                ((ITextEditor)mTextEditor).TextHandler = this;
+            }
+
             //TODO: put it in general func
             string SolutionPath = FileName.Replace(App.UserProfile.Solution.Folder, "~");
             lblTitle.Content = SolutionPath;
@@ -281,7 +286,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
         private void ToolBarItemClick(object sender, RoutedEventArgs e)
         {
-            ITextEditorToolBarItem tool = (ITextEditorToolBarItem)((Button)sender).Tag;            
+            ITextEditorToolBarItem tool = (ITextEditorToolBarItem)((Button)sender).Tag;              
             tool.Execute((ITextEditor)mTextEditor);
         }
 
@@ -494,7 +499,7 @@ namespace Ginger.UserControlsLib.TextEditor
             get { return UpdateButton.Content.ToString(); }
             set { UpdateButton.Content = value; }
         }
-
+        
         private void UpdateButton_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if(UpdateButton.Visibility == Visibility.Visible)
@@ -506,6 +511,25 @@ namespace Ginger.UserControlsLib.TextEditor
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             Save();
+        }
+
+        public string Text { get { return textEditor.Text; } set { textEditor.Text = value; } }
+
+        public int CaretLocation { get { return textEditor.CaretOffset; } set { textEditor.CaretOffset = value; } }
+
+        public void AppendText(string text)
+        {
+            textEditor.AppendText(text);            
+        }
+
+        public void InsertText(string text)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowMessage(MessageType messageType, string text)
+        {
+            throw new NotImplementedException();
         }
     }
 }

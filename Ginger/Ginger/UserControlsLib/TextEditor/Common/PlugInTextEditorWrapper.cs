@@ -89,7 +89,9 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 
         Amdocs.Ginger.Plugin.Core.IFoldingStrategy ITextEditor.FoldingStrategy => throw new System.NotImplementedException();
 
-        public ITextHandler TextHandler { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public ITextHandler TextHandler { get { return mPlugInTextFileEditor.TextHandler; } set { mPlugInTextFileEditor.TextHandler = value; } }
+
+        // public ITextHandler TextHandler { get {return texted }; set { = value} }
 
         //public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
         //{
