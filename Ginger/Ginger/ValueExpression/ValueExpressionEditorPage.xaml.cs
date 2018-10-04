@@ -225,10 +225,10 @@ namespace Ginger
             AddVBSEval(tviVars, "Current Day (0# format)", "Right(\"0\" & Day(Now), 2)");
             AddVBSEval(tviVars, "Current Year (#### format)", "DatePart(\"yyyy\", Now)");
             AddVBSEval(tviVars, "Current Year (## format)", "Right(DatePart(\"yyyy\", Now),2)");
-            AddVBSEval(tviVars, "Current Date +7 days", "DateSerial(Year(Now), Month(Now),Day(Now)+7)");
-            AddVBSEval(tviVars, "Current Day of month +7 days (0# format) ", "Right(\"0\" & CInt(Right(\"0\" & Day(Now), 2))+7, 2)");
-            AddVBSEval(tviVars, "Current Date -1 month", "DateSerial(Year(Now), Month(Now)-1,Day(Now))");
-            AddVBSEval(tviVars, "Current Month -1 (0# format)", "Right(\"0\" & CInt(Right(\"0\" & Month(Now), 2))-1, 2)");
+            AddVBSEval(tviVars, "Current Date +7 days", "DateSerial(Year(Now), Month(Now),Day(DateAdd(\"d\",7,Now)))");
+            AddVBSEval(tviVars, "Current Day of month +7 days (0# format) ", "Right(\"0\" & Day(DateAdd(\"d\",7,Now)), 2)");
+            AddVBSEval(tviVars, "Current Date -1 month", "DateSerial(Year(Now), Month(DateAdd(\"m\",-1,Now)),Day(Now))");
+            AddVBSEval(tviVars, "Current Month -1 (0# format)", "Right(\"0\" & Month(DateAdd(\"m\",-1,Now)), 2)");
             AddVBSEval(tviVars, "Current Day of Week (Name)","WeekdayName(DatePart(\"w\",Now))");
             AddVBSEval(tviVars, "Get # of days between 2 dates", "DateDiff(\"d\",\"5-16-2016\",\"6-16-2016\")");
             AddVBSEval(tviVars, "Check if date is valid", "CStr(IsDate(\"5/18/2016\"))");
