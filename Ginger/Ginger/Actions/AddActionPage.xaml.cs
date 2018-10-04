@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -69,15 +68,16 @@ namespace Ginger.Actions
             {
                 try
                 {
-                    ObservableList<StandAloneAction> actions = pluginPackage.GetStandAloneActions();
+                    List<StandAloneAction> actions = pluginPackage.LoadServicesInfoFromFile(); // GetStandAloneActions();
                     
-                    foreach (StandAloneAction SAA in actions)
+                    foreach (StandAloneAction standAloneAction in actions)
                     {
                         ActPlugIn act = new ActPlugIn();                        
-                        act.Description = SAA.Description;
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.ServiceId), pluginPackage.PluginID);
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.GingerActionID),SAA.ID);
-                        foreach (var v in SAA.InputValues)
+                        act.Description = standAloneAction.Description;
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.PluginId), pluginPackage.PluginID);
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.ServiceId),standAloneAction.ServiceID);
+                        act.GetOrCreateInputParam(nameof(ActPlugIn.GingerActionId),standAloneAction.ID);
+                        foreach (var v in standAloneAction.InputValues)
                         {
                             act.InputValues.Add(new ActInputValue() { Param = v.Param });
                         }                        
@@ -195,6 +195,7 @@ namespace Ginger.Actions
 
             if (actionsGrid == PlugInsActionsGrid)
             {
+                view.GridColsView.Add(new GridColView() { Field = nameof(ActPlugIn.PluginId), Header = "Plugin ID", WidthWeight = 6, ReadOnly = true, BindingMode = BindingMode.OneWay });
                 view.GridColsView.Add(new GridColView() { Field = nameof (ActPlugIn.ServiceId), Header = "Service ID", WidthWeight = 6, ReadOnly = true , BindingMode = BindingMode.OneWay});
             }
             else

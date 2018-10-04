@@ -1810,12 +1810,24 @@ namespace Ginger.Run
         private void ExecutePlugInAction(ActPlugIn actPlugin)     
         {
             // first verify we have service ready or start service
-            
+            Stopwatch st = Stopwatch.StartNew();
             GingerNodeInfo GNI = GetGingerNode(actPlugin);
 
             if (GNI == null)
             {
                 // call plugin to start service and wait for ready
+                WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId);  
+
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                while (GNI == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
+                {
+                    Thread.Sleep(500);
+                    GNI = GetGingerNode(actPlugin);
+                }
+                if (GNI == null)
+                {
+                    throw new Exception("Timeout waiting for service to start");
+                }
             }
 
             GNI.Status = "Reserved";
@@ -1877,7 +1889,10 @@ namespace Ginger.Run
 
             GNI.IncreaseActionCount();
             GNI.Status = "Ready";
-             
+
+            st.Stop();
+            long millis = st.ElapsedMilliseconds;
+            actPlugin.ExInfo += Environment.NewLine + millis;
         }
 
         private GingerNodeInfo GetGingerNode(ActPlugIn actPlugin)
@@ -1897,7 +1912,7 @@ namespace Ginger.Run
         {
             // Here we decompose the GA and create Payload to transfer it to the agent
             NewPayLoad PL = new NewPayLoad("RunAction");
-            PL.AddValue(ActPlugIn.GingerActionID);
+            PL.AddValue(ActPlugIn.GingerActionId);
             List<NewPayLoad> Params = new List<NewPayLoad>();
             foreach (ActInputValue AP in ActPlugIn.InputValues)
             {
@@ -1906,7 +1921,7 @@ namespace Ginger.Run
                 // TODO: use const
                 NewPayLoad p = new NewPayLoad("P");   // To save network trafic we send just one letter
                 p.AddValue(AP.Param);
-                p.AddValue(AP.Value.ToString());
+                p.AddValue(AP.ValueForDriver.ToString());
                 p.ClosePackage();
                 Params.Add(p);
             }
