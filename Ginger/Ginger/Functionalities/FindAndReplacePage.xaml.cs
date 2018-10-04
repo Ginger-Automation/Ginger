@@ -848,9 +848,9 @@ namespace Ginger.Functionalities
             else if(mContext == eContext.AutomatePage)
                 w = new ActionEditPage(act, General.RepositoryItemPageViewMode.Automation);
             else if (Parent is BusinessFlow)
-                w = new ActionEditPage(act, General.RepositoryItemPageViewMode.Child, Parent as BusinessFlow);
+                w = new ActionEditPage(act, General.RepositoryItemPageViewMode.ChildWithSave, Parent as BusinessFlow);
             else if (Parent is Activity)
-                w = new ActionEditPage(act, General.RepositoryItemPageViewMode.Child, actParentActivity: Parent as Activity);
+                w = new ActionEditPage(act, General.RepositoryItemPageViewMode.ChildWithSave, actParentActivity: Parent as Activity);
             else
                 w = new ActionEditPage(act, General.RepositoryItemPageViewMode.SharedReposiotry);
 
@@ -889,7 +889,7 @@ namespace Ginger.Functionalities
             RepositoryItemBase Parent = (RepositoryItemBase)activityToViewFoundItem.ParentItemToSave;
             ActivityEditPage w;
             if (mContext == eContext.SolutionPage)
-                w = new ActivityEditPage(activity, General.RepositoryItemPageViewMode.Child, Parent as BusinessFlow);
+                w = new ActivityEditPage(activity, General.RepositoryItemPageViewMode.ChildWithSave, Parent as BusinessFlow);
             else if(mContext == eContext.AutomatePage)
                 w = new ActivityEditPage(activity, General.RepositoryItemPageViewMode.Automation);
             else

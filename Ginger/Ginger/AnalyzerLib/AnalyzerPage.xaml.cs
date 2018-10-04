@@ -703,7 +703,7 @@ namespace Ginger.AnalyzerLib
                 AnalyzeAction currentAnalyzeAction = (AnalyzeAction)AnalyzerItemsGrid.CurrentItem;
                 Act actionIssue = currentAnalyzeAction.mAction;
                 actionIssue.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
-                ActionEditPage actedit = new ActionEditPage(actionIssue, General.RepositoryItemPageViewMode.Child, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
+                ActionEditPage actedit = new ActionEditPage(actionIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
                 //setting the BusinessFlow on the Action in Order to save 
                 //actedit.mActParentBusinessFlow = ((AnalyzeAction)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
                 //actedit.ap = null;
@@ -715,7 +715,7 @@ namespace Ginger.AnalyzerLib
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
                 Activity ActivityIssue = currentAnalyzeActivity.mActivity;
                 //ActivityIssue.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
-                ActivityEditPage ActivityEdit = new ActivityEditPage(ActivityIssue, General.RepositoryItemPageViewMode.Child, currentAnalyzeActivity.mBusinessFlow);
+                ActivityEditPage ActivityEdit = new ActivityEditPage(ActivityIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeActivity.mBusinessFlow);
                 //setting the BusinessFlow on the Activity in Order to save
                 //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
                 //ActivityEdit.ap = null;

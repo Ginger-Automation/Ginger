@@ -751,16 +751,18 @@ namespace Ginger.Actions
             string title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
+            Button okBtn = new Button();
+            okBtn.Content = "Ok";
+            okBtn.Click += new RoutedEventHandler(okBtn_Click);
+            Button undoBtn = new Button();
+            undoBtn.Content = "Undo & Close";
+            undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+            Button saveBtn = new Button();
+            saveBtn.Content = "Save";
             switch (EditMode)
             {
-                case General.RepositoryItemPageViewMode.Automation:
-                    Button okBtn = new Button();
-                    okBtn.Content = "Ok";
-                    okBtn.Click += new RoutedEventHandler(okBtn_Click);
-                    winButtons.Add(okBtn);
-                    Button undoBtn = new Button();
-                    undoBtn.Content = "Undo & Close";
-                    undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+                case General.RepositoryItemPageViewMode.Automation:                   
+                    winButtons.Add(okBtn);                    
                     winButtons.Add(undoBtn);
 
                     Button nextAction = new Button();
@@ -791,39 +793,33 @@ namespace Ginger.Actions
 
 
                 case General.RepositoryItemPageViewMode.SharedReposiotry:
-                    title = "Edit Shared Repository " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    Button saveBtn = new Button();
-                    saveBtn.Content = "Save";
-                    saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
-                    Button closeBtn = new Button();
-                    closeBtn.Content = "Undo & Close";
-                    closeBtn.Click += new RoutedEventHandler(undoBtn_Click);
-                    winButtons.Add(saveBtn);
-                    winButtons.Add(closeBtn);
+                    title = "Edit Shared Repository " + RemoveActionWord(mAction.ActionDescription) + " Action";                   
+                    saveBtn.Click += new RoutedEventHandler(SharedRepoSaveBtn_Click);
+                    winButtons.Add(saveBtn);                    
+                    winButtons.Add(undoBtn);
                     break;
 
                 case General.RepositoryItemPageViewMode.Child:
                     title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    Button saveButton = new Button();
-                    saveButton.Content = "Save";
-                    saveButton.Click += new RoutedEventHandler(saveButton_Click);
-                    Button closeButton = new Button();
-                    closeButton.Content = "Undo & Close";
-                    closeButton.Click += new RoutedEventHandler(undoBtn_Click);
-                    winButtons.Add(saveButton);
-                    winButtons.Add(closeButton);
+                    winButtons.Add(okBtn);
+                    winButtons.Add(undoBtn);
                     break;
+
+                case General.RepositoryItemPageViewMode.ChildWithSave:
+                    title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
+                    saveBtn.Click += new RoutedEventHandler(ParentSaveButton_Click);
+                    winButtons.Add(saveBtn);
+                    winButtons.Add(undoBtn);
+                    break;
+
                 case General.RepositoryItemPageViewMode.View:
                     title = "View " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    Button okBtnView = new Button();
-                    okBtnView.Content = "Ok";
-                    okBtnView.Click += new RoutedEventHandler(okBtn_Click);
-                    winButtons.Add(okBtnView);
+                    winButtons.Add(okBtn);                    
                     break;
             }
 
             this.Height = 800;
-            this.Width = 800;
+            this.Width = 1000;
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
             SwitchingInputValueBoxAndGrid(mAction);
             return saveWasDone;
@@ -892,12 +888,12 @@ namespace Ginger.Actions
             }
         }
 
-        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        private void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
         {
             CheckIfUserWantToSave();
         }
 
-        private void saveButton_Click(object sender, RoutedEventArgs e)
+        private void ParentSaveButton_Click(object sender, RoutedEventArgs e)
         {
             if ((mActParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow),mActParentBusinessFlow.Name) == MessageBoxResult.Yes) 
                 || (mActParentActivity != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == MessageBoxResult.Yes))

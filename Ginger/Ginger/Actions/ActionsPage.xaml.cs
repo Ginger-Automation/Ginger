@@ -52,7 +52,7 @@ namespace Ginger.Actions
             if (activity != null)
             {
                 //static Activity
-                EditMode = General.RepositoryItemPageViewMode.SharedReposiotry;
+                //EditMode = General.RepositoryItemPageViewMode.SharedReposiotry;
                 mCurrentActivity = activity;
                 grdActions.Title = "Actions";
                 grdActions.DataSourceList = mCurrentActivity.Acts;
