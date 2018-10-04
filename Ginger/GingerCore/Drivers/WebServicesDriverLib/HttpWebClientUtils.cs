@@ -353,7 +353,15 @@ namespace GingerCore.Actions.WebAPI
                 Reporter.ToLog(eLogLevel.INFO, "Client Sending Async Request", null, true, true);
                 Response = Client.SendAsync(RequestMessage).Result;
                 Reporter.ToLog(eLogLevel.INFO, "Response status: " + Response.StatusCode, null, true, true);
-                ResponseMessage = Response.Content.ReadAsStringAsync().Result;
+
+                if (ApplicationAPIUtils.eContentType.PDF.ToString() == mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType))
+                {
+                    ResponseMessage = ReadByteArrayAndConvertToString();
+                }
+                else
+                {
+                    ResponseMessage = Response.Content.ReadAsStringAsync().Result;
+                }
                 Reporter.ToLog(eLogLevel.INFO, "ResponseMessage: " + ResponseMessage, null, true, true);
                 Reporter.ToLog(eLogLevel.INFO, "Returning true on the end of the try in SendRequest method", null, true, true);
                 return true;
@@ -364,8 +372,7 @@ namespace GingerCore.Actions.WebAPI
                 if (WE.InnerException.ToString().Contains("The character set provided in ContentType is invalid. Cannot read content as string using an invalid character set."))
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Caught Content Type Exception:" + WE.Message);
-                    byte[] data = Response.Content.ReadAsByteArrayAsync().Result;
-                    ResponseMessage = Encoding.Default.GetString(data);
+                    ResponseMessage = ReadByteArrayAndConvertToString(); 
                     return false;
                 }
                 mAct.Error = "Request execution failed, reason: " + WE.Message;
@@ -375,6 +382,13 @@ namespace GingerCore.Actions.WebAPI
             return true;
         }
 
+        private string ReadByteArrayAndConvertToString()
+        {
+            byte[] data = Response.Content.ReadAsByteArrayAsync().Result;
+            return Encoding.Default.GetString(data);
+        }
+
+        private string FullFileName = string.Empty;
         private string SaveToFile(string FileType, string RequestFileContent, string SaveDirectory)
         {
             string extension = string.Empty;
@@ -388,6 +402,10 @@ namespace GingerCore.Actions.WebAPI
                 extension = "xml";
             else if (ContentType == ApplicationAPIUtils.eContentType.JSon.ToString())
                 extension = "json";
+            else if(ContentType == ApplicationAPIUtils.eContentType.PDF.ToString())
+            {
+                extension = "pdf";
+            }
             else 
                 extension = "txt";
             string DirectoryFullPath =Path.Combine(SaveDirectory.Replace("~//", mAct.SolutionFolder), FileType + "s");
@@ -395,9 +413,18 @@ namespace GingerCore.Actions.WebAPI
                 Directory.CreateDirectory(DirectoryFullPath);
             String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
             actName = PathHelper.CleanInValidPathChars(mAct.Description);            
-            string FullFileName =Path.Combine(DirectoryFullPath, actName +"_"+ timeStamp + "_" + FileType + "." + extension);
-            File.WriteAllText(FullFileName, RequestFileContent);
+            FullFileName =Path.Combine(DirectoryFullPath, actName +"_"+ timeStamp + "_" + FileType + "." + extension);
 
+            if (ContentType == ApplicationAPIUtils.eContentType.PDF.ToString())
+            {
+                byte[] bytes = Encoding.Default.GetBytes(RequestFileContent);
+                File.WriteAllBytes(FullFileName, bytes);
+            }
+            else
+            {
+                File.WriteAllText(FullFileName, RequestFileContent);
+            }
+           
             return FullFileName;
         }
 
@@ -443,8 +470,11 @@ namespace GingerCore.Actions.WebAPI
             Reporter.ToLog(eLogLevel.INFO, "XMLResponseCanBeParsed Indicator: " + XMLResponseCanBeParsed, null, true, true);
 
             string prettyResponse = XMLDocExtended.PrettyXml(ResponseMessage);
-
-            mAct.AddOrUpdateReturnParamActual("Response:", prettyResponse);
+            if (ApplicationAPIUtils.eContentType.PDF.ToString() == mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType))
+            {
+                prettyResponse = @"Response file: "+ FullFileName;
+            }
+                mAct.AddOrUpdateReturnParamActual("Response:", prettyResponse);
 
             if (!ParseNodesToReturnParams(XMLResponseCanBeParsed))
                 return false;
