@@ -73,6 +73,11 @@ namespace GingerCore.Repository.UpgradeLib
                 return eGingerVersionComparisonResult.ComparisonFailed;//failed to identify and compare the version
             }
 
+            if (fileGingerVersion == "3.0.0.0Beta")//Workaround needed due to move to new repository serilizer in middle of release 
+            {
+                return eGingerVersionComparisonResult.LowerVersion;
+            }
+
             long fileVersionAsLong = GingerCoreNET.GeneralLib.General.GetGingerVersionAsLong(fileGingerVersion);
             long currentVersionAsLong = RepositorySerializer.GetCurrentGingerVersionAsLong();
 
@@ -119,9 +124,17 @@ namespace GingerCore.Repository.UpgradeLib
             if (string.IsNullOrEmpty(xml) == false)
             {
                 if (RepositorySerializer.IsLegacyXmlType(xml) == true)
-                    fileVersion = RepositorySerializer.GetXMLGingerVersion(xml, xmlFilePath);                
+                {
+                    fileVersion = RepositorySerializer.GetXMLGingerVersion(xml, xmlFilePath);
+                    if (fileVersion == "3.0.0.0")
+                    {
+                        fileVersion = fileVersion + "Beta";
+                    }
+                }
                 else
+                {
                     fileVersion = NewRepositorySerializer.GetXMLGingerVersion(xml, xmlFilePath);//New XML type
+                }
 
                 if (fileVersion == null)
                     Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));

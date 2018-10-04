@@ -201,8 +201,8 @@ namespace Amdocs.Ginger.Repository
                         //TODO: mark with no backup
                         //TODO: find better way, make it generic
                         if (mi.Name != nameof(FileName) && mi.Name != nameof(FilePath) && mi.Name != nameof(ObjFolderName) && mi.Name != nameof(ObjFileExt) && mi.Name != nameof(ContainingFolder) && mi.Name != nameof(ContainingFolderFullPath)) // Will cause err to get filename on each repo item
-                        {
-                            v = PI.GetValue(this);
+                        {                            
+                                v = PI.GetValue(this);                                                       
                         }
                     }
                 }
@@ -485,10 +485,20 @@ namespace Amdocs.Ginger.Repository
                 Created = GetUTCDateTime(),
                 CreatedBy = Environment.UserName,
                 GingerVersion = GingerVersion.GetCurrentVersion(),
+                Version= 1,
+                LastUpdateBy = Environment.UserName,
                 LastUpdate = GetUTCDateTime()
 
                 //TODO: other fields
             };
+        }
+
+        public void UpdateHeader()
+        {
+            RepositoryItemHeader.Version++;
+            RepositoryItemHeader.GingerVersion = GingerVersion.GetCurrentVersion();
+            RepositoryItemHeader.LastUpdateBy = Environment.UserName;
+            RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
         }
 
         private DateTime GetUTCDateTime()
@@ -606,16 +616,14 @@ namespace Amdocs.Ginger.Repository
 
         internal void UpdateBeforeSave()
         {
-            {
-                if (RepositoryItemHeader == null)
-                {
-                    InitHeader();
-                }
-                RepositoryItemHeader.Version++;
-                RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
-                RepositoryItemHeader.LastUpdateBy = Environment.UserName;
-                this.ClearBackup();
-            }
+            //if (RepositoryItemHeader == null) //---It already been done inside SerializeToString()
+            //{
+            //    InitHeader();
+            //}
+            //RepositoryItemHeader.Version++;
+            //RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
+            //RepositoryItemHeader.LastUpdateBy = Environment.UserName;
+            this.ClearBackup();
         }
 
         public string GetContainingFolder()
