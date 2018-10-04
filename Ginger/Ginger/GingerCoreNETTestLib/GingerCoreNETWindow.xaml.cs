@@ -20,7 +20,10 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Environments;
+using GingerCoreNET.Drivers.CommunicationProtocol;
+using GingerCoreNET.DriversLib;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.RunLib;
 using GingerWPF.WorkSpaceLib;
@@ -28,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -87,8 +91,43 @@ namespace Ginger.GingerCoreNETTestLib
             Actions.Add(new MyAction() { Name = "Open Applications", Action = () => OpenApplciations() });
             Actions.Add(new MyAction() { Name = "Open BF With Old Actions", Action = () => OpenBFWithOldActions() });
             Actions.Add(new MyAction() { Name = "Run Action", Action = () => RunAction() });
+            Actions.Add(new MyAction() { Name = "Repository Item Base Report", Action = () => RepositoryItemBaseReport() });
             ActionsListBox.ItemsSource = Actions;
             MainDataGrid.MouseDoubleClick += MainDataGrid_MouseDoubleClick;
+        }
+
+        private void RepositoryItemBaseReport()
+        {
+
+            string s = "";
+            RemoteObjectProxy<RepositoryItem> dp = new RemoteObjectProxy<RepositoryItem>(); //dummy to load the dll
+            //s += getRIBase(typeof(Ginger.App).Assembly);  // Ginger
+            //s += getRIBase(typeof(RepositoryItemBase).Assembly);  // GingerCoreCommon
+            //s += getRIBase(typeof(RepositoryItem).Assembly);  // GingerCore
+
+            s += getRIBase(typeof(GingerNode).Assembly);  // GingerCoreNet
+
+            System.IO.File.WriteAllText(@"c:\temp\RIBase.txt", s);
+        }
+
+        private string getRIBase(Assembly a)
+        {
+            string s = "";
+            var RepositoryItemTypes =
+              from type in a.GetTypes()
+              where type.IsSubclassOf(typeof(RepositoryItemBase))
+              select type;
+
+            foreach (Type t in RepositoryItemTypes)
+            {
+                string Notes = "";
+                if(t.IsSubclassOf(typeof(Act)))
+                {
+                    Notes = "Act";
+                }
+                s += t.FullName + "," + t.Assembly.ManifestModule.Name + "," + Notes + Environment.NewLine;
+            }
+            return s;
         }
 
         private void ReporterError()

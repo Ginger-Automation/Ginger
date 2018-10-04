@@ -142,7 +142,11 @@ public class SwingHelper implements IXPath {
 		else if(LocateBy.equalsIgnoreCase("ByXPath"))
 		{
 			comp=mXPathHelper.GetComponentByXPath(CurrentWindow,LocateValue);
-		}	
+		}
+		else if(LocateBy.equalsIgnoreCase("ByMulitpleProperties"))
+		{
+			comp = mXPathHelper.GetComponentByMultipleProperties(CurrentWindow, LocateValue);
+		}
 		return comp;
 	}
 	
