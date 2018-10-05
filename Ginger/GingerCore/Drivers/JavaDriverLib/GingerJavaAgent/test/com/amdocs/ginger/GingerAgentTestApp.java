@@ -25,15 +25,26 @@ public class GingerAgentTestApp {
 	 */
 	public static void main(String[] args) {
  
-		JEditorPaneExample frame= new JEditorPaneExample();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setTitle("Java Swing Test App");
-	    frame.pack();
-	    frame.setVisible(true);
-	    frame.setSize(600, 300);
-	    //Start the Ginger Socket Server
-	    GingerAgent.SHOW_AGENT = true;
-	    GingerAgent GA = new GingerAgent();	    
-	    GA.StartServer();	    
+//		JEditorPaneExample frame= new JEditorPaneExample();
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setTitle("Java Swing Test App");
+//	    frame.pack();
+//	    frame.setVisible(true);
+//	    frame.setSize(600, 300);
+//	    //Start the Ginger Socket Server
+//	    GingerAgent.SHOW_AGENT = true;
+//	    GingerAgent GA = new GingerAgent();	    
+//	    GA.StartServer();	  
+		BasicSwingApp frame= new BasicSwingApp(); 
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+        frame.setTitle("Java Swing Test App"); 
+	    frame.pack(); 
+	    frame.setVisible(true); 
+	    //frame.setSize(600, 300); 
+	    //Start the Ginger Socket Server 
+	    GingerAgent.SHOW_AGENT = true; 
+	    GingerAgent GA = new GingerAgent();     
+	    GA.StartServer();
+
 	}
 }

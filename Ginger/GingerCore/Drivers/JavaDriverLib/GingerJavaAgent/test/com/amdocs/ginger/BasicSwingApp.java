@@ -115,17 +115,40 @@ public class BasicSwingApp extends javax.swing.JFrame {
         //create the root node
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
         //create the child nodes
+        DefaultMutableTreeNode USAndCalNode = new DefaultMutableTreeNode("US And CANADA");
+        USAndCalNode.add(new DefaultMutableTreeNode("California"));
+        USAndCalNode.add(new DefaultMutableTreeNode("Florida"));
+        USAndCalNode.add(new DefaultMutableTreeNode("Texas"));
+        
+        DefaultMutableTreeNode USAndUK = new DefaultMutableTreeNode("US and UK");
+        USAndUK.add(new DefaultMutableTreeNode("California"));
+        
+        
         DefaultMutableTreeNode USNode = new DefaultMutableTreeNode("US");
         USNode.add(new DefaultMutableTreeNode("California"));
+        USNode.add(new DefaultMutableTreeNode("California 2"));
         USNode.add(new DefaultMutableTreeNode("Florida"));
         USNode.add(new DefaultMutableTreeNode("Texas"));
         
+        DefaultMutableTreeNode USAndIndiaNode = new DefaultMutableTreeNode("India And US");
+        USAndIndiaNode.add(new DefaultMutableTreeNode("California"));
+        USAndIndiaNode.add(new DefaultMutableTreeNode("Florida"));
+        USAndIndiaNode.add(new DefaultMutableTreeNode("India"));
+        USAndIndiaNode.add(new DefaultMutableTreeNode("Texas"));
+        
         DefaultMutableTreeNode CanadaNode = new DefaultMutableTreeNode("Canada");
         CanadaNode.add(new DefaultMutableTreeNode("Ontario"));
-        CanadaNode.add(new DefaultMutableTreeNode("Alberta"));
+        
+
+        DefaultMutableTreeNode CanadChild = new DefaultMutableTreeNode("testNode");
+        CanadChild.add(new DefaultMutableTreeNode("leafNode"));
  
+        CanadaNode.add(CanadChild);
         //add the child nodes to the root node
+        root.add(USAndCalNode);
+        root.add(USAndUK);
         root.add(USNode);
+        //root.add(USAndIndiaNode);
         root.add(CanadaNode);
         
         jTree1 = new javax.swing.JTree(root); 

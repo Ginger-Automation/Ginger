@@ -109,7 +109,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOM, pOMsRoot,
                                                                                     SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
                                                                                     new Tuple<string, string>(  nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
-                                                                                                                nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), 
+                                                                                                                nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
                                                                                                                 App.BusinessFlow.CurrentActivity.TargetApplication));
             }
 
