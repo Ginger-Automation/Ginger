@@ -187,11 +187,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         xExcelViewDataButton.Visibility = Visibility.Collapsed;
                         xExcelViewWhereButton.Visibility = Visibility.Collapsed;
                         xExcelGridSplitter.Visibility = Visibility.Collapsed;
-                        if (xSheetNameComboBox.Items.Count == 1)
+                        if (xSheetNameComboBox.Items.Count >= 1)
                         {
                             xSheetNameComboBox.SelectedIndex = 0;
-                        }
-                        Process.Start(dlg.FileName);
+                        }                        
                     }
                     else
                     {
@@ -345,9 +344,16 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         private void FillSheetCombo()
         {
             mAddModelOptionalValuesWizard.ProcessStarted();
-            mAddModelOptionalValuesWizard.ImportOptionalValues.ExcelFileName = xPathTextBox.Text;
-            List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets(true);
-            GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);            
+            try
+            {
+                mAddModelOptionalValuesWizard.ImportOptionalValues.ExcelFileName = xPathTextBox.Text;
+                List<string> SheetsList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetSheets(true);
+                GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+            }
             mAddModelOptionalValuesWizard.ProcessEnded();
         }
         private void xPathTextBox_TextChanged(object sender, TextChangedEventArgs e)

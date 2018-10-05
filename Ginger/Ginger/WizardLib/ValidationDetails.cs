@@ -42,7 +42,7 @@ namespace GingerWPF
         /// </summary>
         /// <param name="depObj"></param>
         /// <returns></returns>
-        public bool SearchValidationsRecursive(DependencyObject depObj, ref bool errorsFound)
+        public bool SearchValidationsRecursive(DependencyObject depObj, bool errorsFound)
         {
             if (depObj != null)
             {
@@ -89,13 +89,13 @@ namespace GingerWPF
                         if (errorsFound == false)
                         {
                             if (child is ucGrid)
-                                errorsFound = ((ucGrid)child).HasValidationError();
+                            { errorsFound = ((ucGrid)child).HasValidationError(); }
                         }
                     }
 
                     if (!errorsFound)
                     {
-                        SearchValidationsRecursive(child, ref errorsFound);
+                        SearchValidationsRecursive(child, errorsFound);
                         if (errorsFound)
                         {
                             break;

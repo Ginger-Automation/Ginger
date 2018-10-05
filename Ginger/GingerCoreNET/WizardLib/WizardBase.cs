@@ -185,20 +185,25 @@ namespace GingerWPF.WizardLib
         {            
             WizardEventArgs WizardEventArgsLeavingForNextPage = new WizardEventArgs(this, EventType.LeavingForNextPage);
             GetCurrentPage().Page.WizardEvent(WizardEventArgsLeavingForNextPage);
-            if (GetCurrentPage().AlternatePage != null) GetCurrentPage().AlternatePage.WizardEvent(WizardEventArgsLeavingForNextPage);
+            if (GetCurrentPage().AlternatePage != null)
+            { GetCurrentPage().AlternatePage.WizardEvent(WizardEventArgsLeavingForNextPage); }
             //TODO: add check if can move next 
             if (!WizardEventArgsLeavingForNextPage.CancelEvent)
             {
                 Pages.MoveNext();
                 GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));
-                if(GetCurrentPage().AlternatePage != null) GetCurrentPage().AlternatePage.WizardEvent(new WizardEventArgs(this, EventType.Active));
+                if (GetCurrentPage().AlternatePage != null)
+                {
+                    GetCurrentPage().AlternatePage.WizardEvent(new WizardEventArgs(this, EventType.Active));
+                }
             }            
         }
 
         public void AfterLoadEvent()
         {
             GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.AfterLoad));
-            if (GetCurrentPage().AlternatePage != null) GetCurrentPage().AlternatePage.WizardEvent(new WizardEventArgs(this, EventType.AfterLoad));
+            if (GetCurrentPage().AlternatePage != null)
+            { GetCurrentPage().AlternatePage.WizardEvent(new WizardEventArgs(this, EventType.AfterLoad)); }
         }
 
         public void Prev()
@@ -207,13 +212,13 @@ namespace GingerWPF.WizardLib
             foreach (WizardPage wp in Pages)
             {
                 wp.Page.WizardEvent(WizardEventArgs);
-                if (wp.AlternatePage != null) wp.AlternatePage.WizardEvent(WizardEventArgs);
+                if (wp.AlternatePage != null) { wp.AlternatePage.WizardEvent(WizardEventArgs); }
             }
 
             Pages.MovePrev();
 
             GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));
-            if (GetCurrentPage().AlternatePage != null) GetCurrentPage().AlternatePage.WizardEvent(new WizardEventArgs(this, EventType.Active));
+            if (GetCurrentPage().AlternatePage != null) { GetCurrentPage().AlternatePage.WizardEvent(new WizardEventArgs(this, EventType.Active)); }
         }
 
         public virtual void Cancel()
@@ -222,7 +227,7 @@ namespace GingerWPF.WizardLib
             foreach (WizardPage wp in Pages)
             {
                 wp.Page.WizardEvent(WizardEventArgs);
-                if (wp.AlternatePage != null) wp.AlternatePage.WizardEvent(WizardEventArgs);
+                if (wp.AlternatePage != null) { wp.AlternatePage.WizardEvent(WizardEventArgs); }
             }
         }
 

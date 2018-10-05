@@ -73,7 +73,10 @@ namespace GingerWPF.WizardLib
             {                
                 // send init event
                 ((IWizardPage)page.Page).WizardEvent(WizardEventArgs);
-                if((IWizardPage)page.AlternatePage != null) ((IWizardPage)page.AlternatePage).WizardEvent(WizardEventArgs);
+                if ((IWizardPage)page.AlternatePage != null)
+                {
+                    ((IWizardPage)page.AlternatePage).WizardEvent(WizardEventArgs);
+                }
 
                 // TODO: attach validation error handler
                 ((Page)page.Page).AddHandler(Validation.ErrorEvent, new RoutedEventHandler(ValidationErrorHandler));
@@ -88,8 +91,15 @@ namespace GingerWPF.WizardLib
         private void UpdateFinishButton()
         {
             xFinishButton.IsEnabled = false;
-            if (mValidationErrors.Count > 0) return;
-            if (mWizard.IsLastPage()) xFinishButton.IsEnabled = true;
+            if (mValidationErrors.Count > 0)
+            {
+                return;
+            }
+
+            if (mWizard.IsLastPage())
+            {
+                xFinishButton.IsEnabled = true;
+            }
         }
 
         ~WizardWindow()
