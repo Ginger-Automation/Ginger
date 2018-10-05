@@ -304,7 +304,7 @@ namespace GingerCore.Drivers.PBDriver
                     }
                     break;
                 case ActUIElement.eElementAction.SelectandValidate:
-                    string statusSel = mUIAutomationHelper.SendKeysAndValidateHandler(AE, actUIPBC);
+                    string statusSel = mUIAutomationHelper.SelectAndValidateHandler(AE, actUIPBC);
                     if (!statusSel.Contains("true"))
                     {
                         actUIPBC.Error += statusSel;

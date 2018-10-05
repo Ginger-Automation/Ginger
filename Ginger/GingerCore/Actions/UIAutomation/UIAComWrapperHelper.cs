@@ -2023,36 +2023,92 @@ namespace GingerCore.Drivers
             string subElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.SubElementLocatorValue);
             //string validationValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.ValidationElementValue);
 
-            object subElement = FindElementByLocator(subElementLocateby, subElementLocateValue);
+            
 
             string Value = act.GetInputParamCalculatedValue(ActUIElement.Fields.Value).ToString();
 
 
             bool flag = false;
+            bool endPane = false;
             int iLoop = 0;
+            int iPaneY = 0;
             if(subElementType == ActUIElement.eSubElementType.Pane.ToString())
-            {
-                ClickElement(AE);
+            {                
+                string oldValue = "&*%^%$#";
                 while (flag == false && iLoop < 20)
-                {                                        
+                {
+                    ClickOnXYPoint(AE, "10,10");
+                    Thread.Sleep(100);
+                    AutomationElement subElement = (AutomationElement)FindElementByLocator(subElementLocateby, subElementLocateValue);
+                    if (subElement == null || subElement.Current.LocalizedControlType != "pane")
+                    {
+                        return "Invalid Sub Element";
+                    }
+                    Thread.Sleep(100);
+                    AutomationElement pageUp=null, pageDown=null, lineDown=null,lineUp=null;
+                    if (TreeWalker.ContentViewWalker.GetFirstChild(subElement) != null)
+                    {
+                        pageDown = subElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
+                        pageUp = subElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page up"));
+                        lineDown = subElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Line down"));
+                    }
+                    else
+                    {
+                        List<AutomationElement> gridControls = GetGridControlsFromPoint(subElement);
+                        foreach(AutomationElement subChild in gridControls)
+                        {
+                            if (subChild.Current.Name == "Page down")
+                                pageDown = subChild;
+                            else if (subChild.Current.Name == "Page up")
+                                pageUp = subChild;
+                            else if (subChild.Current.Name == "Line up")
+                                lineUp = subChild;
+                            else if (subChild.Current.Name == "Line down")
+                                lineDown = subChild;
+                        }
+                    }
+                    int iCount = 0;
+                    while (lineUp != null && iCount<10)
+                    {
+                        ClickOnXYPoint(lineUp,"5,5");
+                        iCount++;
+                    }
+                    for (int i = 0; i < iLoop; i++)
+                        ClickOnXYPoint(lineDown,"5,5");
+                    //pageDown = subElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
+
+                    ClickOnXYPoint(subElement, "10," + (10 + iPaneY));                        
+
                     if (DefineHandleAction == true)
                     {
-                       // LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, validationElementType, handleActionType);
+                        LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, subElementType, handleActionType);
                     }
-                    //flag = LocateAndValidateElement(validationElementLocateby, validattionElementLocateValue, validationElementType, validationType, validationValue);
-
-                    if (flag)
+                    string newValue = GetControlValue(AE);
+                    if (newValue == Value)
                     {
                         return "true";
                     }
-                    iLoop++;
-                    if ((!flag) && (iLoop >= 20))
+                    if (oldValue != newValue && endPane==false)
                     {
-                        return "Validation Failed";
+                        iLoop++;
+                        oldValue = newValue;
+                    }                        
+                    else
+                    {
+                        endPane = true;
+                        if (iPaneY < subElement.Current.BoundingRectangle.Height)
+                            iPaneY += 10;
+                        else
+                            break;
                     }
-                }           
+                    
+                    //if ((!flag) && (iLoop >= 20))
+                    //{
+                    //    return "Validation Failed";
+                    //}
+                }                          
             }
-            return flag.ToString();
+            return "Validation Failed";
         }
 
         public bool SelectFromPane(eLocateBy LocateBy, string LocateValue, string elementType, ActUIElement.eElementAction actionType, string validationValue = "")
@@ -3213,7 +3269,11 @@ namespace GingerCore.Drivers
                 throw new Exception("Unable to set value. Value - " + value);
             }
         }
+        private bool ComparePBActualExpected(string actual,string exp)
+        {
+            return false;
 
+        }
         private AutomationElement ExpandTreeNode(AutomationElement node, string nodeName)
         {
             object ecp;

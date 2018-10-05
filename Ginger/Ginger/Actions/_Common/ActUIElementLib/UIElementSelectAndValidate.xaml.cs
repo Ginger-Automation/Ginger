@@ -51,7 +51,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             HandleLocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
 
             //ValidationType.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationType), Platform.GetPlatformUIValidationTypesList(), false, null);
-            SubElement.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementType), Platform.GetPlatformUIElementsType(), false, null);
+            SubElement.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementType), Platform.GetSubElementType(mAct.ElementType).ToList(), false, null);
             SubElementLocateBy.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
             SubElementLocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
             //ValidationElementValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementValue), true, false, UCValueExpression.eBrowserType.Folder);
