@@ -1025,15 +1025,15 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     sSheetName = table.TableName;
 
                 if (File.Exists(sFilePath))
-                    workbook = SpreadsheetDocument.Open(sFilePath, true);
-                else
                 {
-                    workbook = SpreadsheetDocument.Create(sFilePath, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
-                    WorkbookPart workbookPart = workbook.AddWorkbookPart();
-                    workbook.WorkbookPart.Workbook = new Workbook();
-                    workbook.WorkbookPart.Workbook.Sheets = new Sheets();
+                    File.Delete(sFilePath);
                 }
                                 
+                workbook = SpreadsheetDocument.Create(sFilePath, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
+                WorkbookPart workbookPart = workbook.AddWorkbookPart();
+                workbook.WorkbookPart.Workbook = new Workbook();
+                workbook.WorkbookPart.Workbook.Sheets = new Sheets();
+                                                
                 if (workbook.WorkbookPart.WorkbookStylesPart == null)
                 {
                     WorkbookStylesPart stylePart = workbook.WorkbookPart.AddNewPart<WorkbookStylesPart>();

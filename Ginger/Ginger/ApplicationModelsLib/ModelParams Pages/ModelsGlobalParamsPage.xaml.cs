@@ -34,6 +34,7 @@ using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -139,10 +140,23 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
         private void ExportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {
-            ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-            List<AppParameters> parameters = GetParameterList();
-            string filePath = im.ExportParametersToExcelFile(parameters, "GlobalParameters");
-            Process.Start(filePath);
+            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GlobalParameters.xlsx");
+            bool overrideFile = true;
+            if (File.Exists(fileName))
+            {
+                if (MessageBox.Show("File already exists, do you want to override?", "File Exists", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                {
+                    overrideFile = false;
+                }
+            }
+
+            if (overrideFile)
+            {
+                ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                List<AppParameters> parameters = GetParameterList();
+                string filePath = im.ExportParametersToExcelFile(parameters, "GlobalParameters");
+                Process.Start(filePath); 
+            }
         }
 
         private void ExportParametersToDataSource(object sender, RoutedEventArgs e)

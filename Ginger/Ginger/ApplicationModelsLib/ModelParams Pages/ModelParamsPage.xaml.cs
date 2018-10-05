@@ -164,10 +164,23 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             try
             {
-                ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-                List<AppParameters> parameters = GetParameterList();
-                string filePath = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mApplicationModel.Name));
-                Process.Start(filePath);
+                string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), string.Format("{0}_Parameters.xlsx", mApplicationModel.Name));
+                bool overrideFile = true;
+                if (File.Exists(fileName))
+                {
+                    if (MessageBox.Show("File already exists, do you want to override?", "File Exists", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                    {
+                        overrideFile = false;
+                    }
+                }
+
+                if (overrideFile)
+                {
+                    ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                    List<AppParameters> parameters = GetParameterList();
+                    string filePath = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mApplicationModel.Name));
+                    Process.Start(filePath); 
+                }
             }
             catch (System.Exception ex)
             {
