@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -191,7 +192,7 @@ namespace Amdocs.Ginger.Repository
                     if (mi.Name == nameof(mBackupDic)) continue; // since we are running on repo item which contain the dic we need to ignore trying to save it...
                 }
                 if (mi.Name == nameof(mLocalBackupDic)) continue;
-                dynamic v = null;  //TODO: replace with object dynamic is heavy
+                object v = null;  
                 if (mi.MemberType == MemberTypes.Property)
                 {
                     //Make sure we can do set - not all props have set, so do not save if there is only get
@@ -218,7 +219,7 @@ namespace Amdocs.Ginger.Repository
 
                 if (v is IObservableList)
                 {
-                    BackupList(mi.Name, v, isLocalBackup);
+                    BackupList(mi.Name, (IObservableList)v, isLocalBackup);
                 }
                 else
                 {
@@ -231,7 +232,7 @@ namespace Amdocs.Ginger.Repository
         private void BackupList(string Name, IObservableList v, bool isLocalBackup = false)
         {
             //TODO: if v is Lazy bak the text without drill down
-            List<dynamic> list = new List<dynamic>();  //TODO: FIXME very heavy!!! dynamic
+            List<object> list = new List<object>();  
             foreach (object o in v)
             {
                 // Run back on each item, so will drill down the hierarchy
@@ -270,11 +271,11 @@ namespace Amdocs.Ginger.Repository
                     if (mi.Name == nameof(mBackupDic)) continue;
                 }
                 if (mi.Name == nameof(mLocalBackupDic)) continue;
-                dynamic v = null;
+                object v = null;
                 v = this.GetType().GetField(mi.Name).GetValue(this);
                 if (v is IObservableList)
                 {
-                    foreach (object o in v)
+                    foreach (object o in (IObservableList)v)
                     {
                         if (o is RepositoryItemBase)
                         {
@@ -313,7 +314,7 @@ namespace Amdocs.Ginger.Repository
                 // Console.WriteLine(this.ToString() +  " - mi:" + mi.Name + " - " + mi.ToString());                              
                 if (mi.Name == nameof(mBackupDic) || mi.Name == nameof(mLocalBackupDic) || mi.Name == nameof(FileName) || mi.Name == nameof(FilePath) || mi.Name == nameof(ObjFolderName) || mi.Name == nameof(ObjFileExt) || mi.Name == nameof(ContainingFolder) || mi.Name == nameof(ContainingFolderFullPath))
                     continue;
-                dynamic v;
+                object v;
                 bool b;
                 if (isLocalBackup)
                 {
@@ -335,9 +336,20 @@ namespace Amdocs.Ginger.Repository
                         //Make sure we can do set - not all props have set
                         PropertyInfo PI = this.GetType().GetProperty(mi.Name);
 
-                        if (PI.CanWrite)
+                        if (typeof(IObservableList).IsAssignableFrom(PI.PropertyType))
                         {
-                            PI.SetValue(this, v);
+                            IObservableList list = (IObservableList)PI.GetValue(this);                            
+                            if (list != null)
+                            {
+                                RestoreList(mi.Name, list, isLocalBackup);
+                            }
+                        }
+                        else
+                        {
+                            if (PI.CanWrite)
+                            {
+                                PI.SetValue(this, v);
+                            }
                         }
                     }
                     catch (Exception)
@@ -346,27 +358,31 @@ namespace Amdocs.Ginger.Repository
                 }
                 else if (mi.MemberType == MemberTypes.Field)
                 {
-                    // Do reverse + resotre each obj
+
+                    // Do reverse + restore each obj
                     // Do set only if we can really do set, some attrs are get only
                     // FieldInfo fi = this.GetType().GetField(mi.Name, BindingFlags.SetProperty);
                     FieldInfo fi = this.GetType().GetField(mi.Name);
-                    if (fi != null && fi.IsStatic == false)
+
+
+                    if (typeof(IObservableList).IsAssignableFrom(fi.FieldType))
                     {
-                        fi.SetValue(this, v);
+                        IObservableList list = (IObservableList)fi.GetValue(this);                       
+                        if (list != null)
+                        {
+                            RestoreList(mi.Name, list, isLocalBackup);
+                        }
+                    }
+                    else
+                    {
+
+                        if (fi != null && fi.IsStatic == false)
+                        {
+                            fi.SetValue(this, v);
+                        }
                     }
                 }
-
-                if (v is IObservableList)
-                {
-                    // Console.WriteLine("Restoring IObservableList: - " + mi.Name);
-                    RestoreList(mi.Name, v, isLocalBackup);
-                }
-                else
-                {
-                    // TODO: add List<string>
-                    // else err
-                    //temp below until we have it
-                }
+                
                 if (isLocalBackup)
                 {
                     mLocalBackupDic.Remove(mi.Name);
@@ -383,13 +399,14 @@ namespace Amdocs.Ginger.Repository
                 if (mLocalBackupDic.Count() != 0)
                 {
                     // TODO: err handler
+                    // throw new Exception("Missed item in restore!");
                 }
             }
             else
             {
                 if (mBackupDic.Count() != 0)
                 {
-                    // TODO: err handler
+                    // throw new Exception("Missed item in restore!");
                 }
             }
         }
@@ -413,7 +430,8 @@ namespace Amdocs.Ginger.Repository
                 // TODO: handle err 
             }
 
-            foreach (object o in (List<dynamic>)Backuplist)
+
+            foreach (object o in ((IList)Backuplist)) 
             {
                 v.Add(o);
 
