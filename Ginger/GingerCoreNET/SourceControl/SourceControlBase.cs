@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Repository;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using static GingerCoreNET.SourceControl.SourceControlFileInfo;
 
 namespace GingerCoreNET.SourceControl
@@ -185,36 +186,24 @@ namespace GingerCoreNET.SourceControl
 
         public abstract SourceControlItemInfoDetails GetRepositoryInfo(ref string error);
 
-        public eImageType GetFileStatusForRepositoryItemPath(string FullPath)
-        {
-            // return GetFileStatusForRepositoryItemPath(FullPath);
-
-//            SourceControlIntegration.get
-
+        public async Task<eImageType> GetFileStatusForRepositoryItemPath(string FullPath)
+        {           
             string err = null;
-            eRepositoryItemStatus ss =  GetFileStatus(FullPath, true, ref err);
-            switch (ss)
+            return await Task.Run(() =>
             {
-                case eRepositoryItemStatus.New:
-                    return eImageType.SourceControlNew;
-                case eRepositoryItemStatus.Modified:
-                    return eImageType.SourceControlModified;
-                case eRepositoryItemStatus.Equel:
-                    return eImageType.SourceControlEquel;
-                default:
-                    return eImageType.SourceControlDeleted;
-            }
-                
-            //return  eImageType.ActiveAll;
-            //SourceControlFileInfo.eRepositoryItemStatus st = GetFileStatus(FullPath, true, ref err);
-            
-            //    string err=null;
-            //    SourceControlFileInfo.eRepositoryItemStatus st = GetFileStatus(FullPath, true, ref err);
-            //    if (st == SourceControlFileInfo.eRepositoryItemStatus.New) return eSourceControlFileStatus.New;
-            //    if (st == SourceControlFileInfo.eRepositoryItemStatus.Modified) return eSourceControlFileStatus.Modified;
-            //    if (st == SourceControlFileInfo.eRepositoryItemStatus.Equel) return eSourceControlFileStatus.NoChange;
-
-            //    throw new Exception("Unknow source control status for: " + FullPath);
+                eRepositoryItemStatus ss =  GetFileStatus(FullPath, true, ref err);
+                switch (ss)
+                {
+                    case eRepositoryItemStatus.New:
+                        return eImageType.SourceControlNew;
+                    case eRepositoryItemStatus.Modified:
+                        return eImageType.SourceControlModified;
+                    case eRepositoryItemStatus.Equel:
+                        return eImageType.SourceControlEquel;
+                    default:
+                        return eImageType.SourceControlDeleted;
+                }
+            });             
         }
     }
 }

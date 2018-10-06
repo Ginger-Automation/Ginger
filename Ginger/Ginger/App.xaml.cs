@@ -640,8 +640,7 @@ namespace Ginger
                 App.BusinessFlow = null;
                 App.MainWindow.ResetSolutionDependedUIElements(false);
                 AutoLogProxy.SetAccount("");
-                WorkSpace.Instance.SourceControl = null;
-                RepositoryItemBase.SourceControl = null;
+                WorkSpace.Instance.SourceControl = null;                
 
                 if (!SolutionFolder.EndsWith(@"\")) SolutionFolder += @"\";
                 string SolFile = SolutionFolder + @"Ginger.Solution.xml";
@@ -753,8 +752,8 @@ namespace Ginger
                         WorkSpace.Instance.SolutionRepository.Open(SolutionFolder);
 
                         WorkSpace.Instance.SourceControl = sol.SourceControl;
-                        RepositoryItemBase.SourceControl = sol.SourceControl;
-
+                        RepositoryItemBase.SetSourceControl(sol.SourceControl);
+                        RepositoryFolderBase.SetSourceControl(sol.SourceControl);
                         App.UserProfile.Solution = sol;
 
 

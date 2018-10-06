@@ -61,7 +61,7 @@ namespace Amdocs.Ginger.Repository
         public List<RepositoryFolderBase> SolutionRootFolders
         {
             get { return mSolutionRootFolders; }
-        }
+        }        
 
         Dictionary<Type, SolutionRepositoryItemInfoBase> mSolutionRepositoryItemInfoDictionary = new Dictionary<Type, SolutionRepositoryItemInfoBase>();
         public bool IsItemTypeHandled(RepositoryItemBase repositoryItem)
@@ -176,6 +176,16 @@ namespace Amdocs.Ginger.Repository
         {
             SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
             return SRII.GetItemRepositoryFolder(repositoryItem);
+        }
+
+        /// <summary>
+        /// Get the Repository Root Folder of the Repository Item
+        /// </summary>
+        /// <param name="repositoryItem"></param>
+        public RepositoryFolderBase GetItemRepositoryRootFolder(RepositoryItemBase repositoryItem)
+        {
+            SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
+            return SRII.ItemRootRepositoryFolder;
         }
 
         /// <summary>
@@ -316,7 +326,7 @@ namespace Amdocs.Ginger.Repository
             SRII.Pattern = pattern;
             SRII.ItemRootReposiotryfolder = new RepositoryFolder<T>(this, SRII, pattern, rootFolder, containRepositoryItems, displayName, true);
             mSolutionRepositoryItemInfoDictionary.Add(typeof(T), SRII);
-
+            
             if (addToRootFolders)
             {
                 if (mSolutionRootFolders == null)
@@ -330,10 +340,10 @@ namespace Amdocs.Ginger.Repository
         private SolutionRepositoryItemInfoBase GetSolutionRepositoryItemInfo(Type type)
         {
             SolutionRepositoryItemInfoBase SRII;
-            mSolutionRepositoryItemInfoDictionary.TryGetValue(type, out SRII);
+            mSolutionRepositoryItemInfoDictionary.TryGetValue(type, out SRII); 
 
             if (SRII == null)
-            {
+            {                
                 // for subclass (like APIModel REST/SOAP which subclass APIModelBase) we will not find so now we search each one which is IsAssignableFrom
                 SRII = (from x in mSolutionRepositoryItemInfoDictionary where x.Value.ItemType.IsAssignableFrom(type) select x.Value).FirstOrDefault();
 
@@ -345,12 +355,71 @@ namespace Amdocs.Ginger.Repository
 
             return SRII;
         }
-
+     
         private SolutionRepositoryItemInfo<T> GetSolutionRepositoryItemInfo<T>()
         {
             SolutionRepositoryItemInfoBase SRIIBase = GetSolutionRepositoryItemInfo(typeof(T));
             SolutionRepositoryItemInfo<T> SRII = (SolutionRepositoryItemInfo<T>)SRIIBase;
             return SRII;
+        }
+
+ 
+        public RepositoryItemBase GetRepositoryItemByPath(string filePath)
+        {           
+            RepositoryItemBase repoItem = null;
+            Parallel.ForEach(mSolutionRootFolders, folder =>
+            {               
+                ObservableList<RepositoryItemBase> repoItemList = GetRepositoryFolderByPath(Path.GetDirectoryName(filePath)).GetFolderRepositoryItems();
+                repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath)).FirstOrDefault();
+            });
+            return repoItem;
+        }
+
+        public RepositoryFolderBase GetRepositoryFolderByPath(string folderPath)
+        {
+            RepositoryFolderBase repoFolder = null;
+            Parallel.ForEach(mSolutionRootFolders, folder =>
+            {
+                if (folderPath==folder.FolderFullPath)
+                {
+                    repoFolder = folder;
+                }
+                else if (folderPath.Contains(folder.FolderFullPath))
+                {
+                    Uri fullPath = new Uri(folderPath, UriKind.Absolute);
+                    Uri relRoot = new Uri(folder.FolderFullPath, UriKind.Absolute);
+                    string relPath = relRoot.MakeRelativeUri(fullPath).ToString().Replace("/", "\\");
+                    repoFolder = folder.GetSubFolderByName("~\\" + relPath, true);                    
+                }
+            });
+            return repoFolder;
+        }
+
+        public void RefreshParentFoldersSoucerControlStatus(string path)
+        {
+            RepositoryFolderBase repoFolder = GetRepositoryFolderByPath(path);            
+            if (repoFolder != null)
+            {
+                repoFolder.RefreshSourceControlStatus();             
+                RefreshParentFoldersSoucerControlStatus(Directory.GetParent(path).FullName);
+            }            
+        }
+
+        public void RefreshChildFoldersSourceControlStatus(string path)
+        {
+            RepositoryFolderBase repoSubFolder = GetRepositoryFolderByPath(path);
+            if (repoSubFolder != null)
+            {
+                repoSubFolder.RefreshSourceControlStatus();
+                foreach (RepositoryItemBase ri in repoSubFolder.GetFolderRepositoryItems())
+                {
+                    ri.RefreshSourceControlStatus();
+                }
+            }
+            foreach (string subFolder in Directory.GetDirectories(path))
+            {               
+                RefreshChildFoldersSourceControlStatus(subFolder);
+            }
         }
 
         private void VerifyOrCreateSolutionFolders(string folder)
