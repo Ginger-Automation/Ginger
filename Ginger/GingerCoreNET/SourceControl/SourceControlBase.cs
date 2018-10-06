@@ -187,11 +187,7 @@ namespace GingerCoreNET.SourceControl
         public abstract SourceControlItemInfoDetails GetRepositoryInfo(ref string error);
 
         public async Task<eImageType> GetFileStatusForRepositoryItemPath(string FullPath)
-        {
-            // return GetFileStatusForRepositoryItemPath(FullPath);
-
-//            SourceControlIntegration.get
-
+        {           
             string err = null;
             return await Task.Run(() =>
             {
@@ -207,17 +203,7 @@ namespace GingerCoreNET.SourceControl
                     default:
                         return eImageType.SourceControlDeleted;
                 }
-            }); 
-            //return  eImageType.ActiveAll;
-            //SourceControlFileInfo.eRepositoryItemStatus st = GetFileStatus(FullPath, true, ref err);
-            
-            //    string err=null;
-            //    SourceControlFileInfo.eRepositoryItemStatus st = GetFileStatus(FullPath, true, ref err);
-            //    if (st == SourceControlFileInfo.eRepositoryItemStatus.New) return eSourceControlFileStatus.New;
-            //    if (st == SourceControlFileInfo.eRepositoryItemStatus.Modified) return eSourceControlFileStatus.Modified;
-            //    if (st == SourceControlFileInfo.eRepositoryItemStatus.Equel) return eSourceControlFileStatus.NoChange;
-
-            //    throw new Exception("Unknow source control status for: " + FullPath);
+            });             
         }
     }
 }
