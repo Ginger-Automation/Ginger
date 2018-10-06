@@ -364,41 +364,29 @@ namespace Amdocs.Ginger.Repository
         }
 
  
-        public RepositoryItemBase GetRepositoryItemByPath(string path)
+        public RepositoryItemBase GetRepositoryItemByPath(string filePath)
         {           
             RepositoryItemBase repoItem = null;
             Parallel.ForEach(mSolutionRootFolders, folder =>
-            {
-                if(Path.GetDirectoryName(path).Equals(folder.FolderFullPath))
-                {               
-                    ObservableList<RepositoryItemBase> repoItemList = folder.GetFolderRepositoryItems();
-                    repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(path)).FirstOrDefault();                    
-                }
-                else if(Path.GetDirectoryName(path).Contains(folder.FolderFullPath))
-                {
-                    Uri fullPath = new Uri(path, UriKind.Absolute);
-                    Uri relRoot = new Uri(folder.FolderFullPath, UriKind.Absolute);
-                    string relPath = relRoot.MakeRelativeUri(fullPath).ToString();
-                    RepositoryFolderBase subfolder = folder.GetSubFolderByName("~\\" + Path.GetDirectoryName(relPath), true);                                        
-                    ObservableList<RepositoryItemBase> repoItemList = subfolder.GetFolderRepositoryItems();
-                    repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(path)).FirstOrDefault();                                     
-                }
+            {               
+                ObservableList<RepositoryItemBase> repoItemList = GetRepositoryFolderByPath(Path.GetDirectoryName(filePath)).GetFolderRepositoryItems();
+                repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath)).FirstOrDefault();
             });
             return repoItem;
         }
 
-        public RepositoryFolderBase GetRepositoryFolderByPath(string path)
+        public RepositoryFolderBase GetRepositoryFolderByPath(string folderPath)
         {
             RepositoryFolderBase repoFolder = null;
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
-                if (path==folder.FolderFullPath)
+                if (folderPath==folder.FolderFullPath)
                 {
                     repoFolder = folder;
                 }
-                else if (path.Contains(folder.FolderFullPath))
+                else if (folderPath.Contains(folder.FolderFullPath))
                 {
-                    Uri fullPath = new Uri(path, UriKind.Absolute);
+                    Uri fullPath = new Uri(folderPath, UriKind.Absolute);
                     Uri relRoot = new Uri(folder.FolderFullPath, UriKind.Absolute);
                     string relPath = relRoot.MakeRelativeUri(fullPath).ToString().Replace("/", "\\");
                     repoFolder = folder.GetSubFolderByName("~\\" + relPath, true);                    
@@ -407,13 +395,30 @@ namespace Amdocs.Ginger.Repository
             return repoFolder;
         }
 
-        public void RefreshFolders(string path)
+        public void RefreshParentFoldersSoucerControlStatus(string path)
         {
             RepositoryFolderBase repoFolder = GetRepositoryFolderByPath(path);            
             if (repoFolder != null)
             {
-                repoFolder.SetSourceControlStatus();
-                RefreshFolders(Directory.GetParent(path).FullName);
+                repoFolder.RefreshSourceControlStatus();             
+                RefreshParentFoldersSoucerControlStatus(Directory.GetParent(path).FullName);
+            }            
+        }
+
+        public void RefreshChildFoldersSourceControlStatus(string path)
+        {
+            RepositoryFolderBase repoSubFolder = GetRepositoryFolderByPath(path);
+            if (repoSubFolder != null)
+            {
+                repoSubFolder.RefreshSourceControlStatus();
+                foreach (RepositoryItemBase ri in repoSubFolder.GetFolderRepositoryItems())
+                {
+                    ri.RefreshSourceControlStatus();
+                }
+            }
+            foreach (string subFolder in Directory.GetDirectories(path))
+            {               
+                RefreshChildFoldersSourceControlStatus(subFolder);
             }
         }
 

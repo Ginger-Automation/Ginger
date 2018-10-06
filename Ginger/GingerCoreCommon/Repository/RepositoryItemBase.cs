@@ -748,24 +748,26 @@ namespace Amdocs.Ginger.Repository
 
         private static ISourceControl SourceControl;
         
-        private eImageType? mSourceControlStatus = eImageType.Pending;
-
-        public eImageType? SourceControlStatus
+        private eImageType mSourceControlStatus = eImageType.Null;
+        public eImageType SourceControlStatus
         {
             get
-            {
+            {               
+                if (mSourceControlStatus == eImageType.Null)
+                {
+                    mSourceControlStatus = eImageType.Pending;
+                }
                 return mSourceControlStatus;
-            }
-            set
-            {
-                mSourceControlStatus = value;
-                OnPropertyChanged(nameof(SourceControlStatus));
-            }
+            }         
         }
 
-        public async void SetSourceControlStatus()
+        public async void RefreshSourceControlStatus()
         {
-            SourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(mFilePath);
+            if (mSourceControlStatus != eImageType.Null)
+            {
+                mSourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(mFilePath).ConfigureAwait(true);
+                OnPropertyChanged(nameof(SourceControlStatus));
+            }
         }
 
         public static void SetSourceControl(ISourceControl sourceControl)

@@ -47,8 +47,8 @@ namespace Ginger.SourceControl
         string mPath;
         ObservableList<SourceControlFileInfo> mFiles;
         GenericWindow genWin = null;
-        bool mCheckInWasDone=false;       
-
+        bool mCheckInWasDone=false;
+        private List<RepositoryFolderBase> parentFolders = null;
         public CheckInPage(string path)
         {
             InitializeComponent();
@@ -285,6 +285,7 @@ namespace Ginger.SourceControl
 
         private void TriggerSourceControlIconChanged(List<SourceControlFileInfo> selectedFiles)
         {
+            parentFolders =new List<RepositoryFolderBase>();
             foreach (SourceControlFileInfo fi in selectedFiles)
             {
                 FileAttributes attr = FileAttributes.Normal;
@@ -296,27 +297,37 @@ namespace Ginger.SourceControl
                 if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                 {
                     RepositoryFolderBase repoFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(fi.Path);
-                    if(repoFolder!=null)
-                    {
-                        foreach (RepositoryItemBase ri in repoFolder.GetFolderRepositoryItems())
-                        {
-                            ri.SetSourceControlStatus();
-                        }
-                    }
-                    WorkSpace.Instance.SolutionRepository.RefreshFolders(fi.Path);
+                    WorkSpace.Instance.SolutionRepository.RefreshChildFoldersSourceControlStatus(fi.Path);                   
                 }
                 else
                 {
                     RepositoryItemBase repoItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(fi.Path);
                     if(repoItem!=null)
                     {
-                        repoItem.SetSourceControlStatus();
-                    }                    
-                    WorkSpace.Instance.SolutionRepository.RefreshFolders(Path.GetDirectoryName(fi.Path));
+                        repoItem.RefreshSourceControlStatus();
+                    }
+                  
+                    GetParentRepositoryFolderBase(Path.GetDirectoryName(fi.Path));
                 }
-            }                        
+            }       
+            foreach(RepositoryFolderBase folder in parentFolders)
+            {
+                folder.RefreshSourceControlStatus();
+            }
         }
-       
+                
+        public void GetParentRepositoryFolderBase(string parentFolderPath)
+        {
+            RepositoryFolderBase repoFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(parentFolderPath);
+            if(repoFolder!=null)
+            {
+                if(!parentFolders.Contains(repoFolder))
+                {
+                    parentFolders.Add(repoFolder);
+                    GetParentRepositoryFolderBase(Directory.GetParent(repoFolder.FolderFullPath).FullName);
+                }                             
+            }            
+        }
         private void AfterCommitProcess(bool CommitSuccess, bool conflictHandled)
         {
             this.Dispatcher.BeginInvoke(
