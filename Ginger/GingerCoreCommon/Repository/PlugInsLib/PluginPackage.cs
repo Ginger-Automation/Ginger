@@ -23,7 +23,6 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Plugin.Core;
 using Newtonsoft.Json;
