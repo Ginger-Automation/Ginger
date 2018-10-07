@@ -702,7 +702,6 @@ namespace Ginger
             if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Solution Rename", "New Solution Name:", ref newName, System.IO.Path.GetInvalidPathChars()))
             {
                 App.UserProfile.Solution.Name = newName;
-                //App.UserProfile.Solution.Save();
             }
         }
 

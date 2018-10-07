@@ -56,6 +56,7 @@ using GingerCoreNET.RunLib;
 using Ginger.Agents;
 using Ginger.Extensions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Threading.Tasks;
 
 namespace Ginger
 {
@@ -88,21 +89,17 @@ namespace Ginger
         GridLength mlastBFActivitiesRowHeight = new GridLength(300, GridUnitType.Star);
         GridLength mlastActivityVariablesRowHeight = new GridLength(200, GridUnitType.Star);
         GridLength mlastActivitiyActionsRowHeight = new GridLength(300, GridUnitType.Star);
-        GridLength mMinRowsExpanderSize= new GridLength(35);
-        GridLength mMinColsExpanderSize = new GridLength(35);
+        readonly GridLength mMinRowsExpanderSize = new GridLength(35);
+        readonly GridLength mMinColsExpanderSize = new GridLength(35);
 
-        public RoutedEventHandler GoToBusFlowsListHandler
-        {
-            set
-            {
-                //xToBusinessFlowsListBtn.ButtonText = string.Format("To {0} List", GingerCore.GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
-                xToBusinessFlowsListBtn.Visibility = Visibility.Visible;
-                xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 32);
-                xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 16);
-                xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
-                xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
-                xToBusinessFlowsListBtn.Click += value;
-            }
+        public void GoToBusFlowsListHandler(RoutedEventHandler clickHandler)
+        {           
+            xToBusinessFlowsListBtn.Visibility = Visibility.Visible;
+            xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 32);
+            xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 16);
+            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
+            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
+            xToBusinessFlowsListBtn.Click += clickHandler;
         }
 
         public AutomatePage()
@@ -110,9 +107,9 @@ namespace Ginger
             InitializeComponent();
 
             if (App.BusinessFlow == null) //Not supposed to happen because now Automate is done from BF itself           
+            {
                 App.LoadDefaultBusinessFlow();
-
-            //xToBusinessFlowsListBtn.Visibility = Visibility.Collapsed;
+            }
 
             //Ribbon
             btnRunActivity.Label = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
@@ -154,7 +151,7 @@ namespace Ginger
 
         private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
         {
-            switch(args.EventType)
+            switch (args.EventType)
             {
                 case AutomateEventArgs.eEventType.SetupRunnerForExecution:
                     SetAutomateTabRunnerForExecution();
@@ -177,7 +174,8 @@ namespace Ginger
                 case AutomateEventArgs.eEventType.GenerateLastExecutedItemReport:
                     GenerateLastExecutedItemReport();
                     break;
-                    
+                default:
+                    throw new NotImplementedException();
             }
         }
 
@@ -185,11 +183,9 @@ namespace Ginger
         {
             this.Dispatcher.Invoke(() =>
             {
-                switch (EventArgs.EventType)
+                if (EventArgs.EventType == GingerRunnerEventArgs.eEventType.DoEventsRequired)
                 {
-                    case GingerRunnerEventArgs.eEventType.DoEventsRequired:
-                        GingerCore.General.DoEvents();
-                        break;
+                    GingerCore.General.DoEvents();
                 }
             });
         }
@@ -228,23 +224,25 @@ namespace Ginger
             // We do UI changes using the dispatcher since it might trgigger from STA like IB
             App.MainWindow.Dispatcher.Invoke(() =>
                     {
-                //set daynamic expanders titles
-                if (App.BusinessFlow != null)
-                {
-                    App.BusinessFlow.PropertyChanged -= BusinessFlow_PropertyChanged; 
-                    App.BusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
+                        //set daynamic expanders titles
+                        if (App.BusinessFlow != null)
+                        {
+                            App.BusinessFlow.PropertyChanged -= BusinessFlow_PropertyChanged;
+                            App.BusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
 
-                
-                    CurrentBusExpanderLable.Content = "'" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);    
-                
-                    mCurrentBusPage = new BusinessFlowPage(App.BusinessFlow, true);
-                    CurrentBusFrame.Content = mCurrentBusPage;
+                            CurrentBusExpanderLable.Content = "'" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
 
-                    UpdateCurrentActiityExpander();
-                }
-                else
-                    CurrentBusExpanderLable.Content = "No " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-            });
+                            mCurrentBusPage = new BusinessFlowPage(App.BusinessFlow, true);
+                            CurrentBusFrame.Content = mCurrentBusPage;
+
+                            UpdateCurrentActiityExpander();
+                        }
+                        else
+                        {
+                            CurrentBusExpanderLable.Content = "No " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                        }
+
+                    });
         }
 
         private void UpdateCurrentActiityExpander()
@@ -285,9 +283,13 @@ namespace Ginger
         public void SetGridsView(string viewName)
         {
             if (mActionsPage != null)
-                mActionsPage.grdActions.ChangeGridView(viewName.ToString());
+            {
+                mActionsPage.grdActions.ChangeGridView(viewName);
+            }
             if (mActivitiesPage != null)
-                mActivitiesPage.grdActivities.ChangeGridView(viewName.ToString());
+            {
+                mActivitiesPage.grdActivities.ChangeGridView(viewName);
+            }
         }
 
         private void UserProfilePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -299,10 +301,15 @@ namespace Ginger
                 
                 lstEnvs.ItemsSource = null;
 
-                if (App.UserProfile.Solution == null) return;
-               
+                if (App.UserProfile.Solution == null)
+                {
+                    return;
+                }
+
                 if (mReposiotryPage != null)
+                {
                     mReposiotryPage.RefreshCurrentRepo();
+                }
                 App.UpdateApplicationsAgentsMapping();
                 BindEnvsCombo();
             }
@@ -371,39 +378,6 @@ namespace Ginger
             CurrentBusRow.Height = new GridLength(35);
         } 
 
-        //private void BusinessFlowsExpander_ExpandedCollapsed(object sender, RoutedEventArgs e)
-        //{
-        //    if (BusinessFlowsExpander.IsExpanded)
-        //    {
-        //        BusinessFlowsExpanderLabel.Visibility = System.Windows.Visibility.Collapsed;
-        //        BusinessFlowsColumn.Width = mlastBusFlowsColWidth;
-        //    }
-        //    else
-        //    {
-        //        mlastBusFlowsColWidth = BusinessFlowsColumn.Width;
-        //        BusinessFlowsExpanderLabel.Visibility = System.Windows.Visibility.Visible;
-        //        BusinessFlowsColumn.Width = mMinColsExpanderSize;
-        //    }
-        //}
-
-        //private void BusinessFlowsExpander_SizeChanged(object sender, SizeChangedEventArgs e)
-        //{
-        //    if (BusinessFlowsExpander.IsExpanded == false && e.NewSize.Width > mMinColsExpanderSize.Value)
-        //    {
-        //        BusinessFlowsColumn.Width = mMinColsExpanderSize;
-        //    }
-        //}
-
-        //private void BusinessFlowsTreeView_SizeChanged(object sender, SizeChangedEventArgs e)
-        //{
-        //    if (BusinessFlowsExpander.IsExpanded && e.NewSize.Width <= 50)
-        //    {
-        //        BusinessFlowsExpander.IsExpanded = false;
-        //        mlastBusFlowsColWidth = new GridLength(225);
-        //        BusinessFlowsColumn.Width = mMinColsExpanderSize;
-        //    }
-        //}
-
         private void RepositoryExpander_ExpandedCollapsed(object sender, RoutedEventArgs e)
         {
             if (RepositoryExpander.IsExpanded)
@@ -465,7 +439,9 @@ namespace Ginger
                 if (BFVariablesExpander.IsExpanded)
                 {
                     if (BFVariablesFrame != null && BFVariablesFrame.ActualHeight != 0)
+                    {
                         mlastBFVariablesRowHeight = new GridLength(BFVariablesFrame.ActualHeight + mMinRowsExpanderSize.Value, GridUnitType.Star);
+                    }
                     BFVariablesExpander.SetValue(Grid.RowProperty, ++rowIndex);
                     PageMainGrid.RowDefinitions[rowIndex].MinHeight = mMinRowsExpanderSize.Value;
                     PageMainGrid.RowDefinitions[rowIndex].Height = mlastBFVariablesRowHeight;
@@ -486,7 +462,9 @@ namespace Ginger
                 if (BFActivitiesGroupsExpander.IsExpanded)
                 {
                     if (BFActivitiesGroupsFrame != null && BFActivitiesGroupsFrame.ActualHeight != 0)
+                    {
                         mlastBFActivitiesGroupsRowHeight = new GridLength(BFActivitiesGroupsFrame.ActualHeight + mMinRowsExpanderSize.Value, GridUnitType.Star);
+                    }
                     BFActivitiesGroupsExpander.SetValue(Grid.RowProperty, ++rowIndex);
                     PageMainGrid.RowDefinitions[rowIndex].MinHeight = mMinRowsExpanderSize.Value;
                     PageMainGrid.RowDefinitions[rowIndex].Height = mlastBFActivitiesGroupsRowHeight;
@@ -496,7 +474,9 @@ namespace Ginger
                 else
                 {
                     if (BFActivitiesGroupsFrame != null && BFActivitiesGroupsFrame.ActualHeight != 0)
+                    {
                         mlastBFActivitiesGroupsRowHeight = new GridLength(BFActivitiesGroupsFrame.ActualHeight + mMinRowsExpanderSize.Value, GridUnitType.Star);
+                    }
                     BFActivitiesGroupsExpander.Visibility = System.Windows.Visibility.Collapsed;
                     BFActivitiesGroupsExpander2.Visibility = System.Windows.Visibility.Visible;
                 }
@@ -507,7 +487,9 @@ namespace Ginger
                 if (BFActivitiesExpander.IsExpanded)
                 {
                     if (BFActivitiesFrame != null && BFActivitiesFrame.ActualHeight != 0)
+                    {
                         mlastBFActivitiesRowHeight = new GridLength(BFActivitiesFrame.ActualHeight + mMinRowsExpanderSize.Value, GridUnitType.Star);
+                    }
                     BFActivitiesExpander.SetValue(Grid.RowProperty, ++rowIndex);
                     PageMainGrid.RowDefinitions[rowIndex].MinHeight = mMinRowsExpanderSize.Value;
                     PageMainGrid.RowDefinitions[rowIndex].Height = mlastBFActivitiesRowHeight;
@@ -517,7 +499,9 @@ namespace Ginger
                 else
                 {
                     if (BFActivitiesFrame != null && BFActivitiesFrame.ActualHeight != 0)
+                    {
                         mlastBFActivitiesRowHeight = new GridLength(BFActivitiesFrame.ActualHeight + mMinRowsExpanderSize.Value, GridUnitType.Star);
+                    }
                     BFActivitiesExpander.Visibility = System.Windows.Visibility.Collapsed;
                     BFActivitiesExpander2.Visibility = System.Windows.Visibility.Visible;
                 }
@@ -528,7 +512,9 @@ namespace Ginger
                 if (ActivityVariablesExpander.IsExpanded)
                 {
                     if (ActivityVariablesFrame != null && ActivityVariablesFrame.ActualHeight != 0)
+                    {
                         mlastActivityVariablesRowHeight = new GridLength(ActivityVariablesFrame.ActualHeight + mMinRowsExpanderSize.Value, GridUnitType.Star);
+                    }
                     ActivityVariablesExpander.SetValue(Grid.RowProperty, ++rowIndex);
                     PageMainGrid.RowDefinitions[rowIndex].MinHeight = mMinRowsExpanderSize.Value;
                     PageMainGrid.RowDefinitions[rowIndex].Height = mlastActivityVariablesRowHeight;
@@ -538,7 +524,9 @@ namespace Ginger
                 else
                 {
                     if (ActivityVariablesFrame != null && ActivityVariablesFrame.ActualHeight != 0)
+                    {
                         mlastActivityVariablesRowHeight = new GridLength(ActivityVariablesFrame.ActualHeight + mMinRowsExpanderSize.Value, GridUnitType.Star);
+                    }
                     ActivityVariablesExpander.Visibility = System.Windows.Visibility.Collapsed;
                     ActivityVariablesExpander2.Visibility = System.Windows.Visibility.Visible;
                 }
@@ -549,7 +537,9 @@ namespace Ginger
                 if (ActivityActionsExpander.IsExpanded)
                 {
                     if (ActivityActionsFrame != null && ActivityActionsFrame.ActualHeight != 0)
+                    {
                         mlastActivitiyActionsRowHeight = new GridLength(ActivityActionsFrame.ActualHeight + mMinRowsExpanderSize.Value, GridUnitType.Star);
+                    }
                     ActivityActionsExpander.SetValue(Grid.RowProperty, ++rowIndex);
                     PageMainGrid.RowDefinitions[rowIndex].MinHeight = mMinRowsExpanderSize.Value;
                     PageMainGrid.RowDefinitions[rowIndex].Height = mlastActivitiyActionsRowHeight;
@@ -559,7 +549,9 @@ namespace Ginger
                 else
                 {
                     if (ActivityActionsFrame != null && ActivityActionsFrame.ActualHeight != 0)
+                    {
                         mlastActivitiyActionsRowHeight = new GridLength(ActivityActionsFrame.ActualHeight + mMinRowsExpanderSize.Value, GridUnitType.Star);
+                    }
                     ActivityActionsExpander.Visibility = System.Windows.Visibility.Collapsed;
                     ActivityActionsExpander2.Visibility = System.Windows.Visibility.Visible;
                 }
@@ -592,20 +584,26 @@ namespace Ginger
 
             //arange expanders menu look 
             if (rowIndex == 8)
+            {
                 PageMainGrid.RowDefinitions[3].Height = new GridLength(0);
+            }
             else
+            {
                 PageMainGrid.RowDefinitions[3].Height = new GridLength(35);
+            }
 
             //make sure at least one expander open
             if (rowIndex == 1)
-                BFActivitiesExpander.IsExpanded = true;            
+            {
+                BFActivitiesExpander.IsExpanded = true;
+            }
         }
 
         private void BusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (e.PropertyName == "CurrentActivity")
+                if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
                 {
                     UpdateCurrentActiityExpander();
                 }
@@ -618,7 +616,7 @@ namespace Ginger
 
         private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "BusinessFlow")
+            if (e.PropertyName == nameof(App.BusinessFlow))
             {
                 SetExpanders();
                 SetGherkinOptions();
@@ -689,7 +687,7 @@ namespace Ginger
             ResetStatusRunFRomAutomateTab(Run.GingerRunner.eResetStatus.FromSpecificActionOnwards);
         }
 
-        private async void ResetStatusRunFRomAutomateTab(Run.GingerRunner.eResetStatus resetFrom)
+        private async Task ResetStatusRunFRomAutomateTab(Run.GingerRunner.eResetStatus resetFrom)
         {
             try
             {
@@ -706,17 +704,15 @@ namespace Ginger
                     case Run.GingerRunner.eResetStatus.FromSpecificActionOnwards:
                         App.AutomateTabGingerRunner.ResetStatus(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActionOnwards, App.BusinessFlow, App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
                         break;
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 AutoLogProxy.UserOperationEnd();
             }
             catch (Exception ex)
             {
-                throw ex;
-            }
-            finally
-            {
-                //EnableDisableAutomateTabGrids(true);
+                throw new Exception("Error occured on Reset Status Run from Automate Tab", ex);
             }
         }
 
@@ -742,11 +738,12 @@ namespace Ginger
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 ScenariosGenerator SG = new ScenariosGenerator();
                 SG.CreateScenarios(App.BusinessFlow);
-                int cnt = App.BusinessFlow.ActivitiesGroups.Count;
-                //MessageBox.Show("Cretaed " + cnt + " Scenarios");
+                int cnt = App.BusinessFlow.ActivitiesGroups.Count;               
                 int optCount = App.BusinessFlow.ActivitiesGroups.Where(z => z.Name.StartsWith("Optimized Activities")).Count();
                 if (optCount > 0)
+                {
                     cnt = cnt - optCount;
+                }
                 Reporter.ToUser(eUserMsgKeys.GherkinScenariosGenerated, cnt);
                 Mouse.OverrideCursor = null;
             }
@@ -814,7 +811,7 @@ namespace Ginger
             SetGingerRunnerSpeed();
         }
 
-        public async void RunActivity()
+        public async Task RunActivity()
         {
             await App.AutomateTabGingerRunner.RunActivityAsync(App.BusinessFlow.CurrentActivity, false).ConfigureAwait(false);
 
@@ -822,7 +819,9 @@ namespace Ginger
             foreach (Act act in App.BusinessFlow.CurrentActivity.Acts)
             {
                 if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+                {
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                }
             }
         }
 
@@ -857,7 +856,7 @@ namespace Ginger
             RunAutomateTabFlow(true, true);
         }
 
-        private async void RunAutomateTabFlow(bool Analyz = false, bool ReportNeeded = false)
+        private async Task RunAutomateTabFlow(bool Analyz = false, bool ReportNeeded = false)
         {
             if (Analyz)
             {
@@ -869,7 +868,9 @@ namespace Ginger
                     analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
                     analyzerPage.AnalyzeWithoutUI();
                     while (analyzerPage.IsAnalyzeDone == false)
+                    {
                         System.Threading.Thread.Sleep(100);
+                    }
                     Reporter.CloseGingerHelper();
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)
                     {
@@ -945,20 +946,34 @@ namespace Ginger
                 {
                     ActivitiesPage AP = null;
                     if (BFActivitiesFrame.Content.GetType() == typeof(ActivitiesPage)) // it can be the Activities MiniView
+                    {
                         AP = (ActivitiesPage)BFActivitiesFrame.Content;
+                    }
 
                     ActionsPage ActPage = (ActionsPage)ActivityActionsFrame.Content;
                     if (ActPage != null)
+                    {
                         if (enableGrids)
+                        {
                             EnabelGridSelectedItemChangeOnClick(ActPage.grdActions);
+                        }
                         else
+                        {
                             DisableGridSelectedItemChangeOnClick(ActPage.grdActions);
+                        }
+                    }
 
                     if (AP != null)
+                    {
                         if (enableGrids)
+                        {
                             EnabelGridSelectedItemChangeOnClick(AP.grdActivities);
+                        }
                         else
+                        {
                             DisableGridSelectedItemChangeOnClick(AP.grdActivities);
+                        }
+                    }
                 });
             }
             catch (Exception ex)
@@ -968,7 +983,7 @@ namespace Ginger
         }
 
 
-        public async void RunCurrentAutomatePageAction(bool checkIfActionAllowedToRun = true)
+        public async Task RunCurrentAutomatePageAction(bool checkIfActionAllowedToRun = true)
         {
             AutoLogProxy.UserOperationStart("RunActionButton_Click", App.UserProfile.Solution.Name, App.GetProjEnvironmentName());
 
@@ -1053,6 +1068,8 @@ namespace Ginger
                     case Run.GingerRunner.eContinueFrom.SpecificActivity:
                         await App.AutomateTabGingerRunner.ContinueRunAsync(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eContinueFrom.SpecificActivity, App.BusinessFlow, App.BusinessFlow.CurrentActivity);
                         break;
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 AutoLogProxy.UserOperationEnd();

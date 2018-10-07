@@ -173,7 +173,7 @@ namespace Ginger.BusinessFlowWindows
                     break;
 
                 case General.RepositoryItemPageViewMode.View:
-                    title = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);;
+                    title = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     winButtons.Add(okBtn);                   
                     break;
             }

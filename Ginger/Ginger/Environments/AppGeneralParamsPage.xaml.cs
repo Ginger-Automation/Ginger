@@ -128,8 +128,6 @@ namespace Ginger.Environments
                         {
                             bool changedwasDone = false;
                             GeneralParam.UpdateNameChangeInItem(action, AppOwner.Name, parameter.NameBeforeEdit, parameter.Name, ref changedwasDone);
-                            //if (changedwasDone == true && bf.IsDirty == false)
-                            //    bf.SaveBackup();
                         }
                     }
                 }

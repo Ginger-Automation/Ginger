@@ -133,8 +133,6 @@ namespace Ginger.ALM.Repository
                         testSetsItemsToImport.Add(testSetItem);
                     }
                 }
-                //if (bfsWereDeleted)
-                //    App.MainWindow.RefreshSolutionPage();
 
                 if (testSetsItemsToImport.Count == 0) return false; //noting to import
 

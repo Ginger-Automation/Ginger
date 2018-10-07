@@ -77,8 +77,7 @@ namespace Ginger.MenusLib
             twoLevelMenu.Add(ApplicationModelsMenu);
 
             TopMenuItem environemntsMenu = new TopMenuItem(eImageType.Environment, "Environments", ConsoleKey.E, "Environemnts_AID", "Environments are been used for storing environment level parameters and DB/Unix connections details");
-            environemntsMenu.Add(eImageType.Environment, "Environments", GetEnvsPage, ConsoleKey.E, "Environments are been used for storing environment level parameters and DB / Unix connections details", "Envs List");
-            //environemntsMenu.Add("Compare", EnvsCompare, ConsoleKey.C, "Compare Environments", "compare Envs AID");
+            environemntsMenu.Add(eImageType.Environment, "Environments", GetEnvsPage, ConsoleKey.E, "Environments are been used for storing environment level parameters and DB / Unix connections details", "Envs List");            
             twoLevelMenu.Add(environemntsMenu);
 
             TopMenuItem GlobalVariabelsMenu = new TopMenuItem(eImageType.Variable, GingerDicser.GetTermResValue(eTermResKey.Variables,"Global "), ConsoleKey.G, "Global Variables AID", GingerDicser.GetTermResValue(eTermResKey.Variables, suffixString:" which can be used cross " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));

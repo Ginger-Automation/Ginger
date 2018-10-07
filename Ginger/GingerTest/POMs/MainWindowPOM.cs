@@ -83,8 +83,9 @@ namespace GingerWPFUnitTest.POMs
 
         internal void ClickResourcesRibbon()
         {
-            mMainWindow.Dispatcher.Invoke(() => {
-                // SelectRibbonTab("Resources");
+            mMainWindow.Dispatcher.Invoke(() => {                
+                ListView a = (ListView)mMainWindow.FindName("xSolutionTabsListView");
+                a.SelectedItem = null; 
                 ListViewItem b = (ListViewItem)mMainWindow.FindName("xResourcesListItem");
                 b.RaiseEvent(new RoutedEventArgs(ListViewItem.SelectedEvent));
                 WaitForPage(typeof(TwoLevelMenuPage));
@@ -208,10 +209,11 @@ namespace GingerWPFUnitTest.POMs
             Environments = null;
             Execute(() => {
                 ClickResourcesRibbon();
-                Frame f = (Frame)mMainWindow.FindName("MainFrame");
+                Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
                 TwoLevelMenuPage resourcesPage = (TwoLevelMenuPage)f.Content;
 
-                ListView lv = (ListView)resourcesPage.FindName("xMainNavigationListView");                
+                ListView lv = (ListView)resourcesPage.FindName("xMainNavigationListView");
+                lv.SelectedItem = null;
                 foreach (TopMenuItem topMenuItem in lv.Items)
                 {
                     if (topMenuItem.AutomationID == "Environemnts_AID")

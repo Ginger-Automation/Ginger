@@ -54,15 +54,7 @@ namespace Ginger
             //TODO: move this func to General
             bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
             return designMode;
-        }
-
-        //TODO: we need all places to use this one or something which will be checked at compile time
-        internal static System.Windows.Controls.Image GetImage(string ImageFileName)
-        {
-            System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + ImageFileName));
-            return image;
-        }
+        }       
 
         public static string ConvertSolutionRelativePath(string fileName)
         {
@@ -467,7 +459,7 @@ namespace Ginger
             {
                 bImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                 byte[] byteImage = ms.ToArray();
-                return Convert.ToBase64String(byteImage).ToString(); //Get Base64
+                return Convert.ToBase64String(byteImage); //Get Base64
             }
         }
 

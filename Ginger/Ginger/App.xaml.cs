@@ -186,9 +186,7 @@ namespace Ginger
         //TODO: whenever changed check if isDirty - and ask the user if to save
         public static RepositoryItemBase CurrentRepositoryItem { get; set; }
 
-        public static ITreeViewItem CurrentSelectedTreeItem { get; set; }
-
-        //public static ObservableList<RepositoryItemBase> ItemstoSave = new ObservableList<RepositoryItemBase>();
+        public static ITreeViewItem CurrentSelectedTreeItem { get; set; }       
 
         public static string RecoverFolderPath = null;
         public static IEnumerable<object> CurrentFolderItem { get; set; }
@@ -510,8 +508,7 @@ namespace Ginger
             list.Add("GingerCore.Actions.ActInputValue", typeof(ActInputValue));
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
-            list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
-            //list.Add("GingerCore.BusinessFlow", typeof(BusinessFlow));
+            list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));            
 
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
@@ -649,8 +646,14 @@ namespace Ginger
                 getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
         }
 
-
-        public static bool LoadingSolution;
+        static bool mLoadingSolution;
+        public static bool LoadingSolution
+        {
+            get
+            {
+                return mLoadingSolution;
+            }
+        }
 
         public static bool SetSolution(string SolutionFolder)
         {
@@ -658,7 +661,7 @@ namespace Ginger
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
-                LoadingSolution = true;
+                mLoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
 
                 // Cleanup last loaded solution 
@@ -767,7 +770,7 @@ namespace Ginger
             }
             finally
             {
-                LoadingSolution = false;
+                mLoadingSolution = false;
                 OnPropertyChanged(nameof(LoadingSolution));
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", SolutionFolder));
             }
@@ -776,19 +779,16 @@ namespace Ginger
         private static void HandleSolutionLoadSourceControl(Solution solution)
         {
             string RepositoryRootFolder = string.Empty;
-            switch (SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref RepositoryRootFolder))
+            SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref RepositoryRootFolder);
+            if (type == SourceControlBase.eSourceControlType.GIT)
             {
-                case SourceControlBase.eSourceControlType.GIT:
-                    {
-                        solution.SourceControl = new GITSourceControl();
-                    }
-                    break;
-                case SourceControlBase.eSourceControlType.SVN:
-                    {
-                        solution.SourceControl = new SVNSourceControl();
-                    }
-                    break;
+                solution.SourceControl = new GITSourceControl();
             }
+            else if (type == SourceControlBase.eSourceControlType.SVN)
+            {
+                solution.SourceControl = new SVNSourceControl();
+            }
+            
             if (solution.SourceControl != null)
             {
                 if (string.IsNullOrEmpty(App.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(App.UserProfile.SolutionSourceControlPass))

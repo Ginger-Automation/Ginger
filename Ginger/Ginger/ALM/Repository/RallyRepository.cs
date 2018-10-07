@@ -137,19 +137,12 @@ namespace Ginger.ALM.Repository
 
                         //save bf
                         WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
-                        //tsBusFlow.FileName = LocalRepository.GetRepoItemFileName(tsBusFlow, importDestinationPath);
-                        //tsBusFlow.SaveToFile(tsBusFlow.FileName);
-                        //add to cach
-                        //App.LocalRepository.AddItemToCache(tsBusFlow);
                         Reporter.CloseGingerHelper();
                     }
                     catch (Exception ex)
                     {
                         Reporter.ToUser(eUserMsgKeys.ErrorInTestsetImport, testPlan.Name, ex.Message);
                     }
-
-                    //Refresh the solution tree
-                    //App.MainWindow.RefreshSolutionPage();
 
                     Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
                 }

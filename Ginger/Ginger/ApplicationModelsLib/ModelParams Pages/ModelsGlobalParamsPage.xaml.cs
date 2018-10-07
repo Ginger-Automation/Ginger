@@ -96,9 +96,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["OpenEditPossibleValuesPage"] });
                 view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.CurrentValue), Header = "Current Value", WidthWeight = 80, AllowSorting = true });
 
-                xModelsGlobalParamsGrid.btnSaveSelectedChanges.AddHandler(Button.ClickEvent, new RoutedEventHandler(SaveSelectedGlobalParametersChanges));
-                //xModelsGlobalParamsGrid.btnSaveAllChanges.AddHandler(Button.ClickEvent, new RoutedEventHandler(SaveAllGlobalParametersChanges));
-                //xModelsGlobalParamsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddGlobalParam));
+                xModelsGlobalParamsGrid.btnSaveSelectedChanges.AddHandler(Button.ClickEvent, new RoutedEventHandler(SaveSelectedGlobalParametersChanges));                
                 xModelsGlobalParamsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteSelectedEvent));
                 xModelsGlobalParamsGrid.SetbtnClearAllHandler(DeleteAllEvent);
                 xModelsGlobalParamsGrid.SetbtnCopyHandler(BtnCopyGlobalParamsClicked);
@@ -213,8 +211,6 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                         {
                             bool changedwasDone = false;
                             UpdateItemModelGlobalParamVeWithNameChange(action, ListObj[0], ListObj[1], ref changedwasDone);
-                            //if (changedwasDone == true && bf.IsDirty == false)
-                            //    bf.SaveBackup();//so VF will show as Dirty
                         }
                 }
                 else
@@ -231,11 +227,17 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             ObservableList<RepositoryItemBase> supportedItems = new ObservableList<RepositoryItemBase>();
             ObservableList<BusinessFlow> BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
             foreach (BusinessFlow bf in BFs)
+            {
                 supportedItems.Add(bf);
+            }
             foreach (Agent agent in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>())
+            {
                 supportedItems.Add(agent);
+            }
             foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+            {
                 supportedItems.Add(env);
+            }
 
 
             return supportedItems;

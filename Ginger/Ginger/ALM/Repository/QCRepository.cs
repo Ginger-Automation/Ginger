@@ -140,14 +140,10 @@ namespace Ginger.ALM.Repository
                         testSetsItemsToImport.Add(testSetItem);
                     }
                 }
-                //if (bfsWereDeleted)
-                //    App.MainWindow.RefreshSolutionPage();
 
                 if (testSetsItemsToImport.Count == 0) return false; //noting to import
 
                 //Refresh Ginger repository and allow GingerQC to use it
-
-                
                 ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();               
                 ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
