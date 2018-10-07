@@ -61,8 +61,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             ElementInfo EI = ((ObservableList<ElementInfo>)sender).Last();
 
+            EI.IsAutoLearned = true;
+
             mWizard.IWindowExplorerDriver.UpdateElementInfoFields(EI);
             EI.Locators = mWizard.IWindowExplorerDriver.GetElementLocators(EI);
+            foreach (ElementLocator EL in EI.Locators)
+            {
+                EL.IsAutoLearned = true;
+            }
+            
             EI.Properties = mWizard.IWindowExplorerDriver.GetElementProperties(EI);
             EI.ElementName = GetBestElementName(EI);
             EI.WindowExplorer = mWizard.IWindowExplorerDriver;
@@ -124,8 +131,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
 
                         xReLearnButton.Visibility = Visibility.Visible;
-                        mWizard.IWindowExplorerDriver.UnHighLightElements();
-                        mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
+
                         mSelectedElementTypesList = mWizard.AutoMapElementTypesList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
                         Learn();
                     }
@@ -139,6 +145,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (!mWizard.IsLearningWasDone)
             {
                 mWizard.ProcessStarted();
+                mWizard.IWindowExplorerDriver.UnHighLightElements();
+                mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
+
                 xStopLoadButton.Visibility = Visibility.Visible;
                 xReLearnButton.Visibility = Visibility.Collapsed;
                
@@ -178,7 +187,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void GetElementFromPageTask()
         {
-            mWizard.IWindowExplorerDriver.GetVisibleControls(null, mElementsList);
+            mWizard.IWindowExplorerDriver.GetVisibleControls(mWizard.AutoMapElementTypesList.Where(z => z.Selected == true).Select(z => z.ElementType).ToList(), mElementsList);
         }
 
         string GetBestElementName(ElementInfo EI)

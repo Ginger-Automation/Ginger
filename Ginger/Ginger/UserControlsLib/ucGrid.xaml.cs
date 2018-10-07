@@ -200,6 +200,8 @@ namespace Ginger
         public static ObservableList<RepositoryItemBase> mCopiedorCutItems = new ObservableList<RepositoryItemBase>();
         public static IObservableList mCutSourceList = null;
 
+        public static ObservableList<RepositoryItemBase> mSourceBeforePasteItems = new ObservableList<RepositoryItemBase>();
+
         /// <summary>
         ///  Function to return grid object/columns values as one long string + toUpper
         ///  Used for Search in Grid 
@@ -683,6 +685,8 @@ namespace Ginger
         {
             CutItems();
         }
+
+        
         private void btnPaste_Click(object sender, RoutedEventArgs e)
         {
             PasteItems();
@@ -1756,6 +1760,9 @@ public void RemoveCustomView(string viewName)
         {
             try
             {
+                mSourceBeforePasteItems.Clear();
+                foreach (RepositoryItemBase item in Grid.ItemsSource)
+                    mSourceBeforePasteItems.Add(item);
                 if (mCutSourceList != null)
                 {
                     //CUT

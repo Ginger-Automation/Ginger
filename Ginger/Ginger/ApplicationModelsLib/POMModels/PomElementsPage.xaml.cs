@@ -32,6 +32,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         ApplicationPOMModel mPOM;
         public ObservableList<ElementLocator> mLocators = new ObservableList<ElementLocator>();
         public ObservableList<ControlProperty> mProperties = new ObservableList<ControlProperty>();
+        public ObservableList<ElementInfo> mElements = new ObservableList<ElementInfo>();
         GenericWindow _GenWin;
         
         private Agent mAgent;
@@ -66,10 +67,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             SetControlsGridView();
 
             if (mContext == PomAllElementsPage.eElementsContext.Mapped)
-                xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
+                mElements = mPOM.MappedUIElements;
             else
-                xMainElementsGrid.DataSourceList = mPOM.UnMappedUIElements;
+                mElements = mPOM.UnMappedUIElements;
 
+            xMainElementsGrid.DataSourceList = mElements;
             InitControlPropertiesGridView();
             InitLocatorsGrid();
 
@@ -94,11 +96,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (mAgent.Driver.IsDriverBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
             List<ElementInfo> ItemsToAddList = xMainElementsGrid.grdMain.SelectedItems.Cast<ElementInfo>().ToList();
 
             foreach (ElementInfo EI in ItemsToAddList)
@@ -110,11 +107,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void RemoveButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (mAgent.Driver.IsDriverBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
 
             List<ElementInfo> ItemsToRemoveList = xMainElementsGrid.grdMain.SelectedItems.Cast<ElementInfo>().ToList();
 
@@ -177,13 +169,38 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             //xMainElementsGrid.AddToolbarTool("@Spy_24x24.png", "Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key", new RoutedEventHandler(LiveSpyHandler));
 
-
+            xMainElementsGrid.btnPaste.AddHandler(Button.ClickEvent, new RoutedEventHandler(PasteElementsHandler));
             xMainElementsGrid.SetAllColumnsDefaultView(view);
             xMainElementsGrid.InitViewItems();
             xMainElementsGrid.ChangeGridView(eGridView.RegularView.ToString());
+
+            xMainElementsGrid.grdMain.PreparingCellForEdit += MainElementsGrid_PreparingCellForEdit;
         }
 
-        public enum eGridView
+        private void PasteElementsHandler(object sender, RoutedEventArgs e)
+        {
+            foreach (ElementInfo item in mElements)
+            {
+                if (!ucGrid.mSourceBeforePasteItems.Contains(item))
+                {
+                    item.IsAutoLearned = false;
+                }
+            }
+        }
+
+        private void MainElementsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        {
+            ElementInfo ei = (ElementInfo)xMainElementsGrid.CurrentItem;
+            if (ei.IsAutoLearned)
+            {
+                e.EditingElement.IsEnabled = false;
+            }
+        }
+
+
+    
+
+    public enum eGridView
         {
             RegularView,
         }
@@ -248,9 +265,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 30, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
 
             List<GingerCore.General.ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 40, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList });
+
+           
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 40, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
 
             //defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), WidthWeight = 10 });
+
+            //defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActivityName, WidthWeight = 15, Header = "Name", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.mainGrdActivities.Resources["FieldName"] });
+
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 150 });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 70, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 15, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
@@ -259,10 +281,21 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             xLocatorsGrid.AddToolbarTool("@Play_16x16.png", "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
             xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorHandler));
+            xLocatorsGrid.btnPaste.AddHandler(Button.ClickEvent, new RoutedEventHandler(PasteLocatorsHandler));
+            xLocatorsGrid.grdMain.PreparingCellForEdit += LocatorsGrid_PreparingCellForEdit;
             xLocatorsGrid.SetAllColumnsDefaultView(defView);
             xLocatorsGrid.InitViewItems();
             xLocatorsGrid.DataSourceList = mLocators;
             xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
+        }
+
+        private void LocatorsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        {
+            ElementLocator el = (ElementLocator)xLocatorsGrid.CurrentItem;
+            if (e.Column.Header.ToString() != nameof(ElementLocator.Active) && el.IsAutoLearned)
+            {
+                e.EditingElement.IsEnabled = false;
+            }
         }
 
         private void AddLocatorHandler(object sender, RoutedEventArgs e)
@@ -271,6 +304,20 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mMainElementsGridCurrentItem.Locators.Add(newElementLocator);
             mLocators.Add(newElementLocator);
         }
+
+
+        private void PasteLocatorsHandler(object sender, RoutedEventArgs e)
+        {
+            foreach (ElementLocator item in mLocators)
+            {
+                if (!ucGrid.mSourceBeforePasteItems.Contains(item))
+                {
+                    item.IsAutoLearned = false;
+                }
+            }
+        }
+
+
 
 
         private void InitControlPropertiesGridView()

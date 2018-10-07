@@ -87,6 +87,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void xTakeScreenShotLoadButton_Click(object sender, RoutedEventArgs e)
         {
+            mWizard.IWindowExplorerDriver.UnHighLightElements();
             mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
             ShowScreenShot();
         }
