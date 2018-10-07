@@ -2030,22 +2030,24 @@ namespace GingerCore.Drivers
 
             bool flag = false;
             bool endPane = false;
-            int iLoop = 0;
+            int iLoop = 0;            
             int iPaneY = 0;
             if(subElementType == ActUIElement.eSubElementType.Pane.ToString())
-            {                
-                string oldValue = "&*%^%$#";
-                while (flag == false && iLoop < 20)
-                {
+            {
+                if (GetControlValue(AE) == Value)
+                    return "true";
+                int iClick = 0;
+                while (flag == false && iLoop < 30)
+                {                    
+                    string oldValue = "&*%^%$#";
                     ClickOnXYPoint(AE, "10,10");
-                    Thread.Sleep(100);
                     AutomationElement subElement = (AutomationElement)FindElementByLocator(subElementLocateby, subElementLocateValue);
                     if (subElement == null || subElement.Current.LocalizedControlType != "pane")
                     {
                         return "Invalid Sub Element";
                     }
-                    Thread.Sleep(100);
-                    AutomationElement pageUp=null, pageDown=null, lineDown=null,lineUp=null;
+                    //Thread.Sleep(100);
+                    AutomationElement pageUp = null, pageDown = null, lineDown = null, lineUp = null;
                     if (TreeWalker.ContentViewWalker.GetFirstChild(subElement) != null)
                     {
                         pageDown = subElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
@@ -2055,7 +2057,7 @@ namespace GingerCore.Drivers
                     else
                     {
                         List<AutomationElement> gridControls = GetGridControlsFromPoint(subElement);
-                        foreach(AutomationElement subChild in gridControls)
+                        foreach (AutomationElement subChild in gridControls)
                         {
                             if (subChild.Current.Name == "Page down")
                                 pageDown = subChild;
@@ -2066,31 +2068,54 @@ namespace GingerCore.Drivers
                             else if (subChild.Current.Name == "Line down")
                                 lineDown = subChild;
                         }
-                    }
+                    }                    
                     int iCount = 0;
-                    while (lineUp != null && iCount<10)
+                    while (lineUp != null && iCount < 20 && iLoop==0)
                     {
-                        ClickOnXYPoint(lineUp,"5,5");
+                        ClickOnXYPoint(lineUp, "5,5");
                         iCount++;
+                        Reporter.ToLogAndConsole(eLogLevel.INFO, "lineDown:iCount:" + iCount);
                     }
-                    for (int i = 0; i < iLoop; i++)
-                        ClickOnXYPoint(lineDown,"5,5");
+                    //Thread.Sleep(100);
+                    
+                    for (int i = 0; i < iClick; i++)
+                    {
+                        ClickOnXYPoint(lineDown, "5,5");
+                        Reporter.ToLogAndConsole(eLogLevel.INFO, "lineDown:" + iClick + ":" + i);
+                    }
+                    ClickOnXYPoint(subElement, "10," + (10 + iPaneY));
                     //pageDown = subElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
 
-                    ClickOnXYPoint(subElement, "10," + (10 + iPaneY));                        
+
+
+                    string newValue = GetControlValue(AE);
 
                     if (DefineHandleAction == true)
                     {
-                        LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, subElementType, handleActionType);
+                        int? loadTime = mLoadTimeOut.Value;
+                        mLoadTimeOut = -1;
+                        if(LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, subElementType, handleActionType))
+                        {
+                            iClick++;
+                        }                            
+                        else
+                            iClick = 1;
+                        mLoadTimeOut = loadTime;                        
+                        Reporter.ToLogAndConsole(eLogLevel.INFO, "DefineHandleAction:" + iClick);
                     }
-                    string newValue = GetControlValue(AE);
+                    else
+                        iClick = 1;
+
                     if (newValue == Value)
                     {
                         return "true";
                     }
                     if (oldValue != newValue && endPane==false)
                     {
-                        iLoop++;
+                        if (iLoop == 0 && iClick == 2)
+                            iLoop = 0;
+                        else
+                            iLoop++;
                         oldValue = newValue;
                     }                        
                     else
@@ -2101,7 +2126,7 @@ namespace GingerCore.Drivers
                         else
                             break;
                     }
-                    
+                    Reporter.ToLogAndConsole(eLogLevel.INFO, "iLoop now:" + iLoop);
                     //if ((!flag) && (iLoop >= 20))
                     //{
                     //    return "Validation Failed";
