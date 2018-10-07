@@ -111,6 +111,31 @@ namespace Ginger
             }
         }
 
+        private static string mAppShortVersion = String.Empty;
+        public static string AppShortVersion
+        {
+            get
+            {
+                if (mAppShortVersion == string.Empty)
+                {
+                    if (ApplicationInfo.ProductPrivatePart != 0)//Alpha
+                    {
+                        mAppShortVersion = string.Format("{0}.{1}.{2}.{3}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart, ApplicationInfo.ProductPrivatePart);                        
+                    }
+                    else if (ApplicationInfo.ProductBuildPart != 0)//Beta
+                    {
+                        mAppShortVersion = string.Format("{0}.{1}.{2}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart);                        
+                    }
+                    else//Oficial Release
+                    {
+                        mAppShortVersion = string.Format("{0}.{1}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart);
+                    }
+                }
+
+                return mAppShortVersion;
+            }
+        }
+
         public static Ginger.Functionalties.SolutionAutoSave AppSolutionAutoSave = new Ginger.Functionalties.SolutionAutoSave();
 
         public static Ginger.Functionalties.SolutionRecover AppSolutionRecover = new Ginger.Functionalties.SolutionRecover();
