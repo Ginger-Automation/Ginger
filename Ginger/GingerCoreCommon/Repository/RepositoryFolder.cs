@@ -439,16 +439,16 @@ namespace Amdocs.Ginger.Repository
                     WaitforFileIsReadable(e.FullPath);
                     // reLoad the object to mem updating fields
                     item = GetItemFromCacheByFileName(e.FullPath);
+                    SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(e.FullPath));
                     NewRepositorySerializer.ReloadObjectFromFile(item);
-
-                    //Trigger so source control item can update if needed
-                    item.OnPropertyChanged(nameof(RepositoryItemBase.SourceControlStatus));
-
+                    item.RefreshSourceControlStatus();
+                    
                     break;
                 case WatcherChangeTypes.Deleted:
                     //remove from cache and list
                     item = GetItemFromCacheByFileName(e.FullPath);
-                    RemoveItemFromLists((RepositoryItemBase)item);
+                    SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(e.FullPath));
+                    RemoveItemFromLists(item);
                     break;
                 case WatcherChangeTypes.Created:
                     WaitforFileIsReadable(e.FullPath);
@@ -456,6 +456,7 @@ namespace Amdocs.Ginger.Repository
                     T newItem = LoadItemfromFile<T>(e.FullPath, Path.GetDirectoryName(e.FullPath));
                     AddItemtoCache(e.FullPath, newItem);
                     mFolderItemsList.Add(newItem);
+                    SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(e.FullPath));
                     break;
             }
         }
