@@ -394,14 +394,7 @@ namespace GingerWPF.TreeViewItemsLib
                         mTreeView.Tree.Dispatcher.Invoke(() =>
                         {
                             mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, GetTreeItem((dynamic)e.NewItems[0]));
-                            if(e.NewItems[0] is RepositoryItemBase)
-                            {
-                                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(((RepositoryItemBase)e.NewItems[0]).FilePath));
-                            }    
-                            else if(e.NewItems[0] is RepositoryFolderBase)
-                            {
-                                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(((RepositoryFolderBase)e.NewItems[0]).FolderFullPath);
-                            }
+                            RefreshParentTreeItemsSourceControlStatus(e.NewItems[0]);                            
                         });
                         }
                         break;
@@ -412,14 +405,7 @@ namespace GingerWPF.TreeViewItemsLib
                             mTreeView.Tree.Dispatcher.Invoke(() =>
                             {
                                 mTreeView.Tree.DeleteItemByObjectAndSelectParent(e.OldItems[0], (ITreeViewItem)this);
-                                if (e.OldItems[0] is RepositoryItemBase)
-                                {
-                                    WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(((RepositoryItemBase)e.OldItems[0]).FilePath));
-                                }
-                                else if (e.OldItems[0] is RepositoryFolderBase)
-                                {
-                                    WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(((RepositoryFolderBase)e.OldItems[0]).FolderFullPath);
-                                }
+                                RefreshParentTreeItemsSourceControlStatus(e.OldItems[0]);                                
                             });
                         }
                     break;
@@ -431,6 +417,18 @@ namespace GingerWPF.TreeViewItemsLib
                         });
                     break;
                 }
+        }
+
+        private void RefreshParentTreeItemsSourceControlStatus(object modifiedTreeITemObject)
+        {
+            if (modifiedTreeITemObject is RepositoryItemBase)
+            {
+                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(((RepositoryItemBase)modifiedTreeITemObject).FilePath));
+            }
+            else if (modifiedTreeITemObject is RepositoryFolderBase)
+            {
+                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(((RepositoryFolderBase)modifiedTreeITemObject).FolderFullPath);
+            }
         }
 
         public override void AddSourceControlOptions(ContextMenu CM, bool addDetailsOption = true, bool addLocksOption = true)

@@ -548,22 +548,22 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Cloud);
                     break;
                 case eImageType.SourceControlNew:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Plus, Brushes.Green);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Plus, Brushes.Green, toolTip:"New");
                     break;
                 case eImageType.SourceControlModified:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Pencil, Brushes.OrangeRed);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Pencil, Brushes.OrangeRed, toolTip: "Modified");
                     break;
                 case eImageType.SourceControlDeleted:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Minus, Brushes.Red);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Minus, Brushes.Red, toolTip: "Deleted");
                     break;
                 case eImageType.SourceControlEquel:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Check, Brushes.Gray);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Check, Brushes.Gray, toolTip: "Same as Source");
                     break;
                 case eImageType.SourceControlLockedByAnotherUser:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Purple);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Purple, toolTip: "Locked by Other User");
                     break;
                 case eImageType.SourceControlLockedByMe:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Yellow);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Yellow, toolTip: "Locked by You");
                     break;
                 case eImageType.Check:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircleOutline);

@@ -207,12 +207,28 @@ namespace Amdocs.Ginger.Repository
             return repoFolder;
         }
 
+
         /// <summary>
         /// Refresh source control status of all parent folders
         /// </summary>
         /// <param name="folderPath"></param>
-        public void RefreshParentFoldersSoucerControlStatus(string folderPath)
+        public void RefreshParentFoldersSoucerControlStatus(string folderPath, bool pullParentFolder = false)
         {
+            if (pullParentFolder)
+            {
+                FileAttributes attr = FileAttributes.Normal;
+                attr = File.GetAttributes(folderPath);
+
+                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    folderPath = Directory.GetParent(folderPath).FullName;
+                }
+                else
+                {
+                    folderPath = Path.GetDirectoryName(folderPath);
+                }
+            }
+
             RepositoryFolderBase repoFolder = GetRepositoryFolderByPath(folderPath);
             if (repoFolder != null)
             {
