@@ -236,7 +236,7 @@ namespace Ginger.Activities
 
         private void AddToRepository(object sender, RoutedEventArgs e)
         {
-            List<RepositoryItemBase> listOfGroups = grdActivitiesGroups.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList();// as List<RepositoryItem>;
+            List<RepositoryItemBase> listOfGroups = grdActivitiesGroups.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList();
 
             List<RepositoryItemBase> itemsToUpload = new List<RepositoryItemBase>();
             foreach (RepositoryItemBase group in listOfGroups)
@@ -281,7 +281,9 @@ namespace Ginger.Activities
             {
                 grdActivitiesGroups.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups);
                 
-                //App.LocalRepository.MarkSharedRepositoryItems((System.Collections.Generic.IEnumerable<object>)mBusinessFlow.ActivitiesGroups, (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivitiesGroups());
+                ObservableList<ActivitiesGroup> sharedActivitiesGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+                SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.ActivitiesGroups, (IEnumerable<object>)sharedActivitiesGroups);
+
                 UpdateActivitiesGroupsGridViewTestSuiteColumn();
                 grdActivitiesGroups.DataSourceList = mBusinessFlow.ActivitiesGroups;
             }

@@ -60,8 +60,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void Reset()
         {
-            mBusFlowsPage = null;            
-            //App.BusinessFlow = null;
+            mBusFlowsPage = null;                      
             ShiftToBusinessFlowView();
         }
 
@@ -86,7 +85,7 @@ namespace Ginger.BusinessFlowWindows
                 else
                 {
                     mAutomatePage = new AutomatePage();
-                    ((AutomatePage)mAutomatePage).GoToBusFlowsListHandler = GoToBusinessFlowsList;
+                    ((AutomatePage)mAutomatePage).GoToBusFlowsListHandler(GoToBusinessFlowsList);
                 }
                 
             }
@@ -106,7 +105,9 @@ namespace Ginger.BusinessFlowWindows
                 ITreeViewItem iv = (ITreeViewItem)i.Tag;
 
                 if (iv.NodeObject() != null && iv.NodeObject() is BusinessFlow)
+                {
                     App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, (BusinessFlow)iv.NodeObject());
+                }
             }
         }
 

@@ -85,7 +85,7 @@ namespace Ginger.ConfigurationsLib
 
         private static Page GetTagsPage()
         {
-             return  new TagsPage(TagsPage.eViewMode.Solution); ;            
+             return new TagsPage(TagsPage.eViewMode.Solution);            
         }
 
         private static Page ReportsList()

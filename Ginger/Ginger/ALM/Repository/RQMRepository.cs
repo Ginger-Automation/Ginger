@@ -152,9 +152,6 @@ namespace Ginger.ALM.Repository
                         Reporter.ToUser(eUserMsgKeys.ErrorInTestsetImport, testPlan.Name, ex.Message);
                     }
 
-                    //Refresh the solution tree
-                    //App.MainWindow.RefreshSolutionPage();
-
                     Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
                 }
                 return true;
