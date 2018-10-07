@@ -39,9 +39,6 @@
                 </DataTemplate.Triggers>    
             </DataTemplate>
 
-            <DataTemplate x:Key="xDynamicEnabledDisabledTextField">
-                <TextBox Background="Transparent" BorderThickness="0" IsEnabled="{Binding IsAutoLearned, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"/>
-            </DataTemplate>
 
         </Grid.Resources>
 
@@ -51,7 +48,7 @@
         </Grid.RowDefinitions>
 
 
-        <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" RowChangedEvent="MappedElementsGrid_RowChangedEvent" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" />
+        <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" RowChangedEvent="MappedElementsGrid_RowChangedEvent" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" />
 
         <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
 
@@ -78,7 +75,7 @@
                                     <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
                                 </StackPanel>
                             </TabItem.Header>
-                            <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopyCutPast="Visible" ShowTitle="Collapsed" />
+                            <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" />
                         </TabItem>
 
                     </TabControl>
