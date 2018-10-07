@@ -50,6 +50,8 @@ namespace GingerWPFUnitTest.POMs
                 if (o is DependencyObject)
                 {
                     DependencyObject dependencyObject = (DependencyObject)o;
+
+                    string aid = AutomationProperties.GetAutomationId(dependencyObject);
                     if (dependencyObject is T)  // the type we are searching
                     {
                         if (AutomationProperties.GetAutomationId(dependencyObject) == automationID)
