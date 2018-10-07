@@ -165,6 +165,21 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
+        /// Return the list of Sub Folders
+        /// </summary>
+        /// <returns></returns>
+        public override ObservableList<RepositoryFolderBase> GetSubFoldersAsFolderBase()
+        {
+            ObservableList<RepositoryFolderBase> subFolders = new ObservableList<RepositoryFolderBase>();
+            foreach (object item in GetSubFolders())
+            {
+                subFolders.Add((RepositoryFolderBase)item);
+            }
+
+            return subFolders;
+        }
+
+        /// <summary>
         /// Get current folder and all of it sub folders items
         /// </summary>        
         /// <param name="list"></param>
@@ -438,17 +453,16 @@ namespace Amdocs.Ginger.Repository
                 case WatcherChangeTypes.Changed:
                     WaitforFileIsReadable(e.FullPath);
                     // reLoad the object to mem updating fields
-                    item = GetItemFromCacheByFileName(e.FullPath);
-                    SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(e.FullPath));
+                    item = GetItemFromCacheByFileName(e.FullPath);                    
                     NewRepositorySerializer.ReloadObjectFromFile(item);
                     item.RefreshSourceControlStatus();
-                    
+                    SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(e.FullPath));
                     break;
                 case WatcherChangeTypes.Deleted:
                     //remove from cache and list
                     item = GetItemFromCacheByFileName(e.FullPath);
-                    SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(e.FullPath));
                     RemoveItemFromLists(item);
+                    SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(e.FullPath));                    
                     break;
                 case WatcherChangeTypes.Created:
                     WaitforFileIsReadable(e.FullPath);

@@ -162,6 +162,8 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public abstract ObservableList<RepositoryItemBase> GetFolderRepositoryItems();
 
+        public abstract ObservableList<RepositoryFolderBase> GetSubFoldersAsFolderBase();
+
         public abstract RepositoryFolderBase GetSubFolderByName(string name, bool recursive = false);
 
         /// <summary>
@@ -186,12 +188,30 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public async void RefreshSourceControlStatus()
+        public async void RefreshFolderSourceControlStatus()
         {
             if (mSourceControlStatus != eImageType.Null)
             {
                 mSourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(FolderFullPath).ConfigureAwait(true);
                 OnPropertyChanged(nameof(SourceControlStatus));
+            }
+        }
+
+        /// <summary>
+        /// Refresh source control status of all subfolders and its repository items
+        /// </summary>
+        public void RefreshFolderAndChildElementsSourceControlStatus()
+        {
+            RefreshFolderSourceControlStatus();
+            //sub items
+            foreach (RepositoryItemBase ri in GetFolderRepositoryItems())
+            {
+                ri.RefreshSourceControlStatus();
+            }
+            //sub folders
+            foreach (RepositoryFolderBase subFolder in GetSubFoldersAsFolderBase())
+            {
+                subFolder.RefreshFolderAndChildElementsSourceControlStatus();
             }
         }
 

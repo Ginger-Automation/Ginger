@@ -52,7 +52,7 @@ namespace Ginger.SourceControl
         ObservableList<SourceControlFileInfo> mFiles;
         GenericWindow genWin = null;
         bool mCheckInWasDone=false;
-        private List<RepositoryFolderBase> parentFolders = null;
+        private List<string> parentFolders = null;
 
         public CheckInPage(string path)
         {
@@ -290,34 +290,42 @@ namespace Ginger.SourceControl
 
         private void TriggerSourceControlIconChanged(List<SourceControlFileInfo> selectedFiles)
         {
-            parentFolders = new List<RepositoryFolderBase>();
+            parentFolders = new List<string>();
             foreach (SourceControlFileInfo fi in selectedFiles)
             {
                 FileAttributes attr = FileAttributes.Normal;
                 if (fi.Status != SourceControlFileInfo.eRepositoryItemStatus.Deleted)
                 {
                     attr = File.GetAttributes(fi.Path);
-                }
 
-                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                {
-                    RepositoryFolderBase repoFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(fi.Path);
-                    WorkSpace.Instance.SolutionRepository.RefreshChildFoldersSourceControlStatus(fi.Path);
+                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                    {
+                        RepositoryFolderBase repoFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(fi.Path);
+                        repoFolder.RefreshFolderAndChildElementsSourceControlStatus();
+
+                        AddToParentFoldersToRefresh(Directory.GetParent(fi.Path).FullName);
+                    }
+                    else
+                    {
+                        RepositoryItemBase repoItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(fi.Path);
+                        if (repoItem != null)
+                        {
+                            repoItem.RefreshSourceControlStatus();
+                        }
+
+                        AddToParentFoldersToRefresh(Path.GetDirectoryName(fi.Path));
+                    }
                 }
                 else
                 {
-                    RepositoryItemBase repoItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(fi.Path);
-                    if (repoItem != null)
-                    {
-                        repoItem.RefreshSourceControlStatus();
-                    }
-
-                    GetParentRepositoryFolderBase(Path.GetDirectoryName(fi.Path));
+                    AddToParentFoldersToRefresh(Directory.GetParent(fi.Path).FullName);
                 }
             }
-            foreach (RepositoryFolderBase folder in parentFolders)
+
+            //refresh parent folders
+            foreach (string folder in parentFolders)
             {
-                folder.RefreshSourceControlStatus();
+                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(folder);
             }
         }
 
@@ -325,15 +333,15 @@ namespace Ginger.SourceControl
         /// Generate unique list of parent Repository folders 
         /// </summary>
         /// <param name="parentFolderPath"></param>
-        public void GetParentRepositoryFolderBase(string parentFolderPath)
+        public void AddToParentFoldersToRefresh(string parentFolderPath)
         {
-            RepositoryFolderBase repoFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(parentFolderPath);
-            if (repoFolder != null)
+            string standardPath = Path.GetFullPath(parentFolderPath);
+            if (!parentFolders.Contains(standardPath))
             {
-                if(!parentFolders.Contains(repoFolder))
+                //check if not already covered with exsting folder path(
+                if (parentFolders.Where(x => x.Contains(standardPath)).FirstOrDefault() == null)
                 {
-                    parentFolders.Add(repoFolder);
-                    GetParentRepositoryFolderBase(Directory.GetParent(repoFolder.FolderFullPath).FullName);
+                    parentFolders.Add(standardPath);
                 }
             }
         }

@@ -394,6 +394,14 @@ namespace GingerWPF.TreeViewItemsLib
                         mTreeView.Tree.Dispatcher.Invoke(() =>
                         {
                             mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, GetTreeItem((dynamic)e.NewItems[0]));
+                            if(e.NewItems[0] is RepositoryItemBase)
+                            {
+                                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(((RepositoryItemBase)e.NewItems[0]).FilePath));
+                            }    
+                            else if(e.NewItems[0] is RepositoryFolderBase)
+                            {
+                                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(((RepositoryFolderBase)e.NewItems[0]).FolderFullPath);
+                            }
                         });
                         }
                         break;
@@ -404,6 +412,14 @@ namespace GingerWPF.TreeViewItemsLib
                             mTreeView.Tree.Dispatcher.Invoke(() =>
                             {
                                 mTreeView.Tree.DeleteItemByObjectAndSelectParent(e.OldItems[0], (ITreeViewItem)this);
+                                if (e.OldItems[0] is RepositoryItemBase)
+                                {
+                                    WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(((RepositoryItemBase)e.OldItems[0]).FilePath));
+                                }
+                                else if (e.OldItems[0] is RepositoryFolderBase)
+                                {
+                                    WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(((RepositoryFolderBase)e.OldItems[0]).FolderFullPath);
+                                }
                             });
                         }
                     break;
@@ -563,8 +579,8 @@ namespace GingerWPF.TreeViewItemsLib
                 ImageMakerControl sourceControlImage = new ImageMakerControl();                
                 sourceControlImage.BindControl(repoItem, nameof(RepositoryItemBase.SourceControlStatus));
                 repoItem.RefreshSourceControlStatus();
-                sourceControlImage.Width = 10;
-                sourceControlImage.Height = 10;
+                sourceControlImage.Width = 8;
+                sourceControlImage.Height = 8;                
                 stack.Children.Add(sourceControlImage);
             }
 
@@ -617,9 +633,10 @@ namespace GingerWPF.TreeViewItemsLib
                 // Source control image
                 ImageMakerControl sourceControlImage = new ImageMakerControl();
                 sourceControlImage.BindControl(repoItemFolder, nameof(RepositoryFolderBase.SourceControlStatus));
-                repoItemFolder.RefreshSourceControlStatus();
-                sourceControlImage.Width = 10;
-                sourceControlImage.Height = 10;
+                repoItemFolder.RefreshFolderSourceControlStatus();
+                sourceControlImage.Width = 8;
+                sourceControlImage.Height = 8;
+                sourceControlImage.Margin = new Thickness(0, 0, 2, 0);
                 stack.Children.Add(sourceControlImage);
             }
 
