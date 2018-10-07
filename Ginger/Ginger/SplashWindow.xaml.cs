@@ -41,7 +41,7 @@ namespace Ginger
             //updating splash window
             //lblAppName.Content = "Amdocs Ginger Automation";// Ginger.App.AppName; TODO: pull name from App once ready
             //lblAppMoto.Content = Ginger.App.AppMoto;
-            lblAppVersion.Content = "Version " + Ginger.App.AppVersion;
+            lblAppVersion.Content = "Version " + Ginger.App.AppShortVersion;
             //End           
         }
 

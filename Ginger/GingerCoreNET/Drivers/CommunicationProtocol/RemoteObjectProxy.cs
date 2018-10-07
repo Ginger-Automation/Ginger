@@ -26,7 +26,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
     // a wrapper class for the objects requested by the clients
     public class RemoteObjectProxy<T> : DispatchProxy
     {        
-        // Socket client which is used to communcaite with the REmoteObjectsServer
+        // Socket client which is used to communcaite with the RemoteObjectsServer
         public RemoteObjectsClient mRemoteObjectsClient;
 
         public Guid RemoteObjectGuid { get; set; }

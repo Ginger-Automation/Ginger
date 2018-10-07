@@ -207,11 +207,32 @@ namespace Ginger.Repository
         }
 
 
-        //FIXME to work using SR 
+        
         public static RepositoryItemBase GetMatchingRepoItem(RepositoryItemBase item, IEnumerable<object> existingRepoItems, ref bool linkIsByExternalID, ref bool linkIsByParentID)
-        {
-            // Temp FIX Check me!!!
-            if (existingRepoItems == null) return null;
+        {            
+            if (existingRepoItems == null)
+            {
+                if (item is ActivitiesGroup)
+                {
+                    existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+                }
+                else if (item is Activity)
+                {
+                    existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                }
+                else if (item is Act)
+                {
+                    existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+                }
+                else if (item is VariableBase)
+                {
+                    existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+                }
+                else
+                {
+                    return null;
+                }
+            }
 
             linkIsByExternalID = false;
             linkIsByParentID = false;

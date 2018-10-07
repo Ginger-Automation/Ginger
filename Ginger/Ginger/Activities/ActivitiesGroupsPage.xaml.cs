@@ -236,7 +236,7 @@ namespace Ginger.Activities
 
         private void AddToRepository(object sender, RoutedEventArgs e)
         {
-            List<RepositoryItem> listOfGroups = grdActivitiesGroups.Grid.SelectedItems.Cast<RepositoryItem>().ToList();// as List<RepositoryItem>;
+            List<RepositoryItemBase> listOfGroups = grdActivitiesGroups.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList();// as List<RepositoryItem>;
 
             List<RepositoryItemBase> itemsToUpload = new List<RepositoryItemBase>();
             foreach (RepositoryItemBase group in listOfGroups)
