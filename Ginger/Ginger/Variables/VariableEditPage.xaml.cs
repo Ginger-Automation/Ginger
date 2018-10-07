@@ -201,25 +201,19 @@ namespace Ginger.Variables
                 }
             }
 
+            this.Height = 800;
+            this.Width = 800;
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
             return saveWasDone;
         }
 
         private void FindAndRepalceSaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (LocalRepository.CheckIfSureDoingChange(mVariable, "change") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mVariable, "change") == true)
             {
                 try
-                {
-                    if (mParent.UseNewRepositorySerializer)
-                    {
-                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mParent);
-                    }
-                    else
-                    {
-                        if (mParent is RepositoryItem)
-                            ((RepositoryItem)mParent).Save();
-                    }
+                {                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mParent);                    
                     saveWasDone = true;
                 }
                 catch
@@ -271,10 +265,10 @@ namespace Ginger.Variables
 
         private void CheckIfUserWantToSave()
         {
-            if (LocalRepository.CheckIfSureDoingChange(mVariable, "change") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mVariable, "change") == true)
             {
-                saveWasDone = true;
-                mVariable.Save();
+                saveWasDone = true;                
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mVariable);
                 _pageGenericWin.Close();
             }
         }

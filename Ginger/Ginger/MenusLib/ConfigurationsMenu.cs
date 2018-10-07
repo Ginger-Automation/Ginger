@@ -2,10 +2,10 @@
 using Amdocs.Ginger.Common.Enums;
 using Ginger.GeneralWindows;
 using Ginger.Reports;
+using Ginger.SolutionWindows;
 using Ginger.SolutionWindows.TreeViewItems;
+using Ginger.TagsLib;
 using Ginger.TwoLevelMenuLib;
-using GingerCore.Environments;
-using GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems;
 using GingerWPF.UserControlsLib;
 using System;
 using System.Windows.Controls;
@@ -17,7 +17,7 @@ namespace Ginger.ConfigurationsLib
         public static TwoLevelMenu twoLevelMenu;
 
         private static TwoLevelMenuPage mMenusPage = null;
-        public static TwoLevelMenuPage menusPage
+        public static TwoLevelMenuPage MenusPage
         {
             get
             {
@@ -32,34 +32,42 @@ namespace Ginger.ConfigurationsLib
 
         private static void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Solution")
+            if (e.PropertyName == nameof(UserProfile.Solution))
             {
-                menusPage.Reset();
+                MenusPage.Reset();
             }
         }
 
         private static TwoLevelMenu GetMenu()
         {
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
-            TopMenuItem environemntsMenu = new TopMenuItem("Environments", ConsoleKey.E, "Environemnts_AID");
-            environemntsMenu.Add("Environments List",  EnvsList, ConsoleKey.L, "Manage Environments", "Envs List");
-            environemntsMenu.Add("Compare", EnvsCompare, ConsoleKey.C, "Compare Environments", "compare Envs AID");
-            twoLevelMenu.Add(environemntsMenu);
 
-            TopMenuItem agentsMenu = new TopMenuItem("Agents", ConsoleKey.A, "Agents AID");
-            agentsMenu.Add("List", AgentsList, ConsoleKey.L, "", "AgentsList");            
+            TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, "Target Applications", ConsoleKey.T, "Target Applications AID", "Name & Platformes of the Applications which been tested in current Solution");
+            targetApplicationsMenu.Add(eImageType.Application, "", GetTargetApplicationsPage, ConsoleKey.T, "", "AID");
+            twoLevelMenu.Add(targetApplicationsMenu);
+
+            TopMenuItem agentsMenu = new TopMenuItem(eImageType.Agent, "Agents", ConsoleKey.A, "Agents AID", "Agents are the drivers which comunicates with the tested application");
+            agentsMenu.Add(eImageType.Agent, "", AgentsList, ConsoleKey.A, "", "AID");
             twoLevelMenu.Add(agentsMenu);
-
-            TopMenuItem reportsMenu = new TopMenuItem("Reports", ConsoleKey.R, "Reports_AID");
-            reportsMenu.Add("Reports Templates", ReportsList, ConsoleKey.L, "Report Templates", "Reports AID");
-            reportsMenu.Add("General Configurations", ReportsConfig, ConsoleKey.C, "Configuration", "Reports Config AID");
-            
-            // reportsMenu.Add("Templates", ReportsTemplates, ConsoleKey.T, "Edit and Create report templates", "AID");
+           
+            TopMenuItem reportsMenu = new TopMenuItem(eImageType.Report, "Reports", ConsoleKey.R, "Reports_AID", "Reports Templates and Configurations");
+            reportsMenu.Add(eImageType.Report, "Reports Templates", ReportsList, ConsoleKey.R, "Reports Templates are used to define the HTML report content and design", "Reports AID");
+            reportsMenu.Add(eImageType.Config, "General Configurations", ReportsConfig, ConsoleKey.R, "Global Reports Configurations", "Reports Config AID");           
             twoLevelMenu.Add(reportsMenu);
-            
+
+            TopMenuItem tagsMenu = new TopMenuItem(eImageType.Tag, "Tags", ConsoleKey.T, "Tags AID", "List of Tags to be used for marking any of the Solution items with");
+            tagsMenu.Add(eImageType.Tag, "", GetTagsPage, ConsoleKey.T, "", "AID");
+            twoLevelMenu.Add(tagsMenu);
+
             return twoLevelMenu;
         }
-        
+
+        private static Page GetTargetApplicationsPage()
+        {
+            return (new TargetApplicationsPage());
+        }
+
+
         private static Page ReportsConfig()
         {
             return new HTMLReportsConfigurationPage();
@@ -74,14 +82,10 @@ namespace Ginger.ConfigurationsLib
             return agentsPage;
         }
 
-        private static Page EnvsCompare()
-        {            
-            return new Page() { Content = "Env Compare coming soon..." };
-        }
 
-        private static Page ReportsTemplates()
+        private static Page GetTagsPage()
         {
-             return new Page() { Content = "Reports templates coming soon..." };            
+             return  new TagsPage(TagsPage.eViewMode.Solution); ;            
         }
 
         private static Page ReportsList()
@@ -92,19 +96,7 @@ namespace Ginger.ConfigurationsLib
             return reportsPage;
         }
 
-        private static Page EnvsList()
-        {
-            // cache
-            EnvironmentsFolderTreeItem EnvsRoot = new EnvironmentsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ProjEnvironment>());
-            SingleItemTreeViewExplorerPage p = new SingleItemTreeViewExplorerPage("Environments", eImageType.Environment, EnvsRoot, EnvsRoot.SaveAllTreeFolderItemsHandler, EnvsRoot.AddItemHandler);
-            //xEnvironmentsItem.Tag = p;
-            //xSelectedItemFrame.Content = p;
-            EnvsRoot.IsGingerDefualtFolder = true;
 
-            return p;
-        }
-
-        
 
     }
 }

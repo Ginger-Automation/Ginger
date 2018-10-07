@@ -17,12 +17,15 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Enums;
 using Ginger.ALM;
 using Ginger.BusinessFlowFolder;
+using Ginger.BusinessFlowWindows;
 using Ginger.Exports.ExportToJava;
 using Ginger.UserControlsLib.TextEditor;
 using Ginger.VisualAutomate;
 using GingerCore;
+using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -31,35 +34,36 @@ using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    public class BusinessFlowTreeItem : TreeViewItemBase, ITreeViewItem
+    public class BusinessFlowTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private BusinessFlowPage mBusinessFlowPage;
-        public BusinessFlow BusinessFlow { get; set; }
-        private StackPanel mHeader;
-        public eBusinessFlowsTreeViewMode mViewMode;
+        private BusinessFlow mBusinessFlow { get; set; }
+        private eBusinessFlowsTreeViewMode mViewMode;
 
         Object ITreeViewItem.NodeObject()
         {
-            return BusinessFlow;
+            return mBusinessFlow;
         }
+
         override public string NodePath()
         {
-            return BusinessFlow.FileName;
+            return mBusinessFlow.FileName;
         }
+
         override public Type NodeObjectType()
         {
             return typeof(BusinessFlow);
         }
 
-        public BusinessFlowTreeItem(eBusinessFlowsTreeViewMode viewMode = eBusinessFlowsTreeViewMode.ReadWrite)
+        public BusinessFlowTreeItem(BusinessFlow businessFlow, eBusinessFlowsTreeViewMode viewMode = eBusinessFlowsTreeViewMode.ReadWrite)
         {
+            mBusinessFlow = businessFlow;
             mViewMode = viewMode;
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            mHeader = TreeViewUtils.CreateItemHeader(BusinessFlow.Name, "@WorkFlow_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(BusinessFlow.FileName , ref ItemSourceControlStatus), BusinessFlow, BusinessFlow.Fields.Name, BusinessFlow.IsDirty);
-            return mHeader;
+        {         
+            return NewTVItemHeaderStyle(mBusinessFlow);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -76,7 +80,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mBusinessFlowPage == null)
             {
-                mBusinessFlowPage = new BusinessFlowPage(BusinessFlow);
+                mBusinessFlowPage = new BusinessFlowPage(mBusinessFlow);
             }
             return mBusinessFlowPage;
         }
@@ -84,19 +88,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         ContextMenu ITreeViewItem.Menu()
         {
             return mContextMenu;
-        }
-
-        private void VisualAutomate(object sender, RoutedEventArgs e)
-        {
-            VisualAutomatePage p = new VisualAutomatePage(BusinessFlow);
-            p.ShowAsWindow();
-        }
-
-        private void ExportToJava(object sender, RoutedEventArgs e)
-        {
-            BFToJava j = new BFToJava();
-            j.BusinessFlowToJava(BusinessFlow);
-        }
+        }     
 
         void ITreeViewItem.SetTools(ITreeView TV)
         {
@@ -104,15 +96,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
             if (mViewMode == eBusinessFlowsTreeViewMode.ReadWrite)
             {
-                AddItemNodeBasicManipulationsOptions(mContextMenu);
-                AddSourceControlOptions(mContextMenu);
-
                 if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
                 {
-                    MenuItem automateMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Automate");
-                    TreeViewUtils.AddSubMenuItem(automateMenu, "Automate", Automate, null, "@Automate_16x16.png");
-                    TreeViewUtils.AddSubMenuItem(automateMenu, "Visual Automate", VisualAutomate, null, "@Flow_16x16.png");
+                    //MenuItem automateMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Automate");
+                    //TreeViewUtils.AddSubMenuItem(automateMenu, "Automate", Automate, null, "@Automate_16x16.png");
+                    //TreeViewUtils.AddSubMenuItem(automateMenu, "Visual Automate", VisualAutomate, null, "@Flow_16x16.png");   
+                    TreeViewUtils.AddMenuItem(mContextMenu, "Automate", Automate, null, eImageType.Automate);
                 }
+                
+                AddItemNodeBasicManipulationsOptions(mContextMenu);
+                AddSourceControlOptions(mContextMenu);
 
                 MenuItem ExportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to ALM", ExportToALM, null, "@ALM_16x16.png");
@@ -124,18 +117,31 @@ namespace Ginger.SolutionWindows.TreeViewItems
             AddGherkinOptions(mContextMenu);
         }
 
+        private void VisualAutomate(object sender, RoutedEventArgs e)
+        {
+            VisualAutomatePage p = new VisualAutomatePage(mBusinessFlow);
+            p.ShowAsWindow();
+        }
+
+        private void ExportToJava(object sender, RoutedEventArgs e)
+        {
+            BFToJava j = new BFToJava();
+            j.BusinessFlowToJava(mBusinessFlow);
+        }
+
         public void AddGherkinOptions(ContextMenu CM)
         {
-            if (BusinessFlow.Source == BusinessFlow.eSource.Gherkin)
+            if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
             {
                 MenuItem GherkinMenu = TreeViewUtils.CreateSubMenu(CM, "Gherkin");
                 //TOD Change Icon
                 TreeViewUtils.AddSubMenuItem(GherkinMenu, "Open Feature file", GoToGherkinFeatureFile, null, "@FeatureFile_16X16.png");
             }
         }
+
         private void GoToGherkinFeatureFile(object sender, RoutedEventArgs e)
         {
-            DocumentEditorPage documentEditorPage = new DocumentEditorPage(BusinessFlow.ExternalID.Replace("~", App.UserProfile.Solution.Folder), true);
+            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mBusinessFlow.ExternalID.Replace("~", App.UserProfile.Solution.Folder), true);
             documentEditorPage.Title = "Gherkin Page";
             documentEditorPage.Height = 700;
             documentEditorPage.Width = 1000;
@@ -145,10 +151,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         
         public override void PostDeleteTreeItemHandler()
         {
-            if (App.BusinessFlow == BusinessFlow)
+            if (App.BusinessFlow == mBusinessFlow)
             {
-                if (App.LocalRepository.GetSolutionBusinessFlows().Count != 0)
-                    App.BusinessFlow = App.LocalRepository.GetSolutionBusinessFlows()[0];
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count != 0)
+                    App.BusinessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()[0];
                 else
                     App.BusinessFlow = null;
             }
@@ -156,23 +162,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void Automate(object sender, System.Windows.RoutedEventArgs e)
         {
-            App.MainWindow.AutomateBusinessFlow(BusinessFlow);
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, mBusinessFlow);
         }
 
         private void ExportToALM(object sender, System.Windows.RoutedEventArgs e)
         {
-            ALMIntegration.Instance.ExportBusinessFlowToALM(BusinessFlow, true);
+            ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow, true);
         }
+
         private void ExportToCSV(object sender, System.Windows.RoutedEventArgs e)
         {
             Export.GingerToCSV.BrowseForFilename();
-            Export.GingerToCSV.BusinessFlowToCSV(BusinessFlow);
-        }
-
-        private void RefreshParentFolderChildrens()
-        {
-            App.LocalRepository.RefreshSolutionBusinessFlowsCache(specificFolderPath: BusinessFlow.ContainingFolderFullPath);
-            mTreeView.Tree.RefreshSelectedTreeNodeParent();
+            Export.GingerToCSV.BusinessFlowToCSV(mBusinessFlow);
         }
     }
 }

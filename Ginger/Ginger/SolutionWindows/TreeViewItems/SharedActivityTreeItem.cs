@@ -24,27 +24,30 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using GingerWPF.TreeViewItemsLib;
+using Amdocs.Ginger.Common.Enums;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class SharedActivityTreeItem : TreeViewItemBase, ITreeViewItem
+    class SharedActivityTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private ActivityEditPage mActivityEditPage;
-        public Activity Activity { get; set; }
+        private Activity mActivity;
+        private ActivityEditPage mActivityEditPage;        
         private SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode mShowMode;
 
-        public SharedActivityTreeItem(SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode showMode = SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode.ReadWrite)
+        public SharedActivityTreeItem(Activity activity, SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode showMode = SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode.ReadWrite)
         {
+            mActivity = activity;
             mShowMode = showMode;
         }
 
         Object ITreeViewItem.NodeObject()
         {
-            return Activity;
+            return mActivity;
         }
         override public string NodePath()
         {
-            return Activity.FileName;
+            return mActivity.FileName;
         }
         override public Type NodeObjectType()
         {
@@ -52,8 +55,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.CreateItemHeader(Activity.ActivityName, "@Activities_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Activity.FileName, ref ItemSourceControlStatus));
+        {           
+            return NewTVItemHeaderStyle(mActivity);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -70,7 +73,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActivityEditPage == null)
             {
-                mActivityEditPage = new ActivityEditPage(Activity);
+                mActivityEditPage = new ActivityEditPage(mActivity);
             }
             return mActivityEditPage;
         }
@@ -88,27 +91,27 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
 
-                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, "@Link_16x16.png");
+                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
 
                 AddSourceControlOptions(mContextMenu);
             }
             else
             {
-                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, "@Link_16x16.png");
+                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
             }
         }
 
         private void ShowUsage(object sender, RoutedEventArgs e)
         {
-            RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage(Activity);
+            RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage(mActivity);
             usagePage.ShowAsWindow();
         }
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            if (LocalRepository.CheckIfSureDoingChange(Activity, "delete") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivity, "delete") == true)
             {
-                return (base.DeleteTreeItem(Activity, deleteWithoutAsking, refreshTreeAfterDelete));                
+                return (base.DeleteTreeItem(mActivity, deleteWithoutAsking, refreshTreeAfterDelete));                
             }
 
             return false;

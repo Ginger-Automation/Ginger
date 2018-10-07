@@ -16,6 +16,6 @@
                 </Button>
             </DataTemplate>
         </Grid.Resources>
-        <Ginger:ucGrid x:Name="grdActions" Title="Actions Repository" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" IsManipulationEnabled="True" IsReadOnly="True" />
+        <Ginger:ucGrid x:Name="xActionsGrid" Title="Actions Repository" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" IsManipulationEnabled="True" IsReadOnly="True" />
     </Grid>
 </Page>

@@ -1,0 +1,55 @@
+﻿<Page x:Class="Ginger.User.UserProfilePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.User"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      d:DesignHeight="800" d:DesignWidth="400"
+      Title="UserProfilePage">
+
+    <ScrollViewer Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel Grid.Column="0" >
+            <Label Content="Profile Image:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="-5,20,0,0"/>
+            <Grid Height="100">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+                <Ellipse Grid.Column="0" Height="100" Width="100">
+                    <Ellipse.Fill>
+                        <ImageBrush x:Name="xProfileImageImgBrush" RenderOptions.BitmapScalingMode="HighQuality"  Stretch="Uniform"  />
+                    </Ellipse.Fill>
+                </Ellipse>
+                <StackPanel Grid.Column="1">
+                    <usercontrols:ucButton x:Name="xProfileImageBrowseBtn" ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="OpenFolder" Click="xProfileImageBrowseBtn_Click" ToolTip="Load/Replace Image"/>
+                    <usercontrols:ucButton x:Name="xProfileImageDeleteBtn" ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Delete" Click="xProfileImageDeleteBtn_Click"  ToolTip="Delete Image"/>
+                </StackPanel>
+            </Grid>
+
+            <Label Content="User Name:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="-5,20,0,0"/>
+            <TextBox x:Name="xUserNameTxtBox" Style="{StaticResource $TextBoxStyle}" IsReadOnly="True" IsEnabled="False"/>
+            <Label Content="First Name:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left"/>
+            <TextBox x:Name="xUserFirstNameTxtBox" Style="{StaticResource $TextBoxStyle}"/>
+            <Label Content="Middle Name:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left"/>
+            <TextBox x:Name="xUserMiddleNameTxtBox" Style="{StaticResource $TextBoxStyle}"/>
+            <Label Content="Last Name:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left"/>
+            <TextBox x:Name="xUserLastNameTxtBox" Style="{StaticResource $TextBoxStyle}"/>
+
+            <Label Content="User Type:" Style="{StaticResource $LabelStyle}" Margin="-5,20,0,0"/>
+            <ComboBox x:Name="xUserTypeComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xUserTypeComboBox_SelectionChanged"/>
+            <Label x:Name="xUserTypeNoteLbl" Content="Note: Role type selection change will effect offered functionalities on UI, changes will fully take effect only after Ginger re-start." Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" FontSize="9" />
+            <Label Content="Role:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" />
+            <ComboBox x:Name="xUserRoleComboBox" Style="{StaticResource $FlatInputComboBoxStyle}"/>
+            <Label Content="Department:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left"/>
+            <TextBox x:Name="xUserDepartmentTxtBox" Style="{StaticResource $TextBoxStyle}"/>
+                        
+            <Label Content="Email Address:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="-5,20,0,0"/>
+            <TextBox x:Name="xUserEmailAddressTxtBox" Style="{StaticResource $TextBoxStyle}"/>
+            <Label Content="Phone:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+            <TextBox x:Name="xUserPhoneTxtBox" Style="{StaticResource $TextBoxStyle}" Margin="0,0,0,20"/>
+            
+        </StackPanel>
+    </ScrollViewer>
+</Page>

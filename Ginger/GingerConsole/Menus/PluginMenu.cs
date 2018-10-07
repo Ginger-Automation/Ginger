@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.RosLynLib;
+using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 using Amdocs.Ginger.Repository;
 using System;
 
@@ -72,8 +74,7 @@ namespace Amdocs.Ginger.GingerConsole
             //string actnum = Console.ReadLine();
             //ActionHandler AH =  p.GetStandAloneActionHandler(list[int.Parse(actnum)].ID);
             
-            //// FIXME need lazy load of params
-            //// FIXME params not loaded
+            // FIXME need lazy load of params
             //foreach(ActionParam v in AH.GingerAction.InputParams.Values)
             //{                
             //    Console.WriteLine(v.Name + "?");

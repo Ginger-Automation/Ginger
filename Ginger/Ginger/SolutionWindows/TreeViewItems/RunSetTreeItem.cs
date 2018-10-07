@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Ginger.Run;
+using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -24,17 +26,22 @@ using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class RunSetTreeItem : TreeViewItemBase, ITreeViewItem
+    class RunSetTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        public RunSetConfig RunSetConfig { get; set; }
+        RunSetConfig mRunSetConfig;
+
+        public RunSetTreeItem(RunSetConfig runSetConfig)
+        {
+            mRunSetConfig = runSetConfig;
+        }
 
         Object ITreeViewItem.NodeObject()
         {
-            return RunSetConfig;
+            return mRunSetConfig;
         }
         override public string NodePath()
         {
-            return RunSetConfig.FileName;
+            return mRunSetConfig.FileName;
         }
         override public Type NodeObjectType()
         {
@@ -42,8 +49,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.CreateItemHeader(RunSetConfig.Name, "@Run_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(RunSetConfig.FileName, ref ItemSourceControlStatus));
+        {           
+            return NewTVItemHeaderStyle(mRunSetConfig);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -77,9 +84,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            if (base.DeleteTreeItem(RunSetConfig, deleteWithoutAsking, refreshTreeAfterDelete))
+            if (base.DeleteTreeItem(mRunSetConfig, deleteWithoutAsking, refreshTreeAfterDelete))
             {
-                if (App.RunsetExecutor.RunSetConfig.Equals(RunSetConfig))//update Run tab in case the loaded run set was deleted
+                if (App.RunsetExecutor.RunSetConfig.Equals(mRunSetConfig))//update Run tab in case the loaded run set was deleted
                     App.RunsetExecutor.RunSetConfig = null;
 
                 return true;

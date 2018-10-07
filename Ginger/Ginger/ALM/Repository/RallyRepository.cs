@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.ALM.Rally;
 using Ginger.Repository;
@@ -90,13 +91,12 @@ namespace Ginger.ALM.Repository
                 foreach (RallyTestPlan testPlan in testPlanList)
                 {
                     //Refresh Ginger repository and allow GingerRally to use it
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = App.LocalRepository.GetSolutionRepoActivities(false);
+                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();                    
+                    ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
                     try
                     {
-                        BusinessFlow existedBF = App.LocalRepository.GetSolutionBusinessFlows().Where(x => x.ExternalID == RallyID + "=" + testPlan.RallyID).FirstOrDefault();
+                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == RallyID + "=" + testPlan.RallyID).FirstOrDefault();
                         if (existedBF != null)
                         {
                             MessageBoxResult userSelection = Reporter.ToUser(eUserMsgKeys.TestSetExists, testPlan.Name);
@@ -136,10 +136,11 @@ namespace Ginger.ALM.Repository
                         }
 
                         //save bf
-                        tsBusFlow.FileName = LocalRepository.GetRepoItemFileName(tsBusFlow, importDestinationPath);
-                        tsBusFlow.SaveToFile(tsBusFlow.FileName);
+                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
+                        //tsBusFlow.FileName = LocalRepository.GetRepoItemFileName(tsBusFlow, importDestinationPath);
+                        //tsBusFlow.SaveToFile(tsBusFlow.FileName);
                         //add to cach
-                        App.LocalRepository.AddItemToCache(tsBusFlow);
+                        //App.LocalRepository.AddItemToCache(tsBusFlow);
                         Reporter.CloseGingerHelper();
                     }
                     catch (Exception ex)
@@ -148,7 +149,7 @@ namespace Ginger.ALM.Repository
                     }
 
                     //Refresh the solution tree
-                    App.MainWindow.RefreshSolutionPage();
+                    //App.MainWindow.RefreshSolutionPage();
 
                     Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
                 }
@@ -217,8 +218,8 @@ namespace Ginger.ALM.Repository
             {
                 if (performSaveAfterExport)
                 {
-                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    businessFlow.Save();
+                    Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                 }
                 if(almConectStyle != ALMIntegration.eALMConnectType.Auto && almConectStyle != ALMIntegration.eALMConnectType.Silence)
                     Reporter.ToUser(eUserMsgKeys.ExportItemToALMSucceed);

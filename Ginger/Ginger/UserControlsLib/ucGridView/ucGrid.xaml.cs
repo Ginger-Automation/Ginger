@@ -353,7 +353,7 @@ namespace Ginger
         #region #####Grid Handlers
         public object Title
         {
-            get { return lblTitle.Content; }
+            get { return xSimpleHeaderTitle.Content; }
 
             //TODO: FIXME - due to STA driver like IB move Activity will change the caption
             // Send the MainWindow Dispatcher for updates using main thread
@@ -361,7 +361,7 @@ namespace Ginger
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    lblTitle.Content = value;
+                    xSimpleHeaderTitle.Content = value;
                 });
 
             }
@@ -373,19 +373,19 @@ namespace Ginger
         }
         public Visibility ShowHeader
         {
-            get { return Header.Visibility; }
-            set { Header.Visibility = value; }
+            get { return xSimpleHeader.Visibility; }
+            set { xSimpleHeader.Visibility = value; }
         }
         public Visibility ShowTitle
         {
-            get { return lblTitle.Visibility; }
-            set { lblTitle.Visibility = value; }
+            get { return xSimpleHeaderTitle.Visibility; }
+            set { xSimpleHeaderTitle.Visibility = value; }
         }
 
         public Style TitleStyle
         {
-            get { return lblTitle.Style; }
-            set { lblTitle.Style = value; }
+            get { return xSimpleHeaderTitle.Style; }
+            set { xSimpleHeaderTitle.Style = value; }
         }
 
         public bool SetTitleLightStyle
@@ -400,10 +400,42 @@ namespace Ginger
 
         public void UpdateTitleStyle()
         {
-            if (SetTitleLightStyle)
-                lblTitle.Style = (Style)TryFindResource("@ucGridTitleLightStyle");
+            //if (SetTitleLightStyle)
+            //    xSimpleHeaderTitle.Style = (Style)TryFindResource("@ucGridTitleLightStyle");
+            //else
+            //    xSimpleHeaderTitle.Style = (Style)TryFindResource("@ucTitleStyle_3");
+
+            xSimpleHeaderTitle.Style = (Style)TryFindResource("$ucGridTitleLightStyle");
+           
+        }
+
+        public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName= "",  RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null)
+        {
+            xSimpleHeaderTitle.Visibility = Visibility.Collapsed;
+            xEnhancedHeader.Visibility = Visibility.Visible;
+
+            xEnhancedHeaderIcon.ImageType = itemTypeIcon;
+
+            if (string.IsNullOrEmpty(itemTypeName))
+                xEnhancedHeaderTitle.Content = xSimpleHeaderTitle.Content.ToString();
             else
-                lblTitle.Style = (Style)TryFindResource("@ucTitleStyle_3");
+                xEnhancedHeaderTitle.Content = itemTypeName;
+
+            if (saveAllHandler != null)
+            {
+                xEnhancedHeaderSaveAllButton.Click += saveAllHandler;
+                xEnhancedHeaderSaveAllButton.Visibility = Visibility.Visible;
+            }
+            else
+                xEnhancedHeaderSaveAllButton.Visibility = Visibility.Collapsed;
+
+            if (addHandler != null)
+            {
+                xEnhancedHeaderAddButton.Click += addHandler;
+                xEnhancedHeaderAddButton.Visibility = Visibility.Visible;
+            }
+            else
+                xEnhancedHeaderAddButton.Visibility = Visibility.Collapsed;
         }
 
         public Visibility ShowRefresh
@@ -1194,6 +1226,10 @@ public void RemoveCustomView(string viewName)
                                 gridCol = BindImageColumn(colView.Field);
                                 break;
 
+                            case GridColView.eGridColStyleType.ImageMaker:
+                                gridCol = BindImageMakerColumn(colView.Field);
+                                break;
+
                             case GridColView.eGridColStyleType.CheckBox:
                                 gridCol = new DataGridCheckBoxColumn();
                                 ((DataGridCheckBoxColumn)gridCol).Binding = binding;
@@ -1531,6 +1567,22 @@ public void RemoveCustomView(string viewName)
             return imgColumn;
         }
 
+        public DataGridTemplateColumn BindImageMakerColumn(string ImageField)
+        {
+            // Here we add a new Image column 
+            DataGridTemplateColumn imgColumn = new DataGridTemplateColumn();
+            imgColumn.Header = "";
+            FrameworkElementFactory imageFactory = new FrameworkElementFactory(typeof(System.Windows.Controls.Image));
+            Binding b = new Binding();
+            b.Path = new PropertyPath(ImageField);
+            b.Converter = new ImageMakerToSourceConverter();
+            imageFactory.SetValue(System.Windows.Controls.Image.SourceProperty, b);
+            DataTemplate dataTemplate = new DataTemplate();
+            dataTemplate.VisualTree = imageFactory;
+            imgColumn.CellTemplate = dataTemplate;
+            return imgColumn;
+        }
+
         public class ImageToSourceConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter,
@@ -1549,6 +1601,22 @@ public void RemoveCustomView(string viewName)
                     return bi;
                 }
                 return null;
+            }
+
+            public object ConvertBack(object value, Type targetType,
+                object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public class ImageMakerToSourceConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter,
+                    System.Globalization.CultureInfo culture)
+            {
+                eImageType imageType = (eImageType)value;
+                return ImageMakerControl.GetImageSource(imageType);                
             }
 
             public object ConvertBack(object value, Type targetType,
@@ -1876,7 +1944,7 @@ public void RemoveCustomView(string viewName)
 
         public void SetTitleStyle(Style titleStyle)
         {
-            lblTitle.Style = titleStyle;
+            xSimpleHeaderTitle.Style = titleStyle;
         }
 
         private void Btn_MarkUnMarkAll(object sender, RoutedEventArgs e)

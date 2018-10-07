@@ -45,14 +45,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
             //Add Reports
-            ReportTemplatesTreeItem REPRI = new ReportTemplatesTreeItem();
-            REPRI.Folder = "Document Report Templates";
-            REPRI.Path = App.UserProfile.Solution.Folder + @"\ReportTemplates\";
+            ReportTemplatesTreeItem REPRI = new ReportTemplatesTreeItem();            
             Childrens.Add(REPRI);
 
-            HTMLReportTemplatesTreeItem HTMLREPRI = new HTMLReportTemplatesTreeItem();
-            HTMLREPRI.Folder = "E-mail Reports Templates";
-            HTMLREPRI.Path = App.UserProfile.Solution.Folder + @"\HTMLReportTemplates\";
+            HTMLReportTemplatesTreeItem HTMLREPRI = new HTMLReportTemplatesTreeItem();            
             Childrens.Add(HTMLREPRI);           
 
             return Childrens;

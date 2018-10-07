@@ -19,7 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.UserConfig;
 using GingerCore;
 using GingerCore.Platforms;
@@ -34,16 +34,57 @@ using System.Reflection;
 
 namespace Ginger
 {
-    public enum eGingerStatus{
-        Closed,Active,AutomaticallyClosed
+    public enum eGingerStatus {
+        Closed, Active, AutomaticallyClosed
     }
-  
-    public class UserProfile : RepositoryItem
+
+    public enum eUserType
+    {
+        Regular,
+        Business
+    }
+
+    public enum eUserRole
+    {
+        None,
+        [EnumValueDescription("Product Owner")]
+        ProductOwner,
+        [EnumValueDescription("Scrum Master")]
+        ScrumMaster,
+        Developer,
+        Tester,
+        [EnumValueDescription("Technical Writer")]
+        TechnicalWriter,
+        [EnumValueDescription("User Experience")]
+        UserExperience,
+        [EnumValueDescription("Release Manager")]
+        ReleaseManager,
+        [EnumValueDescription("SW Architect")]
+        SWArchitect,
+        [EnumValueDescription("RM Scoping")]
+        RMScoping,
+        [EnumValueDescription("Service Partner")]
+        ServicePartner,
+        PMO,
+        [EnumValueDescription("Dev Manager")]
+        DevManager,
+        [EnumValueDescription("Program Manager")]
+        ProgramManager,
+        Architect,
+        [EnumValueDescription("Project Manager")]
+        ProjectManager,
+        [EnumValueDescription("Testing Manager")]
+        TestingManager,
+        [EnumValueDescription("Dev Expert")]
+        DevExpert
+    }
+
+    public class UserProfile : RepositoryItemBase
     {
         //Move it to UCGridLib
         public class UserProfileGrid
         {
-            public string GridId {get; set;}
+            public string GridId { get; set; }
             public List<UserProfileGridCol> Cols = new List<UserProfileGridCol>();
         }
 
@@ -56,7 +97,7 @@ namespace Ginger
         public new static class Fields
         {
             public static string AutoLoadLastSolution = "AutoLoadLastSolution";
-            public static string ReportTemplate ="ReportTemplate";
+            public static string ReportTemplate = "ReportTemplate";
             public static string DoNotAskToUpgradeSolutions = "DoNotAskToUpgradeSolutions";
             public static string SourceControlURL = "SourceControlURL"; //represent the source control SERVER url
             public static string SourceControlType = "SourceControlType";   //represent the last used source control type
@@ -76,61 +117,129 @@ namespace Ginger
             set
             {
                 mSolution = value;
-                OnPropertyChanged("Solution");
+                OnPropertyChanged(nameof(Solution));
             }
         }
-        
+
         public List<UserProfileGrid> Grids = new List<UserProfileGrid>();
 
+        bool mAutoLoadLastSolution;
         [IsSerializedForLocalRepository]
-        public bool AutoLoadLastSolution { get; set; }
+        public bool AutoLoadLastSolution
+        {
+            get
+            {
+                return mAutoLoadLastSolution;
+            }
+            set
+            {
+                mAutoLoadLastSolution = value;
+                OnPropertyChanged(nameof(AutoLoadLastSolution));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public eGingerStatus GingerStatus { get; set; }
-        
-        public ObservableList<Solution> RecentSolutionsObjects = new ObservableList<Solution>();
-        public void SetRecentSolutionsObjects()
-        {
-            try
-            {
-                int counter = 0;
-                foreach (string s in RecentSolutions)
-                {
-                    string SolutionFile = s + @"\Ginger.Solution.xml";
-                    if (File.Exists(SolutionFile))
-                    {
-                        Solution sol = (Solution)RepositoryItem.LoadFromFile(typeof(Solution), SolutionFile);
-                        sol.Folder = s;
-                        RecentSolutionsObjects.Add(sol);
-
-                        counter++;
-                        if (counter >= 10) break; // only first latest 10 solutions
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to set Recent Solutions Objects", ex);
-            }
-        }
-
-        public void AddsolutionToRecent(Solution s)
-        {
-            App.UserProfile.RecentSolutions.Remove(s.Folder);
-            // Add it first place 
-            App.UserProfile.RecentSolutions.Insert(0, s.Folder);
-        }
-
-        public void AddsolutionToRecent(string solutionFolder)
-        {
-            App.UserProfile.RecentSolutions.Remove(solutionFolder);
-            // Add it first place 
-            App.UserProfile.RecentSolutions.Insert(0, solutionFolder);
-        }
 
         // Keep the folder names of last solutions opened
         [IsSerializedForLocalRepository]
         public List<string> RecentSolutions = new List<string>();
+
+        private void CleanRecentSolutionsList()
+        {
+            try
+            {
+                //Clean not exist Solutions
+                for (int i = 0; i < RecentSolutions.Count; i++)
+                    if (Directory.Exists(RecentSolutions[i]) == false)
+                    {
+                        RecentSolutions.RemoveAt(i);
+                        i--;
+                    }
+
+                //clean resent solutions list from duplications caused due to bug
+                for (int i = 0; i < RecentSolutions.Count; i++)
+                    for (int j = i + 1; j < RecentSolutions.Count; j++)
+                        if (SolutionRepository.NormalizePath(RecentSolutions[i]) == SolutionRepository.NormalizePath(RecentSolutions[j]))
+                        {
+                            RecentSolutions.RemoveAt(j);
+                            j--;
+                        }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Recent Solutions list clean up", ex);
+            }
+        }
+
+        private ObservableList<Solution> mRecentSolutionsAsObjects = null;
+        public ObservableList<Solution> RecentSolutionsAsObjects
+        {
+            get
+            {
+                if (mRecentSolutionsAsObjects == null)
+                    LoadRecentSolutionsAsObjects();
+                return mRecentSolutionsAsObjects;
+            }
+            set
+            {
+                mRecentSolutionsAsObjects = value;
+            }
+        }
+
+        private ObservableList<Solution> LoadRecentSolutionsAsObjects()
+        {
+
+            CleanRecentSolutionsList();
+
+            mRecentSolutionsAsObjects = new ObservableList<Solution>();
+            int counter = 0;
+            foreach (string s in RecentSolutions)
+            {
+                string SolutionFile = Path.Combine(s, @"Ginger.Solution.xml");
+                if (File.Exists(SolutionFile))
+                {
+                    try
+                    {
+                        Solution sol = Solution.LoadSolution(SolutionFile, false);
+                        mRecentSolutionsAsObjects.Add(sol);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to to load the recent solution which in path '{0}'", s), ex);
+                    }
+
+                    counter++;
+                    if (counter >= 10) break; // only first latest 10 solutions
+                }
+            }
+
+            return mRecentSolutionsAsObjects;
+        }
+
+        public void AddSolutionToRecent(Solution loadedSolution)
+        {
+            //remove existing similar folder path
+            string solPath = RecentSolutions.Where(x => SolutionRepository.NormalizePath(x) == SolutionRepository.NormalizePath(loadedSolution.Folder)).FirstOrDefault();
+            if (solPath != null)
+            {
+                RecentSolutions.Remove(solPath);
+                Solution sol = mRecentSolutionsAsObjects.Where(x => SolutionRepository.NormalizePath(x.Folder) == SolutionRepository.NormalizePath(loadedSolution.Folder)).FirstOrDefault();
+                if (sol != null)
+                {
+                    mRecentSolutionsAsObjects.Remove(sol);
+                }
+            }
+
+            // Add it in first place 
+            RecentSolutions.Insert(0, loadedSolution.Folder);
+            mRecentSolutionsAsObjects.AddToFirstIndex(loadedSolution);
+
+            while (RecentSolutions.Count > 10)//to keep list of 10
+            {
+                RecentSolutions.RemoveAt(10);
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public List<string> RecentAppAgentsMapping = new List<string>();
@@ -182,7 +291,7 @@ namespace Ginger
 
         [IsSerializedForLocalRepository]
         public string ReportTemplateName { get; set; }
-        
+
         public string SourceControlPass
         {
             get
@@ -227,9 +336,9 @@ namespace Ginger
 
         [IsSerializedForLocalRepository]
         public string ALMUserName { get; set; }
-        
-        public string ALMPassword 
-        { 
+
+        public string ALMPassword
+        {
             get
             {
                 bool res = false;
@@ -241,36 +350,54 @@ namespace Ginger
             }
             set
             {
-                bool res=false;
+                bool res = false;
                 EncryptedALMPassword = EncryptionHandler.EncryptString(value, ref res);
             }
         }
         [IsSerializedForLocalRepository]
         public string EncryptedALMPassword { get; set; }
-        
+
+        Amdocs.Ginger.Core.eTerminologyDicsType mTerminologyDictionaryType;
         [IsSerializedForLocalRepository]
-        public Amdocs.Ginger.Core.eTerminologyDicsType TerminologyDictionaryType { get; set; }
+        public Amdocs.Ginger.Core.eTerminologyDicsType TerminologyDictionaryType
+        {
+            get { return mTerminologyDictionaryType; }
+            set { mTerminologyDictionaryType = value; OnPropertyChanged(nameof(TerminologyDictionaryType)); }
+        }
 
         eAppLogLevel mAppLogLevel;
-       [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public eAppLogLevel AppLogLevel
         {
             get { return mAppLogLevel; }
-            set { mAppLogLevel = value; Reporter.CurrentAppLogLevel = mAppLogLevel; }
+            set { mAppLogLevel = value; Reporter.CurrentAppLogLevel = mAppLogLevel; OnPropertyChanged(nameof(AppLogLevel)); }
         }
 
+        eUserType mUserType;
         [IsSerializedForLocalRepository]
-        public eUserType UserType { get; set; }
+        public eUserType UserType
+        { 
+            get
+            {
+                return mUserType;
+            }
+            set
+            {
+                mUserType = value;
+                OnPropertyChanged(nameof(UserType));
+            }
+        }
 
         public UserTypeHelper UserTypeHelper { get; set; }
-        
-        public static string getUserProfileFileName()
+
+        public static string UserProfileFilePath
         {
-            //we just save and load serialized UserProfile objct
-            string s = App.LocalApplicationData + @"\Ginger.UserProfile.xml";
-            return s;
+            get
+            {
+                return Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Ginger.UserProfile.xml");
+            }
         }
-        
+
         public void SaveUserProfile()
         {
             try
@@ -278,9 +405,8 @@ namespace Ginger
                 SaveRecentAppAgentsMapping();
             }
             catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
-
-            string UserProfileFileName = getUserProfileFileName();
-            this.SaveToFile(UserProfileFileName);
+            
+            RepositorySerializer.SaveToFile(this, UserProfileFilePath);
         }
 
         public void SaveRecentAppAgentsMapping()
@@ -288,16 +414,16 @@ namespace Ginger
             if (mSolution != null)
             {
                 //remove last saved mapping for this solution
-                string existingSolMapping= RecentAppAgentsMapping.Where(x=> x.Contains(mSolution.Name + "***")==true).FirstOrDefault();
-                if(string.IsNullOrEmpty(existingSolMapping) ==false)                
+                string existingSolMapping = RecentAppAgentsMapping.Where(x => x.Contains(mSolution.Name + "***") == true).FirstOrDefault();
+                if (string.IsNullOrEmpty(existingSolMapping) == false)
                     RecentAppAgentsMapping.Remove(existingSolMapping);
 
                 //create new save to this solution
-                existingSolMapping= mSolution.Name + "***";                
+                existingSolMapping = mSolution.Name + "***";
                 foreach (ApplicationPlatform ap in mSolution.ApplicationPlatforms)
                 {
                     if (string.IsNullOrEmpty(ap.LastMappedAgentName) == false)
-                        existingSolMapping+= ap.AppName + "," + ap.LastMappedAgentName + "#";
+                        existingSolMapping += ap.AppName + "," + ap.LastMappedAgentName + "#";
                 }
                 RecentAppAgentsMapping.Add(existingSolMapping);
             }
@@ -314,7 +440,7 @@ namespace Ginger
                 else
                 {
                     string solName = mSolution.Name + "***";
-                    existingSolMapping = existingSolMapping.Replace(solName,string.Empty);
+                    existingSolMapping = existingSolMapping.Replace(solName, string.Empty);
                     List<string> appAgentMapping = existingSolMapping.Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries).ToList();
                     Dictionary<string, string> mappingDic = new Dictionary<string, string>();
                     foreach (string mapping in appAgentMapping)
@@ -334,7 +460,7 @@ namespace Ginger
                             if (mappingDic.Keys.Contains(ap.AppName))
                             {
                                 if (ap != null && WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Count > 0)
-                                {    
+                                {
                                     List<Agent> platformAgents = (from p in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where p.Platform == ap.Platform select p).ToList();
                                     Agent matchingAgent = platformAgents.Where(x => x.Name == mappingDic[ap.AppName]).FirstOrDefault();
                                     if (matchingAgent != null)
@@ -350,12 +476,10 @@ namespace Ginger
         public static UserProfile LoadUserProfile()
         {
             if (General.isDesignMode()) return null;
-
-            string UserProfilePath = getUserProfileFileName();
+            
             string InstallationConfigurationPath = System.Reflection.Assembly.GetExecutingAssembly().Location.Replace("Ginger.exe", "Ginger.InstallationConfiguration.Json");
             DateTime InstallationDT = File.GetLastWriteTime(InstallationConfigurationPath);
-            DateTime UserProfileDT = File.GetLastWriteTime(UserProfilePath);
-
+            
             string UserConfigJsonString = string.Empty;
             JObject UserConfigJsonObj = null;
             Dictionary<string, string> UserConfigdictObj = null;
@@ -366,29 +490,39 @@ namespace Ginger
                 UserConfigdictObj = UserConfigJsonObj.ToObject<Dictionary<string, string>>();
             }
 
-            if (File.Exists(UserProfilePath))
+            if (File.Exists(UserProfileFilePath))
             {
                 try
                 {
-                    UserProfile up = (UserProfile)RepositoryItem.LoadFromFile(typeof(UserProfile), UserProfilePath);
+                    DateTime UserProfileDT = File.GetLastWriteTime(UserProfileFilePath);
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("Loading existing User Profile at '{0}'", UserProfileFilePath));
+                    string userProfileTxt = File.ReadAllText(UserProfileFilePath);
+                    UserProfile up = (UserProfile)NewRepositorySerializer.DeserializeFromText(userProfileTxt);
+                    up.FilePath = UserProfileFilePath;                 
                     if (DateTime.Compare(UserProfileDT, InstallationDT) < 0)
                     {
                         if (UserConfigdictObj != null)
+                        {
                             up.AddUserConfigProperties(UserConfigdictObj);
+                        }
                     }
                     return up;
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKeys.UserProfileLoadError, e.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to load the existing User Profile at '{0}'", UserProfileFilePath), ex);
                 }
             }
-            
+
+            Reporter.ToLog(eLogLevel.INFO, "Creating new User Profile");
+
             UserProfile up2 = new UserProfile();
             up2.LoadDefaults();
             if (UserConfigdictObj != null)
+            {
                 up2.AddUserConfigProperties(UserConfigdictObj);
-            up2.ValidateProfile();
+            }
+            
             return up2;
         }
 
@@ -426,25 +560,22 @@ namespace Ginger
             }
         }
 
-        public void ValidateProfile()
-        {
-        }
-
         public void LoadDefaults()
         {
             AutoLoadLastSolution = true; //#Task 160
-            SetDefaultWorkingFolder();
+            //SetDefaultWorkingFolder();
+            string defualtFolder= WorkSpace.Instance.DefualtUserLocalWorkingFolder;//calling it so it will be created
         }
-        
-        public void SetDefaultWorkingFolder()
-        {
-            LocalWorkingFolder = App.LocalApplicationData + @"\WorkingFolder";
-            Directory.CreateDirectory(LocalWorkingFolder);
-        }
-        
+
+        //public void SetDefaultWorkingFolder()
+        //{
+        //    LocalWorkingFolder = App.LocalApplicationData + @"\WorkingFolder";
+        //    Directory.CreateDirectory(LocalWorkingFolder);
+        //}
+
         internal string GetDefaultReport()
         {
-            if(!string.IsNullOrEmpty(ReportTemplateName))
+            if (!string.IsNullOrEmpty(ReportTemplateName))
             {
                 return ReportTemplateName;
             }
@@ -467,13 +598,170 @@ namespace Ginger
             }
         }
 
+        bool mDoNotAskToUpgradeSolutions = false;
         [IsSerializedForLocalRepository]
-        public bool DoNotAskToUpgradeSolutions { get; set; }
+        public bool DoNotAskToUpgradeSolutions
+        {
+            get
+            {
+                return mDoNotAskToUpgradeSolutions;
+            }
+            set
+            {
+                mDoNotAskToUpgradeSolutions = value;
+                OnPropertyChanged(nameof(DoNotAskToUpgradeSolutions));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public bool NewHelpLibraryMessgeShown { get; set; }
 
+
+        bool mAskToSaveBusinessFlow = true;
+        [IsSerializedForLocalRepository]
+        public bool AskToSaveBusinessFlow
+        {
+            get
+            {
+                return mAskToSaveBusinessFlow;
+            }
+            set
+            {
+                mAskToSaveBusinessFlow = value;
+                OnPropertyChanged(nameof(AskToSaveBusinessFlow));
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public bool DoNotAskToRecoverSolutions { get; set; }
+
+        string mProfileImage;
+        [IsSerializedForLocalRepository]
+        public string ProfileImage
+        {
+            get
+            {
+                return mProfileImage;
+            }
+            set
+            {
+                if (mProfileImage != value)
+                {
+                    mProfileImage = value;
+                    OnPropertyChanged(nameof(ProfileImage));
+                }
+            }
+        }
+
+        public string UserName
+        {
+            get { return Environment.UserName; }
+        }
+
+        string mUserFirstName;
+        [IsSerializedForLocalRepository]
+        public string UserFirstName
+        {
+            get
+            {
+                return mUserFirstName;
+            }
+            set
+            {
+                mUserFirstName = value;
+                OnPropertyChanged(nameof(UserFirstName));
+            }
+        }
+
+        string mUserMiddleName;
+        [IsSerializedForLocalRepository]
+        public string UserMiddleName
+        {
+            get
+            {
+                return mUserMiddleName;
+            }
+            set
+            {
+                mUserMiddleName = value;
+                OnPropertyChanged(nameof(UserMiddleName));
+            }
+        }
+
+        string mUserLastName;
+        [IsSerializedForLocalRepository]
+        public string UserLastName
+        {
+            get
+            {
+                return mUserLastName;
+            }
+            set
+            {
+                mUserLastName = value;
+                OnPropertyChanged(nameof(UserLastName));
+            }
+        }
+
+        string mUserEmail;
+        [IsSerializedForLocalRepository]
+        public string UserEmail
+        {
+            get
+            {
+                return mUserEmail;
+            }
+            set
+            {
+                mUserEmail = value;
+                OnPropertyChanged(nameof(UserEmail));
+            }
+        }
+
+        string mUserPhone;
+        [IsSerializedForLocalRepository]
+        public string UserPhone
+        {
+            get
+            {
+                return mUserPhone;
+            }
+            set
+            {
+                mUserPhone = value;
+                OnPropertyChanged(nameof(UserPhone));
+            }
+        }
+
+        eUserRole mUserRole;
+        [IsSerializedForLocalRepository]
+        public eUserRole UserRole
+        {
+            get
+            {
+                return mUserRole;
+            }
+            set
+            {
+                mUserRole = value;
+                OnPropertyChanged(nameof(UserRole));
+            }
+        }
+
+        string mUserDepartment;
+        [IsSerializedForLocalRepository]
+        public string UserDepartment
+        {
+            get
+            {
+                return mUserDepartment;
+            }
+            set
+            {
+                mUserDepartment = value;
+                OnPropertyChanged(nameof(UserDepartment));
+            }
+        }
+
     }
 }

@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Repository;
 using Ginger.Actions;
+using Ginger.Repository;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
@@ -33,8 +35,8 @@ namespace Ginger
     /// </summary>
     public partial class ucSharedRepoInstance : UserControl
     {
-        RepositoryItem mItem = null;
-        RepositoryItem mLinkedRepoItem=null;
+        RepositoryItemBase mItem = null;
+        RepositoryItemBase mLinkedRepoItem=null;
         BusinessFlow mBusinessFlow = null;
         bool mLinkIsByExternalID = false;
         bool mLinkIsByParentID = false;
@@ -47,7 +49,7 @@ namespace Ginger
             UpdateRepoBtn.Visibility = Visibility.Collapsed;
         }
 
-        public void Init(RepositoryItem item, BusinessFlow containingBusinessFlow)
+        public void Init(RepositoryItemBase item, BusinessFlow containingBusinessFlow)
         {
             mItem = item;
             mBusinessFlow = containingBusinessFlow;
@@ -64,7 +66,7 @@ namespace Ginger
             UpdateRepoBtn.Visibility = Visibility.Collapsed;
 
             //get the item from shared repo if exist
-            mLinkedRepoItem = App.LocalRepository.GetMatchingRepoItem(mItem, null, ref mLinkIsByExternalID, ref mLinkIsByParentID);
+            mLinkedRepoItem = SharedRepositoryOperations.GetMatchingRepoItem(mItem, null, ref mLinkIsByExternalID, ref mLinkIsByParentID);
             if (mLinkedRepoItem == null)
             {
                 LinkStatusImage.Source = General.GetResourceImage("@StarGray_24x24.png");

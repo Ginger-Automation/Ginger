@@ -33,6 +33,8 @@ using System.Text;
 
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger;
+using GingerCore.DataSource;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 
 namespace Ginger.Run
@@ -476,7 +478,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables);
+                        mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
                     }
                     mVE.Value = BusinessFlow.RunDescription;
                     BFR.RunDescription = mVE.ValueCalculated;
@@ -565,7 +567,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables);
+                        mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
                     }
                     mVE.Value = Activity.RunDescription;
                     AR.RunDescription = mVE.ValueCalculated;
@@ -674,7 +676,7 @@ namespace Ginger.Run
                         {
                             if (mVE == null)
                             {
-                                mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables);
+                                mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
                             }
                             mVE.Value = act.RunDescription;
                             AR.RunDescription = mVE.ValueCalculated;
@@ -809,7 +811,9 @@ namespace Ginger.Run
                         {
                             try
                             {
-                                FieldsType ftype = ((FieldParamsFieldType)prop.GetCustomAttribute(typeof(FieldParamsFieldType))).FieldType;
+                                FieldParamsFieldType attr = ((FieldParamsFieldType)prop.GetCustomAttribute(typeof(FieldParamsFieldType)));
+                                if (attr == null) continue;
+                                FieldsType ftype = attr.FieldType;
                                 if (ftype == FieldsType.Field)
                                 {
                                     string propName = prop.Name;
@@ -818,11 +822,11 @@ namespace Ginger.Run
                                     fieldsAndValues.Add(new KeyValuePair<string, string>(propFullName, propValue));
                                 }
                             }
-                            catch (Exception) { }
+                            catch (Exception) { }   //TODO: !!!!!!!!!!!!!!!!!! FIXME
                         }
                     }
-                    catch (Exception) { }
-                    
+                    catch (Exception) { } //TODO: !!!!!!!!!!!!!!!!!! FIXME
+
 
                     //add to Console
                     string details = string.Empty;

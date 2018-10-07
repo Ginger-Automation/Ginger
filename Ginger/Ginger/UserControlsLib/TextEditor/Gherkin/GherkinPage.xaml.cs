@@ -39,6 +39,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Amdocs.Ginger.Common;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.GherkinLib
 {
@@ -112,7 +113,7 @@ namespace Ginger.GherkinLib
                 if (guid != Guid.Empty)
                     mSolTags.Add(guid);
             }
-            ARP.grdActivitiesRepository.Tags = mSolTags;
+            ARP.xActivitiesRepositoryGrid.Tags = mSolTags;
             SharedActivitiesFrame.Content = ARP;
         }
 
@@ -292,7 +293,7 @@ namespace Ginger.GherkinLib
             }
 
             
-            ARP.grdActivitiesRepository.Tags = mSolTags;
+            ARP.xActivitiesRepositoryGrid.Tags = mSolTags;
             SharedActivitiesFrame.Content = ARP;
 
             foreach(GherkinStep gStep in mOptimizedSteps)
@@ -345,7 +346,10 @@ namespace Ginger.GherkinLib
             //TODO: get 
             string BusinessFlowFolder = "";
             string path = BusinessFlowFolder;
-            Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true,"",true, mSolTags) where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            //FIXME to use tags
+            // Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true,"",true, mSolTags) where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
+            Activity a2 = (from x in activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
             if (a2 != null)
             {                
                 return "Automated in Shared Repo - " + path;
@@ -445,14 +449,12 @@ namespace Ginger.GherkinLib
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(BFName));
             }
-            mBizFlow = LocalRepository.CreateNewBizFlow(BFName);
+            mBizFlow = App.CreateNewBizFlow(BFName);
             mBizFlow.Source = BusinessFlow.eSource.Gherkin;
-            mBizFlow.ExternalID = GherkinTextEditor.FileName.Replace(App.UserProfile.Solution.Folder, @"~\") ;            
-            mBizFlow.Save();
-            App.LocalRepository.AddItemToCache(mBizFlow);
-
+            mBizFlow.ExternalID = GherkinTextEditor.FileName.Replace(App.UserProfile.Solution.Folder, @"~\") ;                                                
             mBizFlow.Name = BizFlowName;
             mBizFlow.Activities.Clear();
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBizFlow);
         }
 
         //TODO: show message on screen TBD!?
@@ -516,7 +518,7 @@ namespace Ginger.GherkinLib
             {
                 CreateNewBF(FeatureName);
                 CreateActivities();
-                mBizFlow.Save();
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBizFlow);
                 if (genWin != null)
                 {
                     genWin.Close();
@@ -531,7 +533,7 @@ namespace Ginger.GherkinLib
                 Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\","") + mBizFlow.Name, "Updated");
             }
 
-            App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.RefreshTreeFolder ,typeof(BusinessFlowsFolderTreeItem));
+            //App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.RefreshTreeFolder ,typeof(BusinessFlowsFolderTreeItem));
             if(App.BusinessFlow == mBizFlow)
             {
                 App.BusinessFlow = mBizFlow;
@@ -574,8 +576,11 @@ namespace Ginger.GherkinLib
                 if (a1 == null)
                 {
                     if (GH.AutomationStatus == "Automated in Shared Repo - ")
-                    {                       
-                        Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true, "", true, mSolTags) where x.ActivityName == GH.Text select x).FirstOrDefault();
+                    {
+                        ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                        Activity a2 = (from x in activities where x.ActivityName == GH.Text select x).FirstOrDefault();
+                        //FIXME:
+                        // Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true, "", true, mSolTags) where x.ActivityName == GH.Text select x).FirstOrDefault();
                         if (a2 != null)
                         {
                             mBizFlow.AddActivity(a2);
@@ -608,8 +613,8 @@ namespace Ginger.GherkinLib
                 Activity a1 = (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
                 if (AG.CheckActivityInGroup(a1))
                     AG.RemoveActivityFromGroup(a1);
-            }            
-            mBizFlow.Save();
+            }
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBizFlow);
         }
 
 
@@ -635,9 +640,8 @@ namespace Ginger.GherkinLib
         {
             Mouse.OverrideCursor = Cursors.Wait;
             try
-            {
-                string path = BFName;
-                mBizFlow=App.LocalRepository.GetItemByFileName<BusinessFlow>(typeof(BusinessFlow), BFName);
+            {                                
+                mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Name == BFName).SingleOrDefault();
                 if (mBizFlow == null)
                 {
                     CreateNewBF(FeatureName);
@@ -666,8 +670,8 @@ namespace Ginger.GherkinLib
                     mSolTags.Add(guid);
             }
             
-            ARP = new ActivitiesRepositoryPage("",null, mSolTags, ArrowButtonHandler);
-            ARP.grdActivitiesRepository.EnableTagsPanel = false;
+            ARP = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), null, mSolTags, ArrowButtonHandler);
+            ARP.xActivitiesRepositoryGrid.EnableTagsPanel = false;
             SharedActivitiesFrame.Content = ARP;
 
             BFName =  FileName.Replace(App.UserProfile.Solution.Folder,"");
@@ -677,7 +681,7 @@ namespace Ginger.GherkinLib
             BFName = BFName.Replace(".feature", "");
             BFName = folder + BFName + ".Ginger.BusinessFlow.xml";
             // search if we have the BF defined already, so search in BF will work
-            mBizFlow = App.LocalRepository.GetItemByFileName<BusinessFlow>(typeof(BusinessFlow), BFName);
+            mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x =>x.Name == BFName).SingleOrDefault();
 
             if (File.Exists(BFName))
             {
@@ -696,7 +700,7 @@ namespace Ginger.GherkinLib
 
         private void ArrowButtonHandler(object sender, RoutedEventArgs e)
         {
-            foreach (Activity selectedItem in ARP.grdActivitiesRepository.Grid.SelectedItems)
+            foreach (Activity selectedItem in ARP.xActivitiesRepositoryGrid.Grid.SelectedItems)
             {
                 GherkinTextEditor.textEditor.SelectedText = GherkinTextEditor.textEditor.SelectedText + selectedItem.ActivityName + Environment.NewLine;
             }    

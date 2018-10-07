@@ -33,6 +33,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerWPF.TreeViewItemsLib
 {
@@ -45,13 +46,15 @@ namespace GingerWPF.TreeViewItemsLib
             if (item is RepositoryItemBase)
             {
                 RepositoryItemBase RI = (RepositoryItemBase)item;
-                if (saveOnlyIfDirty && RI.IsDirty == false) return false;//no need to Save because not Dirty
+                if (saveOnlyIfDirty && RI.DirtyStatus != eDirtyStatus.Modified)
+                {
+                    return false;//no need to Save because not Dirty
+                }
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, RI.ItemName, "item");
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(RI);
                 Reporter.CloseGingerHelper();               
 
-                //refresh node header               
-                mTreeView.Tree.SelectParentItem((ITreeViewItem)this);//to allow catch isDirty again when user will select this item again so we move to parent
+                //refresh node header                               
                 PostSaveTreeItemHandler();
                 return true;
             }
@@ -77,9 +80,9 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override bool ItemIsDirty(object item)
         {
-            if (item is RepositoryItemBase)
+            if (item is RepositoryItemBase && ((RepositoryItemBase)item).DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
             {
-                return ((RepositoryItemBase)item).IsDirty;
+                return true;
             }
 
             return false;
@@ -219,8 +222,7 @@ namespace GingerWPF.TreeViewItemsLib
                     RepositoryItemBase RI = (RepositoryItemBase)node.NodeObject();
                     if (RI != null)
                     {
-                        if ((RI.DirtyStatus == eDirtyStatus.NoTracked && RI.IsDirty) 
-                                || (RI.DirtyStatus == eDirtyStatus.Modified))
+                        if (RI.DirtyStatus == eDirtyStatus.Modified)
                         {
                             // Try to save only items with file name = standalone xml, avoid items like env app                            
                             if (!string.IsNullOrEmpty(RI.ContainingFolder))
@@ -238,10 +240,10 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Nothing found to Save.");               
             }
-            else
-            {
-                mTreeView.Tree.SelectItem((ITreeViewItem)this);//in case the event was called from diffrent class                                                             
-            }
+            //else
+            //{
+            //    mTreeView.Tree.SelectItem((ITreeViewItem)this);//in case the event was called from diffrent class                                                             
+            //}
         }
         
         public override void RefreshTreeFolder(Type itemType, string path)
@@ -493,8 +495,7 @@ namespace GingerWPF.TreeViewItemsLib
             if (Reporter.ToUser(eUserMsgKeys.SureWantToDoRevert) == MessageBoxResult.Yes)
             {
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.RevertChangesFromSourceControl);
-                SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());
-                App.LocalRepository.RefreshCacheByItemType(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));
+                SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());                
                 mTreeView.Tree.RefreshSelectedTreeNodeParent();
                 Reporter.CloseGingerHelper();
             }
@@ -509,8 +510,7 @@ namespace GingerWPF.TreeViewItemsLib
                 Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "Invalid Path provided");
             else
                 SourceControlIntegration.GetLatest(this.NodePath(), App.UserProfile.Solution.SourceControl);
-
-            App.LocalRepository.RefreshCacheByItemType(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));
+            
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
             Reporter.CloseGingerHelper();
         }
@@ -532,7 +532,7 @@ namespace GingerWPF.TreeViewItemsLib
             return SourceControlIntegration.GetFileImage(path);            
         }
 
-        protected List<ITreeViewItem> GetChildrentGeneric<T>(RepositoryFolder<T> RF, string OrderBy)
+        protected List<ITreeViewItem> GetChildrentGeneric<T>(RepositoryFolder<T> RF)
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
@@ -550,18 +550,29 @@ namespace GingerWPF.TreeViewItemsLib
             folderItems.CollectionChanged -= TreeFolderItems_CollectionChanged;
             folderItems.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
 
-            foreach (T item in folderItems.OrderBy(OrderBy))
+            if (folderItems.Count > 0)
             {
-                ITreeViewItem tvi = GetTreeItem(item);
-                Childrens.Add(tvi);
+                object sampleItem = folderItems[0];               
+                foreach (T item in folderItems.OrderBy(((RepositoryItemBase)sampleItem).ItemNameField))
+                {
+                    ITreeViewItem tvi = GetTreeItem(item);
+                    Childrens.Add(tvi);
+                }
             }
             return Childrens;
         }
 
-
-        protected StackPanel NewTVItemStyle(RepositoryItemBase RI, eImageType imageType, string NameProperty)
+        /// <summary>
+        /// The function creates the tree node item header
+        /// </summary>
+        /// <param name="repoItem">The repository item which the tree nodes represents</param>
+        /// <param name="imageType">The image type which assosicated with the repository item- should be pulled from the repoItem</param>
+        /// <param name="NameProperty">The field of the item which holds the item name or static name in case the repository item is null</param>
+        /// <returns></returns>
+        protected StackPanel NewTVItemHeaderStyle(RepositoryItemBase repoItem, eImageType imageType= eImageType.Null, string NameProperty= "")
         {            
-            RI.StartDirtyTracking();
+            //TODO: Move to biz flow page?
+            repoItem.StartDirtyTracking();
 
             //The new item style with Source control
             StackPanel stack = new StackPanel();
@@ -571,7 +582,7 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 // Source control image
                 ImageMakerControl sourceControlImage = new ImageMakerControl();                
-                sourceControlImage.BindControl(RI, nameof(RepositoryItemBase.SourceControlStatus));
+                sourceControlImage.BindControl(repoItem, nameof(RepositoryItemBase.SourceControlStatus));
                 sourceControlImage.Width = 10;
                 sourceControlImage.Height = 10;
                 stack.Children.Add(sourceControlImage);
@@ -579,24 +590,81 @@ namespace GingerWPF.TreeViewItemsLib
 
             // Add Item Image            
             ImageMakerControl NodeImageType = new ImageMakerControl();
-            NodeImageType.ImageType = imageType;
+            if (repoItem != null && imageType == eImageType.Null)
+                NodeImageType.ImageType = repoItem.ItemImageType;
+            else
+                NodeImageType.ImageType = imageType;
             NodeImageType.Width = 16;
             NodeImageType.Height = 16;
             stack.Children.Add(NodeImageType);
 
             // Add Item header text 
             Label itemHeaderLabel = new Label();
-            itemHeaderLabel.BindControl(RI, NameProperty);
+            if (repoItem != null)                                          
+                BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, repoItem.ItemNameField, BindingMode: System.Windows.Data.BindingMode.OneWay);
+            else            
+                itemHeaderLabel.Content = NameProperty;            
             stack.Children.Add(itemHeaderLabel);
 
             // add icon of dirty status            
             ImageMakerControl dirtyStatusImage = new ImageMakerControl();            
-            dirtyStatusImage.BindControl(RI, nameof(RepositoryItemBase.DirtyStatusImage));
+            dirtyStatusImage.BindControl(repoItem, nameof(RepositoryItemBase.DirtyStatusImage));
             dirtyStatusImage.Width = 6;
             dirtyStatusImage.Height = 6;            
             dirtyStatusImage.VerticalAlignment = VerticalAlignment.Top;
             dirtyStatusImage.Margin = new Thickness(0, 10, 10, 0);
             stack.Children.Add(dirtyStatusImage);
+
+            return stack;
+        }
+
+        /// <summary>
+        /// The function creates the folder tree node header
+        /// </summary>
+        /// <param name="repoItemFolder">the Repository Folder Base</param>      
+        /// <param name="imageType">Only if need diffrent icon than defualt one then require to provide it</param> 
+        /// <returns></returns>
+        protected StackPanel NewTVItemFolderHeaderStyle(RepositoryFolderBase repoItemFolder, eImageType imageType= eImageType.Null)
+        {
+            //RI.StartDirtyTracking();
+
+            //The new item style with Source control
+            StackPanel stack = new StackPanel();
+            stack.Orientation = Orientation.Horizontal;
+
+            //if (WorkSpace.Instance.SourceControl != null)
+            //{
+            //    // Source control image
+            //    ImageMakerControl sourceControlImage = new ImageMakerControl();
+            //    sourceControlImage.BindControl(RI, nameof(RepositoryItemBase.SourceControlStatus));
+            //    sourceControlImage.Width = 10;
+            //    sourceControlImage.Height = 10;
+            //    stack.Children.Add(sourceControlImage);
+            //}
+
+            // Add Item Image            
+            ImageMakerControl NodeImageType = new ImageMakerControl();
+            if (imageType == eImageType.Null)
+                BindingLib.ControlsBinding.ObjFieldBinding(NodeImageType, ImageMakerControl.ImageTypeProperty, repoItemFolder, nameof(RepositoryFolderBase.FolderImageType), BindingMode:System.Windows.Data.BindingMode.OneWay);
+            else
+                NodeImageType.ImageType = imageType;
+            NodeImageType.Width = 16;
+            NodeImageType.Height = 16;
+            stack.Children.Add(NodeImageType);
+
+            // Add Item header text 
+            Label itemHeaderLabel = new Label();
+            itemHeaderLabel.BindControl(repoItemFolder, "DisplayName");
+            stack.Children.Add(itemHeaderLabel);
+
+            //// add icon of dirty status            
+            //ImageMakerControl dirtyStatusImage = new ImageMakerControl();
+            //dirtyStatusImage.BindControl(RI, nameof(RepositoryItemBase.DirtyStatusImage));
+            //dirtyStatusImage.Width = 6;
+            //dirtyStatusImage.Height = 6;
+            //dirtyStatusImage.VerticalAlignment = VerticalAlignment.Top;
+            //dirtyStatusImage.Margin = new Thickness(0, 10, 10, 0);
+            //stack.Children.Add(dirtyStatusImage);
 
             return stack;
         }

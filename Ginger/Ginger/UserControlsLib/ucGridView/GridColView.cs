@@ -40,7 +40,8 @@ namespace Ginger.UserControls
             Link,
             Template,            
             DataColGrid,
-            Image
+            Image,
+            ImageMaker,
         }
 
         public string Field { get; set; }             

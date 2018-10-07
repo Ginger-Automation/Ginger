@@ -19,7 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.Imports.CDL;
 using GingerCore;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -76,7 +76,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Label lbl2 = new Label();
             lbl2.FontWeight = FontWeights.ExtraBold;
             lbl2.Margin = new Thickness(-10, 0, 0, 0);
-            App.ObjFieldBinding(lbl2, Label.ContentProperty, Solution, Solution.Fields.Name);
+            App.ObjFieldBinding(lbl2, Label.ContentProperty, Solution, nameof(Solution.Name));
 
             Label lbl3 = new Label();
             lbl3.Margin = new Thickness(-10, 0, 0, 0);
@@ -97,21 +97,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
             //Add Business Flows            
-            BusinessFlowsFolderTreeItem BFTVI;
-            if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-            {
-                BFTVI = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
-                // need to get dicser for header?
-            }
-            else
-            {
-                BFTVI = new BusinessFlowsFolderTreeItem();
-                BFTVI.Folder = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
-                BFTVI.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
-            }
-            
-            BFTVI.IsGingerDefualtFolder = true;
-            Childrens.Add(BFTVI);
+            //BusinessFlowsFolderTreeItem BFTVI;            
+            //BFTVI = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());                                        
+            //BFTVI.IsGingerDefualtFolder = true;
+            //Childrens.Add(BFTVI);
             
             //if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
             //{             
@@ -141,9 +130,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //}
 
             //Add Shared Repository
-            SharedRepositoryTreeItem SRTI = new SharedRepositoryTreeItem();
-            SRTI.IsGingerDefualtFolder = true;
-            Childrens.Add(SRTI);
+            //SharedRepositoryTreeItem SRTI = new SharedRepositoryTreeItem();
+            //SRTI.IsGingerDefualtFolder = true;
+            //Childrens.Add(SRTI);
             //TODO: move to Config check
             //if (App.UserProfile.UserTypeHelper.IsSupportReports)
             //{
@@ -152,15 +141,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //    RTI.IsGingerDefualtFolder = true;
             //    Childrens.Add(RTI);
             //}
-            if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
-            {
-                //Add Execution Results
-                ExecutionResultsFolderTreeItem ERFTI = new ExecutionResultsFolderTreeItem();
-                ERFTI.Folder = "Execution Results";
-                ERFTI.Path = Path.Combine(App.UserProfile.Solution.Folder,  @"ExecutionResults\");
-                ERFTI.IsGingerDefualtFolder = true;
-                Childrens.Add(ERFTI);
-            }
+            //if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
+            //{
+            //    //Add Execution Results
+            //    ExecutionResultsFolderTreeItem ERFTI = new ExecutionResultsFolderTreeItem();
+            //    ERFTI.Folder = "Execution Results";
+            //    ERFTI.Path = Path.Combine(App.UserProfile.Solution.Folder,  @"ExecutionResults\");
+            //    ERFTI.IsGingerDefualtFolder = true;
+            //    Childrens.Add(ERFTI);
+            //}
             return Childrens;
         }
 
@@ -173,7 +162,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mSolutionPage == null)
             {
-                mSolutionPage = new SolutionPage(Solution);
+                mSolutionPage = new SolutionPage();
             }
 
             return mSolutionPage;
@@ -207,7 +196,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void RefreshSolution(object sender, RoutedEventArgs e)
         {
-            App.MainWindow.RefreshSolution_Click(sender, e);
+            //App.MainWindow.RefreshSolution_Click(sender, e);
         }
         
         ContextMenu ITreeViewItem.Menu()
@@ -222,7 +211,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void SaveAll(object sender, System.Windows.RoutedEventArgs e)
         {
-            App.LocalRepository.SaveAllSolutionDirtyItems(true);
+            throw new NotImplementedException();
+            // App.LocalRepository.SaveAllSolutionDirtyItems(true);
         }
    }
 }

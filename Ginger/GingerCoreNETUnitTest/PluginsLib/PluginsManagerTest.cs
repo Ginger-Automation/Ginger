@@ -49,20 +49,20 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-        [TestMethod]
-        public void AddPluginPackage()
-        {
-            // Arrange
-            PluginsManager mPlugInsManager = new PluginsManager();
-            string folder = TestResources.GetTestResourcesFolder(@"PluginPackages\GingerOfficePlugin");
+        //[TestMethod]
+        //public void AddPluginPackage()
+        //{
+        //    // Arrange
+        //    PluginsManager mPlugInsManager = new PluginsManager();
+        //    string folder = TestResources.GetTestResourcesFolder(@"PluginPackages\GingerOfficePlugin");
 
-            //Act
-            mPlugInsManager.AddPluginPackage(folder);
-            ObservableList<StandAloneAction> list = mPlugInsManager.GetStandAloneActions();
+        //    //Act
+        //    mPlugInsManager.AddPluginPackage(folder);
+        //    ObservableList<StandAloneAction> list = mPlugInsManager.GetStandAloneActions();
 
-            //Assert
-            Assert.AreEqual(5, list.Count, "There are 5 stand alone actions");
-        }
+        //    //Assert
+        //    Assert.AreEqual(5, list.Count, "There are 5 stand alone actions");
+        //}
         [TestMethod]
         public void GetInstalledPluginPackages()
         {

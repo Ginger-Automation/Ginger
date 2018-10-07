@@ -20,20 +20,16 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
-using Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.FlowControlLib;
 using GingerCore.Repository;
 using GingerCore.Variables;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 
 namespace UnitTests.NonUITests
@@ -46,7 +42,7 @@ namespace UnitTests.NonUITests
         [Level1]
         public static void ClassInitialize(TestContext TC)
         {
-            RepositoryItemBase.InitSerializers(new RepositorySerializer());
+            Ginger.App.InitClassTypesDictionary();
         }
 
         [TestInitialize]
@@ -96,11 +92,14 @@ namespace UnitTests.NonUITests
             v.Description = "VDesc 1";
             BF.AddVariable(v);
             string FileName = TestResources.GetTempFile("bf1.xml");
-            BF.SaveToFile(FileName);
+            BF.RepositorySerializer.SaveToFile(BF, FileName);
 
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
+
+            // BusinessFlow BF2 = (BusinessFlow)RepositoryItemBase.LoadFromFile(typeof(BusinessFlow), FileName);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
 
             Assert.AreEqual(BF2.Name, BF.Name);
             Assert.AreEqual(BF2.Description, BF.Description);
@@ -156,16 +155,13 @@ namespace UnitTests.NonUITests
 
 
             //Act
-            BF.SaveToFile(TempFilepath);
+            BF.RepositorySerializer.SaveToFile(BF, TempFilepath);
 
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
-            //BF2.isDirty();
-
-            Assert.IsFalse(BF2.IsDirty);
-
-
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), TempFilepath);
+            Assert.IsTrue(BF2.DirtyStatus != Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified);
         }
         
         [TestMethod]
@@ -176,24 +172,23 @@ namespace UnitTests.NonUITests
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
             BF.Activities = new ObservableList<Activity>();
-            Activity a = new Activity();
-            a.ActivityName = "Activity 1";
-            a.Description = "Desciption -1";
+            
+            Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };            
             BF.Activities.Add(a);
-            a.Status = eRunStatus.Passed;
+            
             BF.SaveBackup();
-            Activity b = new Activity();
-            b.ActivityName = "Activity 2";
-            b.Description = "Desciption -2";
+            Activity b = new Activity() { ActivityName = "Activity 2", Description = "Desciption -2", Status = eRunStatus.Passed };            
             BF.Activities.Add(b);
-            b.Status = eRunStatus.Passed;
+            
             string TempFilepath = TestResources.GetTempFile("bfClearBackup.xml");
 
             //Act
-            BF.SaveToFile(TempFilepath);
+            BF.RepositorySerializer.SaveToFile(BF, TempFilepath);
             BF.SaveBackup();
-            BF.RestoreFromBackup();           
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
+            BF.RestoreFromBackup();
+
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), TempFilepath);
             BF2.SaveBackup();//dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
@@ -210,31 +205,24 @@ namespace UnitTests.NonUITests
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
             BF.Activities = new ObservableList<Activity>();
-            Activity a = new Activity();
-            a.ActivityName = "Activity 1";
-            a.Description = "Desciption -1";
+            Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };            
             BF.Activities.Add(a);
-            a.Status = eRunStatus.Passed;
 
-            ActTextBox t = new ActTextBox();
-            t.Description = "Set text box ";
-            t.LocateBy = eLocateBy.ByID;
-            t.LocateValue = "ID";
+            ActTextBox t = new ActTextBox() { Description = "Set text box ", LocateBy = eLocateBy.ByID, LocateValue = "ID" };                        
             a.Acts.Add(t);
 
             //Act
-            BF.SaveToFile(FileName);   
+            BF.RepositorySerializer.SaveToFile(BF, FileName);   
             a.SaveBackup();
-            ActGotoURL g = new ActGotoURL();
-            g.Description = "goto URL ";
-            g.LocateValue = "ID";
+            ActGotoURL g = new ActGotoURL() { Description = "goto URL ", LocateValue = "ID" };            
             a.Acts.Add(g);
-            BF.SaveToFile(FileName);
+            BF.RepositorySerializer.SaveToFile(BF, FileName);
             a.SaveBackup();            
             a.RestoreFromBackup();
-           
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
-            BF2.SaveBackup();//dirty now just indicate if backup exist
+
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);            
+            BF2.SaveBackup(); //dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
             // Assert
@@ -260,15 +248,17 @@ namespace UnitTests.NonUITests
             g.LocateValue = "ID";
             a.Acts.Add(g);
             string TempFilepath = TestResources.GetTempFile("actionClearBackup.xml");
+
             //Act
-            BF.SaveToFile(TempFilepath);
+            BF.RepositorySerializer.SaveToFile(BF, TempFilepath);
             a.SaveBackup();
             g.LocateValue = "ID1";
-            BF.SaveToFile(TempFilepath);
+            BF.RepositorySerializer.SaveToFile(BF, TempFilepath);
             a.SaveBackup();
             a.RestoreFromBackup();
 
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), TempFilepath);
             BF2.SaveBackup();//dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
@@ -320,17 +310,15 @@ namespace UnitTests.NonUITests
 
 
             //Act
-            BF.SaveToFile(TempFilepath);
+            BF.RepositorySerializer.SaveToFile(BF, TempFilepath);
 
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), TempFilepath);
-            BF2.SaveBackup();//dirty now just indicate if backup exist
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), TempFilepath);
+            BF2.StartDirtyTracking();
             BF2.Description = "aaa";
-
-            Assert.IsTrue(BF2.IsDirty);
-
-
+            Assert.IsTrue(BF2.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified);
         }
 
         [TestMethod]
@@ -349,11 +337,11 @@ namespace UnitTests.NonUITests
             ARC1.BusinessFlowsRunList.Add(BFR);
             RSC.GingerRunners.Add(ARC1);
 
-            RSC.SaveToFile(TempFilepath);
+            RSC.RepositorySerializer.SaveToFile(RSC, TempFilepath);
 
             //Assert
-
-            RunSetConfig RSC2 = (RunSetConfig)RepositoryItem.LoadFromFile(typeof(RunSetConfig), TempFilepath);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            RunSetConfig RSC2 = (RunSetConfig)newRepositorySerializer.DeserializeFromFile(typeof(RunSetConfig), TempFilepath);
         }
 
         //[Ignore]
@@ -457,10 +445,11 @@ namespace UnitTests.NonUITests
             //BF.Activities[0].Asserts.Add(vdb);
 
             //Act
-            BF.SaveToFile(FileName);
+            BF.RepositorySerializer.SaveToFile(BF, FileName);
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
            Assert.AreEqual(BF2.Activities.Count(), ActivitiesToCreate);
             //Assert.AreEqual(BF2. Activities[0].Asserts.Count(), 1);
             //BF2.Description = "aaa";
@@ -702,21 +691,19 @@ namespace UnitTests.NonUITests
 
             //Act            
             string FileName = TestResources.GetTempFile("RunSetConfig1.xml");
-            RSC.SaveToFile(FileName);
+
+            RSC.RepositorySerializer.SaveToFile(RSC, FileName);
 
             //
-            
-            RunSetConfig RSC2 = (RunSetConfig)RepositoryItem.LoadFromFile(FileName);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            RunSetConfig RSC2 = (RunSetConfig)newRepositorySerializer.DeserializeFromFile(FileName);
 
             //Assert
-           Assert.AreEqual(RSC.Name, RSC2.Name, "RSC.Name");
-
+            Assert.AreEqual(RSC.Name, RSC2.Name, "RSC.Name");
             RunSetActionSendEmail RSASE2 = (RunSetActionSendEmail)RSC.RunSetActions[0];
-           Assert.AreEqual(RSASE2.Email.MailFrom, MailFrom, "RSC2.MailFrom");
-           Assert.AreEqual(RSASE2.Email.MailTo, MailTo, "RSC2.MailTo");
-           Assert.AreEqual(RSASE2.Email.MailCC, MailCC, "RSC2.MailCC");
-            
-
+            Assert.AreEqual(RSASE2.Email.MailFrom, MailFrom, "RSC2.MailFrom");
+            Assert.AreEqual(RSASE2.Email.MailTo, MailTo, "RSC2.MailTo");
+            Assert.AreEqual(RSASE2.Email.MailCC, MailCC, "RSC2.MailCC");            
         }
 
 
@@ -743,11 +730,12 @@ namespace UnitTests.NonUITests
             //Act
 
             string FileName = TestResources.GetTempFile("BFWithTags.xml");
-            BF.SaveToFile(FileName);
+            BF.RepositorySerializer.SaveToFile(BF, FileName);
 
 
             // Assert
-            BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
+            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
 
            Assert.AreEqual(BF2.Name, BF.Name);
            Assert.AreEqual(BF2.Description, BF.Description);
@@ -928,9 +916,8 @@ namespace UnitTests.NonUITests
             bf.Activities.Add(activity);
             bf.Activities.Add(activity2);
 
-            activity2.ActivityName = "Test_New";
-            bf.Save();
-
+            activity2.ActivityName = "Test_New";                        
+            bf.RepositorySerializer.SaveToFile(bf, TestResources.GetTempFile("BF.xml"));
 
             //Act
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateInstance();

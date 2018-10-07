@@ -41,6 +41,7 @@ using System.Reflection;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using Ginger.SolutionGeneral;
 
 namespace Ginger
 {
@@ -49,7 +50,7 @@ namespace Ginger
     /// </summary>
     public partial class ValueExpressionEditorPage : Page
     {        
-        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,App.LocalRepository.GetSolutionDataSources(),false,"",false);
+        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
         GenericWindow mWin;
         object mObj;
         string mAttrName;
@@ -136,7 +137,7 @@ namespace Ginger
             if (mObj != null && mObj.GetType() == typeof(FlowControl))
             {   
                 //Added for Business Flow Control in RunSet
-                if (App.MainWindow.MainRibbonSelectedTab == eRibbonTab.Run.ToString())
+                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.Run)
                 {
                     AddBusinessFlowControlConditions();
                 }
@@ -431,7 +432,7 @@ namespace Ginger
             SetItemView(tviDataSources, "Data Sources", "", "@DataSource_16x16.png");
             xObjectsTreeView.Items.Add(tviDataSources);
             
-            ObservableList<DataSourceBase> DataSources = App.LocalRepository.GetSolutionDataSources();
+            ObservableList<DataSourceBase> DataSources = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
 
             foreach (DataSourceBase ds in DataSources)
             {

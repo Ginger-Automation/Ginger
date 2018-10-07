@@ -16,13 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.GeneralLib;
 using Ginger.Reports;
-using Ginger.Repository;
 using GingerCore;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -33,27 +33,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ginger.Environments
+namespace Ginger.SolutionGeneral
 {
-    public class Solution : RepositoryItem
+    public class Solution : RepositoryItemBase
     {
-        public new static class Fields
-        {
-            public static string Name = "Name";
-            public static string Folder = "Folder";
-            public static string MainPlatform = "MainPlatform";   //TODO: delete old usage , after fully moving to apps/platform, meanwhile keeping so code will compile
-            public static string Account = "Account";
-            public static string Variables = "Variables";
-            public static string VariablesNames = "VariablesNames";
-            public static string AlmType = "AlmType";
-
-            public static string ALMServerURL = "ALMServerURL";
-            public static string ALMDomain = "ALMDomain";
-            public static string ALMProject = "ALMProject";
-
-            public static string ShowIndicationkForLockedItems = "ShowIndicationkForLockedItems";
-        }
-
         public SourceControlBase SourceControl { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -65,9 +48,187 @@ namespace Ginger.Environments
             Tags = new ObservableList<RepositoryItemTag>();
         }
 
+        public static Solution LoadSolution(string solutionFileName, bool startDirtyTracking= true)
+        {
+            string txt = File.ReadAllText(solutionFileName);
+            txt = txt.Replace("Ginger.Environments.Solution", "Ginger.SolutionGeneral.Solution");//changed the namespace so need to handle old xml's
+            Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
+            solution.FilePath = solutionFileName;
+            solution.Folder = Path.GetDirectoryName(solutionFileName);
+            if (startDirtyTracking)
+            {
+                solution.StartDirtyTracking();
+            }
+            return solution;
+        }
+
+        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, ReportsSettings}
+        public void SaveSolution(bool showWarning = true, eSolutionItemToSave solutionItemToSave = eSolutionItemToSave.GeneralDetails)
+        {
+            bool doSave = false;
+
+            if (!showWarning)
+            {
+                doSave = true;
+            }
+            else
+            {
+                Solution lastSavedSolution = LoadSolution(FilePath, false);
+                string extraChangedItems = "";
+                if (solutionItemToSave != eSolutionItemToSave.GeneralDetails)
+                {
+                    if (this.Name != lastSavedSolution.Name || this.Account != lastSavedSolution.Account)
+                        extraChangedItems += "Solution General Details, ";
+                }
+                if (solutionItemToSave != eSolutionItemToSave.ALMSettings)
+                {
+                    if (this.ALMDomain != lastSavedSolution.ALMDomain || this.ALMProject != lastSavedSolution.ALMProject || this.ALMServerURL != lastSavedSolution.ALMServerURL || this.AlmType != lastSavedSolution.AlmType)
+                        extraChangedItems += "ALM Details, ";
+                }
+                if (solutionItemToSave != eSolutionItemToSave.SourceControlSettings)
+                {
+                    if (this.SourceControl != lastSavedSolution.SourceControl)
+                        extraChangedItems += "Source Control Details, ";
+                }
+                if (solutionItemToSave != eSolutionItemToSave.ReportsSettings)
+                {
+                    if (ExecutionLoggerConfigurationSetList != null && (ExecutionLoggerConfigurationSetList.Count != lastSavedSolution.ExecutionLoggerConfigurationSetList.Count || HTMLReportsConfigurationSetList.Count != lastSavedSolution.HTMLReportsConfigurationSetList.Count))
+                    {
+                        extraChangedItems += "Reports Settings, ";
+                    }
+                    else
+                    {
+                        if (ExecutionLoggerConfigurationSetList != null)
+                        {
+                            foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
+                            {
+                                if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                                {
+                                    extraChangedItems += "Reports Settings, ";
+                                    break;
+                                }
+                            }
+                        }
+                        if (!extraChangedItems.Contains("Reports Settings"))
+                        {
+                            foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
+                            {
+                                if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                                {
+
+                                    extraChangedItems += "Reports Settings, ";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (solutionItemToSave != eSolutionItemToSave.GlobalVariabels)
+                {
+                    if (Variables.Count != lastSavedSolution.Variables.Count)
+                    {
+                        extraChangedItems += GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", ");
+                    }
+                    else
+                    {
+                        foreach (VariableBase var in Variables)
+                        {
+                            if (var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            {
+                                extraChangedItems += GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", ");
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (solutionItemToSave != eSolutionItemToSave.TargetApplications)
+                {
+                    if (ApplicationPlatforms.Count != lastSavedSolution.ApplicationPlatforms.Count)
+                    {
+                        extraChangedItems += "Target Applications, ";
+                    }
+                    else
+                    {
+                        foreach (ApplicationPlatform app in ApplicationPlatforms)
+                        {
+                            if (app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            {
+                                extraChangedItems += "Target Applications, ";
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (solutionItemToSave != eSolutionItemToSave.Tags)
+                {
+                    if (Tags.Count != lastSavedSolution.Tags.Count)
+                    {
+                        extraChangedItems += "Tags, ";
+                    }
+                    else
+                    {
+                        foreach (RepositoryItemTag tag in Tags)
+                        {
+                            if (tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                            {
+                                extraChangedItems += "Tags, ";
+                                break;
+                            }
+                        }                        
+                    }
+                }
+
+                if (string.IsNullOrEmpty(extraChangedItems))
+                {
+                    doSave = true;
+                }
+                else
+                {
+                    extraChangedItems= extraChangedItems.TrimEnd();
+                    extraChangedItems= extraChangedItems.TrimEnd(new char[] { ',' });                    
+                    if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == System.Windows.MessageBoxResult.Yes)
+                    {
+                        doSave = true;
+                    }
+                }
+            }
+
+            if (doSave)
+            {
+                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, "Solution Configurations", "item");
+                RepositorySerializer.SaveToFile(this, FilePath);
+                this.SetDirtyStatusToNoChange();
+                Reporter.CloseGingerHelper();
+            }
+        }
+
+        //private bool CheckIfListItemsChanged(ObservableList<RepositoryItemBase> list)
+        //{
+        //    foreach (RepositoryItemBase item in list)
+        //    {
+        //        if (item.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || item.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+
+        string mName;
         [IsSerializedForLocalRepository]
-        public string Name { get; set; }
-                
+        public string Name
+        {
+            get
+            {
+                return mName;
+            }
+            set
+            {
+                mName = value;
+                OnPropertyChanged(nameof(Name));
+            }
+        }
+
         public string Folder { get; set; }        
 
         [IsSerializedForLocalRepository]
@@ -172,7 +333,6 @@ namespace Ginger.Environments
                     return null;
                 }
             }
-
         }
         
         [IsSerializedForLocalRepository]
@@ -195,7 +355,7 @@ namespace Ginger.Environments
 
         // Need to be tree view
         public override string GetNameForFileName() { return Name; }
-        
+
         public string BusinessFlowsMainFolder
         {
             get
@@ -207,17 +367,6 @@ namespace Ginger.Environments
             }
         }
 
-        public string ApplicationsMainFolder
-        {
-            get
-            {
-                string folderPath = Folder + @"Applications\";
-                if (Directory.Exists(folderPath) == false)
-                    Directory.CreateDirectory(folderPath);
-                return folderPath;
-            }
-        }
-        
         public void SetUniqueApplicationName(ApplicationPlatform app)
         {
             if (this.ApplicationPlatforms.Where(obj => obj.AppName == app.AppName).FirstOrDefault() == null) return; //no name like it in the group
@@ -240,9 +389,9 @@ namespace Ginger.Environments
         /// <returns></returns>
         public static IEnumerable<string> SolutionFiles(string solutionFolder)
         {
-            // super fast way to get files list in parllel
-            if (GingerCore.Repository.RepositorySerializer.FastLoad)
-            {
+            // super fast way to get files list in paralell
+            //if (GingerCore.Repository.RepositorySerializer.FastLoad)
+            //{
                 //List only need directories which have repo items
                 //Do not add documents, ExecutionResults, HTMLReports
                 ConcurrentBag<string> fileEntries = new ConcurrentBag<string>();
@@ -277,32 +426,32 @@ namespace Ginger.Environments
                 
                 return fileEntries.ToList();
 
-            }
-            else
-            {
+            //}
+            //else
+            //{
 
-                ConcurrentBag<string> fileEntries = new ConcurrentBag<string>();
-                //take root folder files
-                IEnumerable<string> files = Directory.EnumerateFiles(solutionFolder, "*Ginger.*.xml", SearchOption.TopDirectoryOnly).AsParallel().AsOrdered().ToList();
-                foreach (string file in files)
-                {
-                    fileEntries.Add(file);
-                }
+            //    ConcurrentBag<string> fileEntries = new ConcurrentBag<string>();
+            //    //take root folder files
+            //    IEnumerable<string> files = Directory.EnumerateFiles(solutionFolder, "*Ginger.*.xml", SearchOption.TopDirectoryOnly).AsParallel().AsOrdered().ToList();
+            //    foreach (string file in files)
+            //    {
+            //        fileEntries.Add(file);
+            //    }
 
-                //take sub folders files
-                string[] excludedSolutionFolders = new string[] { "HTMLReports", "ExecutionResults", "Backups", "Backup", "Documents","AutoSave","Recover" };
-                IEnumerable<string> AllFolderList = Directory.EnumerateDirectories(solutionFolder, "*", SearchOption.TopDirectoryOnly).Where(file => !excludedSolutionFolders.Any(x => file.Contains(x))).ToList();
+            //    //take sub folders files
+            //    string[] excludedSolutionFolders = new string[] { "HTMLReports", "ExecutionResults", "Backups", "Backup", "Documents","AutoSave","Recover" };
+            //    IEnumerable<string> AllFolderList = Directory.EnumerateDirectories(solutionFolder, "*", SearchOption.TopDirectoryOnly).Where(file => !excludedSolutionFolders.Any(x => file.Contains(x))).ToList();
                 
-                foreach (string folder in AllFolderList)
-                {
-                    // Get each main folder sub folder all levels
-                 if (Directory.Exists(folder))
-                    {    // Add main folder files
-                        AddFolderFiles(fileEntries, folder);
-                    }
-                }
-                return fileEntries.ToList();
-            }
+            //    foreach (string folder in AllFolderList)
+            //    {
+            //        // Get each main folder sub folder all levels
+            //     if (Directory.Exists(folder))
+            //        {    // Add main folder files
+            //            AddFolderFiles(fileEntries, folder);
+            //        }
+            //    }
+            //    return fileEntries.ToList();
+            //}
         }
 
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
@@ -317,10 +466,7 @@ namespace Ginger.Environments
         internal ReportTemplate CreateNewReportTemplate(string path = "")
         {
             ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
-
-            System.Reflection.Assembly ExecutingAssembly;
-            ExecutingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-
+            
             ReportTemplateSelector RTS = new ReportTemplateSelector();
             RTS.ShowAsWindow();
 
@@ -333,55 +479,14 @@ namespace Ginger.Environments
                 string NewReportName = string.Empty;
                 if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
                 {
-                    NewReportTemplate.Name = NewReportName;
-                    if (string.IsNullOrEmpty(path))
-                        NewReportTemplate.FileName = LocalRepository.GetRepoItemFileName(NewReportTemplate);
-                    else
-                        NewReportTemplate.FileName = LocalRepository.GetRepoItemFileName(NewReportTemplate, path);
-                    if (App.LocalRepository != null)
-                    {
-                        App.LocalRepository.SaveNewItem(NewReportTemplate, path);
-                        App.LocalRepository.AddItemToCache(NewReportTemplate);
-                    }
+                    NewReportTemplate.Name = NewReportName;                    
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
                 }
                 return NewReportTemplate;
             }
             return null;
         }
 
-        internal HTMLReportTemplate CreateNewHTMLReportTemplate(string path = "")
-        {
-            HTMLReportTemplate NewReportTemplate = new HTMLReportTemplate() { Name = "New Report Template", Status = HTMLReportTemplate.eReportStatus.Development };
-
-            System.Reflection.Assembly ExecutingAssembly;
-            ExecutingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-
-            HTMLReportTemplateSelector RTS = new HTMLReportTemplateSelector();
-            RTS.ShowAsWindow();
-
-            if (RTS.SelectedReportTemplate != null)
-            {
-                NewReportTemplate.HTML = RTS.SelectedReportTemplate.HTML;
-
-                //Make it Generic or Const string for names used for File
-                string NewReportName = string.Empty;
-                if (GingerCore.General.GetInputWithValidation("Add New Report", "Report Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
-                {
-                    NewReportTemplate.Name = NewReportName;
-                    if (string.IsNullOrEmpty(path))
-                        NewReportTemplate.FileName = LocalRepository.GetRepoItemFileName(NewReportTemplate);
-                    else
-                        NewReportTemplate.FileName = LocalRepository.GetRepoItemFileName(NewReportTemplate, path);
-                    if (App.LocalRepository != null)
-                    {
-                        App.LocalRepository.SaveNewItem(NewReportTemplate, path);
-                        App.LocalRepository.AddItemToCache(NewReportTemplate);
-                    }
-                }
-                return NewReportTemplate;
-            }
-            return null;
-        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
@@ -392,30 +497,30 @@ namespace Ginger.Environments
         [IsSerializedForLocalRepository]
         public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
 
-        public string VariablesNames
-        {
-            get
-            {
-                string varsNames = string.Empty;
-                foreach (VariableBase var in Variables)
-                    varsNames += var.Name + ", ";
-                return (varsNames.TrimEnd(new char[] { ',', ' ' }));
-            }
-        }
+        //public string VariablesNames
+        //{
+        //    get
+        //    {
+        //        string varsNames = string.Empty;
+        //        foreach (VariableBase var in Variables)
+        //            varsNames += var.Name + ", ";
+        //        return (varsNames.TrimEnd(new char[] { ',', ' ' }));
+        //    }
+        //}
 
-        public void RefreshVariablesNames() { OnPropertyChanged(Fields.VariablesNames); }
+        //public void RefreshVariablesNames() { OnPropertyChanged(Fields.VariablesNames); }
 
-        public VariableBase GetVariable(string varName)
-        {
-            VariableBase v = (from v1 in Variables where v1.Name == varName select v1).FirstOrDefault();
-            return v;
-        }
+        //public VariableBase GetVariable(string varName)
+        //{
+        //    VariableBase v = (from v1 in Variables where v1.Name == varName select v1).FirstOrDefault();
+        //    return v;
+        //}
 
-        public void ResetVaribles()
-        {
-            foreach (VariableBase va in Variables)
-                va.ResetValue();
-        }
+        //public void ResetVaribles()
+        //{
+        //    foreach (VariableBase va in Variables)
+        //        va.ResetValue();
+        //}
 
         public void AddVariable(VariableBase v)
         {

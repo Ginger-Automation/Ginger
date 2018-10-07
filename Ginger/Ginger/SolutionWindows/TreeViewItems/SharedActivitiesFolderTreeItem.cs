@@ -16,40 +16,42 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 using Ginger.Repository;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
-using GingerCore.GeneralLib;
-using GingerCore.SourceControl;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class SharedActivitiesFolderTreeItem : TreeViewItemBase, ITreeViewItem
+    class SharedActivitiesFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private ActivitiesRepositoryPage mActivitiesRepositoryPage;
-        public string Folder { get; set; }
-        public string Path { get; set; }
         public enum eActivitiesItemsShowMode { ReadWrite, ReadOnly }
-        private eActivitiesItemsShowMode mShowMode;
 
-        public SharedActivitiesFolderTreeItem(eActivitiesItemsShowMode showMode = eActivitiesItemsShowMode.ReadWrite)
+        private RepositoryFolder<Activity> mActivitiesFolder;
+        private ActivitiesRepositoryPage mActivitiesRepositoryPage;               
+        private eActivitiesItemsShowMode mShowMode;
+        
+        public SharedActivitiesFolderTreeItem(RepositoryFolder<Activity> activitiesFolder, eActivitiesItemsShowMode showMode = eActivitiesItemsShowMode.ReadWrite)
         {
+            mActivitiesFolder = activitiesFolder;
             mShowMode = showMode;
         }
 
         Object ITreeViewItem.NodeObject()
         {
-            return null;
+            return mActivitiesFolder;
         }
         override public string NodePath()
         {
-            return Path + @"\";
+            return mActivitiesFolder.FolderFullPath;
         }
+
         override public Type NodeObjectType()
         {
             return typeof(Activity);
@@ -57,56 +59,35 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFile;
-            if (IsGingerDefualtFolder)
-            {
-                ImageFile = "@Activities_16x16.png";
-            }
-            else
-            {
-                ImageFile = "@Folder2_16x16.png";
-            }
-
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return NewTVItemFolderHeaderStyle(mActivitiesFolder);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            AddsubFolders(Path, Childrens);
-
-            //Add Activities
-            ObservableList<Activity> Activities = App.LocalRepository.GetSolutionRepoActivities(specificFolderPath: Path);
-            foreach (Activity activity in Activities)
-            {
-                SharedActivityTreeItem SATI = new SharedActivityTreeItem(mShowMode);
-                SATI.Activity = activity;
-                Childrens.Add(SATI);
-            }
-            return Childrens;
+            return GetChildrentGeneric<Activity>(mActivitiesFolder);            
         }
 
-        private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
+        public override ITreeViewItem GetTreeItem(object item)
         {
-            try
+            if (item is Activity)
             {
-                foreach (string d in Directory.GetDirectories(Path))
-                {
-                    SharedActivitiesFolderTreeItem FolderItem = new SharedActivitiesFolderTreeItem(mShowMode);
-                    string FolderName = System.IO.Path.GetFileName(d);
-
-                    FolderItem.Folder = FolderName;
-                    FolderItem.Path = d;
-
-                    Childrens.Add(FolderItem);
-                }
+                return new SharedActivityTreeItem((Activity)item);
             }
-            catch (System.Exception excpt)
+
+            if (item is RepositoryFolderBase)
             {
-                Console.WriteLine(excpt.Message);
+                return new SharedActivitiesFolderTreeItem((RepositoryFolder<Activity>)item);
             }
+
+            throw new Exception("Error unknown item added to Activities folder");
         }
+
+        internal void AddItemHandler(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+
         bool ITreeViewItem.IsExpandable()
         {
             return true;
@@ -116,7 +97,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActivitiesRepositoryPage == null)
             {
-                mActivitiesRepositoryPage = new ActivitiesRepositoryPage(Path);
+                mActivitiesRepositoryPage = new ActivitiesRepositoryPage(mActivitiesFolder);
             }
             return mActivitiesRepositoryPage;
         }
@@ -133,16 +114,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             if (mShowMode == eActivitiesItemsShowMode.ReadWrite)
             {
-                if (IsGingerDefualtFolder)
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Activity), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false);
+                if (mActivitiesFolder.IsRootFolder)
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Activity), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh:false);
                 else
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Activity), allowAddNew: false);
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Activity), allowAddNew: false, allowRefresh: false);
                 
                 AddSourceControlOptions(mContextMenu, false, false);
             }
             else
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), true, false, false, false, false, false, false, false, false,false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.Activity), false, false, false, false, false, false, false, false, false,false);
             }
         }               
     }

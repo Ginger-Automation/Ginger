@@ -37,6 +37,8 @@ using System.Drawing.Imaging;
 using System.Reflection;
 using System.Security.Principal;
 using Amdocs.Ginger;
+using amdocs.ginger.GingerCoreNET;
+using GingerCore.DataSource;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -82,7 +84,7 @@ namespace Ginger.Run.RunSetActions
             get {
                 if (mValueExpression == null)
                 {
-                    mValueExpression = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables);
+                    mValueExpression = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
                 }
                 return mValueExpression;
             }
@@ -251,17 +253,19 @@ namespace Ginger.Run.RunSetActions
                                 else
                                 {
                                     emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
+                                    ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
                                     reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                                             false,
-                                                                                                                                            App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
+                                                                                                                                            HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
                                                                                                                                             extraInformationCalculated + "\\" + System.IO.Path.GetFileName(runSetFolder),false, currentConf.HTMLReportConfigurationMaximalFolderSize);
                                 }
                             }
                             else
                             {
+                                ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
                                 reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                                           false,
-                                                                                                                                          App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault());
+                                                                                                                                          HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault());
                             }
                         }
                         if (!string.IsNullOrEmpty(reportsResultFolder))
@@ -376,12 +380,13 @@ namespace Ginger.Run.RunSetActions
         public void CreateSummaryViewReportForEmailAction(ReportInfo RI)
         {
             HTMLReportConfiguration currentTemplate = new HTMLReportConfiguration();
-            currentTemplate = App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault();
-            System.Drawing.Image CustomerLogo = Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(currentTemplate.LogoBase64Image.ToString());
+            ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+            currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault();
+            System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
             CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
             if (currentTemplate == null)
             {
-                currentTemplate = App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).FirstOrDefault();
+                currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
             if ((RI.ReportInfoRootObject == null) || (RI.ReportInfoRootObject.GetType() == typeof(Object)))
             {

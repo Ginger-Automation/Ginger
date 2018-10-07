@@ -169,6 +169,7 @@ namespace Ginger
             if (!showClosebtn)
             {
                 CloseBtn.Visibility = System.Windows.Visibility.Collapsed;
+                UpperCloseBtn.Visibility = System.Windows.Visibility.Collapsed;
             }
             else
             {

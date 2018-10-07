@@ -16,9 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
 using GingerCore.Actions;
@@ -30,7 +33,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 {
     public class UploadItemToRepositoryWizard : WizardBase
     {
-        public override string Title { get { return "Add Items to Repository"; } }
+        public override string Title { get { return "Add Items to Shared Repository"; } }
                          
         public UploadItemToRepositoryWizard(IEnumerable<object> items)
         {
@@ -38,21 +41,21 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         
             foreach (object i in items)
             {
-                UploadItemSelection.mSelectedItems.Add(CreateUploadItem((RepositoryItem)i));
+                UploadItemSelection.mSelectedItems.Add(CreateUploadItem((RepositoryItemBase)i));
             }
-            AddPage(Name: "Items Selection", Title: "Upload Item/s Selection", SubTitle: "Selected items to be added to Shared Repository", Page: new UploadItemsSelectionPage(UploadItemSelection.mSelectedItems));
-            AddPage(Name: "Items Validation", Title: "Upload Item/s Validation", SubTitle: "Validate the items to be added to Shared Repository", Page: new UploadItemsValidationPage());
-            AddPage(Name: "Items Upload Status", Title: "Upload Item/s Status", SubTitle: "Upload Item Status", Page: new UploadStatusPage());
+            AddPage(Name: "Items Selection", Title: "Item/s Selection", SubTitle: "Selected items to be added to Shared Repository", Page: new UploadItemsSelectionPage(UploadItemSelection.mSelectedItems));
+            AddPage(Name: "Items Validation", Title: "Item/s Validation", SubTitle: "Validate the items to be added to Shared Repository", Page: new UploadItemsValidationPage());
+            AddPage(Name: "Items Status", Title: "Item/s Status", SubTitle: "Upload Item Status", Page: new UploadStatusPage());
         }
 
-        private UploadItemSelection CreateUploadItem(RepositoryItem item)
+        private UploadItemSelection CreateUploadItem(RepositoryItemBase item)
         {
             string strComment = "";
             UploadItemSelection uploadItem = new UploadItemSelection();
             uploadItem.Selected = true;
           
             UploadItemSelection.eExistingItemType existingItemType = UploadItemSelection.eExistingItemType.NA;
-            RepositoryItem existingItem = ExistingItemCheck(item, ref strComment, ref existingItemType);
+            RepositoryItemBase existingItem = ExistingItemCheck(item, ref strComment, ref existingItemType);
             if (existingItem != null)
             {
                 uploadItem.ItemUploadType = UploadItemSelection.eItemUploadType.Overwrite;
@@ -72,7 +75,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
                     ActivitiesGroup group = App.BusinessFlow.ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
                     if (group != null)
                     {
-                        ObservableList<ActivitiesGroup> repoGroups = App.LocalRepository.GetSolutionRepoActivitiesGroups();
+                        ObservableList<ActivitiesGroup> repoGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
                         ActivitiesGroup repoGroup = repoGroups.Where(x => (x.Guid == group.Guid) || (x.Guid == group.ParentGuid) || (group.ExternalID != null &&
                         group.ExternalID != string.Empty && x.ExternalID == group.ExternalID)).FirstOrDefault();
                         if (repoGroup == null)
@@ -85,25 +88,44 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 
             uploadItem.ItemName = item.ItemName;
             uploadItem.ItemGUID = item.Guid;
-            uploadItem.SetItemPartesFromEnum(item.GetTypeOfItemParts());
+            uploadItem.SetItemPartesFromEnum(GetTypeOfItemParts(item));
             uploadItem.UsageItem = item;
 
             return uploadItem;
         }
 
-        public RepositoryItem ExistingItemCheck(object item, ref string strComment, ref UploadItemSelection.eExistingItemType existingItemType)
+        public virtual Type GetTypeOfItemParts(RepositoryItemBase item)
+        {
+            if (item is Activity)
+                return typeof(Activity.eItemParts);
+
+            else if (item is Act)
+                return typeof(Act.eItemParts);
+
+            else if (item is ActivitiesGroup)
+                return typeof(ActivitiesGroup.eItemParts);
+
+            else if (item is VariableBase)
+                return typeof(VariableBase.eItemParts);
+
+            else
+                return null;
+        }
+
+        public RepositoryItemBase ExistingItemCheck(object item, ref string strComment, ref UploadItemSelection.eExistingItemType existingItemType)
         {
             IEnumerable<object> existingRepoItems = new ObservableList<RepositoryItem>();
             bool existingItemIsExternalID = false;
             bool existingItemIsParent = false;
             string existingItemFileName = string.Empty;
 
-            if (item is ActivitiesGroup) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivitiesGroups();
-            else if (item is Activity) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivities();
-            else if (item is Act) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActions();
-            else if (item is VariableBase) existingRepoItems = (IEnumerable<object>)App.LocalRepository.GetSolutionRepoVariables();
+            ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            if (item is ActivitiesGroup) existingRepoItems = (IEnumerable<object>)activitiesGroup;
+            else if (item is Activity) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            else if (item is Act) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>(); 
+            else if (item is VariableBase) existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>(); 
 
-            RepositoryItem exsitingItem = App.LocalRepository.GetMatchingRepoItem((RepositoryItem)item, existingRepoItems, ref existingItemIsExternalID, ref existingItemIsParent);
+            RepositoryItemBase exsitingItem = SharedRepositoryOperations.GetMatchingRepoItem((RepositoryItemBase)item, existingRepoItems, ref existingItemIsExternalID, ref existingItemIsParent);
           
             if (exsitingItem != null)
             {

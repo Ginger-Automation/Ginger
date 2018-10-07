@@ -30,6 +30,7 @@ using System.Reflection;
 using Amdocs.Ginger.Repository;
 using GingerCore.ALM.QC;
 using GingerCore.ALM.QCRestAPI;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM
 {
@@ -315,8 +316,8 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Update selected Activities Groups of business flow: " + businessFlow.Name + " from ALM"));
 
-            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = App.LocalRepository.GetSolutionRepoActivities(false);
+            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
@@ -331,8 +332,8 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Update business flow: " + businessFlow.Name + " from ALM"));
 
-            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = App.LocalRepository.GetSolutionRepoActivities(false);
+            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
@@ -434,7 +435,7 @@ namespace Ginger.ALM
             return null;
         }
 
-        public void ImportALMTests(string importDestinationFolderPath = "")
+        public void ImportALMTests(string importDestinationFolderPath = null)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, "Importing Business flow from ALM");

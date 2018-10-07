@@ -32,6 +32,8 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Ginger.BusinessFlowWindows;
 using Ginger.BusinessFlowFolder;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Repository
 {
@@ -40,15 +42,19 @@ namespace Ginger.Repository
     /// </summary>
     public partial class ActivitiesGroupsRepositoryPage : Page
     {
+        RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
+        BusinessFlow mBusinessFlow;
+
         bool TreeInitDone = false;
         bool mInTreeModeView = false;
 
-        BusinessFlow mBusinessFlow;
+        
 
-        public ActivitiesGroupsRepositoryPage(string Folder, BusinessFlow businessFlow = null)
+        public ActivitiesGroupsRepositoryPage(RepositoryFolder<ActivitiesGroup> activitiesGroupFolder,  BusinessFlow businessFlow = null)
         {
             InitializeComponent();
 
+            mActivitiesGroupFolder = activitiesGroupFolder;
             if (businessFlow != null)
                 mBusinessFlow = businessFlow;
             else
@@ -58,9 +64,16 @@ namespace Ginger.Repository
             }
             
             SetActivitiesRepositoryGridView();
-            SetActivitiesRepositoryTreeView();
+            //SetActivitiesRepositoryTreeView();
+            SetGridAndTreeData();
+        }
 
-            App.LocalRepository.AttachHandlerToSolutionRepoActivitiesGroupsChange(RefreshGridActivitiesGroups);         
+        private void SetGridAndTreeData()
+        {
+            if (mActivitiesGroupFolder.IsRootFolder)
+                xActivitiesGroupsRepositoryGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            else
+                xActivitiesGroupsRepositoryGrid.DataSourceList = mActivitiesGroupFolder.GetFolderItems();
         }
 
         private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -83,65 +96,56 @@ namespace Ginger.Repository
             viewCols.Add(new GridColView() { Field = ActivitiesGroup.Fields.Name, WidthWeight = 50, AllowSorting = true });
             viewCols.Add(new GridColView() { Field = ActivitiesGroup.Fields.Description, WidthWeight = 35, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = "Inst.", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ViewInstancesButton"] });
-            grdActivitiesGroupsRepository.SetAllColumnsDefaultView(view);
-            grdActivitiesGroupsRepository.InitViewItems();
-            
-            grdActivitiesGroupsRepository.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGridActivitiesGroups));                       
-            grdActivitiesGroupsRepository.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(AddFromRepository));
-            grdActivitiesGroupsRepository.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivityGroup));
-            grdActivitiesGroupsRepository.RowDoubleClick += grdActivitiesGroupsRepository_grdMain_MouseDoubleClick;
-            grdActivitiesGroupsRepository.ItemDropped += grdActivitiesGroupsRepository_ItemDropped;
-            grdActivitiesGroupsRepository.PreviewDragItem += grdActivitiesGroupsRepository_PreviewDragItem;
-            grdActivitiesGroupsRepository.DataSourceList = App.LocalRepository.GetSolutionRepoActivitiesGroups();
-            grdActivitiesGroupsRepository.ShowTagsFilter = Visibility.Visible;
+            xActivitiesGroupsRepositoryGrid.SetAllColumnsDefaultView(view);
+            xActivitiesGroupsRepositoryGrid.InitViewItems();
+
+            xActivitiesGroupsRepositoryGrid.btnRefresh.Visibility = Visibility.Collapsed;
+            xActivitiesGroupsRepositoryGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(AddFromRepository));
+            xActivitiesGroupsRepositoryGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivityGroup));
+            xActivitiesGroupsRepositoryGrid.RowDoubleClick += grdActivitiesGroupsRepository_grdMain_MouseDoubleClick;
+            xActivitiesGroupsRepositoryGrid.ItemDropped += grdActivitiesGroupsRepository_ItemDropped;
+            xActivitiesGroupsRepositoryGrid.PreviewDragItem += grdActivitiesGroupsRepository_PreviewDragItem;           
+            xActivitiesGroupsRepositoryGrid.ShowTagsFilter = Visibility.Visible;
         }
 
-        private void SetActivitiesRepositoryTreeView()
-        {
-            treeActivitiesGroupsRepository.TreeTitle = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Repository";
-            treeActivitiesGroupsRepository.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
-        }
+        //private void SetActivitiesRepositoryTreeView()
+        //{
+        //    treeActivitiesGroupsRepository.TreeTitle = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Repository";
+        //    treeActivitiesGroupsRepository.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
+        //}
 
-        private void ShowTreeView()
-        {
-            //if not done..
-            if (!TreeInitDone)
-            {
-                treeActivitiesGroupsRepository.TreeTitle = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Repository";
-                treeActivitiesGroupsRepository.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
-                //Add Activities
-                SharedActivitiesGroupsFolderTreeItem SAGFTI = new SharedActivitiesGroupsFolderTreeItem(SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode.ReadOnly);
-                SAGFTI.Folder = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups);
-                SAGFTI.Path = App.UserProfile.Solution.Folder + @"\SharedRepository\ActivitiesGroups\";
-                treeActivitiesGroupsRepository.Tree.AddItem(SAGFTI);
+        //private void ShowTreeView()
+        //{
+        //    //if not done..
+        //    if (!TreeInitDone)
+        //    {
+        //        treeActivitiesGroupsRepository.TreeTitle = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Repository";
+        //        treeActivitiesGroupsRepository.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
+                
+        //        //Add Activities
+        //        SharedActivitiesGroupsFolderTreeItem SAGFTI = new SharedActivitiesGroupsFolderTreeItem(SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode.ReadOnly);
+        //        SAGFTI.Folder = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups);
+        //        SAGFTI.Path = App.UserProfile.Solution.Folder + @"\SharedRepository\ActivitiesGroups\";
+        //        treeActivitiesGroupsRepository.Tree.AddItem(SAGFTI);
 
-                TreeInitDone = true;
-            }
-        }    
+        //        TreeInitDone = true;
+        //    }
+        //}    
 
-        private void RefreshGridActivitiesGroups(object sender, RoutedEventArgs e)
-        {
-            App.LocalRepository.RefreshSolutionRepoActivitiesGroups();
-            grdActivitiesGroupsRepository.DataSourceList = App.LocalRepository.GetSolutionRepoActivitiesGroups();
-        }
-
-        private void RefreshGridActivitiesGroups(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            grdActivitiesGroupsRepository.DataSourceList = App.LocalRepository.GetSolutionRepoActivitiesGroups();
-        }
-
+      
         private void AddFromRepository(object sender, RoutedEventArgs e)
         {
             if (mInTreeModeView == false)
             {
-                if (grdActivitiesGroupsRepository.Grid.SelectedItems != null && grdActivitiesGroupsRepository.Grid.SelectedItems.Count > 0)
+                if (xActivitiesGroupsRepositoryGrid.Grid.SelectedItems != null && xActivitiesGroupsRepositoryGrid.Grid.SelectedItems.Count > 0)
                 {
                     if (mBusinessFlow == null) return;
-                    foreach (ActivitiesGroup selectedItem in grdActivitiesGroupsRepository.Grid.SelectedItems)
+                    foreach (ActivitiesGroup selectedItem in xActivitiesGroupsRepositoryGrid.Grid.SelectedItems)
                     {                       
                         ActivitiesGroup droppedGroupIns = (ActivitiesGroup)selectedItem.CreateInstance(true);
                         mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                        mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, App.LocalRepository.GetSolutionRepoActivities(), false);
+                        ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                        mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                         
                         int selectedActIndex = -1;
                         ObservableList<ActivitiesGroup> actsList = App.BusinessFlow.ActivitiesGroups;
@@ -163,9 +167,9 @@ namespace Ginger.Repository
         }
         private void EditActivityGroup(object sender, RoutedEventArgs e)
         {
-            if (grdActivitiesGroupsRepository.CurrentItem != null)
+            if (xActivitiesGroupsRepositoryGrid.CurrentItem != null)
             {
-                ActivitiesGroup activityGroup = (ActivitiesGroup)grdActivitiesGroupsRepository.CurrentItem;
+                ActivitiesGroup activityGroup = (ActivitiesGroup)xActivitiesGroupsRepositoryGrid.CurrentItem;
                 ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup,ActivitiesGroupPage.eEditMode.SharedRepository);
                 mActivitiesGroupPage.ShowAsWindow();
             }
@@ -177,45 +181,45 @@ namespace Ginger.Repository
 
         private void ViewRepositoryItemUsage(object sender, RoutedEventArgs e)
         {
-            if (grdActivitiesGroupsRepository.Grid.SelectedItem != null)
+            if (xActivitiesGroupsRepositoryGrid.Grid.SelectedItem != null)
             {
-                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItem)grdActivitiesGroupsRepository.Grid.SelectedItem);
+                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItem)xActivitiesGroupsRepositoryGrid.Grid.SelectedItem);
                 usagePage.ShowAsWindow();
             }
             else
                 Reporter.ToUser(eUserMsgKeys.NoItemWasSelected); 
         }
 
-        private void GridTreeViewButton_Click(object sender, RoutedEventArgs e)
-        {
-            Image image = new Image();
+        //private void GridTreeViewButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    Image image = new Image();
 
-            if (((Button)sender).ToolTip.ToString().Contains("Tree") == true)
-            {
-                //switch to tree view
-                treeActivitiesGroupsRepository.Visibility = System.Windows.Visibility.Visible;
-                grdActivitiesGroupsRepository.Visibility = System.Windows.Visibility.Collapsed;
-                ShowTreeView();
+        //    if (((Button)sender).ToolTip.ToString().Contains("Tree") == true)
+        //    {
+        //        //switch to tree view
+        //        treeActivitiesGroupsRepository.Visibility = System.Windows.Visibility.Visible;
+        //        xActivitiesGroupsRepositoryGrid.Visibility = System.Windows.Visibility.Collapsed;
+        //        ShowTreeView();
 
-                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Grid_24x24.png"));
-                GridTreeViewButton.Content = image;
-                GridTreeViewButton.ToolTip = "Switch to Grid View";
+        //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Grid_24x24.png"));
+        //        GridTreeViewButton.Content = image;
+        //        GridTreeViewButton.ToolTip = "Switch to Grid View";
 
-                mInTreeModeView = true;
-            }
-            else
-            {
-                //switch to grid view
-                treeActivitiesGroupsRepository.Visibility = System.Windows.Visibility.Collapsed;
-                grdActivitiesGroupsRepository.Visibility = System.Windows.Visibility.Visible;
+        //        mInTreeModeView = true;
+        //    }
+        //    else
+        //    {
+        //        //switch to grid view
+        //        treeActivitiesGroupsRepository.Visibility = System.Windows.Visibility.Collapsed;
+        //        xActivitiesGroupsRepositoryGrid.Visibility = System.Windows.Visibility.Visible;
 
-                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@TreeView_24x24.png"));
-                GridTreeViewButton.Content = image;
-                GridTreeViewButton.ToolTip = "Switch to Tree View";
+        //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@TreeView_24x24.png"));
+        //        GridTreeViewButton.Content = image;
+        //        GridTreeViewButton.ToolTip = "Switch to Tree View";
 
-                mInTreeModeView = false;
-            }
-        }
+        //        mInTreeModeView = false;
+        //    }
+        //}
 
         private void grdActivitiesGroupsRepository_PreviewDragItem(object sender, EventArgs e)
         {
@@ -237,9 +241,9 @@ namespace Ginger.Repository
                 //refresh and select the item
                 try
                 {
-                    ActivitiesGroup dragedItemInGrid = ((IEnumerable<ActivitiesGroup>)grdActivitiesGroupsRepository.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
+                    ActivitiesGroup dragedItemInGrid = ((IEnumerable<ActivitiesGroup>)xActivitiesGroupsRepositoryGrid.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
                     if (dragedItemInGrid != null)
-                        grdActivitiesGroupsRepository.Grid.SelectedItem = dragedItemInGrid;
+                        xActivitiesGroupsRepositoryGrid.Grid.SelectedItem = dragedItemInGrid;
                 }
                 catch(Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
             }

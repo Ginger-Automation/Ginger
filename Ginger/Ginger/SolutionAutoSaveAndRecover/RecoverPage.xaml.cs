@@ -13,10 +13,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowFolder;
 using Ginger.Repository;
+using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
 
@@ -49,10 +51,10 @@ namespace Ginger.SolutionAutoSaveAndRecover
         private void closeEventHandler(object sender, EventArgs e)
         {
             App.AppSolutionRecover.CleanUp();
-            if (mRecoverwasDone)
-            {
-                App.MainWindow.RefreshSolutionPage();
-            }
+            //if (mRecoverwasDone)
+            //{
+            //    App.MainWindow.RefreshSolutionPage();
+            //}
         }
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
@@ -98,12 +100,12 @@ namespace Ginger.SolutionAutoSaveAndRecover
                 {                    
                     if (ri.RecoveredItemObject is BusinessFlow)
                     {
-                        ObservableList<BusinessFlow> businessFlows = App.LocalRepository.GetSolutionBusinessFlows();
+                        ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
                         originalItem = businessFlows.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
                     }
                     else if (ri.RecoveredItemObject is Run.RunSetConfig)
                     {
-                        ObservableList<Run.RunSetConfig> Runsets = App.LocalRepository.GetSolutionRunSets();
+                        ObservableList<RunSetConfig> Runsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
                         originalItem = Runsets.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
                     }
                     if (originalItem == null)

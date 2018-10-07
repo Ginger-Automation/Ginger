@@ -26,21 +26,29 @@ using System.IO;
 using System.Windows.Controls;
 using Ginger.Repository;
 using GingerCore.GeneralLib;
+using GingerWPF.TreeViewItemsLib;
+using Amdocs.Ginger.Repository;
+using Amdocs.Ginger;
+using System.Windows;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class RunSetFolderTreeItem : TreeViewItemBase, ITreeViewItem
+    class RunSetFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        public string Folder { get; set; }
-        public string Path { get; set; }
+        private RepositoryFolder<RunSetConfig> mRunSetConfigFolder;
+
+        public RunSetFolderTreeItem(RepositoryFolder<RunSetConfig> runSetConfigFolder)
+        {
+            mRunSetConfigFolder = runSetConfigFolder;
+        }
 
         Object ITreeViewItem.NodeObject()
         {
-            return null;
+            return mRunSetConfigFolder;
         }
         override public string NodePath()
         {
-            return Path + @"\";
+            return mRunSetConfigFolder.FolderFullPath;
         }
         override public Type NodeObjectType()
         {
@@ -49,55 +57,32 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFile;
-            if (IsGingerDefualtFolder)
-            {
-                ImageFile = "@Run_16x16.png";
-            }
-            else
-            {
-                ImageFile = "@Folder2_16x16.png";
-            }
-
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return NewTVItemFolderHeaderStyle(mRunSetConfigFolder);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-           
-            //Add Run Sets 
-            ObservableList<RunSetConfig> runSets = App.LocalRepository.GetSolutionRunSets(specificFolderPath: Path);
-            AddsubFolders(Path, Childrens);
-
-            foreach (RunSetConfig RSC in runSets)
-            {
-                RunSetTreeItem RSTI = new RunSetTreeItem();
-                RSTI.RunSetConfig = RSC;
-                Childrens.Add(RSTI);
-            }
-            return Childrens;
+            return GetChildrentGeneric<RunSetConfig>(mRunSetConfigFolder);
         }
-        
-        private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
+
+        public override ITreeViewItem GetTreeItem(object item)
         {
-            try
+            if (item is RunSetConfig)
             {
-                foreach (string d in Directory.GetDirectories(Path))
-                {
-                    RunSetFolderTreeItem FolderItem = new RunSetFolderTreeItem();
-                    string FolderName = System.IO.Path.GetFileName(d);
-
-                    FolderItem.Folder = FolderName;
-                    FolderItem.Path = d;
-
-                    Childrens.Add(FolderItem);
-                }
+                return new RunSetTreeItem((RunSetConfig)item);
             }
-            catch (System.Exception excpt)
+
+            if (item is RepositoryFolderBase)
             {
-                Console.WriteLine(excpt.Message);
+                return new RunSetFolderTreeItem((RepositoryFolder<RunSetConfig>)item);
             }
+
+            throw new Exception("Error unknown item added to Run Sets folder");
+        }
+
+        internal void AddItemHandler(object sender, RoutedEventArgs e)
+        {
+            AddTreeItem();
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -120,36 +105,24 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-            if (IsGingerDefualtFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.RunSet), allowRenameFolder: false, allowDeleteFolder: false);
+            if (mRunSetConfigFolder.IsRootFolder)
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.RunSet), allowRenameFolder: false, allowDeleteFolder: false, allowRefresh:false);
             else
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.RunSet), allowRefresh: false);
             
             AddSourceControlOptions(mContextMenu, false, false);
         }
 
         public override void AddTreeItem()
         {
-            string runSetName = string.Empty;
-            if (InputBoxWindow.GetInputWithValidation(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ref runSetName, System.IO.Path.GetInvalidPathChars()))
-            {
-                RunSetConfig Runsets = LocalRepository.CreateNewRunset(runSetName, Path);
-
-                RunSetTreeItem BFTI = new RunSetTreeItem();
-                BFTI.RunSetConfig = Runsets;
-                ITreeViewItem addTreeViewItem = mTreeView.Tree.AddChildItemAndSelect(this, BFTI);
-
-                ////Must do the action after the node was added to tree!
-                //Runsets.Save();
-                ////add BF to cach
-                //refresh header- to reflect source control state
-                mTreeView.Tree.RefreshHeader(addTreeViewItem);
-            }
+            RunSetOperations.CreateNewRunset(runSetsFolder: mRunSetConfigFolder);
         }
 
-        public override void RefreshTreeFolder(Type itemType, string path)
-        {
-            base.RefreshTreeFolder(typeof(RunSetConfig), path);
-        }
+
+
+        //public override void RefreshTreeFolder(Type itemType, string path)
+        //{
+        //    base.RefreshTreeFolder(typeof(RunSetConfig), path);
+        //}
     }
 }

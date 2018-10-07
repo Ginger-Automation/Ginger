@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Environments;
 using GingerCore;
 using GingerCore.Repository;
@@ -65,7 +66,7 @@ namespace Ginger.SolutionWindows
                 case SolutionUpgradePageViewMode.UpgradeSolution:
                     ExplanationLable.Text = @"The Solution '" + mSolutionName + "' contains items which were created with older version/s of Ginger (see below), it is recommended to upgrade them to current version (" + RepositorySerializer.GetCurrentGingerVersion() + ") before continuing.";
 
-                    string BackupFolder = mSolutionFolder + @"Backups\Backup_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm");
+                    string BackupFolder = Path.Combine(mSolutionFolder, @"Backups\Backup_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm"));
                     BackupFolderTextBox.Text = BackupFolder;
                     FilesListBox.ItemsSource = mFilesToShow;
                     App.ObjFieldBinding(DoNotAskAgainChkbox, CheckBox.IsCheckedProperty, App.UserProfile, UserProfile.Fields.DoNotAskToUpgradeSolutions);
@@ -116,6 +117,7 @@ namespace Ginger.SolutionWindows
             {
                 xProcessingImage.Visibility = Visibility.Visible;
                 GingerCore.General.DoEvents();
+                NewRepositorySerializer newSerilizer = new NewRepositorySerializer();
                 mFailedFiles = new List<string>();
                 string backupFolderPath = BackupFolderTextBox.Text;
                 //make sure back direcroty exist if not create
@@ -135,31 +137,28 @@ namespace Ginger.SolutionWindows
                     //do upgrade
                     try
                     {
-                        string updatedXML = XMLUpgrade.UpgradeSolutionXMLFile(filePath);
-                        if (string.IsNullOrEmpty(updatedXML) == false)
-                        {
-                            //first copy to backup folder
-                            string BakFile = filePath.Replace(mSolutionFolder, BackupFolderTextBox.Text + @"\");
-                            MakeSurePathExistforBakFile(BakFile);
-                            System.IO.File.Copy(filePath, BakFile, true);
+                        //first copy to backup folder
+                        string BakFile = filePath.Replace(mSolutionFolder, BackupFolderTextBox.Text + @"\");
+                        MakeSurePathExistforBakFile(BakFile);
+                        System.IO.File.Copy(filePath, BakFile, true);
 
-                            //make sure backup was created
-                            if (File.Exists(BakFile) == true)
-                            {
-                                //save new XML content
-                                File.WriteAllText(filePath, updatedXML);
-                            }
-                            else
-                            {
-                                mFailedFiles.Add(filePathToConvert);
-                            }
+                        //make sure backup was created
+                        if (File.Exists(BakFile) == true)
+                        {
+                            //Do Upgrade by unserilize and serlize the item using new serilizer
+                            //unserilize
+                            string itemXML = File.ReadAllText(filePath);
+                            RepositoryItemBase itemObject = (RepositoryItemBase)NewRepositorySerializer.DeserializeFromText(itemXML);
+                            itemObject.FilePath = filePath;
+                            //serlize
+                            newSerilizer.SaveToFile(itemObject, filePath);
                         }
                         else
                         {
                             mFailedFiles.Add(filePathToConvert);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
                         mFailedFiles.Add(filePathToConvert);
