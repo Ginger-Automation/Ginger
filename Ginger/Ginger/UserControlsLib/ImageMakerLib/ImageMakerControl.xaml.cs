@@ -548,22 +548,22 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Cloud);
                     break;
                 case eImageType.SourceControlNew:
-                    SetAsStaticImage("SourceControlItemAdded_10x10.png");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Plus, Brushes.Green);
                     break;
                 case eImageType.SourceControlModified:
-                    SetAsStaticImage("SourceControlItemChange_10x10.png");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Pencil, Brushes.OrangeRed);
                     break;
                 case eImageType.SourceControlDeleted:
-                    SetAsStaticImage("SourceControlItemDeleted_10x10.png");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Minus, Brushes.Red);
                     break;
                 case eImageType.SourceControlEquel:
-                    SetAsStaticImage("SourceControlItemUnchanged_10x10.png");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Check, Brushes.Gray);
                     break;
                 case eImageType.SourceControlLockedByAnotherUser:
-                    SetAsStaticImage("Lock_Red_10x10.png");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Purple);
                     break;
                 case eImageType.SourceControlLockedByMe:
-                    SetAsStaticImage("Lock_Yellow_10x10.png");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Yellow);
                     break;
                 case eImageType.Check:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircleOutline);

@@ -20,6 +20,8 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using System;
 using System.ComponentModel;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -160,6 +162,8 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public abstract ObservableList<RepositoryItemBase> GetFolderRepositoryItems();
 
+        public abstract ObservableList<RepositoryFolderBase> GetSubFoldersAsFolderBase();
+
         public abstract RepositoryFolderBase GetSubFolderByName(string name, bool recursive = false);
 
         /// <summary>
@@ -167,5 +171,53 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         /// <param name="repositoryFolder"></param>
         public abstract void MoveItem(RepositoryItemBase repositoryItem, RepositoryFolderBase repositoryFolder);
+
+        private static ISourceControl SourceControl;
+
+        private eImageType? mSourceControlStatus = eImageType.Null;
+
+        public eImageType? SourceControlStatus
+        {
+            get
+            {
+                if (mSourceControlStatus == eImageType.Null)
+                {
+                    mSourceControlStatus = eImageType.Pending;
+                }
+                return mSourceControlStatus;
+            }
+        }
+
+        public async void RefreshFolderSourceControlStatus()
+        {
+            if (mSourceControlStatus != eImageType.Null)
+            {
+                mSourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(FolderFullPath).ConfigureAwait(true);
+                OnPropertyChanged(nameof(SourceControlStatus));
+            }
+        }
+
+        /// <summary>
+        /// Refresh source control status of all subfolders and its repository items
+        /// </summary>
+        public void RefreshFolderAndChildElementsSourceControlStatus()
+        {
+            RefreshFolderSourceControlStatus();
+            //sub items
+            foreach (RepositoryItemBase ri in GetFolderRepositoryItems())
+            {
+                ri.RefreshSourceControlStatus();
+            }
+            //sub folders
+            foreach (RepositoryFolderBase subFolder in GetSubFoldersAsFolderBase())
+            {
+                subFolder.RefreshFolderAndChildElementsSourceControlStatus();
+            }
+        }
+
+        public static void SetSourceControl(ISourceControl sourceControl)
+        {
+            SourceControl = sourceControl;
+        }
     }
 }

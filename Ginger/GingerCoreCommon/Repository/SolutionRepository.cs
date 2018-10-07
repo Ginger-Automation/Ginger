@@ -132,7 +132,8 @@ namespace Amdocs.Ginger.Repository
             rf.SaveRepositoryItem(filePath, txt);
             repositoryItem.FileName = filePath;
             repositoryItem.FilePath = filePath;
-
+            repositoryItem.RefreshSourceControlStatus();
+            RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
             if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
                 repositoryItem.SetDirtyStatusToNoChange();
         }      
@@ -155,7 +156,72 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        /// <summary>
+        /// Get the Repository Root Folder of the Repository Item
+        /// </summary>
+        /// <param name="repositoryItem"></param>
+        public RepositoryFolderBase GetItemRepositoryRootFolder(RepositoryItemBase repositoryItem)
+        {
+            SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
+            return SRII.ItemRootRepositoryFolder;
+        }
 
+        /// <summary>
+        /// Get RepositoryItem by its path
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public RepositoryItemBase GetRepositoryItemByPath(string filePath)
+        {
+            RepositoryItemBase repoItem = null;
+            ObservableList<RepositoryItemBase> repoItemList = GetRepositoryFolderByPath(Path.GetDirectoryName(filePath)).GetFolderRepositoryItems();
+            repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath)).FirstOrDefault();
+            return repoItem;
+        }
+
+        /// <summary>
+        /// Get the Repository Folder by its path
+        /// </summary>
+        /// <param name="folderPath"></param>
+        /// <returns></returns>
+        public RepositoryFolderBase GetRepositoryFolderByPath(string folderPath)
+        {
+            RepositoryFolderBase repoFolder = null;
+            Parallel.ForEach(mSolutionRootFolders, folder =>
+            {
+                if (repoFolder == null)
+                {
+                    if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
+                    {
+                        repoFolder = folder;                        
+                    }
+                    else if (folderPath.Contains(folder.FolderFullPath))
+                    {
+                        Uri fullPath = new Uri(folderPath, UriKind.Absolute);
+                        Uri relRoot = new Uri(folder.FolderFullPath, UriKind.Absolute);
+                        string relPath = relRoot.MakeRelativeUri(fullPath).ToString().Replace("/", "\\");
+                        repoFolder = folder.GetSubFolderByName("~\\" + relPath, true);
+                    }
+                }
+            });
+            return repoFolder;
+        }
+
+        /// <summary>
+        /// Refresh source control status of all parent folders
+        /// </summary>
+        /// <param name="folderPath"></param>
+        public void RefreshParentFoldersSoucerControlStatus(string folderPath)
+        {
+            RepositoryFolderBase repoFolder = GetRepositoryFolderByPath(folderPath);
+            if (repoFolder != null)
+            {
+                repoFolder.RefreshFolderSourceControlStatus();
+                RefreshParentFoldersSoucerControlStatus(Directory.GetParent(folderPath).FullName);
+            }
+        }
+
+        
 
         /// <summary>
         /// Delete the Repository Item from file system and removing it from cache
