@@ -52,8 +52,7 @@ namespace Ginger.SourceControl
         ObservableList<SourceControlFileInfo> mFiles;
         GenericWindow genWin = null;
         bool mCheckInWasDone=false;
-
-        public Action CallBackOnClose { get; internal set; }
+        private List<string> parentFolders = null;
 
         public CheckInPage(string path)
         {
@@ -291,12 +290,58 @@ namespace Ginger.SourceControl
 
         private void TriggerSourceControlIconChanged(List<SourceControlFileInfo> selectedFiles)
         {
+            parentFolders = new List<string>();
             foreach (SourceControlFileInfo fi in selectedFiles)
             {
-                Agent a = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.FilePath == fi.Path select x).SingleOrDefault();
-                if (a != null)
+                FileAttributes attr = FileAttributes.Normal;
+                if (fi.Status != SourceControlFileInfo.eRepositoryItemStatus.Deleted)
                 {
-                    a.OnPropertyChanged(nameof(Agent.SourceControlStatus));
+                    attr = File.GetAttributes(fi.Path);
+
+                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                    {
+                        RepositoryFolderBase repoFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(fi.Path);
+                        repoFolder.RefreshFolderAndChildElementsSourceControlStatus();
+
+                        AddToParentFoldersToRefresh(Directory.GetParent(fi.Path).FullName);
+                    }
+                    else
+                    {
+                        RepositoryItemBase repoItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(fi.Path);
+                        if (repoItem != null)
+                        {
+                            repoItem.RefreshSourceControlStatus();
+                        }
+
+                        AddToParentFoldersToRefresh(Path.GetDirectoryName(fi.Path));
+                    }
+                }
+                else
+                {
+                    AddToParentFoldersToRefresh(Directory.GetParent(fi.Path).FullName);
+                }
+            }
+
+            //refresh parent folders
+            foreach (string folder in parentFolders)
+            {
+                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(folder);
+            }
+        }
+
+        /// <summary>
+        /// Generate unique list of parent Repository folders 
+        /// </summary>
+        /// <param name="parentFolderPath"></param>
+        public void AddToParentFoldersToRefresh(string parentFolderPath)
+        {
+            string standardPath = Path.GetFullPath(parentFolderPath);
+            if (!parentFolders.Contains(standardPath))
+            {
+                //check if not already covered with exsting folder path(
+                if (parentFolders.Where(x => x.Contains(standardPath)).FirstOrDefault() == null)
+                {
+                    parentFolders.Add(standardPath);
                 }
             }
         }
@@ -426,13 +471,7 @@ namespace Ginger.SourceControl
             //    //TODO: remove sol refresh afetr all RIs moved to new repo and using new tree item
             //    App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage, null);                
             //}
-
-            // Callback is used in new tree items to refresh the relevant tree
-            if (CallBackOnClose != null)
-            {
-                CallBackOnClose.Invoke();
-            }
-
+           
             genWin.Close();
         }
 

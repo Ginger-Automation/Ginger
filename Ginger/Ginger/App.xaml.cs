@@ -673,7 +673,6 @@ namespace Ginger
 
                 WorkSpace.Instance.SolutionRepository = null;
                 WorkSpace.Instance.SourceControl = null;
-                RepositoryItemBase.SourceControl = null;
 
                 if (!SolutionFolder.EndsWith(@"\")) SolutionFolder += @"\";
                 string SolFile = SolutionFolder + @"Ginger.Solution.xml";
@@ -819,7 +818,8 @@ namespace Ginger
                 solution.SourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
 
                 WorkSpace.Instance.SourceControl = solution.SourceControl;
-                RepositoryItemBase.SourceControl = solution.SourceControl;
+                RepositoryItemBase.SetSourceControl(solution.SourceControl);
+                RepositoryFolderBase.SetSourceControl(solution.SourceControl);
             }
         }
 

@@ -394,6 +394,7 @@ namespace GingerWPF.TreeViewItemsLib
                         mTreeView.Tree.Dispatcher.Invoke(() =>
                         {
                             mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, GetTreeItem((dynamic)e.NewItems[0]));
+                            RefreshParentTreeItemsSourceControlStatus(e.NewItems[0]);                            
                         });
                         }
                         break;
@@ -404,6 +405,7 @@ namespace GingerWPF.TreeViewItemsLib
                             mTreeView.Tree.Dispatcher.Invoke(() =>
                             {
                                 mTreeView.Tree.DeleteItemByObjectAndSelectParent(e.OldItems[0], (ITreeViewItem)this);
+                                RefreshParentTreeItemsSourceControlStatus(e.OldItems[0]);                                
                             });
                         }
                     break;
@@ -415,6 +417,18 @@ namespace GingerWPF.TreeViewItemsLib
                         });
                     break;
                 }
+        }
+
+        private void RefreshParentTreeItemsSourceControlStatus(object modifiedTreeITemObject)
+        {
+            if (modifiedTreeITemObject is RepositoryItemBase)
+            {
+                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(((RepositoryItemBase)modifiedTreeITemObject).FilePath));
+            }
+            else if (modifiedTreeITemObject is RepositoryFolderBase)
+            {
+                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(((RepositoryFolderBase)modifiedTreeITemObject).FolderFullPath);
+            }
         }
 
         public override void AddSourceControlOptions(ContextMenu CM, bool addDetailsOption = true, bool addLocksOption = true)
@@ -465,31 +479,10 @@ namespace GingerWPF.TreeViewItemsLib
 
         public void SourceControlCheckIn(object sender, System.Windows.RoutedEventArgs e)
         {
-            CheckInPage CIW = new CheckInPage(this.NodePath());
-            CIW.CallBackOnClose += CIWClosed;
+            CheckInPage CIW = new CheckInPage(this.NodePath());           
             CIW.ShowAsWindow();
         }
-
-        void CIWClosed()
-        {                     
-            // when the check in window is closed we refresh the source control status icon
-            Object nodeObject = ((ITreeViewItem)this).NodeObject();
-
-            if (nodeObject is RepositoryItemBase)   // Single Repository item 
-            {
-                ((RepositoryItemBase)nodeObject).RefreshSourceControlStatus();
-            }
-            else if (nodeObject is RepositoryFolderBase)  // repositoryFolder
-            {
-                var v = ((RepositoryFolderBase)nodeObject).GetFolderRepositoryItems();
-                foreach (RepositoryItemBase RI in v)
-                {
-                    RI.RefreshSourceControlStatus();
-                }
-            }
-
-        }
-
+        
         public void SourceControlUndoChanges(object sender, System.Windows.RoutedEventArgs e)
         {
             if (Reporter.ToUser(eUserMsgKeys.SureWantToDoRevert) == MessageBoxResult.Yes)
@@ -583,8 +576,9 @@ namespace GingerWPF.TreeViewItemsLib
                 // Source control image
                 ImageMakerControl sourceControlImage = new ImageMakerControl();                
                 sourceControlImage.BindControl(repoItem, nameof(RepositoryItemBase.SourceControlStatus));
-                sourceControlImage.Width = 10;
-                sourceControlImage.Height = 10;
+                repoItem.RefreshSourceControlStatus();
+                sourceControlImage.Width = 8;
+                sourceControlImage.Height = 8;                
                 stack.Children.Add(sourceControlImage);
             }
 
@@ -632,26 +626,33 @@ namespace GingerWPF.TreeViewItemsLib
             StackPanel stack = new StackPanel();
             stack.Orientation = Orientation.Horizontal;
 
-            //if (WorkSpace.Instance.SourceControl != null)
-            //{
-            //    // Source control image
-            //    ImageMakerControl sourceControlImage = new ImageMakerControl();
-            //    sourceControlImage.BindControl(RI, nameof(RepositoryItemBase.SourceControlStatus));
-            //    sourceControlImage.Width = 10;
-            //    sourceControlImage.Height = 10;
-            //    stack.Children.Add(sourceControlImage);
-            //}
+            if (WorkSpace.Instance.SourceControl != null)
+            {
+                // Source control image
+                ImageMakerControl sourceControlImage = new ImageMakerControl();
+                sourceControlImage.BindControl(repoItemFolder, nameof(RepositoryFolderBase.SourceControlStatus));
+                repoItemFolder.RefreshFolderSourceControlStatus();
+                sourceControlImage.Width = 8;
+                sourceControlImage.Height = 8;
+                sourceControlImage.Margin = new Thickness(0, 0, 2, 0);
+                stack.Children.Add(sourceControlImage);
+            }
 
             // Add Item Image            
             ImageMakerControl NodeImageType = new ImageMakerControl();
-            if (imageType == eImageType.Null)
-                BindingLib.ControlsBinding.ObjFieldBinding(NodeImageType, ImageMakerControl.ImageTypeProperty, repoItemFolder, nameof(RepositoryFolderBase.FolderImageType), BindingMode:System.Windows.Data.BindingMode.OneWay);
+            if(imageType == eImageType.Null)
+            {
+                BindingLib.ControlsBinding.ObjFieldBinding(NodeImageType, ImageMakerControl.ImageTypeProperty, repoItemFolder, nameof(RepositoryFolderBase.FolderImageType), BindingMode: System.Windows.Data.BindingMode.OneWay);
+            }          
             else
+            {
                 NodeImageType.ImageType = imageType;
+            }
+               
             NodeImageType.Width = 16;
             NodeImageType.Height = 16;
             stack.Children.Add(NodeImageType);
-
+          
             // Add Item header text 
             Label itemHeaderLabel = new Label();
             itemHeaderLabel.BindControl(repoItemFolder, "DisplayName");
