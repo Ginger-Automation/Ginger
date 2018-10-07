@@ -289,9 +289,9 @@ namespace GingerCore.Repository
                 }
 
                 // first check if we need to auto upgrade the xml to latest ginger version               
-                string upgradedXML = XMLUpgrade.UpgradeSolutionXMLFileIfNeeded(FileName, xml);
-                if (string.IsNullOrEmpty(upgradedXML) == false)
-                    xml = upgradedXML;
+                //string upgradedXML = XMLUpgrade.UpgradeSolutionXMLFileIfNeeded(FileName, xml);
+                //if (string.IsNullOrEmpty(upgradedXML) == false)
+                //    xml = upgradedXML;
 
                 return DeserializeFromText(t, xml);
             }
@@ -363,10 +363,11 @@ namespace GingerCore.Repository
             if (FileName.Length > 0 && File.Exists(FileName))
             {
                 string xml = File.ReadAllText(FileName);
+
                 // first check if we need to auto upgrade the xml to latest ginger version
-                string upgradedXML = XMLUpgrade.UpgradeSolutionXMLFileIfNeeded(FileName, xml);
-                if (string.IsNullOrEmpty(upgradedXML) == false)
-                    xml = upgradedXML;
+                //string upgradedXML = XMLUpgrade.UpgradeSolutionXMLFileIfNeeded(FileName, xml);
+                //if (string.IsNullOrEmpty(upgradedXML) == false)
+                //    xml = upgradedXML;
 
                 return DeserializeFromText(xml);
             }

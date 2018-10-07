@@ -91,6 +91,10 @@ namespace Amdocs.Ginger.Repository
                         {
                             ri.InitHeader();
                         }
+                        else
+                        {
+                            ri.UpdateHeader();
+                        }
 
                         // Header
                         xml.WriteStartElement(cGingerRepositoryItem);                        
