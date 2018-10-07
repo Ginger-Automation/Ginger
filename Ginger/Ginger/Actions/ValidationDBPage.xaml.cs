@@ -198,21 +198,23 @@ namespace Ginger.Actions
         /// Fill the environments Applications combo box
         /// </summary>
         private void FillAppComboBox()
-        {
-            // TODO: if there is only one item in the combo auto select it
+        {            
             AppNameComboBox.Items.Clear();
-            //string envName = App.MainWindow.lstEnvs.Text; //TODO: need to be fixed
-            string envName = "";
 
-            //pe = (from e in App.LocalRepository.getAllEnvs() where e.Name == envName select e).FirstOrDefault();
-            pe = (from e in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where e.Name == envName select e).FirstOrDefault();
+            if (App.AutomateTabEnvironment != null)
+            {                
+                pe = (from e in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where e.Name == App.AutomateTabEnvironment.Name select e).FirstOrDefault();
 
-            if (pe == null) return;
-            foreach (EnvApplication ea in pe.Applications)
-            {
-                AppNameComboBox.Items.Add(ea.Name);
+                if (pe == null)
+                {
+                    return;
+                }
+                foreach (EnvApplication ea in pe.Applications)
+                {
+                    AppNameComboBox.Items.Add(ea.Name);
+                }
+                ComboAutoSelectIfOneItemOnly(AppNameComboBox);
             }
-            ComboAutoSelectIfOneItemOnly(AppNameComboBox);
         }
 
         private void AppNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
