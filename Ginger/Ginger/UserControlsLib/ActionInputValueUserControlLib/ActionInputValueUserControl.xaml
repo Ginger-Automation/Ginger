@@ -15,7 +15,7 @@
             <DataGrid x:Name="ValueDataGrid" Visibility="Collapsed"></DataGrid>
             <ComboBox x:Name="ValueComboBox" Height="25" Visibility="Collapsed"></ComboBox>
         
-            <Button Grid.Column="1" Width="20">...</Button>
+            <Button x:Name="ValueExpressionButton" Grid.Column="1" Width="20" Click="ValueExpressionButton_Click">...</Button>
         
 
     </Grid>
