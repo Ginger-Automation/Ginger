@@ -71,7 +71,7 @@ namespace GingerCore.GeneralLib
             else
             {
                 //TODO: find from registry or somewhere else
-                return null;
+                return string.Empty;
             }
         }
     }

@@ -103,6 +103,7 @@ namespace GingerCore
     {
         public static Dispatcher MainWindowDispatcher { get; set; }
         public static eAppLogLevel CurrentAppLogLevel;
+        private static bool RunningFromConfigFile = false;
 
         public static event ReporterEventHandler ReporterMessage;
 
@@ -119,6 +120,10 @@ namespace GingerCore
 
         }
 
+        public static void SetRunConfigMode(bool RunConfigMode)
+        {
+            RunningFromConfigFile = RunConfigMode;
+        }
 
         public delegate void ReporterEventHandler(ReporterEventArgs e);
 
@@ -259,26 +264,28 @@ namespace GingerCore
                 MessageBoxResult userSelection = MessageBoxResult.None; //????
 
                 //Show msgbox from Main Window STA
-                MainWindowDispatcher.Invoke(() => {
-                    Window msgOwnerWin = new Window
+                if (!RunningFromConfigFile)
+                {
+                    MainWindowDispatcher.Invoke(() =>
                     {
-                        Width = 0.001,
-                        Height = 0.001,
-                        Topmost = true,
-                        ShowInTaskbar = false,
-                        ShowActivated = true,
-                        WindowStyle = WindowStyle.None,
-                        WindowStartupLocation = WindowStartupLocation.CenterScreen
-                    };
-                    msgOwnerWin.Show();
-                    msgOwnerWin.Hide();
-                    userSelection = MessageBox.Show(msgOwnerWin, messageText, messageToShow.Caption, messageToShow.ButtonsType,
-                                                                                    messageImage, messageToShow.DefualtResualt);
-                    msgOwnerWin.Close();
-
-                    return userSelection;
-                });
-
+                        Window msgOwnerWin = new Window
+                        {
+                            Width = 0.001,
+                            Height = 0.001,
+                            Topmost = true,
+                            ShowInTaskbar = false,
+                            ShowActivated = true,
+                            WindowStyle = WindowStyle.None,
+                            WindowStartupLocation = WindowStartupLocation.CenterScreen
+                        };
+                        msgOwnerWin.Show();
+                        msgOwnerWin.Hide();
+                        userSelection = MessageBox.Show(msgOwnerWin, messageText, messageToShow.Caption, messageToShow.ButtonsType,
+                                                                                        messageImage, messageToShow.DefualtResualt);
+                        msgOwnerWin.Close();
+                        return userSelection;
+                    });
+                }
 
                 if (CurrentAppLogLevel == eAppLogLevel.Debug)
                     ToLog(eLogLevel.INFO, "User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");

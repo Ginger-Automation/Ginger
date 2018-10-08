@@ -642,8 +642,8 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     break;
 
                 case ActGenElement.eGenElementAction.MsgBox:
-                    string msg = act.GetInputParamCalculatedValue("Value");
-                    MessageBox.Show(msg, "Script is paused!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    string msg = act.GetInputParamCalculatedValue("Value");                    
+                    Reporter.ToUser(eUserMsgKeys.ScriptPaused);
                     break;
 
                 default:
@@ -1353,7 +1353,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             throw new NotImplementedException();
         }
 
-        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
         }

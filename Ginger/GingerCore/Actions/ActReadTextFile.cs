@@ -47,6 +47,9 @@ namespace GingerCore.Actions
             public static string FileActionMode = "FileActionMode";
             public static string TextToWrite = "TextToWrite";
             public static string TextFileEncoding = "TextFileEncoding";
+            public static readonly string AppendAt = "AppendAt";
+            public static readonly string AppendLineNumber = "AppendLineNumber";
+
         }
 
         public override string ActionEditPage { get { return "ActReadTextFileEditPage"; } }
@@ -58,6 +61,10 @@ namespace GingerCore.Actions
             Read,Write,Append
         }
 
+        public enum eAppendAt
+        {
+            End,Start,SpecificLine
+        }
         public enum eTextFileEncodings
         {
             UTF8, Unicode, UTF32, UTF7, ASCII, BigEndianUnicode
@@ -65,6 +72,11 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public eTextFileEncodings TextFileEncoding { get; set; }
 
+        [IsSerializedForLocalRepository]
+        public eAppendAt AppendAt { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public string AppendLineNumber { get; set; }
         private eTextFileActionMode mFileActionMode = eTextFileActionMode.Read;
         [IsSerializedForLocalRepository]
         public eTextFileActionMode FileActionMode
@@ -153,8 +165,30 @@ namespace GingerCore.Actions
                 {
                     throw new Exception("Please provide a valid file path");
                 }
+                if (AppendAt == eAppendAt.End)
+                {
+                    AppendTextWithEncoding(calculatedFilePath,GetInputParamCalculatedValue(Fields.TextToWrite));
+                }
+                else
+                {
+                    List<string> LinesfromFile = new List<string>(ReadLinesWithEncoding(calculatedFilePath));
+                    int lineNum = 1;                    
+                    if (AppendAt == eAppendAt.SpecificLine)
+                    {
+                        int.TryParse(GetInputParamCalculatedValue(Fields.AppendLineNumber), out lineNum);
+                    }
 
-                AppendTextWithEncoding(calculatedFilePath,GetInputParamCalculatedValue(Fields.TextToWrite));
+                    if(lineNum>0)
+                    {
+                        LinesfromFile.Insert(lineNum - 1, GetInputParamCalculatedValue(Fields.TextToWrite));
+                    }                        
+                    else
+                    {
+                        LinesfromFile.Add(GetInputParamCalculatedValue(Fields.TextToWrite));
+                    }
+                        
+                    WriteLinesWithEncoding(calculatedFilePath, (IEnumerable<string>)LinesfromFile);                    
+                }
             }
             else
             {
@@ -252,5 +286,62 @@ namespace GingerCore.Actions
             }
             return   TextfromFile;
         }
-       }
+        private IEnumerable<string> ReadLinesWithEncoding(String FilePath)
+        {
+            IEnumerable<string> LinesfromFile;
+            switch (TextFileEncoding)
+            {
+                case eTextFileEncodings.UTF8:
+
+                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.UTF8);
+                    break;
+                case eTextFileEncodings.Unicode:
+                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.Unicode);
+                    break;
+                case eTextFileEncodings.UTF32:
+                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.UTF32);
+                    break;
+                case eTextFileEncodings.UTF7:
+                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.UTF7);
+                    break;
+                case eTextFileEncodings.ASCII:
+                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.ASCII);
+                    break;
+                case eTextFileEncodings.BigEndianUnicode:
+                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.BigEndianUnicode);
+                    break;
+                default:
+                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.Default);
+                    break;
+            }
+            return LinesfromFile;
+        }
+        private void WriteLinesWithEncoding(String FilePath, IEnumerable<string> writeLines)
+        {            
+            switch (TextFileEncoding)
+            {
+                case eTextFileEncodings.UTF8:
+                    System.IO.File.WriteAllLines(FilePath, writeLines,Encoding.UTF8);
+                    break;
+                case eTextFileEncodings.Unicode:
+                    System.IO.File.WriteAllLines(FilePath, writeLines, Encoding.Unicode);
+                    break;
+                case eTextFileEncodings.UTF32:
+                    System.IO.File.WriteAllLines(FilePath, writeLines, Encoding.UTF32);
+                    break;
+                case eTextFileEncodings.UTF7:
+                    System.IO.File.WriteAllLines(FilePath, writeLines, Encoding.UTF7);
+                    break;
+                case eTextFileEncodings.ASCII:
+                    System.IO.File.WriteAllLines(FilePath, writeLines, Encoding.ASCII);
+                    break;
+                case eTextFileEncodings.BigEndianUnicode:
+                    System.IO.File.WriteAllLines(FilePath, writeLines, Encoding.BigEndianUnicode);
+                    break;
+                default:
+                    System.IO.File.WriteAllLines(FilePath, writeLines, Encoding.Default);
+                    break;
+            }            
+        }
+    }
 }

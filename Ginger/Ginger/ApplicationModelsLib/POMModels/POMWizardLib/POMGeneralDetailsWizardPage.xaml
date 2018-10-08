@@ -5,13 +5,20 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
       Title="SelectAppFolderWizardPage">
 
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-        <StackPanel Margin="10,10,10,0" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="240*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" Margin="10,10,10,0" >
             <StackPanel >
                 <Label Content="Name:" Style="{StaticResource @LabelStyle}"/>
                 <TextBox x:Name="xNameTextBox" AutomationProperties.AutomationId="Name POMID"  TextWrapping="Wrap" Text="" Style="{StaticResource @TextBoxStyle}" FontWeight="Bold" Margin="5,0,0,0" />
@@ -23,12 +30,15 @@
                 <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="0,10,0,0" HorizontalAlignment="Left"/>
             </StackPanel>
 
-            <StackPanel Margin="0,20,0,0">
-                <Label Content="Target Appllication:" Style="{StaticResource @LabelStyle}"/>
-                <ComboBox x:Name="xTargetApplicationComboBox"  AutomationProperties.AutomationId="Platform Type AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
-            </StackPanel>
-
         </StackPanel>
+
+        <StackPanel Orientation="Horizontal"  Grid.Row="1" HorizontalAlignment="Right">
+            <UserControls:ucButton x:Name="xBrowseImageLoadButton"  ButtonType="RoundTextAndImageButton"  ButtonText="Browse Image" ButtonImageType="Folder" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xBrowseImageLoadButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+            <UserControls:ucButton x:Name="xTakeScreenShotLoadButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" ButtonText="Take Screen Shot" ButtonImageType="Camera" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xTakeScreenShotLoadButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+        </StackPanel>
+        
+        <Frame x:Name="xScreenShotFrame" Grid.Row="2" NavigationUIVisibility="Hidden"/>
+        
     </Grid>
 
 

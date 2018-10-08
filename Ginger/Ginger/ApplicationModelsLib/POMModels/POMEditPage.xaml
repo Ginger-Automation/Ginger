@@ -5,6 +5,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib"
+      xmlns:agents="clr-namespace:Ginger.Agents"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="800"
       Title="POMEditPage">
@@ -12,8 +14,8 @@
     <ScrollViewer>
         <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="200"/>
-                <RowDefinition  Name="SecondRow" Height="700"/>
+                <RowDefinition Height="250"/>
+                <RowDefinition  Name="SecondRow" Height="100*"/>
             </Grid.RowDefinitions>
 
             <StackPanel Orientation="Vertical">
@@ -26,29 +28,59 @@
                     <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Description:"/>
                     <TextBox x:Name="xDescriptionTextBox" TextWrapping="WrapWithOverflow" Height="50" Style="{StaticResource @MultiRowsTextBoxStyle}" />
                 </StackPanel>
-                <Grid Margin="0,20,10,0" HorizontalAlignment="Left">
+                <Grid Margin="0,20,10,0" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="100"></RowDefinition>
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="300"></ColumnDefinition>
+                        <ColumnDefinition Width="200*"></ColumnDefinition>
+                        <ColumnDefinition Width="300*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" HorizontalAlignment="Right" Orientation="Horizontal">
                         <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Target Application:"/>
-                        <UserControlsLib1:UCComboBox x:Name="xTargetApplicationComboBox" Width="230"></UserControlsLib1:UCComboBox>
+                        <UserControlsLib1:UCComboBox x:Name="xTargetApplicationComboBox" VerticalAlignment="Top" Width="170"></UserControlsLib1:UCComboBox>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Margin="10,0,0,0">
                         <Ginger:ucTagsViewer x:Name="xTagsViewer" HorizontalAlignment="Left" VerticalAlignment="Center" />
                     </StackPanel>
+
+                    <StackPanel Grid.Column="2" >
+                        <agents:ucAgentControl x:Name="xAgentControlUC" HorizontalAlignment="Right" Width="284"></agents:ucAgentControl>
+                    </StackPanel>
+
+
+
                 </Grid>
             </StackPanel>
 
-            <TabControl Grid.Row="1">
-                <TabItem Header="Screen Shot">
-                    <Frame x:Name="xScreenShotFrame"></Frame>
+            <TabControl Grid.Row="1" >
+                <TabItem >
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock VerticalAlignment="Center" Text="Screenshot"  Margin="5,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <StackPanel>
+                        <StackPanel Orientation="Vertical" >
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <UserControls:ucButton x:Name="xBrowseImageLoadButton"  ButtonType="RoundTextAndImageButton"  ButtonText="Browse Image" ButtonImageType="Folder" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="BrowseImageButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                                <UserControls:ucButton x:Name="xTakeScreenShotLoadButton"  ButtonType="RoundTextAndImageButton" ButtonText="Take Screenshot" ButtonImageType="Camera" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TakeScreenShotButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                            </StackPanel>
+                        <Frame x:Name="xScreenShotFrame"></Frame>
+                            
+                        </StackPanel>
+                    </StackPanel>
                 </TabItem>
 
-                <TabItem Header="UI Elements">
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock x:Name="xUIElementTabTextBlock" VerticalAlignment="Center"  Margin="5,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        </StackPanel>
+                    </TabItem.Header>
                     <Frame x:Name="xUIElementsFrame"></Frame>
                 </TabItem>
 

@@ -122,8 +122,8 @@
       <HintPath>..\packages\Gherkin.4.0.0\lib\net45\Gherkin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GingerPluginCore, Version=2.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ginger.Plugin.Core.2.5.1\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
+    <Reference Include="GingerPluginCore, Version=2.6.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ginger.Plugin.Core.2.6.6\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.6.13.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.6.13\lib\Net45\HtmlAgilityPack.dll</HintPath>
@@ -572,18 +572,12 @@
     <Compile Include="ApplicationModelsLib\ModelParams Pages\ModelsGlobalParamsPage.xaml.cs">
       <DependentUpon>ModelsGlobalParamsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMIntroductionWizardPage.xaml.cs">
-      <DependentUpon>POMIntroductionWizardPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\AddPOMWizard.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml.cs">
       <DependentUpon>POMLearnConfigWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml.cs">
       <DependentUpon>POMObjectsMappingWizardPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\POMScreenShotWizardPage.xaml.cs">
-      <DependentUpon>POMScreenShotWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\ScanPageWizardPage.xaml.cs">
       <DependentUpon>ScanPageWizardPage.xaml</DependentUpon>
@@ -1965,6 +1959,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Resource Include="PluginsLibNew\AddPluginWizardLib\AddPluginIntro.md" />
+    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\AddPOMIntro.md" />
+    <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
     <None Include="Ginger.ruleset" />
     <None Include="Resources\VBSTemplate.bmp" />
     <None Include="Resources\VBSTemplate.vbs" />
@@ -2644,19 +2640,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMIntroductionWizardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMLearnConfigWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMObjectsMappingWizardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\POMScreenShotWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

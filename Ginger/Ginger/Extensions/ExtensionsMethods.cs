@@ -338,6 +338,25 @@ namespace Ginger
         // Validations
         // ------------------------------------------------------------
 
+        public static void RemoveValidations(this FrameworkElement frameworkElement, DependencyProperty SelectedProperty)
+        {
+            BindingExpression bd = frameworkElement.GetBindingExpression(SelectedProperty);
+
+            //if (frameworkElement is ucAgentControl)
+            //{
+            //    bd = frameworkElement.GetBindingExpression(ucAgentControl.SelectedAgentProperty);
+            //}
+            //else if(frameworkElement is ComboBox)
+            //{
+            //    bd = frameworkElement.GetBindingExpression(ComboBox.SelectedValueProperty);
+            //}
+
+            if (bd != null)
+            {
+                bd.ParentBinding.ValidationRules.Clear();
+            }
+        }
+
         private static void AddValidation(this FrameworkElement frameworkElement, DependencyProperty dependencyProperty, ValidationRule validationRule)
         {
             BindingExpression bd = frameworkElement.GetBindingExpression(dependencyProperty);

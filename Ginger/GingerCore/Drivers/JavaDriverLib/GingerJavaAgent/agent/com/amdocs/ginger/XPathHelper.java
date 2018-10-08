@@ -18,6 +18,7 @@ package com.amdocs.ginger;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Window;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -373,6 +374,23 @@ public class XPathHelper
 	    }
 
     	return index;
+	}
+
+	public Component GetComponentByMultipleProperties(Window currentWindow, String multipleProperties)
+	{
+		if(currentWindow == null)
+		{
+			GingerAgent.WriteLog("\n Error: Window is not set.");
+			return null;
+		}
+		Container container =currentWindow;
+
+		if(multipleProperties.startsWith("[["))
+			{
+				container=(Container)GetNodeComponent(container,"ByMultiProperty",multipleProperties);
+			}
+		
+		return container;
 	}
 	
 	

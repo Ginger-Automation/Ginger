@@ -681,8 +681,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 fileName = mActWebService.Description + "_" + timeStamp + "_" + fileType + ".xml";
             }
             catch (Exception e)
-            {
-                System.Windows.MessageBox.Show(e.Message);
+            {                
+                Reporter.ToUser(eUserMsgKeys.FailedToCreateRequestResponse, e.Message);
             }
             return fileName;
         }
