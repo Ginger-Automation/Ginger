@@ -191,7 +191,7 @@ namespace Ginger.SolutionWindows
 
             DataSourceBase a = new AccessDataSource();
             a.Name = "GingerDataSource";             
-            a.FilePath = @"~DataSources\GingerDataSource.mdb";
+            a.FilePath = @"~\DataSources\GingerDataSource.mdb";
             a.DSType = DataSourceBase.eDSType.MSAccess;
             string sFileName = mSolution.Folder + @"DataSources\" + a.GetNameForFileName() + "." + a.ObjFileExt + ".xml";
             a.RepositorySerializer.SaveToFile(a, sFileName); 
