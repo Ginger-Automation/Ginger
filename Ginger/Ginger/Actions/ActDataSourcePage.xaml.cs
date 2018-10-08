@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
@@ -408,7 +409,7 @@ namespace Ginger.Actions
 
         private void InitPageData()
         {            
-            mDSList = App.LocalRepository.GetSolutionDataSources();
+            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
                 return;
             foreach (DataSourceBase ds in mDSList)

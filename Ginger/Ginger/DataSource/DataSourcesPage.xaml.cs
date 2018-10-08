@@ -22,6 +22,8 @@ using System.Windows.Controls;
 using GingerCore;
 using GingerCore.DataSource;
 using Ginger.UserControls;
+using amdocs.ginger.GingerCoreNET;
+using System;
 
 namespace Ginger.DataSource
 {
@@ -36,11 +38,14 @@ namespace Ginger.DataSource
         {
             InitializeComponent();
             SetDataSourcesGridView();
-            SetGridData();
-
-            // grdDataSources.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddDataSource));
+            grdDataSources.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();            
             grdDataSources.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteDataSource));
-            grdDataSources.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
+            grdDataSources.btnRefresh.Visibility = Visibility.Collapsed;
+        }
+
+        private void DeleteDataSource(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void SetDataSourcesGridView()
@@ -54,32 +59,7 @@ namespace Ginger.DataSource
             grdDataSources.InitViewItems();
         }
 
-        //private void AddDataSource(object sender, RoutedEventArgs e)
-        //{
-        //    AddNewDataSourcePage CDSP = new AddNewDataSourcePage();
-        //    CDSP.ShowAsWindow();
-
-        //    DataSourceBase dsDetails = CDSP.DSDetails;
-
-        //    if (dsDetails != null)
-        //    {                
-        //        App.LocalRepository.SaveNewItem(dsDetails, Path);      
-        //        App.LocalRepository.AddItemToCache(dsDetails);
-        //        grdDataSources.DataSourceList.Add(dsDetails);                
-        //    }
-        //}
         
-        private void DeleteDataSource(object sender, RoutedEventArgs e)
-        {
-        }
-        private void RefreshGrid(object sender, RoutedEventArgs e)
-        {
-            SetGridData();
-        }
 
-        private void SetGridData()
-        {
-            grdDataSources.DataSourceList = App.LocalRepository.GetSolutionDataSources(includeSubFolders: true);
-        }
     }
 }

@@ -203,7 +203,7 @@ namespace Ginger.Actions.WebServices
             if (apiModelPage == null)
             {
                 AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModels);
-                apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel32, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single);
+                apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single);
             }
             List<object> selectedList = apiModelPage.ShowAsWindow();
 

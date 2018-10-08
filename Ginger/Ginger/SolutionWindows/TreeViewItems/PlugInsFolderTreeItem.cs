@@ -18,40 +18,69 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.PlugInsWindows;
+using GingerCore;
 using GingerWPF.PluginsLib.AddPluginWizardLib;
+using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class PlugInsFolderTreeItem : TreeViewItemBase, ITreeViewItem
+    class PlugInsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
+        private readonly RepositoryFolder<PluginPackage> mPluginsFolder;
         private PlugInsPage mExplorerPlugInsPage;
-        public string Path { get; set; }
-        public string Folder { get; set; }
+
+        public PlugInsFolderTreeItem(RepositoryFolder<PluginPackage> pluginsFolder)
+        {
+            mPluginsFolder = pluginsFolder;
+        }
+
+        Object ITreeViewItem.NodeObject()
+        {
+            return mPluginsFolder;
+        }
         override public string NodePath()
         {
-            return Path + @"\";
+            return mPluginsFolder.FolderFullPath;
+        }
+        override public Type NodeObjectType()
+        {
+            return typeof(PluginPackage);
+        }
+
+        StackPanel ITreeViewItem.Header()
+        {
+            return NewTVItemFolderHeaderStyle(mPluginsFolder);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            return GetChildrentGeneric<PluginPackage>(mPluginsFolder);
+        }
 
-            ObservableList<PluginPackage> PlugIns = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-            
-            foreach (PluginPackage PIW in PlugIns)
-            {                
-                PluginPackageTreeItem EmbeddedTreeItem = new PluginPackageTreeItem();
-                EmbeddedTreeItem.PluginPackage = PIW;
-                Childrens.Add(EmbeddedTreeItem);                                
+        public override ITreeViewItem GetTreeItem(object item)
+        {
+            if (item is PluginPackage)
+            {
+                return new PluginPackageTreeItem((PluginPackage)item);
             }
-            return Childrens;
+            else if (item is RepositoryFolderBase)
+            {
+                return new PlugInsFolderTreeItem((RepositoryFolder<PluginPackage>)item);
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Plugin Packages folder");
+                throw new NotImplementedException();
+            }
         }
 
         Page ITreeViewItem.EditPage()
@@ -63,20 +92,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return mExplorerPlugInsPage;
         }
 
-        StackPanel ITreeViewItem.Header()
+        internal void AddItemHandler(object sender, RoutedEventArgs e)
         {
-            string ImageFileName;
-
-            if (IsGingerDefualtFolder)
-            {
-                ImageFileName = "@Plugin_16x16.png";
-            }
-            else
-            {
-                ImageFileName = "@Folder2_16x16.png";
-            }
-
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFileName, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            AddPlugIn();
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -89,31 +107,23 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return mContextMenu;
         }
 
-        object ITreeViewItem.NodeObject()
-        {
-            return null;
-        }
-
-        override public Type NodeObjectType()
-        {
-            return typeof(PluginPackage);
-        }
-
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();        
-            TreeViewUtils.AddMenuItem(mContextMenu, "Add Plugin", AddPlugIn, null, "@Plugin_16x16.png");            
-            TreeViewUtils.AddMenuItem(mContextMenu, "Open Folder in File Explorer", OpenTreeFolderHandler, null, "@Folder_16x16.png");
-            mTreeView.AddToolbarTool("@Folder_16x16.png", "Open Folder in File Explorer", OpenTreeFolderHandler);
+            TreeViewUtils.AddMenuItem(mContextMenu, "Add Plugin", AddPlugIn, null, eImageType.Add);            
+            TreeViewUtils.AddMenuItem(mContextMenu, "Open Folder in File Explorer", OpenTreeFolderHandler, null, eImageType.OpenFolder);
         }
         
 
         public void AddPlugIn(object sender, System.Windows.RoutedEventArgs e)
         {
-            WizardWindow.ShowWizard(new AddPluginPackageWizard());
+            AddPlugIn();
         }
 
-        
+        public void AddPlugIn()
+        {
+            WizardWindow.ShowWizard(new AddPluginPackageWizard());
+        }
     }
 }

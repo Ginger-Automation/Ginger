@@ -106,7 +106,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (mApplicationPOMSelectionPage == null)
             {
                 ApplicationPOMsTreeItem pOMsRoot = new ApplicationPOMsTreeItem(mPOMModelFolder);
-                mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOM, pOMsRoot,
+                mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOMModel, pOMsRoot,
                                                                                     SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
                                                                                     new Tuple<string, string>(  nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
                                                                                                                 nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), 

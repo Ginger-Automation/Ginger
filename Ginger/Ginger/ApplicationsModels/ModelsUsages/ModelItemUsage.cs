@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using System;
@@ -70,7 +71,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
         public Act Action { get; set; } 
         public string HostActivityName { get; set; }
 
-        public RepositoryItem UsageItem { get; set; }
+        public RepositoryItemBase UsageItem { get; set; }
         public string UsageItemName { get; set; }
 
         public string UsageExtraDetails { get; set; }

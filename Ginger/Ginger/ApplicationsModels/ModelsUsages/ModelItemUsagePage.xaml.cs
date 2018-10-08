@@ -79,7 +79,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             {
                 xProcessingImage.Visibility = Visibility.Visible;
 
-                ObservableList<BusinessFlow> BizFlows = App.LocalRepository.GetSolutionBusinessFlows();
+                ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
                 await Task.Run(() =>
                 {
                     foreach (BusinessFlow BF in BizFlows)
@@ -282,8 +282,8 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                         if (usage.Status == ModelItemUsage.eStatus.Updated || usage.Status == ModelItemUsage.eStatus.SaveFailed)
                         {
                             try
-                            {
-                                usage.HostBusinessFlow.Save();
+                            {                                
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
                                 usage.Status = ModelItemUsage.eStatus.UpdatedAndSaved;
                             }
                             catch (Exception ex)

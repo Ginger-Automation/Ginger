@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Runtime.CompilerServices;
 
 namespace GingerCore.SourceControl
 {
@@ -90,8 +91,9 @@ namespace GingerCore.SourceControl
             return true;
         }
 
-       
+
         // Get Source Control one file info
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems, ref string error)
         {
             if (Path == null ||  Path.Length == 0) return SourceControlFileInfo.eRepositoryItemStatus.Unknown;

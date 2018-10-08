@@ -30,6 +30,8 @@ using Ginger.ALM;
 using De.TorstenMandelkow.MetroChart;
 using Ginger.Run;
 using GingerCoreNET.GeneralLib;
+using amdocs.ginger.GingerCoreNET;
+using GingerCore.DataSource;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -170,7 +172,7 @@ namespace Ginger.BusinessFlowWindows
         {
             Button ReportButton = new Button();
             ReportButton.Content = "Generate Report";
-            ReportButton.Click += new RoutedEventHandler(App.MainWindow.btnLastExecutionHTMLReport_click);
+            ReportButton.Click += ReportButton_Click;
             
             Button ExportBtn = new Button();
             ExportBtn.Content = "Export Execution Details";
@@ -180,13 +182,18 @@ namespace Ginger.BusinessFlowWindows
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, new ObservableList<Button> { ExportBtn, ReportButton });
         }
 
+        private void ReportButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.GenerateLastExecutedItemReport, null);          
+        }
+
         private void ExportExecutionDetails(object sender, RoutedEventArgs e)
         {            
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             bfs.Add(mBusinessFlow);           
             if(!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables));
+                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables));
                 ExportResultsToALMConfigPage.Instance.ShowAsWindow();
             }
             else

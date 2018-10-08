@@ -28,6 +28,8 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Common.Enums;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -117,12 +119,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void GoToGherkinBusinessFlow(object sender, RoutedEventArgs e)
         {
-            BusinessFlow BF = App.LocalRepository.GetSolutionBusinessFlows().Where(x => x.ExternalID != null ? System.IO.Path.GetFullPath(x.ExternalID.Replace("~", App.UserProfile.Solution.Folder)) == System.IO.Path.GetFullPath(Path) : false).FirstOrDefault();
+            ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            BusinessFlow BF = businessFlows.Where(x => x.ExternalID != null ? System.IO.Path.GetFullPath(x.ExternalID.Replace("~", App.UserProfile.Solution.Folder)) == System.IO.Path.GetFullPath(Path) : false).FirstOrDefault();
             if (BF == null)
                 Reporter.ToUser(eUserMsgKeys.GherkinNotifyBFIsNotExistForThisFeatureFile, FileName);
             else
             {
-                App.MainWindow.AutomateBusinessFlow(BF);
+                App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.Automate, BF);
             }
         }
 
