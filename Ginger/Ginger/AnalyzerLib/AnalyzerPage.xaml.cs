@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
@@ -34,6 +34,7 @@ using GingerCore.Helpers;
 using GingerCore.DataSource;
 using Ginger.Actions;
 using Ginger.BusinessFlowWindows;
+using amdocs.ginger.GingerCoreNET;
 using GingerCore.Variables;
 using static Ginger.AnalyzerLib.AnalyzerItemBase;
 
@@ -241,7 +242,7 @@ namespace Ginger.AnalyzerLib
                         if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
                         {
                             checkedGuidList.Add(BF.Guid);
-                            BusinessFlow actualBf = App.LocalRepository.GetSolutionBusinessFlows().Where(x => x.Guid == BF.Guid).FirstOrDefault();
+                            BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == BF.Guid).FirstOrDefault();
                             if (actualBf != null)
                                 RunBusinessFlowAnalyzer(actualBf, false);
                         }
@@ -263,7 +264,7 @@ namespace Ginger.AnalyzerLib
             List<string> usedVariablesInBF = new List<string>();
             List<string> usedVariablesInActivity = new List<string>();
 
-            DSList = Ginger.App.LocalRepository.GetSolutionDataSources();
+            DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(); 
             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
             List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
             AddIssues(issues);
@@ -313,23 +314,27 @@ namespace Ginger.AnalyzerLib
             }
             else if (typeof(Activity).Equals(obj.GetType()))
             {
-                activity = (Activity)obj;
-                if (activity.Variables.Count > 0)
+                if (typeof(Activity).Equals(obj.GetType()))
                 {
-                    AvailableAllVariables = activity.Variables;
-                    variableSourceType = "Activity";
-                    variableSourceName = activity.ActivityName;                    
+                    activity = (Activity)obj;
+                    if (activity.Variables.Count > 0)
+                    {
+                        AvailableAllVariables = activity.Variables;
+                        variableSourceType = "Activity";
+                        variableSourceName = activity.ActivityName;
+                    }
+                }
+                else
+                {
+                    Solution solution = (Solution)obj;
+                    AvailableAllVariables = solution.Variables;
+                    variableSourceType = "Solution";
+                    variableSourceName = solution.Name;
+                    BusinessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()[0];
+
                 }
             }
-            else
-            {
-                Solution solution = (Solution)obj;
-                AvailableAllVariables = solution.Variables;
-                variableSourceType = "Solution";
-                variableSourceName = solution.Name;                
-                activity = BusinessFlow.Activities[0];
-            }
-            
+
 
 
             foreach (VariableBase var in AvailableAllVariables)
@@ -453,7 +458,7 @@ namespace Ginger.AnalyzerLib
 
             //TODO: once this analyzer is taking long time due to many checks, run it using parallel
             //ObservableList<BusinessFlow> BFs = App.LocalRepository.GetAllBusinessFlows();
-            ObservableList<BusinessFlow> BFs = App.LocalRepository.GetSolutionBusinessFlows();
+            ObservableList<BusinessFlow> BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
             // Run it in another task so UI gets updates
             Task t = Task.Factory.StartNew(() =>
@@ -685,7 +690,8 @@ namespace Ginger.AnalyzerLib
                 if (bfToSave.Key != null)
                 {
                     SetStatus("Saving " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":")  + bfToSave.Key.Name);
-                    bfToSave.Key.Save();
+                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bfToSave.Key);
                     foreach (AnalyzerItemBase ai in bfToSave.Value)
                         ai.Status = AnalyzerItemBase.eStatus.FixedSaved;
                 }
@@ -723,7 +729,7 @@ namespace Ginger.AnalyzerLib
                 AnalyzeAction currentAnalyzeAction = (AnalyzeAction)AnalyzerItemsGrid.CurrentItem;
                 Act actionIssue = currentAnalyzeAction.mAction;
                 actionIssue.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
-                ActionEditPage actedit = new ActionEditPage(actionIssue, General.RepositoryItemPageViewMode.Child, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
+                ActionEditPage actedit = new ActionEditPage(actionIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
                 //setting the BusinessFlow on the Action in Order to save 
                 //actedit.mActParentBusinessFlow = ((AnalyzeAction)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
                 //actedit.ap = null;
@@ -735,7 +741,7 @@ namespace Ginger.AnalyzerLib
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
                 Activity ActivityIssue = currentAnalyzeActivity.mActivity;
                 //ActivityIssue.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
-                ActivityEditPage ActivityEdit = new ActivityEditPage(ActivityIssue, General.RepositoryItemPageViewMode.Child, currentAnalyzeActivity.mBusinessFlow);
+                ActivityEditPage ActivityEdit = new ActivityEditPage(ActivityIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeActivity.mBusinessFlow);
                 //setting the BusinessFlow on the Activity in Order to save
                 //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
                 //ActivityEdit.ap = null;

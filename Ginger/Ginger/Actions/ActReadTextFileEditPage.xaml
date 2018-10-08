@@ -1,13 +1,13 @@
-    <Page x:Class="Ginger.Actions.ActReadTextFileEditPage" xmlns:Actions="clr-namespace:Ginger.Actions" 
+<Page x:Class="Ginger.Actions.ActReadTextFileEditPage" xmlns:Actions="clr-namespace:Ginger.Actions" 
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-      d:DesignHeight="250" d:DesignWidth="700"
+      d:DesignHeight="350" d:DesignWidth="700"
 	Title="ActReadTextFileEditPage" >
 
-    <Grid Background="{StaticResource @Skin1_ColorC}"> 
+    <Grid Background="{StaticResource @Skin1_ColorC}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="500*"/>
             <ColumnDefinition Width="100"/>
@@ -16,12 +16,14 @@
             <RowDefinition Height="55"/>
             <RowDefinition Height="55"/>
             <RowDefinition Height="55"/>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="55"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel  Grid.Row="0">
-            <Label Style="{StaticResource @InputFieldLabelStyle}">Operation Type:</Label>            
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Operation Type:</Label>
             <ComboBox x:Name="FileActionMode" SelectionChanged="FileActionMode_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
-            
+
         </StackPanel>
         <StackPanel  Grid.Row="1">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Encoding Type:</Label>
@@ -31,13 +33,20 @@
         <StackPanel Grid.Row="2" >
             <Label Style="{StaticResource @InputFieldLabelStyle}">Text File Path:</Label>
             <Actions:UCValueExpression x:Name="TextFileNameTextBox" ToolTip="Text file full/relative path"/>
-          
-        </StackPanel>
+
+        </StackPanel>        
         <Button  x:Name="BrowseButton" Content="Browse" Grid.Row="2" Grid.Column="2" Click="BrowseButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource @InputButtonStyle}" Margin="5,0,5,3"/>
         <StackPanel Grid.Row="3" x:Name="PanelToWrite" >
             <Label Style="{StaticResource @InputFieldLabelStyle}">Text To Write:</Label>
             <Actions:UCValueExpression x:Name="TextToWrite" />
-
+        </StackPanel>
+        <StackPanel  Grid.Row="4" x:Name="PanelAppendAt">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Append At:</Label>
+            <ComboBox x:Name="TextFileAppendType" SelectionChanged="TextFileAppendType_SelectionChanged"  Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+        </StackPanel>
+        <StackPanel Grid.Row="5" x:Name="PanelAppendLine" Visibility="Collapsed" >
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Line Number:</Label>
+            <Actions:UCValueExpression x:Name="LineNumber" />
         </StackPanel>
 
     </Grid>

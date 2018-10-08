@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace GingerCore.Variables
 {
-    public class VariableDependency : RepositoryItem 
+    public class VariableDependency : RepositoryItemBase
     {
         public new static class Fields
         {

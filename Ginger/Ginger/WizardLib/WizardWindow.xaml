@@ -53,7 +53,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <!--<TextBlock Grid.Column="0" />-->
-                            <Polygon Grid.Column="0" Points="0,0 12,6 0,12 0,0" Stroke="SteelBlue" StrokeThickness="0" SnapsToDevicePixels="True" Margin="0,0,5,0" VerticalAlignment="Center" x:Name="SelectionArrow" >
+                            <Polygon Grid.Column="0" Points="0,0 12,6 0,12 0,0" Stroke="SteelBlue" StrokeThickness="0" SnapsToDevicePixels="True" Margin="0,10,5,0" VerticalAlignment="Center" x:Name="SelectionArrow" >
                                 <Polygon.Fill>
                                     <SolidColorBrush Color="SteelBlue" Opacity="1" />
                                 </Polygon.Fill>
@@ -121,10 +121,10 @@
                     <StackPanel x:Name="stackNaveRightSide"  Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,5">
                         <UserControls:ImageMakerControl x:Name="xProcessingImage" Grid.Column="0" Grid.Row="0" ImageType="Processing" Height="30" Width="30" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="Collapsed"/>
 
-                        <UserControls:ucButton x:Name="PrevButton" ButtonType="RoundTextAndImageButton" ButtonText="Previous" ButtonImageType="GoBack" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="PrevButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" IsEnabled="False"/>
-                        <UserControls:ucButton x:Name="NextButton" ButtonType="RoundTextAndImageButton" ButtonText="Next" ButtonImageType="GoNext" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="NextButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                        <UserControls:ucButton x:Name="FinishButton" ButtonType="RoundTextAndImageButton" ButtonText="Finish" ButtonImageType="Finish" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="FinishButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                        <UserControls:ucButton x:Name="CancelButton" ButtonType="RoundTextAndImageButton" ButtonText="Cancel" ButtonImageType="Cancel" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="CancelButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                        <UserControls:ucButton x:Name="xPrevButton" ButtonType="RoundTextAndImageButton" ButtonText="Previous" ButtonImageType="GoBack" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="PrevButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" IsEnabled="False"/>
+                        <UserControls:ucButton x:Name="xNextButton" ButtonType="RoundTextAndImageButton" ButtonText="Next" ButtonImageType="GoNext" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="NextButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                        <UserControls:ucButton x:Name="xFinishButton" ButtonType="RoundTextAndImageButton" ButtonText="Finish" ButtonImageType="Finish" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="FinishButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                        <UserControls:ucButton x:Name="xCancelButton" ButtonType="RoundTextAndImageButton" ButtonText="Cancel" ButtonImageType="Cancel" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="CancelButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
 
                     </StackPanel>
                 </Grid>

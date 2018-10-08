@@ -23,6 +23,7 @@ using System.Linq;
 using System.Reflection;
 using GingerCore.Environments;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Run
 {
@@ -43,7 +44,8 @@ namespace Ginger.Run
 
         private bool LoadExecutionConfigurations(string runSetName, string environmentName)
         {
-            RunSetConfig runSetConfig = App.LocalRepository.GetSolutionRunSets().Where(x=>x.Name.ToLower().Trim() == runSetName.ToLower().Trim()).FirstOrDefault();
+            ObservableList<RunSetConfig> runSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+            RunSetConfig runSetConfig = runSets.Where(x=>x.Name.ToLower().Trim() == runSetName.ToLower().Trim()).FirstOrDefault();
             if (runSetConfig == null)            
             { 
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("The configured {0} with the name '{1}' was not found in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet), runSetName));
@@ -63,10 +65,7 @@ namespace Ginger.Run
 
                 //TODO: create intizilize run inside the RunSet executer
                 App.RunsetExecutor.RunsetExecutionEnvironment = env;
-                App.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
-
-                // App.RunsetExecutor.SetRunnersPlugIns(App.LocalRepository.GetSolutionPlugIns()); 
-                App.RunsetExecutor.SetRunnersLocalRepository(App.LocalRepository);
+                App.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());                
             }
             catch (Exception ex)
             {

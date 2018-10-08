@@ -34,7 +34,7 @@ namespace GingerWPF.UserControlsLib
             get { return xTreeView; }
         }
 
-        public SingleItemTreeViewExplorerPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null)
+        public SingleItemTreeViewExplorerPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null)
         {
             InitializeComponent();
 
@@ -48,7 +48,12 @@ namespace GingerWPF.UserControlsLib
             xTreeView.SetTopToolBarTools(saveAllHandler, addHandler);
 
             xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
-        }
+
+            if(treeItemDoubleClickHandler != null)
+            {
+                xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
+            }                
+        }       
 
         private void MainTreeView_ItemSelected(object sender, EventArgs e)
         {

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.UserControls;
 using Ginger.Variables;
@@ -228,9 +229,9 @@ namespace Ginger.Run
         {
             try
             {            
-                BusinessFlow originalBF = (from bf in App.LocalRepository.GetSolutionBusinessFlows() where bf.Guid == mBusinessFlow.Guid select bf).FirstOrDefault();
+                BusinessFlow originalBF = (from bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where bf.Guid == mBusinessFlow.Guid select bf).FirstOrDefault();
                 if (originalBF == null)
-                    originalBF = (from bf in App.LocalRepository.GetSolutionBusinessFlows() where bf.Name == mBusinessFlow.Name select bf).FirstOrDefault();             
+                    originalBF = (from bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where bf.Name == mBusinessFlow.Name select bf).FirstOrDefault();             
                 if (originalBF == null)
                 {
                     Reporter.ToUser(eUserMsgKeys.ResetBusinessFlowRunVariablesFailed, "Original " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " was not found");

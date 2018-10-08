@@ -17,11 +17,14 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
+using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore;
 using GingerCore.Actions.PlugIns;
 using GingerPlugIns.ActionsLib;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -42,6 +45,7 @@ namespace Ginger.Actions.PlugIns
             InitializeComponent();
             mAct = act;
             LoadEditPage();
+            AutoCreateEditPage();
         }
 
         //TODO: destructor is not working , need to fix geneal ActionEditPage
@@ -123,7 +127,7 @@ namespace Ginger.Actions.PlugIns
                 mAct.AddOrUpdateInputParamValue(((ActionParam)sender).Name, ((ActionParam)sender).Value.ToString());
         }
 
-        // We Bind the controls on the page to the action input params based ont he Xaml object Name - x:Name=
+        // We Bind the controls on the page to the action input params based on the Xaml object Name - x:Name=
         //this is recursive function which drill down when needed
         private void BindControlsToAction(Panel container)
         {         
@@ -143,6 +147,60 @@ namespace Ginger.Actions.PlugIns
 
                     //TODO: check control type and bind per type
                 }
+            }
+        }
+
+
+        private void AutoCreateEditPage()
+        {
+
+            string pluginId = mAct.GetInputParamValue("PluginId");  //TODO: use const
+            string serviceId = mAct.GetInputParamValue("ServiceId");  //TODO: use const
+            string actionId = mAct.GetInputParamValue("GingerActionId");  //TODO: use const
+            PluginIdLabel.Content = pluginId;
+            ServiceIdLabel.Content = serviceId;
+            ActionIdLabel.Content = actionId;
+
+            int rows = mAct.InputValues.Count;
+            for (int i = 0; i < rows; i++)
+            {
+                ActionConfigGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(35) });
+            }
+
+            ActionConfigGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30, GridUnitType.Star) });
+            ActionConfigGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(70, GridUnitType.Star) });
+
+            int rnum = 0;
+
+            List <ActionInputValueInfo> list = WorkSpace.Instance.PlugInsManager.GetActionEditInfo(pluginId, serviceId, actionId);
+
+
+            foreach (ActInputValue param in mAct.InputValues)
+            {                
+                if (param.Param == "PluginId" ||  param.Param == "ServiceId" || param.Param == "GingerActionId" || param.Param == "GA")  // TODO: use const
+                {
+                    continue;
+                }
+
+                // update the type based on the info json of the plugin
+                param.ParamType = (from x in list where x.Param == param.Param select x.ParamType).SingleOrDefault();
+
+                Label l = new Label() { Content = param.Param };
+                ActionConfigGrid.Children.Add(l);
+                l.Style = App.GetStyle("@InputFieldLabelStyle");
+                Grid.SetRow(l, rnum);
+
+                
+
+                //TODO: based on the param type create textbox, check box, combo, etc...
+
+                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl();
+                actionInputValueUserControl.BindControl(param);
+                actionInputValueUserControl.Margin = new Thickness(5);
+                ActionConfigGrid.Children.Add(actionInputValueUserControl);
+                Grid.SetRow(actionInputValueUserControl, rnum);
+                Grid.SetColumn(actionInputValueUserControl, 1);
+                rnum++;
             }
         }
     }

@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -66,6 +67,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void AddServiceDescription(string URL)
         {
             XmlTextReader reader = new XmlTextReader(URL);
+
             ServiceDescription sd = ServiceDescription.Read(reader);
             mServiceDescriptionsList.Add(sd);
         }
@@ -1037,11 +1039,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 if (WorkURL.Count() <= i)
                 {
-                    return s;
+                    break;
                 }
                 if (WorkURL[i] == '.' || WorkURL[i] == '_')
                 {
-                    return s;
+                    break;
                 }
                 else
                 {
@@ -1900,7 +1902,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     string directory = this.GetDirectoryName(CompleteURL);
                     string relativeDirectories = string.Empty;
-                    if (directory != ContainingFolder)
+                    if (!directory.StartsWith(ContainingFolder))
                     {
                         int ContainingFolderLeanth = ContainingFolder.Length;
                         if (ContainingFolderLeanth < directory.Length)
