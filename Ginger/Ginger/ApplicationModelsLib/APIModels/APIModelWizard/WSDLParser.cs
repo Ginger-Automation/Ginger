@@ -1039,11 +1039,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 if (WorkURL.Count() <= i)
                 {
-                    return s;
+                    break;
                 }
                 if (WorkURL[i] == '.' || WorkURL[i] == '_')
                 {
-                    return s;
+                    break;
                 }
                 else
                 {
@@ -1902,7 +1902,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     string directory = this.GetDirectoryName(CompleteURL);
                     string relativeDirectories = string.Empty;
-                    if (directory != ContainingFolder)
+                    if (!directory.StartsWith(ContainingFolder))
                     {
                         int ContainingFolderLeanth = ContainingFolder.Length;
                         if (ContainingFolderLeanth < directory.Length)
