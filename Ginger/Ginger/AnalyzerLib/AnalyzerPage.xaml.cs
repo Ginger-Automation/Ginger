@@ -314,25 +314,21 @@ namespace Ginger.AnalyzerLib
             }
             else if (typeof(Activity).Equals(obj.GetType()))
             {
-                if (typeof(Activity).Equals(obj.GetType()))
+                activity = (Activity)obj;
+                if (activity.Variables.Count > 0)
                 {
-                    activity = (Activity)obj;
-                    if (activity.Variables.Count > 0)
-                    {
-                        AvailableAllVariables = activity.Variables;
-                        variableSourceType = "Activity";
-                        variableSourceName = activity.ActivityName;
-                    }
+                    AvailableAllVariables = activity.Variables;
+                    variableSourceType = "Activity";
+                    variableSourceName = activity.ActivityName;                    
                 }
-                else
-                {
-                    Solution solution = (Solution)obj;
-                    AvailableAllVariables = solution.Variables;
-                    variableSourceType = "Solution";
-                    variableSourceName = solution.Name;
-                    BusinessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()[0];
-
-                }
+            }
+            else
+            {
+                Solution solution = (Solution)obj;
+                AvailableAllVariables = solution.Variables;
+                variableSourceType = "Solution";
+                variableSourceName = solution.Name;                
+                activity = BusinessFlow.Activities[0];
             }
 
 
