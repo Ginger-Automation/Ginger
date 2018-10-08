@@ -36,8 +36,7 @@
             <Ginger:ucGrid x:Name="xPOMElementsGrid" Width="420" Title="POM Mapped Elements" 
                            ShowTitle="Collapsed" HorizontalAlignment="Stretch" 
                            VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" 
-                           ShowAdd="Collapsed" ShowDelete="Collapsed"
-                           RowChangedEvent="xPOMElementsGrid_RowChangedEvent"/>
+                           ShowAdd="Collapsed" ShowDelete="Collapsed" RowChangedEvent="xPOMElementsGrid_RowChangedEvent"/>
             <TextBlock x:Name="HeaderTextBlock" Visibility="Hidden" Focusable="False"/>
         </ComboBox>
         <!--<Button Grid.Column="5" x:Name="HighlightButton" Margin="10,-1,0,0" Style="{StaticResource @InputButtonStyle}" Width="28" Height="25" Click="HighlightElementClicked" ToolTip="Highlight Element" IsEnabled="False" >

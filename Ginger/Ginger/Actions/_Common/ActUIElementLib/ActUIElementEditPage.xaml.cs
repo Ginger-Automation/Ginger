@@ -40,6 +40,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
     {
         ActUIElement mAction;
         PlatformInfoBase mPlatform;
+        LocateByPOMElement locateByPOMElement;
 
         public ActUIElementEditPage(ActUIElement act)
         {

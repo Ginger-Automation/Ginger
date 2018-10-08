@@ -33,6 +33,7 @@ using System.Windows.Data;
 using System;
 using System.Linq;
 using GingerCore.Platforms;
+using GingerCore.Actions;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -41,32 +42,45 @@ namespace Ginger.Actions._Common.ActUIElementLib
     /// </summary>
     public partial class LocateByPOMElement : Page
     {
-        ActUIElement mAction;
+        Act mAction;
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
         ApplicationPOMModel mSelectedPOM = null;
         RepositoryFolder<ApplicationPOMModel> mPOMModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
         //mWinExplorer = winExplorer;
+        eLocateBy mLocateBy;
+        string mLocateValue;
 
-        public LocateByPOMElement(ActUIElement Action)
+        public LocateByPOMElement(Act Action)
         {
             InitializeComponent();
             DataContext = this;
             mAction = Action;
             SetControlsGridView();
 
-            if (Action.ElementLocateBy == eLocateBy.POMElement)
+            if (mAction is ActUIElement)
             {
-                if ((mAction.ElementLocateValue != null) && (mAction.ElementLocateValue != string.Empty))
+                mLocateBy = ((ActUIElement)mAction).ElementLocateBy;
+                mLocateValue = ((ActUIElement)mAction).ElementLocateValue;
+            }
+            else
+            {
+                mLocateBy = mAction.LocateBy;
+                mLocateValue = mAction.LocateValue;
+            }
+
+            if (mLocateBy == eLocateBy.POMElement)
+            {
+                if ((mLocateValue != null) && (mLocateValue != string.Empty))
                 {
                     try
                     {
-                        string[] pOMandElementGUIDs = mAction.ElementLocateValue.ToString().Split('_');
+                        string[] pOMandElementGUIDs = mLocateValue.ToString().Split('_');
                         Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
                         mSelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
                         if (mSelectedPOM == null)
                         {
                             Reporter.ToUser(eUserMsgKeys.POMSearchByGUIDFailed);
-                            mAction.ElementLocateValue = string.Empty;
+                            mLocateValue = string.Empty;
                             SelectPOM_Click(null, null);
                         }
                         else
@@ -82,7 +96,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                             {
                                 xPOMElementsGrid.DataSourceList = mSelectedPOM.MappedUIElements;
                                 xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
-                                mAction.ElementType = selectedPOMElement.ElementTypeEnum;
+                                if (mAction is ActUIElement)
+                                    ((ActUIElement)mAction).ElementType = selectedPOMElement.ElementTypeEnum;
                                 POMElementComboBox.IsEnabled = true;
                                 HeaderTextBlock.Text = selectedPOMElement.ElementName; 
                                 HeaderTextBlock.Visibility = Visibility.Visible;
@@ -94,7 +109,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     catch
                     {
                         Reporter.ToUser(eUserMsgKeys.POMSearchByGUIDFailed);
-                        mAction.ElementLocateValue = string.Empty;
+                        mLocateValue = string.Empty;
                         SelectPOM_Click(null, null);
                     }
                 }
@@ -165,8 +180,19 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             if ((POMElementComboBox.IsEnabled) && ((DataGrid)sender).SelectedItem != null)
             {
-                mAction.ElementType = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
-                mAction.ElementLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+                if (mAction is ActUIElement)
+                    ((ActUIElement)mAction).ElementType = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
+                mLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+
+                if (mAction is ActUIElement)
+                {
+                    ((ActUIElement)mAction).ElementLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+                }
+                else
+                {
+                    mAction.LocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+                }
+
                 HighlightButton.IsEnabled = true;
             }
         }
@@ -182,7 +208,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 ((IWindowExplorer)currentAgent.Agent.Driver).HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true);
             }
-
         }
     }
 }
