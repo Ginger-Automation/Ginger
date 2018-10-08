@@ -1584,7 +1584,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			
 				if(c instanceof JTree)  
 				{
-					TreePath treePath = SearchTreeNodes(Value, (JTree)c);
+					TreePath treePath = SearchTreeNodes((JTree)c,Value);
 					if(treePath == null)				
 					{				
 						return PayLoad.Error("Path " + Value + " not found");
@@ -1709,57 +1709,33 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		}
 	}
 
-private TreePath SearchTreeNodes(String locateValue, JTree tree) 
+private TreePath SearchTreeNodes(JTree tree,String locateValue) 
 {
 	TreePath treePath = null;
 	int startNodeNumber = 0;
-	boolean nodeFound = false; 
 	String[] nodes = locateValue.split("/");					
-	for (String node: nodes)
-	{
-		if(nodeFound)
-		{
-			break;
-		}
-		startNodeNumber = (treePath == null ? 0 : (tree).getRowForPath(treePath));
+
+	startNodeNumber = (treePath == null ? 0 : (tree).getRowForPath(treePath));
 		(tree).expandRow(startNodeNumber);
 		for(int row = startNodeNumber; row <= ((tree).getRowCount() - 1); row++)
 		{
-			if(nodeFound)
-			{
-				break;
-			}
-			else
-			{
-				treePath = (tree).getNextMatch(node.trim(), row, Position.Bias.Forward);
+				treePath = (tree).getNextMatch(nodes[0].trim(), row, Position.Bias.Forward);
 				
 				if(treePath != null)
 				{
-					if(nodes.length == 1)
-					{
+					
 						DefaultMutableTreeNode lastNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
-						if(((String)lastNode.getUserObject()).equalsIgnoreCase(node))
+						if(((String)lastNode.getUserObject()).equalsIgnoreCase(nodes[0]))
 						{
-							nodeFound = true;
+							
+						  if(nodes.length > 1)
+							{
+								treePath = SearchChildNodes(tree, treePath, nodes);
+							}
 							break;
 						}
-
-					}
-					else if(nodes.length > 1)
-					{
-						treePath = SearchChildNodes(tree, treePath, nodes);
-						if(treePath == null)
-						{
-							break;
-						}
-						nodeFound = true;
-					}
-										
 				}
-				
-			}
 			
-		}
 	}
 	return treePath;
 }
@@ -2669,7 +2645,7 @@ private PayLoad GetComponentState(Component c)
 		 if (c instanceof JTree)
 		 {
 			GingerAgent.WriteLog("c instanceof JTree");
-			TreePath nodePath = SearchTreeNodes(value,((JTree)c));
+			TreePath nodePath = SearchTreeNodes(((JTree)c),value);
 			if (nodePath != null)
 			{
 				GingerAgent.WriteLog("TreePath != null");
@@ -3584,7 +3560,7 @@ if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
 		
 	private Object getTreeNodeFromPathAndSet(JTree tr,String locate) {	
 		GingerAgent.WriteLog( "  getTreeNodeFromPathAndSet::locate  " +  locate);
-	    TreePath nodePath = SearchTreeNodes(locate,tr);
+	    TreePath nodePath = SearchTreeNodes(tr,locate);
 		if (nodePath==null)
 			return null;
 		else
