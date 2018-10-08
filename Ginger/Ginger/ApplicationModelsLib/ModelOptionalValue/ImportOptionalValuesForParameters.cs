@@ -1103,12 +1103,20 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <returns></returns>
         private Cell GetCell(string value, CellValues dataType, uint styleIndex = 0)
         {
-            return new Cell()
+            Cell cl = new Cell()
             {
-                CellValue = new CellValue(value),
                 DataType = new EnumValue<CellValues>(dataType),
                 StyleIndex = styleIndex
             };
+
+            long lng;
+            string val = value;
+            if (long.TryParse(value, out lng))
+            {
+                val = string.Format("{0}'", value);
+            }
+            cl.CellValue = new CellValue(val);
+            return cl;
         }
 
         /// <summary>

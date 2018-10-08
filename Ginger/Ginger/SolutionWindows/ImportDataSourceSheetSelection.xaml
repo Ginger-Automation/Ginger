@@ -25,6 +25,7 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width ="Auto"/>
@@ -36,6 +37,10 @@
                         <Label Name="xSheetLable"   HorizontalAlignment="Left" Content="Sheet:" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"  />
                         <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"  Margin="5,0,0,5"  VerticalAlignment="Center" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
                     </StackPanel>
+                </DockPanel>
+
+                <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="5,10,0,0" >
+                    <CheckBox VerticalAlignment="Center" x:Name="chkHeadingRow" Content="Sheet first row as Column name" IsChecked="True"  />
                 </DockPanel>
             </Grid>
         </StackPanel>

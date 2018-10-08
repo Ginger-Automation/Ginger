@@ -80,17 +80,8 @@ namespace Ginger.SolutionWindows
                 ImportOptionalValuesForParameters impParams = new ImportOptionalValuesForParameters();
                 string path = ((ImportDataSourceBrowseFile)(mWizardEventArgs.Wizard.Pages[1].Page)).Path;
                 string sheetName = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).SheetName;
-                bool headingRow = false;
-
-                if (((ImportDataSourceDisplayData)(mWizardEventArgs.Wizard.Pages[3]).Page).IsAlternatePageToLoad())
-                {
-                    headingRow = ((ImportDataSourceDisplayAllData)(mWizardEventArgs.Wizard.Pages[3]).AlternatePage).HeadingRow;
-                }
-                else
-                {
-                    headingRow = ((ImportDataSourceDisplayData)(mWizardEventArgs.Wizard.Pages[3]).Page).HeadingRow;
-                }
-
+                bool headingRow = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2]).Page).HeadingRow;
+               
                 impParams.ExcelFileName = path;
                 impParams.ExcelSheetName = sheetName;
 

@@ -44,9 +44,9 @@
                     <usercontrols:ucButton x:Name="xExcelViewDataButton" ToolTip="View All Data" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="View" Click="xExcelViewDataButton_Click"  HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,20,0,0"/>
                 </DockPanel>
                 
-                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,5,0,0">
+                <!--<StackPanel Orientation="Vertical" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,5,0,0">
                     <CheckBox VerticalAlignment="Center" x:Name="chkHeadingRow" Content="Sheet first row as Column name" IsChecked="True" Margin="5,0,20,0" />                    
-                </StackPanel>
+                </StackPanel>-->
                 
                 <GridSplitter x:Name="xExcelGridSplitter" Grid.Row="2" Grid.ColumnSpan="3" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource @Skin1_ColorA}" IsEnabled="False" Margin="0,5,0,5" />
 

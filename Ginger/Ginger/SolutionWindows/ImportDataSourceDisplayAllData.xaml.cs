@@ -52,16 +52,16 @@ namespace Ginger.SolutionWindows
         /// </summary>
         public string SheetName { get; set; }
 
-        /// <summary>
-        /// Gets sets the HeadingRow
-        /// </summary>
-        public bool HeadingRow
-        {
-            get
-            {
-                return Convert.ToBoolean(chkHeadingRow.IsChecked);
-            }
-        }
+        ///// <summary>
+        ///// Gets sets the HeadingRow
+        ///// </summary>
+        //public bool HeadingRow
+        //{
+        //    get
+        //    {
+        //        return Convert.ToBoolean(chkHeadingRow.IsChecked);
+        //    }
+        //}
 
         /// <summary>
         /// This method is default wizard action event

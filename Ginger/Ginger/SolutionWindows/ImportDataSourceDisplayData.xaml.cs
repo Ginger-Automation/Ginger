@@ -54,10 +54,8 @@ namespace Ginger.SolutionWindows
         /// </summary>
         public bool HeadingRow
         {
-            get
-            {
-                return Convert.ToBoolean(chkHeadingRow.IsChecked);
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -73,7 +71,8 @@ namespace Ginger.SolutionWindows
                     break;
                 case EventType.Active:                    
                     Path = ((ImportDataSourceBrowseFile)(WizardEventArgs.Wizard.Pages[1].Page)).Path;
-                    SheetName = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).SheetName;                    
+                    SheetName = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).SheetName;
+                    HeadingRow = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).HeadingRow;
                     break;
                 case EventType.AfterLoad:
                     DisplayData();
@@ -143,7 +142,7 @@ namespace Ginger.SolutionWindows
 
                     impParams.ExcelFileName = Path;
                     impParams.ExcelSheetName = SheetName;
-                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked));
+                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow);
                     if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
                     {
                         if (ExcelImportData.Tables.Count == 1)
