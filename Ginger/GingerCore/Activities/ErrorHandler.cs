@@ -51,8 +51,6 @@ namespace GingerCore
             set { if (mHandlerType != value) { mHandlerType = value; OnPropertyChanged(Fields.HandlerType); } }
         }
 
-        //public override System.Drawing.Image Image { get { return (mHandlerType == eHandlerType.Error_Handler) ? Resources.Handler_16x16 : Resources.PopUpHandler_16x16; } }
-
         public override eImageType ItemImageType
         {
             get

@@ -67,7 +67,10 @@ namespace Ginger.SolutionWindows
                 xTargetApplicationsGrid.DataSourceList = mSolution.ApplicationPlatforms;
             }
             else
+            {
                 xTargetApplicationsGrid.DataSourceList = new ObservableList<ApplicationPlatform>();
+            }
+                
         }
 
         private void SaveHandler(object sender, RoutedEventArgs e)
@@ -99,14 +102,19 @@ namespace Ginger.SolutionWindows
                 mSolution.SetUniqueApplicationName(currentApp);
 
                 if (currentApp.AppName != currentApp.NameBeforeEdit)
+                {
                     UpdateApplicationNameChangeInSolution(currentApp);
+                }                    
             }
         }
 
         private void UpdateApplicationNameChangeInSolution(ApplicationPlatform app)
         {
             int numOfAfectedBFs = 0;
-            if (Reporter.ToUser(eUserMsgKeys.UpdateApplicationNameChangeInSolution) == MessageBoxResult.No) return;
+            if (Reporter.ToUser(eUserMsgKeys.UpdateApplicationNameChangeInSolution) == MessageBoxResult.No)
+            {
+                return;
+            }
 
             foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
             {

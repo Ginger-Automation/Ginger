@@ -172,7 +172,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 if (item.IsExpandable())
                 {
                     TVI.Expanded += TVI_Expanded;
-                    TVI.Collapsed += TVI_Collapsed; ;
+                    TVI.Collapsed += TVI_Collapsed;
 
                 TreeViewItem TVDummy = new TreeViewItem() { Header = "DUMMY" };
                     TVI.Items.Add(TVDummy);
@@ -215,7 +215,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             ITreeViewItem itvi = (ITreeViewItem)tvi.Tag;
             object itviObject = itvi.NodeObject();
             if (itviObject is RepositoryFolderBase)
+            { 
                 ((RepositoryFolderBase)itviObject).IsFolderExpanded = isExpanded;
+            }
         }
 
         private void SetTreeNodeItemChilds(TreeViewItem TVI)

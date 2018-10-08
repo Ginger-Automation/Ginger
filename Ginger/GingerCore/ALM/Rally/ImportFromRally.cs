@@ -85,9 +85,7 @@ namespace GingerCore.ALM.Rally
                     {
                         tcActivsGroup = new ActivitiesGroup();
                         tcActivsGroup.Name = tc.Name;
-                        tcActivsGroup.Description = tc.Description;
-                        //tcActivsGroup.CreatedBy = tc.CreatedBy;
-                        //tcActivsGroup.Created = tc.CreationDate;
+                        tcActivsGroup.Description = tc.Description;                        
                         tcActivsGroup.ExternalID = "RallyID=" + tc.RallyID + "|AtsID=" + tc.BTSID;
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                     }

@@ -154,12 +154,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
         }
 
-        //private void UploadBusinessFlows(object sender, System.Windows.RoutedEventArgs e)
-        //{
-        //    ObservableList<BusinessFlow> BFs = mBusFlowsFolder.GetFolderItems();
-        //    UploadBusinessFlowsPage UBFP = new UploadBusinessFlowsPage(BFs);
-        //    UBFP.ShowAsWindow();
-        //}
 
         private void ImportSeleniumScript(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -272,7 +266,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 // TODO: check test me
                 string FeatureFolder = mBusFlowsFolder.FolderFullPath;
                 if (!mBusFlowsFolder.FolderFullPath.EndsWith("BusinessFlows"))
+                {
                     FeatureFolder = mBusFlowsFolder.FolderFullPath.Substring(mBusFlowsFolder.FolderFullPath.IndexOf("BusinessFlows\\") + 14);
+                }                    
                 ImportGherkinFeatureFilePage IFP = new ImportGherkinFeatureFilePage(FeatureFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
                 IFP.ShowAsWindow();
                 BF = IFP.BizFlow;

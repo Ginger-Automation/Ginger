@@ -179,8 +179,7 @@ namespace Amdocs.Ginger.Repository
         {
             //TODO: cache class how to serialzie so will work faster and use reflection sort etc... only for first time
 
-            // Get all serialized attrs (properties and fields)
-            // var attrs = ri.GetType().GetMembers().Where(x => x.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute)) != null).OrderBy(x => x.Name);
+            // Get all serialized attrs (properties and fields)            
             var attrs = ri.GetType().GetMembers().OrderBy(x => x.Name);         // Order by name so XML compare will be easier  
 
             List<RIAttr> SimpleAttrs = new List<RIAttr>();
@@ -912,7 +911,6 @@ namespace Amdocs.Ginger.Repository
                 {
                     MemberInfo mi = obj.GetType().GetMember(AtrrListName).SingleOrDefault();
 
-                    // FieldInfo fi = obj.GetType().GetField(AtrrListName);
                     Type elementType;
                     object value;
                     if (mi.MemberType == MemberTypes.Property)
@@ -953,9 +951,7 @@ namespace Amdocs.Ginger.Repository
                         {
                             ((FieldInfo)mi).SetValue(obj, lst);                            
                         }
-
-
-                        // fi.SetValue(obj, lst);
+                        
                         // Read the list from the xml
                         xmlReadListOfObjects(obj, xdr, lst);
                     }

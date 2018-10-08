@@ -29,7 +29,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class PluginPackageTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private PluginPackage mPluginPackage;
+        private readonly PluginPackage mPluginPackage;
         private PlugInsWindows.PluginPackagePage mPlugInPage;
         
         public PluginPackageTreeItem(PluginPackage pluginPackage)

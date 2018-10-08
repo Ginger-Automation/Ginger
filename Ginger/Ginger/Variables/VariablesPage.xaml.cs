@@ -50,7 +50,7 @@ namespace Ginger.Variables
         private eVariablesLevel mVariablesLevel;
         private object mVariablesParentObj;
         private bool mVariablesParentObjIsStatic;
-        General.RepositoryItemPageViewMode mEditMode;
+        readonly General.RepositoryItemPageViewMode mEditMode;
 
         public eVariablesLevel VariablesLevel
         {
@@ -180,10 +180,7 @@ namespace Ginger.Variables
                 ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
                 switch (mVariablesLevel)
                 {
-                    case eVariablesLevel.Solution:
-                        //if (mVariablesParentObjIsStatic)
-                        //    grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
-                        //SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)((Solution)mVariablesParentObj).Variables, (IEnumerable<object>)variables);
+                    case eVariablesLevel.Solution:                        
                         grdVariables.DataSourceList = ((Solution)mVariablesParentObj).Variables;
                         break;
 
@@ -498,9 +495,7 @@ namespace Ginger.Variables
                             foreach (Act action in activity.Acts)
                             {
                                 bool changedwasDone = false;
-                                VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name,ref changedwasDone);
-                                //if (changedwasDone == true && bfl.IsDirty == false)
-                                //    bfl.SaveBackup();
+                                VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name,ref changedwasDone);                                
                             }
                     }
                     break;
@@ -512,9 +507,7 @@ namespace Ginger.Variables
                         foreach (Act action in activity.Acts)
                         {
                             bool changedwasDone = false;
-                            VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
-                            //if (changedwasDone == true && bf.IsDirty == false)
-                            //    bf.SaveBackup();
+                            VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);                            
                         }
                     break;
 

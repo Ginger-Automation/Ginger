@@ -66,9 +66,13 @@ namespace Amdocs.Ginger.Repository
             get
             {
                 if (IsFolderExpanded)
+                { 
                     return eImageType.OpenFolder;
+                }
                 else
+                { 
                     return eImageType.Folder;
+                }
             }
         }
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
-    public class General
+    public static class General
     {
         public static string LocalUserApplicationDataFolderPath
         {

@@ -97,7 +97,6 @@ namespace UnitTests.NonUITests
 
             // Assert
 
-            // BusinessFlow BF2 = (BusinessFlow)RepositoryItemBase.LoadFromFile(typeof(BusinessFlow), FileName);
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
             BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
 

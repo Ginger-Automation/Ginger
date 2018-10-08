@@ -19,7 +19,20 @@ namespace Ginger.TwoLevelMenuLib
             }
         }
 
-        public bool IsPageLoaded { get { if (mItemPage != null) return true; else return false; } }
+        public bool IsPageLoaded
+        {
+            get
+            {
+                if (mItemPage != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
         internal void ResetPage()
         {

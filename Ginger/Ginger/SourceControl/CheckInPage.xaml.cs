@@ -273,13 +273,9 @@ namespace Ginger.SourceControl
                 });
                 xProcessingIcon.Visibility = Visibility.Collapsed;
                 if (SourceControlIntegration.conflictFlag)
-                {
-                    //App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage, null, true);
+                {                    
                     SourceControlIntegration.conflictFlag = false;
                 }
-                //else
-                    //App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage,null, false);
-                
             }
             finally
             {
@@ -293,7 +289,7 @@ namespace Ginger.SourceControl
             parentFolders = new List<string>();
             foreach (SourceControlFileInfo fi in selectedFiles)
             {
-                FileAttributes attr = FileAttributes.Normal;
+                FileAttributes attr;
                 if (fi.Status != SourceControlFileInfo.eRepositoryItemStatus.Deleted)
                 {
                     attr = File.GetAttributes(fi.Path);
@@ -399,8 +395,7 @@ namespace Ginger.SourceControl
                 else if (SCFI.FileType == "Execution Result")
                 {
                     throw new NotImplementedException();
-                    //FIXME
-                    // obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ExecutionResult>.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    //FIXME                    
                 }
                 else if (SCFI.FileType == "Run Set")
                 {
@@ -465,13 +460,8 @@ namespace Ginger.SourceControl
         }
 
         private void CloseWindow()
-        {
-            //if (mCheckInWasDone)
-            //{
-            //    //TODO: remove sol refresh afetr all RIs moved to new repo and using new tree item
-            //    App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.InitAllPage, null);                
-            //}
-           
+        {   
+            //TODO: remove sol refresh afetr all RIs moved to new repo and using new tree item if mCheckInWasDone true            
             genWin.Close();
         }
 

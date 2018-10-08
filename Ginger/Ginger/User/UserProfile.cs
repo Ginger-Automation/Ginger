@@ -151,20 +151,26 @@ namespace Ginger
             {
                 //Clean not exist Solutions
                 for (int i = 0; i < RecentSolutions.Count; i++)
+                {
                     if (Directory.Exists(RecentSolutions[i]) == false)
                     {
                         RecentSolutions.RemoveAt(i);
                         i--;
                     }
+                }
 
                 //clean resent solutions list from duplications caused due to bug
                 for (int i = 0; i < RecentSolutions.Count; i++)
+                {
                     for (int j = i + 1; j < RecentSolutions.Count; j++)
+                    {
                         if (SolutionRepository.NormalizePath(RecentSolutions[i]) == SolutionRepository.NormalizePath(RecentSolutions[j]))
                         {
                             RecentSolutions.RemoveAt(j);
                             j--;
                         }
+                    }                        
+                }                    
             }
             catch (Exception ex)
             {
@@ -178,7 +184,9 @@ namespace Ginger
             get
             {
                 if (mRecentSolutionsAsObjects == null)
+                {
                     LoadRecentSolutionsAsObjects();
+                }                    
                 return mRecentSolutionsAsObjects;
             }
             set
@@ -187,7 +195,7 @@ namespace Ginger
             }
         }
 
-        private ObservableList<Solution> LoadRecentSolutionsAsObjects()
+        private void LoadRecentSolutionsAsObjects()
         {
 
             CleanRecentSolutionsList();
@@ -210,11 +218,14 @@ namespace Ginger
                     }
 
                     counter++;
-                    if (counter >= 10) break; // only first latest 10 solutions
+                    if (counter >= 10)
+                    {
+                        break; // only first latest 10 solutions
+                    }
                 }
             }
 
-            return mRecentSolutionsAsObjects;
+            return;
         }
 
         public void AddSolutionToRecent(Solution loadedSolution)
@@ -416,14 +427,16 @@ namespace Ginger
                 //remove last saved mapping for this solution
                 string existingSolMapping = RecentAppAgentsMapping.Where(x => x.Contains(mSolution.Name + "***") == true).FirstOrDefault();
                 if (string.IsNullOrEmpty(existingSolMapping) == false)
+                {
                     RecentAppAgentsMapping.Remove(existingSolMapping);
+                }                    
 
                 //create new save to this solution
                 existingSolMapping = mSolution.Name + "***";
                 foreach (ApplicationPlatform ap in mSolution.ApplicationPlatforms)
                 {
                     if (string.IsNullOrEmpty(ap.LastMappedAgentName) == false)
-                        existingSolMapping += ap.AppName + "," + ap.LastMappedAgentName + "#";
+                        existingSolMapping = existingSolMapping + ap.AppName + "," + ap.LastMappedAgentName + "#";
                 }
                 RecentAppAgentsMapping.Add(existingSolMapping);
             }
@@ -562,17 +575,10 @@ namespace Ginger
 
         public void LoadDefaults()
         {
-            AutoLoadLastSolution = true; //#Task 160
-            //SetDefaultWorkingFolder();
+            AutoLoadLastSolution = true; //#Task 160            
             string defualtFolder= WorkSpace.Instance.DefualtUserLocalWorkingFolder;//calling it so it will be created
         }
-
-        //public void SetDefaultWorkingFolder()
-        //{
-        //    LocalWorkingFolder = App.LocalApplicationData + @"\WorkingFolder";
-        //    Directory.CreateDirectory(LocalWorkingFolder);
-        //}
-
+               
         internal string GetDefaultReport()
         {
             if (!string.IsNullOrEmpty(ReportTemplateName))

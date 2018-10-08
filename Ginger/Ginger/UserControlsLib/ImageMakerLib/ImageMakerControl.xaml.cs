@@ -172,6 +172,7 @@ namespace Amdocs.Ginger.UserControls
                 #region Repository Items Images
                 //############################## Repository Items Images:
                 case eImageType.Solution:
+                case eImageType.ApplicationModel:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ThLarge);
                     break;
                 case eImageType.BusinessFlow:
@@ -191,10 +192,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.RunSet:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PlayCircle);
-                    break;
-                case eImageType.ApplicationModel:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThLarge);
-                    break;
+                    break;                    
                 case eImageType.APIModel:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
                     break;
@@ -205,16 +203,16 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Cogs);
                     break;
                 case eImageType.Environment:
+                case eImageType.Globe:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Globe);
                     break;
                 case eImageType.Application:
+                case eImageType.ApplicationPOMModel:
+                case eImageType.Window:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
                     break;
                 case eImageType.HtmlReport:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Html5);
-                    break;
-                case eImageType.ApplicationPOMModel:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
                     break;
                 case eImageType.Variable:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Code);
@@ -226,6 +224,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Star, Brushes.Gray);
                     break;
                 case eImageType.Tag:
+                case eImageType.Ticket:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Tag);
                     break;
                 case eImageType.DataSource:
@@ -377,6 +376,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ObjectGroup);
                     break;
                 case eImageType.Sync:
+                case eImageType.InstanceLink:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Link);
                     break;
                 case eImageType.UnSync:
@@ -391,17 +391,12 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.View:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Eye);
                     break;
-                case eImageType.Download:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.CloudDownload);
-                    break;
+                case eImageType.Download:                   
                 case eImageType.GetLatest:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CloudDownload);
                     break;
                 case eImageType.CheckIn:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CloudUpload);
-                    break;
-                case eImageType.Fix:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Wrench);
                     break;
                 case eImageType.Expand:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ChevronDown);
@@ -493,9 +488,6 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Link:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLink);
                     break;
-                case eImageType.InstanceLink:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Link);
-                    break;
                 case eImageType.Report:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PieChart);
                     break;
@@ -525,22 +517,13 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Text:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Adn);
-                    break;
-                case eImageType.Globe:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Globe);
-                    break;
+                    break;                
                 case eImageType.Service:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Headphones);
-                    break;
-                case eImageType.Ticket:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Tag);
-                    break;
+                    break;                
                 case eImageType.FileVideo:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FileVideoOutline);
-                    break;
-                case eImageType.Window:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
-                    break;
+                    break;                                    
                 case eImageType.Email:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.EnvelopeOutline);
                     break;
@@ -587,6 +570,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PlusSquare);
                     break;
                 case eImageType.Wrench:
+                case eImageType.Fix:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Wrench);
                     break;
                 case eImageType.ArrowDown:
@@ -697,10 +681,13 @@ namespace Amdocs.Ginger.UserControls
             IM.Width = width;            
 
             if (IM.xFAImage.Visibility == Visibility.Visible)
+            {
                 return IM.xFAImage.Source;
+            }                
             else if (IM.xStaticImage.Visibility == Visibility.Visible)
+            {
                 return IM.xStaticImage.Source;
-
+            }
             return null;
         }
 

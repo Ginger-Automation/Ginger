@@ -78,9 +78,7 @@ namespace GingerCore.Activities
             public static string TestSuiteTitle = "TestSuiteTitle";
             public static string TestSuiteId = "TestSuiteId";
         }
-
-        //public virtual System.Drawing.Image Image { get { return Resources.Group_16x16; } }
-
+        
         public ActivitiesGroup()
         {
         }

@@ -95,61 +95,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            //Add Business Flows            
-            //BusinessFlowsFolderTreeItem BFTVI;            
-            //BFTVI = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());                                        
-            //BFTVI.IsGingerDefualtFolder = true;
-            //Childrens.Add(BFTVI);
-            
-            //if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
-            //{             
-                               
-            //    //Add Data Source
-            //    DataSourceFolderTreeItem DSFTI = new DataSourceFolderTreeItem();
-            //    DSFTI.Folder = "DataSource";
-            //    DSFTI.Path = Path.Combine(App.UserProfile.Solution.Folder, @"DataSources\");
-            //    DSFTI.IsGingerDefualtFolder = true;
-            //    Childrens.Add(DSFTI);
-            //}
-            //Add Documents
-            //DocumentsFolderTreeItem DFTI = new DocumentsFolderTreeItem();
-            //DFTI.Folder = "Documents";
-            //DFTI.Path = Path.Combine(App.UserProfile.Solution.Folder, @"Documents\");
-            //DFTI.IsGingerDefualtFolder = true;
-            //Childrens.Add(DFTI);
-
-            //if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
-            //{
-            //    //Add Plugins
-            //    PlugInsFolderTreeItem PIFTI = new PlugInsFolderTreeItem();
-            //    PIFTI.Folder = "PlugIns";
-            //    PIFTI.Path = Path.Combine(App.UserProfile.Solution.Folder, @"PlugIns\");
-            //    PIFTI.IsGingerDefualtFolder = true;
-            //    Childrens.Add(PIFTI);
-            //}
-
-            //Add Shared Repository
-            //SharedRepositoryTreeItem SRTI = new SharedRepositoryTreeItem();
-            //SRTI.IsGingerDefualtFolder = true;
-            //Childrens.Add(SRTI);
-            //TODO: move to Config check
-            //if (App.UserProfile.UserTypeHelper.IsSupportReports)
-            //{
-            //    //Add Reports Repository
-            //    ReportsTreeItem RTI = new ReportsTreeItem();
-            //    RTI.IsGingerDefualtFolder = true;
-            //    Childrens.Add(RTI);
-            //}
-            //if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
-            //{
-            //    //Add Execution Results
-            //    ExecutionResultsFolderTreeItem ERFTI = new ExecutionResultsFolderTreeItem();
-            //    ERFTI.Folder = "Execution Results";
-            //    ERFTI.Path = Path.Combine(App.UserProfile.Solution.Folder,  @"ExecutionResults\");
-            //    ERFTI.IsGingerDefualtFolder = true;
-            //    Childrens.Add(ERFTI);
-            //}
             return Childrens;
         }
 
@@ -195,8 +140,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void RefreshSolution(object sender, RoutedEventArgs e)
-        {
-            //App.MainWindow.RefreshSolution_Click(sender, e);
+        {            
         }
         
         ContextMenu ITreeViewItem.Menu()
@@ -211,8 +155,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void SaveAll(object sender, System.Windows.RoutedEventArgs e)
         {
-            throw new NotImplementedException();
-            // App.LocalRepository.SaveAllSolutionDirtyItems(true);
+            throw new NotImplementedException();            
         }
    }
 }

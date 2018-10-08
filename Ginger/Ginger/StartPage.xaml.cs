@@ -84,8 +84,7 @@ namespace Ginger
 
                 if (selectedSol != null)
                 {
-                    App.SetSolution(selectedSol.Folder);
-                    //App.UserProfile.AddsolutionToRecent(selectedSol);
+                    App.SetSolution(selectedSol.Folder);                    
                 }
                 else
                     Reporter.ToUser(eUserMsgKeys.SolutionLoadError, "Selected Solution was not found");

@@ -18,7 +18,7 @@ namespace Ginger.SolutionLibNew
     /// <summary>
     /// Interaction logic for LoadingSolutionPage.xaml
     /// </summary>
-    public partial class LoadingSolutionPage : Page
+    public partial class LoadingSolutionPage : Page //NOSONAR
     {
         public LoadingSolutionPage()
         {

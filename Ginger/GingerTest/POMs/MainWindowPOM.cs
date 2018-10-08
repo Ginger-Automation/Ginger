@@ -68,17 +68,14 @@ namespace GingerWPFUnitTest.POMs
         }
 
         public void ClickRunTab()
-        {
-            // SelectMenu("Run Menu AID");
+        {            
         }
         public void ClickAutomateTab()
-        {
-            // SelectRibbonTab("AutomateRibbon");
+        {         
         }
 
         public void ClickSolutionTab()
-        {
-            // SelectRibbonTab("Solution AID");
+        {         
         }
 
         internal void ClickResourcesRibbon()

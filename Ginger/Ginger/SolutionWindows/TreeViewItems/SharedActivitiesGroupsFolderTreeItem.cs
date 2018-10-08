@@ -36,7 +36,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         public enum eActivitiesGroupsItemsShowMode { ReadWrite, ReadOnly }
 
-        RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
+        readonly RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
         private ActivitiesGroupsRepositoryPage mActivitiesGroupsRepositoryPage;
         private eActivitiesGroupsItemsShowMode mShowMode;
 
@@ -118,9 +118,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (mShowMode == eActivitiesGroupsItemsShowMode.ReadWrite)
             {
                 if (mActivitiesGroupFolder.IsRootFolder)
+                { 
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false);
+                }
                 else
+                { 
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false, allowRefresh: false);
+                }
 
                 MenuItem exportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
                 TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportAllToALM, null, "@ALM_16x16.png");

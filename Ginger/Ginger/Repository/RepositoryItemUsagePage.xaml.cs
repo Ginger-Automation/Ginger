@@ -41,10 +41,10 @@ namespace Ginger.Repository
     {
         GenericWindow _pageGenericWin = null;
 
-        private RepositoryItemBase mRepoItem;
+        private readonly RepositoryItemBase mRepoItem;
         public ObservableList<RepositoryItemUsage> RepoItemUsages = new ObservableList<RepositoryItemUsage>();
         private bool mIncludeOriginal = false;
-        private RepositoryItemBase mOriginalItem;
+        private readonly RepositoryItemBase mOriginalItem;
 
         public RepositoryItemUsagePage(RepositoryItemBase repoItem, bool includeOriginal=true, RepositoryItemBase originalItem =null)
         {

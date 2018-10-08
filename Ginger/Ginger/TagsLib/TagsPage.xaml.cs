@@ -34,7 +34,7 @@ namespace Ginger.TagsLib
     {
         public enum eViewMode { Solution, SpecificList }
 
-        eViewMode mViewMode;
+        readonly eViewMode mViewMode;
         private ObservableList<RepositoryItemTag> mTags;
         GenericWindow genWin = null;
 
@@ -46,7 +46,9 @@ namespace Ginger.TagsLib
             mTags = tags;
 
             if (mViewMode == eViewMode.Solution)
+            {
                 App.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
+            }
 
             SetTagsGridView();
             SetGridData();
@@ -55,7 +57,9 @@ namespace Ginger.TagsLib
         private void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(UserProfile.Solution))
+            {
                 SetGridData();
+            }                
         }
 
         private void SetGridData()

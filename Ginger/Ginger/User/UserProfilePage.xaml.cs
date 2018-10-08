@@ -16,7 +16,7 @@ namespace Ginger.User
     public partial class UserProfilePage : Page
     {
         GenericWindow _pageGenericWin;
-        eUserType mOriginalUserType;
+        readonly eUserType mOriginalUserType;
 
         public UserProfilePage()
         {
@@ -105,11 +105,7 @@ namespace Ginger.User
         {
             App.UserProfile.SaveBackup();
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            //Button SaveBtn = new Button();
-            //SaveBtn.Content = "Save & Close";
-            //SaveBtn.Click += new RoutedEventHandler(SaveBtn_Click);
-            //winButtons.Add(SaveBtn);
+            ObservableList<Button> winButtons = new ObservableList<Button>();            
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
@@ -123,12 +119,5 @@ namespace Ginger.User
             App.UserProfile.RestoreFromBackup(true);
             _pageGenericWin.Close();
         }
-
-        //private void SaveBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    App.UserProfile.SaveUserProfile();
-        //    _pageGenericWin.Close();
-        //}
-
     }
 }

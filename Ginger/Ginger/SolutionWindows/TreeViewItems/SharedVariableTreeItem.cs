@@ -32,7 +32,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     class SharedVariableTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private VariableEditPage mVariableEditPage;
-        VariableBase mVariableBase;
+        readonly VariableBase mVariableBase;
         private SharedVariablesFolderTreeItem.eVariablesItemsShowMode mShowMode;
 
         public SharedVariableTreeItem(VariableBase variableBase, SharedVariablesFolderTreeItem.eVariablesItemsShowMode showMode = SharedVariablesFolderTreeItem.eVariablesItemsShowMode.ReadWrite)

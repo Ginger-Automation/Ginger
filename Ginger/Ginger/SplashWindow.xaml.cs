@@ -53,9 +53,7 @@ namespace Ginger
             dispatcherTimer.Start();
             App.AppSplashWindow = this;
             App.InitApp();         
-            InitDone = true;
-
-            //CheckShowNews();            
+            InitDone = true;  
         }
 
         private void CheckShowNews()
@@ -65,24 +63,8 @@ namespace Ginger
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
-        {           
-            //switch (lblLoading.Content.ToString())
-            //{
-            //    case "Loading...":
-            //        lblLoading.Content = "Loading   ";
-            //        break;
-            //    case "Loading   ":
-            //        lblLoading.Content = "Loading.  ";
-            //        break;
-            //    case "Loading.  ":
-            //        lblLoading.Content = "Loading.. ";
-            //        break;
-            //    case "Loading.. ":
-            //        lblLoading.Content = "Loading...";
-            //        break;
-            //}
+        {  
             counter++;
-
 
             if (InitDone && System.Diagnostics.Debugger.IsAttached)
             {

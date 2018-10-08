@@ -35,7 +35,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         public enum eVariablesItemsShowMode { ReadWrite, ReadOnly }
 
-        RepositoryFolder<VariableBase> mVariablesFolder;
+        readonly RepositoryFolder<VariableBase> mVariablesFolder;
         private VariablesRepositoryPage mVariablesRepositoryPage;        
         private eVariablesItemsShowMode mShowMode;
 
@@ -118,10 +118,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (mShowMode == eVariablesItemsShowMode.ReadWrite)
             {
                 if (mVariablesFolder.IsRootFolder)
+                { 
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Variable), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh:false);
+                }
                 else
+                { 
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Variable), allowAddNew: false, allowRefresh: false);
-                
+                }
                 AddSourceControlOptions(mContextMenu, false, false);
             }
             else

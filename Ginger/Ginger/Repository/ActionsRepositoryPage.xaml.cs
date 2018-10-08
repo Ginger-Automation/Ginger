@@ -39,7 +39,7 @@ namespace Ginger.Repository
     /// </summary>
     public partial class ActionsRepositoryPage : Page
     {
-        RepositoryFolder<Act> mActionsFolder;
+        readonly RepositoryFolder<Act> mActionsFolder;
 
         public ActionsRepositoryPage(RepositoryFolder<Act> actionsFolder)
         {
@@ -53,9 +53,13 @@ namespace Ginger.Repository
         private void SetGridAndTreeData()
         {
             if (mActionsFolder.IsRootFolder)
+            {
                 xActionsGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+            }                
             else
+            {
                 xActionsGrid.DataSourceList = mActionsFolder.GetFolderItems();
+            }                
         }
 
         private void grdActions_PreviewDragItem(object sender, EventArgs e)

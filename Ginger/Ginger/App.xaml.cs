@@ -659,7 +659,7 @@ namespace Ginger
         {
             //clear existing solution data
             try
-            {
+            {                
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
                 mLoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
@@ -1025,7 +1025,9 @@ namespace Ginger
             a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
             a.Acts = new ObservableList<Act>();
             if (biz.TargetApplications.Count > 0)
+            {
                 a.TargetApplication = biz.TargetApplications[0].AppName;
+            }                
             biz.Activities.Add(a);
 
             biz.Activities.CurrentItem = a;
@@ -1120,12 +1122,6 @@ namespace Ginger
 
         private static void BetaFeatureChanged(object sender, PropertyChangedEventArgs e)
         {
-            //if (e.PropertyName == nameof(BetaFeatures.BFUseSolutionRepositry))
-            //{
-            //    // is this the only item to refresh?
-            //    MainWindow.RefreshSolutionPage();
-            //}
-
         }
 
         internal static void ErrorLogged(int errorsCounter)

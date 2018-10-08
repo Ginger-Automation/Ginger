@@ -33,7 +33,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     public class AgentsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private RepositoryFolder<Agent> mAgentsFolder;
+        private readonly RepositoryFolder<Agent> mAgentsFolder;
         private AgentsPage mAgentsPage;
         
         public AgentsFolderTreeItem(RepositoryFolder<Agent> agentsFolder)

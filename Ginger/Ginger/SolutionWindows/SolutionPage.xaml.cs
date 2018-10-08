@@ -83,13 +83,7 @@ namespace Ginger.SolutionWindows
                 xSolutionDetailsStack.Visibility = Visibility.Collapsed;
             }
         }
-
-
-        //private void xSaveButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    mSolution.SaveSolution(true, Solution.eSolutionItemToSave.GeneralDetails);
-        //}
-
+                
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
             mSolution.SaveBackup();

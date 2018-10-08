@@ -32,7 +32,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class AgentTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private Agent mAgent;
+        private readonly Agent mAgent;
         private AgentEditPage mAgentEditPage;
                 
         public AgentTreeItem(Agent agent)
@@ -81,12 +81,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             return mContextMenu;
         }
-
-        //private void Rename(object sender, RoutedEventArgs e)
-        //{
-        //    RenameItem("Agent Name:", mAgent, Agent.Fields.Name);
-        //}
-
+        
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             mTreeView = TV;

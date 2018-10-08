@@ -100,9 +100,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //TODO: change to wizard
             HTMLReportTemplate NewReportTemplate = new HTMLReportTemplate() { Name = "New Report Template", Status = HTMLReportTemplate.eReportStatus.Development };
 
-            System.Reflection.Assembly ExecutingAssembly;
-            ExecutingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-
             HTMLReportTemplateSelector RTS = new HTMLReportTemplateSelector();
             RTS.ShowAsWindow();
 

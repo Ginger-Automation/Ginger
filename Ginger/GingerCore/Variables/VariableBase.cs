@@ -358,7 +358,10 @@ namespace GingerCore.Variables
                                 }
                             }
                         }
-                        catch (Exception ex) { Console.WriteLine(ex.StackTrace); } // TODO: FIXME!!! no empty exception
+                        catch (Exception ex)
+                        {
+                            // TODO: FIXME!!! no empty exception
+                        } 
                     }
                 }
             }

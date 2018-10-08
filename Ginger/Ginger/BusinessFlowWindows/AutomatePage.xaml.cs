@@ -70,7 +70,7 @@ namespace Ginger
     /// <summary>
     /// Interaction logic for AutomatePage.xaml
     /// </summary>
-    public partial class AutomatePage : Page
+    public partial class AutomatePage : Page //NOSONAR 
     {                 
         BusinessFlowPage mCurrentBusPage;
         VariablesPage mVariablesPage;
@@ -80,8 +80,7 @@ namespace Ginger
         VariablesPage mActivityVariablesPage;
         public ActionsPage mActionsPage;
         RepositoryPage mReposiotryPage;
-
-        GridLength mlastBusFlowsColWidth = new GridLength(225);
+                
         GridLength mlastRepositoryColWidth = new GridLength(300);
 
         GridLength mlastBFVariablesRowHeight = new GridLength(200, GridUnitType.Star);
@@ -415,7 +414,10 @@ namespace Ginger
         {
             if (e.NewSize.Height < 70)
             {
-                if (mActivitiesMiniPage == null) mActivitiesMiniPage = new ActivitiesMiniViewPage();
+                if (mActivitiesMiniPage == null)
+                {
+                    mActivitiesMiniPage = new ActivitiesMiniViewPage();
+                }
                 BFActivitiesFrame.Content = mActivitiesMiniPage;
             }
             else
@@ -431,7 +433,10 @@ namespace Ginger
 
         private void Expanders_Changed()
         {
-            if (BFVariablesExpander == null || BFActivitiesExpander == null || ActivityVariablesExpander == null || ActivityActionsExpander == null) return;
+            if (BFVariablesExpander == null || BFActivitiesExpander == null || ActivityVariablesExpander == null || ActivityActionsExpander == null)
+            {
+                return;
+            }
 
             int rowIndex = 3;   //were dynamic content starts       
             if (BFVariablesExpander != null)
@@ -451,7 +456,9 @@ namespace Ginger
                 else
                 {
                     if (BFVariablesFrame != null && BFVariablesFrame.ActualHeight != 0)
+                    {
                         mlastBFVariablesRowHeight = new GridLength(BFVariablesFrame.ActualHeight + mMinRowsExpanderSize.Value, GridUnitType.Star);
+                    }                        
                     BFVariablesExpander.Visibility = System.Windows.Visibility.Collapsed;
                     BFVariablesExpander2.Visibility = System.Windows.Visibility.Visible;
                 }
@@ -576,9 +583,13 @@ namespace Ginger
                 if (gridSplitters[indx - 1] != null)
                 {
                     if (indx < (rowIndex-1))
+                    {
                         gridSplitters[indx - 1].IsEnabled = true;
+                    }                        
                     else
+                    {
                         gridSplitters[indx - 1].IsEnabled = false;
+                    }                        
                 }
             }
 
@@ -794,7 +805,9 @@ namespace Ginger
             {
                 EnabelGridSelectedItemChangeOnClick(ActPage.grdActions);
                 if (App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
+                {
                     App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent.IsFailedToStart = false;
+                }                    
             }
         }
 
@@ -804,8 +817,7 @@ namespace Ginger
             App.AutomateTabGingerRunner.ProjEnvironment = App.AutomateTabEnvironment;
             App.AutomateTabGingerRunner.SolutionFolder = App.UserProfile.Solution.Folder;
             App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.DataSource.DataSourceBase>();
-            App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-            //App.AutomateTabGingerRunner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
+            App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();            
             App.AutomateTabGingerRunner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
 
             SetGingerRunnerSpeed();
@@ -855,8 +867,8 @@ namespace Ginger
         {
             RunAutomateTabFlow(true, true);
         }
-
-        private async Task RunAutomateTabFlow(bool Analyz = false, bool ReportNeeded = false)
+        
+        private async void RunAutomateTabFlow(bool Analyz = false, bool ReportNeeded = false)
         {
             if (Analyz)
             {
@@ -1146,8 +1158,7 @@ namespace Ginger
 
             if (reportsResultFolder == string.Empty)
             {
-                Reporter.ToUser(eUserMsgKeys.AutomationTabExecResultsNotExists);
-                return;
+                Reporter.ToUser(eUserMsgKeys.AutomationTabExecResultsNotExists);                
             }
             else
             {
@@ -1176,9 +1187,14 @@ namespace Ginger
             string exec_folder = Ginger.Run.ExecutionLogger.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabOfflineLogName);
 
             if (Directory.Exists(exec_folder))
+            {
                 GingerCore.General.ClearDirectoryContent(exec_folder);
+            }                
             else
+            {
                 Directory.CreateDirectory(exec_folder);
+            }
+            
             if (App.AutomateTabGingerRunner.ExecutionLogger.OfflineBusinessFlowExecutionLog(App.BusinessFlow, exec_folder))
             {
                 //create the HTML report
@@ -1247,7 +1263,10 @@ namespace Ginger
         private void lstEnvs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (lstEnvs != null && lstEnvs.SelectedItem != null)
+            {
                 App.AutomateTabEnvironment = (ProjEnvironment)lstEnvs.SelectedItem;
+            }
+                
         }
 
         private void xRibbon_Loaded(object sender, RoutedEventArgs e)

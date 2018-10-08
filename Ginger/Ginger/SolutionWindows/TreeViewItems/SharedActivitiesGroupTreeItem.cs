@@ -34,7 +34,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class SharedActivitiesGroupTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private ActivitiesGroup mActivitiesGroup;
+        private readonly ActivitiesGroup mActivitiesGroup;
         private ActivitiesGroupPage mActivitiesGroupPage;        
         private SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode mShowMode;
 

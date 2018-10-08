@@ -74,7 +74,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 }
                 catch(Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, e.StackTrace.ToString());
+                    Reporter.ToLog(eLogLevel.ERROR, e.StackTrace);
                 }
             }
 

@@ -398,8 +398,7 @@ namespace Amdocs.Ginger.Repository
             {
                 if (mLocalBackupDic.Count() != 0)
                 {
-                    // TODO: err handler
-                    // throw new Exception("Missed item in restore!");
+                    // TODO: err handler                    
                 }
             }
             else
@@ -633,14 +632,7 @@ namespace Amdocs.Ginger.Repository
         public virtual string RelativeFilePath { get; set; }
 
         internal void UpdateBeforeSave()
-        {
-            //if (RepositoryItemHeader == null) //---It already been done inside SerializeToString()
-            //{
-            //    InitHeader();
-            //}
-            //RepositoryItemHeader.Version++;
-            //RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
-            //RepositoryItemHeader.LastUpdateBy = Environment.UserName;
+        {            
             this.ClearBackup();
         }
 
@@ -898,11 +890,7 @@ namespace Amdocs.Ginger.Repository
 
         private void TrackObservableList(IObservableList obj)
         {
-            // No need to track items which are lazy load
-            //if (obj.LazyLoad)
-            //{
-            //    return;
-            //}
+            // No need to track items which are lazy load            
             List<object> items = ((IObservableList)obj).ListItems;
 
             ((INotifyCollectionChanged)obj).CollectionChanged += ((RepositoryItemBase)this).ChildCollectionChanged;
@@ -988,7 +976,7 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemBase CreateInstance(bool originFromSharedRepository = false)
         {
-            RepositoryItemBase copiedItem = (RepositoryItemBase)this.CreateCopy();
+            RepositoryItemBase copiedItem = this.CreateCopy();
             copiedItem.ParentGuid = this.Guid;
             if (originFromSharedRepository) 
             {
@@ -1021,9 +1009,13 @@ namespace Amdocs.Ginger.Repository
             get
             {
                 if (IsSharedRepositoryInstance)
+                { 
                     return eImageType.SharedRepositoryItem;
+                }
                 else
+                { 
                     return eImageType.NonSharedRepositoryItem;
+                }
             }
         }
 
@@ -1055,20 +1047,6 @@ namespace Amdocs.Ginger.Repository
         public void UpdateControlFields()
         {
             // from old RI
-
-            //if (Guid == null || Guid == Guid.Empty)
-            //{
-            //    Guid = Guid.NewGuid();
-            //}
-
-            
-            //if (CreatedBy == null || CreatedBy == string.Empty)
-            //{
-            //    CreatedBy = Environment.UserName;
-            //    Created = DateTime.UtcNow;
-            //}
-
-            //Deleted = false;
         }
        
       

@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace Ginger.MenusLib
 {
-    public class RunMenu
+    public static class RunMenu
     {
         public static TwoLevelMenu twoLevelMenu;
 
@@ -37,21 +37,21 @@ namespace Ginger.MenusLib
 
         private static TwoLevelMenu GetMenu()
         {
-            TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
+            TwoLevelMenu twoLevelMenuGet = new TwoLevelMenu();
 
             TopMenuItem runSetMenu = new TopMenuItem(eImageType.RunSet, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet), ConsoleKey.R, "Run Set AID", GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet, "Create, Design and Execute "));
             runSetMenu.Add(eImageType.RunSet, "", GetRunSetPage, ConsoleKey.R, "", "AID");
-            twoLevelMenu.Add(runSetMenu);
+            twoLevelMenuGet.Add(runSetMenu);
 
             TopMenuItem gingerGridMenu = new TopMenuItem(eImageType.List, "Gingers Grid", ConsoleKey.G, "Ginger Grid AID", "Grid showing all connected Ginger Nodes");
             gingerGridMenu.Add(eImageType.List, "", GetGingerGridPage, ConsoleKey.G, "", "AID");
-            twoLevelMenu.Add(gingerGridMenu);
+            twoLevelMenuGet.Add(gingerGridMenu);
             
             TopMenuItem executionsHistoryMenu = new TopMenuItem(eImageType.History, "Executions History", ConsoleKey.E, "Executions History AID", "View executions history of all Run Sets");
             executionsHistoryMenu.Add(eImageType.History, "", GetExecutionsHistoryPage, ConsoleKey.E, "", "AID");
-            twoLevelMenu.Add(executionsHistoryMenu);
+            twoLevelMenuGet.Add(executionsHistoryMenu);
 
-            return twoLevelMenu;
+            return twoLevelMenuGet;
         }
 
         private static Page GetRunSetPage()

@@ -38,7 +38,7 @@ namespace Ginger.Repository
     /// </summary>    
     public partial class VariablesRepositoryPage : Page
     {
-        RepositoryFolder<VariableBase> mVariablesFolder;
+        readonly RepositoryFolder<VariableBase> mVariablesFolder;
 
         public VariablesRepositoryPage(RepositoryFolder<VariableBase> variablesFolder)
         {
@@ -52,9 +52,14 @@ namespace Ginger.Repository
         private void SetGridAndTreeData()
         {
             if (mVariablesFolder.IsRootFolder)
+            {
                 xVariablesGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+            }                
             else
+            {
                 xVariablesGrid.DataSourceList = mVariablesFolder.GetFolderItems();
+            }
+            
         }
 
 
@@ -83,7 +88,9 @@ namespace Ginger.Repository
             if (xVariablesGrid.Grid.SelectedItems != null && xVariablesGrid.Grid.SelectedItems.Count > 0)
             {
                 foreach (VariableBase selectedItem in xVariablesGrid.Grid.SelectedItems)
+                {
                     App.BusinessFlow.AddVariable((VariableBase)selectedItem.CreateInstance(true));
+                }                    
                 
                 int selectedActIndex = -1;
                 ObservableList<VariableBase> varList = App.BusinessFlow.Variables;

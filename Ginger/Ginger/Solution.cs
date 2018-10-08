@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace Ginger.SolutionGeneral
 {
@@ -75,26 +76,34 @@ namespace Ginger.SolutionGeneral
             {
                 Solution lastSavedSolution = LoadSolution(FilePath, false);
                 string extraChangedItems = "";
+                StringBuilder bldExtraChangedItems = new StringBuilder();
+                
                 if (solutionItemToSave != eSolutionItemToSave.GeneralDetails)
                 {
                     if (this.Name != lastSavedSolution.Name || this.Account != lastSavedSolution.Account)
-                        extraChangedItems += "Solution General Details, ";
+                    {
+                        bldExtraChangedItems.Append("Solution General Details, ");
+                    }                        
                 }
                 if (solutionItemToSave != eSolutionItemToSave.ALMSettings)
                 {
                     if (this.ALMDomain != lastSavedSolution.ALMDomain || this.ALMProject != lastSavedSolution.ALMProject || this.ALMServerURL != lastSavedSolution.ALMServerURL || this.AlmType != lastSavedSolution.AlmType)
-                        extraChangedItems += "ALM Details, ";
+                    {
+                        bldExtraChangedItems.Append("ALM Details, ");
+                    }                        
                 }
                 if (solutionItemToSave != eSolutionItemToSave.SourceControlSettings)
                 {
                     if (this.SourceControl != lastSavedSolution.SourceControl)
-                        extraChangedItems += "Source Control Details, ";
+                    {
+                        bldExtraChangedItems.Append("Source Control Details, ");
+                    }                        
                 }
                 if (solutionItemToSave != eSolutionItemToSave.ReportsSettings)
                 {
                     if (ExecutionLoggerConfigurationSetList != null && (ExecutionLoggerConfigurationSetList.Count != lastSavedSolution.ExecutionLoggerConfigurationSetList.Count || HTMLReportsConfigurationSetList.Count != lastSavedSolution.HTMLReportsConfigurationSetList.Count))
                     {
-                        extraChangedItems += "Reports Settings, ";
+                        bldExtraChangedItems.Append("Reports Settings, ");
                     }
                     else
                     {
@@ -104,30 +113,30 @@ namespace Ginger.SolutionGeneral
                             {
                                 if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                                 {
-                                    extraChangedItems += "Reports Settings, ";
+                                    bldExtraChangedItems.Append("Reports Settings, ");
                                     break;
                                 }
                             }
                         }
-                        if (!extraChangedItems.Contains("Reports Settings"))
+                        if (!bldExtraChangedItems.ToString().Contains("Reports Settings"))
                         {
                             foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
                             {
                                 if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                                 {
 
-                                    extraChangedItems += "Reports Settings, ";
+                                    bldExtraChangedItems.Append("Reports Settings, ");
                                     break;
                                 }
                             }
                         }
                     }
-                }
+                }                
                 if (solutionItemToSave != eSolutionItemToSave.GlobalVariabels)
                 {
                     if (Variables.Count != lastSavedSolution.Variables.Count)
                     {
-                        extraChangedItems += GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", ");
+                        bldExtraChangedItems.Append(GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", "));
                     }
                     else
                     {
@@ -135,7 +144,7 @@ namespace Ginger.SolutionGeneral
                         {
                             if (var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                extraChangedItems += GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", ");
+                                bldExtraChangedItems.Append(GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", "));
                                 break;
                             }
                         }
@@ -145,7 +154,7 @@ namespace Ginger.SolutionGeneral
                 {
                     if (ApplicationPlatforms.Count != lastSavedSolution.ApplicationPlatforms.Count)
                     {
-                        extraChangedItems += "Target Applications, ";
+                        bldExtraChangedItems.Append("Target Applications, ");
                     }
                     else
                     {
@@ -153,7 +162,7 @@ namespace Ginger.SolutionGeneral
                         {
                             if (app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                extraChangedItems += "Target Applications, ";
+                                bldExtraChangedItems.Append("Target Applications, ");
                                 break;
                             }
                         }
@@ -163,7 +172,7 @@ namespace Ginger.SolutionGeneral
                 {
                     if (Tags.Count != lastSavedSolution.Tags.Count)
                     {
-                        extraChangedItems += "Tags, ";
+                        bldExtraChangedItems.Append("Tags, ");
                     }
                     else
                     {
@@ -171,13 +180,13 @@ namespace Ginger.SolutionGeneral
                         {
                             if (tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                extraChangedItems += "Tags, ";
+                                bldExtraChangedItems.Append("Tags, ");
                                 break;
                             }
                         }                        
                     }
                 }
-
+                extraChangedItems = bldExtraChangedItems.ToString();
                 if (string.IsNullOrEmpty(extraChangedItems))
                 {
                     doSave = true;
@@ -201,19 +210,7 @@ namespace Ginger.SolutionGeneral
                 Reporter.CloseGingerHelper();
             }
         }
-
-        //private bool CheckIfListItemsChanged(ObservableList<RepositoryItemBase> list)
-        //{
-        //    foreach (RepositoryItemBase item in list)
-        //    {
-        //        if (item.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || item.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-        //        {
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
-
+                
         string mName;
         [IsSerializedForLocalRepository]
         public string Name

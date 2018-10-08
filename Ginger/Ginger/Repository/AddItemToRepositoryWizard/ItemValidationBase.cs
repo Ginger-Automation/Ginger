@@ -106,11 +106,22 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             ObservableList<VariableBase> variables= WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
             ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-            if (selectedItem.UsageItem is ActivitiesGroup) existingRepoItems = activitiesGroup.Cast<RepositoryItemBase>().ToList();            
-            else if (selectedItem.UsageItem is Activity) existingRepoItems = activities.Cast<RepositoryItemBase>().ToList();
-            else if (selectedItem.UsageItem is Act) existingRepoItems = SharedActions.Cast<RepositoryItemBase>().ToList();
-            
-            else if (selectedItem.UsageItem is VariableBase) existingRepoItems = variables.Cast<RepositoryItemBase>().ToList();
+            if (selectedItem.UsageItem is ActivitiesGroup)
+            {
+                existingRepoItems = activitiesGroup.Cast<RepositoryItemBase>().ToList();
+            }
+            else if (selectedItem.UsageItem is Activity)
+            {
+                existingRepoItems = activities.Cast<RepositoryItemBase>().ToList();
+            }
+            else if (selectedItem.UsageItem is Act)
+            {
+                existingRepoItems = SharedActions.Cast<RepositoryItemBase>().ToList();
+            }
+            else if (selectedItem.UsageItem is VariableBase)
+            {
+                existingRepoItems = variables.Cast<RepositoryItemBase>().ToList();
+            }
             
             if (selectedItem.ItemUploadType == UploadItemSelection.eItemUploadType.Overwrite)
             {
@@ -135,10 +146,22 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
 
             ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-            if (duplicateItem.UsageItem is ActivitiesGroup) existingRepoItems = activitiesGroup.Select(x => x.ItemName).ToList();            
-            else if (duplicateItem.UsageItem is Activity) existingRepoItems = activities.Select(x => x.ItemName).ToList(); 
-            else if (duplicateItem.UsageItem is Act) existingRepoItems = actions.Select(x => x.ItemName).ToList(); 
-            else if (duplicateItem.UsageItem is VariableBase) existingRepoItems = variables.Select(x => x.ItemName).ToList();
+            if (duplicateItem.UsageItem is ActivitiesGroup)
+            {
+                existingRepoItems = activitiesGroup.Select(x => x.ItemName).ToList();
+            }
+            else if (duplicateItem.UsageItem is Activity)
+            {
+                existingRepoItems = activities.Select(x => x.ItemName).ToList();
+            }
+            else if (duplicateItem.UsageItem is Act)
+            {
+                existingRepoItems = actions.Select(x => x.ItemName).ToList();
+            }
+            else if (duplicateItem.UsageItem is VariableBase)
+            {
+                existingRepoItems = variables.Select(x => x.ItemName).ToList();
+            }
 
             string newItemName = duplicateItem.ItemName;
            

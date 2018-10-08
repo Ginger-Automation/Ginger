@@ -289,10 +289,7 @@ namespace GingerCore.Repository
                 }
 
                 // first check if we need to auto upgrade the xml to latest ginger version               
-                //string upgradedXML = XMLUpgrade.UpgradeSolutionXMLFileIfNeeded(FileName, xml);
-                //if (string.IsNullOrEmpty(upgradedXML) == false)
-                //    xml = upgradedXML;
-
+                
                 return DeserializeFromText(t, xml);
             }
             else
@@ -430,8 +427,7 @@ namespace GingerCore.Repository
         private static bool IsObseravbleListLazyLoad(string name)
         {
             // Here we decide which Observable List we cache as string until user really ask for the data
-            // for now we cache only activities which is the major issue for performance when laoding solution
-            // if (name == nameof(BusinessFlow.Activities)) return true;
+            // for now we cache only activities which is the major issue for performance when laoding solution            
             return false;
         }
 
@@ -465,18 +461,13 @@ namespace GingerCore.Repository
 
                 // We first try in current assembly = GingerCore
                 if (targetObj == null)
-                {
-                    //if (FastLoad)
-                    //{
-                        obj = GingerCoreAssembly.CreateInstance(ClassName);
-                    //}
-                    //else
-                    //{
-                    //    obj = System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(ClassName);
-                    //}
+                {                   
+                    obj = GingerCoreAssembly.CreateInstance(ClassName);                    
                 }
                 else
+                { 
                     obj = targetObj; //used for DeepCopy to objects fields
+                }
 
                 if (obj == null)
                 {

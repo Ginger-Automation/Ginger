@@ -207,10 +207,7 @@ namespace Ginger.ALM.Repository
                         Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC", ex);
                     }
                 }
-
-                //Refresh the solution tree
-                //App.MainWindow.RefreshSolutionPage();
-
+                
                 Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
 
                 Reporter.ToLog(eLogLevel.INFO, "Imported from QC successfully");

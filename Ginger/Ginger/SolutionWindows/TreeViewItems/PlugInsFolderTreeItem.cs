@@ -34,7 +34,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class PlugInsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private RepositoryFolder<PluginPackage> mPluginsFolder;
+        private readonly RepositoryFolder<PluginPackage> mPluginsFolder;
         private PlugInsPage mExplorerPlugInsPage;
 
         public PlugInsFolderTreeItem(RepositoryFolder<PluginPackage> pluginsFolder)

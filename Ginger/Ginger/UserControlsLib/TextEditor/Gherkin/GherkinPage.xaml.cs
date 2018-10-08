@@ -347,8 +347,7 @@ namespace Ginger.GherkinLib
             string BusinessFlowFolder = "";
             string path = BusinessFlowFolder;
             ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-            //FIXME to use tags
-            // Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true,"",true, mSolTags) where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
+            //FIXME to use tags -- Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true,"",true, mSolTags) where x.ActivityName == GherkinActivityName select x).FirstOrDefault();            
             Activity a2 = (from x in activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
             if (a2 != null)
             {                
@@ -533,7 +532,6 @@ namespace Ginger.GherkinLib
                 Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\","") + mBizFlow.Name, "Updated");
             }
 
-            //App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.RefreshTreeFolder ,typeof(BusinessFlowsFolderTreeItem));
             if(App.BusinessFlow == mBizFlow)
             {
                 App.BusinessFlow = mBizFlow;
@@ -579,8 +577,7 @@ namespace Ginger.GherkinLib
                     {
                         ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                         Activity a2 = (from x in activities where x.ActivityName == GH.Text select x).FirstOrDefault();
-                        //FIXME:
-                        // Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true, "", true, mSolTags) where x.ActivityName == GH.Text select x).FirstOrDefault();
+                        //FIXME:-- Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true, "", true, mSolTags) where x.ActivityName == GH.Text select x).FirstOrDefault();
                         if (a2 != null)
                         {
                             mBizFlow.AddActivity(a2);

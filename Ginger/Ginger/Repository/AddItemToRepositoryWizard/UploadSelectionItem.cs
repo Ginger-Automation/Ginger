@@ -184,16 +184,5 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             if (PartToUpload.Count > 0)
                 SelectedItemPart = PartToUpload[0];
         }
-
-        //public event PropertyChangedEventHandler PropertyChanged;
-
-        //public void OnPropertyChanged(string name)
-        //{
-        //    PropertyChangedEventHandler handler = PropertyChanged;
-        //    if (handler != null)
-        //    {
-        //        handler(this, new PropertyChangedEventArgs(name));
-        //    }
-        //}
     }
 }

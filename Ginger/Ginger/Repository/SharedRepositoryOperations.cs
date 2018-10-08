@@ -85,18 +85,14 @@ namespace Ginger.Repository
                 if (isOverwrite)
                 {
                     
-                    MovePrevVersion(itemToUpload.ExistingItem, itemToUpload.ExistingItem.FileName);
-                    //itemFileName = itemToUpload.ExistingItem.FileName;
+                    MovePrevVersion(itemToUpload.ExistingItem, itemToUpload.ExistingItem.FileName);                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(itemToUpload.ExistingItem);
                 }
                 else
                 {
-                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
-                    // itemFileName = LocalRepository.GetRepoItemFileName(itemCopy, Path.Combine(App.UserProfile.Solution.Folder, LocalRepository.GetSharedRepoItemTypeFolder(itemCopy.GetType())));
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);                    
                 }
-
-                //itemCopy.SaveToFile(itemFileName);
-
+                
                 itemToUpload.UsageItem.IsSharedRepositoryInstance = true;
 
                 if (itemToUpload.ExistingItemType == UploadItemSelection.eExistingItemType.ExistingItemIsParent && itemToUpload.ItemUploadType == UploadItemSelection.eItemUploadType.New)
@@ -199,10 +195,17 @@ namespace Ginger.Repository
             if (items != null && items.Count() > 0)
             {
                 foreach (RepositoryItemBase item in items)
+                {
                     if (GetMatchingRepoItem(item, existingRepoItems, ref linkIsByExternalID, ref linkIsByParentID) != null)
+                    {
                         item.IsSharedRepositoryInstance = true;
+                    }                        
                     else
+                    {
                         item.IsSharedRepositoryInstance = false;
+                    }                        
+                }
+                    
             }
         }
 
@@ -243,12 +246,18 @@ namespace Ginger.Repository
             if (repoItem == null && item.ExternalID != null && item.ExternalID != string.Empty && item.ExternalID != "0")
             {
                 repoItem = (RepositoryItemBase)existingRepoItems.Where(x => ((RepositoryItemBase)x).ExternalID == item.ExternalID).FirstOrDefault();
-                if (repoItem != null) linkIsByExternalID = true;
+                if (repoItem != null)
+                {
+                    linkIsByExternalID = true;
+                }
             }
             if (repoItem == null && item.ParentGuid != Guid.Empty)
             {
                 repoItem = (RepositoryItemBase)existingRepoItems.Where(x => ((RepositoryItemBase)x).Guid == item.ParentGuid).FirstOrDefault();
-                if (repoItem != null) linkIsByParentID = true;
+                if (repoItem != null)
+                {
+                    linkIsByParentID = true;
+                }
             }
 
             return repoItem;
@@ -258,8 +267,6 @@ namespace Ginger.Repository
         {
             if (File.Exists(FileName))
             {
-                //string PrevFolder = App.UserProfile.Solution.Folder + @"\" + obj.ObjFolderName + @"\PrevVersions\";
-
                 string repoItemTypeFolder = GetSharedRepoItemTypeFolder(obj.GetType());
                 string PrevFolder = Path.Combine(App.UserProfile.Solution.Folder, repoItemTypeFolder, "PrevVersions");
                 if (!Directory.Exists(PrevFolder))
@@ -284,7 +291,9 @@ namespace Ginger.Repository
                 try
                 {
                     if (File.Exists(PrevFileName))
+                    {
                         File.Delete(PrevFileName);
+                    }                        
                     File.Move(FileName, PrevFileName);
                 }
                 catch (Exception ex)
@@ -299,16 +308,26 @@ namespace Ginger.Repository
             string folder = @"SharedRepository\";
 
             if (T.Equals(typeof(ActivitiesGroup)))
+            {
                 folder += "ActivitiesGroups";
+            }
             else if (T.Equals(typeof(Activity)))
+            {
                 folder += "Activities";
+            }
             else if (T.IsSubclassOf(typeof(Act)))
+            {
                 folder += "Actions";
+            }
             else if (T.IsSubclassOf(typeof(VariableBase)))
+            {
                 folder += "Variables";
+            }
 
             if (folder == @"SharedRepository\")
+            {
                 throw new System.InvalidOperationException("Shared Repository Item folder path creation is wrong");
+            }                
 
             return folder;
         }
@@ -321,9 +340,13 @@ namespace Ginger.Repository
             if (usagePage.RepoItemUsages.Count > 0)//TODO: check if only one instance exist for showing the pop up for better performance
             {
                 if (Reporter.ToUser(eUserMsgKeys.AskIfWantsToChangeeRepoItem, item.GetNameForFileName(), usagePage.RepoItemUsages.Count, changeType) == MessageBoxResult.Yes)
+                {
                     return true;
+                }                    
                 else
+                {
                     return false;
+                }                    
             }
 
             return true;

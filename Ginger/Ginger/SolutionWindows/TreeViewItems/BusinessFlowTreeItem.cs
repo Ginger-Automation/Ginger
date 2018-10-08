@@ -38,7 +38,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         private BusinessFlowPage mBusinessFlowPage;
         private BusinessFlow mBusinessFlow { get; set; }
-        private eBusinessFlowsTreeViewMode mViewMode;
+        private readonly eBusinessFlowsTreeViewMode mViewMode;
 
         Object ITreeViewItem.NodeObject()
         {
@@ -97,10 +97,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (mViewMode == eBusinessFlowsTreeViewMode.ReadWrite)
             {
                 if (App.UserProfile.UserTypeHelper.IsSupportAutomate)
-                {
-                    //MenuItem automateMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Automate");
-                    //TreeViewUtils.AddSubMenuItem(automateMenu, "Automate", Automate, null, "@Automate_16x16.png");
-                    //TreeViewUtils.AddSubMenuItem(automateMenu, "Visual Automate", VisualAutomate, null, "@Flow_16x16.png");   
+                {   
                     TreeViewUtils.AddMenuItem(mContextMenu, "Automate", Automate, null, eImageType.Automate);
                 }
                 
@@ -154,9 +151,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (App.BusinessFlow == mBusinessFlow)
             {
                 if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count != 0)
+                {
                     App.BusinessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()[0];
+                }
                 else
+                {
                     App.BusinessFlow = null;
+                }
             }
         }
 

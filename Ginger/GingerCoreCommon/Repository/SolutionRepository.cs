@@ -216,7 +216,7 @@ namespace Amdocs.Ginger.Repository
         {
             if (pullParentFolder)
             {
-                FileAttributes attr = FileAttributes.Normal;
+                FileAttributes attr;
                 attr = File.GetAttributes(folderPath);
 
                 if ((attr & FileAttributes.Directory) == FileAttributes.Directory)

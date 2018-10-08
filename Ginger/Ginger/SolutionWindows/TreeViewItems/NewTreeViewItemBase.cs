@@ -239,11 +239,7 @@ namespace GingerWPF.TreeViewItemsLib
             if (itemsSavedCount == 0)
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Nothing found to Save.");               
-            }
-            //else
-            //{
-            //    mTreeView.Tree.SelectItem((ITreeViewItem)this);//in case the event was called from diffrent class                                                             
-            //}
+            }            
         }
         
         public override void RefreshTreeFolder(Type itemType, string path)
@@ -585,19 +581,29 @@ namespace GingerWPF.TreeViewItemsLib
             // Add Item Image            
             ImageMakerControl NodeImageType = new ImageMakerControl();
             if (repoItem != null && imageType == eImageType.Null)
+            {
                 NodeImageType.ImageType = repoItem.ItemImageType;
+            }                
             else
+            {
                 NodeImageType.ImageType = imageType;
+            }
+                
             NodeImageType.Width = 16;
             NodeImageType.Height = 16;
             stack.Children.Add(NodeImageType);
 
             // Add Item header text 
             Label itemHeaderLabel = new Label();
-            if (repoItem != null)                                          
+            if (repoItem != null)
+            {
                 BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, repoItem.ItemNameField, BindingMode: System.Windows.Data.BindingMode.OneWay);
-            else            
-                itemHeaderLabel.Content = NameProperty;            
+            }                
+            else
+            {
+                itemHeaderLabel.Content = NameProperty;
+            }
+                
             stack.Children.Add(itemHeaderLabel);
 
             // add icon of dirty status            
@@ -620,8 +626,6 @@ namespace GingerWPF.TreeViewItemsLib
         /// <returns></returns>
         protected StackPanel NewTVItemFolderHeaderStyle(RepositoryFolderBase repoItemFolder, eImageType imageType= eImageType.Null)
         {
-            //RI.StartDirtyTracking();
-
             //The new item style with Source control
             StackPanel stack = new StackPanel();
             stack.Orientation = Orientation.Horizontal;
@@ -658,14 +662,6 @@ namespace GingerWPF.TreeViewItemsLib
             itemHeaderLabel.BindControl(repoItemFolder, "DisplayName");
             stack.Children.Add(itemHeaderLabel);
 
-            //// add icon of dirty status            
-            //ImageMakerControl dirtyStatusImage = new ImageMakerControl();
-            //dirtyStatusImage.BindControl(RI, nameof(RepositoryItemBase.DirtyStatusImage));
-            //dirtyStatusImage.Width = 6;
-            //dirtyStatusImage.Height = 6;
-            //dirtyStatusImage.VerticalAlignment = VerticalAlignment.Top;
-            //dirtyStatusImage.Margin = new Thickness(0, 10, 10, 0);
-            //stack.Children.Add(dirtyStatusImage);
 
             return stack;
         }

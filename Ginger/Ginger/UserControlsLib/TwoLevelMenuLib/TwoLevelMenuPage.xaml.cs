@@ -15,7 +15,7 @@ namespace Ginger.GeneralWindows
     /// </summary>
     public partial class TwoLevelMenuPage : Page
     {
-        TwoLevelMenu mTwoLevelMenu;
+        readonly TwoLevelMenu mTwoLevelMenu;
         // static for reuse
         static LoadingPage loadingPage = new LoadingPage();
 
@@ -122,7 +122,9 @@ namespace Ginger.GeneralWindows
             else
             {
                 if (subItems.Count > 1)
+                { 
                     SetSelectedListItemStyle(xSubNavigationListView, Brushes.Gray);
+                }
             }
 
         }
@@ -148,15 +150,19 @@ namespace Ginger.GeneralWindows
             }
 
             if (SelectedSubListItem != null && SelectedSubListItem.ItemPage != null)
+            { 
                 xSelectedItemFrame.SetContent(SelectedSubListItem.ItemPage);
+            }
 
             if (xSubNavigationListView.Items.Count > 1)
+            { 
                 SetSelectedListItemStyle(xSubNavigationListView, Brushes.Gray);
+            }
         }
 
         private void Page_KeyDown(object sender, KeyEventArgs e)
-        {            
-            // MessageBox.Show(e.Key.ToString());            
+        {           
+                        
         }
 
         private void SetSelectedListItemStyle(ListView listView, Brush defualtForeground)
@@ -199,7 +205,9 @@ namespace Ginger.GeneralWindows
         private void xSubNavigationListView_Loaded(object sender, RoutedEventArgs e)
         {
             if (xSubNavigationListView.Items.Count > 1 && xSubNavigationListView.IsVisible)
+            { 
                 SetSelectedListItemStyle(xSubNavigationListView, Brushes.Gray);
+            }
         }
     }
 }

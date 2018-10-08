@@ -35,7 +35,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class RunSetFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private RepositoryFolder<RunSetConfig> mRunSetConfigFolder;
+        private readonly RepositoryFolder<RunSetConfig> mRunSetConfigFolder;
 
         public RunSetFolderTreeItem(RepositoryFolder<RunSetConfig> runSetConfigFolder)
         {
@@ -106,10 +106,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
 
             if (mRunSetConfigFolder.IsRootFolder)
+            { 
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.RunSet), allowRenameFolder: false, allowDeleteFolder: false, allowRefresh:false);
+            }
             else
+            { 
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.RunSet), allowRefresh: false);
-            
+            }
+
             AddSourceControlOptions(mContextMenu, false, false);
         }
 
@@ -118,11 +122,5 @@ namespace Ginger.SolutionWindows.TreeViewItems
             RunSetOperations.CreateNewRunset(runSetsFolder: mRunSetConfigFolder);
         }
 
-
-
-        //public override void RefreshTreeFolder(Type itemType, string path)
-        //{
-        //    base.RefreshTreeFolder(typeof(RunSetConfig), path);
-        //}
     }
 }

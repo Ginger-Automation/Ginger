@@ -69,8 +69,7 @@ namespace GingerCore
         }
         
         public new static class Fields
-        {
-            //public static string Image = "Image";
+        {            
             public static string ActivityName = "ActivityName";
             public static string Description = "Description";
             public static string RunDescription = "RunDescription";

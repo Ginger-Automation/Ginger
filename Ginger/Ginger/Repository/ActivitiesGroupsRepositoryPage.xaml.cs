@@ -42,7 +42,7 @@ namespace Ginger.Repository
     /// </summary>
     public partial class ActivitiesGroupsRepositoryPage : Page
     {
-        RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
+        readonly RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
         BusinessFlow mBusinessFlow;
 
         bool TreeInitDone = false;
@@ -63,17 +63,20 @@ namespace Ginger.Repository
                 App.PropertyChanged += AppPropertychanged;
             }
             
-            SetActivitiesRepositoryGridView();
-            //SetActivitiesRepositoryTreeView();
+            SetActivitiesRepositoryGridView();            
             SetGridAndTreeData();
         }
 
         private void SetGridAndTreeData()
         {
             if (mActivitiesGroupFolder.IsRootFolder)
+            {
                 xActivitiesGroupsRepositoryGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            }                
             else
+            {
                 xActivitiesGroupsRepositoryGrid.DataSourceList = mActivitiesGroupFolder.GetFolderItems();
+            }                
         }
 
         private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -108,30 +111,6 @@ namespace Ginger.Repository
             xActivitiesGroupsRepositoryGrid.ShowTagsFilter = Visibility.Visible;
         }
 
-        //private void SetActivitiesRepositoryTreeView()
-        //{
-        //    treeActivitiesGroupsRepository.TreeTitle = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Repository";
-        //    treeActivitiesGroupsRepository.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
-        //}
-
-        //private void ShowTreeView()
-        //{
-        //    //if not done..
-        //    if (!TreeInitDone)
-        //    {
-        //        treeActivitiesGroupsRepository.TreeTitle = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Repository";
-        //        treeActivitiesGroupsRepository.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
-                
-        //        //Add Activities
-        //        SharedActivitiesGroupsFolderTreeItem SAGFTI = new SharedActivitiesGroupsFolderTreeItem(SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode.ReadOnly);
-        //        SAGFTI.Folder = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups);
-        //        SAGFTI.Path = App.UserProfile.Solution.Folder + @"\SharedRepository\ActivitiesGroups\";
-        //        treeActivitiesGroupsRepository.Tree.AddItem(SAGFTI);
-
-        //        TreeInitDone = true;
-        //    }
-        //}    
-
       
         private void AddFromRepository(object sender, RoutedEventArgs e)
         {
@@ -139,7 +118,11 @@ namespace Ginger.Repository
             {
                 if (xActivitiesGroupsRepositoryGrid.Grid.SelectedItems != null && xActivitiesGroupsRepositoryGrid.Grid.SelectedItems.Count > 0)
                 {
-                    if (mBusinessFlow == null) return;
+                    if (mBusinessFlow == null)
+                    {
+                        return;
+                    }
+
                     foreach (ActivitiesGroup selectedItem in xActivitiesGroupsRepositoryGrid.Grid.SelectedItems)
                     {                       
                         ActivitiesGroup droppedGroupIns = (ActivitiesGroup)selectedItem.CreateInstance(true);
@@ -162,7 +145,9 @@ namespace Ginger.Repository
                     mBusinessFlow.AttachActivitiesGroupsAndActivities();
                 }
                 else
+                {
                     Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+                }                    
             }
         }
         private void EditActivityGroup(object sender, RoutedEventArgs e)

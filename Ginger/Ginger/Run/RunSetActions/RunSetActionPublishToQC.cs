@@ -45,7 +45,7 @@ namespace Ginger.Run.RunSetActions
             public static string toAttachActivitiesGroupReport = "toAttachActivitiesGroupReport";
         }
         PublishToALMConfig PublishToALMConfig = new PublishToALMConfig();
-        ValueExpression mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);                
+        readonly ValueExpression mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);                
 
         private string mVariableForTCRunName;
         [IsSerializedForLocalRepository]

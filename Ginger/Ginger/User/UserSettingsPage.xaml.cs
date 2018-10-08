@@ -23,7 +23,7 @@ namespace Ginger.User
     public partial class UserSettingsPage : Page
     {
         GenericWindow _pageGenericWin;
-        eTerminologyDicsType mOriginalTerminologyType;
+        readonly eTerminologyDicsType mOriginalTerminologyType;
 
         public UserSettingsPage()
         {
@@ -37,8 +37,7 @@ namespace Ginger.User
 
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAutoLoadLastSolutionCheckBox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToUpgradeSolutionCheckBox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
-            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToRecoverSolutionCheckBox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
-            //GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xShowBFSaveWarnCheckBox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AskToSaveBusinessFlow));
+            GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xAskToRecoverSolutionCheckBox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));            
         }
 
         private void xTerminologyTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -57,11 +56,7 @@ namespace Ginger.User
         {
             App.UserProfile.SaveBackup();
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            //Button SaveBtn = new Button();
-            //SaveBtn.Content = "Save & Close";
-            //SaveBtn.Click += new RoutedEventHandler(SaveBtn_Click);
-            //winButtons.Add(SaveBtn);
+            ObservableList<Button> winButtons = new ObservableList<Button>();            
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);

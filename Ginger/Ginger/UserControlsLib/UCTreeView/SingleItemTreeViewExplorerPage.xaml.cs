@@ -50,7 +50,9 @@ namespace GingerWPF.UserControlsLib
             xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
 
             if(treeItemDoubleClickHandler != null)
+            {
                 xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
+            }                
         }       
 
         private void MainTreeView_ItemSelected(object sender, EventArgs e)

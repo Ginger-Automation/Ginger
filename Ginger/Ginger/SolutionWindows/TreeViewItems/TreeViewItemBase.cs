@@ -125,7 +125,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (item is RepositoryItem)
             {
                 RepositoryItem RI = (RepositoryItem)item;
-                if (saveOnlyIfDirty && RI.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified) return false;//no need to Save because not Dirty
+                if (saveOnlyIfDirty && RI.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
+                {
+                    return false;//no need to Save because not Dirty
+                }
+
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, RI.GetNameForFileName(), "item");
                 RI.Save();                
                 Reporter.CloseGingerHelper();
@@ -253,8 +257,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)nodeItemToCopy);
                 if (copiedItem != null)
                 {
-                    //Save copy to target folder
-                    //App.LocalRepository.SaveNewItem(copiedItem, targetFolderNode.NodePath());
+                    //Save copy to target folder                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(copiedItem);
 
                     //refresh target folder node
@@ -351,13 +354,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public override bool PasteCutTreeItem(object nodeItemToCut, TreeViewItemGenericBase targetFolderNode, bool toRefreshFolder = true)
         {
             if (nodeItemToCut is RepositoryItem)
-            {
-                //set target folder path + file name
-               // string targetFileName = LocalRepository.GetRepoItemFileName(((RepositoryItem)nodeItemToCut), targetFolderNode.NodePath());
-                //move the item to target folder
-                //Directory.Move(((RepositoryItem)nodeItemToCut).FileName, targetFileName);
-                //((RepositoryItem)nodeItemToCut).FileName = targetFileName;
-
+            {  
                 //refresh source and target folder nodes
                 if (toRefreshFolder)
                 {
@@ -422,9 +419,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {                
                 if (Reporter.ToUser(eUserMsgKeys.RefreshFolder) == MessageBoxResult.Yes)
-                {
-                    //App.LocalRepository.RefreshCacheByItemType(itemType, path);
-
+                {                    
                     //refresh Tree
                     mTreeView.Tree.RefreshHeader((ITreeViewItem)this);
                     mTreeView.Tree.RefreshSelectedTreeNodeChildrens();

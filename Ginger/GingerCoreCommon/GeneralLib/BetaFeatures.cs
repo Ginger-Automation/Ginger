@@ -66,12 +66,7 @@ namespace Amdocs.Ginger.Common
 
         //Gherkin
         public bool ImportGherkinFeatureWizrd { get { return GetFeature(nameof(ImportGherkinFeatureWizrd)).Selected; } set { UpdateFeature(nameof(ImportGherkinFeatureWizrd), value); } }
-
-
-        // Repository
-        // public bool UseNewRepositorySerializer { get { return GetFeature(nameof(UseNewRepositorySerializer)).Selected; } set { UpdateFeature(nameof(UseNewRepositorySerializer), value); } }
-
-
+                
         // CDL
         public bool ShowCDL { get { return GetFeature(nameof(ShowCDL)).Selected; } set { UpdateFeature(nameof(ShowCDL), value); } }
 
