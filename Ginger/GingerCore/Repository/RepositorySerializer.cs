@@ -361,11 +361,6 @@ namespace GingerCore.Repository
             {
                 string xml = File.ReadAllText(FileName);
 
-                // first check if we need to auto upgrade the xml to latest ginger version
-                //string upgradedXML = XMLUpgrade.UpgradeSolutionXMLFileIfNeeded(FileName, xml);
-                //if (string.IsNullOrEmpty(upgradedXML) == false)
-                //    xml = upgradedXML;
-
                 return DeserializeFromText(xml);
             }
             else
@@ -471,14 +466,8 @@ namespace GingerCore.Repository
 
                 if (obj == null)
                 {
-                    //if (FastLoad)
-                    //{
-                        obj = GingerAssembly.CreateInstance(ClassName);
-                    //}
-                    //else
-                    //{
-                        obj = System.Reflection.Assembly.Load("Ginger").CreateInstance(ClassName);
-                    //}
+                    obj = GingerAssembly.CreateInstance(ClassName);
+                    obj = System.Reflection.Assembly.Load("Ginger").CreateInstance(ClassName);
                 }
 
                 if (obj == null)
@@ -518,8 +507,7 @@ namespace GingerCore.Repository
                     // New to support prop and field - like BF.Activities
                     if (mi.MemberType == MemberTypes.Field)
                     {
-                        FieldInfo FI = (FieldInfo)mi; 
-                        // obj.GetType().GetField(attrName);
+                        FieldInfo FI = (FieldInfo)mi;                         
                         // We check if it is list by arg count - List<string> will have string etc...
                         // another option is check the nake to start with List, Observ...
                         //or find a better way

@@ -94,19 +94,6 @@ namespace Ginger
             public int Width { get; set; }
         }
 
-        public new static class Fields
-        {
-            public static string AutoLoadLastSolution = "AutoLoadLastSolution";
-            public static string ReportTemplate = "ReportTemplate";
-            public static string DoNotAskToUpgradeSolutions = "DoNotAskToUpgradeSolutions";
-            public static string SourceControlURL = "SourceControlURL"; //represent the source control SERVER url
-            public static string SourceControlType = "SourceControlType";   //represent the last used source control type
-            public static string SourceControlUser = "SourceControlUser"; //user profile  
-            public static string SolutionSourceControlUser = "SolutionSourceControlUser"; //Solution
-            public static string UserType = "UserType";
-            public static string DoNotAskToRecoverSolutions = "DoNotAskToRecoverSolutions";
-        }
-
         public string LocalWorkingFolder { get; set; }
 
         public Solution mSolution { get; set; }
@@ -436,7 +423,9 @@ namespace Ginger
                 foreach (ApplicationPlatform ap in mSolution.ApplicationPlatforms)
                 {
                     if (string.IsNullOrEmpty(ap.LastMappedAgentName) == false)
-                        existingSolMapping = existingSolMapping + ap.AppName + "," + ap.LastMappedAgentName + "#";
+                    {
+                        existingSolMapping = string.Format("{0}{1},{2}#", existingSolMapping, ap.AppName, ap.LastMappedAgentName);
+                    }
                 }
                 RecentAppAgentsMapping.Add(existingSolMapping);
             }
@@ -449,7 +438,9 @@ namespace Ginger
                 //unserialize the current solution mapping saving
                 string existingSolMapping = RecentAppAgentsMapping.Where(x => x.Contains(mSolution.Name + "***") == true).FirstOrDefault();
                 if (string.IsNullOrEmpty(existingSolMapping))
+                {
                     return;//no saved mapping
+                }
                 else
                 {
                     string solName = mSolution.Name + "***";

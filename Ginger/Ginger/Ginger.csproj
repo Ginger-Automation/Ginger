@@ -894,7 +894,6 @@
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationVersionTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\NewAgentsTreeItems\NewAgentTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\NewAgentsTreeItems\NewAgentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvironmentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\NewTreeViewItemBase.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\PlugInsFolderTreeItem.cs" />
@@ -1851,7 +1850,6 @@
     <Compile Include="Repository\VariableRepositoryPage.xaml.cs">
       <DependentUpon>VariableRepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\LocalRepository.cs" />
     <Compile Include="Repository\RepositoryPage.xaml.cs">
       <DependentUpon>RepositoryPage.xaml</DependentUpon>
     </Compile>

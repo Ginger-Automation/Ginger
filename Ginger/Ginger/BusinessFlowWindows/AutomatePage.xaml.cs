@@ -723,7 +723,8 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                throw new Exception("Error occured on Reset Status Run from Automate Tab", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured on Reset Status Run from Automate Tab", ex);
+                throw ex;                
             }
         }
 
@@ -797,10 +798,6 @@ namespace Ginger
                 RunActivity();
                 AutoLogProxy.UserOperationEnd();
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
             finally
             {
                 EnabelGridSelectedItemChangeOnClick(ActPage.grdActions);
@@ -868,7 +865,7 @@ namespace Ginger
             RunAutomateTabFlow(true, true);
         }
         
-        private async void RunAutomateTabFlow(bool Analyz = false, bool ReportNeeded = false)
+        private async Task RunAutomateTabFlow(bool Analyz = false, bool ReportNeeded = false)
         {
             if (Analyz)
             {
@@ -1026,7 +1023,9 @@ namespace Ginger
             var result = await App.AutomateTabGingerRunner.RunActionAsync((Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem, checkIfActionAllowedToRun, true).ConfigureAwait(false);
 
             if (App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
+            {
                 App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent.IsFailedToStart = false;
+            }
 
             AutoLogProxy.UserOperationEnd();
         }
@@ -1060,7 +1059,7 @@ namespace Ginger
             ContinueRunFRomAutomateTab(Run.GingerRunner.eContinueFrom.SpecificActivity);
         }
 
-        private async void ContinueRunFRomAutomateTab(Run.GingerRunner.eContinueFrom continueFrom)
+        private async Task ContinueRunFRomAutomateTab(Run.GingerRunner.eContinueFrom continueFrom)
         {
             try
             {

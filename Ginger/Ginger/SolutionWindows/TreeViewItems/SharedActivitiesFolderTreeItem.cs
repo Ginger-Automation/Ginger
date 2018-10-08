@@ -73,13 +73,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 return new SharedActivityTreeItem((Activity)item);
             }
-
-            if (item is RepositoryFolderBase)
+            else if (item is RepositoryFolderBase)
             {
                 return new SharedActivitiesFolderTreeItem((RepositoryFolder<Activity>)item);
             }
-
-            throw new Exception("Error unknown item added to Activities folder");
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Activitiess folder");
+                throw new NotImplementedException();
+            }
         }
 
         internal void AddItemHandler(object sender, RoutedEventArgs e)
@@ -115,9 +117,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (mShowMode == eActivitiesItemsShowMode.ReadWrite)
             {
                 if (mActivitiesFolder.IsRootFolder)
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Activity), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh:false);
+                {
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Activity), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false);
+                }
                 else
+                {
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Activity), allowAddNew: false, allowRefresh: false);
+                }
                 
                 AddSourceControlOptions(mContextMenu, false, false);
             }

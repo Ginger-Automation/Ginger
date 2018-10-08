@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.PlugInsWindows;
+using GingerCore;
 using GingerWPF.PluginsLib.AddPluginWizardLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -71,13 +72,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 return new PluginPackageTreeItem((PluginPackage)item);
             }
-
-            if (item is RepositoryFolderBase)
+            else if (item is RepositoryFolderBase)
             {
                 return new PlugInsFolderTreeItem((RepositoryFolder<PluginPackage>)item);
             }
-
-            throw new Exception("Error unknown item added to Plugin Packages folder");
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Plugin Packages folder");
+                throw new NotImplementedException();
+            }
         }
 
         Page ITreeViewItem.EditPage()

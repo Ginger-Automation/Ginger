@@ -41,7 +41,7 @@ namespace Ginger.Repository
     /// </summary>
     public partial class ActivitiesRepositoryPage : Page
     {
-        RepositoryFolder<Activity> mActivitiesFolder;
+        readonly RepositoryFolder<Activity> mActivitiesFolder;
         bool TreeInitDone = false;
         bool mInTreeModeView = false;
         BusinessFlow mBusinessFlow;
@@ -73,17 +73,20 @@ namespace Ginger.Repository
                 App.PropertyChanged += AppPropertychanged;
             }
 
-            SetActivitiesRepositoryGridView();
-            //SetActivitiesRepositoryTreeView();
+            SetActivitiesRepositoryGridView();            
             SetGridAndTreeData();
         }
 
         private void SetGridAndTreeData()
         {
             if (mActivitiesFolder.IsRootFolder)
+            {
                 xActivitiesRepositoryGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            }
             else
+            {
                 xActivitiesRepositoryGrid.DataSourceList = mActivitiesFolder.GetFolderItems();
+            }
         }
 
         private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -119,38 +122,6 @@ namespace Ginger.Repository
             xActivitiesRepositoryGrid.ShowTagsFilter = Visibility.Visible;
         }
 
-        //private void SetActivitiesRepositoryTreeView()
-        //{
-        //    ActivitiesRepositoryTreeView.TreeTitle = GingerDicser.GetTermResValue(eTermResKey.Activities) + " Repository";
-        //    ActivitiesRepositoryTreeView.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
-
-        //    ActivitiesRepositoryTreeView.Tree.ItemSelected += ActivityTreeView_ItemSelected;
-        //}
-        //private void ShowTreeView()
-        //{            
-        //    //if not done..
-        //    if (!TreeInitDone)
-        //    {
-        //        ActivitiesRepositoryTreeView.TreeTitle = GingerDicser.GetTermResValue(eTermResKey.Activities) + " Repository";
-        //        ActivitiesRepositoryTreeView.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
-        //        //Add Activities
-        //        RepositoryFolder<Activity> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>();
-
-        //        SharedActivitiesFolderTreeItem SAFTI = new SharedActivitiesFolderTreeItem(repositoryFolder, SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode.ReadOnly);
-        //        SAFTI.Folder = GingerDicser.GetTermResValue(eTermResKey.Activities);
-        //        SAFTI.Path = App.UserProfile.Solution.Folder + @"\SharedRepository\Activities\";
-        //        ActivitiesRepositoryTreeView.Tree.AddItem(SAFTI);
-
-        //        TreeInitDone = true;
-        //    }
-        //}      
-        
-
-        //private void RefreshGridActivities(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        //{
-        //    grdActivitiesRepository.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-        //}
-
         private void AddFromRepository(object sender, RoutedEventArgs e)
         {
             if (mInTreeModeView == false)
@@ -158,13 +129,15 @@ namespace Ginger.Repository
                 if (xActivitiesRepositoryGrid.Grid.SelectedItems != null && xActivitiesRepositoryGrid.Grid.SelectedItems.Count > 0)
                 {
                     foreach (Activity selectedItem in xActivitiesRepositoryGrid.Grid.SelectedItems)
+                    {
                         if (mBusinessFlow != null)
                         {
                             Activity instance = (Activity)selectedItem.CreateInstance(true);
                             instance.Active = true;
                             mBusinessFlow.SetActivityTargetApplication(instance);
-                            mBusinessFlow.AddActivity(instance,true);
+                            mBusinessFlow.AddActivity(instance, true);
                         }
+                    }
                 }
                 else
                     Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
@@ -193,60 +166,10 @@ namespace Ginger.Repository
                 usagePage.ShowAsWindow();
             }
             else
-                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected); 
+            {
+                Reporter.ToUser(eUserMsgKeys.NoItemWasSelected);
+            }
         }
-
-        //private void GridTreeViewButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    Image image = new Image();
-
-        //    if (((Button)sender).ToolTip.ToString().Contains("Tree") == true)
-        //    {
-        //        //switch to tree view
-        //        ActivitiesRepositoryTreeView.Visibility = System.Windows.Visibility.Visible;
-        //        grdActivitiesRepository.Visibility = System.Windows.Visibility.Collapsed;
-        //        ShowTreeView();
-
-        //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Grid_24x24.png"));
-        //        GridTreeViewButton.Content = image;
-        //        GridTreeViewButton.ToolTip = "Switch to Grid View";
-
-        //        mInTreeModeView = true;
-        //    }
-        //    else
-        //    {
-        //        //switch to grid view
-        //        ActivitiesRepositoryTreeView.Visibility = System.Windows.Visibility.Collapsed;
-        //        grdActivitiesRepository.Visibility = System.Windows.Visibility.Visible;
-
-        //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@TreeView_24x24.png"));
-        //        GridTreeViewButton.Content = image;
-        //        GridTreeViewButton.ToolTip = "Switch to Tree View";
-
-        //        mInTreeModeView = false;
-        //    }
-        //}
-
-        //private void ActivityTreeView_ItemSelected(object sender, EventArgs e)
-        //{
-        //    // update user selection
-        //    TreeViewItem i = (TreeViewItem)sender;
-        //    if (i != null)
-        //    {
-        //        ITreeViewItem iv = (ITreeViewItem)i.Tag;
-        //        if (iv.NodeObject() != null)
-        //        {
-        //        }
-        //    }
-        //}
-
-        //private void treeViewTree_MouseMove(object sender, MouseEventArgs e)
-        //{
-        //}
-
-        //private void ActivitiesRepositoryTreeView_Drop(object sender, DragEventArgs e)
-        //{
-        //}
 
         private void grdActivitiesRepository_PreviewDragItem(object sender, EventArgs e)
         {
@@ -262,8 +185,7 @@ namespace Ginger.Repository
             Activity dragedItem = (Activity)((DragInfo)sender).Data;
             if (dragedItem != null)
             {
-                ////check if the Activity is part of a group which not exist in ActivitiesGroups repository
-                // App.LocalRepository.AddItemToRepositoryWithPreChecks(dragedItem, mBusinessFlow);
+                ////check if the Activity is part of a group which not exist in ActivitiesGroups repository                
                 SharedRepositoryOperations.AddItemToRepository(dragedItem);
 
                 //refresh and select the item

@@ -175,37 +175,6 @@ namespace Ginger.Repository
                 Reporter.ToUser(eUserMsgKeys.NoItemWasSelected); 
         }
 
-        //private void GridTreeViewButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    Image image = new Image();
-
-        //    if (((Button)sender).ToolTip.ToString().Contains("Tree") == true)
-        //    {
-        //        //switch to tree view
-        //        treeActivitiesGroupsRepository.Visibility = System.Windows.Visibility.Visible;
-        //        xActivitiesGroupsRepositoryGrid.Visibility = System.Windows.Visibility.Collapsed;
-        //        ShowTreeView();
-
-        //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Grid_24x24.png"));
-        //        GridTreeViewButton.Content = image;
-        //        GridTreeViewButton.ToolTip = "Switch to Grid View";
-
-        //        mInTreeModeView = true;
-        //    }
-        //    else
-        //    {
-        //        //switch to grid view
-        //        treeActivitiesGroupsRepository.Visibility = System.Windows.Visibility.Collapsed;
-        //        xActivitiesGroupsRepositoryGrid.Visibility = System.Windows.Visibility.Visible;
-
-        //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@TreeView_24x24.png"));
-        //        GridTreeViewButton.Content = image;
-        //        GridTreeViewButton.ToolTip = "Switch to Tree View";
-
-        //        mInTreeModeView = false;
-        //    }
-        //}
-
         private void grdActivitiesGroupsRepository_PreviewDragItem(object sender, EventArgs e)
         {
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))

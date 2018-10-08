@@ -261,14 +261,20 @@ namespace GingerCore
         {
             get
             {
-                if (mActivities == null) mActivities = new ObservableList<Activity>();
+                if (mActivities == null)
+                {
+                    mActivities = new ObservableList<Activity>();
+                }
                 if (mActivities.LazyLoad)
                 {
                     mActivities.GetItemsInfo();
                 }
                 return mActivities;
             }
-            set { mActivities = value; }
+            set
+            {
+                mActivities = value;
+            }
         }        
 
         [IsSerializedForLocalRepository]

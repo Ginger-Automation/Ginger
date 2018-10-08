@@ -75,13 +75,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 return new SharedActionTreeItem((Act)item);
             }
-
-            if (item is RepositoryFolderBase)
+            else if (item is RepositoryFolderBase)
             {
                 return new SharedActionsFolderTreeItem((RepositoryFolder<Act>)item);
             }
-
-            throw new Exception("Error unknown item added to Actions folder");
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Actions folder");
+                throw new NotImplementedException();
+            }
         }
 
         internal void AddItemHandler(object sender, RoutedEventArgs e)
@@ -116,9 +118,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (mShowMode == eActionsItemsShowMode.ReadWrite)
             {
                 if (mActionsFolder.IsRootFolder)
+                {
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Action", allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false);
+                }
                 else
+                {
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Action", allowAddNew: false, allowRefresh: false);
+                }
                 
                 AddSourceControlOptions(mContextMenu, false, false);
             }

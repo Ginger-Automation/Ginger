@@ -71,13 +71,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 return new RunSetTreeItem((RunSetConfig)item);
             }
-
-            if (item is RepositoryFolderBase)
+            else if (item is RepositoryFolderBase)
             {
                 return new RunSetFolderTreeItem((RepositoryFolder<RunSetConfig>)item);
             }
-
-            throw new Exception("Error unknown item added to Run Sets folder");
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Run Sets folder");
+                throw new NotImplementedException();
+            }
         }
 
         internal void AddItemHandler(object sender, RoutedEventArgs e)

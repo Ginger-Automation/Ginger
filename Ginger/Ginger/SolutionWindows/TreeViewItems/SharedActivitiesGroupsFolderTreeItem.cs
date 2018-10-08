@@ -75,13 +75,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 return new SharedActivitiesGroupTreeItem((ActivitiesGroup)item);
             }
-
-            if (item is RepositoryFolderBase)
+            else if (item is RepositoryFolderBase)
             {
                 return new SharedActivitiesGroupsFolderTreeItem((RepositoryFolder<ActivitiesGroup>)item);
             }
-
-            throw new Exception("Error unknown item added to Activities Group folder");
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Activities Group folder");
+                throw new NotImplementedException();
+            }
         }
 
         internal void AddItemHandler(object sender, RoutedEventArgs e)

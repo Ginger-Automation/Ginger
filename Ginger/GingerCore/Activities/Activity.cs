@@ -146,17 +146,9 @@ namespace GingerCore
             return ActivityName;
         }
 
-        //public virtual System.Drawing.Image Image { get { return Resources.Activity_16x16; } }
-
         private bool mActive;
         [IsSerializedForLocalRepository]
         public Boolean Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(Fields.Active); } } }
-
-
-        //TODO: Create linked activity to item in shared repo, if true will copy: per user config: Activities, name, etc...
-        //private bool mLinked;
-        //[IsSerializedForLocalRepository]
-        // public Boolean Linked { get { return mLinked; } set { if (mLinked != value) { mLinked = value; OnPropertyChanged(Fields.Linked); } } }
 
         private string mActivityName;
         [IsSerializedForLocalRepository]

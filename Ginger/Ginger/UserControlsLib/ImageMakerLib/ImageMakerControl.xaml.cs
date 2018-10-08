@@ -674,7 +674,7 @@ namespace Amdocs.Ginger.UserControls
             ImageMakerControl IM = new ImageMakerControl();
             IM.ImageType = imageType;
             IM.SetBorder = SetBorder;
-            if (foreground != null || spinDuration != 0 || toolTip != null)//defualt design change is required
+            if (foreground != null || spinDuration > 0 || toolTip != null)//defualt design change is required
             {
                 IM.SetAsFontAwesomeIcon(IM.xFAImage.Icon, foreground, spinDuration, toolTip);
             }

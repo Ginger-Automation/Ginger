@@ -88,7 +88,8 @@ namespace Ginger
                 Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
                 Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
 
-                //Main Menu                
+                //Main Menu            
+                //xRecentSolutionsMenuItem.Tag = true;//so it will show recent solutions as defualt
                 xGingerIconImg.ToolTip = App.AppFullProductName + Environment.NewLine + "Version " + App.AppVersion;
                 SetSolutionDependedUIElements();
                 UpdateUserDetails();

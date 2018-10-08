@@ -692,7 +692,7 @@ namespace Amdocs.Ginger.Repository
                     if (mi==null)
                     {
                         NewReporter.ToConsole("Error: Cannot find attrbiute. Class: " + className + ", Attribute: " + xdr.Name);
-                        throw new Exception("Error: Cannot find attrbiute. Class: " + className + ", Attribute: " + xdr.Name);
+                        throw new MissingFieldException("Error: Cannot find attrbiute. Class: " + className + ", Attribute: " + xdr.Name);
                     }
 
                     

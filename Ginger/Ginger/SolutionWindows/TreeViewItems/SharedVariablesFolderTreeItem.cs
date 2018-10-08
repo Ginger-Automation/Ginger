@@ -74,13 +74,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 return new SharedVariableTreeItem((VariableBase)item);
             }
-
-            if (item is RepositoryFolderBase)
+            else if (item is RepositoryFolderBase)
             {
                 return new SharedVariablesFolderTreeItem((RepositoryFolder<VariableBase>)item);
             }
-
-            throw new Exception("Error unknown item added to Variables folder");
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Variables folder");
+                throw new NotImplementedException();
+            }
         }
 
         internal void AddItemHandler(object sender, RoutedEventArgs e)

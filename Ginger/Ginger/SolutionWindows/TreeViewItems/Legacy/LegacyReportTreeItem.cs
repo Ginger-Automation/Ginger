@@ -45,10 +45,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
             //Add Reports
-            ReportTemplatesTreeItem REPRI = new ReportTemplatesTreeItem();            
+            ReportTemplatesTreeItem REPRI = new ReportTemplatesTreeItem(null);            
             Childrens.Add(REPRI);
 
-            HTMLReportTemplatesTreeItem HTMLREPRI = new HTMLReportTemplatesTreeItem();            
+            HTMLReportTemplatesTreeItem HTMLREPRI = new HTMLReportTemplatesTreeItem(null);            
             Childrens.Add(HTMLREPRI);           
 
             return Childrens;

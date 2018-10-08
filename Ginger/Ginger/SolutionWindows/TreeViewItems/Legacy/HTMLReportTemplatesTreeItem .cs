@@ -31,8 +31,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
     class HTMLReportTemplatesTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private HTMLReportTemplatesPage mReportTemplatesPage;
-        RepositoryFolder<HTMLReportTemplate> mRepositoryFolder;        
+        RepositoryFolder<HTMLReportTemplate> mReportFolder;        
         ITreeView mTV;
+
+        public HTMLReportTemplatesTreeItem(RepositoryFolder<HTMLReportTemplate> reportFolder)
+        {
+            mReportFolder = reportFolder;
+        }
 
         Object ITreeViewItem.NodeObject()
         {
@@ -41,12 +46,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {            
-             return TreeViewUtils.NewRepositoryItemTreeHeader(mRepositoryFolder, nameof(RepositoryFolder<HTMLReportTemplate>.DisplayName), eImageType.HtmlReport, GetSourceControlImage(mRepositoryFolder), false);
+             return TreeViewUtils.NewRepositoryItemTreeHeader(mReportFolder, nameof(RepositoryFolder<HTMLReportTemplate>.DisplayName), eImageType.HtmlReport, GetSourceControlImage(mReportFolder), false);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return GetChildrentGeneric<HTMLReportTemplate>(mRepositoryFolder);           
+            return GetChildrentGeneric<HTMLReportTemplate>(mReportFolder);           
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -67,7 +72,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             ContextMenu CM = new ContextMenu();            
             TreeViewUtils.AddMenuItem(CM, "Save All", SaveAll, null, eImageType.Save);
-            AddViewFolderFilesMenuItem(CM, mRepositoryFolder.FolderFullPath);
+            AddViewFolderFilesMenuItem(CM, mReportFolder.FolderFullPath);
             return CM;
         }
 
@@ -76,7 +81,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTV = TV;            
             TV.AddToolbarTool("@SaveAll_16x16.png", "Save All", SaveAll);
             TV.AddToolbarTool("@Add_16x16.png", "Add New", AddNewReport);
-            TV.AddToolbarTool("@Glass_16x16.png", "Open Folder in File Explorer", ViewFolderFilesFromTool, System.Windows.Visibility.Visible, mRepositoryFolder.FolderFullPath);
+            TV.AddToolbarTool("@Glass_16x16.png", "Open Folder in File Explorer", ViewFolderFilesFromTool, System.Windows.Visibility.Visible, mReportFolder.FolderFullPath);
         }
 
         

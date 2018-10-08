@@ -90,13 +90,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 return new BusinessFlowTreeItem((BusinessFlow)item);
             }
-
-            if (item is RepositoryFolderBase)
+            else if (item is RepositoryFolderBase)
             {
                 return new BusinessFlowsFolderTreeItem((RepositoryFolder<BusinessFlow>)item);
             }
-
-            throw new Exception("Error unknown item added to Agents folder");
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Business Flows folder");
+                throw new NotImplementedException();
+            }
         }
 
         internal void AddItemHandler(object sender, RoutedEventArgs e)

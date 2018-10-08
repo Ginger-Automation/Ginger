@@ -139,7 +139,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
             view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.Status), Header = "Status", WidthWeight = 15, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.RecoveredItems.Resources["ViewDetailsButton"] });
 
-            App.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty, App.UserProfile, UserProfile.Fields.DoNotAskToRecoverSolutions);
+            App.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
 
             xRecoveredItemsGrid.SetAllColumnsDefaultView(view);
             xRecoveredItemsGrid.InitViewItems();

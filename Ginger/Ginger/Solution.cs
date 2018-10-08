@@ -386,14 +386,12 @@ namespace Ginger.SolutionGeneral
         /// <returns></returns>
         public static IEnumerable<string> SolutionFiles(string solutionFolder)
         {
-            // super fast way to get files list in paralell
-            //if (GingerCore.Repository.RepositorySerializer.FastLoad)
-            //{
+
                 //List only need directories which have repo items
                 //Do not add documents, ExecutionResults, HTMLReports
                 ConcurrentBag<string> fileEntries = new ConcurrentBag<string>();
 
-                string[] SolutionMainFolders = new string[] { "Agents", "Applications", "BusinessFlows", "DataSources", "Environments", "ALMDefectProfiles", "HTMLReportConfigurations", "RunSetConfigs", "SharedRepository" };
+                string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments",  "HTMLReportConfigurations", "PluginPackages", "RunSetConfigs", "SharedRepository" };
                 
                 Parallel.ForEach(SolutionMainFolders, folder =>
                 {
@@ -418,37 +416,8 @@ namespace Ginger.SolutionGeneral
                         });
                     }
                 });
-
-                //To comapre with the old way I wrote the file sorted in both option and compared them - it was matching 1:1 on big project with 1512 files.
-                
+               
                 return fileEntries.ToList();
-
-            //}
-            //else
-            //{
-
-            //    ConcurrentBag<string> fileEntries = new ConcurrentBag<string>();
-            //    //take root folder files
-            //    IEnumerable<string> files = Directory.EnumerateFiles(solutionFolder, "*Ginger.*.xml", SearchOption.TopDirectoryOnly).AsParallel().AsOrdered().ToList();
-            //    foreach (string file in files)
-            //    {
-            //        fileEntries.Add(file);
-            //    }
-
-            //    //take sub folders files
-            //    string[] excludedSolutionFolders = new string[] { "HTMLReports", "ExecutionResults", "Backups", "Backup", "Documents","AutoSave","Recover" };
-            //    IEnumerable<string> AllFolderList = Directory.EnumerateDirectories(solutionFolder, "*", SearchOption.TopDirectoryOnly).Where(file => !excludedSolutionFolders.Any(x => file.Contains(x))).ToList();
-                
-            //    foreach (string folder in AllFolderList)
-            //    {
-            //        // Get each main folder sub folder all levels
-            //     if (Directory.Exists(folder))
-            //        {    // Add main folder files
-            //            AddFolderFiles(fileEntries, folder);
-            //        }
-            //    }
-            //    return fileEntries.ToList();
-            //}
         }
 
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)

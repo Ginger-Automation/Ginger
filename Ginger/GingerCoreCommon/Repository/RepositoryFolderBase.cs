@@ -22,6 +22,7 @@ using System;
 using System.ComponentModel;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -192,7 +193,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public async void RefreshFolderSourceControlStatus()
+        public async Task RefreshFolderSourceControlStatus()
         {
             if (mSourceControlStatus != eImageType.Null)
             {

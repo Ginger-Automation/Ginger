@@ -277,10 +277,8 @@ namespace Ginger.Repository
                 string dts = DateTime.Now.ToString("MM_dd_yyyy_H_mm_ss");
                 string repoName = string.Empty;
                 if (obj.FileName != null && File.Exists(obj.FileName))
-                    repoName = obj.FileName;
-                else
                 {
-                    //repoName = GetRepoItemFileName(obj);
+                    repoName = obj.FileName;
                 }
                 string PrevFileName = repoName.Replace(repoItemTypeFolder, repoItemTypeFolder + @"\PrevVersions") + "." + dts + "." + obj.ObjFileExt;
 

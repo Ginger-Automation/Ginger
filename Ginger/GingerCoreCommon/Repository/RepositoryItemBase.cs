@@ -27,6 +27,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -405,7 +406,7 @@ namespace Amdocs.Ginger.Repository
             {
                 if (mBackupDic.Count() != 0)
                 {
-                    // throw new Exception("Missed item in restore!");
+                    // TODO: err handler 
                 }
             }
         }
@@ -491,7 +492,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                throw new Exception("Repository Item didn't implement ItemNameField - " + this.GetType().FullName);                
+                throw new NotImplementedException("Repository Item didn't implement ItemNameField - " + this.GetType().FullName);                
             }
         }
 
@@ -720,7 +721,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                throw new Exception("ItemImageType not defined for: " + this.GetType().FullName);                
+                throw new NotImplementedException("ItemImageType not defined for: " + this.GetType().FullName);                
             }
         }
 
@@ -741,7 +742,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public async void RefreshSourceControlStatus()
+        public async Task RefreshSourceControlStatus()
         {
             if (mSourceControlStatus != eImageType.Null)
             {
@@ -1021,12 +1022,12 @@ namespace Amdocs.Ginger.Repository
 
         public virtual RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase selectedItem, RepositoryItemBase existingItem, string itemPartToUpdate)
         {
-            throw new Exception("GetUpdatedRepoItem() was not implemented for this Item type");
+            throw new NotImplementedException("GetUpdatedRepoItem() was not implemented for this Item type");
         }
 
         public virtual void UpdateInstance(RepositoryItemBase instanceItem, string itemPartToUpdate, RepositoryItemBase hostItem = null)
         {
-            throw new Exception("UpdateInstance() was not implemented for this Item type");
+            throw new NotImplementedException("UpdateInstance() was not implemented for this Item type");
         }
 
         public static void ObjectsDeepCopy(RepositoryItemBase sourceObj, RepositoryItemBase targetObj)

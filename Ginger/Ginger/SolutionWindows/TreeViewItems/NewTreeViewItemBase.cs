@@ -580,7 +580,7 @@ namespace GingerWPF.TreeViewItemsLib
 
             // Add Item Image            
             ImageMakerControl NodeImageType = new ImageMakerControl();
-            if (repoItem != null && imageType == eImageType.Null)
+            if (imageType == eImageType.Null)
             {
                 NodeImageType.ImageType = repoItem.ItemImageType;
             }                
@@ -595,7 +595,7 @@ namespace GingerWPF.TreeViewItemsLib
 
             // Add Item header text 
             Label itemHeaderLabel = new Label();
-            if (repoItem != null)
+            if (string.IsNullOrEmpty(NameProperty))
             {
                 BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, repoItem.ItemNameField, BindingMode: System.Windows.Data.BindingMode.OneWay);
             }                
