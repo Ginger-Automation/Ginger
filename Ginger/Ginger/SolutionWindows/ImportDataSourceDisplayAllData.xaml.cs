@@ -81,6 +81,9 @@ namespace Ginger.SolutionWindows
                     impParams.ExcelFileName = Path;
                     impParams.ExcelSheetName = SheetName;
                     break;
+                case EventType.AfterLoad:
+                    DisplayData();
+                    break;
                 default:
                     break;
             }
@@ -105,7 +108,7 @@ namespace Ginger.SolutionWindows
             try
             {
                 xExcelFileStackPanel.Visibility = Visibility.Visible;
-                xExcelViewDataButton.Visibility = Visibility.Visible;
+                //xExcelViewDataButton.Visibility = Visibility.Visible;
                 xExcelGridSplitter.Visibility = Visibility.Collapsed;
             }
             catch (System.Exception ex)
@@ -123,29 +126,37 @@ namespace Ginger.SolutionWindows
         {
             try
             {
-                Mouse.OverrideCursor = Cursors.Wait;
-                WizardEventArgs.Wizard.ProcessStarted();
-
-                ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked));
-                if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
-                {
-                    _tabItems = new List<TabItem>();
-                    foreach (DataTable dt in ExcelImportData.Tables)
-                    {
-                        AddTabItem(dt.TableName, dt);
-                    }
-                    // bind tab control
-                    tabDynamic.DataContext = _tabItems;
-                    tabDynamic.SelectedIndex = 0;
-                }
-
-                WizardEventArgs.Wizard.ProcessEnded();
-                Mouse.OverrideCursor = null;
+                DisplayData();
             }
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// This method displays the data
+        /// </summary>
+        private void DisplayData()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            WizardEventArgs.Wizard.ProcessStarted();
+
+            ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked), true, true);
+            if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
+            {
+                _tabItems = new List<TabItem>();
+                foreach (DataTable dt in ExcelImportData.Tables)
+                {
+                    AddTabItem(dt.TableName, dt);
+                }
+                // bind tab control
+                tabDynamic.DataContext = _tabItems;
+                tabDynamic.SelectedIndex = 0;
+            }
+
+            WizardEventArgs.Wizard.ProcessEnded();
+            Mouse.OverrideCursor = null;
         }
 
         private List<TabItem> _tabItems;

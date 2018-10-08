@@ -1113,9 +1113,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             string val = value;
             if (long.TryParse(value, out lng))
             {
-                val = string.Format("{0}'", value);
+                cl.DataType = CellValues.Number;
             }
             cl.CellValue = new CellValue(val);
+            
             return cl;
         }
 
@@ -1180,8 +1181,105 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <summary>
         /// This method is used to get the excel sheet data
         /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="isFirstRowHeader"></param>
         /// <returns></returns>
         public DataSet GetExcelAllSheetData(string sheetName, bool isFirstRowHeader)
+        {
+            return GetExcelAllSheetsData(sheetName, isFirstRowHeader);
+        }
+
+        /// <summary>
+        /// This method is used to get the excel sheet data
+        /// </summary>
+        /// <returns></returns>
+        public DataSet GetExcelAllSheetData(string sheetName, bool isFirstRowHeader, bool exactValues, bool pivoteTable)
+        {
+            DataSet ds = new DataSet();
+            ds = GetExcelAllSheetsData(sheetName, isFirstRowHeader);
+
+            DataSet dsExact = new DataSet();
+            if(exactValues)
+            {
+                foreach (DataTable dt in ds.Tables)
+                {
+                    List<string> lstColumn = new List<string>();
+                    foreach (DataColumn dc in dt.Columns)
+                    {
+                        bool colEmpty = true;
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            if (!string.IsNullOrEmpty(Convert.ToString(dr[dc.ColumnName])))
+                            {
+                                colEmpty = false;
+                            }
+                        }
+                        if(colEmpty)
+                        {
+                            lstColumn.Add(dc.ColumnName);
+                        }
+                    }
+
+                    foreach (string colName in lstColumn)
+                    {
+                        dt.Columns.Remove(colName);
+                    }
+
+                    DataTable dtNew = dt.Copy();
+                    dsExact.Tables.Add(dtNew);
+                }
+            }
+
+            DataSet dsPivote = new DataSet();
+            if (pivoteTable)
+            {
+                foreach (DataTable dt in ds.Tables)
+                {
+                    DataTable dtNew = PivotTable(dt);
+                    dsPivote.Tables.Add(dtNew);
+                }
+                dsExact = dsPivote;
+            }
+
+            return dsExact;
+        }
+
+        /// <summary>
+        /// This method pivot table i.e. convert rows to column
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        private DataTable PivotTable(DataTable dt)
+        {
+            DataTable dtNew = new DataTable();
+
+            //adding columns    
+            for (int cols = 0; cols < dt.Rows.Count; cols++)
+            {
+                string colName = Convert.ToString(dt.Rows[cols].ItemArray[0]).Replace("[", "_").Replace("]", "");
+                dtNew.Columns.Add(colName);
+            }
+
+            //Adding Row Data
+            for (int cols = 1; cols < dt.Columns.Count; cols++)
+            {
+                DataRow row = dtNew.NewRow();
+                for (int indx = 0; indx < dt.Rows.Count; indx++)
+                {
+                    row[indx] = Convert.ToString(dt.Rows[indx][cols]);
+                }
+                dtNew.Rows.Add(row);
+            }
+            return dtNew;
+        }
+
+        /// <summary>
+        /// This method is used to get the excel sheet data
+        /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="isFirstRowHeader"></param>
+        /// <returns></returns>
+        private DataSet GetExcelAllSheetsData(string sheetName, bool isFirstRowHeader)
         {
             DataSet ds = new DataSet();
             if (!string.IsNullOrEmpty(ExcelFileName))
@@ -1216,7 +1314,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                             {
                                                 if (isFirstRowHeader)
                                                 {
-                                                    dt.Columns.Add(GetCellValue(spreadSheetDocument, cell)); 
+                                                    dt.Columns.Add(GetCellValue(spreadSheetDocument, cell));
                                                 }
                                                 else
                                                 {
@@ -1224,7 +1322,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                                 }
                                                 i++;
                                             }
-                                            
+
                                             foreach (Row row in rows)
                                             {
                                                 DataRow tempRow = dt.NewRow();
@@ -1232,7 +1330,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                                 int preColIndx = 0;
                                                 foreach (Cell cel in row.Descendants<Cell>())
                                                 {
-                                                    if(dt.Columns.Count <= i)
+                                                    if (dt.Columns.Count <= i)
                                                     {
                                                         int cnt = dt.Columns.Count + 1;
                                                         dt.Columns.Add(string.Format("Field_{0}", cnt));
@@ -1249,7 +1347,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                                 }
                                                 dt.Rows.Add(tempRow);
                                             }
-                                            if (isFirstRowHeader) {
+                                            if (isFirstRowHeader)
+                                            {
                                                 dt.Rows.RemoveAt(0);
                                             }
                                             ds.Tables.Add(dt);
@@ -1276,7 +1375,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         }
                         return null;
                     }
-                } 
+                }
             }
             return ds;
         }

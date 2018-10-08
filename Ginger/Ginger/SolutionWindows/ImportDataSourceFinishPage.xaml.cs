@@ -97,7 +97,7 @@ namespace Ginger.SolutionWindows
 
                 if (ExcelImportData == null || ExcelImportData.Tables.Count <= 0)
                 {
-                    ExcelImportData = impParams.GetExcelAllSheetData(sheetName, headingRow);
+                    ExcelImportData = impParams.GetExcelAllSheetData(sheetName, headingRow, true, true);
                 }
                 foreach (DataTable dt in ExcelImportData.Tables)
                 {

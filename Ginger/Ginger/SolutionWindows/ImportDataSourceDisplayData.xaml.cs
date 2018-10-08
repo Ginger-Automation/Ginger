@@ -142,7 +142,7 @@ namespace Ginger.SolutionWindows
 
                     impParams.ExcelFileName = Path;
                     impParams.ExcelSheetName = SheetName;
-                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow);
+                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, true, true);
                     if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
                     {
                         if (ExcelImportData.Tables.Count == 1)
