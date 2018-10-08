@@ -16,9 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RosLynLib;
-using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 using Amdocs.Ginger.Repository;
 using System;
 
@@ -35,10 +33,26 @@ namespace Amdocs.Ginger.GingerConsole
             LoadPluginMenuItem = new MenuItem(ConsoleKey.D1, "Load Plugin", () => LoadPlugin(), true);
             StartDriverMenuItem = new MenuItem(ConsoleKey.D2, "Start Driver", () => StartDriver(), true);
             StartDriverMenuItem = new MenuItem(ConsoleKey.D3, "Load Plugin and run Action", () => LoadPluginAndRunAction(), true);
+            StartDriverMenuItem = new MenuItem(ConsoleKey.D4, "Create Plugin Actions info json", () => CreatePluginActionsinfojson(), true);
             MenuItem GingerGridMenu = new MenuItem(ConsoleKey.P, "Plugin Menu");
             GingerGridMenu.SubItems.Add(LoadPluginMenuItem);
             GingerGridMenu.SubItems.Add(StartDriverMenuItem);
             return GingerGridMenu;
+        }
+
+        private void CreatePluginActionsinfojson()
+        {
+            Console.WriteLine("Plugin Package folder? (use plugin publish folder bin/debug)");
+            string folder = Console.ReadLine();
+            if (System.IO.Directory.Exists(folder))
+            {
+                PluginPackage p = new PluginPackage(folder);
+                p.CreateServicesInfo();
+            }
+            else
+            {
+                Console.WriteLine("folder not found");
+            }
         }
 
         private void LoadPluginAndRunAction()

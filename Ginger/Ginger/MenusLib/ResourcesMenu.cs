@@ -57,7 +57,7 @@ namespace Ginger.MenusLib
             // meanwhile show/hide per current status
             if (WorkSpace.Instance.BetaFeatures.ShowPOMInResourcesTab)
             {
-                ApplicationModelsMenu.Add("Page Objects Model", POMModels, ConsoleKey.P, "Page Object Modeling", "AID");                
+                ApplicationModelsMenu.Add("Page Objects Models", POMModels, ConsoleKey.P, "Page Object Modeling", "AID");                
             }
             ApplicationModelsMenu.Add("Models Global Parameters", ModelsGlobalParameters, ConsoleKey.G, "Add or Edit Models Global Parameters", "AID");
             twoLevelMenu.Add(ApplicationModelsMenu);
