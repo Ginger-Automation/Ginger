@@ -6,7 +6,7 @@
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="MenusPage" KeyDown="Page_KeyDown">
+      Title="MenusPage">
 
     <DockPanel  Background="{StaticResource $BackgroundColor_LightGray}">
         <!--Main Navigation Panel-->

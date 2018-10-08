@@ -88,11 +88,14 @@ namespace Ginger
                 Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
                 Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
 
-                //Main Menu            
-                //xRecentSolutionsMenuItem.Tag = true;//so it will show recent solutions as defualt
+                //Main Menu                            
                 xGingerIconImg.ToolTip = App.AppFullProductName + Environment.NewLine + "Version " + App.AppVersion;
                 SetSolutionDependedUIElements();
                 UpdateUserDetails();
+                if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
+                {
+                    xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
+                }
 
                 //Status Bar            
                 ErrorsLabel.Visibility = Visibility.Collapsed;
@@ -193,11 +196,6 @@ namespace Ginger
 
         private void RecentSolutionsObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (App.UserProfile.RecentSolutionsAsObjects.Count > 0)
-            {
-                xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
-            }
-
             if (xRecentSolutionsMenuItem.Tag != null) //means it is expanded
             {
                 SetRecentSolutionsAsMenuItems();

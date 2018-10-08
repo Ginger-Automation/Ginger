@@ -535,7 +535,7 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
-        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_LightGray}" />
         <Setter Property="Height" Value="35" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">

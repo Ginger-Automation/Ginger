@@ -174,7 +174,9 @@ namespace Ginger
                     GenerateLastExecutedItemReport();
                     break;
                 default:
-                    throw new NotImplementedException();
+                    //Avoid other operations
+                    break;
+
             }
         }
 

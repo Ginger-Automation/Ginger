@@ -160,11 +160,6 @@ namespace Ginger.GeneralWindows
             }
         }
 
-        private void Page_KeyDown(object sender, KeyEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         private void SetSelectedListItemStyle(ListView listView, Brush defualtForeground)
         {
             try
