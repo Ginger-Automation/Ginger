@@ -1613,7 +1613,7 @@ namespace GingerCore.Drivers.AndroidADB
             throw new NotImplementedException();
         }
 
-        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
         }

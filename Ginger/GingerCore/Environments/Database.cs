@@ -36,8 +36,7 @@ using MySql.Data.MySqlClient;
 namespace GingerCore.Environments
 {
     public class Database : RepositoryItemBase
-    {
-        public override bool UseNewRepositorySerializer { get { return true; } }    
+    {        
 
         public enum eDBTypes
         {

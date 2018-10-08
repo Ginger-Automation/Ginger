@@ -61,7 +61,7 @@ namespace UnitTests.UITests
             mBF.AddVariable(v1);
 
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.Environments.Solution();
+            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;

@@ -68,12 +68,13 @@ namespace Ginger.PlugInsWindows
          
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = "ServiceId", Header = "Action Type", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = "Id", Header = "Id", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = "ServiceId", Header = "Service Id", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
             ServicesGrid.SetAllColumnsDefaultView(view);
             ServicesGrid.InitViewItems();
 
-            var services = mPluginPackage.GetServices();
+            var services = mPluginPackage.LoadServicesInfoFromFile(); 
             PlugInsActionsGrid.Grid.ItemsSource = services;
 
         }
@@ -99,8 +100,12 @@ namespace Ginger.PlugInsWindows
             PlugInsActionsGrid.SetAllColumnsDefaultView(view);
             PlugInsActionsGrid.InitViewItems();
 
-            
-            PlugInsActionsGrid.DataSourceList = mPluginPackage.GetStandAloneActions();
+            ObservableList<StandAloneAction> list = new ObservableList<StandAloneAction>();
+            foreach(StandAloneAction action in mPluginPackage.LoadServicesInfoFromFile())
+            {
+                list.Add(action);
+            }
+            PlugInsActionsGrid.DataSourceList =  list; 
             
         }
 

@@ -30,6 +30,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using Ginger.BusinessFlowWindows;
 using Ginger.BusinessFlowFolder;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Activities
 {
@@ -80,6 +81,8 @@ namespace Ginger.Activities
 
         private void SetGroupedActivitiesGridView()
         {
+            grdGroupedActivities.SetTitleLightStyle = true;
+
             GridViewDef defView2 = new GridViewDef(GridViewDef.DefaultViewName);
             defView2.GridColsView = new ObservableList<GridColView>();
 
@@ -99,7 +102,7 @@ namespace Ginger.Activities
             if (mEditMode == eEditMode.ExecutionFlow)
                 activitiesRepository = App.BusinessFlow.Activities;
             else if (mEditMode == eEditMode.SharedRepository)
-                activitiesRepository = App.LocalRepository.GetSolutionRepoActivities();
+                activitiesRepository = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
             foreach (ActivityIdentifiers actIdent in mActivitiesGroup.ActivitiesIdentifiers)
             {
@@ -161,6 +164,8 @@ namespace Ginger.Activities
             undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
             winButtons.Add(undoBtn);
 
+            this.Height = 800;
+            this.Width = 800;
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
         }
 
@@ -206,9 +211,9 @@ namespace Ginger.Activities
 
         private void CheckIfUserWantToSave()
         {
-            if (LocalRepository.CheckIfSureDoingChange(mActivitiesGroup, "change") == true)
-            {
-                mActivitiesGroup.Save();
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivitiesGroup, "change") == true)
+            {                
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivitiesGroup);
                 _pageGenericWin.Close();
             }
         }
