@@ -82,7 +82,7 @@ namespace Ginger.ApiModelsFolder
             if (apiModelTreeSelectionPage == null)
             {
                 AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
-                apiModelTreeSelectionPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel32, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi);
+                apiModelTreeSelectionPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi);
             }
             List<object> selectedList = apiModelTreeSelectionPage.ShowAsWindow();
 

@@ -28,8 +28,7 @@ namespace Ginger.Reports
 {
     public class HTMLReportTemplate : RepositoryItemBase
     {
-
-        public override bool UseNewRepositorySerializer { get { return true; } }
+        
 
         public enum eReportStatus
         {

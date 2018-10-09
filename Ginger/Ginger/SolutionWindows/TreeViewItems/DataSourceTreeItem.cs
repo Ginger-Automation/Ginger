@@ -58,7 +58,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return NewTVItemStyle(DSDetails, eImageType.DataSource, nameof(DataSourceBase.Name));
+            return NewTVItemHeaderStyle(DSDetails);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

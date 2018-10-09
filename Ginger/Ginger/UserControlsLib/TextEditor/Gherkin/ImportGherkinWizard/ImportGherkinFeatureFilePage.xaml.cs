@@ -28,6 +28,7 @@ using Ginger.SolutionWindows;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.WizardLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.GherkinLib
 {
@@ -114,8 +115,8 @@ namespace Ginger.GherkinLib
                 {
                     string BFName = System.IO.Path.GetFileName(FetaureFileName.FilePathTextBox.Text).Replace(".feature", "");
                     GP.CreateNewBF(BFName, mWizard.mFeatureFile);
-                    GP.CreateActivities();
-                    GP.mBizFlow.Save();
+                    GP.CreateActivities();                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(GP.mBizFlow);
                     mWizard.BizFlow = GP.mBizFlow;
                 }
                 else

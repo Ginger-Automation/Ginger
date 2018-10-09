@@ -118,18 +118,18 @@ namespace Ginger.Environments
 
             else
             {
-                ObservableList<BusinessFlow> bfs = App.LocalRepository.GetSolutionBusinessFlows();
+                ObservableList<BusinessFlow> bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
                 foreach (BusinessFlow bf in bfs)
                 {
                     foreach (Activity activity in bf.Activities)
+                    {
                         foreach (Act action in activity.Acts)
                         {
                             bool changedwasDone = false;
                             GeneralParam.UpdateNameChangeInItem(action, AppOwner.Name, parameter.NameBeforeEdit, parameter.Name, ref changedwasDone);
-                            if (changedwasDone == true && bf.IsDirty == false)
-                                bf.SaveBackup();
                         }
+                    }
                 }
             }
             parameter.NameBeforeEdit = parameter.Name;
@@ -243,8 +243,7 @@ namespace Ginger.Environments
                             if (matchingApp.GeneralParams.Where(x => x.Name == ((GeneralParam)obj).Name).FirstOrDefault() == null)
                             {
                                 GeneralParam param = (GeneralParam)(((RepositoryItemBase)obj).CreateCopy());
-                                matchingApp.GeneralParams.Add(param);
-                                App.AddItemToSaveAll(env);
+                                matchingApp.GeneralParams.Add(param);                               
                                 paramsWereAdded = true;
                             }
                         }

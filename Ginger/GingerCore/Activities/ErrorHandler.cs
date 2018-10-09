@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using GingerCore.Properties;
 
@@ -50,6 +51,12 @@ namespace GingerCore
             set { if (mHandlerType != value) { mHandlerType = value; OnPropertyChanged(Fields.HandlerType); } }
         }
 
-        public override System.Drawing.Image Image { get { return (mHandlerType == eHandlerType.Error_Handler) ? Resources.Handler_16x16 : Resources.PopUpHandler_16x16; } }
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Wrench;
+            }
+        }
     }
 }

@@ -22,7 +22,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.GeneralLib;
 using Ginger.Repository;
 using GingerCore;
@@ -62,7 +62,7 @@ using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
 //TODO: move this class to GingerCore
 namespace Ginger.Run
 {
-    public class GingerRunner : RepositoryItem
+    public class GingerRunner : RepositoryItemBase
     {
         public enum eExecutedFrom
         {
@@ -284,8 +284,6 @@ namespace Ginger.Run
         public bool FilterExecutionByTags { get; set; }
 
         public ProjEnvironment ProjEnvironment { get; set; }
-
-        public LocalRepository SolutionLocalRepository { get; set; }
 
         public ObservableList<DataSourceBase> DSList { get; set; }
 
@@ -1815,6 +1813,7 @@ namespace Ginger.Run
 
             if (GNI == null)
             {
+                actPlugin.Error = "GNI not found";  //temp fix me!!!
                 // call plugin to start service and wait for ready
                 WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId);  
 
@@ -2280,7 +2279,8 @@ namespace Ginger.Run
         {
             //find activity            
             string activityName = fc.GetNameFromValue().ToUpper();
-            Activity sharedActivity = SolutionLocalRepository.GetSolutionRepoActivities().Where(x => x.ActivityName.ToUpper() == activityName).FirstOrDefault();
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            Activity sharedActivity = activities.Where(x => x.ActivityName.ToUpper() == activityName).FirstOrDefault();
 
             if (sharedActivity != null)
             {

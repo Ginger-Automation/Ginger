@@ -20,7 +20,7 @@ using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Platforms
 {
-    public class TargetApplication : RepositoryItem
+    public class TargetApplication : RepositoryItemBase
     {
         public new static partial class Fields
         {

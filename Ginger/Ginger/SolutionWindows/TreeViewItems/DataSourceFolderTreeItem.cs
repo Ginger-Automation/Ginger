@@ -57,19 +57,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.NewRepositoryItemTreeHeader(mDataSourcesRepositoryFolder, nameof(RepositoryFolder<DataSourceBase>.DisplayName), eImageType.DataSource, GetSourceControlImage(mDataSourcesRepositoryFolder), false);
+        {           
+            return NewTVItemFolderHeaderStyle(mDataSourcesRepositoryFolder, eImageType.DataSource);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             return GetChildrentGeneric<DataSourceBase>(mDataSourcesRepositoryFolder);
-        }
-
-        List<ITreeViewItem> GetChildrentGeneric<T>(RepositoryFolder<T> RF)
-        {
-            return GetChildrentGeneric<DataSourceBase>(mDataSourcesRepositoryFolder, nameof(DataSourceBase.Name));
-           
         }
 
         public override ITreeViewItem GetTreeItem(object item)

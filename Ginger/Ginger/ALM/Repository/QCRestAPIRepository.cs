@@ -17,6 +17,7 @@ using GingerCore.ALM.QC;
 using GingerCore.ALM.QCRestAPI;
 using ALM_Common.DataContracts;
 using GingerCore.ALM;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM.Repository
 {
@@ -132,15 +133,12 @@ namespace Ginger.ALM.Repository
                         testSetsItemsToImport.Add(testSetItem);
                     }
                 }
-                if (bfsWereDeleted)
-                    App.MainWindow.RefreshSolutionPage();
 
                 if (testSetsItemsToImport.Count == 0) return false; //noting to import
 
-                //Refresh Ginger repository and allow GingerQC to use it
-                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-                ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = App.LocalRepository.GetSolutionRepoActivities(false);
+                //Refresh Ginger repository and allow GingerQC to use it                
+                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+                ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
                 foreach (QCTestSetTreeItem testSetItemtoImport in testSetsItemsToImport)
                 {
@@ -180,12 +178,8 @@ namespace Ginger.ALM.Repository
                             foreach (Activity activ in tsBusFlow.Activities)
                                 activ.TargetApplication = null; // no app configured on solution level
                         }
-
-                        //save bf
-                        tsBusFlow.FileName = LocalRepository.GetRepoItemFileName(tsBusFlow, importDestinationPath);
-                        tsBusFlow.SaveToFile(tsBusFlow.FileName);
-                        //add to cach
-                        App.LocalRepository.AddItemToCache(tsBusFlow);
+                        
+                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);                        
                         Reporter.CloseGingerHelper();
                     }
                     catch (Exception ex)
@@ -194,9 +188,6 @@ namespace Ginger.ALM.Repository
                         Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC", ex);
                     }
                 }
-
-                //Refresh the solution tree
-                App.MainWindow.RefreshSolutionPage();
 
                 Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
 
@@ -274,7 +265,7 @@ namespace Ginger.ALM.Repository
                 if (performSaveAfterExport)
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, activtiesGroup.Name, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
-                    activtiesGroup.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(activtiesGroup);                    
                     Reporter.CloseGingerHelper();
                 }
                 return true;
@@ -366,7 +357,7 @@ namespace Ginger.ALM.Repository
                 if (performSaveAfterExport)
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    businessFlow.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);                    
                     Reporter.CloseGingerHelper();
                 }
                 if (almConectStyle != ALMIntegration.eALMConnectType.Auto)

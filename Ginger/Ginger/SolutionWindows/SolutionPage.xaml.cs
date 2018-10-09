@@ -16,8 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.TagsLib;
 using Ginger.UserControls;
 using Ginger.Variables;
@@ -37,126 +38,78 @@ namespace Ginger.SolutionWindows
     /// </summary>
     public partial class SolutionPage : Page
     {
+        GenericWindow _pageGenericWin;
         Solution mSolution;
         ucGrid ApplicationGrid;
 
-        public SolutionPage(Solution s)
+        public SolutionPage()
         {
             InitializeComponent();
-            mSolution = s;
+            
+            App.UserProfile.PropertyChanged += UserProfile_PropertyChanged;
             Init();
+        }
+
+        private void UserProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(UserProfile.Solution))
+            {
+                Init();
+            }
         }
 
         private void Init()
         {
-            App.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, mSolution, Solution.Fields.Name);
-            App.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, Solution.Fields.Folder);
-            App.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, Solution.Fields.Account);
-
-            ApplicationGrid = new ucGrid();
-            ApplicationGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddApplication));
-            ApplicationGrid.Grid.PreparingCellForEdit += ApplicationGrid_PreparingCellForEdit;
-            ApplicationGrid.Grid.CellEditEnding += ApplicationGrid_CellEditEnding;
-            SetAppsGridView();
-            ApplicationGrid.ShowTitle = System.Windows.Visibility.Collapsed;
-            if (mSolution.ApplicationPlatforms == null)
+            if (App.UserProfile.Solution != null)
             {
-                mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
+                mSolution = App.UserProfile.Solution;
             }
-            ApplicationGrid.DataSourceList = mSolution.ApplicationPlatforms;
-            ApplicationsFrame.Content = ApplicationGrid;
-
-            VariablesPage varbsPage = new VariablesPage(eVariablesLevel.Solution);
-            varbsPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
-            VariablesFrame.Content = varbsPage;
-
-            infoImage.ToolTip = "The first application in the list of Target Application(s) is consider to be the Solution Main Application."
-                                + Environment.NewLine +
-                                "Application: The local name of the application to be automated i.e.: CRM, select the name you use to call this app and how it is known to all people in the project"
-                                + Environment.NewLine +
-                                "Core: The core product on which this application is built on i.e: Amdocs CRM, this name is used to search packages in the global repository"
-                                + Environment.NewLine +
-                                "Core Version: The version of the core product i.e.: for CRM we have v8 or v9";
-
-
-            SolutionTagsEditorPage p = new SolutionTagsEditorPage(mSolution.Tags);
-            TagsFrame.Content = p;
-        }
-
-        private void AddApplication(object sender, RoutedEventArgs e)
-        {
-            AddApplicationPage AAP = new AddApplicationPage(App.UserProfile.Solution);
-            AAP.ShowAsWindow();
-        }
-
-        private void SetAppsGridView()
-        {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Application", WidthWeight = 60 });
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Core), WidthWeight = 60 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.CoreVersion), WidthWeight = 20 });
-
-
-            List<string> platformesTypesList = GingerCore.General.GetEnumValues(typeof(ePlatformType));
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 40, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = platformesTypesList });
-
-            ApplicationGrid.SetAllColumnsDefaultView(view);
-            ApplicationGrid.InitViewItems();
-        }
-
-        private void ApplicationGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
-        {
-            if (e.Column.DisplayIndex == 0)//App Name Column
+            else
             {
-                ApplicationPlatform currentApp = (ApplicationPlatform)ApplicationGrid.CurrentItem;
-                currentApp.NameBeforeEdit = currentApp.AppName;
+                mSolution = null;
+            }
+
+            if (mSolution != null)
+            {
+                xLoadSolutionlbl.Visibility = Visibility.Collapsed;
+                xSolutionDetailsStack.Visibility = Visibility.Visible;
+                App.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Name));
+                App.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Folder));
+                App.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Account));
+            }
+            else
+            {
+                xLoadSolutionlbl.Visibility = Visibility.Visible;
+                xSolutionDetailsStack.Visibility = Visibility.Collapsed;
             }
         }
-
-        private void ApplicationGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+                
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
-            //Validate the name of the App is unique
-            if (e.Column.DisplayIndex == 0)//App Name Column
-            {
-                ApplicationPlatform currentApp = (ApplicationPlatform)ApplicationGrid.CurrentItem;
-                mSolution.SetUniqueApplicationName(currentApp);
+            mSolution.SaveBackup();
 
-                if (currentApp.AppName != currentApp.NameBeforeEdit)
-                    UpdateApplicationNameChangeInSolution(currentApp);
-            }
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+            Button SaveBtn = new Button();
+            SaveBtn.Content = "Save";
+            SaveBtn.Click += new RoutedEventHandler(SaveBtn_Click);
+            winButtons.Add(SaveBtn);
+            Button undoBtn = new Button();
+            undoBtn.Content = "Undo & Close";
+            undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
+            winButtons.Add(undoBtn);
+
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, startupLocationWithOffset: startupLocationWithOffset);
         }
 
-        private void UpdateApplicationNameChangeInSolution(ApplicationPlatform app)
+        private void UndoBtn_Click(object sender, RoutedEventArgs e)
         {
-            int numOfAfectedBFs = 0;
-            if (Reporter.ToUser(eUserMsgKeys.UpdateApplicationNameChangeInSolution) == MessageBoxResult.No) return;
+            mSolution.RestoreFromBackup(true);
+            _pageGenericWin.Close();
+        }
 
-
-            foreach(BusinessFlow bf in App.LocalRepository.GetSolutionBusinessFlows())
-            {
-                //update the BF target applications
-                foreach (TargetApplication bfApp in bf.TargetApplications)
-                {
-                    if (bfApp.AppName == app.NameBeforeEdit)
-                    {
-                        App.AddItemToSaveAll(bf);
-                        bfApp.AppName = app.AppName;
-
-                        //update the bf activities
-                        foreach (Activity activity in bf.Activities)
-                        {
-                            if (activity.TargetApplication == app.NameBeforeEdit)
-                                activity.TargetApplication = app.AppName;
-                        }
-
-                        numOfAfectedBFs++;
-                        break;
-                    }
-                }
-            }
-            Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, string.Format("{0} {1} were updated successfully, please remember to Save All change.", numOfAfectedBFs, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
+        private void SaveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mSolution.SaveSolution(true, Solution.eSolutionItemToSave.GeneralDetails);
         }
     }
 }

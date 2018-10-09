@@ -46,34 +46,34 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = UploadItemSelection.Fields.Selected, StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
-            defView.GridColsView.Add(new GridColView() { Field = UploadItemSelection.Fields.ItemName, Header = "Item To Upload", WidthWeight = 15, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemName), Header = "Item To Upload", WidthWeight = 15, ReadOnly = true });
             
             List<GingerCore.General.ComboEnumItem> itemUploadTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eItemUploadType));
             GridColView GCWUploadType = new GridColView()
             {
-                Field = UploadItemSelection.Fields.ItemUploadType,
+                Field = nameof(UploadItemSelection.ItemUploadType),
                 Header = "Upload Type",
                 StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridComboBoxTemplate(UploadItemSelection.Fields.UploadTypeList, UploadItemSelection.Fields.ItemUploadType, false, false, UploadItemSelection.Fields.IsExistingItemParent, true),
+                CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(UploadItemSelection.UploadTypeList), nameof(UploadItemSelection.ItemUploadType), false, false, nameof(UploadItemSelection.IsExistingItemParent), true),
                 
                 WidthWeight = 15
             };
 
             defView.GridColsView.Add(GCWUploadType);
-            defView.GridColsView.Add(new GridColView() { Field = UploadItemSelection.Fields.ExistingItemName, Header = "Existing Item", WidthWeight = 15, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ExistingItemName), Header = "Existing Item", WidthWeight = 15, ReadOnly = true });
 
             GridColView GCW = new GridColView()
             {
-                Field = UploadItemSelection.Fields.SelectedItemPart,
+                Field = nameof(UploadItemSelection.SelectedItemPart),
                 Header = "Part to Upload",
                 StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridComboBoxTemplate(UploadItemSelection.Fields.PartToUpload, UploadItemSelection.Fields.SelectedItemPart, false, false, UploadItemSelection.Fields.IsOverrite, true),
+                CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(UploadItemSelection.PartToUpload), nameof(UploadItemSelection.SelectedItemPart), false, false, nameof(UploadItemSelection.IsOverrite), true),
                 WidthWeight = 15
             };
 
             defView.GridColsView.Add(GCW);
-            defView.GridColsView.Add(new GridColView() { Field = UploadItemSelection.Fields.Comment, StyleType = GridColView.eGridColStyleType.Text, Header = "Comment", WidthWeight = 30, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Comment), StyleType = GridColView.eGridColStyleType.Text, Header = "Comment", WidthWeight = 30, ReadOnly = true });
             itemSelectionGrid.SetAllColumnsDefaultView(defView);
             itemSelectionGrid.InitViewItems();
             itemSelectionGrid.btnMarkAll.Visibility = Visibility.Visible;

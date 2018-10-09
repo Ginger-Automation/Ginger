@@ -19,7 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Platforms;
 

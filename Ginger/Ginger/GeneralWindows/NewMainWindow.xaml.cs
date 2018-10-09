@@ -19,7 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerWPF.BusinessFlowsLib;
 using GingerWPF.TestLib;

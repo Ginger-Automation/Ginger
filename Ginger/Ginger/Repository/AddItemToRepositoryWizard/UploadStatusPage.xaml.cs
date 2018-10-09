@@ -44,13 +44,13 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = UploadItemSelection.Fields.Selected, StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10, ReadOnly=true});
-            defView.GridColsView.Add(new GridColView() { Field = UploadItemSelection.Fields.ItemName, Header = "Item Name", WidthWeight = 25, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = UploadItemSelection.Fields.ItemUploadType, Header = "Item Upload Type", WidthWeight = 20, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = UploadItemSelection.Fields.SelectedItemPart, Header="Part To Upload", WidthWeight=10 ,ReadOnly=true});
-            defView.GridColsView.Add(new GridColView() { Field = UploadItemSelection.Fields.ItemUploadStatus, Header = "Status", WidthWeight = 10, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10, ReadOnly=true});
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemName), Header = "Item Name", WidthWeight = 25, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemUploadType), Header = "Item Upload Type", WidthWeight = 20, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.SelectedItemPart), Header="Part To Upload", WidthWeight=10 ,ReadOnly=true});
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemUploadStatus), Header = "Status", WidthWeight = 10, ReadOnly = true });
            
-            defView.GridColsView.Add(new GridColView() { Field = UploadItemSelection.Fields.Comment, StyleType = GridColView.eGridColStyleType.Text, Header = "Comment", WidthWeight = 20, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Comment), StyleType = GridColView.eGridColStyleType.Text, Header = "Comment", WidthWeight = 20, ReadOnly = true });
             itemStatusGrid.SetAllColumnsDefaultView(defView);
             itemStatusGrid.InitViewItems();     
         }
