@@ -2942,37 +2942,34 @@ namespace GingerCore.Drivers
                 LocValue = ValidationElementLocateValue;
             else
             {
-                if (act is ActUIElement)
+                if (LocatorType == eLocateBy.POMElement)
                 {
-                    if (LocatorType == eLocateBy.POMElement)
+                    string[] pOMandElementGUIDs = LocValue.ToString().Split('_');
+                    Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+                    ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+                    if (currentPOM == null)
                     {
-                        string[] pOMandElementGUIDs = LocValue.ToString().Split('_');
-                        Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
-                        ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
-                        if (currentPOM == null)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "POM Search By GUID Failed - for action " + act.ItemName);
-                            return null;
-                        }
-                        else
-                        {
-                            Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                            ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
-                            if (selectedPOMElement == null)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "POM's Element Search By GUID Failed - for action " + act.ItemName + " and element " + selectedPOMElement.ElementName);
-                            }
-                            else
-                            {
-                                locators = selectedPOMElement.Locators;
-                                return LocateElementByLocators(locators);
-                            }
-                        }
+                        Reporter.ToLog(eLogLevel.ERROR, "POM Search By GUID Failed - for action " + act.ItemName);
+                        return null;
                     }
                     else
                     {
-                        LocValue = ((ActUIElement)act).ElementLocateValueForDriver;
+                        Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                        ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                        if (selectedPOMElement == null)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "POM's Element Search By GUID Failed - for action " + act.ItemName + " and element " + selectedPOMElement.ElementName);
+                        }
+                        else
+                        {
+                            locators = selectedPOMElement.Locators;
+                            return LocateElementByLocators(locators);
+                        }
                     }
+                }
+                else
+                {
+                    LocValue = ((ActUIElement)act).ElementLocateValueForDriver;
                 }
             }
 
