@@ -27,12 +27,13 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Repository;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Reports
 {
     public class ReportTemplate : RepositoryItemBase
-    {
-        public override bool UseNewRepositorySerializer { get { return true; } }
+    {        
 
         public override string GetNameForFileName() { return Name; }
 
@@ -104,7 +105,9 @@ namespace Ginger.Reports
         internal static string GenerateReport(string ReportTemplateName, ReportInfo RI)
         {
             GC.Collect();
-            ReportTemplate RT = App.LocalRepository.GetSolutionReportTemplates(UseCache:false).Where(x => x.Name == ReportTemplateName).FirstOrDefault();
+
+            ObservableList<ReportTemplate> reportTempaltes = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>();
+            ReportTemplate RT = reportTempaltes.Where(x => x.Name == ReportTemplateName).FirstOrDefault();
 
             if (RT == null)
             {

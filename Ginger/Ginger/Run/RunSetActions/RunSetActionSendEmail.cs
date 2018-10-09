@@ -29,6 +29,7 @@ using GingerCore.Repository;
 using System.IO.Compression;
 using Ginger.Reports.HTMLReports;
 using System.Collections.Generic;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -145,7 +146,8 @@ namespace Ginger.Run.RunSetActions
             string html = String.Empty;
 
             HTMLReportTemplate HTMLR = new HTMLReportTemplate();
-            foreach (HTMLReportTemplate HT in App.LocalRepository.GetSolutionHTMLReportTemplates())
+            ObservableList<HTMLReportTemplate> HTMLReports = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>();
+            foreach (HTMLReportTemplate HT in HTMLReports)
             {
                 if (HT.Name ==CustomHTMLReportTemplate)
                 {

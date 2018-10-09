@@ -21,7 +21,7 @@ using Amdocs.Ginger.Common;
 
 namespace GingerCore.Actions
 {
-    public class ActOutDataSourceConfig : RepositoryItem
+    public class ActOutDataSourceConfig : RepositoryItemBase
     {
         private bool mActive;
         public enum eOutputType

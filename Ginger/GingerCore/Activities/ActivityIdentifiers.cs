@@ -21,7 +21,7 @@ using System;
 
 namespace GingerCore.Activities
 {
-    public class ActivityIdentifiers : RepositoryItem
+    public class ActivityIdentifiers : RepositoryItemBase
     {
         public new static class Fields
         {

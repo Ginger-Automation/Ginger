@@ -16,7 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.Variables;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -96,7 +101,7 @@ namespace Ginger.Repository
             {
                 if (((string)tbiActivitiesGroups.Tag) != "Done")
                 {
-                    ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(App.UserProfile.Solution.Folder + @"\SharedRepository\ActivitiesGroups", mBusinessFlow);
+                    ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mBusinessFlow);
                     frmActivitiesGroups.Content = ActivitiesGroupsRepoPage;
                     // Mark that this tab is loaded with info
                     tbiActivitiesGroups.Tag = "Done";
@@ -107,7 +112,7 @@ namespace Ginger.Repository
             {
                 if (((string)tbiActivities.Tag) != "Done")
                 {
-                    ActivitiesRepoPage = new ActivitiesRepositoryPage(App.UserProfile.Solution.Folder + @"\SharedRepository\Activities", mBusinessFlow);
+                    ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), mBusinessFlow);
                     frmActivities.Content = ActivitiesRepoPage;
                     // Mark that this tab is loaded with info
                     tbiActivities.Tag = "Done";
@@ -118,7 +123,7 @@ namespace Ginger.Repository
             {
                 if (((string)tbiActions.Tag) != "Done")
                 {
-                    ActionsRepoPage = new ActionsRepositoryPage(App.UserProfile.Solution.Folder + @"\SharedRepository\Actions");
+                    ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>());
                     frmActions.Content = ActionsRepoPage;
                     // Mark that this tab is loaded with info
                     tbiActions.Tag = "Done";
@@ -128,8 +133,8 @@ namespace Ginger.Repository
             if (tabRepository.SelectedItem == tbiVariables)
             {
                 if (((string)tbiVariables.Tag) != "Done")
-                {
-                    VariablesRepoPage = new VariablesRepositoryPage(App.UserProfile.Solution.Folder + @"\SharedRepository\Variables");
+                {                    
+                    VariablesRepoPage = new VariablesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>());
                     frmVariables.Content = VariablesRepoPage;
                     // Mark that this tab is loaded with info
                     tbiVariables.Tag = "Done";

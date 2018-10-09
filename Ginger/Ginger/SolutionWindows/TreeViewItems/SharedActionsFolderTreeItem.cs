@@ -25,29 +25,34 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Controls;
+using Amdocs.Ginger.Repository;
+using GingerWPF.TreeViewItemsLib;
+using System.Windows;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class SharedActionsFolderTreeItem : TreeViewItemBase, ITreeViewItem
+    class SharedActionsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private ActionsRepositoryPage mActionsRepositoryPage;
-        public string Folder { get; set; }
-        public string Path { get; set; }
         public enum eActionsItemsShowMode { ReadWrite, ReadOnly }
-        private eActionsItemsShowMode mShowMode;
 
-        public SharedActionsFolderTreeItem(eActionsItemsShowMode showMode = eActionsItemsShowMode.ReadWrite)
+        RepositoryFolder<Act> mActionsFolder;
+        private ActionsRepositoryPage mActionsRepositoryPage;        
+        private eActionsItemsShowMode mShowMode;
+        
+
+        public SharedActionsFolderTreeItem(RepositoryFolder<Act> actionsFolder, eActionsItemsShowMode showMode = eActionsItemsShowMode.ReadWrite)
         {
+            mActionsFolder = actionsFolder;
             mShowMode = showMode;
         }
 
         Object ITreeViewItem.NodeObject()
         {
-            return null;
+            return mActionsFolder;
         }
         override public string NodePath()
         {
-            return Path + @"\";
+            return mActionsFolder.FolderFullPath;
         }
         override public Type NodeObjectType()
         {
@@ -56,55 +61,34 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFile;
-            if (IsGingerDefualtFolder)
-            {
-                ImageFile = "@Flash_16x16.png";
-            }
-            else
-            {
-                ImageFile = "@Folder2_16x16.png";
-            }
-
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return NewTVItemFolderHeaderStyle(mActionsFolder);
         }
         
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            AddsubFolders(Path, Childrens);
-            //Add Actions
-            ObservableList<Act> Acts = App.LocalRepository.GetSolutionRepoActions(specificFolderPath:Path);
-
-            foreach (Act act in Acts)
-            {
-                SharedActionTreeItem SATI = new SharedActionTreeItem();
-                SATI.Act = act;
-                Childrens.Add(SATI);
-            }
-            return Childrens;
+            return GetChildrentGeneric<Act>(mActionsFolder);
         }
 
-        private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
+        public override ITreeViewItem GetTreeItem(object item)
         {
-            try
+            if (item is Act)
             {
-                foreach (string d in Directory.GetDirectories(Path))
-                {
-                    SharedActionsFolderTreeItem FolderItem = new SharedActionsFolderTreeItem();
-                    string FolderName = System.IO.Path.GetFileName(d);
-
-                    FolderItem.Folder = FolderName;
-                    FolderItem.Path = d;
-
-                    Childrens.Add(FolderItem);
-                }
+                return new SharedActionTreeItem((Act)item);
             }
-            catch (System.Exception excpt)
+            else if (item is RepositoryFolderBase)
             {
-                Console.WriteLine(excpt.Message);
+                return new SharedActionsFolderTreeItem((RepositoryFolder<Act>)item);
             }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Actions folder");
+                throw new NotImplementedException();
+            }
+        }
+
+        internal void AddItemHandler(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -116,7 +100,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActionsRepositoryPage == null)
             {
-                mActionsRepositoryPage = new ActionsRepositoryPage(Path);
+                mActionsRepositoryPage = new ActionsRepositoryPage(mActionsFolder);
             }
             return mActionsRepositoryPage;
         }
@@ -133,16 +117,20 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             if (mShowMode == eActionsItemsShowMode.ReadWrite)
             {
-                if (IsGingerDefualtFolder)
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Action", allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false);
+                if (mActionsFolder.IsRootFolder)
+                {
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Action", allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false);
+                }
                 else
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Action", allowAddNew: false);
+                {
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Action", allowAddNew: false, allowRefresh: false);
+                }
                 
                 AddSourceControlOptions(mContextMenu, false, false);
             }
             else
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), true,false, false, false, false, false, false, false, false, false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), false,false, false, false, false, false, false, false, false, false);
             }
         }       
     }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -29,7 +29,6 @@ namespace Amdocs.Ginger.Repository
 
     public class GlobalAppModelParameter : AppModelParameter
     {
-        public override bool UseNewRepositorySerializer { get { return true; } }
 
         public static string CURRENT_VALUE = "{Current Value}";
 
@@ -79,6 +78,8 @@ namespace Amdocs.Ginger.Repository
 
         public static void GetListOfUsedGlobalParameters(object item, ref List<string> usedGlobalParam)
         {
+            //FIXME !!! use nameof and more - do not use refelction
+
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
 
             Regex rxGlobalParamPattern = new Regex(@"({GlobalAppsModelsParam Name=(\D*\d*\s*)}})|({GlobalAppsModelsParam Name=(\D*\d*\s*)})", RegexOptions.Compiled);
@@ -88,11 +89,11 @@ namespace Amdocs.Ginger.Repository
                 if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
                     mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
                     mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ScreenShots" ||
-                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath") continue;
+                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType") continue;
 
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
-                dynamic value = null;
+                dynamic value = null;   // dynamic is bad!!!
                 try
                 {
                     if (mi.MemberType == MemberTypes.Property)
