@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -26,25 +26,83 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         [IsSerializedForLocalRepository]
         public Guid GUID { get; set; }
 
-        // AppName can be NotePad, but if we have several running in same flow it will be Notepad1, Notepad2, Notepad3        
+        string mAppName;
         [IsSerializedForLocalRepository]
-        public string AppName { get; set; }
+        public string AppName
+        {
+            get
+            {
+                return mAppName;
+            }
+            set
+            {
+                if (mAppName != value)
+                {
+                    mAppName = value;
+                    OnPropertyChanged(nameof(AppName));
+                }
+            }
+        }
 
-        // Core is the generic name of the application like: Notepad, we will search packaaged based on core app        
-        [IsSerializedForLocalRepository]
+        // Core is the generic name of the application like: Notepad, we will search packaaged based on core app                
         public string Core { get; set; }
 
+        string mCoreVersion;
         [IsSerializedForLocalRepository]
-        public string CoreVersion { get; set; }
+        public string CoreVersion
+        {
+            get
+            {
+                return mCoreVersion;
+            }
+            set
+            {
+                if (mCoreVersion != value)
+                {
+                    mCoreVersion = value;
+                    OnPropertyChanged(nameof(CoreVersion));
+                }
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public Guid CoreGUID { get; set; }
 
+        ePlatformType mPlatform;
         [IsSerializedForLocalRepository]
-        public ePlatformType Platform { get; set; }
+        public ePlatformType Platform
+        {
+            get
+            {
+                return mPlatform;
+            }
+            set
+            {
+                if (mPlatform != value)
+                {
+                    mPlatform = value;
+                    OnPropertyChanged(nameof(Platform));
+                }
+            }
+        }
 
+        string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }
+        public string Description
+        {
+            get
+            {
+                return mDescription;
+            }
+            set
+            {
+                if (mDescription != value)
+                {
+                    mDescription = value;
+                    OnPropertyChanged(nameof(Description));
+                }
+            }
+        }
 
         // No need to serialzed used for temp selection only
         public bool Selected { get; set; }

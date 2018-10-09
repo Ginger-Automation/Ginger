@@ -25,6 +25,7 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Variables
 {
@@ -35,7 +36,7 @@ namespace GingerCore.Variables
         Solution = 2
     }
     
-    public abstract class VariableBase : RepositoryItem
+    public abstract class VariableBase : RepositoryItemBase
     {
         public enum eItemParts
         {
@@ -186,7 +187,7 @@ namespace GingerCore.Variables
         public abstract string VariableType();
         public abstract void ResetValue();
         public abstract void GenerateAutoValue();
-        public virtual System.Drawing.Image Image { get{return Resources.Const;} }
+        public virtual System.Drawing.Image Image { get{return Resources.Const;} }//TODO: replace with ItemImageType
         public override string GetNameForFileName() { return Name; }
         public abstract string VariableEditPage { get; }
 
@@ -287,10 +288,12 @@ namespace GingerCore.Variables
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
+                // TODO: !!! change to nameof
+
                 if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
                     mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
                     mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ScreenShots" ||
-                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath") continue;
+                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType") continue;
 
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
@@ -323,6 +326,7 @@ namespace GingerCore.Variables
                         {
                             if (PI.CanWrite)
                             {
+                                //TODO: Use nameof !!!!!
                                 if (mi.Name == "StoreToValue" && mi.DeclaringType.Name=="ActReturnValue" && value.ToString().IndexOf("{DS Name") == -1)
                                 {
                                     //check that it is not GUID of global model Param
@@ -354,7 +358,10 @@ namespace GingerCore.Variables
                                 }
                             }
                         }
-                        catch (Exception ex) { Console.WriteLine(ex.StackTrace); }
+                        catch (Exception ex)
+                        {
+                            // TODO: FIXME!!! no empty exception
+                        } 
                     }
                 }
             }
@@ -394,7 +401,7 @@ namespace GingerCore.Variables
             return false;
         }
 
-        public override void UpdateInstance(RepositoryItem instance, string partToUpdate, RepositoryItem hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
         {
             VariableBase variableBaseInstance = (VariableBase)instance;
 
@@ -435,7 +442,7 @@ namespace GingerCore.Variables
             }           
         }
 
-        public override RepositoryItem GetUpdatedRepoItem(RepositoryItem itemToUpload, RepositoryItem existingRepoItem, string itemPartToUpdate)
+        public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase existingRepoItem, string itemPartToUpdate)
         {
 
             VariableBase updatedVariable = null;       
@@ -524,5 +531,26 @@ namespace GingerCore.Variables
         public abstract List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations();
 
         public abstract String VariableUIType { get; }
+
+        /// <summary>
+        /// Do not use, exist for backward support
+        /// </summary>
+        public int CycleCount { get; set; }
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Variable;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
     }
 }

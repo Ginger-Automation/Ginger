@@ -30,6 +30,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Ginger.Repository;
+using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Activities
 {
@@ -160,7 +162,8 @@ namespace Ginger.Activities
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
                 mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, App.LocalRepository.GetSolutionRepoActivities(), false,false,previousActivity);
+                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();                
+                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false, false, previousActivity);
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
 
                 int selectedActIndex = -1;
@@ -186,8 +189,8 @@ namespace Ginger.Activities
             //Columns view
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
             defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Name, Header = "Name", WidthWeight = 40 });
             defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Description, Header = "Description", WidthWeight = 40 });
             if (mBusinessFlow.ActivitiesGroups.Where(z => z.TestSuiteId != null && z.TestSuiteId != string.Empty).ToList().Count > 0)
@@ -219,8 +222,8 @@ namespace Ginger.Activities
             //Columns view
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
             defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Name, Header = "Name", WidthWeight = 40 });
             defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Description, Header = "Description", WidthWeight = 40 });
             if (mBusinessFlow.ActivitiesGroups.Where(z => z.TestSuiteId != null && z.TestSuiteId != string.Empty).ToList().Count > 0)
@@ -233,10 +236,10 @@ namespace Ginger.Activities
 
         private void AddToRepository(object sender, RoutedEventArgs e)
         {
-            List<RepositoryItem> listOfGroups = grdActivitiesGroups.Grid.SelectedItems.Cast<RepositoryItem>().ToList();// as List<RepositoryItem>;
+            List<RepositoryItemBase> listOfGroups = grdActivitiesGroups.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList();
 
-            List<RepositoryItem> itemsToUpload = new List<RepositoryItem>();
-            foreach (RepositoryItem group in listOfGroups)
+            List<RepositoryItemBase> itemsToUpload = new List<RepositoryItemBase>();
+            foreach (RepositoryItemBase group in listOfGroups)
             {
                 foreach (ActivityIdentifiers AI in ((ActivitiesGroup)group).ActivitiesIdentifiers)
                 {
@@ -246,9 +249,6 @@ namespace Ginger.Activities
             itemsToUpload.AddRange(listOfGroups);
 
             SharedRepositoryOperations.AddItemsToRepository(itemsToUpload);
-
-          
-          
         }
 
         private void RefereshFromALM(object sender, RoutedEventArgs e)
@@ -280,7 +280,10 @@ namespace Ginger.Activities
             if (mBusinessFlow != null)
             {
                 grdActivitiesGroups.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups);
-                App.LocalRepository.MarkSharedRepositoryItems((System.Collections.Generic.IEnumerable<object>)mBusinessFlow.ActivitiesGroups, (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivitiesGroups());
+                
+                ObservableList<ActivitiesGroup> sharedActivitiesGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+                SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.ActivitiesGroups, (IEnumerable<object>)sharedActivitiesGroups);
+
                 UpdateActivitiesGroupsGridViewTestSuiteColumn();
                 grdActivitiesGroups.DataSourceList = mBusinessFlow.ActivitiesGroups;
             }

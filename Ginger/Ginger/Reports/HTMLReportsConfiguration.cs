@@ -22,8 +22,7 @@ using GingerCore;
 namespace Ginger.Reports
 {
     public class HTMLReportsConfiguration : RepositoryItemBase
-    {
-        public override bool UseNewRepositorySerializer { get { return true; } }
+    {        
 
         public enum AutomationTabContext
         {

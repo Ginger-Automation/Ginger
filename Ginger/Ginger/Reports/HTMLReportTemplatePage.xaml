@@ -133,7 +133,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdSummaryViewFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdSummaryViewFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[Summary View]"/>
                                                         </Ginger:ucGrid.Title>
@@ -145,7 +145,7 @@
                                                 <TabItem.Header>
                                                     <StackPanel Orientation="Horizontal">
                                                         <CheckBox x:Name="gingers_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
-                                                        <TextBlock Text="Gingers Runners"/>
+                                                        <TextBlock Text="Runners"/>
                                                     </StackPanel>
                                                 </TabItem.Header>
 
@@ -159,7 +159,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdGingersFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdGingersFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[Ginger Runners]"/>
                                                         </Ginger:ucGrid.Title>
@@ -185,7 +185,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdBusinessFlowFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden"  ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdBusinessFlowFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden"  ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[Business Flows]"/>
                                                         </Ginger:ucGrid.Title>
@@ -197,7 +197,7 @@
                                                 <TabItem.Header>
                                                     <StackPanel Orientation="Horizontal">
                                                         <CheckBox x:Name="activityGroups_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
-                                                        <TextBlock Text="Activity Groups"/>
+                                                        <TextBlock Text="Activities Groups"/>
                                                     </StackPanel>
                                                 </TabItem.Header>
 
@@ -211,7 +211,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdActivityGroupsFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdActivityGroupsFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[ActivityGroups]"/>
                                                         </Ginger:ucGrid.Title>
@@ -237,7 +237,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdActivitiesFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdActivitiesFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[Activities]"/>
                                                         </Ginger:ucGrid.Title>
@@ -263,7 +263,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdActionsFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdActionsFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[Actions]"/>
                                                         </Ginger:ucGrid.Title>
@@ -294,7 +294,7 @@
                                         </DataTemplate>
                                     </Grid.Resources>
 
-                                    <Ginger:ucGrid x:Name="grdEmailSummaryViewFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                    <Ginger:ucGrid x:Name="grdEmailSummaryViewFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                         <Ginger:ucGrid.Title>
                                             <GingerCore:ucTextDicResource Text="[Email Body Summary View]"/>
                                         </Ginger:ucGrid.Title>

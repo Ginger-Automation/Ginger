@@ -53,9 +53,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {            
-            //return TreeViewUtils.CreateItemHeader(EnvApplication, nameof(EnvApplication.Name), eImageType.Application, eImageType.Null);
-            return NewTVItemStyle(EnvApplication, eImageType.Environment, nameof(EnvApplication.Name));
+        {                        
+            return NewTVItemHeaderStyle(EnvApplication);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

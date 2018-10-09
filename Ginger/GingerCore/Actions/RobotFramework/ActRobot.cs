@@ -33,16 +33,13 @@ namespace GingerCore.Actions.RobotFramework
 {
     public class ActRobot : ActWithoutDriver
     {
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue PythonExecutable => GetOrCreateInputParam(nameof(PythonExecutable));
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue RobotExecutable => GetOrCreateInputParam(nameof(RobotExecutable));
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue RobotFileName => GetOrCreateInputParam(nameof(RobotFileName));
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue RobotLibraries => GetOrCreateInputParam(nameof(RobotLibraries));        
 
         public override string ActionDescription { get { return "Robot File Action"; } }

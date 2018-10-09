@@ -24,13 +24,14 @@ using GingerCore.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Activities
 {
     /// <summary>
     /// ActivitiesGroup used to store the ID's and execution order of few Activities
     /// </summary>
-    public class ActivitiesGroup : RepositoryItem
+    public class ActivitiesGroup : RepositoryItemBase
     {
         public enum eItemParts
         {
@@ -77,9 +78,7 @@ namespace GingerCore.Activities
             public static string TestSuiteTitle = "TestSuiteTitle";
             public static string TestSuiteId = "TestSuiteId";
         }
-
-        public virtual System.Drawing.Image Image { get { return Resources.Group_16x16; } }
-
+        
         public ActivitiesGroup()
         {
         }
@@ -222,7 +221,7 @@ namespace GingerCore.Activities
             }
         }
 
-        public override void UpdateInstance(RepositoryItem instance, string partToUpdate, RepositoryItem hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
         {
             ActivitiesGroup activitiesGroupInstance = (ActivitiesGroup)instance;
 
@@ -262,7 +261,7 @@ namespace GingerCore.Activities
         }
 
 
-        public override RepositoryItem GetUpdatedRepoItem(RepositoryItem itemToUpload, RepositoryItem existingRepoItem, string itemPartToUpdate)
+        public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase existingRepoItem, string itemPartToUpdate)
         {
             ActivitiesGroup updatedGroup = null;
                    
@@ -360,6 +359,22 @@ namespace GingerCore.Activities
                     mRunStatus = value;
                     OnPropertyChanged(Fields.RunStatus);
                 }
+            }
+        }
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.ActivitiesGroup;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
             }
         }
     }

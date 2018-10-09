@@ -73,7 +73,7 @@
                     </usercontrols:ucButton>
                     <usercontrols:ucButton x:Name="xFindAndReplace" ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Search" Click="xFindAndReplace_Click">
                         <usercontrols:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Find And Repalce in [RunSet]"/>
+                            <GingerCore:ucTextDicResource Text="Find And Replace in [RunSet]"/>
                         </usercontrols:ucButton.ToolTip>
                     </usercontrols:ucButton>
                     <Menu x:Name="xOtherRunSetOperationsMenu" Background="Transparent">

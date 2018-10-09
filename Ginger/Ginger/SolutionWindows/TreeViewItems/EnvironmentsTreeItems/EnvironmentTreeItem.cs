@@ -48,7 +48,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {                                                                                    
-            return NewTVItemStyle(ProjEnvironment, eImageType.Environment,  nameof(ProjEnvironment.Name));
+            return NewTVItemHeaderStyle(ProjEnvironment);
         }        
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
