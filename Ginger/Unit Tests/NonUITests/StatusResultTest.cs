@@ -71,7 +71,7 @@ namespace UnitTests.NonUITests
             mBF.AddVariable(v1);
 
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.Environments.Solution();
+            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mGR.GiveUserFeedback = true;
            
             Agent a = new Agent();

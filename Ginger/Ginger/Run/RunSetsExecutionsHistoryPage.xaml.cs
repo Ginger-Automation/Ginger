@@ -71,6 +71,11 @@ namespace Ginger.Run
 
         private void SetGridView()
         {
+            if (mExecutionHistoryLevel == eExecutionHistoryLevel.Solution)
+            {
+                grdExecutionsHistory.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.History, GingerDicser.GetTermResValue(eTermResKey.RunSets, "All "," Executions History"), saveAllHandler: null, addHandler: null);
+            }
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 

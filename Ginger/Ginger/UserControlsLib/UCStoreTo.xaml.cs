@@ -27,6 +27,8 @@ using GingerCore;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using System.Windows.Media;
+using GingerCore.DataSource;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.UserControlsLib
 {
@@ -59,7 +61,7 @@ namespace Ginger.UserControlsLib
             InitializeComponent();
             mLabel = ActReturnValue.eStoreTo.Variable.ToString();
             GingerCore.General.FillComboItemsFromEnumType(cmbStoreTo, actR.StoreTo.GetType());            
-            if (App.LocalRepository.GetSolutionDataSources().Count == 0)
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Count == 0)
             {
                 GingerCore.General.DisableComboItem(cmbStoreTo,ActReturnValue.eStoreTo.DataSource);                
                 DSConfig.IsEnabled = false;
@@ -125,7 +127,7 @@ namespace Ginger.UserControlsLib
         {
             bool isValid = true;
             if ((this.Checked == ActReturnValue.eStoreTo.Variable.ToString() && !GingerCore.General.CheckComboItemExist(VariableList,this.TextProp))
-                || (this.Checked == ActReturnValue.eStoreTo.DataSource.ToString() && GingerCore.General.CheckDataSource(this.TextProp,App.LocalRepository.GetSolutionDataSources()) != "")
+                || (this.Checked == ActReturnValue.eStoreTo.DataSource.ToString() && GingerCore.General.CheckDataSource(this.TextProp,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>()) != "")
                 || (this.Checked == ActReturnValue.eStoreTo.ApplicationModelParameter.ToString() && !GingerCore.General.CheckComboItemExist(xModelsParamsComboBox, this.TextProp, "Value")))
                 isValid = false;
 
@@ -186,7 +188,7 @@ namespace Ginger.UserControlsLib
             {
                 if(VariableList != null && VariableList.Items.Count != 0)
                     GingerCore.General.EnableComboItem(cmbStoreTo, (object)mLabel);                
-                if (App.LocalRepository.GetSolutionDataSources().Count == 0)
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Count == 0)
                 {                    
                     GingerCore.General.DisableComboItem(cmbStoreTo,ActReturnValue.eStoreTo.DataSource);                    
                     DSConfig.IsEnabled = false;

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.TagsLib;
 using System;
 using System.Collections.Generic;
@@ -24,8 +25,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using GingerCore;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger
 {
@@ -158,7 +157,7 @@ namespace Ginger
             ComboTagsList.Clear();
 
             TagsComboBox.DisplayMemberPath = RepositoryItemTag.Fields.Name;
-            TagsComboBox.SelectedValuePath = RepositoryItem.Fields.Guid;
+            TagsComboBox.SelectedValuePath = nameof(RepositoryItemBase.Guid);
             TagsComboBox.ItemsSource = ComboTagsList;
 
         }
@@ -220,7 +219,7 @@ namespace Ginger
                 if (mFullListEditTag!=null && ((RepositoryItemTag)TagsComboBox.SelectedItem).Guid == mFullListEditTag.Guid)
                 {
                     //open edit solution page
-                    SolutionTagsEditorPage page = new SolutionTagsEditorPage(mFullTagsList);
+                    TagsPage page = new TagsPage(TagsPage.eViewMode.SpecificList, mFullTagsList);
                     
                     page.ShowAsWindow();
                 }
@@ -299,7 +298,7 @@ namespace Ginger
 
         private void EditTagBtn_Click(object sender, RoutedEventArgs e)
         {
-            SolutionTagsEditorPage s = new SolutionTagsEditorPage(mFullTagsList);
+            TagsPage s = new TagsPage(TagsPage.eViewMode.SpecificList, mFullTagsList);
             s.ShowAsWindow();
         }
     }

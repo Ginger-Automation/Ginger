@@ -24,6 +24,8 @@ using Ginger.UserControls;
 using GingerCore.Environments;
 using GingerCore;
 using Amdocs.Ginger.Common.Enums;
+using amdocs.ginger.GingerCoreNET;
+using GingerCore.DataSource;
 
 namespace Ginger.Environments
 {
@@ -77,7 +79,7 @@ namespace Ginger.Environments
                     Reporter.ToUser(eUserMsgKeys.AskToSelectItem);
                     return;
                 }
-                db.DSList = App.LocalRepository.GetSolutionDataSources();
+                db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = App.AutomateTabEnvironment;
                 db.BusinessFlow = App.BusinessFlow;
 

@@ -68,41 +68,52 @@ namespace GingerWPFUnitTest.POMs
         }
 
         public void ClickRunTab()
-        {
-            SelectRibbonTab("RunRibbon");
+        {            
         }
         public void ClickAutomateTab()
-        {
-            SelectRibbonTab("AutomateRibbon");
+        {         
         }
 
         public void ClickSolutionTab()
-        {
-            SelectRibbonTab("Solution AID");
+        {         
         }
 
         internal void ClickResourcesRibbon()
         {
-            SelectRibbonTab("Resources");
-            WaitForPage(typeof(TwoLevelMenu));
+            mMainWindow.Dispatcher.Invoke(() => {                
+                ListView a = (ListView)mMainWindow.FindName("xSolutionTabsListView");
+                a.SelectedItem = null; 
+                ListViewItem b = (ListViewItem)mMainWindow.FindName("xResourcesListItem");
+                b.RaiseEvent(new RoutedEventArgs(ListViewItem.SelectedEvent));
+                WaitForPage(typeof(TwoLevelMenuPage));
+            });
+
+            
         }
 
         internal void ClickConfigurationsRibbon()
         {
-            SelectRibbonTab("Configurations");
-            WaitForPage(typeof(TwoLevelMenuPage));
+
+            mMainWindow.Dispatcher.Invoke(() => {
+                SleepWithDoEvents(1);                
+                ListView lv = (ListView)mMainWindow.FindName("xSolutionTabsListView");
+                ListViewItem b = (ListViewItem)mMainWindow.FindName("xConfigurationsListItem");
+                lv.SelectedItem = b;
+                WaitForPage(typeof(TwoLevelMenuPage));
+            });
         }
 
         private void WaitForPage(Type p1)
         {
-            SleepWithDoEvents(100);
-            Frame f = (Frame)mMainWindow.FindName("MainFrame");
+            SleepWithDoEvents(1);
+            Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
             int i = 0;
             while (true && i <100)
             {                
                 Page p = (Page)f.Content;
                 if (p.GetType().FullName == p1.FullName && p.IsVisible)
-                {                    
+                {
+                    SleepWithDoEvents(1);
                     return;
                 }
                 SleepWithDoEvents(100);
@@ -124,62 +135,96 @@ namespace GingerWPFUnitTest.POMs
             SleepWithDoEvents(500);
 
         }
-        
-        private void SelectRibbonTab(string automationID)
-        {
-            Execute(() => {
-                Ribbon rc = (Ribbon)mMainWindow.FindName("MainRibbon");
-                foreach (RibbonTab RT in rc.Items)
-                {
-                    if (AutomationProperties.GetAutomationId(RT) == automationID)
-                    {
-                        //mimic user click
-                        //MouseEventArgs - not working...
-                        //MouseDevice mouse = InputManager.Current.PrimaryMouseDevice;                        
-                        //MouseButtonEventArgs arg = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left);
-                        //arg.RoutedEvent = RibbonTab.PreviewMouseLeftButtonDownEvent;                        
-                        //RT.RaiseEvent(arg);
 
-                        // for now use direct change of the tab
-                        rc.SelectedItem = RT;
+        //private void SelectMenu(string automationID)
+        //{
+        //    Execute(() => {
+        //        Menu rc = (Menu)mMainWindow.FindName("MainRibbon");
+        //        foreach (RibbonTab RT in rc.Items)
+        //        {
+        //            if (AutomationProperties.GetAutomationId(RT) == automationID)
+        //            {
+        //                //mimic user click
+        //                //MouseEventArgs - not working...
+        //                //MouseDevice mouse = InputManager.Current.PrimaryMouseDevice;                        
+        //                //MouseButtonEventArgs arg = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left);
+        //                //arg.RoutedEvent = RibbonTab.PreviewMouseLeftButtonDownEvent;                        
+        //                //RT.RaiseEvent(arg);
 
-                        SleepWithDoEvents(100);                        
+        //                // for now use direct change of the tab
+        //                rc.SelectedItem = RT;
 
-                        //while (!rc.IsVisible)
-                        //{
-                        //    Thread.Sleep(100);
-                        //}
-                        return;
-                    }
-                }
-                throw new Exception("SelectRibbonTab element not found by AutomationID: " + automationID);
-            });
-        }
+        //                SleepWithDoEvents(100);
+
+        //                //while (!rc.IsVisible)
+        //                //{
+        //                //    Thread.Sleep(100);
+        //                //}
+        //                return;
+        //            }
+        //        }
+        //        throw new Exception("SelectRibbonTab element not found by AutomationID: " + automationID);
+        //    });
+        //}
+
+
+        //private void SelectRibbonTab(string automationID)
+        //{
+        //    Execute(() => {
+        //        Ribbon rc = (Ribbon)mMainWindow.FindName("MainRibbon");
+        //        foreach (RibbonTab RT in rc.Items)
+        //        {
+        //            if (AutomationProperties.GetAutomationId(RT) == automationID)
+        //            {
+        //                //mimic user click
+        //                //MouseEventArgs - not working...
+        //                //MouseDevice mouse = InputManager.Current.PrimaryMouseDevice;                        
+        //                //MouseButtonEventArgs arg = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left);
+        //                //arg.RoutedEvent = RibbonTab.PreviewMouseLeftButtonDownEvent;                        
+        //                //RT.RaiseEvent(arg);
+
+        //                // for now use direct change of the tab
+        //                rc.SelectedItem = RT;
+
+        //                SleepWithDoEvents(100);                        
+
+        //                //while (!rc.IsVisible)
+        //                //{
+        //                //    Thread.Sleep(100);
+        //                //}
+        //                return;
+        //            }
+        //        }
+        //        throw new Exception("SelectRibbonTab element not found by AutomationID: " + automationID);
+        //    });
+        //}
 
         
 
         public EnvironmentsPOM GotoEnvironments()
         {
             Environments = null;
-            Execute(() => {                
-                ClickConfigurationsRibbon();
-                Frame f = (Frame)mMainWindow.FindName("MainFrame");
-                TwoLevelMenuPage configurationsPage = (TwoLevelMenuPage)f.Content;
+            Execute(() => {
+                ClickResourcesRibbon();
+                Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                TwoLevelMenuPage resourcesPage = (TwoLevelMenuPage)f.Content;
 
-                ListView lv = (ListView)configurationsPage.FindName("xMainNavigationListView");
-                foreach(ListViewItem lvi in lv.Items)
+                ListView lv = (ListView)resourcesPage.FindName("xMainNavigationListView");
+                lv.SelectedItem = null;
+                foreach (TopMenuItem topMenuItem in lv.Items)
                 {
-                    if (AutomationProperties.GetAutomationId(lvi) == "Environemnts_AID")
+                    if (topMenuItem.AutomationID == "Environemnts_AID")
                     {
-                        lv.SelectedItem = lvi;
+                        lv.SelectedItem = topMenuItem;
                         SleepWithDoEvents(100);
-                        Frame f1 = (Frame)FindElementByName(configurationsPage, "xSelectedItemFrame");
+                        Frame f1 = (Frame)FindElementByName(resourcesPage, "xSelectedItemFrame");
                         SingleItemTreeViewExplorerPage itemExplorerPage = (SingleItemTreeViewExplorerPage)f1.Content;
                         while (!itemExplorerPage.IsVisible)
                         {
                             SleepWithDoEvents(100);
                         }
-                        Environments = new EnvironmentsPOM(itemExplorerPage);                        
+                        Environments = new EnvironmentsPOM(itemExplorerPage);
+                        break;
                     }
                 }
             });
@@ -209,16 +254,18 @@ namespace GingerWPFUnitTest.POMs
             Agents = null;
             Execute(() => {
                 ClickConfigurationsRibbon();
-                Frame f = (Frame)mMainWindow.FindName("MainFrame");
+                Frame f = (Frame)mMainWindow .FindName("xMainWindowFrame");
+                TwoLevelMenuPage p = (TwoLevelMenuPage)f.Content;
+                
+                ListView lvi =  (ListView)FindElementByAutomationID<ListViewItem>(p, "Agents AID");
                 TwoLevelMenuPage configurationsPage = (TwoLevelMenuPage)f.Content;
 
                 ListView lv = (ListView)configurationsPage.FindName("xMainNavigationListView");
-                foreach (ListViewItem lvi in lv.Items)
-                {
-                    string AID = AutomationProperties.GetAutomationId(lvi);
-                    if (AID == "Agents AID")
+                foreach (TopMenuItem topMenuItem in lv.Items)
+                {                    
+                    if (topMenuItem.AutomationID == "Agents AID")
                     {
-                        lv.SelectedItem = lvi;
+                        lv.SelectedItem = topMenuItem;
                         SleepWithDoEvents(100);
                         Frame f1 = (Frame)FindElementByName(configurationsPage, "xSelectedItemFrame");
                         SingleItemTreeViewExplorerPage itemExplorerPage = (SingleItemTreeViewExplorerPage)f1.Content;
@@ -226,7 +273,8 @@ namespace GingerWPFUnitTest.POMs
                         {
                             SleepWithDoEvents(100);
                         }
-                        Agents = new AgentsPOM(itemExplorerPage);                        
+                        Agents = new AgentsPOM(itemExplorerPage);
+                        break;
                     }
                 }
             });

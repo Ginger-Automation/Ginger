@@ -26,6 +26,7 @@ using System.Windows.Navigation;
 using GingerCore;
 using Ginger.Environments;
 using System.Diagnostics;
+using Ginger.SolutionGeneral;
 
 namespace Ginger
 {
@@ -41,7 +42,7 @@ namespace Ginger
             //TODO: load from external - so easier to update
             lblAppVersion.Content = "Version " + Ginger.App.AppVersion;
                                   
-            App.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty, App.UserProfile, UserProfile.Fields.AutoLoadLastSolution);
+            App.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
             SetRecentSolutions();
         }
 
@@ -50,7 +51,7 @@ namespace Ginger
             try
             {
                 ObservableList<Hyperlink> recentSolutionsLinksList = new ObservableList<Hyperlink>();
-                foreach (Solution sol in App.UserProfile.RecentSolutionsObjects)
+                foreach (Solution sol in App.UserProfile.RecentSolutionsAsObjects)
                 {
                     Hyperlink solLink = new Hyperlink();
                     solLink.Tag = sol.Name;
@@ -79,12 +80,11 @@ namespace Ginger
             try
             {
                 string selectedSolFolder = ((Hyperlink)sender).ToolTip.ToString().ToUpper();
-                Solution selectedSol = App.UserProfile.RecentSolutionsObjects.Where(x=>x.Folder.ToUpper() == selectedSolFolder).FirstOrDefault();
+                Solution selectedSol = App.UserProfile.RecentSolutionsAsObjects.Where(x=>x.Folder.ToUpper() == selectedSolFolder).FirstOrDefault();
 
                 if (selectedSol != null)
                 {
-                    App.SetSolution(selectedSol.Folder);
-                    App.UserProfile.AddsolutionToRecent(selectedSol);
+                    App.SetSolution(selectedSol.Folder);                    
                 }
                 else
                     Reporter.ToUser(eUserMsgKeys.SolutionLoadError, "Selected Solution was not found");

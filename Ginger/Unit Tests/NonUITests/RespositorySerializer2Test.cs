@@ -33,7 +33,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize]        
         public static void ClassInitialize(TestContext TC)
         {
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(BusinessFlow).Assembly);            
+            //TODO::
         }
 
         [TestInitialize]

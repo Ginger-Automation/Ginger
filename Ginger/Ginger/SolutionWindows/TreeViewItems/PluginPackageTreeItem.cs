@@ -23,31 +23,41 @@ using System.Windows.Controls;
 using Amdocs.Ginger.Repository;
 using Ginger.PlugInsWindows;
 using GingerWPF.TreeViewItemsLib;
+using System;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     class PluginPackageTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        public PluginPackage PluginPackage { get; set; }
+        private readonly PluginPackage mPluginPackage;
         private PlugInsWindows.PluginPackagePage mPlugInPage;
         
-        List<ITreeViewItem> ITreeViewItem.Childrens()
+        public PluginPackageTreeItem(PluginPackage pluginPackage)
         {
-            return null;
+            mPluginPackage = pluginPackage;
         }
 
-        Page ITreeViewItem.EditPage()
+        Object ITreeViewItem.NodeObject()
         {
-            if (mPlugInPage == null)
-            {
-                 mPlugInPage = new PluginPackagePage(PluginPackage);
-            }
-            return mPlugInPage;
+            return mPluginPackage;
+        }
+        override public string NodePath()
+        {
+            return mPluginPackage.FileName;
+        }
+        override public Type NodeObjectType()
+        {
+            return typeof(PluginPackage);
         }
 
         StackPanel ITreeViewItem.Header()
         {
-            return NewTVItemStyle(PluginPackage, Amdocs.Ginger.Common.Enums.eImageType.PluginPackage, nameof(PluginPackage.PluginID));
+            return NewTVItemHeaderStyle(mPluginPackage);
+        }
+
+        List<ITreeViewItem> ITreeViewItem.Childrens()
+        {
+            return null;
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -55,14 +65,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return false;
         }
 
+        Page ITreeViewItem.EditPage()
+        {
+            if (mPlugInPage == null)
+            {
+                 mPlugInPage = new PluginPackagePage(mPluginPackage);
+            }
+            return mPlugInPage;
+        }
+
         ContextMenu ITreeViewItem.Menu()
         {
             return mContextMenu;
-        }
-
-        object ITreeViewItem.NodeObject()
-        {
-            return PluginPackage;
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)

@@ -72,8 +72,7 @@ namespace Amdocs.Ginger.GingerConsole
             //string actnum = Console.ReadLine();
             //ActionHandler AH =  p.GetStandAloneActionHandler(list[int.Parse(actnum)].ID);
             
-            //// FIXME need lazy load of params
-            //// FIXME params not loaded
+            // FIXME need lazy load of params
             //foreach(ActionParam v in AH.GingerAction.InputParams.Values)
             //{                
             //    Console.WriteLine(v.Name + "?");
