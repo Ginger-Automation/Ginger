@@ -2998,7 +2998,7 @@ namespace GingerCore.Drivers
                 else
                 {
                     locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
-                    locator.LocateStatusError = "Element not found: " + locator.LocateBy + "=" + locator.LocateValue;
+                    locator.StatusError = "Element not found: " + locator.LocateBy + "=" + locator.LocateValue;
                 }
             }
 
@@ -3047,7 +3047,7 @@ namespace GingerCore.Drivers
                         elem = null;
                         locator.StatusError = ex.Message;
                         locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
-                        locator.LocateStatusError = "Element not found: " + locator.LocateBy + "=" + locator.LocateValue;
+                        locator.StatusError = "Element not found: " + locator.LocateBy + "=" + locator.LocateValue;
                         return elem;
                     }
                     else
@@ -3160,7 +3160,7 @@ namespace GingerCore.Drivers
                     elem = null;
                     locator.StatusError = ex.Message;
                     locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
-                    locator.LocateStatusError = "Element not found: " + locator.LocateBy + "=" + locator.LocateValue;
+                    locator.StatusError = "Element not found: " + locator.LocateBy + "=" + locator.LocateValue;
                     return elem;
                 }
                 else
@@ -3173,7 +3173,7 @@ namespace GingerCore.Drivers
                     elem = null;
                     locator.StatusError = ex.Message;
                     locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
-                    locator.LocateStatusError = "Element not found: " + locator.LocateBy + "=" + locator.LocateValue;
+                    locator.StatusError = "Element not found: " + locator.LocateBy + "=" + locator.LocateValue;
                     return elem;
                 }
                 else
@@ -5477,7 +5477,7 @@ namespace GingerCore.Drivers
                     if ((locators != null) && (locators.ToList().Where(z => z.LocateStatus == ElementLocator.eLocateStatus.Failed).Any()))
                     {
                         locators.ToList().Where(z => z.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList()
-                                         .ForEach(y => act.Error += y.LocateStatusError + System.Environment.NewLine);
+                                         .ForEach(y => act.Error += y.StatusError + System.Environment.NewLine);
                     }
                     else
                         act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
