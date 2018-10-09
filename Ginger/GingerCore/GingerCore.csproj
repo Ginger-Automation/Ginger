@@ -696,8 +696,6 @@
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\DecimalRandom.cs" />
-    <Compile Include="Variables\VariableDependency.cs" />
     <Compile Include="Activities\ErrorHandler.cs" />
     <Compile Include="Activities\Activity.cs" />
     <Compile Include="Animations\Animations.cs" />
