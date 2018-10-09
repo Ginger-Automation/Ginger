@@ -30,6 +30,8 @@ using GingerCore.FlowControlLib;
 using System.Data;
 using GingerCore.Variables;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
+using GingerCore.DataSource;
 
 namespace Ginger.Reports
 {
@@ -443,7 +445,7 @@ namespace Ginger.Reports
         
         private string GetValueForDriverWithoutDescrypting(string value)
         {
-            ValueExpression VE = new ValueExpression(mExecutionEnviroment, App.BusinessFlow, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables);
+            ValueExpression VE = new ValueExpression(mExecutionEnviroment, App.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
             VE.DecryptFlag = false;
             VE.Value = value;
 

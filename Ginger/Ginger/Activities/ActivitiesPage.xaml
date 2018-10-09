@@ -17,14 +17,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="600*"/>
         </Grid.RowDefinitions>
-
-
-        
-        
-
-
-
-
         <Grid.Resources>  
             <DataTemplate x:Key="FieldActive">
                 <CheckBox x:Name="grdActivities_FieldActive"  Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotGherkinOptimizedActivity, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding Active ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Center"/>

@@ -59,8 +59,8 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.NewRepositoryItemTreeHeader(mProjEnvironmentFolder, nameof(RepositoryFolder<ProjEnvironment>.DisplayName), eImageType.Folder, GetSourceControlImage(mProjEnvironmentFolder), false);
+        {            
+            return NewTVItemFolderHeaderStyle(mProjEnvironmentFolder);
         }        
 
         public override ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)
@@ -85,7 +85,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return GetChildrentGeneric<ProjEnvironment>(mProjEnvironmentFolder, nameof(ProjEnvironment.Name));            
+            return GetChildrentGeneric<ProjEnvironment>(mProjEnvironmentFolder);            
         }
 
         bool ITreeViewItem.IsExpandable()

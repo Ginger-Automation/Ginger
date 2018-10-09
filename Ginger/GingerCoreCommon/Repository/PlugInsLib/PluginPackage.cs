@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Plugin.Core;
 using Newtonsoft.Json;
@@ -421,6 +422,22 @@ namespace Amdocs.Ginger.Repository
                 }
             }
             return textEditors;
+        }
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.PluginPackage;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.PluginID);
+            }
         }
 
 

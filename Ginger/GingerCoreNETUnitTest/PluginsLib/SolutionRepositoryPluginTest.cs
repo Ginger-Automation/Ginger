@@ -105,19 +105,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-        [TestMethod]
-        public void GetPluginServices()
-        {
-            //Arrange            
-            ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-            PluginPackage p = (from x in Plugins where x.PluginID == "GingerOfficePlugin" select x).SingleOrDefault();
-
-            // Act            
-            List<IGingerService> list = p.GetServices();
-
-            //Assert                        
-            Assert.AreEqual(6, list.Count, "There are 6 stand alone actions");
-        }
+        //[TestMethod]
+        //public void GetPluginServices()        
 
         [TestMethod]
         public void GetPluginTextEditor()

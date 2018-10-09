@@ -33,6 +33,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
+using Ginger.Repository;
 
 namespace Ginger.BusinessFlowFolder
 {
@@ -57,8 +60,8 @@ namespace Ginger.BusinessFlowFolder
                 mBusinessFlow = App.BusinessFlow;
                 mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
                 App.PropertyChanged += AppPropertychanged;
-                grdActivities.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Activity", App.MainWindow.FloatingContinueRunActivityButton_Click, 4);
-                grdActivities.AddFloatingImageButton("@RunAction_20x20.png", "Run Selected Action", App.MainWindow.RunActionButton_Click, 4);
+                grdActivities.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Activity", FloatingContinueRunActivityButton_Click, 4);
+                grdActivities.AddFloatingImageButton("@RunAction_20x20.png", "Run Selected Action", RunActionButton_Click, 4);
                 grdActivities.AddFloatingImageButton("@Run2_20x20.png", "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity), RunFloatingButtonClicked, 4); 
             }
           
@@ -72,6 +75,15 @@ namespace Ginger.BusinessFlowFolder
                 grdActivities.RowDoubleClick -= grdActivities_grdMain_MouseDoubleClick;
                 grdActivities.DisableGridColoumns();
             }
+        }
+
+        public void FloatingContinueRunActivityButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ContinueActivityRun, null);
+        }
+        public void RunActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, null);
         }
 
         private void SetGridRowStyle()
@@ -119,7 +131,7 @@ namespace Ginger.BusinessFlowFolder
 
         private void BusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Activities")
+            if (e.PropertyName == nameof(BusinessFlow.Activities))
             {
                 RefreshActivitiesGrid();
             }
@@ -128,7 +140,7 @@ namespace Ginger.BusinessFlowFolder
         private void RunFloatingButtonClicked(object sender, RoutedEventArgs e)
         {
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
-            App.MainWindow.RunActivity(); 
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActivity, null); 
         }
 
         private void CurrentActivity_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -173,9 +185,9 @@ namespace Ginger.BusinessFlowFolder
             else if (droppedItem.GetType() == typeof(ActivitiesGroup))
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
-                mBusinessFlow.AddActivitiesGroup(droppedGroupIns);              
-                
-                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, App.LocalRepository.GetSolutionRepoActivities(), false);
+                mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
+                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
 
                 int selectedActIndex = -1;
@@ -217,8 +229,8 @@ namespace Ginger.BusinessFlowFolder
             //# Default View
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Active, WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.mainGrdActivities.Resources["FieldActive"] });
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Mandatory, Header="Mand.", WidthWeight =3.0, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActivityName, WidthWeight = 15, Header = "Name", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.mainGrdActivities.Resources["FieldName"] });
@@ -304,7 +316,7 @@ namespace Ginger.BusinessFlowFolder
         private void AddToRepository(object sender, RoutedEventArgs e)
 
         {
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdActivities.Grid.SelectedItems.Cast<RepositoryItem>().ToList());
+            Repository.SharedRepositoryOperations.AddItemsToRepository(grdActivities.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
           
         }
 
@@ -344,7 +356,8 @@ namespace Ginger.BusinessFlowFolder
             if (mBusinessFlow != null)
             {
                 grdActivities.Title = "'" + mBusinessFlow.Name + "' - " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-                App.LocalRepository.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.Activities, (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActivities());
+                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.Activities, (IEnumerable<object>)activities);
                 grdActivities.DataSourceList = mBusinessFlow.Activities;                
             }
             else

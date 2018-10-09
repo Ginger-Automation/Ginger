@@ -108,4 +108,14 @@ public class Utils {
 	public static String getCurrentTimeStamp() {
 	    return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
 	}	
+	
+	public static Date parseDateValue(String value) throws Exception
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+		Date date = new Date();
+		date = sdf.parse(value);
+			
+		return date;
+	}
+	
 }

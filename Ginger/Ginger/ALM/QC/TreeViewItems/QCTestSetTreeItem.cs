@@ -22,6 +22,7 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM.QC.TreeViewItems
 {
@@ -87,7 +88,7 @@ namespace Ginger.ALM.QC.TreeViewItems
             AlreadyImported = false;
             MappedBusinessFlow = null;
             MappedBusinessFlowPath = "None";
-            foreach (BusinessFlow bf in App.LocalRepository.GetSolutionBusinessFlows())
+            foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
             {
                 if (bf.ExternalID != null)
                 {
