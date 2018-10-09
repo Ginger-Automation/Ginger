@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,12 +16,22 @@ limitations under the License.
 */
 #endregion
 
-using GingerCoreNET.ReporterLib;
 using System;
 using System.Reflection;
+using System.Windows;
 
-namespace GingerCoreNET.Dictionaries
-{
+namespace GingerCore
+{    
+    public enum eTermResKey
+    {
+        BusinessFlow, BusinessFlows,
+        ActivitiesGroup, ActivitiesGroups,
+        Activity, Activities,
+        ConversionMechanism,
+        Variable, Variables,
+        RunSet, RunSets
+    }
+
     public enum eSkinDicsType
     {
         Default
@@ -40,16 +50,6 @@ namespace GingerCoreNET.Dictionaries
         Business
     }
 
-    public enum eTermResKey
-    {
-        BusinessFlow, BusinessFlows,
-        ActivitiesGroup, ActivitiesGroups,
-        Activity, Activities,
-        ConversionMechanism,
-        Variable, Variables,
-        RunSet, RunSets
-    }
-
     public class GingerDicser
     {
         public static string GetTermResValue(eTermResKey termResourceKey, string prefixString = "", string suffixString = "", bool setToUpperCase = false)
@@ -57,7 +57,11 @@ namespace GingerCoreNET.Dictionaries
             object termResValue = null;
             try
             {
-                // temp ugly code since we cannot load ResourceDic in GingerCoreNET - need another solution
+                //termResValue = (new FrameworkElement()).TryFindResource(termResourceKey.ToString());
+
+                //TODO: Fix it
+                //termResValue = Application.Current.Resources[termResourceKey.ToString()];
+
                 if (termResourceKey == eTermResKey.Activity) termResValue = "Activity";
                 if (termResourceKey == eTermResKey.BusinessFlows) termResValue = "Business Flows";
 
@@ -65,11 +69,13 @@ namespace GingerCoreNET.Dictionaries
                 {
                     termResValue = "!!!termResValue!!!";  //FIXME
                 }
+
             }
             catch (Exception ex)
             {
                 termResValue = null;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                //TODO: Fix it 
+                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
 
             if (termResValue != null)
@@ -81,6 +87,19 @@ namespace GingerCoreNET.Dictionaries
             else
                 //key not found
                 return string.Empty;
-        } 
+        }
+
+        //public static void LinkToTermResource(FrameworkElement obj, DependencyProperty objPropertyToLink, eTermResKey termResourceKey)
+        //{
+        //    if (obj != null && objPropertyToLink != null) //&& termResourceKey != null ... termResourceKey is never null
+        //        obj.SetResourceReference(objPropertyToLink, termResourceKey.ToString());
+        //}
+
+        //public static void LinkToResource(FrameworkElement obj, DependencyProperty objPropertyToLink, string resourceKey)
+        //{
+        //    if (obj != null && objPropertyToLink != null && string.IsNullOrEmpty(resourceKey) == false)
+        //        obj.SetResourceReference(objPropertyToLink, resourceKey);
+        //}        
+
     }
 }
