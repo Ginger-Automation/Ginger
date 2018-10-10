@@ -1147,15 +1147,13 @@ namespace Ginger.WindowExplorer
                     WebPlatform webPlatformInfo = new WebPlatform();
                     UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
                     break;
-                case ePlatformType.Java:
-                    JavaPlatform javaPlatformInfo = new JavaPlatform();
-                    UIElementsTypeList = javaPlatformInfo.GetPlatformUIElementsType();
-                    break;
             }
-
-            foreach (eElementType eET in UIElementsTypeList)
+            if (UIElementsTypeList != null)
             {
-                FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
+                foreach (eElementType eET in UIElementsTypeList)
+                {
+                    FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
+                }
             }
         }
 
