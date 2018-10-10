@@ -55,21 +55,10 @@ namespace GingerCore
         public static string GetTermResValue(eTermResKey termResourceKey, string prefixString = "", string suffixString = "", bool setToUpperCase = false)
         {
             object termResValue = null;
+
             try
             {
-                //termResValue = (new FrameworkElement()).TryFindResource(termResourceKey.ToString());
-
-                //TODO: Fix it
-                //termResValue = Application.Current.Resources[termResourceKey.ToString()];
-
-                if (termResourceKey == eTermResKey.Activity) termResValue = "Activity";
-                if (termResourceKey == eTermResKey.BusinessFlows) termResValue = "Business Flows";
-
-                if (termResValue == null)
-                {
-                    termResValue = "!!!termResValue!!!";  //FIXME
-                }
-
+                termResValue = GingerTerminology.getTerminologyValue(termResourceKey);
             }
             catch (Exception ex)
             {

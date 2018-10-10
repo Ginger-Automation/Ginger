@@ -23,7 +23,7 @@ namespace Ginger.User
     public partial class UserSettingsPage : Page
     {
         GenericWindow _pageGenericWin;
-        readonly eTerminologyDicsType mOriginalTerminologyType;
+        readonly GingerCore.eTerminologyDicsType mOriginalTerminologyType;
 
         public UserSettingsPage()
         {
@@ -42,7 +42,7 @@ namespace Ginger.User
 
         private void xTerminologyTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((eTerminologyDicsType)xTerminologyTypeComboBox.SelectedValue != mOriginalTerminologyType)
+            if ((GingerCore.eTerminologyDicsType)xTerminologyTypeComboBox.SelectedValue != mOriginalTerminologyType)
             {
                 xTerminologyTypeNoteLbl.Visibility = Visibility.Visible;
             }

@@ -29,7 +29,7 @@ namespace Ginger.Dictionaries
     /// </summary>
     public partial class SetTerminologyTypePage : Page
     {
-        Amdocs.Ginger.Core.eTerminologyDicsType mInitialType;
+        GingerCore.eTerminologyDicsType mInitialType;
         GenericWindow _pageGenericWin = null;
 
         public SetTerminologyTypePage()
@@ -68,6 +68,7 @@ namespace Ginger.Dictionaries
         {
             if (App.UserProfile.TerminologyDictionaryType != mInitialType)
             {
+                GingerTerminology.TERMINOLOGY_TYPE = mInitialType;
                 Reporter.ToUser(eUserMsgKeys.SettingsChangeRequireRestart);
             }
             _pageGenericWin.Close();

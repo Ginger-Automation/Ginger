@@ -355,9 +355,9 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public string EncryptedALMPassword { get; set; }
 
-        Amdocs.Ginger.Core.eTerminologyDicsType mTerminologyDictionaryType;
+        GingerCore.eTerminologyDicsType mTerminologyDictionaryType;
         [IsSerializedForLocalRepository]
-        public Amdocs.Ginger.Core.eTerminologyDicsType TerminologyDictionaryType
+        public GingerCore.eTerminologyDicsType TerminologyDictionaryType
         {
             get { return mTerminologyDictionaryType; }
             set { mTerminologyDictionaryType = value; OnPropertyChanged(nameof(TerminologyDictionaryType)); }
@@ -552,14 +552,14 @@ namespace Ginger
             switch (dictObj["TerminologyDictionaryType"])
             {
                 case "Default":
-                    TerminologyDictionaryType = Amdocs.Ginger.Core.eTerminologyDicsType.Default;
+                    TerminologyDictionaryType = GingerCore.eTerminologyDicsType.Default;
                     break;
 
                 case "Testing":
-                    TerminologyDictionaryType = Amdocs.Ginger.Core.eTerminologyDicsType.Testing;
+                    TerminologyDictionaryType = GingerCore.eTerminologyDicsType.Testing;
                     break;
                 case "Gherkin":
-                    TerminologyDictionaryType = Amdocs.Ginger.Core.eTerminologyDicsType.Gherkin;
+                    TerminologyDictionaryType = GingerCore.eTerminologyDicsType.Gherkin;
                     break;
             }
         }
