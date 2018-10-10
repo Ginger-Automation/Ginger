@@ -140,7 +140,7 @@ namespace GingerCore.Actions
         private string GenerateOutputPath()
         {
             string OutputFilePathNew;
-            OutputFilePathNew = System.IO.Path.Combine(SolutionFolder, @"Documents\OutputFiles\") + OutputFileName;
+            OutputFilePathNew = System.IO.Path.Combine(SolutionFolder, @"Documents\OutputFiles\", OutputFileName);
             return OutputFilePathNew;
         }
 
@@ -253,7 +253,7 @@ namespace GingerCore.Actions
             string DataFilePath;
             if (DataFileName.StartsWith("~"))
             {
-                DataFilePath = SolutionFolder + DataFileName.Replace("~\\", "");
+                DataFilePath = System.IO.Path.Combine(SolutionFolder, DataFileName.Replace("~\\", ""));
             }
             else DataFilePath = DataFileName;
 

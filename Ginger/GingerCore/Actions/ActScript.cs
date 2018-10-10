@@ -177,7 +177,7 @@ namespace GingerCore.Actions
                     p.StartInfo.WorkingDirectory = ScriptPath;
             }
             else
-                p.StartInfo.WorkingDirectory = SolutionFolder + @"Documents\scripts\"; 
+                p.StartInfo.WorkingDirectory = System.IO.Path.Combine(SolutionFolder, @"Documents\scripts\"); 
             try
             {
                 string Params = GetCommandText(this);

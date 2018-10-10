@@ -108,7 +108,7 @@ namespace Ginger.Actions
             if (ImportFileFlag && !FileName.StartsWith(@"~\"))
             {
                 //TODO import request File
-                string targetPath = SolutionFolder + @"Documents\SQL";
+                string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\SQL");
                 if (!System.IO.Directory.Exists(targetPath))
                 {
                     System.IO.Directory.CreateDirectory(targetPath);

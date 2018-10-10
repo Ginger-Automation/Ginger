@@ -404,7 +404,7 @@ namespace Ginger
             string solutionFolder = General.OpenSelectFolderDialog("Select Ginger Solution Folder");
             if (solutionFolder != null)
             {
-                string solutionFileName = solutionFolder + @"\Ginger.Solution.xml";
+                string solutionFileName = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
                 if (System.IO.File.Exists(PathHelper.GetLongPath(solutionFileName)))
                 {
                     App.SetSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder)));
