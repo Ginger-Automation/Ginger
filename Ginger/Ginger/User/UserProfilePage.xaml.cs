@@ -56,7 +56,7 @@ namespace Ginger.User
             op.ShowDialog();
 
             var fileLength = new FileInfo(op.FileName).Length;
-            if (fileLength <= 30000)
+            if (fileLength <= 50000)
             {
                 xProfileImageImgBrush.ImageSource = new BitmapImage(new Uri(op.FileName));                
                 if ((op.FileName != null) && (op.FileName != string.Empty))
@@ -79,7 +79,7 @@ namespace Ginger.User
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.ImageSize);
+                Reporter.ToUser(eUserMsgKeys.ImageSize, "50");
             }
         }
 
