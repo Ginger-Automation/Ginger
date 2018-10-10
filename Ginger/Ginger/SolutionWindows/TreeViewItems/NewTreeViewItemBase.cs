@@ -553,8 +553,8 @@ namespace GingerWPF.TreeViewItemsLib
         /// <param name="imageType">The image type which assosicated with the repository item- should be pulled from the repoItem</param>
         /// <param name="NameProperty">The field of the item which holds the item name or static name in case the repository item is null</param>
         /// <returns></returns>
-        protected StackPanel NewTVItemHeaderStyle(RepositoryItemBase repoItem, eImageType imageType= eImageType.Null, string NameProperty= "")
-        {            
+        protected StackPanel NewTVItemHeaderStyle(RepositoryItemBase repoItem, eImageType imageType = eImageType.Null, string NameProperty = "")
+        {
             //TODO: Move to biz flow page?
             repoItem.StartDirtyTracking();
 
@@ -565,11 +565,11 @@ namespace GingerWPF.TreeViewItemsLib
             if (WorkSpace.Instance.SourceControl != null)
             {
                 // Source control image
-                ImageMakerControl sourceControlImage = new ImageMakerControl();                
+                ImageMakerControl sourceControlImage = new ImageMakerControl();
                 sourceControlImage.BindControl(repoItem, nameof(RepositoryItemBase.SourceControlStatus));
                 repoItem.RefreshSourceControlStatus();
                 sourceControlImage.Width = 8;
-                sourceControlImage.Height = 8;                
+                sourceControlImage.Height = 8;
                 stack.Children.Add(sourceControlImage);
             }
 
@@ -578,34 +578,33 @@ namespace GingerWPF.TreeViewItemsLib
             if (imageType == eImageType.Null)
             {
                 NodeImageType.ImageType = repoItem.ItemImageType;
-            }                
+            }
             else
             {
                 NodeImageType.ImageType = imageType;
             }
-                
+
             NodeImageType.Width = 16;
             NodeImageType.Height = 16;
             stack.Children.Add(NodeImageType);
 
             // Add Item header text 
             Label itemHeaderLabel = new Label();
+
             if (string.IsNullOrEmpty(NameProperty))
             {
-                BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, repoItem.ItemNameField, BindingMode: System.Windows.Data.BindingMode.OneWay);
-            }                
-            else
-            {
-                itemHeaderLabel.Content = NameProperty;
+                NameProperty = repoItem.ItemNameField;
             }
-                
+            BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, NameProperty, BindingMode: System.Windows.Data.BindingMode.OneWay);
+
+
             stack.Children.Add(itemHeaderLabel);
 
             // add icon of dirty status            
-            ImageMakerControl dirtyStatusImage = new ImageMakerControl();            
+            ImageMakerControl dirtyStatusImage = new ImageMakerControl();
             dirtyStatusImage.BindControl(repoItem, nameof(RepositoryItemBase.DirtyStatusImage));
             dirtyStatusImage.Width = 6;
-            dirtyStatusImage.Height = 6;            
+            dirtyStatusImage.Height = 6;
             dirtyStatusImage.VerticalAlignment = VerticalAlignment.Top;
             dirtyStatusImage.Margin = new Thickness(0, 10, 10, 0);
             stack.Children.Add(dirtyStatusImage);
