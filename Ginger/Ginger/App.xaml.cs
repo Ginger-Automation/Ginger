@@ -927,12 +927,14 @@ namespace Ginger
                 }
 
                 //load new Business Flow as default
+               // TODO: Need to check is actually below LoadDefaultBussinessFlow()method is required here
                 App.BusinessFlow = LoadDefaultBusinessFlow();
 
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to load the recent " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " used", ex);
+                // TODO: Need to check is actually below LoadDefaultBussinessFlow()method is required here
                 LoadDefaultBusinessFlow();
             }
         }
