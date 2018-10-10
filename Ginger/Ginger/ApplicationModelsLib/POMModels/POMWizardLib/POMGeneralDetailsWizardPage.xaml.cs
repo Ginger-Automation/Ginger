@@ -99,7 +99,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 var fileLength = new FileInfo(op.FileName).Length;
-                if (fileLength <= 30000)
+                if (fileLength <= 50000)
                 {
                     if ((op.FileName != null) && (op.FileName != string.Empty))
                     {
@@ -123,7 +123,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.ImageSize);
+                    Reporter.ToUser(eUserMsgKeys.ImageSize, "50");
                 }
             }
         }

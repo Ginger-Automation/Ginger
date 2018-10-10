@@ -72,26 +72,20 @@ namespace GingerCore.Actions
             list.Add(DynamicXMLElements);
             return list;
         }
-        
-        [IsSerializedForLocalRepository]
+                
         public ActInputValue URL { get { return GetOrCreateInputParam(Fields.URL); } }
             
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicXMLElements = new ObservableList<ActInputValue>();
-
-        [IsSerializedForLocalRepository]        
+             
         public ActInputValue SOAPAction { get { return GetOrCreateInputParam(Fields.SOAPAction); } }
-
-        [IsSerializedForLocalRepository]        
+         
         public ActInputValue XMLfileName { get { return GetOrCreateInputParam(Fields.XMLfileName); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue URLUser { get { return GetOrCreateInputParam(Fields.URLUser); } }
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue URLPass { get { return GetOrCreateInputParam(Fields.URLPass); } }
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue URLDomain { get { return GetOrCreateInputParam(Fields.URLDomain); } }
 
         [IsSerializedForLocalRepository]
