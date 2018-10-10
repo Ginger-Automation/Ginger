@@ -124,7 +124,11 @@ Begin
     
     XMLDocument.async := False;
     XMLDocument.load(strUserProfileXMLFilePath);
+    XMLNode := XMLDocument.selectSingleNode('//GingerRepositoryItem//UserProfile');
+	if (IDispatch(XMLNode) = nil) then
+    begin
     XMLNode := XMLDocument.selectSingleNode('//Ginger.UserProfile');
+    end
     if (XMLNode.getAttribute('UserType') = null) then 
     begin
         ChosenUserType := 'Regular';

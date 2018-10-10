@@ -1148,10 +1148,12 @@ namespace Ginger.WindowExplorer
                     UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
                     break;
             }
-
-            foreach (eElementType eET in UIElementsTypeList)
+            if (UIElementsTypeList != null)
             {
-                FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
+                foreach (eElementType eET in UIElementsTypeList)
+                {
+                    FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
+                }
             }
         }
 
