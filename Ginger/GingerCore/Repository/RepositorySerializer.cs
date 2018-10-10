@@ -489,7 +489,7 @@ namespace GingerCore.Repository
 
                 if (obj == null)
                 {
-                      Reporter.ToLog(eLogLevel.INFO, "Error:Cannot create Class: " + ClassName, writeOnlyInDebugMode: true);
+                      Reporter.ToLog(eLogLevel.ERROR, "Error:Cannot create Class: " + ClassName);
                       return null;
                 }
 
@@ -566,7 +566,7 @@ namespace GingerCore.Repository
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Error:Cannot create instance of: " + ClassName, writeOnlyInDebugMode: true);
+                Reporter.ToLog(eLogLevel.ERROR, "Error:Cannot create instance of: " + ClassName);
                 return null;
             }
         }
