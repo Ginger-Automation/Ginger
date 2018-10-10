@@ -186,12 +186,7 @@ namespace GingerWPF.TreeViewItemsLib
         {
             if (nodeItemToCut is RepositoryItemBase)
             {
-                // TODO: change me, ugly but will work for now
-                string relativeFolder = targetFolderNode.NodePath().Replace(WorkSpace.Instance.SolutionRepository.SolutionFolder, @"~\");
-                WorkSpace.Instance.SolutionRepository.MoveItem((RepositoryItemBase)nodeItemToCut, relativeFolder);
-
-              
-
+                WorkSpace.Instance.SolutionRepository.MoveItem((RepositoryItemBase)nodeItemToCut, targetFolderNode.NodePath());
                 return true;
             }
             else
