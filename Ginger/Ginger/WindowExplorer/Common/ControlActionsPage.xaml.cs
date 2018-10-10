@@ -32,6 +32,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
+using System.Collections.Generic;
 
 namespace Ginger.WindowExplorer
 {
@@ -157,6 +158,11 @@ namespace Ginger.WindowExplorer
 
         private void AddToPageList()
         {
+            if(App.PageList == null)
+            { 
+                App.PageList = new List<Page>();
+            }
+
             ControlActionsPage tempPage = App.PageList.FirstOrDefault(Page => Page is ControlActionsPage) as ControlActionsPage;
             if (tempPage == null) App.PageList.Add(this);
             else
