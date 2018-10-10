@@ -72,10 +72,7 @@ namespace Ginger.Repository
                     itemCopy = (RepositoryItemBase)item.CreateCopy(false);
                 }
 
-                itemCopy.UpdateItemFieldForReposiotryUse();
-                //Only the Repository items which are stored as XML are getting foldername, for others need to set these values explicitly.
-                itemCopy.ContainingFolder = itemToUpload.ExistingItem.ContainingFolder;
-                itemCopy.ContainingFolderFullPath = itemToUpload.ExistingItem.ContainingFolderFullPath;
+                itemCopy.UpdateItemFieldForReposiotryUse();               
 
                 bool blockingIssuesHandled= HandleItemValidationIssues(itemToUpload, itemCopy, ref isOverwrite);
 
