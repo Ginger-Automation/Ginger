@@ -8,7 +8,7 @@
         <DockPanel Background="{StaticResource $BackgroundColor_White}">
             <Image Source="{StaticResource @GingerLogoNew_Small}" Height="200" Width="641" DockPanel.Dock="Top" HorizontalAlignment="Center"/>
             <Label x:Name="lblAppVersion" Content="AppVersion" Style="{StaticResource $LabelStyle}" Foreground="{StaticResource $SelectionColor_Pink}"  DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="35,0,0,0" FontWeight="Bold"></Label>
-            <Label x:Name="lblLoading" Content="Loading..." FontFamily="open sans" FontSize="15" Foreground="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="35,10,0,0" ></Label>
+            <Label x:Name="lblLoading" Content="Loading..." FontFamily="open sans" FontSize="15" Foreground="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="35,5,0,0" ></Label>
             <Label  x:Name="lblLoadingInfo" Content="Loading Info" FontFamily="open sans" FontSize="12" Foreground="{StaticResource $BackgroundColor_Gray}" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="35,-5,0,0"></Label>
         </DockPanel>
     </Border>
