@@ -157,6 +157,11 @@ namespace Ginger.WindowExplorer
 
         private void AddToPageList()
         {
+            if (App.PageList == null)
+            {
+                App.PageList = new List<Page>();
+            }
+
             ControlActionsPage tempPage = App.PageList.FirstOrDefault(Page => Page is ControlActionsPage) as ControlActionsPage;
             if (tempPage == null) App.PageList.Add(this);
             else
