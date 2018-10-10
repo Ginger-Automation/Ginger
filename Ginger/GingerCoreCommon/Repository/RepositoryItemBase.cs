@@ -430,14 +430,16 @@ namespace Amdocs.Ginger.Repository
                 // TODO: handle err 
             }
 
-
-            foreach (object o in ((IList)Backuplist)) 
+            if (!(((IList)Backuplist) == null))
             {
-                v.Add(o);
-
-                if (o is RepositoryItemBase)
+                foreach (object o in ((IList)Backuplist))
                 {
-                    ((RepositoryItemBase)o).RestoreBackup(isLocalBackup);   // Drill down the restore
+                    v.Add(o);
+
+                    if (o is RepositoryItemBase)
+                    {
+                        ((RepositoryItemBase)o).RestoreBackup(isLocalBackup);   // Drill down the restore
+                    }
                 }
             }
             if (isLocalBackup)
