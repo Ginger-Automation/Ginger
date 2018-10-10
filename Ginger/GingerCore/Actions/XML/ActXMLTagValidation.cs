@@ -75,16 +75,15 @@ namespace GingerCore.Actions.XML
             }
         }
 
-
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue InputFile
         {
             get
             {
                 return GetOrCreateInputParam(Fields.InputFile);
 
-            } }
+            }
+        }
 
 
         public bool mReqisFromFile = true;
