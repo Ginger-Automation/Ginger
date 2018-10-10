@@ -417,38 +417,37 @@ namespace Amdocs.Ginger.Repository
 
             object Backuplist;
             bool b;
-            if (isLocalBackup)
-            {
-                b = mLocalBackupDic.TryGetValue(Name + "~List", out Backuplist);
-            }
-            else
-            {
-                b = mBackupDic.TryGetValue(Name + "~List", out Backuplist);
-            }
-            if (!b)
-            {
-                // TODO: handle err 
-            }
+            b = isLocalBackup ? mLocalBackupDic.TryGetValue(Name + "~List", out Backuplist) : mBackupDic.TryGetValue(Name + "~List", out Backuplist);
 
-            if (!(((IList)Backuplist) == null))
+            if (b)
             {
-                foreach (object o in ((IList)Backuplist))
+                if (Backuplist != null)
                 {
-                    v.Add(o);
-
-                    if (o is RepositoryItemBase)
+                    foreach (object o in ((IList)Backuplist))
                     {
-                        ((RepositoryItemBase)o).RestoreBackup(isLocalBackup);   // Drill down the restore
+                        v.Add(o);
+                        RepositoryItemBase repoItem = o as RepositoryItemBase;
+                        repoItem?.RestoreBackup(isLocalBackup);   // Drill down the restore
+
+                    }
+
+                    if (isLocalBackup)
+                    {
+                        mLocalBackupDic.Remove(Name + "~List");
+                    }
+                    else
+                    {
+                        mBackupDic.Remove(Name + "~List");
                     }
                 }
-            }
-            if (isLocalBackup)
-            {
-                mLocalBackupDic.Remove(Name + "~List");
+                else
+                {
+                    v = null;
+                }
             }
             else
             {
-                mBackupDic.Remove(Name + "~List");
+                // TODO: handle err 
             }
         }
 
