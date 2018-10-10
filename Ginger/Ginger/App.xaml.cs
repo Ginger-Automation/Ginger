@@ -927,7 +927,6 @@ namespace Ginger
                 }
 
                 //load new Business Flow as default
-               // TODO: Need to check is actually below LoadDefaultBussinessFlow()method is required here
                 App.BusinessFlow = LoadDefaultBusinessFlow();
 
             }
