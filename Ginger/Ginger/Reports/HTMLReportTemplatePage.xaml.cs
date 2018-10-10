@@ -503,7 +503,7 @@ namespace Ginger.Reports
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.ImageSize);
+                Reporter.ToUser(eUserMsgKeys.ImageSize, "30");
             }
         }
 
