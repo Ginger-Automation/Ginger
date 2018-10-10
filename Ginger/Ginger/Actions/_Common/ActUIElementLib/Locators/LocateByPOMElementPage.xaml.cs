@@ -40,17 +40,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
     /// <summary>
     /// Interaction logic for LocateValueEditPage.xaml
     /// </summary>
-    public partial class LocateByPOMElement : Page
+    public partial class LocateByPOMElementPage : Page
     {
         Act mAction;
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
         ApplicationPOMModel mSelectedPOM = null;
-        RepositoryFolder<ApplicationPOMModel> mPOMModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
-        //mWinExplorer = winExplorer;
+        RepositoryFolder<ApplicationPOMModel> mPOMModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();       
         eLocateBy mLocateBy;
         string mLocateValue;
 
-        public LocateByPOMElement(Act Action)
+        public LocateByPOMElementPage(Act Action)
         {
             InitializeComponent();
             DataContext = this;
@@ -97,11 +96,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
                                 xPOMElementsGrid.DataSourceList = mSelectedPOM.MappedUIElements;
                                 xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
                                 if (mAction is ActUIElement)
+                                {
                                     ((ActUIElement)mAction).ElementType = selectedPOMElement.ElementTypeEnum;
-                                POMElementComboBox.IsEnabled = true;
-                                HeaderTextBlock.Text = selectedPOMElement.ElementName; 
-                                HeaderTextBlock.Visibility = Visibility.Visible;
-                                POMElementComboBox.SelectedItem = HeaderTextBlock;
+                                }
+                                xPOMElementComboBox.IsEnabled = true;
+                                xHeaderTextBlock.Text = selectedPOMElement.ElementName; 
+                                xHeaderTextBlock.Visibility = Visibility.Visible;
+                                xPOMElementComboBox.SelectedItem = xHeaderTextBlock;
                                 HighlightButton.IsEnabled = true;
                             }
                         }
@@ -135,7 +136,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 SetPOMPathToShow();
 
                 xPOMElementsGrid.DataSourceList = mSelectedPOM.MappedUIElements;
-                POMElementComboBox.IsEnabled = true;
+                xPOMElementComboBox.IsEnabled = true;
             }
         }
 
@@ -143,7 +144,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             string pathToShow;
             pathToShow = mSelectedPOM.FilePath.Substring(0, mSelectedPOM.FilePath.LastIndexOf("\\")).Substring(mPOMModelFolder.FolderFullPath.Length) + @"\" + mSelectedPOM.ItemName;
-            HTMLReportFolderTextBox.Text = pathToShow;
+            xHTMLReportFolderTextBox.Text = pathToShow;
         }
 
         private void POMElementComboBox_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -153,15 +154,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void POMElementComboBox_DropDownOpened(object sender, System.EventArgs e)
         {
-            HeaderTextBlock.Visibility = Visibility.Collapsed;
+            xHeaderTextBlock.Visibility = Visibility.Collapsed;
             xPOMElementsGrid.Refresh();
         }
 
         private void POMElementComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
-            HeaderTextBlock.Visibility = Visibility.Visible;
-            HeaderTextBlock.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
-            POMElementComboBox.SelectedItem = HeaderTextBlock;
+            xHeaderTextBlock.Visibility = Visibility.Visible;
+            xHeaderTextBlock.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
+            xPOMElementComboBox.SelectedItem = xHeaderTextBlock;
         }
 
         private void SetControlsGridView()
@@ -178,10 +179,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void xPOMElementsGrid_RowChangedEvent(object sender, System.EventArgs e)
         {
-            if ((POMElementComboBox.IsEnabled) && ((DataGrid)sender).SelectedItem != null)
+            if ((xPOMElementComboBox.IsEnabled) && ((DataGrid)sender).SelectedItem != null)
             {
                 if (mAction is ActUIElement)
+                {
                     ((ActUIElement)mAction).ElementType = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
+                }
                 mLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
 
                 if (mAction is ActUIElement)

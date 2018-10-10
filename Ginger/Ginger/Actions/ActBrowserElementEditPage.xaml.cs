@@ -162,7 +162,7 @@ namespace Ginger.Actions
                 switch (SelectedLocType)
                 {
                     case eLocateBy.POMElement:
-                        Page p = new LocateByPOMElement(mAct);
+                        Page p = new LocateByPOMElementPage(mAct);
                         LocateValueEditFrame.Content = p;
                         LocateValueEditFrame.Width = 1035;
                         LocateValueEditFrame.Visibility = System.Windows.Visibility.Visible;
