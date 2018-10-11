@@ -388,7 +388,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
             }
 
         }
@@ -440,7 +440,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
             }
                         
             finally

@@ -721,7 +721,9 @@ namespace Ginger
                         SetDefaultBusinessFlow();
 
                         if (!App.RunningFromConfigFile)
+                        {
                             DoSolutionAutoSaveAndRecover();
+                        }
 
                         //Offer to upgrade Solution items to current version
                         try

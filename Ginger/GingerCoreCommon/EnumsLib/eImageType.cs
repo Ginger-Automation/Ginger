@@ -182,6 +182,7 @@ namespace Amdocs.Ginger.Common.Enums
         Website,
         Beta,
         Error,
+        Coffee,
         #endregion
 
 

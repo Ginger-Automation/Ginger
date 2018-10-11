@@ -254,7 +254,8 @@
             </DockPanel>
         </Grid>
 
-        <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderThickness="1" />
+        <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderThickness="1"/>
+        <usercontrols:ImageMakerControl x:Name="xUmbrellaImg" Grid.Row="1" ImageType="Coffee" SetAsFontImageWithSize="100" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
         <Border Grid.Row="2" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderThickness="1" >
             <DockPanel VerticalAlignment="Center">

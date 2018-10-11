@@ -25,18 +25,18 @@ namespace Amdocs.Ginger.Common
     {
         public static event ReportEventHandler ReportEvent;
         public delegate void ReportEventHandler(AppReportEventArgs reportEventArgs);
-        public static void OnReportEvent(eAppReportType reportType, string reportMessage, eAppReporterLogLevel reportLogLevel = eAppReporterLogLevel.INFO, Exception reportExceptionToRecord = null, eAppReporterMessageType reportMessageType = eAppReporterMessageType.INFO)
+        public static void OnReportEvent(eAppReportType reportType, string reportMessage, eAppReporterLogLevel reportLogLevel = eAppReporterLogLevel.INFO, Exception reportExceptionToRecord = null, bool logOnlyOnDebugMode = false, eAppReporterMessageType reportMessageType = eAppReporterMessageType.INFO)
         {
             ReportEventHandler handler = ReportEvent;
             if (handler != null)
             {
-                handler(new AppReportEventArgs(reportType, reportMessage, reportLogLevel, reportExceptionToRecord, reportMessageType));
+                handler(new AppReportEventArgs(reportType, reportMessage, reportLogLevel, reportExceptionToRecord, logOnlyOnDebugMode, reportMessageType));
             }
         }
 
-        internal static void ToLog(eAppReporterLogLevel logLevel, string logMessage, Exception exceptionToRecord = null)
+        internal static void ToLog(eAppReporterLogLevel logLevel, string logMessage, Exception exceptionToRecord = null, bool logOnlyOnDebugMode=false)
         {
-            OnReportEvent(reportType: eAppReportType.ToLog, reportMessage: logMessage, reportLogLevel: logLevel, reportExceptionToRecord: exceptionToRecord);
+            OnReportEvent(reportType: eAppReportType.ToLog, reportMessage: logMessage, reportLogLevel: logLevel, reportExceptionToRecord: exceptionToRecord, logOnlyOnDebugMode: logOnlyOnDebugMode);
         }
 
         internal static void ToConsole(string consoleMessage, Exception exceptionToRecord = null)

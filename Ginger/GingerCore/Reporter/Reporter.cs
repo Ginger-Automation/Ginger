@@ -94,7 +94,7 @@ namespace GingerCore
                 switch (reportEventArgs.ReportType)
                 {
                     case eAppReportType.ToLog:
-                        ToLog(reportEventArgs.ReportLogLevel, reportEventArgs.ReportMessage, reportEventArgs.ReportExceptionToRecord, true, false);
+                        ToLog(reportEventArgs.ReportLogLevel, reportEventArgs.ReportMessage, reportEventArgs.ReportExceptionToRecord, writeOnlyInDebugMode: reportEventArgs.LogOnlyOnDebugMode);
                         break;
 
                     case eAppReportType.ToUser:
@@ -177,7 +177,15 @@ namespace GingerCore
         }
 
         public static event ErrorReportedEventHandler ErrorReportedEvent;
-        public delegate void ErrorReportedEventHandler();        
+        public delegate void ErrorReportedEventHandler();
+        public static void OnErrorReportedEvent()
+        {
+            ErrorReportedEventHandler handler = ErrorReportedEvent;
+            if (handler != null)
+            {
+                handler();
+            }
+        }
 
 
         #region ReportToLog
@@ -199,7 +207,7 @@ namespace GingerCore
                         break;
                     case eAppReporterLogLevel.ERROR:
                         log.Error(messageToLog, exceptionToLog);
-                        ErrorReportedEvent();
+                        OnErrorReportedEvent();
                         break;
                     case eAppReporterLogLevel.FATAL:
                         log.Fatal(messageToLog, exceptionToLog);

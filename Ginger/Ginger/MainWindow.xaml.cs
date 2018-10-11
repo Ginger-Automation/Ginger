@@ -142,14 +142,17 @@ namespace Ginger
 
         private void UpdateErrorNotification()
         {
-            this.Dispatcher.Invoke(() =>
+            Task.Factory.StartNew(() =>
             {
-                if (xLogErrorsPnl != null)
+                this.Dispatcher.Invoke(() =>
                 {
-                    xLogErrorsPnl.Visibility = Visibility.Visible;
-                    xLogErrorsLbl.Content = "[" + ++mErrorsNum + "]";
-                    xLogErrorsPnl.ToolTip = mErrorsNum + " Errors were logged to Ginger log, click to view log file";
-                }
+                    if (xLogErrorsPnl != null)
+                    {
+                        xLogErrorsPnl.Visibility = Visibility.Visible;
+                        xLogErrorsLbl.Content = "[" + ++mErrorsNum + "]";
+                        xLogErrorsPnl.ToolTip = mErrorsNum + " Errors were logged to Ginger log, click to view log file";
+                    }
+                });
             });
         }
 
@@ -181,11 +184,13 @@ namespace Ginger
                 {
                     xMainWindowFrame.Content = new LoadingSolutionPage();
                     xMainWindowFrame.Visibility = Visibility.Visible;
+                    xUmbrellaImg.Visibility = Visibility.Collapsed;
                     GingerCore.General.DoEvents();
                 }
                 else if (xMainWindowFrame.Content is LoadingSolutionPage && SelectedSolutionTab == eSolutionTabType.None)
                 {
                     xMainWindowFrame.Visibility = Visibility.Collapsed;
+                    xUmbrellaImg.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -393,6 +398,7 @@ namespace Ginger
             if (!(xMainWindowFrame.Content is LoadingSolutionPage))
             {
                 xMainWindowFrame.Visibility = Visibility.Collapsed;
+                xUmbrellaImg.Visibility = Visibility.Visible;
             }
             ListViewItem selectedTopListItem = (ListViewItem)xSolutionTabsListView.SelectedItem;
 
@@ -433,6 +439,7 @@ namespace Ginger
 
                 xMainWindowFrame.Content = selectedTopListItem.Tag;
                 xMainWindowFrame.Visibility = Visibility.Visible;
+                xUmbrellaImg.Visibility = Visibility.Collapsed;
             }
         }
 
