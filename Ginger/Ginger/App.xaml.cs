@@ -270,13 +270,6 @@ namespace Ginger
             }
         }
 
-        public static List<Page> PageList { get; set; }
-
-        public static Page GetPage(Type PageType)
-        {
-            Page p = (from p1 in PageList where p1.GetType() == PageType select p1).FirstOrDefault();
-            return p;
-        }
 
         //public static string LocalApplicationData
         //{
@@ -678,7 +671,7 @@ namespace Ginger
                 WorkSpace.Instance.SourceControl = null;
 
                 if (!SolutionFolder.EndsWith(@"\")) SolutionFolder += @"\";
-                string SolFile = SolutionFolder + @"Ginger.Solution.xml";
+                string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
                 if (File.Exists(PathHelper.GetLongPath(SolFile)))
                 {
                     //get Solution files

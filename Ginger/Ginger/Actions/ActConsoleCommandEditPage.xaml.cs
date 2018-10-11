@@ -34,7 +34,7 @@ namespace Ginger.Actions
     {
         private GingerCore.Actions.ActConsoleCommand f;
 
-        string SHFilesPath = App.UserProfile.Solution.Folder + @"\Documents\sh\";        
+        string SHFilesPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\sh\");        
 
         public ActConsoleCommandEditPage(GingerCore.Actions.ActConsoleCommand Act)
         {
