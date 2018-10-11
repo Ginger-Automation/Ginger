@@ -68,7 +68,7 @@ namespace Ginger.Dictionaries
         {
             if (App.UserProfile.TerminologyDictionaryType != mInitialType)
             {
-                GingerTerminology.TERMINOLOGY_TYPE = mInitialType;
+                GingerTerminology.SET_TERMINOLOGY_TYPE = mInitialType;
                 Reporter.ToUser(eUserMsgKeys.SettingsChangeRequireRestart);
             }
             _pageGenericWin.Close();
