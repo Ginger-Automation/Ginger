@@ -1260,6 +1260,11 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad resp = null;
             List<String> Locators = new List<string>();
             List<String> vals = null;
+            //New serializer resotring the value to null. So handling it to set it to empy
+            if (AJTE.LocateColTitle == null)
+            {
+                AJTE.LocateColTitle = string.Empty;
+            }
 
             PayLoad PL1 = new PayLoad("TableAction");
             PL1.AddValue(AJTE.ControlAction.ToString());
