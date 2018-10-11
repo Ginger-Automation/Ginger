@@ -541,7 +541,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the recent " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " used", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the recent " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " used", ex);
                 return null;
             }
         }
@@ -945,7 +945,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking Run Set Business Flow files change", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while checking Run Set Business Flow files change", ex);
             }
         }
 

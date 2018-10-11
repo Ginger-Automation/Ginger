@@ -20,6 +20,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Core;
 using Amdocs.Ginger.UserControls;
 using GingerCore;
@@ -137,7 +138,7 @@ namespace Ginger.Environments
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
     }

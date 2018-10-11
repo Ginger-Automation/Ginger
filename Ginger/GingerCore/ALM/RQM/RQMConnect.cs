@@ -206,8 +206,8 @@ namespace GingerCore.ALM.RQM
                             }
                             catch (Exception ex)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "Error while trying to retrieve the following TestPlan page:" + responseData.RequestUri);
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error while trying to retrieve the following TestPlan page:" + responseData.RequestUri);
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                             }
                         }
                     }
@@ -215,7 +215,7 @@ namespace GingerCore.ALM.RQM
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error while trying to import RQM test plans, RQM_ImportConfigs_Template.xml wasn't found at: " + importConfigTemplate);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error while trying to import RQM test plans, RQM_ImportConfigs_Template.xml wasn't found at: " + importConfigTemplate);
             }
 
             return RQMTestPlanList;
@@ -309,8 +309,8 @@ namespace GingerCore.ALM.RQM
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Error while trying to retrieve TestPlan id:" + RQMTestPlanId);
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error while trying to retrieve TestPlan id:" + RQMTestPlanId);
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                         }
                     }
                 }
@@ -400,7 +400,7 @@ namespace GingerCore.ALM.RQM
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error while trying to import selected RQM test plan, RQM_ImportConfigs_Template.xml wasn't found at: " + importConfigTemplate);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error while trying to import selected RQM test plan, RQM_ImportConfigs_Template.xml wasn't found at: " + importConfigTemplate);
             }
 
             Mouse.OverrideCursor = null;

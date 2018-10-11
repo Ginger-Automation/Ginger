@@ -156,7 +156,7 @@ namespace GingerCore.Drivers.ASCF
                     //TODO: catch excpetion of socket not all..         
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                         Thread.Sleep(500);
                     }
                 }
@@ -326,7 +326,7 @@ namespace GingerCore.Drivers.ASCF
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close ASCF Driver - " + ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close ASCF Driver - " + ex.Message);
             }
         }
 

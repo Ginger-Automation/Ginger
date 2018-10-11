@@ -30,6 +30,7 @@ using System.IO;
 using GingerCore.Platforms;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Actions
 {
@@ -341,7 +342,7 @@ namespace GingerCore.Actions
                         {
                             this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             this.Error = e.Message;
-                            Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
                         }
                         
                         break;
@@ -398,7 +399,7 @@ namespace GingerCore.Actions
                         {
                             this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             this.Error = e.Message;
-	                        Reporter.ToLog(eLogLevel.ERROR, e.Message);
+	                        Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
                         }
                         
                         break;
@@ -411,7 +412,7 @@ namespace GingerCore.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
             }
         }
 

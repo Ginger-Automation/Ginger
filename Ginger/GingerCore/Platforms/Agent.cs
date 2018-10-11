@@ -251,7 +251,7 @@ namespace GingerCore
                 lock (thisLock)
                         {
                             DriverIsRunning = Driver.IsRunning();
-                            Reporter.ToLog(eLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}");
+                            Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}");
                         }
                 if (DriverIsRunning) return eStatus.Running;
                               
