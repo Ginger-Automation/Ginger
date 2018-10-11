@@ -181,6 +181,7 @@ namespace Amdocs.Ginger.Common.Enums
         Forum,
         Website,
         Beta,
+        Error,
         #endregion
 
 

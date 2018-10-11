@@ -221,7 +221,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Error while deleteing Data Soucre File", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Error while deleteing Data Soucre File", ex);
                     Reporter.ToUser(eUserMsgKeys.DeleteDSFileError, DSDetails.FileFullPath);                    
                 }
             }

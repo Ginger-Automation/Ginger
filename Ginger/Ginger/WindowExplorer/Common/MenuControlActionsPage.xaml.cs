@@ -95,7 +95,7 @@ namespace Ginger.WindowExplorer.Common
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
                 return;
             }
         }
@@ -109,7 +109,7 @@ namespace Ginger.WindowExplorer.Common
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
                 return;
             }
         }

@@ -43,7 +43,7 @@ namespace Ginger.ALM.Repository
         {
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Connecting to QC server");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Connecting to QC server");
                 return ALMIntegration.Instance.AlmCore.ConnectALMServer();
             }
             catch (Exception e)
@@ -53,7 +53,7 @@ namespace Ginger.ALM.Repository
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
                     Reporter.ToUser(eUserMsgKeys.ALMConnectFailureWithCurrSettings, e.Message);
 
-                Reporter.ToLog(eLogLevel.ERROR, "Error connecting to QC server", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error connecting to QC server", e);
                 return false;
             }
         }
@@ -105,7 +105,7 @@ namespace Ginger.ALM.Repository
         #region Import From QC
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            Reporter.ToLog(eLogLevel.INFO, "Start importing from QC");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Start importing from QC");
             //set path to import to               
             if (importDestinationFolderPath == "")
                 importDestinationFolderPath = App.UserProfile.Solution.BusinessFlowsMainFolder;
@@ -204,16 +204,16 @@ namespace Ginger.ALM.Repository
                     catch (Exception ex)
                     {
                         Reporter.ToUser(eUserMsgKeys.ErrorInTestsetImport, testSetItemtoImport.TestSetName, ex.Message);
-                        Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC", ex);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error importing from QC", ex);
                     }
                 }
                 
                 Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
 
-                Reporter.ToLog(eLogLevel.INFO, "Imported from QC successfully");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Imported from QC successfully");
                 return true;
             }
-            Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC");
+            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error importing from QC");
             return false;
         }
 

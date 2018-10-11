@@ -187,7 +187,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Web Services Driver - " + ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Web Services Driver - " + ex.Message);
             }
         }
 
@@ -227,8 +227,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             else if (act is ActWebAPIModel)
             {
-                if (Reporter.CurrentAppLogLevel == eAppLogLevel.Debug)
-                    Reporter.ToLog(eLogLevel.INFO, "Start Execution");
+                if (Reporter.CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Start Execution");
 
                 //pull pointed API Model
                 ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == ((ActWebAPIModel)act).APImodelGUID).FirstOrDefault();
@@ -246,8 +246,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
                     actWebAPI = CreateActWebAPISOAP((ApplicationAPIModel)AAMB, (ActWebAPIModel)act);
 
-                if (Reporter.CurrentAppLogLevel == eAppLogLevel.Debug)
-                    Reporter.ToLog(eLogLevel.INFO, "ActWebAPIBase created successfully");
+                if (Reporter.CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "ActWebAPIBase created successfully");
 
                 //Execution
                 mActWebAPI = actWebAPI;
@@ -394,11 +394,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
 
-                Reporter.ToLog(eLogLevel.INFO, "RequestContstructor passed successfully", null, true, true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "RequestContstructor passed successfully", null, true, true);
 
                 if (WebAPI.SendRequest() == true)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "SendRequest passed successfully", null, true, true);
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "SendRequest passed successfully", null, true, true);
 
                     //Call for  response validation
                     bool dontFailActionOnBadResponse = false;
@@ -406,14 +406,14 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     if (!dontFailActionOnBadResponse)
                         WebAPI.ValidateResponse();
 
-                    Reporter.ToLog(eLogLevel.INFO, "ValidateResponse passed successfully", null, true, true);
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "ValidateResponse passed successfully", null, true, true);
 
                     WebAPI.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath);
                     WebAPI.HandlePostExecutionOperations();
                     //Parse response
                     WebAPI.ParseRespondToOutputParams();
 
-                    Reporter.ToLog(eLogLevel.INFO, "ParseRespondToOutputParams passed successfully", null, true, true);
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "ParseRespondToOutputParams passed successfully", null, true, true);
                 }
             }
         }

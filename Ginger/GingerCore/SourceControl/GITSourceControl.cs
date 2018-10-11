@@ -229,7 +229,7 @@ namespace GingerCore.SourceControl
                     {
                         if (supressMessage == true)
 
-                            Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully, Update status: " + result.Status + ", to Revision :"  + repo.Head.Tip.Sha);
+                            Reporter.ToLog(eAppReporterLogLevel.INFO, "The solution was updated successfully, Update status: " + result.Status + ", to Revision :"  + repo.Head.Tip.Sha);
 
                         else
                             Reporter.ToUser(eUserMsgKeys.GitUpdateState, result.Status, repo.Head.Tip.Sha);
@@ -238,7 +238,7 @@ namespace GingerCore.SourceControl
                 else
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.INFO, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
+                        Reporter.ToLog(eAppReporterLogLevel.INFO, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
                     else
                         Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "The files are not connected to source control");
                 }

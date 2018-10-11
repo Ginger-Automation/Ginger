@@ -591,6 +591,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Beta:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Android, Brushes.Orange);
                     break;
+                case eImageType.Error:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle);
+                    break;
                 #endregion
 
 

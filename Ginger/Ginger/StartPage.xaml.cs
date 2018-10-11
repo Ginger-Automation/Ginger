@@ -71,7 +71,7 @@ namespace Ginger
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to set the latest solutions links", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to set the latest solutions links", ex);
             }
         }
 

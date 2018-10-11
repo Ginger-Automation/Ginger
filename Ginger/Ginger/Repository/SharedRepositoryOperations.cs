@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
@@ -105,7 +106,7 @@ namespace Ginger.Repository
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "failed to upload the repository item", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "failed to upload the repository item", e);
                 itemToUpload.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.FailedToUpload;
                 return false;
             }
@@ -296,7 +297,7 @@ namespace Ginger.Repository
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Save Previous File got error " + ex.Message);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Save Previous File got error " + ex.Message);
                 }
             }
         }

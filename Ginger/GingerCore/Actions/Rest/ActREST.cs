@@ -540,10 +540,10 @@ namespace GingerCore.Actions.REST
                 
                 //TODO: check if UTF8 is good for all
                 StreamReader reader=new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
-                Reporter.ToLog(eLogLevel.INFO, "Response");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Response");
 
                 string resp = reader.ReadToEnd().ToString();
-                Reporter.ToLog(eLogLevel.INFO, resp);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, resp);
 
                 if (RestRequestSave==true && RequestType!=eRequestType.GET)
                 {

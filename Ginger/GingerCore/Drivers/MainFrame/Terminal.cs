@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Open3270;
 using Open3270.TN3270;
 using System;
@@ -175,7 +176,7 @@ namespace GingerCore.Drivers.MainFrame
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
 
@@ -281,7 +282,7 @@ namespace GingerCore.Drivers.MainFrame
             }
             catch (Exception ex)
             {
-                Reporter.ToLog (eLogLevel.ERROR, "Failed to connect to Mainframe source : Terminal.cs->ConnectToHost() ",ex);
+                Reporter.ToLog (eAppReporterLogLevel.ERROR, "Failed to connect to Mainframe source : Terminal.cs->ConnectToHost() ",ex);
                 return false;
             }           
         }
@@ -307,7 +308,7 @@ namespace GingerCore.Drivers.MainFrame
             catch (Exception e)
             {
                 status = false;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
             }
             return status;
         }

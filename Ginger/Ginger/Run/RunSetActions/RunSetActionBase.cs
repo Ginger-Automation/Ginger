@@ -197,7 +197,7 @@ namespace Ginger.Run.RunSetActions
             Reporter.ToGingerHelper(eGingerHelperMsgKey.ExecutingRunSetAction, null, this.Name);
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, String.Format("Execution Started for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name,this.Type), writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("Execution Started for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name,this.Type), writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
                 Status = RunSetActionBase.eRunSetActionStatus.Running;
                 Errors = null;
                 GingerCore.General.DoEvents();
@@ -215,7 +215,7 @@ namespace Ginger.Run.RunSetActions
                     Status = RunSetActionBase.eRunSetActionStatus.Completed;
                 }
                 GingerCore.General.DoEvents();
-                Reporter.ToLog(eLogLevel.INFO, String.Format("Execution Ended for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name, this.Type), writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("Execution Ended for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name, this.Type), writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
             }
             finally
             {
