@@ -185,18 +185,34 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 ThirdRow.Height = new GridLength(40);
                 XMLTemplatesGrid.Visibility = Visibility.Collapsed;
                 xURLTextBox.IsEnabled = true;
-                if (string.IsNullOrEmpty(xURLTextBox.Text) || APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
-                    xBrowseLoadButton.Visibility = Visibility.Collapsed;
-                else
+
+                xURLTextBox.Text = string.Empty;
+
+                if (URLRadioButton.IsChecked == true)
+                {
+                    if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString() || (string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString()))
+                        xBrowseLoadButton.Visibility = Visibility.Collapsed;
+                    else if ((!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString()))
+                        xBrowseLoadButton.Visibility = Visibility.Visible;
+                }
+                else if (FileRadioButton.IsChecked == true)
+                {
                     xBrowseLoadButton.Visibility = Visibility.Visible;
-                xBrowseLoadButton.ButtonText = "Load";
+                }
+
+
+                //if (string.IsNullOrEmpty(xURLTextBox.Text) || APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+                //    xBrowseLoadButton.Visibility = Visibility.Collapsed;
+                //else
+                //    xBrowseLoadButton.Visibility = Visibility.Visible;
+                //xBrowseLoadButton.ButtonText = "Load";
                 XMLTemplatesLable.Visibility = Visibility.Collapsed;
 
-                if (AddAPIModelWizard != null)
-                {
-                    GingerCore.General.ObjFieldBinding(xURLTextBox, TextBox.TextProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.URL));
-                    xURLTextBox.AddValidationRule(eValidationRule.CannotBeEmpty);
-                }
+                //if (AddAPIModelWizard != null)
+                //{
+                //    GingerCore.General.ObjFieldBinding(xURLTextBox, TextBox.TextProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.URL));
+                //    xURLTextBox.AddValidationRule(eValidationRule.CannotBeEmpty);
+                //}
             }
             else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString() || APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
             {
@@ -286,12 +302,11 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 else
                 {
                     xBrowseLoadButton.Visibility = Visibility.Collapsed;
-                    // AddAPIModelWizard.NextEnabled = false;
                 }
             }
             else if (FileRadioButton.IsChecked == true)
             {
-                if (!string.IsNullOrEmpty(xURLTextBox.Text))
+                if (!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
                 {
                     xBrowseLoadButton.ButtonText = "Load";
                 }
