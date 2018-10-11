@@ -59,6 +59,15 @@ namespace Ginger.SolutionWindows
         }
 
         /// <summary>
+        /// Gets sets the IsModelParamsFile
+        /// </summary>
+        public bool IsModelParamsFile
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// This method is default wizard action event
         /// </summary>
         /// <param name="WizardEventArgs"></param>
@@ -73,6 +82,7 @@ namespace Ginger.SolutionWindows
                     Path = ((ImportDataSourceBrowseFile)(WizardEventArgs.Wizard.Pages[1].Page)).Path;
                     SheetName = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).SheetName;
                     HeadingRow = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).HeadingRow;
+                    IsModelParamsFile = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).IsModelParamsFile;
                     break;
                 case EventType.AfterLoad:
                     DisplayData();
@@ -142,7 +152,7 @@ namespace Ginger.SolutionWindows
 
                     impParams.ExcelFileName = Path;
                     impParams.ExcelSheetName = SheetName;
-                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, true, true);
+                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, true, IsModelParamsFile);
                     if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
                     {
                         if (ExcelImportData.Tables.Count == 1)

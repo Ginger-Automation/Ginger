@@ -67,6 +67,17 @@ namespace Ginger.SolutionWindows
         }
 
         /// <summary>
+        /// Gets sets the IsModelParamsFile
+        /// </summary>
+        public bool IsModelParamsFile
+        {
+            get
+            {
+                return Convert.ToBoolean(chkModelParamsFile.IsChecked);
+            }
+        }
+
+        /// <summary>
         /// This method is default wizard action event
         /// </summary>
         /// <param name="WizardEventArgs"></param>

@@ -52,16 +52,10 @@ namespace Ginger.SolutionWindows
         /// </summary>
         public string SheetName { get; set; }
 
-        ///// <summary>
-        ///// Gets sets the HeadingRow
-        ///// </summary>
-        //public bool HeadingRow
-        //{
-        //    get
-        //    {
-        //        return Convert.ToBoolean(chkHeadingRow.IsChecked);
-        //    }
-        //}
+        /// <summary>
+        /// Gets sets the IsModelParamsFile
+        /// </summary>
+        public bool IsModelParamsFile { get; set; }
 
         /// <summary>
         /// This method is default wizard action event
@@ -76,6 +70,7 @@ namespace Ginger.SolutionWindows
                 case EventType.Active:
                     Path = ((ImportDataSourceBrowseFile)(mWizardEventArgs.Wizard.Pages[1].Page)).Path;
                     SheetName = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).SheetName;
+                    IsModelParamsFile = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).IsModelParamsFile;
 
                     WizardEventArgs = mWizardEventArgs;
                     impParams.ExcelFileName = Path;
@@ -141,8 +136,8 @@ namespace Ginger.SolutionWindows
         {
             Mouse.OverrideCursor = Cursors.Wait;
             WizardEventArgs.Wizard.ProcessStarted();
-
-            ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked), true, true);
+                        
+            ExcelImportData = impParams.GetExcelAllSheetData(SheetName, Convert.ToBoolean(chkHeadingRow.IsChecked), true, IsModelParamsFile);
             if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
             {
                 _tabItems = new List<TabItem>();

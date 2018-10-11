@@ -1226,6 +1226,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     }
 
                     DataTable dtNew = dt.Copy();
+                    dtNew.TableName = dt.TableName;
                     dsExact.Tables.Add(dtNew);
                 }
             }
@@ -1236,6 +1237,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 foreach (DataTable dt in ds.Tables)
                 {
                     DataTable dtNew = PivotTable(dt);
+                    dtNew.TableName = dt.TableName;
                     dsPivote.Tables.Add(dtNew);
                 }
                 dsExact = dsPivote;

@@ -81,7 +81,8 @@ namespace Ginger.SolutionWindows
                 string path = ((ImportDataSourceBrowseFile)(mWizardEventArgs.Wizard.Pages[1].Page)).Path;
                 string sheetName = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).SheetName;
                 bool headingRow = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2]).Page).HeadingRow;
-               
+                bool isModelParamsFile = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).IsModelParamsFile;
+
                 impParams.ExcelFileName = path;
                 impParams.ExcelSheetName = sheetName;
 
@@ -97,7 +98,7 @@ namespace Ginger.SolutionWindows
 
                 if (ExcelImportData == null || ExcelImportData.Tables.Count <= 0)
                 {
-                    ExcelImportData = impParams.GetExcelAllSheetData(sheetName, headingRow, true, true);
+                    ExcelImportData = impParams.GetExcelAllSheetData(sheetName, headingRow, true, isModelParamsFile);
                 }
                 foreach (DataTable dt in ExcelImportData.Tables)
                 {
