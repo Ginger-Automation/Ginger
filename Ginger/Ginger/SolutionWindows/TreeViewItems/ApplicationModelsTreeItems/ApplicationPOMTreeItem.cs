@@ -57,7 +57,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return NewTVItemStyle(mApplicationPOM, eImageType.ApplicationPOM, nameof(ApplicationPOMModel.Name));
+            return NewTVItemHeaderStyle(mApplicationPOM);
         }
 
         Page ITreeViewItem.EditPage()

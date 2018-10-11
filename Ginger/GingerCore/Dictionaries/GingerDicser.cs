@@ -22,12 +22,6 @@ using System.Windows;
 
 namespace GingerCore
 {    
-    public enum eUserType
-    {
-        Regular,
-        Business
-    }
-
     public enum eTermResKey
     {
         BusinessFlow, BusinessFlows,

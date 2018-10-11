@@ -16,20 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using System;
-using System.Diagnostics;
-using System.Windows.Controls;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore;
-using GingerCore.Repository;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Controls;
 
 namespace Ginger.Run.RunSetActions
 {
-    public abstract class RunSetActionBase : RepositoryItem
+    public abstract class RunSetActionBase : RepositoryItemBase
     {
         public enum eRunAt
         {

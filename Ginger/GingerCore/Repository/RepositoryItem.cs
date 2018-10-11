@@ -29,38 +29,13 @@ using System.Reflection;
 
 namespace GingerCore
 {
-    public abstract class RepositoryItem: RepositoryItemBase 
-    {
-        public static partial class Fields
-        {
-            public static string Image = "Image";
-            public static string FileName = "FileName";
-            public static string Guid = "Guid";
-            public static string ParentGuid = "ParentGuid";
-            public static string CreatedBy = "CreatedBy";
-            public static string SharedRepoInstanceImage = "SharedRepoInstanceImage";
-        }
+    public abstract class RepositoryItem : RepositoryItemBase
+    {        
 
         //[IsSerializedForLocalRepository]
         //public new Guid ParentGuid { get; set; }
 
-        bool mIsSharedRepositoryInstance = false;
-        public bool IsSharedRepositoryInstance
-        {
-            get
-            {
-                return mIsSharedRepositoryInstance;
-            }
-            set
-            {
-                if (mIsSharedRepositoryInstance != value)
-                {
-                    mIsSharedRepositoryInstance = value;
-                    OnPropertyChanged(Fields.SharedRepoInstanceImage);
-                }
-            }
-        }
-               
+
         // TODO: remove or squeeze to one field
 
         [IsSerializedForLocalRepository]
@@ -82,7 +57,7 @@ namespace GingerCore
         //public new string ExternalID { get; set; }
 
         public bool Deleted { get; set; }
-        
+
         public new string ObjFolderName { get { return FolderName(this.GetType()); } }
 
         public RepositoryItem()
@@ -90,57 +65,44 @@ namespace GingerCore
             UpdateControlFields();
         }
 
-        public void UpdateControlFields()
-        {
-            if (Guid == null || Guid == Guid.Empty)
-            {
-                Guid = Guid.NewGuid();
-            }
-            if (CreatedBy == null || CreatedBy == string.Empty)
-            {
-                CreatedBy = Environment.UserName;
-                Created = DateTime.UtcNow;
-            }
-
-            Deleted = false;
-        }
         
+
         //public void SaveParentGUID()
         //{
         //    ParentGuid = Guid;
         //    Guid = Guid.NewGuid();
         //}
-        
+
         public virtual void Save()
         {
             SaveToFile(FileName);
         }
 
-        public void SaveToFile(string fileName, bool FlagToUpdateFileName=true)
+        public void SaveToFile(string fileName, bool FlagToUpdateFileName = true)
         {
             //DoPreSavePreperations;
             this.Version++;
             this.LastUpdate = DateTime.UtcNow;
             this.LastUpdateBy = Environment.UserName;
-            if(FlagToUpdateFileName)
+            if (FlagToUpdateFileName)
                 this.FileName = fileName;
             this.ClearBackup();
 
             RepositorySerializer rs = new RepositorySerializer();
-            rs.SaveToFile(this,fileName);
+            rs.SaveToFile(this, fileName);
         }
-        
+
         public static object LoadFromFile(Type type, string FileName)
         {
             GingerCore.Repository.RepositorySerializer RS = new RepositorySerializer();
-            RepositoryItem ri = (RepositoryItem)RS.DeserializeFromFile(type, FileName);
+            RepositoryItemBase ri = (RepositoryItemBase)RS.DeserializeFromFile(type, FileName);
             ri.FileName = FileName;
             return ri;
         }
         public static object LoadFromFile(string FileName)
         {
             GingerCore.Repository.RepositorySerializer RS = new RepositorySerializer();
-            RepositoryItem ri = (RepositoryItem)RS.DeserializeFromFile(FileName);
+            RepositoryItemBase ri = (RepositoryItemBase)RS.DeserializeFromFile(FileName);
             ri.FileName = FileName;
             return ri;
         }
@@ -152,18 +114,18 @@ namespace GingerCore
             GingerCore.Repository.RepositorySerializer RS = new RepositorySerializer();
             RS.DeserializeFromTextWithTargetObj(sourceObj.GetType(), sourceObjXml, targetObj);
         }
-        
-        public RepositoryItem CreateInstance(bool originFromShredRepo=false)
-        {
-            RepositoryItem copiedItem = (RepositoryItem)this.CreateCopy();
-            copiedItem.ParentGuid = this.Guid;
-            if (originFromShredRepo)
-            {
-                copiedItem.IsSharedRepositoryInstance = true;
-                copiedItem.ExternalID = this.ExternalID;
-            }
-                return copiedItem;
-        }
+
+        //public RepositoryItem CreateInstance(bool originFromShredRepo = false)
+        //{
+        //    RepositoryItem copiedItem = (RepositoryItem)this.CreateCopy();
+        //    copiedItem.ParentGuid = this.Guid;
+        //    if (originFromShredRepo)
+        //    {
+        //        copiedItem.IsSharedRepositoryInstance = true;
+        //        copiedItem.ExternalID = this.ExternalID;
+        //    }
+        //    return copiedItem;
+        //}
 
         //// Temp solution for backup restore until we have the obj ref tree copy
         //public void SaveBackup()
@@ -214,10 +176,10 @@ namespace GingerCore
             if (T == typeof(BusinessFlow)) { return "BusinessFlow"; }
             if (T == typeof(ActivitiesGroup)) { return "ActivitiesGroup"; }
             if (T == typeof(Activity)) { return "Activity"; }
-            if (T == typeof(ErrorHandler)) { return "Activity"; }            
+            if (T == typeof(ErrorHandler)) { return "Activity"; }
             if (typeof(Act).IsAssignableFrom(T)) { return "Action"; }
             if (typeof(VariableBase).IsAssignableFrom(T)) { return "Variable"; }
-            if (typeof(DataSourceBase).IsAssignableFrom(T)) return "DataSource";        
+            if (typeof(DataSourceBase).IsAssignableFrom(T)) return "DataSource";
             if (T.FullName == "GingerCore.Agent") return "Agent";
             if (T.FullName == "GingerCore.Environments.ProjEnvironment") return "Environment";
             if (T.FullName == "Ginger.Run.RunSetConfig") return "RunSetConfig";
@@ -229,14 +191,14 @@ namespace GingerCore
             if (T.FullName == "Ginger.Reports.HTMLReportConfiguration") return "HTMLReportConfiguration";
             if (T.FullName == "Ginger.TagsLib.RepositoryItemTag") return "RepsotirotyItemTag";
 
-            if (T== typeof(ApplicationDBTableModel)) return "ApplicationDBTableModel";
-            if (T ==  typeof (ApplicationDBModel)) return "ApplicationDBModel";
+            if (T == typeof(ApplicationDBTableModel)) return "ApplicationDBTableModel";
+            if (T == typeof(ApplicationDBModel)) return "ApplicationDBModel";
             if (T == typeof(ApplicationPOMModel)) return "ApplicationPOM";
-            
+
             // Make sure we must impl or get exception
             throw new Exception("Unknown Type for Short Type Name " + T.Name);
         }
-        
+
         public new string ObjFileExt { get { return FileExt(this.GetType()); } }
 
         public new static string FolderName(Type T)
@@ -289,20 +251,6 @@ namespace GingerCore
 
 
 
-        public System.Drawing.Image SharedRepoInstanceImage
-        {
-            get
-            {
-                if (IsSharedRepositoryInstance)
-                    return Resources.Star_16x16;
-                else
-                    return Resources.StarGray_16x16;
-            }
-        }
-
-        public virtual void UpdateItemFieldForReposiotryUse()
-        {
-            UpdateControlFields();
-        }
+      
     }
 }

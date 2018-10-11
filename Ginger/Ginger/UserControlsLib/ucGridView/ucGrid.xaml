@@ -1,0 +1,136 @@
+<UserControl x:Class="Ginger.ucGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Ginger="clr-namespace:Ginger"              
+             xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="400"  d:DesignWidth="600">
+    <UserControl.Resources>
+        <Image x:Key="Mark" Source="{StaticResource @CheckAllColumn_16x16.png}"></Image>
+        <Image x:Key="UnMark" Source="{StaticResource @UnCheckAllColumn_16x16.png}"></Image>
+    </UserControl.Resources>
+    <DockPanel x:Name="mainDockPanel"  HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}">
+        <!-- Grid Title -->
+        <Border x:Name="xSimpleHeader" DockPanel.Dock="Top" Visibility="{Binding  ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}"  >
+            <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource $ucGridTitleLightStyle}">Grid Title</Label>
+        </Border>
+        <DockPanel x:Name="xEnhancedHeader" DockPanel.Dock="Top" VerticalAlignment="Center" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="5,5,5,0">
+                <usercontrols:ImageMakerControl x:Name="xEnhancedHeaderIcon" ImageType="Empty" Width="32" VerticalAlignment="Top" HorizontalAlignment="Left" Foreground="{StaticResource $BackgroundColor_DarkBlue}" Margin="0,5,0,0"/>
+                <Label x:Name="xEnhancedHeaderTitle" Content="Item Name" FontSize="25"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,-3,0,0" />
+            </StackPanel>
+            <GridSplitter Height="1" ResizeDirection="Rows" DockPanel.Dock="Bottom" Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,5,0,5" IsEnabled="False" Background="LightGray" />
+            <DockPanel x:Name="xEnhancedHeaderToolsPnl" DockPanel.Dock="Bottom" Margin="0,20,0,0" HorizontalAlignment="Left">
+                <usercontrols:ucButton x:Name="xEnhancedHeaderSaveAllButton" ToolTip="Save All Changed Items" VerticalAlignment="Bottom" HorizontalAlignment="Left" DockPanel.Dock="Left" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Visibility="Visible" Margin="0,0,-4,0"></usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="xEnhancedHeaderAddButton" AutomationProperties.AutomationId="AddButton" ToolTip="Add Item" VerticalAlignment="Bottom" HorizontalAlignment="Left" DockPanel.Dock="Left" ButtonType="CircleImageButton"  ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Add"  Visibility="Visible" Margin="0,0,0,2"/>
+            </DockPanel>
+        </DockPanel>
+
+        <!-- Grid Tools Bar -->
+        <Border DockPanel.Dock="Top" Visibility="{Binding  ElementName=ToolsTray, Path=Visibility}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" Background="{StaticResource $BackgroundColor_LightGray}" >
+            <ToolBarTray x:Name="ToolsTray" Background="{StaticResource $BackgroundColor_LightGray}"  >
+                <ToolBar x:Name="toolbar" ToolBarTray.IsLocked="True" Band="1" Background="{StaticResource $BackgroundColor_LightGray}"
+                     IsHitTestVisible="True" ScrollViewer.CanContentScroll="True" Width="{Binding ElementName=ToolsTray,Path=ActualWidth}">
+                    <Button x:Name="btnMarkAll" ToolTip="Mark All As InActive"  Visibility="Collapsed" Click="Btn_MarkUnMarkAll">
+                        <Image Source="{DynamicResource @UnCheckAllColumn_16x16.png}"/>
+                    </Button>
+                    <Button x:Name="btnSaveAllChanges" ToolTip="Save All Changes" Click="btnSaveAllChanges_Click" Visibility="Collapsed">
+                        <Image Source="{DynamicResource @SaveAll_16x16}" />
+                    </Button>
+                    <Button x:Name="btnSaveSelectedChanges" ToolTip="Save Selected Changes" Visibility="Collapsed">
+                        <Image Source="{DynamicResource @Save_16x16}"/>
+                    </Button>
+                    <Button x:Name="btnRefresh" usercontrols:ImageMaker.Content="Refresh" Width="20" ToolTip="Refresh" Click="btnSaveAllChanges_Click">
+                    </Button>
+                    <Button x:Name="btnUndo" ToolTip="Undo Delete Changes" Click="btnUndo_Click" Visibility="Collapsed">
+                        <Image Source="{DynamicResource @Undo_16x16}" />
+                    </Button>
+                    <Button x:Name="btnEdit" ToolTip="Edit Selected" Click="btnEdit_Click">
+                        <Image Source="{DynamicResource @Edit_16x16}" />
+                    </Button>
+                    <Button x:Name="btnAdd" ToolTip="Add New" Click="btnAdd_Click">
+                        <Image Source="{DynamicResource @Add_16x16}" />
+                    </Button>
+                    <Button x:Name="btnDelete" ToolTip="Delete Selected" Click="btnDelete_Click">
+                        <Image Source="{DynamicResource @Delete_16x16}" />
+                    </Button>
+                    <Button x:Name="btnClearAll" ToolTip="Delete All" Click="btnClearAll_Click">
+                        <Image Source="{DynamicResource @Trash_16x16}" />
+                    </Button>
+                    <Button x:Name="btnDuplicate" ToolTip="Duplicate Selected" Click="btnDuplicate_Click" Visibility="Collapsed">
+                        <Image Source="{DynamicResource @Duplicate_16x16.png}" />
+                    </Button>
+                    <Button x:Name="btnCut" ToolTip="Cut Selected" Click="btnCut_Click" Visibility="Collapsed">
+                        <Image Source="{StaticResource @Cut_16x16}" />
+                    </Button>
+                    <Button x:Name="btnCopy" ToolTip="Copy Selected" Click="btnCopy_Click" Visibility="Collapsed">
+                        <Image Source="{StaticResource @Duplicate_16x16.png}" />
+                    </Button>
+                    <Button x:Name="btnPaste" ToolTip="Paste" Click="btnPaste_Click" Visibility="Collapsed">
+                        <Image Source="{StaticResource @Paste_16x16}" />
+                    </Button>
+                    <Button x:Name="btnUp" ToolTip="Move Up" Click="btnUp_Click">
+                        <Image Source="{StaticResource @ArrowUp_16x16}"  />
+                    </Button>
+                    <Button x:Name="btnDown" ToolTip="Move Down" Click="btnDown_Click">
+                        <Image Source= "{StaticResource @ArrowDown_16x16}"/>
+                    </Button>
+
+                    <Label x:Name="lblSearch" Style="{DynamicResource @LabelStyle}">Search:</Label>
+                    <TextBox x:Name="txtSearch" Width="100" TextChanged="txtSearch_TextChanged" Style="{DynamicResource @ToolBarTextBoxStyle}" ></TextBox>
+                    <Button x:Name="btnClearSearch" ToolTip="Clear Searched Text" Click="btnClearSearchText_Click">
+                        <Image Source="{DynamicResource @DisabledClear_16x16}" />
+                    </Button>
+                    <Ginger:ucTagsViewer x:Name="TagsViewer" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Collapsed" AddTags="False"/>
+
+                    <Label x:Name="lblView" Style="{DynamicResource @LabelStyle}" Visibility="Collapsed">View:</Label>
+                    <ComboBox x:Name="comboView" Width="100" SelectionChanged="comboView_SelectionChanged" Style="{DynamicResource @ToolBarComboBoxStyle}" Visibility="Collapsed">
+                    </ComboBox>
+
+                </ToolBar>
+            </ToolBarTray>
+        </Border>
+
+        <Grid x:Name="MainAreaGrid">
+            <!-- Data Grid -->
+            <DataGrid x:Name="grdMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Loaded="grdMain_Loaded"                   
+                  AllowDrop="True" 
+                  
+                  AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeColumns="True" 
+                  CanUserResizeRows="True" AreRowDetailsFrozen="True" CanUserAddRows="False" 
+                  PreviewMouseDown="grdMain_SelectionChanged" SelectionChanged="grdMain_SelectionChanged" SelectionMode="Extended"  SelectionUnit="FullRow" 
+                  IsSynchronizedWithCurrentItem="True"
+                  ColumnHeaderStyle="{DynamicResource @DataGridColumnHeader}" CellStyle="{DynamicResource @DataGridCellStyle}" 
+                  AlternationCount="2" AlternatingRowBackground="#F6F6F6"
+                  LoadingRow="grdMain_LoadingRow" 
+                  Background="{StaticResource $BackgroundColor_White}"
+                  BorderBrush="{DynamicResource @Skin1_ColorA}"
+                  BorderThickness="1"    
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"                  
+                  SizeChanged="grdMain_SizeChanged"        
+                  ScrollViewer.ScrollChanged="grdMain_ScrollChanged"
+                  >
+                <DataGrid.RowStyle>
+                    <Style TargetType="{x:Type DataGridRow}">
+                        <Setter Property="MaxHeight" Value="70"/>
+                        <EventSetter Event="MouseDoubleClick" Handler="Row_DoubleClick"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource @Skin1_ColorF}"/>
+                                <!--<Setter Property="Foreground" Value="White"/>-->
+                                <Setter Property="BorderBrush" Value="{DynamicResource @Skin1_ColorA}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.RowHeaderStyle>
+                    <Style TargetType="DataGridRowHeader">
+                        <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}"/>
+                    </Style>
+                </DataGrid.RowHeaderStyle>
+            </DataGrid>
+        </Grid>
+    </DockPanel>
+</UserControl>

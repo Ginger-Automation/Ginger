@@ -17,10 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using GingerWPF.WizardLib;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace GingerWPF.PluginsLib.AddPluginWizardLib
@@ -51,10 +52,13 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                     xVersionTextBox.Text = mPluginPackage.PluginPackageVersion;
                     FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
 
-                    ServicesGrid.ItemsSource = mPluginPackage.GetServices();
+                    List<StandAloneAction> actions = mPluginPackage.LoadServicesInfoFromFile();
 
-                    // TODO: get selected service only
-                    ObservableList<StandAloneAction> actions = mPluginPackage.GetStandAloneActions();
+                    // show distict list of the services
+                    ServicesGrid.ItemsSource = (from x in actions select x.ServiceID).Distinct();
+
+                    // TODO: get selected service only  - add radio show al or per selected
+                    
                     ActionsDataGrid.ItemsSource = actions;
                     
                     break;

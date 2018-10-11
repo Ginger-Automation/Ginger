@@ -20,12 +20,14 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -120,33 +122,15 @@ namespace Amdocs.Ginger.Repository
             return ShortName;
         }
 
-        // TODO: temp by default all repository items use the old Serializer, unless flagged to use the new, overrride in sub class
-        public virtual bool UseNewRepositorySerializer { get { return false; } }
+        
+        static NewRepositorySerializer mRepositorySerializer = new NewRepositorySerializer();
 
-        static NewRepositorySerializer NewRepositorySerializer2;
-        static IRepositorySerializer OldRepositorySerializer;
-
-        // TODO: temp until we move all items to new RS
-        public static void InitSerializers(IRepositorySerializer oldRepositorySerializer)
-        {
-            OldRepositorySerializer = oldRepositorySerializer;
-            NewRepositorySerializer2 = new NewRepositorySerializer();
-
-
-        }
 
         public IRepositorySerializer RepositorySerializer
         {
             get
-            {
-                if (UseNewRepositorySerializer)
-                {
-                    return NewRepositorySerializer2;
-                }
-                else
-                {
-                    return OldRepositorySerializer;
-                }
+            {                
+                return mRepositorySerializer;                
             }
         }
 
@@ -180,28 +164,11 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public bool IsDirty
-        {
-            get
-            {
-                if (mBackupDic == null)
-                    return false;
-                else
-                    return true;
-            }
-        }
-
-        public void SaveToFile(string FilePath)
-        {
-            RepositorySerializer.SaveToFile(this, FilePath);
-        }
-
         public void SaveBackup()
         {
-            if (IsDirty == false)
+            if (DirtyStatus != eDirtyStatus.NoChange) 
             {
-                CreateBackup();              
-                OnPropertyChanged(nameof(IsDirty));
+                CreateBackup();                
             }
             else
             {
@@ -212,7 +179,6 @@ namespace Amdocs.Ginger.Repository
         // Deep backup keep obj ref and all prop, restore to real original situation
         private void CreateBackup(bool isLocalBackup = false)
         {
-
             if (!isLocalBackup)
             {
                 mBackupDic = new Dictionary<string, object>();                
@@ -227,7 +193,7 @@ namespace Amdocs.Ginger.Repository
                     if (mi.Name == nameof(mBackupDic)) continue; // since we are running on repo item which contain the dic we need to ignore trying to save it...
                 }
                 if (mi.Name == nameof(mLocalBackupDic)) continue;
-                dynamic v = null;
+                object v = null;  
                 if (mi.MemberType == MemberTypes.Property)
                 {
                     //Make sure we can do set - not all props have set, so do not save if there is only get
@@ -237,8 +203,8 @@ namespace Amdocs.Ginger.Repository
                         //TODO: mark with no backup
                         //TODO: find better way, make it generic
                         if (mi.Name != nameof(FileName) && mi.Name != nameof(FilePath) && mi.Name != nameof(ObjFolderName) && mi.Name != nameof(ObjFileExt) && mi.Name != nameof(ContainingFolder) && mi.Name != nameof(ContainingFolderFullPath)) // Will cause err to get filename on each repo item
-                        {
-                            v = PI.GetValue(this);
+                        {                            
+                                v = PI.GetValue(this);                                                       
                         }
                     }
                 }
@@ -246,22 +212,20 @@ namespace Amdocs.Ginger.Repository
                 {
                     v = this.GetType().GetField(mi.Name).GetValue(this);
                 }
-                
-                if (v is IObservableList)
-                {
-                    BackupList(mi.Name, v, isLocalBackup);
-                }
-                else
-                {
-                    // TODO: add List<string>
-                }
-                // Save it
 
                 if (!isLocalBackup)
                 {
-                    mBackupDic.Add(mi.Name, v);                  
-                }                    
-                mLocalBackupDic.Add(mi.Name, v);
+                    mBackupDic.Add(mi.Name, v);
+                }
+
+                if (v is IObservableList)
+                {
+                    BackupList(mi.Name, (IObservableList)v, isLocalBackup);
+                }
+                else
+                {
+                    mLocalBackupDic.Add(mi.Name, v);
+                }
             }
         }
 
@@ -269,7 +233,7 @@ namespace Amdocs.Ginger.Repository
         private void BackupList(string Name, IObservableList v, bool isLocalBackup = false)
         {
             //TODO: if v is Lazy bak the text without drill down
-            List<dynamic> list = new List<dynamic>();
+            List<object> list = new List<object>();  
             foreach (object o in v)
             {
                 // Run back on each item, so will drill down the hierarchy
@@ -284,7 +248,7 @@ namespace Amdocs.Ginger.Repository
             {                
                 mBackupDic.Add(Name + "~List", list);
             }                        
-                mLocalBackupDic.Add(Name + "~List", list);            
+            mLocalBackupDic.Add(Name + "~List", list);            
         }
 
         // Item which will not be saved to the XML - for example dynamic activities or temp output values - no expected or store to
@@ -300,33 +264,32 @@ namespace Amdocs.Ginger.Repository
 
         public void ClearBackup(bool isLocalBackup = false)
         {
-                var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
-                foreach (MemberInfo mi in properties)
+            var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
+            foreach (MemberInfo mi in properties)
+            {
+                if (!isLocalBackup)
                 {
-                    if (!isLocalBackup)
+                    if (mi.Name == nameof(mBackupDic)) continue;
+                }
+                if (mi.Name == nameof(mLocalBackupDic)) continue;
+                object v = null;
+                v = this.GetType().GetField(mi.Name).GetValue(this);
+                if (v is IObservableList)
+                {
+                    foreach (object o in (IObservableList)v)
                     {
-                        if (mi.Name == nameof(mBackupDic)) continue;
-                    }
-                    if (mi.Name == nameof(mLocalBackupDic)) continue;
-                    dynamic v = null;
-                    v = this.GetType().GetField(mi.Name).GetValue(this);
-                    if (v is IObservableList)
-                    {
-                        foreach (object o in v)
+                        if (o is RepositoryItemBase)
                         {
-                            if (o is RepositoryItemBase)
-                            {
-                                ((RepositoryItemBase)o).ClearBackup(isLocalBackup);
-                            }
+                            ((RepositoryItemBase)o).ClearBackup(isLocalBackup);
                         }
                     }
                 }
-                if (!isLocalBackup)
-                {
-                    mBackupDic = null;
-                    OnPropertyChanged(nameof(IsDirty));
-                }
-                mLocalBackupDic = null;                     
+            }
+            if (!isLocalBackup)
+            {
+                mBackupDic = null;                
+            }
+            mLocalBackupDic = null;
         }
 
         private void RestoreBackup(bool isLocalBackup = false)
@@ -352,7 +315,7 @@ namespace Amdocs.Ginger.Repository
                 // Console.WriteLine(this.ToString() +  " - mi:" + mi.Name + " - " + mi.ToString());                              
                 if (mi.Name == nameof(mBackupDic) || mi.Name == nameof(mLocalBackupDic) || mi.Name == nameof(FileName) || mi.Name == nameof(FilePath) || mi.Name == nameof(ObjFolderName) || mi.Name == nameof(ObjFileExt) || mi.Name == nameof(ContainingFolder) || mi.Name == nameof(ContainingFolderFullPath))
                     continue;
-                dynamic v;
+                object v;
                 bool b;
                 if (isLocalBackup)
                 {
@@ -374,9 +337,20 @@ namespace Amdocs.Ginger.Repository
                         //Make sure we can do set - not all props have set
                         PropertyInfo PI = this.GetType().GetProperty(mi.Name);
 
-                        if (PI.CanWrite)
+                        if (typeof(IObservableList).IsAssignableFrom(PI.PropertyType))
                         {
-                            PI.SetValue(this, v);
+                            IObservableList list = (IObservableList)PI.GetValue(this);                            
+                            if (list != null)
+                            {
+                                RestoreList(mi.Name, list, isLocalBackup);
+                            }
+                        }
+                        else
+                        {
+                            if (PI.CanWrite)
+                            {
+                                PI.SetValue(this, v);
+                            }
                         }
                     }
                     catch (Exception)
@@ -385,27 +359,31 @@ namespace Amdocs.Ginger.Repository
                 }
                 else if (mi.MemberType == MemberTypes.Field)
                 {
-                    // Do reverse + resotre each obj
+
+                    // Do reverse + restore each obj
                     // Do set only if we can really do set, some attrs are get only
                     // FieldInfo fi = this.GetType().GetField(mi.Name, BindingFlags.SetProperty);
                     FieldInfo fi = this.GetType().GetField(mi.Name);
-                    if (fi != null && fi.IsStatic == false)
+
+
+                    if (typeof(IObservableList).IsAssignableFrom(fi.FieldType))
                     {
-                        fi.SetValue(this, v);
+                        IObservableList list = (IObservableList)fi.GetValue(this);                       
+                        if (list != null)
+                        {
+                            RestoreList(mi.Name, list, isLocalBackup);
+                        }
+                    }
+                    else
+                    {
+
+                        if (fi != null && fi.IsStatic == false)
+                        {
+                            fi.SetValue(this, v);
+                        }
                     }
                 }
-
-                if (v is IObservableList)
-                {
-                    // Console.WriteLine("Restoring IObservableList: - " + mi.Name);
-                    RestoreList(mi.Name, v, isLocalBackup);
-                }
-                else
-                {
-                    // TODO: add List<string>
-                    // else err
-                    //temp below until we have it
-                }
+                
                 if (isLocalBackup)
                 {
                     mLocalBackupDic.Remove(mi.Name);
@@ -421,14 +399,14 @@ namespace Amdocs.Ginger.Repository
             {
                 if (mLocalBackupDic.Count() != 0)
                 {
-                    // TODO: err handler
+                    // TODO: err handler                    
                 }
             }
             else
             {
                 if (mBackupDic.Count() != 0)
                 {
-                    // TODO: err handler
+                    // TODO: err handler 
                 }
             }
         }
@@ -452,7 +430,8 @@ namespace Amdocs.Ginger.Repository
                 // TODO: handle err 
             }
 
-            foreach (object o in (List<dynamic>)Backuplist)
+
+            foreach (object o in ((IList)Backuplist)) 
             {
                 v.Add(o);
 
@@ -509,6 +488,14 @@ namespace Amdocs.Ginger.Repository
             set;
         }
 
+        public virtual string ItemNameField
+        {
+            get
+            {
+                throw new NotImplementedException("Repository Item didn't implement ItemNameField - " + this.GetType().FullName);                
+            }
+        }
+
         public void InitHeader()
         {
             RepositoryItemHeader = new RepositoryItemHeader()
@@ -516,10 +503,20 @@ namespace Amdocs.Ginger.Repository
                 Created = GetUTCDateTime(),
                 CreatedBy = Environment.UserName,
                 GingerVersion = GingerVersion.GetCurrentVersion(),
+                Version= 1,
+                LastUpdateBy = Environment.UserName,
                 LastUpdate = GetUTCDateTime()
 
                 //TODO: other fields
             };
+        }
+
+        public void UpdateHeader()
+        {
+            RepositoryItemHeader.Version++;
+            RepositoryItemHeader.GingerVersion = GingerVersion.GetCurrentVersion();
+            RepositoryItemHeader.LastUpdateBy = Environment.UserName;
+            RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
         }
 
         private DateTime GetUTCDateTime()
@@ -573,7 +570,7 @@ namespace Amdocs.Ginger.Repository
 
                 // we drill down to ObservableList
                 if (typeof(IObservableList).IsAssignableFrom(PI.FieldType))
-                {
+                {                    
                     IObservableList obj = (IObservableList)PI.GetValue(item);
                     if (obj == null) return;
                     List<object> items = ((IObservableList)obj).ListItems;
@@ -611,24 +608,9 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public static string GetOldRepositoryItemFileExt(Type T)
-        {
-            return OldRepositorySerializer.GetShortType(T);
-        }
-
         public string FileExt(Type T)
         {
-            if (UseNewRepositorySerializer)
-            {
-                return NewRepositorySerializer2.GetShortType(T);
-            }
-            else
-            {
-                return OldRepositorySerializer.GetShortType(T);
-            }
-
-
-            //TODO: use below after we move to GingerCoreCommon
+            return RepositorySerializer.GetShortType(T);
         }
 
         private RepositoryItemKey mRepositoryItemKey;
@@ -651,17 +633,8 @@ namespace Amdocs.Ginger.Repository
         public virtual string RelativeFilePath { get; set; }
 
         internal void UpdateBeforeSave()
-        {
-            {
-                if (RepositoryItemHeader == null)
-                {
-                    InitHeader();
-                }
-                RepositoryItemHeader.Version++;
-                RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
-                RepositoryItemHeader.LastUpdateBy = Environment.UserName;
-                this.ClearBackup();
-            }
+        {            
+            this.ClearBackup();
         }
 
         public string GetContainingFolder()
@@ -744,30 +717,44 @@ namespace Amdocs.Ginger.Repository
             set { mFilePath = value; OnPropertyChanged(nameof(FilePath)); }
         }
 
-        #region SourceControl
-
-        public static ISourceControl SourceControl = null;
-        public eImageType? SourceControlStatus
+        public virtual eImageType ItemImageType
         {
             get
             {
-                if (SourceControl != null)
-                {
-                    eImageType st = SourceControl.GetFileStatusForRepositoryItemPath(mFilePath);
-                    return st;
-                }
-                else
-                {
-                    return null;
-                }
+                throw new NotImplementedException("ItemImageType not defined for: " + this.GetType().FullName);                
             }
         }
 
-        public void RefreshSourceControlStatus()
+        #region SourceControl
+
+        private static ISourceControl SourceControl;
+
+        private eImageType mSourceControlStatus = eImageType.Null;
+        public eImageType SourceControlStatus
         {
-            OnPropertyChanged(nameof(SourceControlStatus));
+            get
+            {
+                if (mSourceControlStatus == eImageType.Null)
+                {
+                    mSourceControlStatus = eImageType.Pending;
+                }
+                return mSourceControlStatus;
+            }
         }
 
+        public async Task RefreshSourceControlStatus()
+        {
+            if (mSourceControlStatus != eImageType.Null)
+            {
+                mSourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(mFilePath).ConfigureAwait(true);
+                OnPropertyChanged(nameof(SourceControlStatus));
+            }
+        }
+
+        public static void SetSourceControl(ISourceControl sourceControl)
+        {
+            SourceControl = sourceControl;
+        }
         #endregion SourceControl
 
         #region Dirty
@@ -785,7 +772,10 @@ namespace Amdocs.Ginger.Repository
                 if (mDirtyStatus != value)
                 {
                     mDirtyStatus = value;
-                    if (value == eDirtyStatus.Modified) RaiseDirtyChangedEvent();
+                    if (value == eDirtyStatus.Modified)
+                    {
+                        RaiseDirtyChangedEvent();
+                    }
                     OnPropertyChanged(nameof(DirtyStatus));
                     OnPropertyChanged(nameof(DirtyStatusImage));
                 }
@@ -876,7 +866,6 @@ namespace Amdocs.Ginger.Repository
                     IObservableList obj = (IObservableList)PI.GetValue(this);
                     if (obj == null) continue;
                     TrackObservableList((IObservableList)obj);
-
                 }
             }
 
@@ -902,6 +891,7 @@ namespace Amdocs.Ginger.Repository
 
         private void TrackObservableList(IObservableList obj)
         {
+            // No need to track items which are lazy load            
             List<object> items = ((IObservableList)obj).ListItems;
 
             ((INotifyCollectionChanged)obj).CollectionChanged += ((RepositoryItemBase)this).ChildCollectionChanged;
@@ -983,6 +973,84 @@ namespace Amdocs.Ginger.Repository
         // undo shoudl reset to - restpre from bak
 
         #endregion Dirty
+
+
+        public RepositoryItemBase CreateInstance(bool originFromSharedRepository = false)
+        {
+            RepositoryItemBase copiedItem = this.CreateCopy();
+            copiedItem.ParentGuid = this.Guid;
+            if (originFromSharedRepository) 
+            {
+                copiedItem.IsSharedRepositoryInstance = true;
+                copiedItem.ExternalID = this.ExternalID;
+            }
+            return copiedItem;
+        }
+
+        bool mIsSharedRepositoryInstance = false;
+        public bool IsSharedRepositoryInstance
+        {
+            get
+            {
+                return mIsSharedRepositoryInstance;
+            }
+            set
+            {
+                if (mIsSharedRepositoryInstance != value)
+                {
+                    mIsSharedRepositoryInstance = value;
+                    
+                    OnPropertyChanged(nameof(SharedRepoInstanceImage));
+                }
+            }
+        }
+
+        public eImageType SharedRepoInstanceImage
+        {
+            get
+            {
+                if (IsSharedRepositoryInstance)
+                { 
+                    return eImageType.SharedRepositoryItem;
+                }
+                else
+                { 
+                    return eImageType.NonSharedRepositoryItem;
+                }
+            }
+        }
+
+        public virtual RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase selectedItem, RepositoryItemBase existingItem, string itemPartToUpdate)
+        {
+            throw new NotImplementedException("GetUpdatedRepoItem() was not implemented for this Item type");
+        }
+
+        public virtual void UpdateInstance(RepositoryItemBase instanceItem, string itemPartToUpdate, RepositoryItemBase hostItem = null)
+        {
+            throw new NotImplementedException("UpdateInstance() was not implemented for this Item type");
+        }
+
+        public static void ObjectsDeepCopy(RepositoryItemBase sourceObj, RepositoryItemBase targetObj)
+        {
+            NewRepositorySerializer repoSer = new NewRepositorySerializer(); 
+
+            string sourceObjXml = repoSer.SerializeToString(sourceObj);
+            NewRepositorySerializer RS = new NewRepositorySerializer();            
+
+            RS.DeserializeFromTextWithTargetObj(sourceObj.GetType(), sourceObjXml, targetObj);
+         }
+
+        public virtual void UpdateItemFieldForReposiotryUse()
+        {
+            UpdateControlFields();
+        }
+
+        public void UpdateControlFields()
+        {
+            // from old RI
+        }
+       
+      
 
     }
 }

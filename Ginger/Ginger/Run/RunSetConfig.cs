@@ -16,16 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using System;
+using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
-using GingerCore;
 using GingerCore.GeneralLib;
+using Amdocs.Ginger.Common.Enums;
+using System;
 
 namespace Ginger.Run
 {
-    public class RunSetConfig : RepositoryItem
+    public class RunSetConfig : RepositoryItemBase
     {        
         private string mName;
         [IsSerializedForLocalRepository]
@@ -41,6 +41,7 @@ namespace Ginger.Run
                 }
             }
         }
+        
 
         private string mDescription;
         [IsSerializedForLocalRepository]
@@ -133,6 +134,22 @@ namespace Ginger.Run
             set
             {
                 this.Name = value;
+            }
+        }
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.RunSet;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
             }
         }
     }

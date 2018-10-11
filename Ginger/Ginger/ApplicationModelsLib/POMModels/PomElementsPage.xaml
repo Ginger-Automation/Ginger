@@ -25,63 +25,40 @@
             </DataTemplate>
 
             <DataTemplate  x:Key="xTestStatusIconTemplate">
-                <UserControls:ImageMakerControl x:Name="xStatusIconImageMakerControl" ImageType="{Binding LocateStatusIcon}" ImageToolTip="{Binding LocateStatusError}" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                <UserControls:ImageMakerControl x:Name="xStatusIconImageMakerControl" ImageType="{Binding StatusIcon}" ImageToolTip="{Binding StatusError}" SetAsFontImageWithSize="16"  Width="16" Height="16" />
                 <DataTemplate.Triggers>
-                    <DataTrigger Binding="{Binding LocateStatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Passed">
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Passed">
                         <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Green"/>
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding LocateStatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Failed">
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Failed">
                         <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Red"/>
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding LocateStatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Pending">
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Pending">
                         <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Orange"/>
                     </DataTrigger>
                 </DataTemplate.Triggers>    
             </DataTemplate>
             
         </Grid.Resources>
-        
+
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="Row0" Height="10" MinHeight="40"/>
             <RowDefinition x:Name="Row1" Height="76*" MinHeight="35"/>
             <RowDefinition  x:Name="Row2" Height="8*" MinHeight="20"/>
         </Grid.RowDefinitions>
 
-        <StackPanel x:Name="xSpyPanel" HorizontalAlignment="Left" Orientation="Horizontal" Grid.Row="0">
-            <ToggleButton x:Name="LiveSpyButton" Click="LiveSpyHandler"  ToolTip="Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key" Width="24" Height="24" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}">
-                <Image Source="{StaticResource @Spy_24x24}"/>
-            </ToggleButton>
-            <Label x:Name="xStatusLable" Content="Spying off" ></Label>
-            <UserControls:ucButton x:Name="xCreateNewElement" ButtonType="RoundTextAndImageButton" ButtonText="Create New Element" ButtonImageType="New" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed"  Click="CreateNewElemetClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-        </StackPanel>
 
-        <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="1" RowChangedEvent="MappedElementsGrid_RowChangedEvent" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" />
+        <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" RowChangedEvent="MappedElementsGrid_RowChangedEvent" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" />
 
-        <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
+        <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
 
-        <Expander x:Name="xDetailsExpander" Grid.Row="2" ExpandDirection="Down" Expanded="DetailsGrid_Expanded" IsExpanded="False" Collapsed="DetailsGrid_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
+        <Expander x:Name="xDetailsExpander" Grid.Row="1" ExpandDirection="Down" Expanded="DetailsGrid_Expanded" IsExpanded="False" Collapsed="DetailsGrid_Collapsed" IsEnabled="False" Style="{StaticResource @ExpanderLightStyle}">
             <Expander.Header>
                 <Label x:Name="xDetailsExpanderLabel" Content="Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}"/>
             </Expander.Header>
             <Expander.Content>
                 <Grid>
 
-                    <TabControl x:Name="POMModelTabs" Grid.Row="1" Background="{StaticResource @Skin1_ColorC}"  HorizontalAlignment="Stretch" >
-                        <TabControl.Resources>
-                            <Style TargetType="{x:Type TabItem}">
-                                <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
-                                <Setter Property="Height" Value="25"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="False" >
-                                        <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
-                                    </Trigger>
-                                    <Trigger Property="IsSelected" Value="True" >
-                                        <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-
-                        </TabControl.Resources>
+                    <TabControl x:Name="POMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch" >
 
                         <TabItem Margin="0,0,0,0" >
                             <TabItem.Header>

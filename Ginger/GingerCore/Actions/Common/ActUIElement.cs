@@ -313,7 +313,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Dismiss Dialog")]
             DismissDialog,
             [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Select UIF Date")]
+            [EnumValueDescription("Set Date")]
             SetDate,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Scroll Up")]

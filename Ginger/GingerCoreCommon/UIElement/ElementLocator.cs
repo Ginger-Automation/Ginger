@@ -26,6 +26,8 @@ namespace Amdocs.Ginger.Common.UIElement
     public class ElementLocator : RepositoryItemBase 
     {
         private bool mActive { get; set; }
+
+        [IsSerializedForLocalRepository]
         public bool Active { get { return mActive; } set { mActive = value; OnPropertyChanged(nameof(Active)); } }
 
         private eLocateBy mLocateBy;
@@ -71,13 +73,13 @@ namespace Amdocs.Ginger.Common.UIElement
             set
             {
                 mLocateStatus = value;
-                OnPropertyChanged(nameof(LocateStatusError));
-                OnPropertyChanged(nameof(LocateStatusIcon));
+                OnPropertyChanged(nameof(StatusError));
+                OnPropertyChanged(nameof(StatusIcon));
 
             }
         }
 
-        public eImageType LocateStatusIcon
+        public eImageType StatusIcon
         {
             get
             {
@@ -96,7 +98,7 @@ namespace Amdocs.Ginger.Common.UIElement
         }
 
         private string mLocateStatusError;
-        public string LocateStatusError
+        public string StatusError
         {
             get
             {
