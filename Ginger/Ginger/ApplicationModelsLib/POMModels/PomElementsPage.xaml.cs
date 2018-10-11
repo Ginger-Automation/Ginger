@@ -64,6 +64,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mLocators.CollectionChanged += Locators_CollectionChanged;
             mProperties.CollectionChanged += Properties_CollectionChanged;
 
+            xMainElementsGrid.PasteItemEvent -= PasteElementEvent;
+            xMainElementsGrid.PasteItemEvent += PasteElementEvent;
+
+            xLocatorsGrid.PasteItemEvent -= PasteLocatorEvent;
+            xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
+
             SetControlsGridView();
 
             if (mContext == PomAllElementsPage.eElementsContext.Mapped)
@@ -77,6 +83,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         }
 
+        private void PasteElementEvent(PasteItemEventArgs EventArgs)
+        {
+            ((ElementInfo)EventArgs.RepositoryItemBaseObject).IsAutoLearned = false;
+        }
+
+        private void PasteLocatorEvent(PasteItemEventArgs EventArgs)
+        {
+            ((ElementLocator)EventArgs.RepositoryItemBaseObject).IsAutoLearned = false;
+        }
 
         private void Properties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -169,7 +184,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             //xMainElementsGrid.AddToolbarTool("@Spy_24x24.png", "Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key", new RoutedEventHandler(LiveSpyHandler));
 
-            xMainElementsGrid.btnPaste.AddHandler(Button.ClickEvent, new RoutedEventHandler(PasteElementsHandler));
             xMainElementsGrid.SetAllColumnsDefaultView(view);
             xMainElementsGrid.InitViewItems();
             xMainElementsGrid.ChangeGridView(eGridView.RegularView.ToString());
@@ -177,16 +191,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xMainElementsGrid.grdMain.PreparingCellForEdit += MainElementsGrid_PreparingCellForEdit;
         }
 
-        private void PasteElementsHandler(object sender, RoutedEventArgs e)
-        {
-            foreach (ElementInfo item in mElements)
-            {
-                if (!ucGrid.mSourceBeforePasteItems.Contains(item))
-                {
-                    item.IsAutoLearned = false;
-                }
-            }
-        }
 
         private void MainElementsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
@@ -280,8 +284,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
 
             xLocatorsGrid.AddToolbarTool("@Play_16x16.png", "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
-            xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorHandler));
-            xLocatorsGrid.btnPaste.AddHandler(Button.ClickEvent, new RoutedEventHandler(PasteLocatorsHandler));
             xLocatorsGrid.grdMain.PreparingCellForEdit += LocatorsGrid_PreparingCellForEdit;
             xLocatorsGrid.SetAllColumnsDefaultView(defView);
             xLocatorsGrid.InitViewItems();
@@ -306,16 +308,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         }
 
 
-        private void PasteLocatorsHandler(object sender, RoutedEventArgs e)
-        {
-            foreach (ElementLocator item in mLocators)
-            {
-                if (!ucGrid.mSourceBeforePasteItems.Contains(item))
-                {
-                    item.IsAutoLearned = false;
-                }
-            }
-        }
 
 
 
