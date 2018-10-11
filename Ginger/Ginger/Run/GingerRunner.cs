@@ -993,7 +993,7 @@ namespace Ginger.Run
 
                 if (DataSource.FilePath.StartsWith("~"))
                 {
-                    DataSource.FileFullPath = DataSource.FilePath.Replace("~", "");
+                    DataSource.FileFullPath = DataSource.FilePath.Replace(@"~\", "").Replace("~", "");
                     DataSource.FileFullPath = System.IO.Path.Combine(Ginger.App.UserProfile.Solution.Folder, DataSource.FileFullPath);
                 }
                 DataSource.Init(DataSource.FileFullPath);

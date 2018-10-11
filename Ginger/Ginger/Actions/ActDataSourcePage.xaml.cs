@@ -1246,7 +1246,7 @@ namespace Ginger.Actions
                     mDataSourceName = cmbDataSourceName.SelectedValue.ToString();
                     if (ds.FilePath.StartsWith("~"))
                     {
-                        ds.FileFullPath = ds.FilePath.Replace("~", "");
+                        ds.FileFullPath = ds.FilePath.Replace(@"~\","").Replace("~", "");
                         ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
                     }
                     ds.Init(ds.FileFullPath);

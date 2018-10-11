@@ -716,7 +716,7 @@ namespace Ginger
                         App.UserProfile.LoadRecentAppAgentMapping();
                         AutoLogProxy.SetAccount(sol.Account);
 
-                        LoadRecentBusinessFlow();
+                        SetDefaultBusinessFlow();
 
                         if (!App.RunningFromConfigFile)
                             DoSolutionAutoSaveAndRecover();
@@ -891,80 +891,7 @@ namespace Ginger
             //mRootFolders.Add(new RepositoryFolder(this, "*", @"~\Documents";, false, "Documents"));
 
             return SR;
-        }
-        
-        private static void LoadRecentBusinessFlow()
-        {
-            try
-            {
-                if (App.UserProfile.Solution == null) return;
-                ObservableList<BusinessFlow> allBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-
-                if (App.UserProfile.RecentBusinessFlow != null &&
-                            App.UserProfile.RecentBusinessFlow != Guid.Empty)
-                {
-                    BusinessFlow recentBizFlow = allBizFlows.Where(biz => biz.Guid == App.UserProfile.RecentBusinessFlow).FirstOrDefault();
-                    if (recentBizFlow != null)
-                    {
-                        recentBizFlow.SaveBackup();
-                        App.BusinessFlow = recentBizFlow;
-                        return;
-                    }
-                }
-
-                if (allBizFlows.Count > 0)
-                {
-                    allBizFlows[0].SaveBackup();
-                    App.BusinessFlow = allBizFlows[0];
-                    return;
-                }
-
-                //load new Business Flow as default
-                App.BusinessFlow = LoadDefaultBusinessFlow();
-
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the recent " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " used", ex);
-                LoadDefaultBusinessFlow();
-            }
-        }
-
-        //public static void UpdateEnvironmentsCombo(ComboBox envsCombo)
-        //{
-        //    envsCombo.ItemsSource = null;
-
-        //    if (UserProfile.Solution != null)
-        //    {
-        //        envsCombo.ItemsSource = App.LocalRepository.GetSolutionEnvironments();
-        //        envsCombo.DisplayMemberPath = ProjEnvironment.Fields.Name;
-        //        envsCombo.SelectedValuePath = RepositoryItem.Fields.Guid;
-
-        //        //select last used environment
-        //        if (envsCombo.Items != null && envsCombo.Items.Count > 0)
-        //        {
-        //            if (envsCombo.Items.Count > 1 && App.UserProfile.RecentEnvironment != null && App.UserProfile.RecentEnvironment != Guid.Empty)
-        //            {
-        //                foreach (object env in envsCombo.Items)
-        //                {
-        //                    if (((ProjEnvironment)env).Guid == App.UserProfile.RecentEnvironment)
-        //                    {
-        //                        envsCombo.SelectedIndex = envsCombo.Items.IndexOf(env);
-        //                        return;
-        //                    }
-        //                }
-        //            }
-
-        //            //defualt selection
-        //            envsCombo.SelectedIndex = 0;
-        //        }
-        //    }
-        //    if (envsCombo.Items.Count == 0)
-        //    {
-        //        LoadDefaultENV();
-        //        UpdateEnvironmentsCombo(envsCombo);
-        //    }
-        //}
+        }               
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
@@ -994,11 +921,24 @@ namespace Ginger
             e.Handled = true;
         }
 
-        public static BusinessFlow LoadDefaultBusinessFlow()
+        public static BusinessFlow SetDefaultBusinessFlow()
         {
-            BusinessFlow biz = CreateNewBizFlow(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " 1");
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(biz);
-            return biz;
+            BusinessFlow defualtBF;
+
+            ObservableList<BusinessFlow> allBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            if (allBizFlows.Count > 0)
+            {
+                defualtBF = allBizFlows[0];
+            }
+            else
+            {
+                defualtBF = CreateNewBizFlow(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " 1");
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(defualtBF);
+            }
+
+            defualtBF.SaveBackup();
+            App.BusinessFlow = defualtBF;
+            return defualtBF;
         }
 
         public static BusinessFlow CreateNewBizFlow(string Name)
