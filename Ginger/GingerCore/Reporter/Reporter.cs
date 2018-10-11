@@ -136,12 +136,12 @@ namespace GingerCore
             }
         }
 
-        public static void OnGingerHelperEvent(eGingerHelperEventActions EventAction, RoutedEventHandler btnHandler = null, GingerHelperMsg helperMsg=null)
+        public static void OnGingerHelperEvent( eGingerHelperEventActions EventAction, eGingerHelperMsgType messageType, RoutedEventHandler btnHandler = null, GingerHelperMsg helperMsg=null)
         {
             GingerHelperEventHandler handler = HandlerGingerHelperEvent;
             if (handler != null)
             {
-                handler(new GingerHelperEventArgs(EventAction, btnHandler, helperMsg));
+                handler(new GingerHelperEventArgs(EventAction, messageType, btnHandler, helperMsg));
             }
         }
 
@@ -341,7 +341,7 @@ namespace GingerCore
                     ToConsole("Showing User Message (GingerHelper): " + messageContent);
 
             
-                OnGingerHelperEvent(eGingerHelperEventActions.Show, btnHandler, messageToShow);
+                OnGingerHelperEvent(eGingerHelperEventActions.Show, messageToShow.MessageType, btnHandler, messageToShow);
                 messageToShow.MsgContent = orgMessageContent;
             }
             catch (Exception ex)
@@ -353,7 +353,7 @@ namespace GingerCore
         
         public static void CloseGingerHelper()
         {
-            OnGingerHelperEvent(eGingerHelperEventActions.Close);
+            OnGingerHelperEvent(eGingerHelperEventActions.Close, eGingerHelperMsgType.PROCESS);
             if (CurrentAppLogLevel == eAppLogLevel.Debug)
                 ToLog(eLogLevel.INFO, "User Message (GingerHelper) Closed.");
             else if (AddAllReportingToConsole)
