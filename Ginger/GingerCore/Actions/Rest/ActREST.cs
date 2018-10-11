@@ -115,7 +115,14 @@ namespace GingerCore.Actions.REST
         {
             get
             {
-              return  WebReqResponse.StatusCode;
+                if (WebReqResponse == null)
+                { 
+                    return HttpStatusCode.Ambiguous;
+                }
+                else
+                { 
+                    return WebReqResponse.StatusCode;
+                }
             }
         }
 

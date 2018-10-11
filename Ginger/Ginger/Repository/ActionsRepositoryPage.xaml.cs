@@ -155,7 +155,7 @@ namespace Ginger.Repository
         {
             if (xActionsGrid.Grid.SelectedItem != null)
             {
-                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItem)xActionsGrid.Grid.SelectedItem);
+                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItemBase)xActionsGrid.Grid.SelectedItem);
                 usagePage.ShowAsWindow();
             }
             else

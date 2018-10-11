@@ -75,6 +75,8 @@ namespace Ginger.Repository
 
                 itemCopy.UpdateItemFieldForReposiotryUse();
 
+               
+
                 bool blockingIssuesHandled= HandleItemValidationIssues(itemToUpload, itemCopy, ref isOverwrite);
 
                 if(blockingIssuesHandled==false)
@@ -86,8 +88,11 @@ namespace Ginger.Repository
                 if (isOverwrite)
                 {
                     
-                    MovePrevVersion(itemToUpload.ExistingItem, itemToUpload.ExistingItem.FileName);                    
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(itemToUpload.ExistingItem);
+                    MovePrevVersion(itemToUpload.ExistingItem, itemToUpload.ExistingItem.FileName);
+                    //To be removed from here. And and need to handle from solution repository
+                    itemCopy.ContainingFolder = itemToUpload.ExistingItem.ContainingFolder;
+                    itemCopy.ContainingFolderFullPath = itemToUpload.ExistingItem.ContainingFolderFullPath;
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(itemCopy);
                 }
                 else
                 {
