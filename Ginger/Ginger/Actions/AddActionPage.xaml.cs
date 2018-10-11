@@ -79,7 +79,7 @@ namespace Ginger.Actions
                         act.ActionId = standAloneAction.ActionId;
                         foreach (var v in standAloneAction.InputValues)
                         {
-                            if (Param == "GA") continue; // not needed
+                            if (v.Param == "GA") continue; // not needed
                             act.InputValues.Add(new ActInputValue() { Param = v.Param });
                         }                        
                         act.Active = true;                        

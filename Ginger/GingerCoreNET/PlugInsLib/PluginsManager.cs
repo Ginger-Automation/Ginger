@@ -362,7 +362,7 @@ namespace Amdocs.Ginger.Repository
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
 
             string nodeFileName = NodeConfigFile.CreateNodeConfigFile(PluginId + "1");  // TODO: check if 1 exist then try 2,3 in case more than one same id service start
-            string cmd = "dotnet " + dll + " " + nodeFileName;
+            string cmd = "dotnet \"" + dll + "\" \"" + nodeFileName + "\"";
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);            
             procStartInfo.UseShellExecute = true;             
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
