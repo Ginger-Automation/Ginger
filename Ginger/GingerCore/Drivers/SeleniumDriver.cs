@@ -49,6 +49,8 @@ using System.Reflection;
 using Protractor;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Drivers
 {
@@ -2919,35 +2921,66 @@ namespace GingerCore.Drivers
 
         public IWebElement LocateElement(Act act, bool AlwaysReturn = false, string ValidationElementLocateBy = null, string ValidationElementLocateValue = null)
         {
-            eLocateBy LocatorType = act.LocateBy;
-            string LocValue = act.LocateValueCalculated;
+            IWebElement elem = null;
+            eLocateBy locateBy = act.LocateBy;
+            string locateValue = act.LocateValueCalculated;
 
             if (ValidationElementLocateBy != null)
             {
-                Enum.TryParse<eLocateBy>(ValidationElementLocateBy, true, out LocatorType);
+                Enum.TryParse<eLocateBy>(ValidationElementLocateBy, true, out locateBy);
             }
-            else
-            {
-                if (act is ActUIElement)
-                {
-                    ActUIElement aev = (ActUIElement)act;
-                    Enum.TryParse<eLocateBy>(aev.ElementLocateBy.ToString(), true, out LocatorType);
-                }
-            }
-
             if (ValidationElementLocateValue != null)
-                LocValue = ValidationElementLocateValue;
-            else
             {
-                if (act is ActUIElement)
+                locateValue = ValidationElementLocateValue;
+            }
+
+            if (act is ActUIElement)
+            {
+                ActUIElement aev = (ActUIElement)act;
+                Enum.TryParse<eLocateBy>(aev.ElementLocateBy.ToString(), true, out locateBy);
+                locateValue = aev.ElementLocateValue;
+            }
+
+            if (locateBy == eLocateBy.POMElement)
+            {
+                string[] pOMandElementGUIDs = locateValue.ToString().Split('_');
+                Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+                ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+                if (currentPOM == null)
                 {
-                    LocValue = ((ActUIElement)act).ElementLocateValueForDriver;
+                    act.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
+                    return null;
+                }
+                else
+                {
+                    Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                    ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                    if (selectedPOMElement == null)
+                    {
+                        act.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
+                        return null;
+                    }
+                    else
+                    {
+                        elem = LocateElementByLocators(selectedPOMElement.Locators);
+                        selectedPOMElement.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
+                    }
                 }
             }
-            
-            return LocateElementByLocator(new ElementLocator() { LocateBy = LocatorType, LocateValue = LocValue }, AlwaysReturn);
-        }
+            else
+            {
+                ElementLocator locator = new ElementLocator();
+                locator.LocateBy = locateBy;
+                locator.LocateValue = locateValue;
+                elem= LocateElementByLocator(locator, AlwaysReturn);
+                if (elem == null)
+                {
+                    act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
+                }                
+            }
 
+            return elem;
+        }
 
         private IWebElement LocateElementByLocators(ObservableList<ElementLocator> Locators)
         {
@@ -2975,7 +3008,6 @@ namespace GingerCore.Drivers
 
             return null;
         }
-
 
         private IWebElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
         {
@@ -3052,13 +3084,14 @@ namespace GingerCore.Drivers
                         else
                             elem = Driver.FindElement(By.XPath(sel));
                     }
-                    catch (NoSuchElementException)
+                    catch (NoSuchElementException ex)
                     {
                         try
                         {
                             sel = "//a[href='@']";
                             sel = sel.Replace("@", locator.LocateValue);
                             elem = Driver.FindElement(By.XPath(sel));
+                            locator.StatusError = ex.Message;
                         }
                         catch (Exception)
                         { }
@@ -3091,7 +3124,10 @@ namespace GingerCore.Drivers
 
                             }
                         }
-                        catch { }
+                        catch (Exception ex2)
+                        {
+                            locator.StatusError = ex2.Message;
+                        }
                     }
 
                 }
@@ -3149,7 +3185,10 @@ namespace GingerCore.Drivers
             }
 
             if (elem != null)
+            {
                 locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+            }
+
             return elem;
         }
 
@@ -5441,7 +5480,6 @@ namespace GingerCore.Drivers
                 e = LocateElement(act);
                 if (e == null)
                 {
-                    //TODO: if multiple props the message needs to be different... or by X,Y
                     act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
                 }
             }
