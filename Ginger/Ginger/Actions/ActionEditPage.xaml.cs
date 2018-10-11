@@ -994,7 +994,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             if (ActionTab.SelectedItem == ScreenShotTab)
@@ -1293,7 +1293,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 
@@ -1495,8 +1495,8 @@ namespace Ginger.Actions
                     mDataSourceName = cmbDataSourceName.SelectedValue.ToString();
                     if (ds.FilePath.StartsWith("~"))
                     {
-                        ds.FileFullPath = ds.FilePath.Replace("~", "");
-                        ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
+                        ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
+                        ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
                     }
                     ds.Init(ds.FileFullPath);
                     List<string> dsTableNames = new List<string>();

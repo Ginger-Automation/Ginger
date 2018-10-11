@@ -82,7 +82,7 @@ namespace Ginger.Functionalties
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "AutoSave: Failed to clear the AutoSave folder before doing new save", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "AutoSave: Failed to clear the AutoSave folder before doing new save", ex);
                 }
 
                 //get all dirty items for AutoSave
@@ -122,7 +122,7 @@ namespace Ginger.Functionalties
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "AutoSave: Failed to delete the all AutoSave folder on SolutionAutoSaveEnd", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "AutoSave: Failed to delete the all AutoSave folder on SolutionAutoSaveEnd", ex);
             }
         }
 
@@ -147,7 +147,7 @@ namespace Ginger.Functionalties
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("AutoSave: Failed to AutoSave the item:'{0}'", itemToSave.ItemName), ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("AutoSave: Failed to AutoSave the item:'{0}'", itemToSave.ItemName), ex);
             }
         }
 

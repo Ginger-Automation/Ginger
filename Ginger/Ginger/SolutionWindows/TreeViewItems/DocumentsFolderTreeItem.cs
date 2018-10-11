@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.GherkinLib;
 using Ginger.UserControlsLib.TextEditor;
@@ -119,7 +120,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (System.Exception excpt)
             {
-               Reporter.ToLog(eLogLevel.ERROR, "Failed to add Document Folder to tree",excpt,true);
+               Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add Document Folder to tree",excpt,true);
             }
         }
 
@@ -280,7 +281,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 if(Folder == "Documents")
                 {
                     DocumentsFolderTreeItem DFTI = new DocumentsFolderTreeItem();
-                    DFTI.Path = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";
+                    DFTI.Path = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Features\");
                     DFTI.Folder = "Features";
                     mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
                     mTreeView.Tree.GetChildItembyNameandSelect("Features", this);                    
@@ -299,7 +300,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 DocumentsFolderTreeItem DFTI = null;
                 if (this.Folder == "Documents")
                 {
-                    FullDirectoryPath = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";                    
+                    FullDirectoryPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Features\");                    
                     
                     if (!System.IO.Directory.Exists(FullDirectoryPath))
                     {

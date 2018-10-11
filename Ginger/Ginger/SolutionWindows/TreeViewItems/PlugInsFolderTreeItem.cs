@@ -78,7 +78,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Plugin Packages folder");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error unknown item added to Plugin Packages folder");
                 throw new NotImplementedException();
             }
         }

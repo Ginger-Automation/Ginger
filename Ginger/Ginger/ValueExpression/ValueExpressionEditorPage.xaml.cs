@@ -265,7 +265,7 @@ namespace Ginger
             catch (Exception ex)
             {
 
-                Reporter.ToLog(eLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
             }
         }
 
@@ -438,7 +438,7 @@ namespace Ginger
             {
                 if (ds.FilePath.StartsWith("~"))
                 {
-                    ds.FileFullPath = ds.FilePath.Replace("~", "");
+                    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
                     ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
                 }
                 ds.Init(ds.FileFullPath);

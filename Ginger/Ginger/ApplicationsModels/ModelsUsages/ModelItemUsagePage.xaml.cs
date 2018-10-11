@@ -186,7 +186,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update the model item usage", ex);
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to update the model item usage", ex);
                             usage.Status = ModelItemUsage.eStatus.UpdateFailed;
                         }
                     }
@@ -290,7 +290,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                             {
                                 usage.Status = ModelItemUsage.eStatus.SaveFailed;
                                 Reporter.CloseGingerHelper();
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                             }
                         }
                     }

@@ -27,11 +27,11 @@ namespace Amdocs.Ginger.Common
     public class StandAloneAction
     {
         [JsonProperty]
-        public string ID { get; internal set; }
+        public string ActionId { get; internal set; }
         [JsonProperty]
-        public string PluginID { get; internal set; }
+        public string PluginId { get; internal set; }
         [JsonProperty]
-        public string ServiceID { get; internal set; }
+        public string ServiceId { get; internal set; }
         [JsonProperty]
         public string Description { get; internal set; }
 

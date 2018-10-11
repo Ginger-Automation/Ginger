@@ -75,16 +75,15 @@ namespace GingerCore.Actions.XML
             }
         }
 
-
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue InputFile
         {
             get
             {
                 return GetOrCreateInputParam(Fields.InputFile);
 
-            } }
+            }
+        }
 
 
         public bool mReqisFromFile = true;
@@ -265,7 +264,7 @@ namespace GingerCore.Actions.XML
 
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
                 throw new System.ArgumentException("Node not found at provided path");
             }
         }

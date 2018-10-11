@@ -191,7 +191,7 @@ namespace GingerCore.Actions
                 chart.DataLabel.Position = DataLabelPosition.OutsideEnd;
 
 
-                string filename = SolutionFolder + @"Documents\"+ Guid.NewGuid().ToString().ToUpper() + ".pdf";
+                string filename = System.IO.Path.Combine(SolutionFolder , @"Documents\", Guid.NewGuid().ToString().ToUpper() + ".pdf");
                 PdfDocument document = new PdfDocument(filename);
                 chartFrame.Location = new XPoint(30, 30);
                 chartFrame.Size = new XSize(500, 600);

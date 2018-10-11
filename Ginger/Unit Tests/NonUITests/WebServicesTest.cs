@@ -81,7 +81,7 @@ namespace UnitTests.NonUITests
 
             mGR.BusinessFlows.Add(mBF);
 
-            Reporter.ToLog(eLogLevel.INFO, "Creating the GingerCoreNET WorkSpace");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);         
 
