@@ -74,11 +74,12 @@ namespace Ginger.Actions
                     {
                         ActPlugIn act = new ActPlugIn();                        
                         act.Description = standAloneAction.Description;
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.PluginId), pluginPackage.PluginID);
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.ServiceId),standAloneAction.ServiceID);
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.GingerActionId),standAloneAction.ID);
+                        act.PluginId = pluginPackage.PluginID;
+                        act.ServiceId = standAloneAction.ServiceId;
+                        act.ActionId = standAloneAction.ActionId;
                         foreach (var v in standAloneAction.InputValues)
                         {
+                            if (Param == "GA") continue; // not needed
                             act.InputValues.Add(new ActInputValue() { Param = v.Param });
                         }                        
                         act.Active = true;                        

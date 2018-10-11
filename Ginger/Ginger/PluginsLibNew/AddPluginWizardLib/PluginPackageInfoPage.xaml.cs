@@ -55,9 +55,9 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                     List<StandAloneAction> actions = mPluginPackage.LoadServicesInfoFromFile();
 
                     // show distict list of the services
-                    ServicesGrid.ItemsSource = (from x in actions select x.ServiceID).Distinct();
+                    ServicesGrid.ItemsSource = (from x in actions select x.ServiceId).Distinct();
 
-                    // TODO: get selected service only  - add radio show al or per selected
+                    // TODO: get selected service only  - add radio show all or per selected
                     
                     ActionsDataGrid.ItemsSource = actions;
                     

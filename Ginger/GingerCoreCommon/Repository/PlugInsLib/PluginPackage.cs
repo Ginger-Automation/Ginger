@@ -223,10 +223,10 @@ namespace Amdocs.Ginger.Repository
                 {
                     GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);
                     StandAloneAction DA = new StandAloneAction();
-                    DA.ID = token.Id;
+                    DA.ActionId = token.Id;
                     // AssemblyName AN = MI.DeclaringType.Assembly.GetName();
-                    DA.PluginID = PluginID;  //AN.Name;
-                    DA.ServiceID = pluginService.ServiceId;
+                    DA.PluginId = PluginID;  //AN.Name;
+                    DA.ServiceId = pluginService.ServiceId;
                     DA.Description = token.Description;
                     foreach (ParameterInfo PI in MI.GetParameters())
                     {

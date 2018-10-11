@@ -376,7 +376,7 @@ namespace Amdocs.Ginger.Repository
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
         {
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
-            StandAloneAction standAloneAction = (from x in pluginPackage.LoadServicesInfoFromFile() where x.ServiceID == serviceId && x.ID == actionId select x).SingleOrDefault();
+            StandAloneAction standAloneAction = (from x in pluginPackage.LoadServicesInfoFromFile() where x.ServiceId == serviceId && x.ActionId == actionId select x).SingleOrDefault();
             return standAloneAction.InputValues;
         }
 
