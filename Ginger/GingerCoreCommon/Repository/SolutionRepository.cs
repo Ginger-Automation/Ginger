@@ -478,7 +478,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         //TODO: fix this method name or cretae or !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public string CreateRepositoryItemFileName(RepositoryItemBase RI, string containingFolder="")
+        public string CreateRepositoryItemFileName(RepositoryItemBase RI, string containingFolder = "")
         {
             var v = GetSolutionRepositoryItemInfo(RI.GetType());
 
@@ -490,16 +490,16 @@ namespace Amdocs.Ginger.Repository
             {
                 //probably new item so create new path for it
 
-                //FOLDER
-                string fileFolderPath = string.Empty;
+                //FOLDER             
+                string fileFolderPath = string.Empty; 
                 if (string.IsNullOrEmpty(containingFolder))
                     fileFolderPath = RI.ContainingFolder;
                 else
                     fileFolderPath = containingFolder;
                 if (!fileFolderPath.StartsWith(cSolutionRootFolderSign) || !fileFolderPath.StartsWith(mSolutionFolderPath))
                 {
-                    // Fix me for Linux !!!
-                    string A = mSolutionFolderPath; //.TrimEnd(Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar);
+                    // Fix me for Linux !!!	
+                    string A = mSolutionFolderPath; //.TrimEnd(Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar);	
                     string B = fileFolderPath.Replace(cSolutionRootFolderSign, Path.DirectorySeparatorChar.ToString()).TrimStart(Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
                     if (!A.EndsWith(Path.DirectorySeparatorChar.ToString()))
                     {
@@ -516,8 +516,7 @@ namespace Amdocs.Ginger.Repository
                     fileName = fileName.Replace(invalidChar.ToString(), "");
                 }
                 fileName = fileName.Replace(@".", "");
-
-                string fileExtention = v.Pattern;  //string.Format(".{0}.xml", RI.ObjFileExt);
+                
                 string fullName = v.Pattern.Replace("*", fileName);
 
 
