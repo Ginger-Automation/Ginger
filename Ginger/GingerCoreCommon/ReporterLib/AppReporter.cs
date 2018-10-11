@@ -41,8 +41,12 @@ namespace Amdocs.Ginger.Common
 
         internal static void ToConsole(string consoleMessage, Exception exceptionToRecord = null)
         {
-            //Console.WriteLine(v);
             OnReportEvent(reportType: eAppReportType.ToConsole, reportMessage: consoleMessage, reportExceptionToRecord: exceptionToRecord);
+        }
+
+        internal static void ToUser(eAppReporterMessageType reportMessageType, string message)
+        {
+            OnReportEvent(reportType: eAppReportType.ToUser, reportMessage: message, reportMessageType: reportMessageType);
         }
     }
 }
