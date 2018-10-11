@@ -896,6 +896,38 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style TargetType="Button" x:Key="$InputButtonStyle">
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="Height" Value="25" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Margin" Value="2,0,0,2" />
+        <Setter Property="Padding" Value="5,0,5,0"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{DynamicResource $BackgroundColor_DarkBlue}" BorderThickness="1">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 
     <!-- $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ New Design 2018 -END -->
 

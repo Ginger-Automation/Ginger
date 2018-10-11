@@ -187,7 +187,7 @@ namespace Ginger.Run
                 else
                 {
                     //If the path configured by user in the logger is not accessible, we set the logger path to default path
-                    logsFolder = App.UserProfile.Solution.Folder + @"\ExecutionResults\";
+                    logsFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"ExecutionResults\");
                     System.IO.Directory.CreateDirectory(logsFolder);
                     
                     App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";

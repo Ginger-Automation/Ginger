@@ -280,7 +280,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 if(Folder == "Documents")
                 {
                     DocumentsFolderTreeItem DFTI = new DocumentsFolderTreeItem();
-                    DFTI.Path = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";
+                    DFTI.Path = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Features\");
                     DFTI.Folder = "Features";
                     mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
                     mTreeView.Tree.GetChildItembyNameandSelect("Features", this);                    
@@ -299,7 +299,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 DocumentsFolderTreeItem DFTI = null;
                 if (this.Folder == "Documents")
                 {
-                    FullDirectoryPath = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";                    
+                    FullDirectoryPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Features\");                    
                     
                     if (!System.IO.Directory.Exists(FullDirectoryPath))
                     {
