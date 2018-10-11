@@ -2832,7 +2832,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             catch (Exception)
             {
-                logsFolder = App.UserProfile.Solution.Folder + @"\HTMLReports\";
+                logsFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"HTMLReports\");
                 System.IO.Directory.CreateDirectory(logsFolder);
                 App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
             }

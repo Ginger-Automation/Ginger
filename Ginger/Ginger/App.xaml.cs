@@ -671,7 +671,7 @@ namespace Ginger
                 WorkSpace.Instance.SourceControl = null;
 
                 if (!SolutionFolder.EndsWith(@"\")) SolutionFolder += @"\";
-                string SolFile = SolutionFolder + @"Ginger.Solution.xml";
+                string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
                 if (File.Exists(PathHelper.GetLongPath(SolFile)))
                 {
                     //get Solution files
