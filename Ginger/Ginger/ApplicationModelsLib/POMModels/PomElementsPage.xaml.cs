@@ -73,9 +73,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
             SetControlsGridView();
 
             if (mContext == PomAllElementsPage.eElementsContext.Mapped)
+            {
                 mElements = mPOM.MappedUIElements;
+            }
             else
+            {
                 mElements = mPOM.UnMappedUIElements;
+            }
+
 
             xMainElementsGrid.DataSourceList = mElements;
             InitControlPropertiesGridView();

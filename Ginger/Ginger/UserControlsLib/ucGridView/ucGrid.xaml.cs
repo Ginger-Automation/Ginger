@@ -291,7 +291,7 @@ namespace Ginger
         public event PasteItemEventHandler PasteItemEvent;
         public delegate void PasteItemEventHandler(PasteItemEventArgs EventArgs);
 
-        public void OnGingerRunnerEvent(PasteItemEventArgs.eEventType evType, RepositoryItemBase repositoryItemBaseObj)
+        public void OnPasteItemEvent(PasteItemEventArgs.eEventType evType, RepositoryItemBase repositoryItemBaseObj)
         {
             PasteItemEventHandler handler = PasteItemEvent;
             if (handler != null)
@@ -1874,7 +1874,7 @@ public void RemoveCustomView(string viewName)
                         //set unique name
                         SetItemUniqueName(copiedItem, "_Copy");
                         //Triger event for changing sub classes fields
-                        OnGingerRunnerEvent(PasteItemEventArgs.eEventType.PasteCopiedItem, copiedItem);
+                        OnPasteItemEvent(PasteItemEventArgs.eEventType.PasteCopiedItem, copiedItem);
                         //add                        
                         AddItemAfterCurrent(copiedItem);
                     }
