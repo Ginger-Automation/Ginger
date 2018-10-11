@@ -486,8 +486,7 @@ namespace Amdocs.Ginger.Repository
                 //probably new item so create new path for it
 
                 //FOLDER
-                string fileFolderPath = v.ItemRootRepositoryFolder.FolderFullPath;
-       
+                string fileFolderPath = GetItemRepositoryFolder(RI)?.FolderFullPath;              
 
                 //FILE
                 string fileName = name;
