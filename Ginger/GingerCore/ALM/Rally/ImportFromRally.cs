@@ -710,9 +710,9 @@ namespace GingerCore.ALM.Rally
         {
             XmlNodeList xlist = null;
             XmlDocument doc = new XmlDocument();
-            if (System.IO.File.Exists(solutionFolder + @"Documents\ALM\RQM_Configs\FieldMapping.xml"))
+            if (System.IO.File.Exists(System.IO.Path.Combine(solutionFolder, @"Documents\ALM\RQM_Configs\FieldMapping.xml")))
             {
-                doc.Load(solutionFolder + @"Documents\ALM\RQM_Configs\FieldMapping.xml");
+                doc.Load(System.IO.Path.Combine(solutionFolder, @"Documents\ALM\RQM_Configs\FieldMapping.xml"));
 
                 if (fieldType == "TestPlan")
                 {

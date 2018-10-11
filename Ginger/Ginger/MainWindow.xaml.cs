@@ -69,6 +69,7 @@ namespace Ginger
             {
                 //General
                 this.WindowState = System.Windows.WindowState.Maximized;
+                Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
 
                 //App
                 App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
@@ -84,8 +85,7 @@ namespace Ginger
                 App.UserProfile.SaveUserProfile();
                 App.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
-                //Reporter
-                Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
+                //Reporter                
                 Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
 
                 //Main Menu                            
@@ -223,8 +223,17 @@ namespace Ginger
             {
                 if (e.GingerHelperEventActions == GingerHelperEventArgs.eGingerHelperEventActions.Show)
                 {
+                    if (e.MessageType == eGingerHelperMsgType.PROCESS)
+                    {
+                        xProcessMsgIcon.ImageType = eImageType.Processing;
+                    }
+                    else
+                    {
+                        xProcessMsgIcon.ImageType = eImageType.Info;
+                    }
                     xProcessMsgPnl.Visibility = Visibility.Visible;
                     xProcessMsgTxtBlock.Text = e.HelperMsg.MsgContent;
+                    xProcessMsgTxtBlock.ToolTip= e.HelperMsg.MsgContent;
                     mProcessMsgShowTime = DateTime.Now;
                     GingerCore.General.DoEvents();
                 }
@@ -404,7 +413,7 @@ namespace Ginger
             string solutionFolder = General.OpenSelectFolderDialog("Select Ginger Solution Folder");
             if (solutionFolder != null)
             {
-                string solutionFileName = solutionFolder + @"\Ginger.Solution.xml";
+                string solutionFileName = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
                 if (System.IO.File.Exists(PathHelper.GetLongPath(solutionFileName)))
                 {
                     App.SetSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder)));

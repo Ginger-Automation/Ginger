@@ -216,7 +216,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void DeleteUnMappedElementRow(object sender, RoutedEventArgs e)
         {
-            if (mAgent.Driver.IsDriverBusy)
+            if (IsDriverBusy())
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
@@ -228,7 +228,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddMappedElementRow(object sender, RoutedEventArgs e)
         {
-            if (mAgent.Driver.IsDriverBusy)
+            if (IsDriverBusy())
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
@@ -243,7 +243,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddUnMappedElementRow(object sender, RoutedEventArgs e)
         {
-            if (mAgent.Driver.IsDriverBusy)
+            if (IsDriverBusy())
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
@@ -439,7 +439,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return false;
             }
 
-            if (mAgent.Driver.IsDriverBusy)
+            if (IsDriverBusy())
             {
                 Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return false;
@@ -447,6 +447,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             return true;
 
+        }
+
+        private bool IsDriverBusy()
+        {
+            if (mAgent != null && mAgent.Driver.IsDriverBusy)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }

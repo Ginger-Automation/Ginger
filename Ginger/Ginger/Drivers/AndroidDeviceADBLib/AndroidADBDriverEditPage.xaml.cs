@@ -164,7 +164,7 @@ namespace Ginger.Drivers
 
         private void DeviceConfigFileCombo_DropDownOpened(object sender, EventArgs e)
         {
-            string DevicesFolder = App.UserProfile.Solution.Folder + @"\Documents\Devices\";
+            string DevicesFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"\Documents\Devices\");
 
             DeviceConfigFolderComboBox.Items.Clear();            
 
@@ -189,7 +189,7 @@ namespace Ginger.Drivers
             string DeviceFolder = DeviceConfigFolderTextBox.Text;
             if (!string.IsNullOrEmpty(DeviceFolder))
             {
-                DeviceViewPage DVP = new DeviceViewPage(App.UserProfile.Solution.Folder + @"\Documents\Devices\" + DeviceFolder + @"\");
+                DeviceViewPage DVP = new DeviceViewPage(System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Devices", DeviceFolder + @"\"));
                 DeviceFrame.Content = DVP;
             }
             else

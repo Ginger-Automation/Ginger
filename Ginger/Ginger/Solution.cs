@@ -358,8 +358,10 @@ namespace Ginger.SolutionGeneral
             get
             {
                 string folderPath = Path.Combine(Folder , @"BusinessFlows\");
-                if (Directory.Exists(folderPath) == false)
+                if(!Directory.Exists(folderPath))
+                {
                     Directory.CreateDirectory(folderPath);
+                }
                 return folderPath;
             }
         }

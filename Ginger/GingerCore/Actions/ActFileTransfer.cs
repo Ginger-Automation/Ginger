@@ -317,7 +317,7 @@ namespace GingerCore.Actions
                             {
 
 
-                                sPCPath = this.SolutionFolder + sPCPath.Remove(0, 2);
+                                sPCPath = System.IO.Path.Combine(this.SolutionFolder, sPCPath.Remove(0, 2));
                             }
                             sPCPath=sPCPath.Replace(Environment.NewLine, "");
                             
@@ -371,7 +371,7 @@ namespace GingerCore.Actions
                              {
 
 
-                                 sPCPath = this.SolutionFolder+sPCPath.Remove(0,2);
+                                 sPCPath = System.IO.Path.Combine(this.SolutionFolder, sPCPath.Remove(0,2));
                              }
                             if (!IsDir(sPCPath))
 	                        {
