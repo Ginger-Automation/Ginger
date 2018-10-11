@@ -193,8 +193,8 @@ namespace Ginger.SolutionWindows
             a.Name = "GingerDataSource";             
             a.FilePath = @"~\DataSources\GingerDataSource.mdb";
             a.DSType = DataSourceBase.eDSType.MSAccess;
-            string sFileName = System.IO.Path.Combine(mSolution.Folder, @"DataSources", a.GetNameForFileName() + "." + a.ObjFileExt + ".xml");
-            a.RepositorySerializer.SaveToFile(a, sFileName); 
+            RepositoryFolder<DataSourceBase> dsTargetFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
+            dsTargetFolder.AddRepositoryItem(a);
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)

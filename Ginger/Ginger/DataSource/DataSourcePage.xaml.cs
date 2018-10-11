@@ -102,7 +102,7 @@ namespace Ginger.DataSource
                 ADC = new AccessDataSource();
                 if (mDSDetails.FilePath.StartsWith("~"))
                 {
-                    mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~", "");
+                    mDSDetails.FileFullPath = mDSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
                     mDSDetails.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, mDSDetails.FileFullPath);
                 }
                 ADC.Init(mDSDetails.FileFullPath);
