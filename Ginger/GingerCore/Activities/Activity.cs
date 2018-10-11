@@ -27,13 +27,14 @@ using GingerCore.Actions;
 using System.Windows;
 using GingerCore.Variables;
 using GingerCore.Properties;
+using Amdocs.Ginger.Common.Enums;
 
 //TODO: chang add core
 namespace GingerCore
 {
     // Activity can have several steps - Acts
     // The activities can come from external like: QC TC Step, vStorm    
-    public class Activity : RepositoryItem
+    public class Activity : RepositoryItemBase
     {
         public enum eActivityAutomationStatus
         {
@@ -68,8 +69,7 @@ namespace GingerCore
         }
         
         public new static class Fields
-        {
-            public static string Image = "Image";
+        {            
             public static string ActivityName = "ActivityName";
             public static string Description = "Description";
             public static string RunDescription = "RunDescription";
@@ -146,17 +146,9 @@ namespace GingerCore
             return ActivityName;
         }
 
-        public virtual System.Drawing.Image Image { get { return Resources.Activity_16x16; } }
-
         private bool mActive;
         [IsSerializedForLocalRepository]
         public Boolean Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(Fields.Active); } } }
-
-
-        //TODO: Create linked activity to item in shared repo, if true will copy: per user config: Activities, name, etc...
-        //private bool mLinked;
-        //[IsSerializedForLocalRepository]
-        // public Boolean Linked { get { return mLinked; } set { if (mLinked != value) { mLinked = value; OnPropertyChanged(Fields.Linked); } } }
 
         private string mActivityName;
         [IsSerializedForLocalRepository]
@@ -655,7 +647,7 @@ namespace GingerCore
             }
         }
 
-        public override void UpdateInstance(RepositoryItem instance, string partToUpdate, RepositoryItem hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
         {
             Activity activityInstance = (Activity)instance;
             //Create new instance of source
@@ -702,7 +694,7 @@ namespace GingerCore
             }
         }
 
-        public override RepositoryItem GetUpdatedRepoItem(RepositoryItem itemToUpload, RepositoryItem existingRepoItem, string itemPartToUpdate)
+        public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase existingRepoItem, string itemPartToUpdate)
         {
             Activity updatedActivity = null;
             
@@ -846,5 +838,20 @@ namespace GingerCore
             }
         }
 
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Activity;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.ActivityName);
+            }
+        }
     }
 }

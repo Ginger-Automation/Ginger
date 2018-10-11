@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -20,8 +20,23 @@ namespace Amdocs.Ginger.Repository
 {
     public class OptionalValue : RepositoryItemBase
     {
+        string mValue;
         [IsSerializedForLocalRepository]
-        public string Value { get; set; }
+        public string Value
+        {
+            get
+            {
+                return mValue;
+            }
+            set
+            {
+                if (mValue != value)
+                {
+                    mValue = value;
+                    OnPropertyChanged(nameof(Value));
+                }
+            }
+        }
 
         bool mIsDefault;
         [IsSerializedForLocalRepository]

@@ -21,13 +21,13 @@ using Amdocs.Ginger.Common;
 using System;
 using System.Data;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.DataSource
 {    
 
     public abstract class DataSourceBase : RepositoryItemBase
     {
-        public override bool UseNewRepositorySerializer { get { return true; } }
         public enum eDSType
         {
             // Access
@@ -153,5 +153,21 @@ namespace GingerCore.DataSource
         //    }
         //    base.Save();
         //}
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.DataSource;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
     }
 }

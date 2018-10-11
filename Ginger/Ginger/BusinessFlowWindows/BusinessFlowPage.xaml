@@ -6,7 +6,8 @@
       xmlns:BussinesFlow="clr-namespace:Ginger.BusinessFlowWindows"
       xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" x:Class="Ginger.BusinessFlowFolder.BusinessFlowPage"       
       mc:Ignorable="d" 
-        xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Business Flow"
+        xmlns:h="clr-namespace:Ginger.Help"
+    xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" h:GingerHelpProvider.HelpString="Business Flow"
       d:DesignHeight="600" d:DesignWidth="1000"
       Title="BusinessFlowPage">
    
@@ -14,6 +15,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="80*"/>
             <ColumnDefinition Width="20*"/>
+            <ColumnDefinition Width="100"/>
             <ColumnDefinition  x:Name="RepositoryGridColumn" Width="35"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -72,7 +74,7 @@
             </StackPanel>
         </StackPanel>
 
-        <TabControl x:Name="xTargetApplication" Grid.Row="0" Grid.Column="1" Grid.RowSpan="5" Grid.ColumnSpan="2" Margin="0,0,0,10">
+        <TabControl x:Name="xTargetApplication" Grid.Row="0" Grid.Column="1" Grid.RowSpan="5" Margin="0,0,0,10">
             <TabItem Header="Target Application(s)" >
                 <Grid>
                     <Grid.RowDefinitions>
@@ -85,7 +87,9 @@
             </TabItem>
         </TabControl>
 
-        <Expander x:Name="VariablesExpander" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2"  Margin="0,0,6,5" ExpandDirection="Down" IsExpanded="True" Expanded="VariablesExpander_Expanded" Collapsed="VariablesExpander_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
+        <UserControls:ucButton x:Name="xAutomateBtn" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" ButtonType="RoundTextAndImageButton" ButtonText="Automate" ButtonImageType="Automate" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20"  Click="xAutomateBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+
+        <Expander x:Name="VariablesExpander" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="3"  Margin="0,0,6,5" ExpandDirection="Down" IsExpanded="True" Expanded="VariablesExpander_Expanded" Collapsed="VariablesExpander_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
             <Expander.Header>
                 <Label x:Name="VariablesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
                     <Label.Content>
@@ -98,7 +102,7 @@
             </Expander.Content>
         </Expander>
 
-        <Expander x:Name="ActivitiesGroupsExpander" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2"  Margin="0,0,6,5" ExpandDirection="Down" IsExpanded="True" Expanded="ActivitiesGroupsExpander_Expanded" Collapsed="ActivitiesGroupsExpander_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
+        <Expander x:Name="ActivitiesGroupsExpander" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="3"  Margin="0,0,6,5" ExpandDirection="Down" IsExpanded="True" Expanded="ActivitiesGroupsExpander_Expanded" Collapsed="ActivitiesGroupsExpander_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
             <Expander.Header>
                 <Label x:Name="ActivitiesGroupsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
                     <Label.Content>
@@ -111,7 +115,7 @@
             </Expander.Content>
         </Expander>
 
-        <Expander x:Name="ActivitiesExpander" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2"  Margin="0,0,6,0" ExpandDirection="Down" IsExpanded="True" Expanded="ActivitiesExpander_Expanded" Collapsed="ActivitiesExpander_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
+        <Expander x:Name="ActivitiesExpander" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="3"  Margin="0,0,6,0" ExpandDirection="Down" IsExpanded="True" Expanded="ActivitiesExpander_Expanded" Collapsed="ActivitiesExpander_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
             <Expander.Header>
                 <Label x:Name="ActivitiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
                     <Label.Content>
@@ -124,7 +128,7 @@
             </Expander.Content>
         </Expander>
 
-        <Expander x:Name="RepositoryExpander" Grid.Row="4" Grid.Column="2" Grid.RowSpan="4" ExpandDirection="Left" IsExpanded="False" Expanded="RepositoryExpander_ExpandedCollapsed" Collapsed="RepositoryExpander_ExpandedCollapsed" Style="{StaticResource @ExpanderDarkStyle}" SizeChanged="RepositoryExpander_SizeChanged" Margin="0,39,0,0">
+        <Expander x:Name="RepositoryExpander" Grid.Row="4" Grid.Column="3" Grid.RowSpan="4" ExpandDirection="Left" IsExpanded="False" Expanded="RepositoryExpander_ExpandedCollapsed" Collapsed="RepositoryExpander_ExpandedCollapsed" Style="{StaticResource @ExpanderDarkStyle}" SizeChanged="RepositoryExpander_SizeChanged" Margin="0,39,0,0">
             <Expander.Header>
                 <Label x:Name="RepositoryExpanderLabel" Content="Shared Repository" Style="{StaticResource @VerticalExpanderLabelStyle}"/>
             </Expander.Header>
@@ -133,8 +137,8 @@
             </Expander.Content>
         </Expander>
 
-        <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
-        <GridSplitter x:Name="RowSplitter2" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
-        <GridSplitter x:Name="RepoSplitter" ResizeDirection="Columns" Grid.Column="1" Width="5" HorizontalAlignment="Right" Grid.Row="5"  Grid.RowSpan="3" VerticalAlignment="Stretch" Background="{StaticResource @Skin1_ColorA}" IsEnabled="True" Margin="0,0,0,0"/>
+        <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="3" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
+        <GridSplitter x:Name="RowSplitter2" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="3" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
+        <GridSplitter x:Name="RepoSplitter" ResizeDirection="Columns" Grid.Column="2" Width="5" HorizontalAlignment="Right" Grid.Row="5"  Grid.RowSpan="3" VerticalAlignment="Stretch" Background="{StaticResource @Skin1_ColorA}" IsEnabled="True" Margin="0,0,0,0"/>
     </Grid>
 </Page>

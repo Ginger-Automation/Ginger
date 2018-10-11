@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -54,8 +55,7 @@ namespace GingerCore
 
     public class Agent : RepositoryItemBase
     {
-
-        public override bool UseNewRepositorySerializer { get { return true; } }
+        
 
         public enum eDriverType
         {
@@ -931,7 +931,7 @@ namespace GingerCore
             //ProjEnvironment = App.AutomateTabEnvironment;
             //BusinessFlow = App.BusinessFlow; ;
             //SolutionFolder = App.UserProfile.Solution.Folder;
-            //DSList = App.LocalRepository.GetSolutionDataSources();
+            //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             try
             {
                 StartDriver();
@@ -957,6 +957,22 @@ namespace GingerCore
         }
 
         public object Tag;
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Agent;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
 
     }
 }

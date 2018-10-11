@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Gherkin;
@@ -226,7 +227,9 @@ namespace Ginger.GherkinLib
             {
                 if (act.IsSharedRepositoryInstance == true)
                 {
-                    Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true, "", true, act.Tags) where x.ActivityName == act.ActivityName select x).FirstOrDefault();
+                    ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    // FIXME to use (true, "", true, act.Tags)
+                    Activity a2 = (from x in activities where x.ActivityName == act.ActivityName select x).FirstOrDefault();
                     if(a2 !=null)
                     {
                         if (a2.Tags != null)

@@ -100,14 +100,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 var fileLength = new FileInfo(op.FileName).Length;
-                if (fileLength <= 30000)
+                if (fileLength <= 50000)
                 {
                     if ((op.FileName != null) && (op.FileName != string.Empty))
                     {
                         using (var ms = new MemoryStream())
                         {
                             BitmapImage bi = new BitmapImage(new Uri(op.FileName));
-                            Tuple<int, int> sizes = Ginger.Reports.GingerExecutionReport.ExtensionMethods.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
+                            Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
 
                             BitmapImage bi_resized = new BitmapImage();
                             bi_resized.BeginInit();
@@ -115,8 +115,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                             bi_resized.DecodePixelHeight = sizes.Item2;
                             bi_resized.DecodePixelWidth = sizes.Item1;
                             bi_resized.EndInit();
-                            mWizard.ScreenShot = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(bi_resized);
-                            mWizard.POM.ScreenShotImage = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(mWizard.ScreenShot);
+                            mWizard.ScreenShot = Ginger.General.BitmapImage2Bitmap(bi_resized);
+                            mWizard.POM.ScreenShotImage = Ginger.General.BitmapToBase64(mWizard.ScreenShot);
                             mScreenshotPage = new ScreenShotViewPage(mWizard.POM.Name, mWizard.ScreenShot);
                             xScreenShotFrame.Content = mScreenshotPage;
                         }
@@ -124,7 +124,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKeys.ImageSize);
+                    Reporter.ToUser(eUserMsgKeys.ImageSize, "50");
                 }
             }
         }

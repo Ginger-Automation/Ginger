@@ -16,15 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.Reports;
+using Ginger.UserControls;
+using GingerCore.GeneralLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Ginger.UserControls;
-using GingerCore;
-using GingerCore.GeneralLib;
-using Ginger.Reports;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -46,7 +46,9 @@ namespace Ginger.Run.RunSetActions
             {
                 runSetActionSendEmail.Email = new Email();                
             }
-            foreach (HTMLReportTemplate HT in App.LocalRepository.GetSolutionHTMLReportTemplates())
+
+            ObservableList<HTMLReportTemplate> HTMLReportTemplates = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>();
+            foreach (HTMLReportTemplate HT in HTMLReportTemplates)
             {
                 CustomHTMLReportComboBox.Items.Add(HT.Name);
             }
@@ -154,8 +156,9 @@ namespace Ginger.Run.RunSetActions
             
             if (CustomHTMLReportComboBox.SelectedItem == null)
                 return;
-            
-            foreach (HTMLReportTemplate htr in App.LocalRepository.GetSolutionHTMLReportTemplates())
+
+            ObservableList<HTMLReportTemplate> HTMLReportTemplates = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>();
+            foreach (HTMLReportTemplate htr in HTMLReportTemplates)
             {
                if(htr.Name==CustomHTMLReportComboBox.SelectedItem.ToString())
                {
@@ -177,7 +180,8 @@ namespace Ginger.Run.RunSetActions
             }
             CustomHTMLReportComboBox.Items.Clear();
 
-            foreach (var htr in App.LocalRepository.GetSolutionHTMLReportTemplates())
+            ObservableList<HTMLReportTemplate> HTMLReportTemplates = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>();
+            foreach (var htr in HTMLReportTemplates)
             {
                 CustomHTMLReportComboBox.Items.Add(htr.Name);
             }

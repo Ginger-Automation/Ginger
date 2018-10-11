@@ -195,7 +195,7 @@ namespace Ginger.Reports
             newHTMLReportConfiguration.Description = string.Empty;
             using (var ms = new MemoryStream())
             {
-                newHTMLReportConfiguration.LogoBase64Image = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@amdocs_logo.jpg"))));
+                newHTMLReportConfiguration.LogoBase64Image = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@amdocs_logo.jpg"))));
             }
             return newHTMLReportConfiguration;
         }
@@ -349,7 +349,7 @@ namespace Ginger.Reports
 
         private void SetLoadedLogoImage()
         {
-            imgLogo.Source = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(_HTMLReportConfiguration.LogoBase64Image.ToString()));
+            imgLogo.Source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(_HTMLReportConfiguration.LogoBase64Image.ToString()));
         }
 
         private void SetDefaultLogoImage()
@@ -379,12 +379,11 @@ namespace Ginger.Reports
             _pageGenericWin.Hide();
 
             App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
-            App.UserProfile.Solution.Save();
+            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportsSettings);
 
             if (_existingTemplatePage)
             {
-                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");
-                // _HTMLReportConfiguration.Save();
+                Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");                
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_HTMLReportConfiguration);
                 Reporter.CloseGingerHelper();
             }
@@ -489,7 +488,7 @@ namespace Ginger.Reports
                     using (var ms = new MemoryStream())
                     {
                         BitmapImage bi = new BitmapImage(new Uri(op.FileName));
-                        Tuple<int, int> sizes = Ginger.Reports.GingerExecutionReport.ExtensionMethods.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
+                        Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
 
                         BitmapImage bi_resized = new BitmapImage();
                         bi_resized.BeginInit();
@@ -498,13 +497,13 @@ namespace Ginger.Reports
                         bi_resized.DecodePixelWidth = sizes.Item1;
                         bi_resized.EndInit();
 
-                        _HTMLReportConfiguration.LogoBase64Image = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(bi_resized));
+                        _HTMLReportConfiguration.LogoBase64Image = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(bi_resized));
                     }
                 }
             }
             else
             {
-                Reporter.ToUser(eUserMsgKeys.ImageSize);
+                Reporter.ToUser(eUserMsgKeys.ImageSize, "30");
             }
         }
 
