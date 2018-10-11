@@ -76,35 +76,26 @@ namespace GingerCore.Actions.Tuxedo
         
         private SftpClient UnixFTPClient;
         private string workdir;
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue Host { get { return GetOrCreateInputParam(Fields.Host); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue Port { get { return GetOrCreateInputParam(Fields.Port); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue UserName { get { return GetOrCreateInputParam(Fields.UserName); } }
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue Password { get { return GetOrCreateInputParam(Fields.Password); } }
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue PrivateKey { get { return GetOrCreateInputParam(Fields.PrivateKey); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue PrivateKeyPassPhrase { get { return GetOrCreateInputParam(Fields.PrivateKeyPassPhrase); } }
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue PCPath { get { return GetOrCreateInputParam(Fields.PCPath); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue UnixPath { get { return GetOrCreateInputParam(Fields.UnixPath); } }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicUDElements = new ObservableList<ActInputValue>();
-
-        [IsSerializedForLocalRepository]
+     
         public ActInputValue PreCommand { get { return GetOrCreateInputParam(Fields.PreCommand); } }
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()

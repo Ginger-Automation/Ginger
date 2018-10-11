@@ -441,7 +441,7 @@ namespace Ginger.GherkinLib
             //TODO: get file name from repo not hard coded extension...
             if (BFName == null)
             {                
-                BFName =App.UserProfile.Solution.Folder + @"BusinessFlows\" + BizFlowName;
+                BFName = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"BusinessFlows", BizFlowName);
             }
 
             if (!Directory.Exists(Path.GetDirectoryName(BFName)))

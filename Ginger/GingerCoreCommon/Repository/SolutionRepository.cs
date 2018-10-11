@@ -608,20 +608,10 @@ namespace Amdocs.Ginger.Repository
         public void MoveItem(RepositoryItemBase repositoryItem, string targetFolder)
         {
             RepositoryFolderBase RF = GetItemRepositoryFolder(repositoryItem);
+            RepositoryFolderBase targetRF= GetRepositoryFolderByPath(targetFolder);
 
-
-            SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
-            RepositoryFolderBase rootRF = SRII.GetItemRepositoryFolder(repositoryItem);
-            RepositoryFolderBase targetRF = rootRF.GetSubFolderByName(targetFolder);
-
-
-
-            RF.MoveItem(repositoryItem, targetRF);
-
-
-
+            RF.DeleteRepositoryItem(repositoryItem);
+            targetRF.AddRepositoryItem(repositoryItem);
         }
-
-
     }
 }

@@ -62,7 +62,7 @@ namespace Ginger.WindowExplorer
             InitActionsGrid();
             InitLocatorsGrid();
             InitDataPage();
-            AddToPageList();            
+             
             SelectLocatorButton.Visibility = System.Windows.Visibility.Collapsed;
         }
 
@@ -106,7 +106,6 @@ namespace Ginger.WindowExplorer
             AddActionButton.Visibility = System.Windows.Visibility.Collapsed;
 
             InitLocatorsGrid();
-            AddToPageList();
         }
 
         private void InitLocatorsGrid()
@@ -155,16 +154,6 @@ namespace Ginger.WindowExplorer
             AvailableControlActionsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
         }
 
-        private void AddToPageList()
-        {
-            ControlActionsPage tempPage = App.PageList.FirstOrDefault(Page => Page is ControlActionsPage) as ControlActionsPage;
-            if (tempPage == null) App.PageList.Add(this);
-            else
-            {
-                App.PageList.Remove(tempPage);
-                App.PageList.Add(this);
-            }
-        }
 
         private void AddActionButton_Click(object sender, RoutedEventArgs e)
         {

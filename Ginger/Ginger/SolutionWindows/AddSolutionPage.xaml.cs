@@ -75,7 +75,7 @@ namespace Ginger.SolutionWindows
                 //TODO: check AppName and platform validity - not empty + app exist in list of apps
 
                 //validate solution
-                if (!mSolution.Folder.EndsWith(@"\")) mSolution.Folder += @"\";
+                if (!mSolution.Folder.EndsWith(@"\")) mSolution.Folder += @"\"; 
 
                 //make sure main folder exist
                 if (!System.IO.Directory.Exists(mSolution.Folder))
@@ -91,9 +91,9 @@ namespace Ginger.SolutionWindows
                 }
 
                 //check solution not already exist
-                if (System.IO.File.Exists(mSolution.Folder + @"\Ginger.Solution.xml") == false)
+                if (System.IO.File.Exists(System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml")) == false)
                 {
-                    mSolution.FilePath = mSolution.Folder + @"\Ginger.Solution.xml";
+                    mSolution.FilePath = System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml");
                     mSolution.SaveSolution(false);
                 }
                 else
@@ -180,10 +180,10 @@ namespace Ginger.SolutionWindows
         {
             byte[] obj= Properties.Resources.GingerDataSource;
 
-            if(File.Exists(mSolution.Folder + @"DataSources\GingerDataSource.mdb") == false)
+            if(!File.Exists(System.IO.Path.Combine(mSolution.Folder, @"DataSources\GingerDataSource.mdb")))
             {
-                Directory.CreateDirectory(mSolution.Folder + "DataSources");
-                System.IO.FileStream fs = new System.IO.FileStream(mSolution.Folder + @"DataSources\GingerDataSource.mdb", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                Directory.CreateDirectory(System.IO.Path.Combine(mSolution.Folder, "DataSources"));
+                System.IO.FileStream fs = new System.IO.FileStream(System.IO.Path.Combine(mSolution.Folder, @"DataSources\GingerDataSource.mdb"), System.IO.FileMode.Create, System.IO.FileAccess.Write);
                 fs.Write(obj, 0, obj.Count());
                 fs.Close();
                 fs.Dispose();
@@ -193,8 +193,8 @@ namespace Ginger.SolutionWindows
             a.Name = "GingerDataSource";             
             a.FilePath = @"~\DataSources\GingerDataSource.mdb";
             a.DSType = DataSourceBase.eDSType.MSAccess;
-            string sFileName = mSolution.Folder + @"DataSources\" + a.GetNameForFileName() + "." + a.ObjFileExt + ".xml";
-            a.RepositorySerializer.SaveToFile(a, sFileName); 
+            RepositoryFolder<DataSourceBase> dsTargetFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
+            dsTargetFolder.AddRepositoryItem(a);
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
