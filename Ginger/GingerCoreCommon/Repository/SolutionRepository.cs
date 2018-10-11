@@ -118,11 +118,16 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         /// <param name="repositoryItem"></param>
         public void SaveRepositoryItem(RepositoryItemBase repositoryItem)
-        {      
+        {
+            if (String.IsNullOrEmpty(repositoryItem.ContainingFolder))
+            {
+                throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
+            }
+
             repositoryItem.UpdateBeforeSave();
 
             string txt = RepositorySerializer.SerializeToString(repositoryItem);
-            string filePath = GetRepositoryItemFilePath(repositoryItem);
+            string filePath = CreateRepositoryItemFileName(repositoryItem);
             RepositoryFolderBase rf = GetItemRepositoryFolder(repositoryItem);
             rf.SaveRepositoryItem(filePath, txt);
             repositoryItem.FileName = filePath;
@@ -464,7 +469,7 @@ namespace Amdocs.Ginger.Repository
         internal void SaveNewRepositoryItem(RepositoryItemBase repositoryItem)
         {
             //check if file already exist
-            string filePath = GetRepositoryItemFilePath(repositoryItem);
+            string filePath = CreateRepositoryItemFileName(repositoryItem);
             if (System.IO.File.Exists(filePath))
             {
                 throw new Exception("Repository file already exist - " + filePath);
@@ -473,20 +478,35 @@ namespace Amdocs.Ginger.Repository
         }
 
         //TODO: fix this method name or cretae or !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public string GetRepositoryItemFilePath(RepositoryItemBase RI)
+        public string CreateRepositoryItemFileName(RepositoryItemBase RI, string containingFolder = "")
         {
             var v = GetSolutionRepositoryItemInfo(RI.GetType());
 
             string name = RI.ItemName; // (string)RI.GetType().GetProperty(v.PropertyForFileName).GetValue(RI);
 
-            if (RI.FilePath != null && File.Exists(RI.FilePath))
+            if (RI.FilePath != null && File.Exists(RI.FilePath) && string.IsNullOrEmpty(containingFolder))
                 return RI.FilePath;
             else
             {
                 //probably new item so create new path for it
 
-                //FOLDER
-                string fileFolderPath = GetItemRepositoryFolder(RI)?.FolderFullPath;              
+                //FOLDER             
+                string fileFolderPath = string.Empty; 
+                if (string.IsNullOrEmpty(containingFolder))
+                    fileFolderPath = RI.ContainingFolder;
+                else
+                    fileFolderPath = containingFolder;
+                if (!fileFolderPath.StartsWith(cSolutionRootFolderSign) || !fileFolderPath.StartsWith(mSolutionFolderPath))
+                {
+                    // Fix me for Linux !!!	
+                    string A = mSolutionFolderPath; //.TrimEnd(Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar);	
+                    string B = fileFolderPath.Replace(cSolutionRootFolderSign, Path.DirectorySeparatorChar.ToString()).TrimStart(Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
+                    if (!A.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                    {
+                        A += Path.DirectorySeparatorChar;
+                    }
+                    fileFolderPath = Path.Combine(A, B);
+                }
 
                 //FILE
                 string fileName = name;
