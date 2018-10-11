@@ -436,10 +436,10 @@ namespace Ginger
 
             foreach (DataSourceBase ds in DataSources)
             {
-                if (ds.FilePath.StartsWith("~"))
+                if (ds.FilePath.StartsWith("~") || ds.FilePath.StartsWith(@"~\"))
                 {
-                    ds.FileFullPath = ds.FilePath.Replace("~", "");
-                    ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
+                    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
+                    ds.FileFullPath = App.UserProfile.Solution.Folder + @"\" + ds.FileFullPath;
                 }
                 ds.Init(ds.FileFullPath);
                 TreeViewItem tviDataSource = new TreeViewItem();

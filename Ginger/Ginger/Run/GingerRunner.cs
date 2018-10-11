@@ -991,10 +991,10 @@ namespace Ginger.Run
                 if (DataSource == null)
                     return;
 
-                if (DataSource.FilePath.StartsWith("~"))
+                if (DataSource.FilePath.StartsWith("~") || DataSource.FilePath.StartsWith(@"~\"))
                 {
-                    DataSource.FileFullPath = DataSource.FilePath.Replace("~", "");
-                    DataSource.FileFullPath = Ginger.App.UserProfile.Solution.Folder + DataSource.FileFullPath;
+                    DataSource.FileFullPath = DataSource.FilePath.Replace(@"~\", "").Replace("~", "");
+                    DataSource.FileFullPath = Ginger.App.UserProfile.Solution.Folder + @"\" +  DataSource.FileFullPath;
                 }
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dstTables = DataSource.DSC.GetTablesList();

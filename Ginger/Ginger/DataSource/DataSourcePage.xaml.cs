@@ -100,17 +100,10 @@ namespace Ginger.DataSource
             {
                 DataSourceBase ADC;
                 ADC = new AccessDataSource();
-                if (mDSDetails.FilePath.StartsWith("~"))
+                if (mDSDetails.FilePath.StartsWith("~") || mDSDetails.FilePath.StartsWith(@"~\"))
                 {
-                    mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~", "");
-                    if(!mDSDetails.FilePath.StartsWith(@"~\"))
-                    {
-                        mDSDetails.FileFullPath = App.UserProfile.Solution.Folder + @"\" + mDSDetails.FileFullPath;
-                    }
-                    else
-                    {
-                        mDSDetails.FileFullPath = App.UserProfile.Solution.Folder + mDSDetails.FileFullPath;
-                    }
+                    mDSDetails.FileFullPath = mDSDetails.FilePath.Replace(@"~\", "").Replace("~", "");                    
+                    mDSDetails.FileFullPath = App.UserProfile.Solution.Folder + @"\" + mDSDetails.FileFullPath;                    
                 }
                 ADC.Init(mDSDetails.FileFullPath);
                 mDSDetails.DSC = ADC;

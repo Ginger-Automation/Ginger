@@ -1493,11 +1493,11 @@ namespace Ginger.Actions
                 if (ds.Name == cmbDataSourceName.SelectedValue.ToString())
                 {
                     mDataSourceName = cmbDataSourceName.SelectedValue.ToString();
-                    if (ds.FilePath.StartsWith("~"))
+                    if (ds.FilePath.StartsWith("~") || ds.FilePath.StartsWith(@"~\"))
                     {
-                        ds.FileFullPath = ds.FilePath.Replace("~", "");
-                        ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
-                    }
+                        ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");                                              
+                        ds.FileFullPath = App.UserProfile.Solution.Folder + @"\" + ds.FileFullPath;
+                    }                       
                     ds.Init(ds.FileFullPath);
                     List<string> dsTableNames = new List<string>();
                     mDSTableList.Clear();
