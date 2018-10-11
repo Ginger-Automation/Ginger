@@ -270,13 +270,6 @@ namespace Ginger
             }
         }
 
-        public static List<Page> PageList { get; set; }
-
-        public static Page GetPage(Type PageType)
-        {
-            Page p = (from p1 in PageList where p1.GetType() == PageType select p1).FirstOrDefault();
-            return p;
-        }
 
         //public static string LocalApplicationData
         //{
