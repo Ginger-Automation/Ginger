@@ -3530,16 +3530,26 @@ namespace GingerCore.Drivers
                     // grab only visible elements
                     if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0) continue;
 
-                    ElementInfo foundElemntInfo = GetElementInfoWithIWebElement(el, path);  
+                    eElementType ElementTypeEnum = GetElementTypeEnum(el);
+
+                    ElementInfo foundElemntInfo = null;
+                   
                     
                     //filter element if needed
                     if (filteredElementType != null && filteredElementType.Count > 0)
                     {
-                        if (filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                        if (filteredElementType.Contains(ElementTypeEnum))
+                        {
+                            foundElemntInfo = GetElementInfoWithIWebElement(el, path);
+                            foundElemntInfo.IsAutoLearned = true;
                             foundElementsList.Add(foundElemntInfo);
+                        }
+                            
                     }
                     else
                     {
+                        foundElemntInfo = GetElementInfoWithIWebElement(el, path);
+                        foundElemntInfo.IsAutoLearned = true;
                         foundElementsList.Add(foundElemntInfo);
                     }                                     
 

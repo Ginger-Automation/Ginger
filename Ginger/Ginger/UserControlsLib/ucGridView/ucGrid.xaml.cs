@@ -200,6 +200,7 @@ namespace Ginger
         public static ObservableList<RepositoryItemBase> mCopiedorCutItems = new ObservableList<RepositoryItemBase>();
         public static IObservableList mCutSourceList = null;
 
+
         /// <summary>
         ///  Function to return grid object/columns values as one long string + toUpper
         ///  Used for Search in Grid 
@@ -286,6 +287,19 @@ namespace Ginger
             }
             return sb.ToString().ToUpper();
         }
+
+        public event PasteItemEventHandler PasteItemEvent;
+        public delegate void PasteItemEventHandler(PasteItemEventArgs EventArgs);
+
+        public void OnPasteItemEvent(PasteItemEventArgs.eEventType evType, RepositoryItemBase repositoryItemBaseObj)
+        {
+            PasteItemEventHandler handler = PasteItemEvent;
+            if (handler != null)
+            {
+                handler(new PasteItemEventArgs(evType, repositoryItemBaseObj));
+            }
+        }
+
 
         public ucGrid()
         {
@@ -713,6 +727,8 @@ namespace Ginger
         {
             CutItems();
         }
+
+        
         private void btnPaste_Click(object sender, RoutedEventArgs e)
         {
             PasteItems();
@@ -1857,6 +1873,8 @@ public void RemoveCustomView(string viewName)
                         RepositoryItemBase copiedItem = item.CreateCopy();
                         //set unique name
                         SetItemUniqueName(copiedItem, "_Copy");
+                        //Triger event for changing sub classes fields
+                        OnPasteItemEvent(PasteItemEventArgs.eEventType.PasteCopiedItem, copiedItem);
                         //add                        
                         AddItemAfterCurrent(copiedItem);
                     }
@@ -2086,6 +2104,24 @@ public void RemoveCustomView(string viewName)
                 Grid.BorderBrush = FindResource("@Skin1_ColorA") as Brush;
 
             return validationRes;
+        }
+    }
+
+    public class PasteItemEventArgs
+    {
+        public enum eEventType
+        {
+            PasteCopiedItem,
+            PasteCutedItem,
+        }
+
+        public eEventType EventType;
+        public RepositoryItemBase RepositoryItemBaseObject;
+
+        public PasteItemEventArgs(eEventType eventType, RepositoryItemBase repositoryItemBaseObjectObject)
+        {
+            this.EventType = eventType;
+            this.RepositoryItemBaseObject = repositoryItemBaseObjectObject;
         }
     }
 }
