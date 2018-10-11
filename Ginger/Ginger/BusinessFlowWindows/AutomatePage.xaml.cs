@@ -107,7 +107,7 @@ namespace Ginger
 
             if (App.BusinessFlow == null) //Not supposed to happen because now Automate is done from BF itself           
             {
-                App.LoadDefaultBusinessFlow();
+                App.SetDefaultBusinessFlow();
             }
 
             //Ribbon
