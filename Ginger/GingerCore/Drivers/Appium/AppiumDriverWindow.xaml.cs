@@ -431,7 +431,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while designing the Mobile window initial look", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while designing the Mobile window initial look", ex);
             }
         }
 
@@ -573,7 +573,7 @@ namespace GingerCore.Drivers.Appium
             {
                 if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
                                 AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get mobile page source or convert it to XML format", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get mobile page source or convert it to XML format", ex);
                 else
                     Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
 
@@ -626,7 +626,7 @@ namespace GingerCore.Drivers.Appium
                     sourceLbl.Visibility = System.Windows.Visibility.Visible;
                     pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
                     pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 }
             }
             else
@@ -684,7 +684,7 @@ namespace GingerCore.Drivers.Appium
                                         break;
                                     }
                             }
-                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
                         }
 
                         if (!skipElement)
@@ -723,7 +723,7 @@ namespace GingerCore.Drivers.Appium
                                     element_Start_Y = -1;
                                     element_Max_X = -1;
                                     element_Max_Y = -1;
-                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                                 }
                                 break;
 
@@ -741,7 +741,7 @@ namespace GingerCore.Drivers.Appium
                                     element_Start_Y = -1;
                                     element_Max_X = -1;
                                     element_Max_Y = -1;
-                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                                 }
                                 break;
                         }
@@ -780,7 +780,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return null;
             }
         }
@@ -976,7 +976,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to identify the mobile element", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to identify the mobile element", ex);
                 elemntAct.LocateBy = eLocateBy.ByXY;
                 elemntAct.LocateValue = pointOnMobile_X + "," + pointOnMobile_Y;
                 return elemntAct;
@@ -1035,7 +1035,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to record the mobile action", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to record the mobile action", ex);
             }
         }
         
@@ -1176,7 +1176,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to draw mobile element rectangle", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to draw mobile element rectangle", ex);
             }
         }
 

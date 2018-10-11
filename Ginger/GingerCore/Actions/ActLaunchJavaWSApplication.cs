@@ -583,7 +583,7 @@ namespace GingerCore.Actions
             catch (Exception ex)
             {
                 Error = "Failed to launch the java application with the command '" + javaExecuter + " " + command + "'";
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
                 return false;
             }
         }
@@ -624,7 +624,7 @@ namespace GingerCore.Actions
             catch (Exception ex)
             {
                 Error = "Failed to attach the Ginger Agent with the command '" + javaExecuter + " " + command + "'";
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
                 return false;
             }
         }
@@ -762,7 +762,7 @@ namespace GingerCore.Actions
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception in FindProcessWindowTitle", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in FindProcessWindowTitle", ex);
                 }
             }
             return false;
@@ -887,7 +887,7 @@ namespace GingerCore.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception when checking IsInstrumentationModuleLoaded", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception when checking IsInstrumentationModuleLoaded", e);
             }
 
             return false;

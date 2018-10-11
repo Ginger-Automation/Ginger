@@ -29,6 +29,7 @@ using System.Data;
 using GingerCore.Platforms;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Actions
 {
@@ -133,7 +134,7 @@ namespace GingerCore.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
             }
         }
         //to get the absolute path of output file
@@ -312,7 +313,7 @@ namespace GingerCore.Actions
             }
             catch (Exception exc)
             {
-                Reporter.ToLog(eLogLevel.ERROR, exc.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, exc.Message);
             }
             finally
             {

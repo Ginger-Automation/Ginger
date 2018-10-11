@@ -142,7 +142,7 @@ namespace GingerCore.ALM.QC
                 }
             }catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
                 newTSTest.Runs = new List<QCTSTestRun>();
             }
 
@@ -514,7 +514,7 @@ namespace GingerCore.ALM.QC
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
                             }
 
                             //add linked variable if needed
@@ -565,7 +565,7 @@ namespace GingerCore.ALM.QC
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                         //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                     }
                 }
@@ -587,7 +587,7 @@ namespace GingerCore.ALM.QC
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -808,7 +808,7 @@ namespace GingerCore.ALM.QC
                                 if (stepActivityVar is VariableString)
                                     ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                             }
-                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
                         }
 
                         //add linked variable if needed
@@ -858,7 +858,7 @@ namespace GingerCore.ALM.QC
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                     //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                 }
             }
@@ -1060,7 +1060,7 @@ namespace GingerCore.ALM.QC
                                 if (stepActivityVar is VariableString)
                                     ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                             }
-                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
                         }
 
                         //add linked variable if needed
@@ -1110,7 +1110,7 @@ namespace GingerCore.ALM.QC
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                     //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                 }
             }
@@ -1134,7 +1134,7 @@ namespace GingerCore.ALM.QC
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while stripping the HTML from QC TC Step Description/Expected", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while stripping the HTML from QC TC Step Description/Expected", ex);
                 return HTMLText;
             }
         }
@@ -1154,7 +1154,7 @@ namespace GingerCore.ALM.QC
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while pulling the parameters names from QC TC Step Description/Expected", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while pulling the parameters names from QC TC Step Description/Expected", ex);
             }
         }
 

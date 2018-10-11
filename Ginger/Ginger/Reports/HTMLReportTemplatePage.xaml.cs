@@ -717,7 +717,7 @@ namespace Ginger.Reports
                     string unzippedDataTestPath= System.IO.Path.Combine(mPreviewDummyReportDataPath, "RunSet.txt");
                     if (File.Exists(unzippedDataTestPath) == false)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Missing HTML Report preview unzipped data on: " + unzippedDataTestPath);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Missing HTML Report preview unzipped data on: " + unzippedDataTestPath);
                         mPreviewDummyReportPath = string.Empty;
                     }
                     else
@@ -728,12 +728,12 @@ namespace Ginger.Reports
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Missing HTML Report preview Dummy report Zip file on: " + dummyReportOriginalZipFilePath);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Missing HTML Report preview Dummy report Zip file on: " + dummyReportOriginalZipFilePath);
                 }                
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to prepare the dummy report data for HTML Report Preview", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to prepare the dummy report data for HTML Report Preview", ex);
             }
         }
 

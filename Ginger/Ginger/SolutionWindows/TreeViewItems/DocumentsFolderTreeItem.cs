@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.GherkinLib;
 using Ginger.UserControlsLib.TextEditor;
@@ -119,7 +120,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (System.Exception excpt)
             {
-               Reporter.ToLog(eLogLevel.ERROR, "Failed to add Document Folder to tree",excpt,true);
+               Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add Document Folder to tree",excpt,true);
             }
         }
 

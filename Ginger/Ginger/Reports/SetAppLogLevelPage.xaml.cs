@@ -29,14 +29,14 @@ namespace Ginger.Reports
     /// </summary>
     public partial class SetAppLogLevelPage : Page
     {
-        eAppLogLevel mInitialType;
+        eAppReporterLoggingLevel mInitialType;
         GenericWindow _pageGenericWin = null;
 
         public SetAppLogLevelPage()
         {
             InitializeComponent();
 
-            LogLevelCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eAppLogLevel));
+            LogLevelCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eAppReporterLoggingLevel));
             App.ObjFieldBinding(LogLevelCombo, ComboBox.TextProperty, App.UserProfile, nameof(App.UserProfile.AppLogLevel));
 
             mInitialType = App.UserProfile.AppLogLevel;

@@ -126,7 +126,7 @@ namespace Ginger.Variables
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the variable type configurations page", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the variable type configurations page", ex);
             }
         }
 

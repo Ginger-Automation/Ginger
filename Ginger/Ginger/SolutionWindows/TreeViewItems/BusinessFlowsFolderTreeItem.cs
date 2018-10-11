@@ -96,7 +96,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Business Flows folder");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error unknown item added to Business Flows folder");
                 throw new NotImplementedException();
             }
         }

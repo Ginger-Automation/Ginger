@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Linq;
+using Amdocs.Ginger.Common;
 using Microsoft.Win32;
 
 namespace GingerCore.GeneralFunctions
@@ -57,7 +58,7 @@ namespace GingerCore.GeneralFunctions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get the registry key for the RootType: '" + rootType +
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get the registry key for the RootType: '" + rootType +
                     "' and KeyPath: '" + keyPath + "'", ex);
                 regKey = null;
                 return regKey;
@@ -103,7 +104,7 @@ namespace GingerCore.GeneralFunctions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to create the registry key for the RootType: '" + rootType +
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to create the registry key for the RootType: '" + rootType +
                                                     "' and KeyPath: '" + keyPath + "'", ex);
                 return false;
             }
@@ -126,7 +127,7 @@ namespace GingerCore.GeneralFunctions
                     else
                     {
                         //requied parameter was not found
-                        Reporter.ToLog(eLogLevel.WARN, "Failed to get the registry key value for the RootType: '" + rootType +
+                        Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to get the registry key value for the RootType: '" + rootType +
                                       "', KeyPath: '" + keyPath + "' and ParameterName: '" + paramterName + "'- Parameter was not found");
                         return null;
                     }
@@ -139,7 +140,7 @@ namespace GingerCore.GeneralFunctions
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get the registry key value for the RootType: '" + rootType +
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get the registry key value for the RootType: '" + rootType +
                                       "', KeyPath: '" + keyPath + "' and ParameterName: '" + paramterName + "'", ex);
                 return null;
             }
@@ -166,7 +167,7 @@ namespace GingerCore.GeneralFunctions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to set the registry key value: '" + value + 
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to set the registry key value: '" + value + 
                     "' for the RootType: '" + rootType + "', KeyPath: '" + keyPath + "' and ParameterName: '" + paramterName + "'", ex);
                 return false;
             }
@@ -248,7 +249,7 @@ namespace GingerCore.GeneralFunctions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to complete the registry value check for the key: " + 
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to complete the registry value check for the key: " + 
                                                                                         rootType + "\\" + keyPath, ex);                
                 if (!silentMode)
                 {
