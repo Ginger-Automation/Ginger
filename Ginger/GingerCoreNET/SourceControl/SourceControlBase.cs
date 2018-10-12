@@ -196,10 +196,19 @@ namespace GingerCoreNET.SourceControl
                 {
                     case eRepositoryItemStatus.New:
                         return eImageType.SourceControlNew;
+
                     case eRepositoryItemStatus.Modified:
                         return eImageType.SourceControlModified;
+
                     case eRepositoryItemStatus.Equel:
                         return eImageType.SourceControlEquel;
+
+                    case eRepositoryItemStatus.LockedByMe:
+                        return eImageType.SourceControlLockedByMe;
+
+                    case eRepositoryItemStatus.LockedByAnotherUser:
+                        return eImageType.SourceControlLockedByAnotherUser; 
+
                     default:
                         return eImageType.SourceControlDeleted;
                 }

@@ -363,7 +363,7 @@ namespace GingerCore.SourceControl
                             }
                         }
                     }
-                }
+                }                
 
                 client.Commit(Paths, ca, out result);
                 if (result != null)
@@ -409,7 +409,7 @@ namespace GingerCore.SourceControl
             try
             {
                 string relativePath = System.IO.Path.GetFullPath(Path);
-                relativePath = relativePath.Substring(SolutionFolder.Length - 1);
+                relativePath = relativePath.Replace(SolutionFolder,"");
                 Uri targetUri = new Uri(SourceControlURL + relativePath);
                 SvnTarget target = SvnTarget.FromUri(targetUri);
                 SvnListArgs args = new SvnListArgs();
@@ -428,13 +428,16 @@ namespace GingerCore.SourceControl
 
         public override bool Lock(string Path,string lockComment, ref string error)
         {
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
             bool result = false;
             try
             {
                 string relativePath = System.IO.Path.GetFullPath(Path);
-                relativePath = relativePath.Substring(SolutionFolder.Count() - 1);
-
+                relativePath = relativePath.Replace(SolutionFolder,"");
+                
                 Uri targetUri = new Uri(SourceControlURL + relativePath);
                 result = client.RemoteLock(targetUri, lockComment);
             }
