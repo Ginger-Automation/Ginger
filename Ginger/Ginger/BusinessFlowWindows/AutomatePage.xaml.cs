@@ -876,8 +876,11 @@ namespace Ginger
                 try
                 {
                     AnalyzerPage analyzerPage = new AnalyzerPage();
-                    analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
-                    analyzerPage.AnalyzeWithoutUI();
+                    await Task.Run(() =>
+                    {
+                        analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
+                        analyzerPage.AnalyzeWithoutUI();
+                    });
                     while (analyzerPage.IsAnalyzeDone == false)
                     {
                         System.Threading.Thread.Sleep(100);
