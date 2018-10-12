@@ -29,7 +29,7 @@ namespace Ginger.Dictionaries
     /// </summary>
     public partial class SetTerminologyTypePage : Page
     {
-        GingerCore.eTerminologyDicsType mInitialType;
+        eTerminologyDicsType mInitialType;
         GenericWindow _pageGenericWin = null;
 
         public SetTerminologyTypePage()
