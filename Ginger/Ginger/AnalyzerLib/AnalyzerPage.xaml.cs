@@ -158,10 +158,8 @@ namespace Ginger.AnalyzerLib
                         RunSolutionAnalyzer();
                         break;
                     case AnalyzedObject.BusinessFlow:
-                        Task t = Task.Factory.StartNew(() =>
-                        {
                             RunBusinessFlowAnalyzer(businessFlow, true);
-                        });
+                      
                         break;
                     case AnalyzedObject.RunSetConfig:
                         RunRunSetConfigAnalyzer(mRunSetConfig);
@@ -222,8 +220,7 @@ namespace Ginger.AnalyzerLib
 
         private void RunRunSetConfigAnalyzer(RunSetConfig mRunSetConfig)
         {
-            Task t = Task.Factory.StartNew(() =>
-            {
+            
                 List<AnalyzerItemBase> issues = RunSetConfigAnalyzer.Analyze(mRunSetConfig);
                 AddIssues(issues);
                 //TODO: check agents is not dup in different GR
@@ -256,7 +253,7 @@ namespace Ginger.AnalyzerLib
                 }
 
                 SetAnalayzeProceesAsCompleted();
-            });
+            
         }
 
         private List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, bool markCompletion = true)
