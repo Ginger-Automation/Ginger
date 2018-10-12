@@ -86,18 +86,11 @@ namespace GingerCore.Actions.XML
         }
 
 
-        public bool mReqisFromFile = true;
-        [IsSerializedForLocalRepository]
+        
+        [IsSerializedForLocalRepository(true)]
         public bool ReqisFromFile
         {
-            get
-            {
-                return mReqisFromFile;
-            }
-            set
-            {
-                mReqisFromFile = value;
-            }
+            get;set;
         }
         private eDocumentType mDocumentType;
         [IsSerializedForLocalRepository]
