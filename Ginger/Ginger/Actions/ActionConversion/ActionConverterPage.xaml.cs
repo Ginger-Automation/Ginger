@@ -323,7 +323,7 @@ namespace Ginger.Actions.ActionConversion
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert activities - ", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while trying to convert activities - ", ex);
                     Reporter.ToUser(eUserMsgKeys.ActivitiesConversionFailed);
                 }
                 finally

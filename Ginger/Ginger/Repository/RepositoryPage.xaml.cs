@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerCore.Actions;
@@ -93,7 +94,7 @@ namespace Ginger.Repository
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             // We do looad on demand

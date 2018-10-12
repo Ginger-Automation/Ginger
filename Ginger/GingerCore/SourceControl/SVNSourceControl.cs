@@ -218,7 +218,7 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 error = ex.Message + Environment.NewLine + ex.InnerException;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to communicate with SVN server through path "+Path+" got error "+ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to communicate with SVN server through path "+Path+" got error "+ex.Message);
                 return files;
             }
 
@@ -278,14 +278,14 @@ namespace GingerCore.SourceControl
                 if (result.Revision != -1)
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
+                        Reporter.ToLog(eAppReporterLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
                     else
                         Reporter.ToUser(eUserMsgKeys.UpdateToRevision, result.Revision);
                 }
                 else
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
                     else
                         Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "The files are not connected to source control");
                 }
@@ -400,7 +400,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
             }
         }
 
@@ -421,7 +421,7 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 ListEventArgs = null;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return null;
             }
         }

@@ -52,7 +52,7 @@ namespace Ginger
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
                 }
 
             }

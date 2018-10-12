@@ -599,7 +599,7 @@ namespace Ginger.WindowExplorer
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);                
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);                
                 Reporter.ToUser(eUserMsgKeys.ObjectLoad);
             }
         }        

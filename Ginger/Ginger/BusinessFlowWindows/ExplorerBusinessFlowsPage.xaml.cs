@@ -22,6 +22,7 @@ using System.Windows.Controls;
 using GingerCore;
 using Ginger.UserControls;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -36,7 +37,15 @@ namespace Ginger.BusinessFlowWindows
                         
             grdBusinessFlows.btnRefresh.Visibility = Visibility.Collapsed; 
             SetBusinessFlowsGridView();
-            grdBusinessFlows.DataSourceList = repositoryFolder.GetFolderItems();
+
+            if (repositoryFolder.IsRootFolder)
+            {
+                grdBusinessFlows.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            }
+            else
+            {
+                grdBusinessFlows.DataSourceList = repositoryFolder.GetFolderItems();
+            }
         }
 
         private void SetBusinessFlowsGridView()

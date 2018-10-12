@@ -1270,7 +1270,7 @@ namespace GingerCore.Drivers.AndroidADB
                                         break;
                                     }
                             }
-                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
                         }
 
                         if (!skipElement)
@@ -1308,7 +1308,7 @@ namespace GingerCore.Drivers.AndroidADB
                             element_Start_Y = -1;
                             element_Max_X = -1;
                             element_Max_Y = -1;
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                         }
                       
 
@@ -1344,7 +1344,7 @@ namespace GingerCore.Drivers.AndroidADB
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return null;
             }
         }

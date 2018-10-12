@@ -994,7 +994,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             if (ActionTab.SelectedItem == ScreenShotTab)
@@ -1293,7 +1293,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 
