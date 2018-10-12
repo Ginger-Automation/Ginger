@@ -139,7 +139,7 @@ namespace Ginger.AnalyzerLib
             Analyze();
         }
 
-        private void Analyze()
+        private async void Analyze()
         {
             // Each anlyzer will set to true once completed, this is prep for multi run in threads for speed
             BusyInProcess = true;
@@ -158,7 +158,7 @@ namespace Ginger.AnalyzerLib
                         RunSolutionAnalyzer();
                         break;
                     case AnalyzedObject.BusinessFlow:
-                        Task t = Task.Factory.StartNew(() =>
+                        await Task.Run(() =>
                         {
                             RunBusinessFlowAnalyzer(businessFlow, true);
                         });

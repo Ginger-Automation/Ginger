@@ -878,10 +878,14 @@ namespace Ginger
                     AnalyzerPage analyzerPage = new AnalyzerPage();
                     analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
                     analyzerPage.AnalyzeWithoutUI();
-                    while (analyzerPage.IsAnalyzeDone == false)
+                    await Task.Run(() =>
                     {
-                        System.Threading.Thread.Sleep(100);
-                    }
+                        while (analyzerPage.IsAnalyzeDone == false)
+                        {
+                            System.Threading.Thread.Sleep(100);
+
+                        }
+                    });
                     Reporter.CloseGingerHelper();
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)
                     {
