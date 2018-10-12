@@ -316,7 +316,7 @@ namespace Ginger.ALM.QC
                 catch (Exception ex)
                 {
                     testCaseDetails.LastExecutionTime = (filteredRuns[0].ExecutionDate);
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 }
                 testCaseDetails.LastExecutionStatus = filteredRuns[0].Status;
             }

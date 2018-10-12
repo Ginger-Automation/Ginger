@@ -188,7 +188,7 @@ namespace Ginger.GeneralWindows
             }
             catch(Exception ex)
             {
-                GingerCore.Reporter.ToLog(GingerCore.eLogLevel.ERROR, "Failed to Set Selected ListItem Style", ex);
+                GingerCore.Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Set Selected ListItem Style", ex);
             }
         }
 

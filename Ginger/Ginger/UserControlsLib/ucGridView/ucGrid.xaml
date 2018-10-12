@@ -14,7 +14,7 @@
     <DockPanel x:Name="mainDockPanel"  HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}">
         <!-- Grid Title -->
         <Border x:Name="xSimpleHeader" DockPanel.Dock="Top" Visibility="{Binding  ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}"  >
-            <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource $ucGridTitleLightStyle}">Grid Title</Label>
+            <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource $ucGridTitleLightStyle}" Margin="0,1,0,1">Grid Title</Label>
         </Border>
         <DockPanel x:Name="xEnhancedHeader" DockPanel.Dock="Top" VerticalAlignment="Center" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="5,5,5,0">

@@ -119,7 +119,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
                 catch(Exception ex)
                 {
                     ri.Status = eRecoveredItemStatus.RecoveredFailed;
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to recover the original file '{0}' with the recovered file '{1}'", originalItem.FileName, ri.RecoveredItemObject.FileName), ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to recover the original file '{0}' with the recovered file '{1}'", originalItem.FileName, ri.RecoveredItemObject.FileName), ex);
                 }
             }
 

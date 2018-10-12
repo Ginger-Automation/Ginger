@@ -23,6 +23,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor.XML
 {
@@ -71,7 +72,7 @@ namespace Ginger.UserControlsLib.TextEditor.XML
         }
 
         // if we want to add tool bar item and handler this is the place
-        public override List<TextEditorToolBarItem> Tools
+        public override List<ITextEditorToolBarItem> Tools
         {
             get { return null; }
         }

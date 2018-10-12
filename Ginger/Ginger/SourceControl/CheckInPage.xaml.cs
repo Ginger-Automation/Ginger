@@ -137,7 +137,7 @@ namespace Ginger.SourceControl
                          {
                              if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
-                             Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                             Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                          }
                     
                          if (string.IsNullOrEmpty(SCFI.Path)) SCFI.FileType = "";
@@ -502,7 +502,7 @@ namespace Ginger.SourceControl
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
             }
         }
     }

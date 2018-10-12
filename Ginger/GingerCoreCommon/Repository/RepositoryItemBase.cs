@@ -661,6 +661,7 @@ namespace Amdocs.Ginger.Repository
             return false;
         }
 
+        ///Do not use,This field will be removed. All the folder paths, Solution repository should know based on repo item type
         private string mContainingFolder = null;
         public string ContainingFolder
         {
