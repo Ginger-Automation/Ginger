@@ -94,7 +94,7 @@ namespace GingerCore
         ConnectionCloseWarning,
         InvalidCharactersWarning,
         InvalidValueExpression, RecoverItemsMissingSelectionToRecover,
-        FolderExistsWithName, DownloadedSolutionFromSourceControl, SourceControlFileLockedByAnotherUser,
+        FolderExistsWithName, DownloadedSolutionFromSourceControl, SourceControlFileLockedByAnotherUser, SourceControlItemAlreadyLocked,SoruceControlItemAlreadyUnlocked,
         SourceControlUpdateFailed, SourceControlCommitFailed, SourceControlChkInSucss, SourceControlChkInConflictHandledFailed, SourceControlGetLatestConflictHandledFailed, SourceControlChkInConflictHandled, SourceControlCheckInLockedByAnotherUser, SourceControlCheckInLockedByMe, SourceControlCheckInUnsavedFileChecked, FailedToUnlockFileDuringCheckIn, SourceControlChkInConfirmtion, SourceControlMissingSelectionToCheckIn, SourceControlResolveConflict, SureWantToDoRevert, SureWantToDoCheckIn, SourceControlConflictResolveFailed,
         NoOptionalAgent, MissingActivityAppMapping,
         SettingsChangeRequireRestart, UnsupportedFileFormat, WarnRegradingMissingVariablesUse, NotAllMissingVariablesWereAdded, UpdateApplicationNameChangeInSolution,
@@ -267,6 +267,11 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.FailedToGetProjectsListFromSVN, new UserMessage(eAppReporterMessageType.ERROR, "Source Control Error", "Failed to get the solutions list from the source control." + Environment.NewLine + "Error Details: '{0}'", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AskToSelectSolution, new UserMessage(eAppReporterMessageType.WARN, "Select Solution", "Please select solution.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.SourceControlFileLockedByAnotherUser, new UserMessage(eAppReporterMessageType.WARN, "Source Control File Locked", "The file '{0}' was locked by: {1} "  + Environment.NewLine + "Locked comment {2}." + Environment.NewLine + Environment.NewLine + " Are you sure you want to unlock the file?", MessageBoxButton.YesNo, MessageBoxResult.No));
+
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.SourceControlItemAlreadyLocked, new UserMessage(eAppReporterMessageType.INFO, "Source Control File Locked", "The file is already locked" + Environment.NewLine + "Please do Get info for more details", MessageBoxButton.OK, MessageBoxResult.OK));
+
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.SoruceControlItemAlreadyUnlocked, new UserMessage(eAppReporterMessageType.INFO, "Source Control File not Locked", "The file is not locked" + Environment.NewLine + "Please do Get info for more details", MessageBoxButton.OK, MessageBoxResult.OK));
+
             Reporter.UserMessagesPool.Add(eUserMsgKeys.DownloadedSolutionFromSourceControl, new UserMessage(eAppReporterMessageType.INFO, "Download Solution", "The solution '{0}' was downloaded successfully." + Environment.NewLine + "Do you want to open the downloaded Solution?", MessageBoxButton.YesNo, MessageBoxResult.No));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.UpdateToRevision, new UserMessage(eAppReporterMessageType.INFO, "Update Solution", "The solution was updated successfully to revision: {0}.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.CommitedToRevision, new UserMessage(eAppReporterMessageType.INFO, "Commit Solution", "The changes were committed successfully, Revision: {0}.", MessageBoxButton.OK, MessageBoxResult.None));

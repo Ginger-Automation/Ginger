@@ -546,7 +546,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Purple, toolTip: "Locked by Other User");
                     break;
                 case eImageType.SourceControlLockedByMe:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Yellow, toolTip: "Locked by You");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.SaddleBrown, toolTip: "Locked by You");
                     break;
                 case eImageType.Check:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircleOutline);
