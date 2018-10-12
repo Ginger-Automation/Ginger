@@ -23,6 +23,7 @@ using System.Windows.Controls;
 using Ginger.UserControlsLib.TextEditor.Common;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using GingerPlugIns.TextEditorLib;
+using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor.VBS
 {
@@ -71,7 +72,7 @@ namespace Ginger.UserControlsLib.TextEditor.VBS
         }
 
         // if we want to add tool bar item and handler this is the place
-        public override List<TextEditorToolBarItem> Tools
+        public override List<ITextEditorToolBarItem> Tools
         {
             get { return null; }
         }

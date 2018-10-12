@@ -135,10 +135,6 @@ namespace GingerCore
             //set fields default values
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
-            Active = true;
-
-            //Variables.CollectionChanged+= Variables_CollectionChanged;
-            //Variables.PropertyChanged +=Variables_PropertyChanged;
         }
 
         public override string ToString()
@@ -547,7 +543,7 @@ namespace GingerCore
                 {
                     this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                 }
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return false;
             }
         }
@@ -768,7 +764,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
 

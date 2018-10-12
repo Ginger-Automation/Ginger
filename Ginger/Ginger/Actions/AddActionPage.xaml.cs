@@ -74,11 +74,12 @@ namespace Ginger.Actions
                     {
                         ActPlugIn act = new ActPlugIn();                        
                         act.Description = standAloneAction.Description;
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.PluginId), pluginPackage.PluginID);
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.ServiceId),standAloneAction.ServiceID);
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.GingerActionId),standAloneAction.ID);
+                        act.PluginId = pluginPackage.PluginID;
+                        act.ServiceId = standAloneAction.ServiceId;
+                        act.ActionId = standAloneAction.ActionId;
                         foreach (var v in standAloneAction.InputValues)
                         {
+                            if (v.Param == "GA") continue; // not needed
                             act.InputValues.Add(new ActInputValue() { Param = v.Param });
                         }                        
                         act.Active = true;                        
@@ -87,7 +88,7 @@ namespace Ginger.Actions
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginID + "'", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginID + "'", ex);
                 }
             }
           
@@ -331,7 +332,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in PlugIn tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in PlugIn tabs style", ex);
             }
             ShowSelectedActionDetails();
         }
