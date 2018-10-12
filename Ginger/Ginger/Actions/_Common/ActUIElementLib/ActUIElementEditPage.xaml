@@ -8,13 +8,12 @@
       xmlns:h="clr-namespace:Ginger.Help"
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
-      d:DesignHeight="800" d:DesignWidth="1154"      
+      d:DesignHeight="500" d:DesignWidth="800"      
 	  Title="ActUIElementEditPage">
-    <Grid>
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="122"/>
-
+            <RowDefinition Height="150"/>
             <RowDefinition/>
             <RowDefinition Height="37"/>
             <RowDefinition Height="50"/>
@@ -24,32 +23,39 @@
             <Grid x:Name="locatorsGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
-                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="40"/>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="154"/>
-                    <ColumnDefinition Width="194" />
+                    <ColumnDefinition Width="105"/>
+                    <ColumnDefinition Width="140" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Label Content="Locate By:"  Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}" Grid.Row="0" Grid.Column="0"/>
-                <ComboBox  x:Name="ElementLocateByComboBox" SelectionChanged="ElementLocateByComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" 
+                <Label Content="Locate By:"  Style="{StaticResource $LabelStyle}"  Grid.Row="0" Grid.Column="0"/>
+                <ComboBox  x:Name="ElementLocateByComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" 
                                                   ToolTip="How to Locate the Element on the screen"  Grid.Row="0" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
 
-                <StackPanel  Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="3">
-                    <Label x:Name="LocateValueLable" Content="Locate Value:" Width="154" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}"/>
-                    <Frame x:Name="LocateValueEditFrame" Width="254" Margin="0,3,0,0" NavigationUIVisibility="Hidden" BorderBrush="Black"/>
-                </StackPanel>
+                <Grid  Grid.Row="1" Grid.ColumnSpan="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="105"/>
+                        <ColumnDefinition Width="100*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="LocateValueLable" Content="Locate Value:" Style="{StaticResource $LabelStyle}" Grid.Column="0"/>
+                    <Frame x:Name="LocateValueEditFrame" NavigationUIVisibility="Hidden" BorderBrush="Transparent" Grid.Column="1"/>
+                </Grid>
 
                 <StackPanel  Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
-                    <Label  VerticalAlignment="Top" Content="Element Type:" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}"/>
+                    <Label  VerticalAlignment="Top" Content="Element Type:" Style="{StaticResource $LabelStyle}"/>
                     <Image x:Name="ElementTypeImage" Source="{StaticResource @Run_16x16}" Width="16" />
                 </StackPanel>
 
                 <ComboBox x:Name="ElementTypeComboBox"  SelectionChanged="ElementTypeComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Row="2" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
-                <Label Content="Element Action:"  Name="ElementActionLabel" Grid.Row="3" Grid.Column="0" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}"/>
+                <Label Content="Element Action:"  Name="ElementActionLabel" Grid.Row="3" Grid.Column="0" Style="{StaticResource $LabelStyle}" />
                 <ComboBox x:Name="ElementActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementActionComboBox_SelectionChanged" IsSynchronizedWithCurrentItem="True" Grid.Row="3" Grid.Column="1" Height="Auto" Margin="0,4,-48,13">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -61,8 +67,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1" Margin="0,10,0,0" x:Name="UIElementActionEditPagePanel"  >
-            <Frame x:Name="UIElementActionEditPageFrame" Content="UIElementActionEditPageFrame" Visibility="Collapsed" BorderBrush="Black" BorderThickness=".5" Margin="7" Padding="6" />
-
+            <Frame x:Name="UIElementActionEditPageFrame" Content="UIElementActionEditPageFrame" Visibility="Collapsed" BorderBrush="Transparent" BorderThickness="0" NavigationUIVisibility="Hidden" />
         </StackPanel>
 
         <StackPanel Grid.Row="2"  Margin="0,10,0,0">
@@ -70,7 +75,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="3"  Margin="0,20,0,0">
-            <TextBlock x:Name="ActionInfoLabel" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" Background="#FFEFEFF2" TextAlignment="Left"  FontSize="13" Margin="10,0,0,0"></TextBlock>
+            <TextBlock x:Name="ActionInfoLabel" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" TextAlignment="Left"  FontSize="12" Margin="10,0,0,0"></TextBlock>
         </StackPanel>
     </Grid>
 </Page>

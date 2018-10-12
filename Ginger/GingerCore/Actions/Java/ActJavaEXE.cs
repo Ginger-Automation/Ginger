@@ -179,7 +179,7 @@ namespace GingerCore.Actions.Java
                     process.StartInfo.WorkingDirectory = ScriptPath;
             }
             else
-                process.StartInfo.WorkingDirectory = SolutionFolder + @"Documents\Java\";
+                process.StartInfo.WorkingDirectory = System.IO.Path.Combine(SolutionFolder, @"Documents\Java\");
             try
             {
                 process.StartInfo.Arguments = "-jar " + ScriptName + " " + parms;
