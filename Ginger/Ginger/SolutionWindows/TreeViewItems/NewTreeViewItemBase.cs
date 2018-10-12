@@ -433,14 +433,10 @@ namespace GingerWPF.TreeViewItemsLib
                 if (App.UserProfile.Solution.SourceControl.IsSupportingGetLatestForIndividualFiles)
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Get Latest Version", SourceControlGetLatestVersion, null, "@GetLatest2_16x16.png");
                 if (App.UserProfile.Solution.ShowIndicationkForLockedItems && App.UserProfile.Solution.SourceControl.IsSupportingLocks && addLocksOption)
-                    if (ItemSourceControlStatus == SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser || ItemSourceControlStatus == SourceControlFileInfo.eRepositoryItemStatus.LockedByMe)
-                    {
-                        TreeViewUtils.AddSubMenuItem(sourceControlMenu, "UnLock Item", SourceControlUnlock, null, "@Unlock_16x16.png");
-                    }
-                    else
-                    {
-                        TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Lock Item", SourceControlLock, null, "@Lock_16x16.png");
-                    }
+                {
+                    TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Lock Item", SourceControlLock, null, "@Lock_16x16.png");
+                    TreeViewUtils.AddSubMenuItem(sourceControlMenu, "UnLock Item", SourceControlUnlock, null, "@Unlock_16x16.png");                    
+                }  
                 TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Undo Changes", SourceControlUndoChanges, null, "@Undo_16x16.png");
             }
         }
@@ -454,12 +450,26 @@ namespace GingerWPF.TreeViewItemsLib
 
         private void SourceControlUnlock(object sender, RoutedEventArgs e)
         {
+            RepositoryItemBase RI = ((ITreeViewItem)this).NodeObject() as RepositoryItemBase;
+
+            if (RI != null && RI.SourceControlStatus != eImageType.SourceControlLockedByMe && RI.SourceControlStatus != eImageType.SourceControlLockedByAnotherUser)
+            {
+                Reporter.ToUser(eUserMsgKeys.SoruceControlItemAlreadyUnlocked);
+                return;
+            }
             SourceControlIntegration.UnLock(App.UserProfile.Solution.SourceControl, this.NodePath());
             mTreeView.Tree.RefreshHeader((ITreeViewItem)this);
         }
 
         private void SourceControlLock(object sender, RoutedEventArgs e)
         {
+            RepositoryItemBase RI= ((ITreeViewItem)this).NodeObject() as RepositoryItemBase;
+         
+            if(RI != null && (RI.SourceControlStatus== eImageType.SourceControlLockedByMe || RI.SourceControlStatus == eImageType.SourceControlLockedByAnotherUser))
+            {
+               Reporter.ToUser(eUserMsgKeys.SourceControlItemAlreadyLocked);
+               return;
+            }
             string lockComment = string.Empty;
             if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment, System.IO.Path.GetInvalidFileNameChars()))
             {
