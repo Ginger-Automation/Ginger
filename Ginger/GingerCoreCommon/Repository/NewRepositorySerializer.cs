@@ -568,7 +568,6 @@ namespace Amdocs.Ginger.Repository
             else
             {
                 //Item saved by old Serialzier so calling it to load the XML 
-                //AppReporter.ToConsole(string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", filePath));
                 return (RepositoryItemBase)OnNewRepositorySerializerEvent(NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired, filePath, xml, targetObj);
             }
 

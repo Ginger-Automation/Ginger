@@ -601,11 +601,16 @@ namespace GingerWPF.TreeViewItemsLib
             // Add Item header text 
             Label itemHeaderLabel = new Label();
 
+            string nameFieldProperty;
             if (string.IsNullOrEmpty(NameProperty))
             {
-                NameProperty = repoItem.ItemNameField;
+                nameFieldProperty = repoItem.ItemNameField;
             }
-            BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, NameProperty, BindingMode: System.Windows.Data.BindingMode.OneWay);
+            else
+            {
+                nameFieldProperty = NameProperty;
+            }
+            BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, nameFieldProperty, BindingMode: System.Windows.Data.BindingMode.OneWay);
 
 
             stack.Children.Add(itemHeaderLabel);

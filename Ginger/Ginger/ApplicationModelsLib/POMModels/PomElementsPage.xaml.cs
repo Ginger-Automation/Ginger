@@ -30,9 +30,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
     {
 
         ApplicationPOMModel mPOM;
-        public ObservableList<ElementLocator> mLocators = new ObservableList<ElementLocator>();
-        public ObservableList<ControlProperty> mProperties = new ObservableList<ControlProperty>();
-        public ObservableList<ElementInfo> mElements = new ObservableList<ElementInfo>();
+        ObservableList<ElementLocator> mLocators = new ObservableList<ElementLocator>();
+        ObservableList<ControlProperty> mProperties = new ObservableList<ControlProperty>();
+        ObservableList<ElementInfo> mElements = new ObservableList<ElementInfo>();
         GenericWindow _GenWin;
         
         private Agent mAgent;

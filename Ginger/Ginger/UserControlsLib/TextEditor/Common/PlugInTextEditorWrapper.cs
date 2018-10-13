@@ -85,10 +85,6 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 
         public string Name => throw new System.NotImplementedException();
 
-        byte[] ITextEditor.HighlightingDefinition => throw new System.NotImplementedException();
-
-        Amdocs.Ginger.Plugin.Core.IFoldingStrategy ITextEditor.FoldingStrategy => throw new System.NotImplementedException();
-
         public ITextHandler TextHandler { get { return mPlugInTextFileEditor.TextHandler; } set { mPlugInTextFileEditor.TextHandler = value; } }        
 
         //public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)

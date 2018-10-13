@@ -46,7 +46,6 @@ namespace Ginger.Actions
             GotoURLTypeRadioButton.Init(typeof(ActBrowserElement.eGotoURLType), GotoURLRadioButton, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString()));
             ElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
             ImplicitWaitVE.BindControl(mAct, ActBrowserElement.Fields.ImplicitWait);
-            // SetVisibleControlsForAction();
         }
 
         private void ControlActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -80,10 +79,10 @@ namespace Ginger.Actions
                 LocateValueEditFrame.Visibility = System.Windows.Visibility.Collapsed;
                 ElementLocateByComboBox_SelectionChanged(null, null);
             }
-            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL || mAct.ControlAction == ActBrowserElement.eControlAction.OpenURLNewTab || 
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL || mAct.ControlAction == ActBrowserElement.eControlAction.OpenURLNewTab ||
                      mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS || mAct.ControlAction == ActBrowserElement.eControlAction.RunJavaScript)
             {
-                if(mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL || mAct.ControlAction == ActBrowserElement.eControlAction.OpenURLNewTab)
+                if (mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL || mAct.ControlAction == ActBrowserElement.eControlAction.OpenURLNewTab)
                 {
                     GotoURLRadioButton.Visibility = System.Windows.Visibility.Visible;
                     Lable.Visibility = System.Windows.Visibility.Visible;

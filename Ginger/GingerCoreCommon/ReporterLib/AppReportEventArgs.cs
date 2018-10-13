@@ -6,28 +6,72 @@ namespace Amdocs.Ginger.Common.ReporterLib
 {
     public class AppReportEventArgs
     {
-        public eAppReportType ReportType;
-
-        public string ReportMessage;
-
-        public eAppReporterLogLevel ReportLogLevel;//TODO: group to 1 class
-        public bool LogOnlyOnDebugMode;
-        public Exception ReportExceptionToRecord;
-
-        public eAppReporterMessageType ReportMessageType;
-
-
-        public AppReportEventArgs(eAppReportType reportType, string reportMessage, eAppReporterLogLevel reportLogLevel = eAppReporterLogLevel.INFO, Exception reportExceptionToRecord = null, bool logOnlyOnDebugMode = false,  eAppReporterMessageType reportMessageType = eAppReporterMessageType.INFO)
+        eAppReportType mReportType;
+        public eAppReportType ReportType
         {
-            this.ReportType = reportType;
+            get
+            {
+                return mReportType;
+            }
+        }
 
-            this.ReportMessage = reportMessage;
+        string mReportMessage;
+        public string ReportMessage
+        {
+            get
+            {
+                return mReportMessage;
+            }
+        }
 
-            this.ReportLogLevel = reportLogLevel;
-            this.LogOnlyOnDebugMode = logOnlyOnDebugMode;
-            this.ReportExceptionToRecord = reportExceptionToRecord;
+        eAppReporterLogLevel mReportLogLevel;
+        public eAppReporterLogLevel ReportLogLevel//TODO: group to 1 class
+        {
+            get
+            {
+                return mReportLogLevel;
+            }
+        }
 
-            this.ReportMessageType = reportMessageType;           
+        bool mLogOnlyOnDebugMode;
+        public bool LogOnlyOnDebugMode
+        {
+            get
+            {
+                return mLogOnlyOnDebugMode;
+            }
+        }
+
+        Exception mReportExceptionToRecord;
+        public Exception ReportExceptionToRecord
+        {
+            get
+            {
+                return mReportExceptionToRecord;
+            }
+        }
+
+        eAppReporterMessageType mReportMessageType;
+        public eAppReporterMessageType ReportMessageType
+        {
+            get
+            {
+                return mReportMessageType;
+            }
+        }
+
+
+        public AppReportEventArgs(eAppReportType reportType, string reportMessage, eAppReporterLogLevel reportLogLevel = eAppReporterLogLevel.INFO, Exception reportExceptionToRecord = null, bool logOnlyOnDebugMode = false, eAppReporterMessageType reportMessageType = eAppReporterMessageType.INFO)
+        {
+            mReportType = reportType;
+
+            mReportMessage = reportMessage;
+
+            mReportLogLevel = reportLogLevel;
+            mLogOnlyOnDebugMode = logOnlyOnDebugMode;
+            mReportExceptionToRecord = reportExceptionToRecord;
+
+            mReportMessageType = reportMessageType;
         }
     }
 }
