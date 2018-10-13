@@ -399,7 +399,9 @@ namespace Amdocs.Ginger.Repository
 
             ObservableList<ITextEditor> textEditors = new ObservableList<ITextEditor>();
             foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
-            {                
+            {
+
+                Assembly assembly = null;
                 if (string.IsNullOrEmpty(mPluginPackageInfo.UIDLL))
                 {
                     continue;
@@ -408,8 +410,8 @@ namespace Amdocs.Ginger.Repository
                 if (!File.Exists(UIDLLFileName))
                 {
                     throw new Exception("Plugin UI DLL not found: " + UIDLLFileName);
-                }
-                Assembly assembly = Assembly.LoadFrom(UIDLLFileName);                
+                }                
+                assembly = Assembly.UnsafeLoadFrom(UIDLLFileName);               
 
                 var list = from type in assembly.GetTypes()
                            where typeof(ITextEditor).IsAssignableFrom(type) && type.IsAbstract == false
