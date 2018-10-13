@@ -63,7 +63,7 @@ namespace Ginger.GherkinLib
             FileContentViewer.Visibility = System.Windows.Visibility.Collapsed;
             FetaureFileName.FilePathTextBox.TextChanged += FilePathTextBox_TextChanged;
 
-            FileContentViewer.ContentEditorTitleLabel.Content = "Selected Gherkin Feature File Preview";
+            FileContentViewer.SetContentEditorTitleLabel("Selected Gherkin Feature File Preview");
             FileContentViewer.ToolBarRow.Height = new GridLength(0);
             FileContentViewer.ToolBarTray.Visibility = Visibility.Collapsed;
             FileContentViewer.lblTitle.Content = "Text";

@@ -53,33 +53,34 @@ namespace Ginger.User
             System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
             op.Title = "Select Image";
             op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
-            op.ShowDialog();
-
-            var fileLength = new FileInfo(op.FileName).Length;
-            if (fileLength <= 30000)
+            if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                xProfileImageImgBrush.ImageSource = new BitmapImage(new Uri(op.FileName));                
-                if ((op.FileName != null) && (op.FileName != string.Empty))
+                var fileLength = new FileInfo(op.FileName).Length;
+                if (fileLength <= 50000)
                 {
-                    using (var ms = new MemoryStream())
+                    xProfileImageImgBrush.ImageSource = new BitmapImage(new Uri(op.FileName));
+                    if ((op.FileName != null) && (op.FileName != string.Empty))
                     {
-                        BitmapImage bi = new BitmapImage(new Uri(op.FileName));
-                        Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(bi, 100, 100);
+                        using (var ms = new MemoryStream())
+                        {
+                            BitmapImage bi = new BitmapImage(new Uri(op.FileName));
+                            Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(bi, 100, 100);
 
-                        BitmapImage bi_resized = new BitmapImage();
-                        bi_resized.BeginInit();
-                        bi_resized.UriSource = new Uri(op.FileName);
-                        bi_resized.DecodePixelHeight = sizes.Item2;
-                        bi_resized.DecodePixelWidth = sizes.Item1;
-                        bi_resized.EndInit();
+                            BitmapImage bi_resized = new BitmapImage();
+                            bi_resized.BeginInit();
+                            bi_resized.UriSource = new Uri(op.FileName);
+                            bi_resized.DecodePixelHeight = sizes.Item2;
+                            bi_resized.DecodePixelWidth = sizes.Item1;
+                            bi_resized.EndInit();
 
-                        App.UserProfile.ProfileImage = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(bi_resized));
+                            App.UserProfile.ProfileImage = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(bi_resized));
+                        }
                     }
                 }
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKeys.ImageSize);
+                else
+                {
+                    Reporter.ToUser(eUserMsgKeys.ImageSize, "50");
+                }
             }
         }
 

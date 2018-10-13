@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Ginger.Actions.UserControls;
 using GingerCore;
 using GingerCore.Actions;
@@ -365,7 +366,7 @@ namespace Ginger.Actions.VisualTesting
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKeys.VisualTestingFailedToDeleteOldBaselineImage);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
 
             mAct.CreateBaseline(GetVisualTestingDriver());

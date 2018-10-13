@@ -408,7 +408,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             
@@ -479,7 +479,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Business Flow Configuration Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Business Flow Configuration Page tabs style", ex);
             }
         }
     }

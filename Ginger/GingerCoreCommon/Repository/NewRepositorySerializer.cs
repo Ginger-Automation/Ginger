@@ -436,8 +436,8 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemBase DeserializeFromFile(Type t, string FileName)
         {
-            Console.WriteLine(FileName);
-
+            AppReporter.ToConsole("DeserializeFromFile the file: " + FileName);
+            
             if (FileName.Length > 0 && File.Exists(FileName))
             {
                 string xml = File.ReadAllText(FileName);
@@ -568,7 +568,6 @@ namespace Amdocs.Ginger.Repository
             else
             {
                 //Item saved by old Serialzier so calling it to load the XML 
-                NewReporter.ToConsole(string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", filePath));//add support to write it to log
                 return (RepositoryItemBase)OnNewRepositorySerializerEvent(NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired, filePath, xml, targetObj);
             }
 
@@ -690,8 +689,7 @@ namespace Amdocs.Ginger.Repository
                     MemberInfo mi = obj.GetType().GetMember(attrName).SingleOrDefault();
 
                     if (mi==null)
-                    {
-                        NewReporter.ToConsole("Error: Cannot find attrbiute. Class: " + className + ", Attribute: " + xdr.Name);
+                    {                        
                         throw new MissingFieldException("Error: Cannot find attrbiute. Class: " + className + ", Attribute: " + xdr.Name);
                     }
 
@@ -782,8 +780,7 @@ namespace Amdocs.Ginger.Repository
                 return obj;
             }
             catch (Exception ex)
-            {
-                NewReporter.ToConsole("Error: Cannot create instance of: " + className + ", for attribute: " + xdr.Name + " - " + ex.Message);
+            {               
                 throw new Exception("Error: Cannot create instance of: " + className + ", for attribute: " + xdr.Name + " - " + ex.Message);
             }
         }
@@ -1004,13 +1001,12 @@ namespace Amdocs.Ginger.Repository
                             }
                             else
                             {
-                                NewReporter.ToLog(eNewLogLevel.WARN, "Property not Found: " + xdr.Name);
+                                AppReporter.ToLog(eAppReporterLogLevel.WARN, "Property not Found: " + xdr.Name);
                             }
                             xdr.MoveToNextAttribute();
                             continue;
                         }
-                        string Value = xdr.Value;
-                        // Console.WriteLine("SetObjectAttributes: Property=" + propertyInfo.Name + ", Value=" + Value);                    
+                        string Value = xdr.Value;                                          
                         if (Value != "Null")
                         {
                             if (propertyInfo.CanWrite)
@@ -1032,7 +1028,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch (Exception ex)
             {
-                NewReporter.ToLog(eNewLogLevel.WARN, "Error when setting Property: " + xdr.Name);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "NewRepositorySerilizer- Error when setting Property: " + xdr.Name, ex);
                 throw ex;
             }
         }

@@ -441,7 +441,7 @@ namespace Ginger.GherkinLib
             //TODO: get file name from repo not hard coded extension...
             if (BFName == null)
             {                
-                BFName =App.UserProfile.Solution.Folder + @"BusinessFlows\" + BizFlowName;
+                BFName = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"BusinessFlows", BizFlowName);
             }
 
             if (!Directory.Exists(Path.GetDirectoryName(BFName)))
@@ -653,8 +653,7 @@ namespace Ginger.GherkinLib
 
         public bool Load(string FileName)
         {
-            GherkinTextEditor.ContentEditorTitleLabel.Content = Path.GetFileName(FileName);
-            GherkinTextEditor.ContentEditorTitleLabel.Style = (Style)TryFindResource("@ucGridTitleLightStyle");
+            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName), (Style)TryFindResource("@ucGridTitleLightStyle"));
             GherkinDcoumentEditor g = new GherkinDcoumentEditor();                        
             g.OptimizedSteps = mOptimizedSteps;
             g.OptimizedTags = mTags;

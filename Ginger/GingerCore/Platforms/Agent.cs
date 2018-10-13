@@ -251,7 +251,7 @@ namespace GingerCore
                 lock (thisLock)
                         {
                             DriverIsRunning = Driver.IsRunning();
-                            Reporter.ToLog(eLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}");
+                            Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}");
                         }
                 if (DriverIsRunning) return eStatus.Running;
                               
@@ -361,7 +361,7 @@ namespace GingerCore
                                 break;
                             case eDriverType.UnixShell:
                                 Driver = new UnixShellDriver(BusinessFlow, ProjEnvironment);
-                                ((UnixShellDriver)Driver).SetScriptsFolder(SolutionFolder + @"\Documents\sh\");
+                                ((UnixShellDriver)Driver).SetScriptsFolder(System.IO.Path.Combine(SolutionFolder, @"Documents\sh\"));
                                 break;
 
                             case eDriverType.MobileAppiumAndroid:
@@ -410,7 +410,7 @@ namespace GingerCore
                                 string DeviceConfigFolder = GetOrCreateParam("DeviceConfigFolder").Value;
                                 if (!string.IsNullOrEmpty(DeviceConfigFolder))
                                 {
-                                    Driver = new AndroidADBDriver(BusinessFlow, SolutionFolder + @"\Documents\Devices\" + DeviceConfigFolder + @"\");
+                                    Driver = new AndroidADBDriver(BusinessFlow, System.IO.Path.Combine(SolutionFolder, @"Documents\Devices", DeviceConfigFolder, @"\"));
                                 }
                                 else
                                 {
