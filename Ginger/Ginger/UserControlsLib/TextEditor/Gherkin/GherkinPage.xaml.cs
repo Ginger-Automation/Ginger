@@ -653,8 +653,7 @@ namespace Ginger.GherkinLib
 
         public bool Load(string FileName)
         {
-            GherkinTextEditor.ContentEditorTitleLabel.Content = Path.GetFileName(FileName);
-            GherkinTextEditor.ContentEditorTitleLabel.Style = (Style)TryFindResource("@ucGridTitleLightStyle");
+            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName), (Style)TryFindResource("@ucGridTitleLightStyle"));
             GherkinDcoumentEditor g = new GherkinDcoumentEditor();                        
             g.OptimizedSteps = mOptimizedSteps;
             g.OptimizedTags = mTags;

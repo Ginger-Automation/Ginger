@@ -531,5 +531,16 @@ namespace Ginger.UserControlsLib.TextEditor
         {
             throw new NotImplementedException();
         }
+
+        public void SetContentEditorTitleLabel(string titleContent, Style titleStyle=null)
+        {
+            lblTitle.Visibility = Visibility.Collapsed;
+            ContentEditorTitleLabel.Visibility = Visibility.Visible;
+            ContentEditorTitleLabel.Content = titleContent;
+            if (titleStyle != null)
+            {
+                ContentEditorTitleLabel.Style = titleStyle;
+            }
+        }
     }
 }
