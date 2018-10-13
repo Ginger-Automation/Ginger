@@ -69,7 +69,7 @@ public GingerHelperEventArgs(eGingerHelperEventActions EventAction, eGingerHelpe
             mHelperMsg = helperMsg;
             mGingerHelperEventActions = EventAction;
             mbtnHandler = btnHandler;
-            MessageType = messageType;
+            mMessageType = messageType;
         }
     }
 }

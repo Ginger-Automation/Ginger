@@ -63,6 +63,9 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             }
         }
 
+        byte[] ITextEditor.HighlightingDefinition => throw new System.NotImplementedException();
+
+        Amdocs.Ginger.Plugin.Core.IFoldingStrategy ITextEditor.FoldingStrategy => throw new System.NotImplementedException();
 
 
         public override List<ITextEditorToolBarItem> Tools
