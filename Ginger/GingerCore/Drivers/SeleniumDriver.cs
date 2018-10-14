@@ -6133,6 +6133,11 @@ namespace GingerCore.Drivers
         void IWindowExplorer.UpdateElementInfoFields(ElementInfo ei)
         {
             //TODO: remove from here and put in EI - do lazy loading if needed + why the switch frame?
+            if (ei == null)
+            {
+                return;
+            }
+
             SwitchFrame(ei.Path, ei.XPath, true);
             if (string.IsNullOrEmpty(ei.XPath))
                 ei.XPath = GenerateXpathForIWebElement((IWebElement)ei.ElementObject, "");

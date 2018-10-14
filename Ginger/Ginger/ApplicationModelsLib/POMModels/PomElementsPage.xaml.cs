@@ -461,5 +461,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
+        private void xMainElementsGrid_Unloaded(object sender, RoutedEventArgs e)
+        {
+            xMainElementsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
+        }
+
+        private void xPropertiesGrid_Unloaded(object sender, RoutedEventArgs e)
+        {
+            xPropertiesGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
+        }
+
+        private void xLocatorsGrid_Unloaded(object sender, RoutedEventArgs e)
+        {
+            xLocatorsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
+        }
     }
 }

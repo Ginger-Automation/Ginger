@@ -102,13 +102,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             if (WizardEventArgs.EventType == EventType.Init)
             {
-                mAddModelOptionalValuesWizard = (AddModelOptionalValuesWizard)WizardEventArgs.Wizard;
-                xPathTextBox.BindControl(this, nameof(Path));
-                xPathTextBox.AddValidationRule(new EmptyValidationRule());
-
-                xSheetNameComboBox.BindControl(this, nameof(SheetName));
-                xSheetNameComboBox.AddValidationRule(new EmptyValidationRule());
-                xPathTextBox.Focus();
+                mAddModelOptionalValuesWizard = (AddModelOptionalValuesWizard)WizardEventArgs.Wizard;                
             }
             else if (WizardEventArgs.EventType == EventType.LeavingForNextPage)
             {
@@ -243,9 +237,21 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xSheetLable.Visibility = Visibility.Visible;
                 xDBStackPanel.Visibility = Visibility.Collapsed;
                 xImportOptionalValuesGrid.Visibility = Visibility.Collapsed;
+
+                xPathTextBox.BindControl(this, nameof(Path));
+                xPathTextBox.RemoveValidations(TextBox.TextProperty);
+                xPathTextBox.AddValidationRule(new EmptyValidationRule());
+
+                xSheetNameComboBox.BindControl(this, nameof(SheetName));
+                xSheetNameComboBox.RemoveValidations(ComboBox.TextProperty);
+                xSheetNameComboBox.AddValidationRule(new EmptyValidationRule());
+                xPathTextBox.Focus();
             }
             else if (FileType == eSourceType.XML.ToString() || FileType == eSourceType.Json.ToString())
             {
+                xPathTextBox.RemoveValidations(TextBox.TextProperty);
+                xSheetNameComboBox.RemoveValidations(ComboBox.TextProperty);
+
                 xExcelFileStackPanel.Visibility = Visibility.Collapsed;
                 xSaveExcelLable.Visibility = Visibility.Collapsed;
                 xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
@@ -261,6 +267,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             else if (FileType == eSourceType.DB.ToString())
             {
+                xPathTextBox.RemoveValidations(TextBox.TextProperty);
+                xSheetNameComboBox.RemoveValidations(ComboBox.TextProperty);
+
                 xExcelFileStackPanel.Visibility = Visibility.Collapsed;
                 xSaveExcelLable.Visibility = Visibility.Collapsed;
                 xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
