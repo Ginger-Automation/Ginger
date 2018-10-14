@@ -195,12 +195,12 @@ namespace Amdocs.Ginger.Repository
                     {
                         repoFolder = folder;                        
                     }
-                    else if (folderPath.Contains(folder.FolderFullPath))
+                    else if (folderPath.ToLower().Contains(folder.FolderFullPath.ToLower()))
                     {
                         Uri fullPath = new Uri(folderPath, UriKind.Absolute);
                         Uri relRoot = new Uri(folder.FolderFullPath, UriKind.Absolute);
                         string relPath = relRoot.MakeRelativeUri(fullPath).ToString().Replace("/", "\\");
-                        repoFolder = folder.GetSubFolderByName("~\\" + relPath, true);
+                        repoFolder = folder.GetSubFolderByName("~\\" + Uri.UnescapeDataString(relPath), true);
                     }
                 }
             });
