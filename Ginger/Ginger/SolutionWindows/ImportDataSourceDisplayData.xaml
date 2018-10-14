@@ -35,7 +35,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 
-                <DockPanel Grid.Row="0" Grid.ColumnSpan="3">
+                <DockPanel Grid.Row="0" Grid.ColumnSpan="3" Name="SelectPanel">
                     <StackPanel Margin="0,10,0,0">
                         <Label Name="xSelectRowLable"  Style="{StaticResource @InputFieldLabelStyle}"  Content="Select Row(s) Where:" VerticalAlignment="Center"  />
                         <TextBox x:Name="xSelectRowTextBox" Background="White" Margin="5,0,0,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger'."  Style="{StaticResource @MultiRowsTextBoxStyle}" Text ="" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" IsEnabled="true"/>
@@ -53,7 +53,7 @@
                 <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">
                     <DockPanel x:Name="xExcelDataGridDockPanel" Margin="0,5,5,5">
                         <Label Style ="{StaticResource @InputFieldLabelStyle}" Content="Excel Data:" DockPanel.Dock="Left"></Label>
-                        <DataGrid x:Name="xExcelDataGrid" DockPanel.Dock="Top" Height="180" VerticalScrollBarVisibility="Visible" >
+                        <DataGrid x:Name="xExcelDataGrid" DockPanel.Dock="Top" Height="300" VerticalScrollBarVisibility="Visible" >
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="{x:Type DataGridColumnHeader}">
                                     <Setter Property="Template">
@@ -66,6 +66,8 @@
                                 </Style>
                             </DataGrid.ColumnHeaderStyle>
                         </DataGrid>
+                        <TabControl Name="tabDynamic" Height="300" ItemsSource="{Binding}" Visibility="Collapsed">
+                        </TabControl>
                     </DockPanel>
                 </StackPanel>
             </Grid>

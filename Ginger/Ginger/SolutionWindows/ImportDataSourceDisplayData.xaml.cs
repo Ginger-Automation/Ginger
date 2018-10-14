@@ -26,6 +26,7 @@ using System.Data;
 using System;
 using GingerWPF.WizardLib;
 using System.Windows.Input;
+using System.Collections.Generic;
 
 namespace Ginger.SolutionWindows
 {
@@ -38,7 +39,7 @@ namespace Ginger.SolutionWindows
         ImportOptionalValuesForParameters impParams;
         public DataSet ExcelImportData = null;
         WizardEventArgs mWizardEventArgs;
-
+        
         /// <summary>
         /// Gets sets the File path
         /// </summary>
@@ -67,6 +68,8 @@ namespace Ginger.SolutionWindows
             set;
         }
 
+        private List<TabItem> _tabItems;
+
         /// <summary>
         /// This method is default wizard action event
         /// </summary>
@@ -83,6 +86,10 @@ namespace Ginger.SolutionWindows
                     SheetName = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).SheetName;
                     HeadingRow = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).HeadingRow;
                     IsModelParamsFile = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).IsModelParamsFile;
+
+                    impParams.ExcelFileName = Path;
+                    impParams.ExcelSheetName = SheetName;
+
                     break;
                 case EventType.AfterLoad:
                     DisplayData();
@@ -145,13 +152,17 @@ namespace Ginger.SolutionWindows
         {
             try
             {
-                if (!IsAlternatePageToLoad())
-                {
-                    Mouse.OverrideCursor = Cursors.Wait;
-                    mWizardEventArgs.Wizard.ProcessStarted();
+                Mouse.OverrideCursor = Cursors.Wait;
+                mWizardEventArgs.Wizard.ProcessStarted();
 
-                    impParams.ExcelFileName = Path;
-                    impParams.ExcelSheetName = SheetName;
+
+                if (SheetName != "-- All --")
+                {
+                    xExcelDataGrid.Visibility = Visibility.Visible;
+                    tabDynamic.Visibility = Visibility.Collapsed;
+                    SelectPanel.Visibility = Visibility.Visible;
+                    xExcelGridSplitter.Visibility = Visibility.Visible;
+
                     ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, true, IsModelParamsFile);
                     if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
                     {
@@ -160,16 +171,52 @@ namespace Ginger.SolutionWindows
                             xExcelDataGrid.ItemsSource = ExcelImportData.Tables[0].AsDataView();
                             xExcelDataGridDockPanel.Visibility = Visibility.Visible;
                         }
-                    }
-
-                    mWizardEventArgs.Wizard.ProcessEnded();
-                    Mouse.OverrideCursor = null; 
+                    }                    
                 }
+                else
+                {
+                    SelectPanel.Visibility = Visibility.Collapsed;
+                    xExcelGridSplitter.Visibility = Visibility.Collapsed;
+                    xExcelDataGrid.Visibility = Visibility.Collapsed;
+                    tabDynamic.Visibility = Visibility.Visible;
+                    xExcelDataGridDockPanel.Visibility = Visibility.Visible;
+
+                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, true, IsModelParamsFile);
+                    if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
+                    {
+                        _tabItems = new List<TabItem>();
+                        foreach (DataTable dt in ExcelImportData.Tables)
+                        {
+                            AddTabItem(dt.TableName, dt);
+                        }
+                        // bind tab control
+                        tabDynamic.DataContext = _tabItems;
+                        tabDynamic.SelectedIndex = 0;
+                    }
+                }
+                mWizardEventArgs.Wizard.ProcessEnded();
+                Mouse.OverrideCursor = null;
             }
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
+        }
+        private TabItem AddTabItem(string name, DataTable dt)
+        {
+            int count = _tabItems.Count;
+
+            // create new tab item
+            TabItem tab = new TabItem();
+            tab.Header = string.Format("{0}", name);
+            tab.Name = string.Format("{0}", name);
+
+            var stackPanel = new StackPanel();
+            stackPanel.Children.Add(new GridPage() { ExcelData = dt });
+            tab.Content = stackPanel;
+
+            _tabItems.Add(tab);
+            return tab;
         }
 
         /// <summary>
@@ -210,10 +257,10 @@ namespace Ginger.SolutionWindows
         public bool IsAlternatePageToLoad()
         {
             bool isAlternatePage = false;
-            if (SheetName == "-- All --")
-            {
-                isAlternatePage = true;
-            }
+            //if (SheetName == "-- All --")
+            //{
+            //    isAlternatePage = true;
+            //}
             return isAlternatePage;
         }
     }

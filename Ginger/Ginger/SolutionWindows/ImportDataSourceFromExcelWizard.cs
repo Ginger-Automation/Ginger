@@ -50,7 +50,8 @@ namespace Ginger.SolutionWindows
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Import DataSource From Excel File", Page: new WizardIntroPage("/SolutionWindows/ImportDataSourceIntro.md"));
             AddPage(Name: "Browse File", Title: "Browse File", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceBrowseFile());
             AddPage(Name: "Sheet Selection", Title: "Sheet Selection", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceSheetSelection());
-            AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData(), AlternatePage: new ImportDataSourceDisplayAllData());
+            AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData());
+            //AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData(), AlternatePage: new ImportDataSourceDisplayAllData());
             AddPage(Name: "Finish", Title: "Finish", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceFinishPage(DSDetails));
         }
 

@@ -147,7 +147,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 WizardWindow.ShowWizard(new ImportDataSourceFromExcelWizard(DSDetails));
-                RefreshTreeItems();
+                mTreeView.Tree.RefresTreeNodeChildrens(this);
+                //   RefreshTreeItems();
             }
             catch (Exception ex)
             {
@@ -268,8 +269,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)
-        {
-            RefreshTreeItems();            
+        {            
+            mTreeView.Tree.RefresTreeNodeChildrens(this);
+            //RefreshTreeItems();
         }
         private void RefreshTreeItems()
         {
