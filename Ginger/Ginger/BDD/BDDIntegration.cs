@@ -59,11 +59,11 @@ namespace Ginger.BDD
             string Folder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"BusinessFlows");
             if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
             {
-                WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(Folder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder));                
+               //TODO:: FIX WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(Folder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder));                
             }
             else
             {
-                IFP = new ImportGherkinFeatureFilePage(Folder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
+               //TODO:: FIX IFP = new ImportGherkinFeatureFilePage(Folder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
                 IFP.ShowAsWindow();
             }
             return IFP.Imported;
