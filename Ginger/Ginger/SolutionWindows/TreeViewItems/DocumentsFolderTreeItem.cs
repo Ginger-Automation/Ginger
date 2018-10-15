@@ -34,16 +34,15 @@ using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    public enum eDocumentsItemViewMode
-    {
-        All = 0,
-        FoldersOnly = 1
-    };
+    //public enum eDocumentsItemViewMode
+    //{
+    //    All = 0,
+    //    FoldersOnly = 1
+    //};
     class DocumentsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         public string Folder { get; set; }
-
-        public eDocumentsItemViewMode mViewMode;
+                
         string mPath;
         public string Path
         {
@@ -61,9 +60,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
         }  
         
-        public DocumentsFolderTreeItem(eDocumentsItemViewMode viewMode = eDocumentsItemViewMode.All)
+        public DocumentsFolderTreeItem()
         {
-            mViewMode = viewMode;
+           
         }
         Object ITreeViewItem.NodeObject()
         {
@@ -90,9 +89,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             AddSubFolders(Path, Childrens);
 
-            if (mViewMode == eDocumentsItemViewMode.FoldersOnly)
-                return Childrens;
-
             //Add Current folder Docs 
             foreach (string f in Directory.GetFiles(Path))
             {                
@@ -112,7 +108,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 foreach (string d in Directory.GetDirectories(Path))
                 {
-                    DocumentsFolderTreeItem FolderItem = new DocumentsFolderTreeItem(mViewMode);
+                    DocumentsFolderTreeItem FolderItem = new DocumentsFolderTreeItem();
                     string FolderName = System.IO.Path.GetFileName(d);
 
                     FolderItem.Folder = FolderName;
@@ -154,7 +150,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-            if(mViewMode == eDocumentsItemViewMode.FoldersOnly)
+            if(TV.Tree.TreeChildFolderOnly == true)
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", true, false, false, false, false, false, false, true, false, false);
             else
             {
@@ -287,8 +283,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         { 
             string FileName = string.Empty;
             if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars()))
-            {
-                string FullFilePath = this.Path + @"\" + FileName + ".feature";
+            {                
+                string FullFilePath = System.IO.Path.Combine(this.Path + @"\" , FileName + ".feature");
                 if (!System.IO.File.Exists(FullFilePath))
                 {
                     string FileContent = "Feature: Description\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario1 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario2 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n@Tag1 @Tag2\r\n\r\n\r\nScenario Outline: eating\r\n  Given there are <start> cucumbers\r\n  When I eat <eat> cucumbers\r\n  Then I should have <left> cucumbers\r\n\r\n  Examples:\r\n    | start | eat | left |\r\n    |  12   |  5  |  7   |\r\n    |  20   |  5  |  15  |";

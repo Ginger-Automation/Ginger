@@ -87,6 +87,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             xTreeView.Tree.TreeNodesFilterByField = propertyValueFilter;
             xTreeView.AllowTreeTools = allowTreeTools;
+            if(itemSelectionType == eItemSelectionType.Folder)
+            {
+                xTreeView.Tree.TreeChildFolderOnly = true;                
+            }
 
             TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);            
             r.IsExpanded = true;

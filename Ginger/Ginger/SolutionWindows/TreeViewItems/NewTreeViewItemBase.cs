@@ -39,13 +39,6 @@ namespace GingerWPF.TreeViewItemsLib
 {
     public class NewTreeViewItemBase : TreeViewItemGenericBase
     {
-        public enum eTreeViewMode
-        {
-            All = 0,
-            FoldersOnly = 1
-        }
-        public eTreeViewMode mTreeViewMode = eTreeViewMode.All;
-
         public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one      
         static bool mBulkOperationIsInProcess = false;
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
@@ -539,18 +532,13 @@ namespace GingerWPF.TreeViewItemsLib
 
             ObservableList<RepositoryFolder<T>> subFolders = RF.GetSubFolders();
             foreach (RepositoryFolder<T> envFolder in subFolders)
-            {
-                ITreeViewItem child = GetTreeItem(envFolder);
-                if (child is NewTreeViewItemBase)
-                    ((NewTreeViewItemBase)child).mTreeViewMode = this.mTreeViewMode;
-                Childrens.Add(child);
+            {                
+                Childrens.Add(GetTreeItem(envFolder));
             }
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // track sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
-            if (mTreeViewMode == eTreeViewMode.FoldersOnly)
-                return Childrens;
-
+            
             //Add direct childrens        
             ObservableList<T> folderItems = RF.GetFolderItems();
             // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once

@@ -53,14 +53,13 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     ImportGherkinFeatureWizard wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard;
                     if (mContext == eImportGherkinFileContext.DocumentsFolder)
                     {
-                        BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
-                        bfsFolder.mTreeViewMode = GingerWPF.TreeViewItemsLib.NewTreeViewItemBase.eTreeViewMode.FoldersOnly;                       
-
+                        BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(),eBusinessFlowsTreeViewMode.ReadOnly);
+                        
                         mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);
                     }
                     else if(mContext == eImportGherkinFileContext.BusinessFlowFolder)
                     {
-                        DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem(eDocumentsItemViewMode.FoldersOnly);
+                        DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem();
                         documentsFolderRoot.IsGingerDefualtFolder = true;
                         documentsFolderRoot.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents");
                         documentsFolderRoot.Folder = "Documents";
