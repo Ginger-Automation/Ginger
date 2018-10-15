@@ -262,7 +262,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //BusinessFlow BF = null;
             // if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
             // {
-            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this.Path, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
+            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this.NodePath(), ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
             WizardWindow.ShowWizard(mWizard);                
           //  }
             //else
@@ -288,9 +288,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     //Select Business Folder
                     mTreeView.Tree.SelectItem(this);
                     mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                    BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem(BF);                    
-                    BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem();
-                    BFTI.BusinessFlow = mWizard.BizFlow;
+                    //BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem(BF);                    
+                    BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem(mWizard.BizFlow);
+                    //BFTI.BusinessFlow = mWizard.BizFlow;
 
                     mTreeView.Tree.GetChildItembyNameandSelect(mWizard.BizFlow.Name, this);
                 }

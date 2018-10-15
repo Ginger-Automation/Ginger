@@ -54,17 +54,17 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     if (mContext == eImportGherkinFileContext.DocumentsFolder)
                     {
                         BusinessFlowsFolderTreeItem bfsFolder;
-                        if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                        {
+                        //if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
+                        //{
                             bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(),eBusinessFlowsTreeViewMode.FoldersOnly);
-                        }
-                        else
-                        {
-                            bfsFolder = new BusinessFlowsFolderTreeItem(eBusinessFlowsTreeViewMode.FoldersOnly);//create new tree each time for now to allow refresh
-                        }
-                        bfsFolder.Folder = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
-                        bfsFolder.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
-                        bfsFolder.IsGingerDefualtFolder = true;
+                        //}
+                        //else
+                        //{
+                        //    bfsFolder = new BusinessFlowsFolderTreeItem(eBusinessFlowsTreeViewMode.FoldersOnly);//create new tree each time for now to allow refresh
+                        //}
+                        //bfsFolder.Folder = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
+                        //bfsFolder.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
+                        //bfsFolder.IsGingerDefualtFolder = true;
 
                         mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true, SingleItemTreeViewSelectionPage.eItemEnableEventType.Select);
                         

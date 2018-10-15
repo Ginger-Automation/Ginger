@@ -516,14 +516,14 @@ namespace Ginger.GherkinLib
             if (!isBFexists)
             {
                 BusinessFlowsFolderTreeItem bfsFolder;
-                if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                {
+                //if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
+                //{
                     bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(), eBusinessFlowsTreeViewMode.FoldersOnly);
-                }
-                else
-                {
-                    bfsFolder = new BusinessFlowsFolderTreeItem(eBusinessFlowsTreeViewMode.FoldersOnly);//create new tree each time for now to allow refresh
-                }                 
+                //}
+                //else
+                //{
+                //    bfsFolder = new BusinessFlowsFolderTreeItem(eBusinessFlowsTreeViewMode.FoldersOnly);//create new tree each time for now to allow refresh
+                //}                 
                 bfsFolder.Folder = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
                 bfsFolder.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
                 bfsFolder.IsGingerDefualtFolder = true;
@@ -697,15 +697,15 @@ namespace Ginger.GherkinLib
             BFName = folder + BFName + ".Ginger.BusinessFlow.xml";
             // search if we have the BF defined already, so search in BF will work
             mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x =>x.Name == BFName).SingleOrDefault();
-            string externalID = FileName.Replace(App.UserProfile.Solution.Folder, "~\\");
-            if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-            {
-                mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).SingleOrDefault();
-            }
-            else
-            {
-                mBizFlow = App.LocalRepository.GetSolutionBusinessFlows(true,"",true).Where(x => x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).FirstOrDefault();
-            }            
+            //string externalID = FileName.Replace(App.UserProfile.Solution.Folder, "~\\");
+            //if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
+            //{
+            //    mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).SingleOrDefault();
+            //}
+            //else
+            //{
+            //    mBizFlow = App.LocalRepository.GetSolutionBusinessFlows(true,"",true).Where(x => x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).FirstOrDefault();
+            //}            
             
 
             if (mBizFlow != null)
