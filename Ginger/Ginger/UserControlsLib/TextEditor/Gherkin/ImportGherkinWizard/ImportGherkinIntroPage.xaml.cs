@@ -18,6 +18,7 @@ limitations under the License.
 
 using GingerWPF.WizardLib;
 using System.Windows.Controls;
+using Ginger.SolutionWindows.TreeViewItems;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -37,7 +38,10 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             {
                 case EventType.Init:
                     ImportGherkinFeatureWizard wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard;
-                    FolderLabel.Content = wiz.featureTargetFolder; 
+                    if(wiz.targetFolder is DocumentsFolderTreeItem)
+                        FolderLabel.Content =((DocumentsFolderTreeItem) wiz.targetFolder).NodePath(); 
+                    else if(wiz.targetFolder is BusinessFlowsFolderTreeItem)
+                        FolderLabel.Content = ((BusinessFlowsFolderTreeItem)wiz.targetFolder).NodePath();
                     break;
             }
         }

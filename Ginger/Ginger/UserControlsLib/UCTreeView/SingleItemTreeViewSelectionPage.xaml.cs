@@ -55,22 +55,27 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             Single, Multi, MultiStayOpenOnDoubleClick, Folder
         }
-
-        public enum eItemEnableEventType
-        {
-            DoubleClick,Select
-        }
+       
         eItemSelectionType mItemSelectionType;        
         GenericWindow mPageGenericWin = null;
         List<object> mSelectedItems = null;
         string mitemTypeName;
-        public event SelectionTreeEventHandler SelectionDone;      
+        public event SelectionTreeEventHandler SelectionDone;
+        public event SelectionTreeEventHandler OnSelect;
+
         protected virtual void OnSelectionDone(SelectionTreeEventArgs e)
         {
             if (SelectionDone != null)
                 SelectionDone(this, e);
         }
-             
+
+        protected virtual void OnSelectItem(SelectionTreeEventArgs e)
+        {
+            if (OnSelect != null)
+                OnSelect(this, e);
+        }
+
+
         public TreeView1 TreeView
         {
             get { return xTreeView; }
@@ -86,10 +91,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);            
             r.IsExpanded = true;
 
-            if(enableEvent==eItemEnableEventType.DoubleClick)
-                xTreeView.Tree.ItemDoubleClick += Tree_ItemDoubleClick;
-            else if(enableEvent == eItemEnableEventType.Select)
-                xTreeView.Tree.ItemSelected += Tree_ItemSelected;
+            xTreeView.Tree.ItemDoubleClick += Tree_ItemDoubleClick;
+            xTreeView.Tree.ItemSelected += Tree_ItemSelected;
 
             mitemTypeName = itemTypeName;
             xTreeView.TreeTitle = itemTypeName;
@@ -137,12 +140,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     {                        
                         Reporter.ToUser(eUserMsgKeys.ItemSelection, "Please select single node item (not a folder).");
                         return false;
-                    }
+                    }                      
                     
-                    //get all childerans objects of direct and sub folders
-                    foreach (ITreeViewItem subItvItem in xTreeView.Tree.GetTreeNodeChildsIncludingSubChilds(itvItem))                      
+                        //get all childerans objects of direct and sub folders
+                    foreach (ITreeViewItem subItvItem in xTreeView.Tree.GetTreeNodeChildsIncludingSubChilds(itvItem))
                         if (subItvItem.NodeObject() != null && subItvItem.NodeObject().GetType().BaseType != typeof(RepositoryFolderBase))
-                            mSelectedItems.Add(subItvItem.NodeObject());
+                            mSelectedItems.Add(subItvItem.NodeObject());                                        
                 }
                 else
                 {
@@ -187,17 +190,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
         }
         private void Tree_ItemSelected(object sender, EventArgs e)
-        {            
+        {
             mSelectedItems = new List<object>();
-            ITreeViewItem itvItem = xTreeView.Tree.CurrentSelectedTreeViewItem;
-            if(itvItem.NodeObject() == null)
+            ITreeViewItem itvItem = xTreeView.Tree.CurrentSelectedTreeViewItem;            
+            if(mItemSelectionType == eItemSelectionType.Folder)
                 mSelectedItems.Add(itvItem);
             else
                 mSelectedItems.Add(itvItem.NodeObject());
             if (SelectCurrentItem())
             {
-                OnSelectionDone(new SelectionTreeEventArgs(mSelectedItems));
-            }            
+                OnSelectItem(new SelectionTreeEventArgs(mSelectedItems));
+            }
         }
     }
 }

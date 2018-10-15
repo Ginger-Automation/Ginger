@@ -40,8 +40,7 @@ namespace Ginger.GherkinLib
     {
         
         ImportGherkinFeatureWizard mWizard;
-        string mFeatureFolder;
-
+        
         internal string mFeatureFile { get { return mWizard.mFeatureFile; } }
 
         public object GherkinTextEditor { get; private set; }
@@ -57,10 +56,9 @@ namespace Ginger.GherkinLib
         }
         GenericWindow genWin;
 
-        public ImportGherkinFeatureFilePage(string folder, eImportGherkinFileContext context)
+        public ImportGherkinFeatureFilePage()
         {
-            InitializeComponent();
-            mFeatureFolder = folder;
+            InitializeComponent();            
             FetaureFileName.FileExtensions.Add(".feature");            
             FileContentViewer.Visibility = System.Windows.Visibility.Collapsed;
             FetaureFileName.FilePathTextBox.TextChanged += FilePathTextBox_TextChanged;

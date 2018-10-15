@@ -39,7 +39,14 @@ namespace GingerWPF.TreeViewItemsLib
 {
     public class NewTreeViewItemBase : TreeViewItemGenericBase
     {
-        public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one
+        public enum eTreeViewMode
+        {
+            All = 0,
+            FoldersOnly = 1
+        }
+        public eTreeViewMode mTreeViewMode = eTreeViewMode.All;
+
+        public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one      
         static bool mBulkOperationIsInProcess = false;
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
         {         
@@ -533,10 +540,16 @@ namespace GingerWPF.TreeViewItemsLib
             ObservableList<RepositoryFolder<T>> subFolders = RF.GetSubFolders();
             foreach (RepositoryFolder<T> envFolder in subFolders)
             {
-                Childrens.Add(GetTreeItem(envFolder));
+                ITreeViewItem child = GetTreeItem(envFolder);
+                if (child is NewTreeViewItemBase)
+                    ((NewTreeViewItemBase)child).mTreeViewMode = this.mTreeViewMode;
+                Childrens.Add(child);
             }
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // track sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
+
+            if (mTreeViewMode == eTreeViewMode.FoldersOnly)
+                return Childrens;
 
             //Add direct childrens        
             ObservableList<T> folderItems = RF.GetFolderItems();
@@ -549,7 +562,7 @@ namespace GingerWPF.TreeViewItemsLib
                 object sampleItem = folderItems[0];               
                 foreach (T item in folderItems.OrderBy(((RepositoryItemBase)sampleItem).ItemNameField))
                 {
-                    ITreeViewItem tvi = GetTreeItem(item);
+                    ITreeViewItem tvi = GetTreeItem(item);                    
                     Childrens.Add(tvi);
                 }
             }

@@ -46,8 +46,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     public enum eBusinessFlowsTreeViewMode
     {
         ReadWrite = 0,
-        ReadOnly = 1,
-        FoldersOnly =2
+        ReadOnly = 1        
     }
 
     public class BusinessFlowsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
@@ -258,39 +257,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }        
 
         private void ImportGherkinFeature(object sender, RoutedEventArgs e)
-        {
-            //BusinessFlow BF = null;
-            // if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
-            // {
-            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this.NodePath(), ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
+        {            
+            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
             WizardWindow.ShowWizard(mWizard);                
-          //  }
-            //else
-            //{
-            //    string FeatureFolder = Folder;
-            //    if (!this.Path.EndsWith("BusinessFlows"))
-            //        FeatureFolder = this.Path.Substring(this.Path.IndexOf("BusinessFlows\\") + 14);
-            //    ImportGherkinFeatureFilePage IFP = new ImportGherkinFeatureFilePage(FeatureFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
-            //    IFP.ShowAsWindow();
-            //    BF = IFP.BizFlow;
-
+         
                 if (mWizard.BizFlow != null)
                 {
-                 //Refresh and select Faetures Folder                
-                    //DocumentsFolderTreeItem DFTI = (DocumentsFolderTreeItem)mTreeView.Tree.GetChildItembyNameandSelect("Documents");
-                   //// DFTI = (DocumentsFolderTreeItem)mTreeView.Tree.GetChildItembyNameandSelect("Features", DFTI);
-                   // if (Folder != "Business Flows")
-                   // {
-                   //     mTreeView.Tree.GetChildItembyNameandSelect(Folder, DFTI);
-                   // }
-                   // mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-
+         
                     //Select Business Folder
                     mTreeView.Tree.SelectItem(this);
                     mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
                     //BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem(BF);                    
-                    BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem(mWizard.BizFlow);
-                    //BFTI.BusinessFlow = mWizard.BizFlow;
+                    BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem(mWizard.BizFlow);                    
 
                     mTreeView.Tree.GetChildItembyNameandSelect(mWizard.BizFlow.Name, this);
                 }

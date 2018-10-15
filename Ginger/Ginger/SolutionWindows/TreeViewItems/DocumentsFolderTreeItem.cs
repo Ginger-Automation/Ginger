@@ -272,31 +272,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //    FeatureFolder = this.Path.Substring(this.Path.IndexOf("Documents\\Features\\") + 19);
             //if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
             //{
-            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this.Path, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
+            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
             mWizard.mFolder = this.Path;
             WizardWindow.ShowWizard(mWizard);
-
-            //}
-            //else
-            //{
-            //    ImportGherkinFeatureFilePage IFP = new ImportGherkinFeatureFilePage(FeatureFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
-            //    IFP.ShowAsWindow();
-            //string featureFile = .mFeatureFile;
-
-            //if (!String.IsNullOrEmpty(featureFile))
-            //{
-            //    if (Folder == "Documents")
-            //    {
-            //        DocumentsFolderTreeItem DFTI = new DocumentsFolderTreeItem();
-            //        DFTI.Path = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";
-            //        DFTI.Folder = "Features";
-            //        mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-            //        mTreeView.Tree.GetChildItembyNameandSelect("Features", this);
-            //    }
-            //    mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-            //    mTreeView.Tree.GetChildItembyNameandSelect(System.IO.Path.GetFileName(featureFile), mTreeView.Tree.CurrentSelectedTreeViewItem);
-            //}
-            //}
+            
             if(!String.IsNullOrEmpty(mWizard.FetaureFileName))
             {
                 mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
@@ -309,30 +288,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             string FileName = string.Empty;
             if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars()))
             {
-                //string FullDirectoryPath = "";
-                //DocumentsFolderTreeItem DFTI = null;
-                //if (this.Folder == "Documents")
-                //{
-                //    FullDirectoryPath = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";                    
-                    
-                //    if (!System.IO.Directory.Exists(FullDirectoryPath))
-                //    {
-                //        System.IO.Directory.CreateDirectory(FullDirectoryPath);
-                //        DFTI = new DocumentsFolderTreeItem();
-                //        DFTI.Path = FullDirectoryPath;
-                //        DFTI.Folder = "Features";
-                //        mTreeView.Tree.AddChildItemAndSelect(this, DFTI);
-                //        mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                //    }
-                //    else
-                //    {
-                //        DFTI = (DocumentsFolderTreeItem)mTreeView.Tree.GetChildItembyNameandSelect("Features",this);                        
-                //    }
-                    
-                //}
-                //else
-                //FullDirectoryPath = this.Path;
-
                 string FullFilePath = this.Path + @"\" + FileName + ".feature";
                 if (!System.IO.File.Exists(FullFilePath))
                 {

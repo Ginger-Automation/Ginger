@@ -22,14 +22,17 @@ using GingerWPF.WizardLib;
 using System;
 using System.IO;
 using static Ginger.GherkinLib.ImportGherkinFeatureFilePage;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
+using Ginger.SolutionWindows.TreeViewItems;
+using GingerWPF.UserControlsLib.UCTreeView;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
     public class ImportGherkinFeatureWizard : WizardBase 
     {
         // shared data across pages goes here        
-
-        public string featureTargetFolder { get; internal set; }
+                
         public string mFolder;
         public bool Imported;
         public string mFeatureFile;
@@ -38,15 +41,20 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         public eImportGherkinFileContext mContext;
         public string FetaureFileName;
         ImportGherkinTargetFolder importGherkinTargetFolder;
-        string bizFlowTargetFolder;
+        //RepositoryFolder<BusinessFlow> bizFlowTargetFolder;
+        public ITreeViewItem targetFolder { get; internal set; }
+        ITreeViewItem featureTargetFolder, bizFlowTargetFolder;
 
-        public ImportGherkinFeatureWizard(string folder, eImportGherkinFileContext context)
+        public ImportGherkinFeatureWizard(ITreeViewItem folder, eImportGherkinFileContext context)
         {            
-            mContext = context;
+            mContext = context;            
             if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
                 bizFlowTargetFolder = folder;
             else
                 featureTargetFolder = folder;
+
+            targetFolder = (ITreeViewItem)folder;
+            
             importGherkinTargetFolder = new ImportGherkinTargetFolder(mContext);
 
             AddPage(Name: "Intro", Title: "Import Gherkin Intro", SubTitle: "Importing BDD Gherkin File...", Page: new ImportGherkinIntroPage());
@@ -56,7 +64,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 AddPage(Name: "SelectDocumentsFolder", Title: "Target Feature File Path", SubTitle: "Select Feature Folder...", Page: importGherkinTargetFolder);
             }
 
-            AddPage(Name: "SelectFile", Title: "Select Feature File", SubTitle: "Choose ...", Page: new ImportGherkinFeatureFilePage(folder, context));
+            AddPage(Name: "SelectFile", Title: "Select Feature File", SubTitle: "Choose ...", Page: new ImportGherkinFeatureFilePage());
 
             if(mContext == eImportGherkinFileContext.DocumentsFolder)
             {
@@ -71,10 +79,10 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         public override void Finish()
         {
             if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
-                featureTargetFolder  = importGherkinTargetFolder.mTargetPath;
+                featureTargetFolder = (ITreeViewItem)importGherkinTargetFolder.mTargetFolder;
             else
-                bizFlowTargetFolder = importGherkinTargetFolder.mTargetPath;
-
+                bizFlowTargetFolder = (ITreeViewItem)importGherkinTargetFolder.mTargetFolder;
+            targetFolder = (ITreeViewItem)importGherkinTargetFolder.mTargetFolder;
             mFeatureFile = Import();
             if (mFeatureFile == "")
             {
@@ -91,11 +99,11 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 if (Compiled)
                 {
                     string BizFlowName =  System.IO.Path.GetFileName(mFeatureFile).Replace(".feature", "");
-                    GP.CreateNewBF(BizFlowName, mFeatureFile, bizFlowTargetFolder);
+                    GP.CreateNewBF(BizFlowName, mFeatureFile,(RepositoryFolder<BusinessFlow>)(bizFlowTargetFolder).NodeObject());
                     GP.CreateActivities();
-                    GP.mBizFlow.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(GP.mBizFlow);
                     BizFlow = GP.mBizFlow;
-                    Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, BizFlow.ContainingFolder.Replace("BusinessFlows\\", "") + BizFlow.Name, "Created");
+                    Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, BizFlow.ContainingFolder.Replace("BusinessFlows\\", "") + "\\" + BizFlow.Name, "Created");
                 }
                 else
                 {
@@ -105,26 +113,13 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         }
 
         private string Import()
-        {
+        {            
             if (String.IsNullOrEmpty(mFeatureFile) || !File.Exists(mFeatureFile))
                 return String.Empty;
-            // Copy the feature file to local docs
-            //string FeatureFolder = App.UserProfile.Solution.ContainingFolderFullPath + @"\Documents\";
-
-            //if (mFolder != "Business Flows" && mContext == eImportGherkinFileContext.BusinessFlowFolder)
-            //    FeatureFolder = FeatureFolder + mFolder + "\\";
-            //else if (mFolder != "Documents" && mFolder != "Features" && mContext == eImportGherkinFileContext.DocumentsFolder)
-            //    FeatureFolder = FeatureFolder + mFolder + "\\";
-
-            //if (!Directory.Exists(FeatureFolder))
-            //{
-            //    Directory.CreateDirectory(FeatureFolder);
-            //}
-
-            FetaureFileName = System.IO.Path.GetFileName(mFeatureFile);
-            string targetFile = Path.Combine(featureTargetFolder, FetaureFileName);
             
-
+            FetaureFileName = System.IO.Path.GetFileName(mFeatureFile);
+            string targetFile = Path.Combine(((DocumentsFolderTreeItem)featureTargetFolder).NodePath(), FetaureFileName);
+            
             if (targetFile == mFeatureFile)
             {                
                 Reporter.ToUser(eUserMsgKeys.GherkinNotifyFeatureFileSelectedFromTheSolution, targetFile);
@@ -137,9 +132,10 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 Reporter.ToUser(eUserMsgKeys.GherkinNotifyFeatureFileExists, targetFile);
                 return String.Empty;
             }
+
             File.Copy(mFeatureFile, targetFile);
-            Reporter.ToUser(eUserMsgKeys.GherkinFeatureFileImportedSuccessfully, targetFile);
-            
+            Reporter.ToUser(eUserMsgKeys.GherkinFeatureFileImportedSuccessfully, targetFile);            
+            ((DocumentsFolderTreeItem)featureTargetFolder).mTreeView.Tree.RefresTreeNodeChildrens(featureTargetFolder);
 
             return targetFile;
         }

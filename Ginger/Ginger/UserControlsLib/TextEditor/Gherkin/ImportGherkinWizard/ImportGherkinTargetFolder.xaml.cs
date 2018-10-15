@@ -36,7 +36,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
     /// 
     public partial class ImportGherkinTargetFolder : Page, IWizardPage
     {
-        public string mTargetPath;
+        public object mTargetFolder;
         eImportGherkinFileContext mContext;
         SingleItemTreeViewSelectionPage mTargetFolderSelectionPage = null;
         public ImportGherkinTargetFolder(eImportGherkinFileContext context)
@@ -52,24 +52,12 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 case EventType.Init:
                     ImportGherkinFeatureWizard wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard;
                     if (mContext == eImportGherkinFileContext.DocumentsFolder)
-                    {
-                        BusinessFlowsFolderTreeItem bfsFolder;
-                        //if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-                        //{
-                            bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(),eBusinessFlowsTreeViewMode.FoldersOnly);
-                        //}
-                        //else
-                        //{
-                        //    bfsFolder = new BusinessFlowsFolderTreeItem(eBusinessFlowsTreeViewMode.FoldersOnly);//create new tree each time for now to allow refresh
-                        //}
-                        //bfsFolder.Folder = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
-                        //bfsFolder.Path = App.UserProfile.Solution.BusinessFlowsMainFolder;
-                        //bfsFolder.IsGingerDefualtFolder = true;
-
-                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true, SingleItemTreeViewSelectionPage.eItemEnableEventType.Select);
+                    {                        
+                        bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
+                        bfsFolder.mTreeViewMode = GingerWPF.TreeViewItemsLib.NewTreeViewItemBase.eTreeViewMode.FoldersOnly;
                         
-                        //List<object> selectedBfs = mBusFlowsSelectionPage.ShowAsWindow();
-                        //AddSelectedBuinessFlows(selectedBfs);
+
+                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);
                     }
                     else if(mContext == eImportGherkinFileContext.BusinessFlowFolder)
                     {
@@ -77,10 +65,10 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                         documentsFolderRoot.IsGingerDefualtFolder = true;
                         documentsFolderRoot.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents");
                         documentsFolderRoot.Folder = "Documents";
-                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Documents", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true,SingleItemTreeViewSelectionPage.eItemEnableEventType.Select);                        
+                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Documents", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);                        
 
                     }
-                    mTargetFolderSelectionPage.SelectionDone += MTargetFolderSelectionPage_SelectionDone;
+                    mTargetFolderSelectionPage.OnSelect += MTargetFolderSelectionPage_OnSelectItem;
 
                    // mTargetFolderSelectionPage.Click += MTargetFolderSelectionPage_Click;
 
@@ -88,24 +76,18 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     break;
                 case EventType.Validate:
                     {
-                        if (string.IsNullOrEmpty(mTargetPath))
+                        if (mTargetFolder == null)
                         {
                             //WizardEventArgs.AddError("Please Select target Folder");
                         }
                             break;
-                    }                   
+                    }                
             }
 
         }
-        private void MTargetFolderSelectionPage_SelectionDone(object sender, SelectionTreeEventArgs e)
+        private void MTargetFolderSelectionPage_OnSelectItem(object sender, SelectionTreeEventArgs e)
         {
-            if (e.SelectedItems[0].GetType() == typeof(BusinessFlowsFolderTreeItem))
-            {
-                mTargetPath = ((BusinessFlowsFolderTreeItem)e.SelectedItems[0]).NodePath();
-            }else if (e.SelectedItems[0].GetType() == typeof(DocumentsFolderTreeItem))
-            {
-                mTargetPath = ((DocumentsFolderTreeItem)e.SelectedItems[0]).NodePath();
-            }
-        }        
+            mTargetFolder = e.SelectedItems[0];           
+        }
     }
 }
