@@ -20,27 +20,13 @@ using Amdocs.Ginger.Common;
 using System;
 using System.ComponentModel;
 using GingerCore;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
-    public class UploadItemSelection : RepositoryItem, INotifyPropertyChanged
+    public class UploadItemSelection : RepositoryItemBase, INotifyPropertyChanged
     {
-        public static new class Fields
-        {
-            public static string Selected = "Selected";
-            public static string ItemGUID = "ItemGUID";
-            public static string ItemName = "ItemName";
-            public static string ExistingItemName = "ExistingItemName";
-            public static string ItemUploadType = "ItemUploadType";
-            public static string UploadTypeList = "UploadTypeList";
-            public static string PartToUpload = "PartToUpload";
-            public static string Comment = "Comment";
-            public static string SelectedItemPart = "SelectedItemPart";
-            public static string IsOverrite = "IsOverrite";
-            public static string IsExistingItemParent = "IsExistingItemParent";
-            public static string ItemUploadStatus = "ItemUploadStatus"; 
-        }
-
+       
         public enum eItemUploadStatus
         {
             PendingUpload,
@@ -65,8 +51,8 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                 if (mItemUploadType != value)
                 {
                     mItemUploadType = value;
-                    OnPropertyChanged(Fields.ItemUploadType);
-                    OnPropertyChanged(Fields.IsOverrite);
+                    OnPropertyChanged(nameof(ItemUploadType));
+                    OnPropertyChanged(nameof(IsOverrite));
                 }
             }
         }
@@ -92,8 +78,8 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
         }
 
-        public RepositoryItem UsageItem { get; set; }
-        public RepositoryItem ExistingItem { get; set; }
+        public RepositoryItemBase UsageItem { get; set; }
+        public RepositoryItemBase ExistingItem { get; set; }
     
         public enum eExistingItemType
         {
@@ -115,7 +101,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             set
             {
                 mSelected = value;
-                OnPropertyChanged(Fields.Selected);
+                OnPropertyChanged(nameof(Selected));
             }
         }
         
@@ -131,7 +117,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             set
             {
                 mSelectedItemPart = value;
-                OnPropertyChanged(Fields.SelectedItemPart);
+                OnPropertyChanged(nameof(SelectedItemPart));
             }
         }
 
@@ -146,7 +132,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             set
             {
                 mUploadTypeList = value;
-                OnPropertyChanged(Fields.UploadTypeList);
+                OnPropertyChanged(nameof(UploadTypeList));
             }
         }
 
@@ -160,7 +146,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             set
             {
                 mPartToUpload = value;
-                OnPropertyChanged(Fields.PartToUpload);
+                OnPropertyChanged(nameof(PartToUpload));
             }
         }
 
@@ -197,17 +183,6 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
             if (PartToUpload.Count > 0)
                 SelectedItemPart = PartToUpload[0];
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged(string name)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(name));
-            }
         }
     }
 }

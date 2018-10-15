@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.GherkinLib;
 using Ginger.UserControlsLib.TextEditor;
@@ -78,19 +79,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {            
-            //string ImageFile;
-            //if (IsGingerDefualtFolder)
-            //{
-            //    ImageFile = "@Documents_16x16.png";
-            //}
-            //else
-            //{
-            //    ImageFile = "@Folder2_16x16.png";
-            //}
-
-            //return TreeViewUtils.CreateItemHeader(Folder, ImageFile, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
-
+        {                       
             return TreeViewUtils.NewRepositoryItemTreeHeader(null, Folder, eImageType.Folder, GetSourceControlImageByPath(Path), false);
         }
 
@@ -135,7 +124,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (System.Exception excpt)
             {
-               Reporter.ToLog(eLogLevel.ERROR, "Failed to add Document Folder to tree",excpt,true);
+               Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add Document Folder to tree",excpt,true);
             }
         }
 
@@ -190,46 +179,23 @@ namespace Ginger.SolutionWindows.TreeViewItems
             MenuItem CreateDocumentMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Create Document");
 
             //Creating text and VBS menus
-            TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import txt Document", ImportNewDocument, ".txt", eImageType.Download);
+            TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import TXT Document", ImportNewDocument, ".txt", eImageType.Download);
             TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import VBS Document", ImportNewDocument, ".vbs", eImageType.Download);
             TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import Gherkin Feature Document", ImportGherkinFeatureFile, null, eImageType.Download);
-            TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create txt Document", CreateNewDocument, ".txt", eImageType.Add);
+            TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create TXT Document", CreateNewDocument, ".txt", eImageType.Add);
             TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create VBS Document", CreateNewDocument, ".vbs", eImageType.Add);
             TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create Gherkin Feature Document", CreateGherkinFeatureFile, null, eImageType.Add);
+            TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Add Other File Type", CreateNewDocument, "", eImageType.Add);
         }
-
-        //public void AddGherkinOptions(ContextMenu CM)
-        //{
-        //    MenuItem GherkinMenu = TreeViewUtils.CreateSubMenu(CM, "Gherkin");
-        //    //TOD Change Icon
-        //    TreeViewUtils.AddSubMenuItem(GherkinMenu, "Create Feature file", CreateGherkinFeatureFile, null, "@FeatureFile_16X16.png");
-        //    TreeViewUtils.AddSubMenuItem(GherkinMenu, "Import Feature file", ImportGherkinFeatureFile, null, "@FeatureFile_16X16.png");
-        //}
-
-        //private void AddSolutionPlugInEditorsOptions(MenuItem ImportDocumentMenu, MenuItem CreateDocumentMenu)
-        //{
-        //   ObservableList<PlugInWrapper> PlugInLists = App.LocalRepository.GetSolutionPlugIns();
-
-        //    foreach (PlugInWrapper PIW in PlugInLists)
-        //    {
-        //        foreach (PlugInTextFileEditorBase PITFEB in PIW.TextEditors())
-        //        {
-        //            foreach (string extension in PITFEB.Extensions)
-        //            {
-        //                String DocumentName = extension.Substring(1).ToUpper();
-        //                TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create " + DocumentName + " Document", CreateNewDocument, extension, "@Add_16x16.png");
-        //                TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import " + DocumentName + " Document", ImportNewDocument, extension, "@Import_16x16.png");
-        //            }
-        //        }
-        //    }
-        //}
 
         private void CreateNewDocument(object sender, RoutedEventArgs e)
         {
             mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
 
-            string FileContent = string.Empty;
             string FileExtension = ((string)((MenuItem)sender).CommandParameter);
+           
+            string FileContent = string.Empty;
+            
             if (FileExtension == ".txt")
             {
                 FileContent = "Some text";
@@ -238,16 +204,28 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 FileContent = Properties.Resources.VBSTemplate;
             }
-            // else
-            //{
-            //     FileContent = PlugInsIntegration.GetTamplateContentByPlugInExtension(FileExtension);
-            //}
 
             string NewFileName = string.Empty;
             string FullFilePath = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("New " + FileExtension.Substring(1).ToUpper() + " File", "File Name:", ref NewFileName, System.IO.Path.GetInvalidFileNameChars()))
+            string headerToShow;
+            string lblToShow;
+            if (string.IsNullOrEmpty(FileExtension))
             {
-                FullFilePath = Path + @"\" + NewFileName + FileExtension;
+                headerToShow = "New File";
+                lblToShow = "File Name & Extension:";
+            }
+           else
+            {
+                headerToShow = string.Format("New {0} File", FileExtension.ToUpper().TrimStart(new char[] { '.' }));
+                lblToShow = "File Name:";
+            }
+            if (GingerCore.General.GetInputWithValidation(headerToShow, lblToShow, ref NewFileName, System.IO.Path.GetInvalidFileNameChars()))
+            {
+                FullFilePath = System.IO.Path.Combine(Path, NewFileName + FileExtension);
+                if (string.IsNullOrEmpty(System.IO.Path.GetExtension(FullFilePath)))
+                {
+                    FullFilePath = FullFilePath + ".txt";
+                }
                 if (!System.IO.Directory.Exists(Path))
                     Directory.CreateDirectory(System.IO.Path.GetFullPath(Path));
                 if (!System.IO.File.Exists(FullFilePath))

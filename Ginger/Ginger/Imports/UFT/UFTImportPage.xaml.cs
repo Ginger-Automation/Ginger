@@ -37,6 +37,7 @@ using GingerCore.Platforms;
 using System.Xml;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Imports.UFT
 {
@@ -285,8 +286,8 @@ namespace Ginger.Imports.UFT
                 CalendarBusFunction.SelectedIndex = 0;
             }
             else
-            {
-                MessageBox.Show("Please Enter a Valid Calendar path !!");
+            {                
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Please Enter a Valid Calendar path !!");
             }
         }
 
@@ -418,13 +419,13 @@ namespace Ginger.Imports.UFT
                     ResultsDataGrid.DataSourceList = mCCL;
                 }
                 else
-                {
-                    MessageBox.Show("No GUI functions fetched, Click CONVERT, to convert other actions in BUS function");
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "No GUI functions fetched, Click CONVERT, to convert other actions in BUS function");
                 }
             }
             else
-            {
-                MessageBox.Show("Please enter a Valid " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name");
+            {                
+                Reporter.ToUser(eUserMsgKeys.EnterValidBusinessflow);
             }
         }
 
@@ -432,7 +433,7 @@ namespace Ginger.Imports.UFT
         private void SaveBusinessFlowButton_Button_Click(object sender, RoutedEventArgs e)
         {
             mBusinessFlow.Name = BusinessFlowNameTextBox.Text;
-            App.LocalRepository.SaveNewItem(mBusinessFlow);
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);            
 
             //TODO: open the new BF in Automate tab + make sure it is added to the tree
             Reporter.ToGingerHelper(eGingerHelperMsgKey.ScriptImported_RefreshSolution);

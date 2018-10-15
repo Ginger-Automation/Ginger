@@ -126,7 +126,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             if (JavaAgentHost == null || JavaAgentHost.Length ==0)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
                 ErrorMessageFromDriver= "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty";
                 return;
             }
@@ -154,8 +154,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PayLoad rcAC = Send(plAC);
                 string status = rcAC.GetValueString();
 
-                //TODO: do check version with server version make sure protocol match - should be same Gigner version on both sides
-                // MessageBox.Show(s);
+                //TODO: do check version with server version make sure protocol match - should be same Gigner version on both sides                
                 if (status!= "Done")
                 {
                     //TODO: Err
@@ -169,8 +168,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PayLoad rc = Send(pl);
                 string s = rc.GetValueString();
 
-                //TODO: do check version with server version make sure protocol match - should be same Gigner version on both sides
-                // MessageBox.Show(s);
+                //TODO: do check version with server version make sure protocol match - should be same Gigner version on both sides                
                 if (s != "v2.0.0")
                 {
                     //TODO: Err
@@ -178,7 +176,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else
             {
-                Reporter.ToLog(eLogLevel.INFO, "Failed to connect Java Agent");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Failed to connect Java Agent");
                 ErrorMessageFromDriver = "Failed to connect Java Agent";
             }
         }
@@ -219,7 +217,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     //TODO: catch excpetion of socket not all..         
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                         Thread.Sleep(500);
                     }                  
                 }
@@ -230,7 +228,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         
         private Boolean Reconnect()
         {
-            Reporter.ToLog(eLogLevel.INFO, "Trying to reconnent Java Agent");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Trying to reconnent Java Agent");
             try
             {
                 clientSocket.Connect(serverAddress);
@@ -362,7 +360,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Ginger Java Agent Driver - " + ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Ginger Java Agent Driver - " + ex.Message);
             }
             finally
             {
@@ -1262,6 +1260,11 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad resp = null;
             List<String> Locators = new List<string>();
             List<String> vals = null;
+            //New serializer resotring the value to null. So handling it to set it to empy
+            if (AJTE.LocateColTitle == null)
+            {
+                AJTE.LocateColTitle = string.Empty;
+            }
 
             PayLoad PL1 = new PayLoad("TableAction");
             PL1.AddValue(AJTE.ControlAction.ToString());
@@ -1564,7 +1567,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                             else
                             {
                                 actScreenShot.Error = "Failed to create Java application screenshot. Error= " + error;
-                                Reporter.ToLog(eLogLevel.ERROR, actScreenShot.Error);
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, actScreenShot.Error);
                             }               
                         }
                         else
@@ -1590,7 +1593,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                             catch(Exception ex)
                             {
                                 actScreenShot.Error = "Failed to create Java application HTML Widget screenshot. Error= " + ex.Message;
-                                Reporter.ToLog(eLogLevel.ERROR, actScreenShot.Error, ex);
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, actScreenShot.Error, ex);
                             }
                         }
                     }
@@ -1869,8 +1872,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad Response = Send(plInitialize);
 
             if (Response.IsErrorPayLoad())
-            {             
-                MessageBox.Show("Failed to Initialize JEditor Element");
+            {                
+                Reporter.ToUser(eUserMsgKeys.FailedToInitiate, "JEditor Element");
                 return;
             }
         }
@@ -1895,9 +1898,9 @@ namespace GingerCore.Drivers.JavaDriverLib
             General.DoEvents();
             PayLoad Response = Send(PL);
             if (Response.IsErrorPayLoad())
-            {                
-                //TODO:: Handle exception 
-                MessageBox.Show("Failed to Initialize Browser Element");
+            {
+                //TODO:: Handle exception                 
+                Reporter.ToUser(eUserMsgKeys.FailedToInitiate, "Browser Element");
                 return;
             }
         }
@@ -2291,8 +2294,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                 return AW;
             }
             else
-            {
-                MessageBox.Show("Error in GetActiveForm - " );
+            {                
+                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in GetActiveForm");
                 return null;
             }
         }
@@ -2312,8 +2315,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                 return list;
             }
             catch (Exception ex)
-            {
-                MessageBox.Show("Error in GetHTMLElements - " + ex.Message);
+            {                
+                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error in GetHTMLElements - " + ex.Message);
                 return null;
             }
         }
@@ -2793,7 +2796,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             throw new NotImplementedException();
         }
 
-        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
         }

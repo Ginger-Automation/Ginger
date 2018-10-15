@@ -27,13 +27,14 @@ using GingerCore.Actions;
 using System.Windows;
 using GingerCore.Variables;
 using GingerCore.Properties;
+using Amdocs.Ginger.Common.Enums;
 
 //TODO: chang add core
 namespace GingerCore
 {
     // Activity can have several steps - Acts
     // The activities can come from external like: QC TC Step, vStorm    
-    public class Activity : RepositoryItem
+    public class Activity : RepositoryItemBase
     {
         public enum eActivityAutomationStatus
         {
@@ -68,8 +69,7 @@ namespace GingerCore
         }
         
         public new static class Fields
-        {
-            public static string Image = "Image";
+        {            
             public static string ActivityName = "ActivityName";
             public static string Description = "Description";
             public static string RunDescription = "RunDescription";
@@ -135,10 +135,6 @@ namespace GingerCore
             //set fields default values
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
-            Active = true;
-
-            //Variables.CollectionChanged+= Variables_CollectionChanged;
-            //Variables.PropertyChanged +=Variables_PropertyChanged;
         }
 
         public override string ToString()
@@ -146,17 +142,9 @@ namespace GingerCore
             return ActivityName;
         }
 
-        public virtual System.Drawing.Image Image { get { return Resources.Activity_16x16; } }
-
         private bool mActive;
         [IsSerializedForLocalRepository]
         public Boolean Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(Fields.Active); } } }
-
-
-        //TODO: Create linked activity to item in shared repo, if true will copy: per user config: Activities, name, etc...
-        //private bool mLinked;
-        //[IsSerializedForLocalRepository]
-        // public Boolean Linked { get { return mLinked; } set { if (mLinked != value) { mLinked = value; OnPropertyChanged(Fields.Linked); } } }
 
         private string mActivityName;
         [IsSerializedForLocalRepository]
@@ -555,7 +543,7 @@ namespace GingerCore
                 {
                     this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                 }
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return false;
             }
         }
@@ -655,7 +643,7 @@ namespace GingerCore
             }
         }
 
-        public override void UpdateInstance(RepositoryItem instance, string partToUpdate, RepositoryItem hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
         {
             Activity activityInstance = (Activity)instance;
             //Create new instance of source
@@ -676,7 +664,7 @@ namespace GingerCore
                     newInstance.ActivitiesGroupID = activityInstance.ActivitiesGroupID;
                     newInstance.TargetApplication = activityInstance.TargetApplication;
                     newInstance.Active = activityInstance.Active;
-                    newInstance.VariablesDependencies = activityInstance.VariablesDependencies;
+                    newInstance.VariablesDependencies = activityInstance.VariablesDependencies;                   
                     if (ePartToUpdate == eItemParts.Details)
                     {
                         //keep other parts
@@ -702,7 +690,7 @@ namespace GingerCore
             }
         }
 
-        public override RepositoryItem GetUpdatedRepoItem(RepositoryItem itemToUpload, RepositoryItem existingRepoItem, string itemPartToUpdate)
+        public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase existingRepoItem, string itemPartToUpdate)
         {
             Activity updatedActivity = null;
             
@@ -776,7 +764,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
 
@@ -831,8 +819,7 @@ namespace GingerCore
         public override void UpdateItemFieldForReposiotryUse()
         {
             base.UpdateItemFieldForReposiotryUse();
-            ActivitiesGroupID = null;
-            Mandatory = false;
+            ActivitiesGroupID = null;            
         }
 
         public override bool IsTempItem
@@ -847,5 +834,20 @@ namespace GingerCore
             }
         }
 
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Activity;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.ActivityName);
+            }
+        }
     }
 }

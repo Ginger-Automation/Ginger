@@ -28,6 +28,7 @@ using Ginger.SolutionWindows;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.WizardLib;
+using amdocs.ginger.GingerCoreNET;
 using static Ginger.ExtensionMethods;
 
 namespace Ginger.GherkinLib
@@ -64,7 +65,7 @@ namespace Ginger.GherkinLib
             FileContentViewer.Visibility = System.Windows.Visibility.Collapsed;
             FetaureFileName.FilePathTextBox.TextChanged += FilePathTextBox_TextChanged;
 
-            FileContentViewer.ContentEditorTitleLabel.Content = "Selected Gherkin Feature File Preview";
+            FileContentViewer.SetContentEditorTitleLabel("Selected Gherkin Feature File Preview");
             FileContentViewer.ToolBarRow.Height = new GridLength(0);
             FileContentViewer.ToolBarTray.Visibility = Visibility.Collapsed;
             FileContentViewer.lblTitle.Content = "Text";
@@ -118,9 +119,9 @@ namespace Ginger.GherkinLib
                 {
                     string BFName = System.IO.Path.GetFileName(mWizard.mFeatureFile).Replace(".feature", "");
                     GP.CreateNewBF(BFName, mWizard.mFeatureFile);
-                    GP.CreateActivities();
-                    GP.mBizFlow.Save();
-                    mWizard.BizFlow = GP.mBizFlow;                    
+                    GP.CreateActivities();                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(GP.mBizFlow);
+                    mWizard.BizFlow = GP.mBizFlow;
                 }
                 else
                 {

@@ -181,9 +181,10 @@ namespace Ginger.AnalyzerLib
                         {
                             if (string.IsNullOrEmpty(f.Value) || ValueExpression.IsThisDynamicVE(f.Value) == false)
                             {
-                                //f.CalcualtedValue(BusinessFlow, App.ProjEnvironment, App.LocalRepository.GetSolutionDataSources());
+                                //f.CalcualtedValue(BusinessFlow, App.ProjEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
                                 string RunSharedRepositoryActivity = f.GetNameFromValue();
-                                if (App.LocalRepository.GetSolutionRepoActivities().Where(x => x.ActivityName == RunSharedRepositoryActivity).FirstOrDefault() == null)
+                                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                                if (activities.Where(x => x.ActivityName == RunSharedRepositoryActivity).FirstOrDefault() == null)
                                 {
                                     AnalyzeAction AA = CreateNewIssue(IssuesList, BusinessFlow, parentActivity, a);
                                     AA.Description = "Flow control mapped to Shared Repository "+ GingerDicser.GetTermResValue(eTermResKey.Activity) +" which does not exist";
@@ -389,7 +390,15 @@ namespace Ginger.AnalyzerLib
                 }
             }
         }
+
+        public static List<string> GetUsedVariableFromAction(Act action)
+        {
+            List<string> ActivityUsedVariables = new List<string>();
+            VariableBase.GetListOfUsedVariables(action, ref ActivityUsedVariables);
+            return ActivityUsedVariables;
+        }
         
+
         private static void FixFlowControlWrongActionMapping(object sender, EventArgs e)
         {
             //look for Action with same name and re-map the Flow Control            

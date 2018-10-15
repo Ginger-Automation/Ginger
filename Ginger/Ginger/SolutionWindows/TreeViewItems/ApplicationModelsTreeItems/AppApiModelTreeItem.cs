@@ -54,7 +54,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         public StackPanel Header()
         {
-            return NewTVItemStyle(mApiModel, eImageType.APIModel16, nameof(ApplicationAPIModel.Name));
+            return NewTVItemHeaderStyle(mApiModel);
         }
 
         public Page EditPage()

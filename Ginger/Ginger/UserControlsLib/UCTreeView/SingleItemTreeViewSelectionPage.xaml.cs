@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -133,8 +134,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 if (itvItem.IsExpandable())
                 {
                     if (mItemSelectionType == eItemSelectionType.Single)
-                    {
-                        MessageBox.Show("Please select single node item (not a folder).", "Item Selection", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                    {                        
+                        Reporter.ToUser(eUserMsgKeys.ItemSelection, "Please select single node item (not a folder).");
                         return false;
                     }
                     
@@ -151,9 +152,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
 
             if (mSelectedItems == null || mSelectedItems.Count == 0)
-            {
-                //TODO: Fix with New Reporter (on GingerWPF)
-                MessageBox.Show("No item was selected.", "Item Selection", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.ItemSelection, "No item was selected.");
                 return false;
             }
 

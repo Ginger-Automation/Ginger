@@ -26,6 +26,8 @@ using System.Windows.Controls;
 using System.Security.Principal;
 using System.Security.AccessControl;
 using System.IO;
+using amdocs.ginger.GingerCoreNET;
+using GingerCore.DataSource;
 
 namespace Ginger.Reports
 {
@@ -55,9 +57,10 @@ namespace Ginger.Reports
 
             DefaultTemplatePickerCbx.ItemsSource = null;
 
-            if ((App.UserProfile.Solution != null) && (App.LocalRepository.GetSolutionHTMLReportConfigurations() != null) && (App.LocalRepository.GetSolutionHTMLReportConfigurations().Count > 0))
+            ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+            if (App.UserProfile.Solution != null  && HTMLReportConfigurations.Count > 0)
             {
-                DefaultTemplatePickerCbx.ItemsSource = App.LocalRepository.GetSolutionHTMLReportConfigurations();
+                DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
                 DefaultTemplatePickerCbx.SelectedValuePath = HTMLReportConfiguration.Fields.ID;
             }
@@ -84,7 +87,7 @@ namespace Ginger.Reports
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpression mVE=new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables);
+            ValueExpression mVE=new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
             string extraInformationCalculated = string.Empty;
             mVE.Value = mEmailAttachment.ExtraInformation;
             extraInformationCalculated = mVE.ValueCalculated;

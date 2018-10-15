@@ -12,15 +12,33 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="59*"/>
-            <RowDefinition Height="37*"/>
-            <RowDefinition Height="204*"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="93*"/>
+            <RowDefinition Height="148*"/>
         </Grid.RowDefinitions>
         <!--<Label x:Name="NoConfigLabel" Content="This action doesn't require any configuration" />-->
         <Label x:Name="LoadErrorLbl" HorizontalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Foreground="Red" Content="Failed To Load The PlugIn Action Edit Page"  Visibility="Collapsed" Margin="150,0" Grid.RowSpan="3" Width="0"/>
         <Frame x:Name="EditFrame" VerticalAlignment="Top" Content="Plugin Edit action Frame" Grid.Row="0" HorizontalAlignment="Stretch" Height="16"/>
 
-        <UserControls:UCDataColGrid HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Grid.RowSpan="3"/>
-        <DataGrid x:Name="InputGrid" Grid.Row="2" AutoGenerateColumns="False">
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Label Style="{StaticResource @SubInputFieldLabelStyle}">Plugin Id</Label>
+            <Label x:Name="PluginIdLabel" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold">P ID</Label>
+            <Label Style="{StaticResource @SubInputFieldLabelStyle}">Service Id</Label>
+            <Label x:Name="ServiceIdLabel" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold">S ID</Label>
+            <Label Style="{StaticResource @SubInputFieldLabelStyle}">Action Id</Label>
+            <Label x:Name="ActionIdLabel" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold">A ID</Label>
+        </StackPanel>
+        <!--<UserControls:UCDataColGrid HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Grid.RowSpan="3"/>-->
+        
+        <Grid x:Name="ActionConfigGrid" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="31*"/>
+                <ColumnDefinition Width="69*"/>
+            </Grid.ColumnDefinitions>
+        </Grid>
+        
+
+        <DataGrid x:Name="InputGrid" Grid.Row="3" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Param" Binding="{Binding Param}" Width="80"></DataGridTextColumn>
                 <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="80"></DataGridTextColumn>

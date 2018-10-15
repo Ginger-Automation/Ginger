@@ -216,8 +216,8 @@ namespace GingerCore.Drivers
                 return (mshtml.IHTMLElement)el;
             }
             catch(Exception ex)
-            {
-                MessageBox.Show("Error Executing JS: " +  ex.Message);
+            {                
+                Reporter.ToUser(eUserMsgKeys.JSExecutionFailed, ex.Message);
                 return null;
             }
         }

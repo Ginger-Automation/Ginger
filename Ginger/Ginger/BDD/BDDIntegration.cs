@@ -32,7 +32,7 @@ namespace Ginger.BDD
             string FileName = string.Empty;
             if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars()))
             {
-                string FullDirectoryPath = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";
+                string FullDirectoryPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, "Documents", "Features");
                 if (!System.IO.Directory.Exists(FullDirectoryPath))
                 {
                     System.IO.Directory.CreateDirectory(FullDirectoryPath);
@@ -56,7 +56,7 @@ namespace Ginger.BDD
         public bool ImportFeatureFile()
         {
             ImportGherkinFeatureFilePage IFP = null;
-            string Folder = App.UserProfile.Solution.Folder + @"\BusinessFlows";
+            string Folder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"BusinessFlows");
             if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
             {
                 WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(Folder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder));                

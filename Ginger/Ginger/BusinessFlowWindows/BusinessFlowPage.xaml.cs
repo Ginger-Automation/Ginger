@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Activities;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
@@ -120,6 +121,12 @@ namespace Ginger.BusinessFlowFolder
                 xBusinessflowinfo.IsEnabled = false;
                 xTargetApplication.IsEnabled = false;
                 RepositoryExpander.IsEnabled = false;
+                xAutomateBtn.Visibility = Visibility.Collapsed;
+            }
+
+            if (!App.UserProfile.UserTypeHelper.IsSupportAutomate)
+            {
+                xAutomateBtn.Visibility = Visibility.Collapsed;
             }
         }
         
@@ -128,7 +135,7 @@ namespace Ginger.BusinessFlowFolder
             mBusinessFlow.Activities.CollectionChanged += mBusinessFlowActivities_CollectionChanged;
             foreach (Activity activity in mBusinessFlow.Activities)
             {
-                try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; }catch(Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }  //to make sure wont be added twice              
+                try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; }catch(Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }  //to make sure wont be added twice              
                 activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
             }
         }
@@ -152,7 +159,7 @@ namespace Ginger.BusinessFlowFolder
             {
                 foreach (Activity activity in mBusinessFlow.Activities)
                 {
-                    try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; } catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }  //to make sure wont be added twice              
+                    try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; } catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }  //to make sure wont be added twice              
                     activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
                 }
             }
@@ -181,7 +188,7 @@ namespace Ginger.BusinessFlowFolder
             App.ObjFieldBinding(txtDescription, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Description);
             App.FillComboFromEnumVal(StatusComboBox, mBusinessFlow.Status);
             App.ObjFieldBinding(StatusComboBox, ComboBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Status);                     
-            App.ObjFieldBinding(CreatedByTextBox, TextBox.TextProperty, mBusinessFlow, RepositoryItem.Fields.CreatedBy);            
+            App.ObjFieldBinding(CreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader,  nameof(RepositoryItemHeader.CreatedBy));  
             App.ObjFieldBinding(AutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.AutomationPrecentage, System.Windows.Data.BindingMode.OneWay);            
             
             // Per source we can show specific source page info
@@ -322,17 +329,18 @@ namespace Ginger.BusinessFlowFolder
                 if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
                     UndoChanges();
                 else
-                    mBusinessFlow.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
+                
             }
             _pageGenericWin.Close();
         }
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (LocalRepository.CheckIfSureDoingChange(mBusinessFlow, "change") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mBusinessFlow, "change") == true)
             {
-                saveWasDone = true;
-                mBusinessFlow.Save();
+                saveWasDone = true;                
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
                 _pageGenericWin.Close();
             }
         }
@@ -354,6 +362,11 @@ namespace Ginger.BusinessFlowFolder
         {
             OKButtonClicked = true;
             _pageGenericWin.Close();
+        }
+
+        private void xAutomateBtn_Click(object sender, RoutedEventArgs e)
+        {
+           App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, mBusinessFlow);
         }
     }
 }

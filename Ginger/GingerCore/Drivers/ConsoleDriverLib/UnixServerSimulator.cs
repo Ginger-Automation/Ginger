@@ -23,6 +23,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
 using System.Reflection;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -76,7 +77,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
      }

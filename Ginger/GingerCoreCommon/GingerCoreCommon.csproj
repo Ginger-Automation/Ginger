@@ -14,8 +14,16 @@
     <FileVersion>3.0.0.0</FileVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>GingerCoreCommon.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>GingerCoreCommon.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Ginger.Plugin.Core" Version="2.5.1" />
+    <PackageReference Include="Ginger.Plugin.Core" Version="2.6.6" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.8.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="2.8.2" />

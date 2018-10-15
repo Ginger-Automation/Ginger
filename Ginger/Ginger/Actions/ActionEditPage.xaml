@@ -9,8 +9,8 @@
       xmlns:UCControl="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
       Title="Edit Action" 
-      Width="1100"
-      Height="800"
+      d:DesignWidth="1100"
+      d:DesignHeight="800"
       SizeChanged="Page_SizeChanged">
 
     <Grid Name="pageGrid" Background="{StaticResource @Skin1_ColorC}">
