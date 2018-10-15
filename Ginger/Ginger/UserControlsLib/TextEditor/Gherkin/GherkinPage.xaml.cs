@@ -661,7 +661,7 @@ namespace Ginger.GherkinLib
                     BFName = Path.GetFileName(BFName).Replace(".Ginger.BusinessFlow.xml", "");
                 }
                 
-                mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Name == BFName && x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == featureFileName)).SingleOrDefault();
+                mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x =>x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == featureFileName)).SingleOrDefault();
                 if (mBizFlow == null)
                 {                    
                     CreateNewBF(FeatureName);
@@ -703,24 +703,12 @@ namespace Ginger.GherkinLib
             if (BFName.EndsWith(".feature"))
             {
                 BFName = Path.GetFileName(FileName).Replace(".feature", "");
-            }
-            //BFName = BFName.Replace(@"Documents\Features\", "");
-            //BFName = BFName.Replace(".feature", "");
-            //BFName = folder + BFName + ".Ginger.BusinessFlow.xml";
+            }            
             // search if we have the BF defined already, so search in BF will work
             string externalID = FileName.Replace(App.UserProfile.Solution.Folder, "~");
             
-            mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x =>x.Name == BFName && x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).SingleOrDefault();            
-            //if (WorkSpace.Instance.BetaFeatures.BFUseSolutionRepositry)
-            //{
-            //    mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).SingleOrDefault();
-            //}
-            //else
-            //{
-            //    mBizFlow = App.LocalRepository.GetSolutionBusinessFlows(true,"",true).Where(x => x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).FirstOrDefault();
-            //}            
+            mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x =>x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).SingleOrDefault();                           
             
-
             if (mBizFlow != null)
             {
                 BFName = mBizFlow.FileName;

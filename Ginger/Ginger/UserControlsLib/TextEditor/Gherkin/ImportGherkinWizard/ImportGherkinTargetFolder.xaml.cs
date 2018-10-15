@@ -52,10 +52,9 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 case EventType.Init:
                     ImportGherkinFeatureWizard wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard;
                     if (mContext == eImportGherkinFileContext.DocumentsFolder)
-                    {                        
-                        bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
-                        bfsFolder.mTreeViewMode = GingerWPF.TreeViewItemsLib.NewTreeViewItemBase.eTreeViewMode.FoldersOnly;
-                        
+                    {
+                        BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
+                        bfsFolder.mTreeViewMode = GingerWPF.TreeViewItemsLib.NewTreeViewItemBase.eTreeViewMode.FoldersOnly;                       
 
                         mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);
                     }
