@@ -950,6 +950,9 @@
       <DependentUpon>ImportGherkinFeatureSummaryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinFeatureWizard.cs" />
+    <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml.cs">
+      <DependentUpon>ImportGherkinTargetFolder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinIntroPage.xaml.cs">
       <DependentUpon>ImportGherkinIntroPage.xaml</DependentUpon>
     </Compile>
@@ -2931,6 +2934,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControlsLib\PieChart\NewPiePlotter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

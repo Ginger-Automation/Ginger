@@ -39,7 +39,7 @@ namespace GingerWPF.TreeViewItemsLib
 {
     public class NewTreeViewItemBase : TreeViewItemGenericBase
     {
-        public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one
+        public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one      
         static bool mBulkOperationIsInProcess = false;
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
         {         
@@ -532,12 +532,13 @@ namespace GingerWPF.TreeViewItemsLib
 
             ObservableList<RepositoryFolder<T>> subFolders = RF.GetSubFolders();
             foreach (RepositoryFolder<T> envFolder in subFolders)
-            {
+            {                
                 Childrens.Add(GetTreeItem(envFolder));
             }
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // track sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
+            
             //Add direct childrens        
             ObservableList<T> folderItems = RF.GetFolderItems();
             // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once
@@ -549,7 +550,7 @@ namespace GingerWPF.TreeViewItemsLib
                 object sampleItem = folderItems[0];               
                 foreach (T item in folderItems.OrderBy(((RepositoryItemBase)sampleItem).ItemNameField))
                 {
-                    ITreeViewItem tvi = GetTreeItem(item);
+                    ITreeViewItem tvi = GetTreeItem(item);                    
                     Childrens.Add(tvi);
                 }
             }
