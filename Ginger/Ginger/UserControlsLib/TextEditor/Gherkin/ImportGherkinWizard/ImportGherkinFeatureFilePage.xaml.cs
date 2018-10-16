@@ -138,7 +138,7 @@ namespace Ginger.GherkinLib
             {
                 case EventType.Init:
                     mWizard = (ImportGherkinFeatureWizard)WizardArgs.Wizard;
-                    //FetaureFileName.FilePathTextBox.AddValidationRule(eValidationRule.CannotBeEmpty);
+                    //TO DO::Feature File Cannot BE NULL
                     break;
                 case EventType.Validate:
                     if (!File.Exists(FetaureFileName.FilePathTextBox.Text))

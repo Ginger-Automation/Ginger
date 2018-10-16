@@ -267,16 +267,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
          
                 if (mWizard.BizFlow != null)
                 {
-         
                     //Select Business Folder
                     mTreeView.Tree.SelectItem(this);
-                    mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                    //BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem(BF);                    
-                    BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem(mWizard.BizFlow);                    
-
+                    mTreeView.Tree.RefreshSelectedTreeNodeChildrens();                    
                     mTreeView.Tree.GetChildItembyNameandSelect(mWizard.BizFlow.Name, this);
-                }
-            //}
+                }            
         }
 
         private void ExportAllToALM(object sender, System.Windows.RoutedEventArgs e)

@@ -41,7 +41,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DI);
         public bool TreeItemDoubleClicked = false;
-        public bool TreeChildFolderOnly = false;
+        public bool TreeChildFolderOnly { get; set; }
 
         public Tuple<string, string> TreeNodesFilterByField { get; set; } 
 

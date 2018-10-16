@@ -40,10 +40,9 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         public GenericWindow genWin;
         public eImportGherkinFileContext mContext;
         public string FetaureFileName;
-        ImportGherkinTargetFolder importGherkinTargetFolder;
-        //RepositoryFolder<BusinessFlow> bizFlowTargetFolder;
-        public ITreeViewItem bizFlowTargetFolder;
-        public ITreeViewItem featureTargetFolder;
+        ImportGherkinTargetFolder importGherkinTargetFolder;        
+        public ITreeViewItem bizFlowTargetFolder { get; set; }
+        public ITreeViewItem featureTargetFolder { get; set; }
 
         public ImportGherkinFeatureWizard(ITreeViewItem folder, eImportGherkinFileContext context)
         {            
@@ -90,8 +89,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             if (!string.IsNullOrEmpty(mFeatureFile))
             {
                 GherkinPage GP = new GherkinPage();                
-                bool Compiled = GP.Load(mFeatureFile);                
-                //GP.Optimize();
+                bool Compiled = GP.Load(mFeatureFile);                                
                 if (Compiled)
                 {
                     string BizFlowName =  System.IO.Path.GetFileName(mFeatureFile).Replace(".feature", "");

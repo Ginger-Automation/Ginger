@@ -22,6 +22,7 @@ using Ginger.UserControlsLib.TextEditor.Gherkin;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System.IO;
+using Ginger.SolutionWindows.TreeViewItems;
 
 namespace Ginger.BDD
 {
@@ -54,19 +55,13 @@ namespace Ginger.BDD
         }
 
         public bool ImportFeatureFile()
-        {
-            ImportGherkinFeatureFilePage IFP = null;
-            string Folder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"BusinessFlows");
+        {            
+            BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(), eBusinessFlowsTreeViewMode.ReadOnly);
             if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
             {
-               //TODO:: FIX WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(Folder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder));                
+                WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(bfsFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder));                
             }
-            else
-            {
-               //TODO:: FIX IFP = new ImportGherkinFeatureFilePage(Folder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
-                IFP.ShowAsWindow();
-            }
-            return IFP.Imported;
+            return true;
         }
     }
 }

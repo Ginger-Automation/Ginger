@@ -36,9 +36,9 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
     /// 
     public partial class ImportGherkinTargetFolder : Page, IWizardPage
     {
-        public object mTargetFolder;
+        public object mTargetFolder { get; set; }
         eImportGherkinFileContext mContext;
-        SingleItemTreeViewSelectionPage mTargetFolderSelectionPage = null;
+        SingleItemTreeViewSelectionPage mTargetFolderSelectionPage;
         ImportGherkinFeatureWizard wiz;
         public ImportGherkinTargetFolder(eImportGherkinFileContext context)
         {
@@ -69,8 +69,6 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     }
                     mTargetFolderSelectionPage.OnSelect += MTargetFolderSelectionPage_OnSelectItem;
 
-                   // mTargetFolderSelectionPage.Click += MTargetFolderSelectionPage_Click;
-
                     TargetPath.Content = mTargetFolderSelectionPage;
                     break;
                 case EventType.LeavingForNextPage:
@@ -83,10 +81,12 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     {
                         if (mTargetFolder == null)
                         {
-                            //WizardEventArgs.AddError("Please Select target Folder");
+                            //TODO  : Select target Fodler error
                         }
                             break;
-                    }                
+                    }
+                default:
+                    break;
             }
 
         }

@@ -59,11 +59,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 mPath = value;
             }
         }  
-        
-        public DocumentsFolderTreeItem()
-        {
-           
-        }
         Object ITreeViewItem.NodeObject()
         {
             return null;
@@ -159,9 +154,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 else
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
                 AddSourceControlOptions(mContextMenu, false, false);
-
-                //if(IsGingerDefualtFolder || this.Path.Contains("\\Documents\\Features")) 
-                //    AddGherkinOptions(mContextMenu);
 
                 AddImportsAndCreateDocumentsOptions();
             }
@@ -262,12 +254,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
          //Gherkin BDD functions
         private void ImportGherkinFeatureFile(object sender, RoutedEventArgs e)
-        {
-            string FeatureFolder = Folder;
-            //if (this.Path.IndexOf("Documents\\Features\\") > 0)
-            //    FeatureFolder = this.Path.Substring(this.Path.IndexOf("Documents\\Features\\") + 19);
-            //if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
-            //{
+        {   
             ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
             mWizard.mFolder = this.Path;
             WizardWindow.ShowWizard(mWizard);
