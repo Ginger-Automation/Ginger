@@ -461,6 +461,7 @@ namespace GingerCoreNET.DriversLib
                     default:
                         throw new Exception("Unknown output Value Type - " + AOV.GetParamType());
                 }
+                PLO.AddValue(AOV.Path);
                 PLO.ClosePackage();
 
                 OutputValuesPayLoad.Add(PLO);

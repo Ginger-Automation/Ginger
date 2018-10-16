@@ -1854,8 +1854,17 @@ namespace Ginger.Run
                     {
                         case nameof(OutputValueType.String):
                             string v = OPL.GetValueString();
+                            string Path = OPL.GetValueString();
                             //GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueString = v });
-                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = v});
+                            if (string.IsNullOrEmpty(Path))
+                            {
+                                actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = v });
+                            }
+                            else
+                            {
+                                actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = v ,Path=Path});
+                            }
+
                             break;
                         case nameof(OutputValueType.ByteArray):
                             byte[] b = OPL.GetBytes();
