@@ -36,111 +36,27 @@ namespace GingerCoreCommonTest.TerminologyTests
             //after every test
         }
 
-        [TestMethod]
-        public void GingerDefaultTerm_TestActivities()
-        {
-            //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Default;
-            eTermResKey termResourceKey = eTermResKey.Activities;
-            
-            //Act
-            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
-
-            //Assert
-            Assert.AreEqual("Activities", termValue);
-        }
-
-        [TestMethod]
-        public void GingerGherkinTerm_TestActivities()
-        {
-            //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
-            eTermResKey termResourceKey = eTermResKey.Activities;
-
-            //Act
-            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
-
-            //Assert
-            Assert.AreEqual("Steps", termValue);
-        }
-
-        [TestMethod]
-        public void GingerTestingTerm_TestActivities()
-        {
-            //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Testing;
-            eTermResKey termResourceKey = eTermResKey.Activities;
-
-            //Act
-            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
-
-            //Assert
-            Assert.AreEqual("Steps", termValue);
-        }
-
-
-        [TestMethod]
-        public void GingerDefaultTerm_TestRunset()
-        {
-            //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Default;
-            eTermResKey termResourceKey = eTermResKey.RunSet;
-
-            //Act
-            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
-
-            //Assert
-            Assert.AreEqual("Run Set", termValue);
-        }
-
-        [TestMethod]
-        public void GingerGherkinTerm_TestRunset()
-        {
-            //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
-            eTermResKey termResourceKey = eTermResKey.RunSet;
-
-            //Act
-            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
-
-            //Assert
-            Assert.AreEqual("Run Set", termValue);
-        }
-
-        [TestMethod]
-        public void GingerTestingTerm_TestRunset()
-        {
-            //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Testing;
-            eTermResKey termResourceKey = eTermResKey.RunSet;
-
-            //Act
-            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
-
-            //Assert
-            Assert.AreEqual("Calendar", termValue);
-        }
-
+        //Business Flows
 
         [TestMethod]
         public void GingerDefaultTerm_TestBusinessFlows()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Default;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Default;
             eTermResKey termResourceKey = eTermResKey.BusinessFlows;
 
             //Act
             string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
 
             //Assert
-            Assert.AreEqual("Business Flow Features", termValue);
+            Assert.AreEqual("Business Flows", termValue);
         }
 
         [TestMethod]
         public void GingerGherkinTerm_TestBusinessFlows()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
             eTermResKey termResourceKey = eTermResKey.BusinessFlows;
 
             //Act
@@ -154,7 +70,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerTestingTerm_TestBusinessFlows()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Testing;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Testing;
             eTermResKey termResourceKey = eTermResKey.BusinessFlows;
 
             //Act
@@ -164,55 +80,13 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Test Sets", termValue);
         }
 
-        [TestMethod]
-        public void GingerDefaultTerm_TestVariable()
-        {
-            //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Default;
-            eTermResKey termResourceKey = eTermResKey.Variable;
-
-            //Act
-            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
-
-            //Assert
-            Assert.AreEqual("Variable", termValue);
-        }
-
-        [TestMethod]
-        public void GingerGherkinTerm_TestVariable()
-        {
-            //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
-            eTermResKey termResourceKey = eTermResKey.Variable;
-
-            //Act
-            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
-
-            //Assert
-            Assert.AreEqual("Parameter", termValue);
-        }
-
-        [TestMethod]
-        public void GingerTestingTerm_TestVariable()
-        {
-            //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Testing;
-            eTermResKey termResourceKey = eTermResKey.Variable;
-
-            //Act
-            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
-
-            //Assert
-            Assert.AreEqual("Parameter", termValue);
-        }
-
         //ActivitiesGroup
 
         [TestMethod]
         public void GingerDefaultTerm_TestActivitiesGroup()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Default;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Default;
             eTermResKey termResourceKey = eTermResKey.ActivitiesGroup;
 
             //Act
@@ -226,7 +100,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerGherkinTerm_TestActivitiesGroup()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
             eTermResKey termResourceKey = eTermResKey.ActivitiesGroup;
 
             //Act
@@ -240,7 +114,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerTestingTerm_TestActivitiesGroup()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Testing;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Testing;
             eTermResKey termResourceKey = eTermResKey.ActivitiesGroup;
 
             //Act
@@ -250,12 +124,148 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Test Case", termValue);
         }
 
+        //Activities
+
+        [TestMethod]
+        public void GingerDefaultTerm_TestActivities()
+        {
+            //Arrange
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Default;
+            eTermResKey termResourceKey = eTermResKey.Activities;
+            
+            //Act
+            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
+
+            //Assert
+            Assert.AreEqual("Activities", termValue);
+        }
+
+        [TestMethod]
+        public void GingerGherkinTerm_TestActivities()
+        {
+            //Arrange
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
+            eTermResKey termResourceKey = eTermResKey.Activities;
+
+            //Act
+            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
+
+            //Assert
+            Assert.AreEqual("Steps", termValue);
+        }
+
+        [TestMethod]
+        public void GingerTestingTerm_TestActivities()
+        {
+            //Arrange
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Testing;
+            eTermResKey termResourceKey = eTermResKey.Activities;
+
+            //Act
+            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
+
+            //Assert
+            Assert.AreEqual("Steps", termValue);
+        }
+
+        //Variable
+
+        [TestMethod]
+        public void GingerDefaultTerm_TestVariable()
+        {
+            //Arrange
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Default;
+            eTermResKey termResourceKey = eTermResKey.Variable;
+
+            //Act
+            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
+
+            //Assert
+            Assert.AreEqual("Variable", termValue);
+        }
+
+        [TestMethod]
+        public void GingerGherkinTerm_TestVariable()
+        {
+            //Arrange
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
+            eTermResKey termResourceKey = eTermResKey.Variable;
+
+            //Act
+            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
+
+            //Assert
+            Assert.AreEqual("Parameter", termValue);
+        }
+
+        [TestMethod]
+        public void GingerTestingTerm_TestVariable()
+        {
+            //Arrange
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Testing;
+            eTermResKey termResourceKey = eTermResKey.Variable;
+
+            //Act
+            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
+
+            //Assert
+            Assert.AreEqual("Parameter", termValue);
+        }
+
+
+        //Runset
+
+        [TestMethod]
+        public void GingerDefaultTerm_TestRunset()
+        {
+            //Arrange
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Default;
+            eTermResKey termResourceKey = eTermResKey.RunSet;
+
+            //Act
+            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
+
+            //Assert
+            Assert.AreEqual("Run Set", termValue);
+        }
+
+        [TestMethod]
+        public void GingerGherkinTerm_TestRunset()
+        {
+            //Arrange
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
+            eTermResKey termResourceKey = eTermResKey.RunSet;
+
+            //Act
+            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
+
+            //Assert
+            Assert.AreEqual("Run Set", termValue);
+        }
+
+        [TestMethod]
+        public void GingerTestingTerm_TestRunset()
+        {
+            //Arrange
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Testing;
+            eTermResKey termResourceKey = eTermResKey.RunSet;
+
+            //Act
+            string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
+
+            //Assert
+            Assert.AreEqual("Calendar", termValue);
+        }
+
+
+
+        //Prefix and Suffix Tests
 
         [TestMethod]
         public void GingerGherkinTerm_TestBusinessFlowPrefix()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "TestPre");
@@ -269,7 +279,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerGherkinTerm_TestBusinessFlowSuffix()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "", "TestSuffix");
@@ -282,7 +292,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerGherkinTerm_TestBusinessFlowCase()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "", "", true);
@@ -295,7 +305,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerGherkinTerm_TestBusinessFlowPrefixSuffix()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "TestPre", "TestSuffix", false);
@@ -308,7 +318,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerGherkinTerm_TestBusinessFlowPrefixSuffixCase()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "TestPre", "TestSuffix", true);
@@ -321,7 +331,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerTestingTerm_TestBusinessFlowPrefix()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Testing;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Testing;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "TestPre");
@@ -335,7 +345,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerTestingTerm_TestBusinessFlowSuffix()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Testing;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Testing;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "", "TestSuffix");
@@ -348,7 +358,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerTestingTerm_TestBusinessFlowCase()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Testing;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Testing;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "", "", true);
@@ -361,7 +371,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerTestingTerm_TestBusinessFlowPrefixSuffix()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Testing;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Testing;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "TestPre", "TestSuffix", false);
@@ -374,7 +384,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerTestingTerm_TestBusinessFlowPrefixSuffixCase()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Testing;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Testing;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "TestPre", "TestSuffix", true);
@@ -388,7 +398,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerGherkinTerm_TestActivityPrefix()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Testing;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Testing;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.Activity, "TestPre");
@@ -402,7 +412,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerGherkinTerm_TestActivitySuffix()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.Activity, "", "TestSuffix");
@@ -415,7 +425,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerGherkinTerm_TestActivityCase()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.Activity, "", "", true);
@@ -428,7 +438,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerGherkinTerm_TestActivityPrefixSuffix()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.Activity, "TestPre", "TestSuffix", false);
@@ -441,7 +451,7 @@ namespace GingerCoreCommonTest.TerminologyTests
         public void GingerGherkinTerm_TestActivityPrefixSuffixCase()
         {
             //Arrange
-            GingerTerminology.SET_TERMINOLOGY_TYPE = eTerminologyDicsType.Gherkin;
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Gherkin;
 
             //Act
             string termResValue = GingerDicser.GetTermResValue(eTermResKey.Activity, "TestPre", "TestSuffix", true);

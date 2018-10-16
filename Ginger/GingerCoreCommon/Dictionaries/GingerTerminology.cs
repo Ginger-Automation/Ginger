@@ -7,7 +7,7 @@ namespace GingerCore
 {
     public class GingerTerminology
     {
-        public static eTerminologyDicsType SET_TERMINOLOGY_TYPE { get; set; }
+        public static eTerminologyType TERMINOLOGY_TYPE { get; set; }
 
         static List<KeyValuePair<string, string>> gingerTermDefaultList = new List<KeyValuePair<string, string>>()
         {
@@ -56,15 +56,15 @@ namespace GingerCore
         public static string GetTerminologyValue(eTermResKey key)
         {
             KeyValuePair<string, string> result = new KeyValuePair<string, string>();
-            switch (SET_TERMINOLOGY_TYPE)
+            switch (TERMINOLOGY_TYPE)
             {
-                case eTerminologyDicsType.Default:
+                case eTerminologyType.Default:
                     result = gingerTermDefaultList.Find(kvp => kvp.Key == key.ToString());
                     break;
-                case eTerminologyDicsType.Gherkin:
+                case eTerminologyType.Gherkin:
                     result = gingerTermGherkinList.Find(kvp => kvp.Key == key.ToString());
                     break;
-                case eTerminologyDicsType.Testing:
+                case eTerminologyType.Testing:
                     result = gingerTermTestingList.Find(kvp => kvp.Key == key.ToString());
                     break;
             }

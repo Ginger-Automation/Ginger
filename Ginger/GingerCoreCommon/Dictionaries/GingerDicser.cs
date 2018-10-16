@@ -37,7 +37,7 @@ namespace GingerCore
         Default
     }
 
-    public enum eTerminologyDicsType
+    public enum eTerminologyType
     {
         Default,
         Testing,

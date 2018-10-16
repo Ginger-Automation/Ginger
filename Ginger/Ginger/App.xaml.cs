@@ -301,7 +301,7 @@ namespace Ginger
             GingerCore.General.ObjFieldBinding(control, dependencyProperty, obj, property, BindingMode);
         }
 
-        public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyDicsType TerminologyDicType = GingerCore.eTerminologyDicsType.Default)
+        public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType TerminologyType = GingerCore.eTerminologyType.Default)
         {
             //Clear all Dictionaries
             Application.Current.Resources.MergedDictionaries.Clear();
@@ -326,7 +326,7 @@ namespace Ginger
             }
 
             // set terminology type
-            GingerTerminology.SET_TERMINOLOGY_TYPE = TerminologyDicType;
+            GingerTerminology.TERMINOLOGY_TYPE = TerminologyType;
 
             //Terminologies
             //switch (TerminologyDicType)
@@ -413,7 +413,7 @@ namespace Ginger
             if (App.UserProfile != null)
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, App.UserProfile.TerminologyDictionaryType);
             else
-                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyDicsType.Default);
+                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
 
             Reporter.ToLog(eLogLevel.INFO, "Loading user messages pool");
             UserMessagesPool.LoadUserMessgaesPool();
