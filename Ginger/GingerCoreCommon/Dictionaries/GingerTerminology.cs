@@ -13,7 +13,6 @@ namespace GingerCore
         {
             new KeyValuePair<string, string>("BusinessFlow", "Business Flow Feature"),
             new KeyValuePair<string, string>("BusinessFlows", "Business Flow Features"),
-            new KeyValuePair<string, string>("ALM", "ALM"),
             new KeyValuePair<string, string>("ActivitiesGroup", "Activities Group"),
             new KeyValuePair<string, string>("ActivitiesGroups", "Activities Groups"),
             new KeyValuePair<string, string>("Activity", "Activity"),
@@ -22,6 +21,7 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variables", "Variables"),
             new KeyValuePair<string, string>("RunSet", "Run Set"),
             new KeyValuePair<string, string>("RunSets", "Run Sets"),
+            new KeyValuePair<string, string>("ALM", "ALM"),
         };
 
         static List<KeyValuePair<string, string>> gingerTermGherkinList = new List<KeyValuePair<string, string>>()
@@ -52,25 +52,21 @@ namespace GingerCore
             new KeyValuePair<string, string>("RunSets", "Calendars"),
         };
 
-
-        public static string getTerminologyValue(eTermResKey key)
+        public static string GetTerminologyValue(eTermResKey key)
         {
             KeyValuePair<string, string> result = new KeyValuePair<string, string>();
-
             switch (SET_TERMINOLOGY_TYPE)
             {
+                case eTerminologyDicsType.Default:
+                    result = gingerTermDefaultList.Find(kvp => kvp.Key == key.ToString());
+                    break;
                 case eTerminologyDicsType.Gherkin:
                     result = gingerTermGherkinList.Find(kvp => kvp.Key == key.ToString());
                     break;
                 case eTerminologyDicsType.Testing:
                     result = gingerTermTestingList.Find(kvp => kvp.Key == key.ToString());
                     break;
-                case eTerminologyDicsType.Default:
-                default:
-                    result = gingerTermDefaultList.Find(kvp => kvp.Key == key.ToString());
-                    break;
             }
-
             return result.Value;
         }
 

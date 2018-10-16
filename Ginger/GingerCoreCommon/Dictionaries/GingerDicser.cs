@@ -58,7 +58,7 @@ namespace GingerCore
 
             try
             {
-                termResValue = GingerTerminology.getTerminologyValue(termResourceKey);
+                termResValue = GingerTerminology.GetTerminologyValue(termResourceKey);
             }
             catch (Exception ex)
             {
@@ -69,26 +69,18 @@ namespace GingerCore
 
             if (termResValue != null)
             {
-                string strValue = prefixString + termResValue.ToString() + suffixString;
+                string strValue = "";
+                if (!string.IsNullOrEmpty(prefixString)) strValue = prefixString;
+                if (!string.IsNullOrEmpty(strValue)) strValue = strValue + " " + termResValue.ToString();  else strValue = termResValue.ToString();
+                if (!string.IsNullOrEmpty(suffixString)) strValue = strValue + " " + suffixString;
                 if (setToUpperCase) strValue = strValue.ToUpper();
                 return strValue;
             }
             else
-                //key not found
-                return string.Empty;
-        }
-
-        //public static void LinkToTermResource(FrameworkElement obj, DependencyProperty objPropertyToLink, eTermResKey termResourceKey)
-        //{
-        //    if (obj != null && objPropertyToLink != null) //&& termResourceKey != null ... termResourceKey is never null
-        //        obj.SetResourceReference(objPropertyToLink, termResourceKey.ToString());
-        //}
-
-        //public static void LinkToResource(FrameworkElement obj, DependencyProperty objPropertyToLink, string resourceKey)
-        //{
-        //    if (obj != null && objPropertyToLink != null && string.IsNullOrEmpty(resourceKey) == false)
-        //        obj.SetResourceReference(objPropertyToLink, resourceKey);
-        //}        
+            {
+                return string.Empty;  //key not found
+            }
+        }        
 
     }
 }
