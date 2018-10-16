@@ -1715,17 +1715,18 @@ private TreePath SearchTreeNodes(JTree tree,String locateValue)
 	int startNodeNumber = 0;
 	String[] nodes = locateValue.split("/");					
 
-	startNodeNumber = (treePath == null ? 0 : (tree).getRowForPath(treePath));
-		(tree).expandRow(startNodeNumber);
-		for(int row = startNodeNumber; row <= ((tree).getRowCount() - 1); row++)
+	(tree).expandRow(startNodeNumber);
+	
+		for(int row = startNodeNumber; row < tree.getRowCount(); row++)
 		{
-				treePath = (tree).getNextMatch(nodes[0].trim(), row, Position.Bias.Forward);
+				treePath = tree.getNextMatch(nodes[0].trim(), row, Position.Bias.Forward);
 				
 				if(treePath != null)
 				{
 					
 						DefaultMutableTreeNode lastNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
-						if(((String)lastNode.getUserObject()).equalsIgnoreCase(nodes[0]))
+						
+						if(nodes[0].equalsIgnoreCase((String)lastNode.getUserObject()))
 						{
 							
 						  if(nodes.length > 1)
@@ -1743,17 +1744,19 @@ private TreePath SearchTreeNodes(JTree tree,String locateValue)
 private TreePath SearchChildNodes(JTree tree, TreePath treePath, String[] nodes) 
 {
 	boolean nodeFound = false;
-	for (int i = 0; i < nodes.length - 1; i++)
+	for (int i =1; i < nodes.length; i++)
 	{
 		nodeFound = false;
-		String nextNode = nodes[i+1];
-		TreeNode childNodes = (TreeNode) treePath.getLastPathComponent();
-		Enumeration<?> children =  childNodes.children();
+		String nodeToSearch = nodes[i];
+		
+		TreeNode startNode = (TreeNode) treePath.getLastPathComponent();
+		
+		Enumeration<?> children =  startNode.children();
 		while(children.hasMoreElements())
 		{
 			DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
 			String userObject = (String) child.getUserObject();
-			if(userObject.equalsIgnoreCase(nextNode))
+			if(userObject.equalsIgnoreCase(nodeToSearch))
 			{
 				nodeFound = true;
 				(tree).expandRow((tree).getRowForPath(treePath));
