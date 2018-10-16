@@ -16,20 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using System;
-using System.Diagnostics;
-using System.Windows.Controls;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore;
-using GingerCore.Repository;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Controls;
 
 namespace Ginger.Run.RunSetActions
 {
-    public abstract class RunSetActionBase : RepositoryItem
+    public abstract class RunSetActionBase : RepositoryItemBase
     {
         public enum eRunAt
         {
@@ -199,7 +197,7 @@ namespace Ginger.Run.RunSetActions
             Reporter.ToGingerHelper(eGingerHelperMsgKey.ExecutingRunSetAction, null, this.Name);
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, String.Format("Execution Started for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name,this.Type), writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("Execution Started for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name,this.Type), writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
                 Status = RunSetActionBase.eRunSetActionStatus.Running;
                 Errors = null;
                 GingerCore.General.DoEvents();
@@ -217,7 +215,7 @@ namespace Ginger.Run.RunSetActions
                     Status = RunSetActionBase.eRunSetActionStatus.Completed;
                 }
                 GingerCore.General.DoEvents();
-                Reporter.ToLog(eLogLevel.INFO, String.Format("Execution Ended for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name, this.Type), writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("Execution Ended for the Run Set Operation from Type '{1}' and Name '{0}'", this.Name, this.Type), writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
             }
             finally
             {

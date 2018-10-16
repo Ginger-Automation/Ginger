@@ -96,7 +96,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 using (var ms = new MemoryStream())
                 {
-                    POM.ScreenShotImage = Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(ScreenShot);
+                    POM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShot);
                 }
             }
 

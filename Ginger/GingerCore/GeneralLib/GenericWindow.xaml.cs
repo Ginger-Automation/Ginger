@@ -169,6 +169,7 @@ namespace Ginger
             if (!showClosebtn)
             {
                 CloseBtn.Visibility = System.Windows.Visibility.Collapsed;
+                UpperCloseBtn.Visibility = System.Windows.Visibility.Collapsed;
             }
             else
             {
@@ -184,7 +185,7 @@ namespace Ginger
                     if (margin.Right < 10)
                         margin.Right = 10;
                     btn.Margin = margin;
-                    btn.Style = this.FindResource("@WindowButtonStyle") as Style;
+                    btn.Style = this.FindResource("$WindowButtonStyle") as Style;
                     DockPanel.SetDock(btn, Dock.Right);
                     BottomPanel.Children.Add(btn);
                 }

@@ -287,7 +287,7 @@ namespace Ginger.Actions.WebServices
                 if (ImportFileFlag)
                 {
                     //TODO import request File
-                    string targetPath = SolutionFolder + @"Documents\WebServices\RequestFile";
+                    string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\WebServices\RequestFile");
                     if (!System.IO.Directory.Exists(targetPath))
                     {
                         System.IO.Directory.CreateDirectory(targetPath);
@@ -357,7 +357,7 @@ namespace Ginger.Actions.WebServices
                 if (ImportFileFlag)
                 {
                     //TODO import Certificate File to solution folder
-                    string targetPath = SolutionFolder + @"Documents\WebServices\Certificates";
+                    string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\WebServices\Certificates");
                     if (!System.IO.Directory.Exists(targetPath))
                     {
                         System.IO.Directory.CreateDirectory(targetPath);

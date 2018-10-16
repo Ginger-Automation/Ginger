@@ -18,14 +18,14 @@
                 </Button>
             </DataTemplate>
         </Grid.Resources>
-        <Ginger:ucGrid x:Name="grdActivitiesGroupsRepository" Grid.Column="3" Grid.Row="4" Grid.ColumnSpan="2" ShowTitle="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowUpDown="Collapsed" IsReadOnly="True">
+        <Ginger:ucGrid x:Name="xActivitiesGroupsRepositoryGrid" Grid.Column="3" Grid.Row="4" Grid.ColumnSpan="2" ShowTitle="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowUpDown="Collapsed" IsReadOnly="True">
             <Ginger:ucGrid.Title>
                 <GingerCore:ucTextDicResource Text="[ActivitiesGroups] Repository"/>
             </Ginger:ucGrid.Title>
         </Ginger:ucGrid>
-        <UCTreeView:TreeView2 x:Name="treeActivitiesGroupsRepository" Visibility="Collapsed" ShowTitle="Collapsed" AllowDrop="True"/>
+        <!--<UCTreeView:TreeView2 x:Name="treeActivitiesGroupsRepository" Visibility="Collapsed" ShowTitle="Collapsed" AllowDrop="True"/>
         <Button x:Name="GridTreeViewButton" Click="GridTreeViewButton_Click" ToolTip="Switch to Tree View" Width="26" Height="26" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,3,3,0">
             <Image Source="{StaticResource @TreeView_24x24.png}" />
-        </Button>
+        </Button>-->
     </Grid>
 </Page>

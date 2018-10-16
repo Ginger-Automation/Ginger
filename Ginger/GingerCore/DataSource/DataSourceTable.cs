@@ -24,8 +24,7 @@ namespace GingerCore.DataSource
 {    
 
     public class DataSourceTable : RepositoryItemBase
-    {
-        public override bool UseNewRepositorySerializer { get { return true; } }
+    {        
 
         public enum eDSTableType
         {

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using GingerCore;
 using System;
 using System.Threading.Tasks;
@@ -83,7 +84,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to control the Ginger Helper animation", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to control the Ginger Helper animation", ex);
             }
         }
 

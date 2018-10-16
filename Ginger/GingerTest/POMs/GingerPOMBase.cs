@@ -50,6 +50,7 @@ namespace GingerWPFUnitTest.POMs
                 if (o is DependencyObject)
                 {
                     DependencyObject dependencyObject = (DependencyObject)o;
+                   
                     if (dependencyObject is T)  // the type we are searching
                     {
                         if (AutomationProperties.GetAutomationId(dependencyObject) == automationID)
@@ -71,9 +72,7 @@ namespace GingerWPFUnitTest.POMs
 
 
         internal DependencyObject FindElementByName(DependencyObject context, string name)
-        {
-            // T elm = (T)context.FindName(name);
-
+        {            
             DependencyObject d = null;
             Execute(() => { 
                 d = (DependencyObject)LogicalTreeHelper.FindLogicalNode(context, name);

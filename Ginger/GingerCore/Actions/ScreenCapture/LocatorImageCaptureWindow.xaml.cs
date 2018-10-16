@@ -259,8 +259,8 @@ namespace GingerCore.Actions.ScreenCapture
             {
                 //TODO: need to find a way to hold the image in the Act so it will go to shared repo have version and more
                 // Need to think if good or not
-                if (!Directory.Exists(f.SolutionFolder + @"Documents\ExpectedImages\"))
-                    Directory.CreateDirectory(f.SolutionFolder + @"Documents\ExpectedImages\");
+                if (!Directory.Exists(System.IO.Path.Combine(f.SolutionFolder + @"Documents\ExpectedImages\")))
+                    Directory.CreateDirectory(System.IO.Path.Combine(f.SolutionFolder + @"Documents\ExpectedImages\"));
             }
             catch (Exception e)
             {                

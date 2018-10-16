@@ -27,6 +27,7 @@ using GingerCore.GeneralLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Import
 {
@@ -71,7 +72,7 @@ namespace Ginger.Import
                     {
                         if (bf != null)
                         {
-                            App.LocalRepository.SaveNewItem(bf);
+                            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(bf);                            
                         }
                         bf = new BusinessFlow(row.Descendants("title").FirstOrDefault().InnerText);
                         result = new Activity() { Active = true };

@@ -165,6 +165,21 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
+        /// Return the list of Sub Folders
+        /// </summary>
+        /// <returns></returns>
+        public override ObservableList<RepositoryFolderBase> GetSubFoldersAsFolderBase()
+        {
+            ObservableList<RepositoryFolderBase> subFolders = new ObservableList<RepositoryFolderBase>();
+            foreach (object item in GetSubFolders())
+            {
+                subFolders.Add((RepositoryFolderBase)item);
+            }
+
+            return subFolders;
+        }
+
+        /// <summary>
         /// Get current folder and all of it sub folders items
         /// </summary>        
         /// <param name="list"></param>
@@ -222,9 +237,9 @@ namespace Amdocs.Ginger.Repository
 
             if (FullPath == null || !Directory.Exists(PathHelper.GetLongPath(FullPath)))
             {
-                throw new Exception("LoadFolderFiles: Invalid folder - " + Folder);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "RepositoryFolder/LoadFolderFiles- Invalid folder: " + Folder);
+                return null;                
             }
-
 
             // TODO: move from here to better place                
             string ContainingFolder = Folder.Replace(SolutionRepository.SolutionFolder, SolutionRepository.cSolutionRootFolderSign); 
@@ -233,17 +248,23 @@ namespace Amdocs.Ginger.Repository
 
             string[] fileEntries = FileSystem.GetDirectoryFiles(FullPath, mSolutionRepositoryItemInfo.Pattern);
 
-
             Parallel.ForEach(fileEntries, FileName =>
             {
-                // Check if item exist in cache if yes use it, no need to load from file, yay!
-                T item = (T)mFolderItemsCache[FileName];
-                if (item == null)
+                try
                 {
-                    item = LoadItemfromFile<T>(FileName, ContainingFolder);
-                    AddItemtoCache(FileName, item);
+                    // Check if item exist in cache if yes use it, no need to load from file, yay!
+                    T item = (T)mFolderItemsCache[FileName];
+                    if (item == null)
+                    {
+                        item = LoadItemfromFile<T>(FileName, ContainingFolder);
+                        AddItemtoCache(FileName, item);
+                    }
+                    list.Add(item);
                 }
-                list.Add(item);
+                catch(Exception ex)
+                {
+                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("RepositoryFolder/LoadFolderFiles- Failed to load the Repository Item XML which in file: '{0}'.", FileName), ex);
+                }
             });
 
             return new ObservableList<T>(list); //TODO: order by name .OrderBy(x => ((RepositoryItem)x).FilePath)); ??
@@ -367,7 +388,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                NewReporter.ToConsole(string.Format("Exception thrown from ReposiotryFolder FileWatcher, Error:'{0}'", ex.Message));
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
             }
 
         }
@@ -388,7 +409,7 @@ namespace Amdocs.Ginger.Repository
         Mutex m = new Mutex();
         private void FileWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            Console.WriteLine("FileWatcher change detected: " + e.FullPath + " , " + e.ChangeType);
+            AppReporter.ToConsole("FileWatcher change detected: " + e.FullPath + " , " + e.ChangeType);
             try
             {                
                 m.WaitOne();
@@ -419,14 +440,14 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                NewReporter.ToConsole(string.Format("Exception thrown from ReposiotryFolder FileWatcher, Error:'{0}'", ex.Message));
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
             }
                         
             finally
             {
                 m.ReleaseMutex();
             }
-            Console.WriteLine("FileWatcher change handled: " + e.FullPath + " , " + e.ChangeType);
+            AppReporter.ToConsole("FileWatcher change handled: " + e.FullPath + " , " + e.ChangeType);
         }
 
         private void HandleFileChange(FileSystemEventArgs e)
@@ -438,17 +459,16 @@ namespace Amdocs.Ginger.Repository
                 case WatcherChangeTypes.Changed:
                     WaitforFileIsReadable(e.FullPath);
                     // reLoad the object to mem updating fields
-                    item = GetItemFromCacheByFileName(e.FullPath);
+                    item = GetItemFromCacheByFileName(e.FullPath);                    
                     NewRepositorySerializer.ReloadObjectFromFile(item);
-
-                    //Trigger so source control item can update if needed
-                    item.OnPropertyChanged(nameof(RepositoryItemBase.SourceControlStatus));
-
+                    item.RefreshSourceControlStatus();
+                    SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(e.FullPath));
                     break;
                 case WatcherChangeTypes.Deleted:
                     //remove from cache and list
                     item = GetItemFromCacheByFileName(e.FullPath);
-                    RemoveItemFromLists((RepositoryItemBase)item);
+                    RemoveItemFromLists(item);
+                    SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(e.FullPath));                    
                     break;
                 case WatcherChangeTypes.Created:
                     WaitforFileIsReadable(e.FullPath);
@@ -456,6 +476,7 @@ namespace Amdocs.Ginger.Repository
                     T newItem = LoadItemfromFile<T>(e.FullPath, Path.GetDirectoryName(e.FullPath));
                     AddItemtoCache(e.FullPath, newItem);
                     mFolderItemsList.Add(newItem);
+                    SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(e.FullPath));
                     break;
             }
         }

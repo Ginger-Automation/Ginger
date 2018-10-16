@@ -22,7 +22,7 @@ using Amdocs.Ginger.Common;
 namespace GingerCore.DataSource
 {
    
-    public class DataSourceTableColumn : RepositoryItem 
+    public class DataSourceTableColumn : RepositoryItemBase
     {
         public enum eDSTableColType
         {

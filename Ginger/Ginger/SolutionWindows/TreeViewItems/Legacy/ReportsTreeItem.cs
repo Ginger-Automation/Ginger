@@ -54,23 +54,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            //Add Reports
-            //add legacy reports nodes only if the solution iclude old templates
-            if (App.LocalRepository.GetSolutionReportTemplates(UseCache: false, specificFolderPath: App.UserProfile.Solution.Folder + @"\ReportTemplates\").Count > 0 ||
-                    App.LocalRepository.GetSolutionHTMLReportTemplates(UseCache: false, specificFolderPath: App.UserProfile.Solution.Folder + @"\HTMLReportTemplates\").Count > 0)
-            {
-                LegacyReportTreeItem LRTI = new LegacyReportTreeItem();
-                Childrens.Add(LRTI);
-            }
-
-            HTMLGingerReportsTreeItem HTMGLR = new HTMLGingerReportsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<HTMLReportConfiguration>());
-            HTMGLR.Folder = "HTML Reports Templates";
-            HTMGLR.Path = App.UserProfile.Solution.Folder + @"\HTMLReportConfigurations\";
-            Childrens.Add(HTMGLR);
-
-            return Childrens;
+            throw new NotImplementedException();            
         }
 
         bool ITreeViewItem.IsExpandable()

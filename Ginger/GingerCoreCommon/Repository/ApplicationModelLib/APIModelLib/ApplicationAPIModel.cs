@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using System;
 using System.Collections.Generic;
@@ -156,8 +157,22 @@ namespace Amdocs.Ginger.Repository
         //public OutputTemplateModel mOutputTemplateModel { get; set; }
 
         public ObservableList<TemplateFile> OptionalValuesTemplates = new ObservableList<TemplateFile>();// XML & JSON
-       
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.APIModel;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
+
     }
-
-
 }

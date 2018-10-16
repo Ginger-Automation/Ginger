@@ -28,16 +28,13 @@ using GingerCore.Activities;
 using GingerCore.FlowControlLib;
 using GingerCoreNET.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore
 {
-    public class BusinessFlow : RepositoryItem
-    {
-        //  This class is container for AAA
-        //This class is being serialized and saved to XML when working local
-        // Regex to find variable between {} like: {Var=FirstName}  or {Var=City} , can also find if string contains "AA {Var=First} - {Var=Last} BB"
-        // private static string rxVar = "Var=";
-        // private static Regex rx = new Regex(@"{" + rxVar + "[^}]*}", RegexOptions.Compiled);
+    public class BusinessFlow : RepositoryItemBase
+    {        
+
         public BusinessFlow()
         {
 
@@ -144,8 +141,8 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public string RunDescription { get { return mRunDescription; } set { if (mRunDescription != value) { mRunDescription = value; OnPropertyChanged(Fields.RunDescription); } } }
 
-        double? mElapsed;
-        [IsSerializedForLocalRepository]
+        double? mElapsed; 
+        [IsSerializedForLocalRepository]     // TODO: Needed?
         public double? Elapsed
         {
             get { return mElapsed; }
@@ -257,8 +254,28 @@ namespace GingerCore
         //@ Run info 
 
 
+        private ObservableList<Activity> mActivities;
+
         [IsSerializedForLocalRepository]
-        public ObservableList<Activity> Activities; //DO NOT USE  { get; set; } it will break repo serializer
+        public ObservableList<Activity> Activities
+        {
+            get
+            {
+                if (mActivities == null)
+                {
+                    mActivities = new ObservableList<Activity>();
+                }
+                if (mActivities.LazyLoad)
+                {
+                    mActivities.GetItemsInfo();
+                }
+                return mActivities;
+            }
+            set
+            {
+                mActivities = value;
+            }
+        }        
 
         [IsSerializedForLocalRepository]
         public new string ExternalID { get; set; } // will use it for QC ID or other external ID
@@ -1086,5 +1103,20 @@ namespace GingerCore
             }
         }
 
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.BusinessFlow;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
     }
 }
