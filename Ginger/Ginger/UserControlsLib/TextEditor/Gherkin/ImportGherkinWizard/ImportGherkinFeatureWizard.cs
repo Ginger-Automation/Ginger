@@ -48,9 +48,13 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         {            
             mContext = context;            
             if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
+            { 
                 bizFlowTargetFolder = folder;
+            }
             else
+            { 
                 featureTargetFolder = folder;
+            }
             importGherkinTargetFolder = new ImportGherkinTargetFolder(mContext);
 
             AddPage(Name: "Intro", Title: "Import Gherkin Intro", SubTitle: "Importing BDD Gherkin File...", Page: new ImportGherkinIntroPage());
@@ -109,8 +113,10 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         private string Import()
         {            
             if (String.IsNullOrEmpty(mFeatureFile) || !File.Exists(mFeatureFile))
+            { 
                 return String.Empty;
-            
+            }
+
             FetaureFileName = System.IO.Path.GetFileName(mFeatureFile);
             string targetFile = Path.Combine(((DocumentsFolderTreeItem)featureTargetFolder).NodePath(), FetaureFileName);
             

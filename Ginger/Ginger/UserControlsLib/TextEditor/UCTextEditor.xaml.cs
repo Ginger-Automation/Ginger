@@ -197,9 +197,13 @@ namespace Ginger.UserControlsLib.TextEditor
 
             this.FileName = FileName;
             if (!string.IsNullOrEmpty(this.FileName) && File.Exists(this.FileName))
+            {
                 textEditor.Load(this.FileName);
+            }
             else
+            { 
                 textEditor.Clear();
+            }
 
             textEditor.ShowLineNumbers = true;
 

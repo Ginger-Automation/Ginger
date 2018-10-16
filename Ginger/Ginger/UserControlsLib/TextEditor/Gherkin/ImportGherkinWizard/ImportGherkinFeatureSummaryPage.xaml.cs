@@ -39,11 +39,13 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 case EventType.Active:
                     ImportGherkinFeatureWizard wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard; 
                     if(wiz.featureTargetFolder != null)
-                        TargetFeatureFolderLabel.Content = ((DocumentsFolderTreeItem)wiz.featureTargetFolder).NodePath();                    
-                    if(wiz.bizFlowTargetFolder != null)
+                    { 
+                        TargetFeatureFolderLabel.Content = ((DocumentsFolderTreeItem)wiz.featureTargetFolder).NodePath();
+                    }
+                    if (wiz.bizFlowTargetFolder != null)
+                    {
                         TargetBFFolderLabel.Content = ((BusinessFlowsFolderTreeItem)wiz.bizFlowTargetFolder).NodePath();
-                    break;
-                default:
+                    }
                     break;
             }
         }

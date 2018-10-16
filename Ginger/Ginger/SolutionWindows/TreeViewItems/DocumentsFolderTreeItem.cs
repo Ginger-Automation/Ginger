@@ -146,7 +146,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
 
             if(TV.Tree.TreeChildFolderOnly == true)
+            { 
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", true, false, false, false, false, false, false, true, false, false);
+            }
             else
             {
                 if (IsGingerDefualtFolder)

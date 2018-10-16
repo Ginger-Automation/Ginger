@@ -72,7 +72,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         protected virtual void OnSelectItem(SelectionTreeEventArgs e)
         {
             if (OnSelect != null)
+            { 
                 OnSelect(this, e);
+            }
         }
 
 
@@ -198,9 +200,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             mSelectedItems = new List<object>();
             ITreeViewItem itvItem = xTreeView.Tree.CurrentSelectedTreeViewItem;            
             if(mItemSelectionType == eItemSelectionType.Folder)
+            { 
                 mSelectedItems.Add(itvItem);
+            }
             else
+            { 
                 mSelectedItems.Add(itvItem.NodeObject());
+            }
+
             if (SelectCurrentItem())
             {
                 OnSelectItem(new SelectionTreeEventArgs(mSelectedItems));

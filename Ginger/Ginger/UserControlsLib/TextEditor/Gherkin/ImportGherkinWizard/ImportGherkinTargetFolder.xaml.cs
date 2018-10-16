@@ -73,20 +73,20 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     break;
                 case EventType.LeavingForNextPage:
                     if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
+                    { 
                         wiz.featureTargetFolder = (ITreeViewItem)mTargetFolder;
-                    else
-                        wiz.bizFlowTargetFolder = (ITreeViewItem)mTargetFolder;
-                    break;
-                case EventType.Validate:
-                    {
-                        if (mTargetFolder == null)
-                        {
-                            //TODO  : Select target Fodler error
-                        }
-                            break;
                     }
-                default:
+                    else
+                    { 
+                        wiz.bizFlowTargetFolder = (ITreeViewItem)mTargetFolder;
+                    }
                     break;
+                case EventType.Validate:                    
+                    if (mTargetFolder == null)
+                    {
+                        //TODO  : Select target Fodler error
+                    }
+                    break;                                    
             }
 
         }
