@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using System;
 using System.ComponentModel;
 using GingerCore;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Repository
 {
@@ -74,7 +75,7 @@ namespace Ginger.Repository
         public Activity HostActivity { get; set; }
         public string HostActivityName { get; set; }
 
-        public RepositoryItem UsageItem { get; set; }
+        public RepositoryItemBase UsageItem { get; set; }
         public string UsageItemName { get; set; }
 
         public eUsageTypes UsageItemType { get; set; }

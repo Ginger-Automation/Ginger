@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Environments;
 using GingerCore;
 using GingerCore.Repository;
@@ -65,10 +66,10 @@ namespace Ginger.SolutionWindows
                 case SolutionUpgradePageViewMode.UpgradeSolution:
                     ExplanationLable.Text = @"The Solution '" + mSolutionName + "' contains items which were created with older version/s of Ginger (see below), it is recommended to upgrade them to current version (" + RepositorySerializer.GetCurrentGingerVersion() + ") before continuing.";
 
-                    string BackupFolder = mSolutionFolder + @"Backups\Backup_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm");
+                    string BackupFolder = Path.Combine(mSolutionFolder, @"Backups\Backup_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm"));
                     BackupFolderTextBox.Text = BackupFolder;
                     FilesListBox.ItemsSource = mFilesToShow;
-                    App.ObjFieldBinding(DoNotAskAgainChkbox, CheckBox.IsCheckedProperty, App.UserProfile, UserProfile.Fields.DoNotAskToUpgradeSolutions);
+                    App.ObjFieldBinding(DoNotAskAgainChkbox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
                     break;
 
                 case SolutionUpgradePageViewMode.FailedUpgradeSolution:
@@ -116,6 +117,7 @@ namespace Ginger.SolutionWindows
             {
                 xProcessingImage.Visibility = Visibility.Visible;
                 GingerCore.General.DoEvents();
+                NewRepositorySerializer newSerilizer = new NewRepositorySerializer();
                 mFailedFiles = new List<string>();
                 string backupFolderPath = BackupFolderTextBox.Text;
                 //make sure back direcroty exist if not create
@@ -130,38 +132,43 @@ namespace Ginger.SolutionWindows
                     string filePath = filePathToConvert;
                     //remove info extention
                     if (filePath.Contains("-->"))
+                    {
                         filePath = filePath.Remove(filePath.IndexOf("-->"));
+                    }
 
                     //do upgrade
                     try
                     {
-                        string updatedXML = XMLUpgrade.UpgradeSolutionXMLFile(filePath);
-                        if (string.IsNullOrEmpty(updatedXML) == false)
-                        {
-                            //first copy to backup folder
-                            string BakFile = filePath.Replace(mSolutionFolder, BackupFolderTextBox.Text + @"\");
-                            MakeSurePathExistforBakFile(BakFile);
-                            System.IO.File.Copy(filePath, BakFile, true);
+                        //first copy to backup folder
+                        string BakFile = filePath.Replace(mSolutionFolder, BackupFolderTextBox.Text + @"\");
+                        MakeSurePathExistforBakFile(BakFile);
+                        System.IO.File.Copy(filePath, BakFile, true);
 
-                            //make sure backup was created
-                            if (File.Exists(BakFile) == true)
+                        //make sure backup was created
+                        if (File.Exists(BakFile) == true)
+                        {
+                            //Do Upgrade by unserilize and serlize the item using new serilizer
+                            //unserilize
+                            string itemXML = File.ReadAllText(filePath);
+                            if(filePath.Contains("Ginger.Solution.xml"))//workaround due to namespaces change, TODO: replace with better solution
                             {
-                                //save new XML content
-                                File.WriteAllText(filePath, updatedXML);
+                                itemXML = itemXML.Replace("Ginger.Environments.Solution", "Ginger.SolutionGeneral.Solution");
                             }
-                            else
-                            {
-                                mFailedFiles.Add(filePathToConvert);
-                            }
+                            RepositoryItemBase itemObject = (RepositoryItemBase)NewRepositorySerializer.DeserializeFromText(itemXML);
+                            itemObject.FilePath = filePath;
+                            //serlize
+                            newSerilizer.SaveToFile(itemObject, filePath);
                         }
                         else
                         {
                             mFailedFiles.Add(filePathToConvert);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
+
+
+                        Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
                         mFailedFiles.Add(filePathToConvert);
                     }
                 }
@@ -180,7 +187,7 @@ namespace Ginger.SolutionWindows
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to upgrade the solution files", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to upgrade the solution files", ex);
                 Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error occurred during upgrade, details: " + ex.Message);
                 _pageGenericWin.Close();
             }

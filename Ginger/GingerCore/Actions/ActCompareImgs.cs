@@ -105,7 +105,7 @@ namespace GingerCore.Actions
             {
                 string SolutionFolder1 = SolutionFolder.ToString();
                 ExpectedImgFile1 = ExpectedImgFile1.Replace("~\\", "");
-                ExpectedImgFile1 = SolutionFolder1 + ExpectedImgFile1;
+                ExpectedImgFile1 = System.IO.Path.Combine(SolutionFolder1, ExpectedImgFile1);
             }
             if (WindowName == "FULLSCREEN")
             {

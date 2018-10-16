@@ -122,8 +122,8 @@
       <HintPath>..\packages\Gherkin.4.0.0\lib\net45\Gherkin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GingerPluginCore, Version=2.6.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ginger.Plugin.Core.2.6.3\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
+    <Reference Include="GingerPluginCore, Version=2.6.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ginger.Plugin.Core.2.6.6\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.6.13.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.6.13\lib\Net45\HtmlAgilityPack.dll</HintPath>
@@ -403,8 +403,8 @@
     <Compile Include="Actions\ActDataSourcePage.xaml.cs">
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml.cs">
-      <DependentUpon>LocateByPOMElement.xaml</DependentUpon>
+    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElementPage.xaml.cs">
+      <DependentUpon>LocateByPOMElementPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\_Common\ActUIElementLib\UIElementSelectAndValidate.xaml.cs">
       <DependentUpon>UIElementSelectAndValidate.xaml</DependentUpon>
@@ -479,6 +479,10 @@
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
+    <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
+      <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
@@ -612,6 +616,15 @@
       <DependentUpon>ModelItemUsagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MenusLib\ResourcesMenu.cs" />
+    <Compile Include="MenusLib\RunMenu.cs" />
+    <Compile Include="RunSetLib\RunSetOperations.cs" />
+    <Compile Include="Run\RunSetConfig.cs" />
+    <Compile Include="SolutionLibNew\LoadingSolutionPage.xaml.cs">
+      <DependentUpon>LoadingSolutionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
+      <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Run\GingerRunnerLogger.cs" />
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
@@ -623,10 +636,11 @@
       <DependentUpon>MyWizardPropertiesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TestLib\WizardLib\MyWizardSubItem.cs" />
-    <Compile Include="TwoLevelMenuLib\LoadingPage.xaml.cs">
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\LoadingPage.xaml.cs">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TwoLevelMenuLib\TwoLevelMenuPage.xaml.cs">
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\MenuItemBase.cs" />
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenuPage.xaml.cs">
       <DependentUpon>TwoLevelMenuPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="SolutionAutoSaveAndRecover\RecoveredItem.cs" />
@@ -649,8 +663,8 @@
     <Compile Include="BusinessFlowsLibNew\ActivityVariablesPage.xaml.cs">
       <DependentUpon>ActivityVariablesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\BusinessFlowAutomatePage.xaml.cs">
-      <DependentUpon>BusinessFlowAutomatePage.xaml</DependentUpon>
+    <Compile Include="BusinessFlowsLibNew\NewAutomatePage.xaml.cs">
+      <DependentUpon>NewAutomatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowsLibNew\BusinessFlowDiagramPage.xaml.cs">
       <DependentUpon>BusinessFlowDiagramPage.xaml</DependentUpon>
@@ -873,17 +887,16 @@
     </Compile>
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\AppApiModelsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\AppApiModelTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationDBsTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationDBTableTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationDBTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBsTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBTableTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationPOMsTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationPOMTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationProcessTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationVersionTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationProcessTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationVersionTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\NewAgentsTreeItems\NewAgentTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\NewAgentsTreeItems\NewAgentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvironmentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\NewTreeViewItemBase.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\PlugInsFolderTreeItem.cs" />
@@ -900,9 +913,9 @@
     <Compile Include="TestLib\ImageMakerTestPage.xaml.cs">
       <DependentUpon>ImageMakerTestPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TwoLevelMenuLib\SubMenuItem.cs" />
-    <Compile Include="TwoLevelMenuLib\TopMenuItem.cs" />
-    <Compile Include="TwoLevelMenuLib\TwoLevelMenu.cs" />
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\SubMenuItem.cs" />
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\TopMenuItem.cs" />
+    <Compile Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenu.cs" />
     <Compile Include="UserConfig\SetUserTypePage.xaml.cs">
       <DependentUpon>SetUserTypePage.xaml</DependentUpon>
     </Compile>
@@ -940,6 +953,9 @@
       <DependentUpon>ImportGherkinFeatureSummaryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinFeatureWizard.cs" />
+    <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml.cs">
+      <DependentUpon>ImportGherkinTargetFolder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinIntroPage.xaml.cs">
       <DependentUpon>ImportGherkinIntroPage.xaml</DependentUpon>
     </Compile>
@@ -983,6 +999,12 @@
     <Compile Include="UserControlsLib\VisualFlow\ZoomPanel.xaml.cs">
       <DependentUpon>ZoomPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="User\UserProfilePage.xaml.cs">
+      <DependentUpon>UserProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="User\UserSettingsPage.xaml.cs">
+      <DependentUpon>UserSettingsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Variables\VariablePasswordStringPage.xaml.cs">
       <DependentUpon>VariablePasswordStringPage.xaml</DependentUpon>
     </Compile>
@@ -1024,8 +1046,8 @@
     <Compile Include="SourceControl\SourceControlItemInfoPage.xaml.cs">
       <DependentUpon>SourceControlItemInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TagsLib\SolutionTagsEditorPage.xaml.cs">
-      <DependentUpon>SolutionTagsEditorPage.xaml</DependentUpon>
+    <Compile Include="TagsLib\TagsPage.xaml.cs">
+      <DependentUpon>TagsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TagsLib\TagsSelectorPage.xaml.cs">
       <DependentUpon>TagsSelectorPage.xaml</DependentUpon>
@@ -1096,7 +1118,7 @@
     <Compile Include="BusinessFlowWindows\SourceGherkinPage.xaml.cs">
       <DependentUpon>SourceGherkinPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\TreeViewItems\LegacyReportTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\LegacyReportTreeItem.cs" />
     <Compile Include="UserControlsLib\TextEditor\AutoDetect\AutoDetectTextEditor.cs" />
     <Compile Include="UserControlsLib\TextEditor\Common\SelectedContentArgs.cs" />
     <Compile Include="UserControlsLib\TextEditor\DocumentEditorPage.xaml.cs">
@@ -1712,7 +1734,7 @@
     <Compile Include="Environments\EnvsListPage.xaml.cs">
       <DependentUpon>EnvsListPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Environments\Solution.cs" />
+    <Compile Include="Solution.cs" />
     <Compile Include="GeneralLib\GeneralErrorWindow.xaml.cs">
       <DependentUpon>GeneralErrorWindow.xaml</DependentUpon>
     </Compile>
@@ -1764,7 +1786,7 @@
       <DependentUpon>ActivityEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppProgressBar.cs" />
-    <Compile Include="AutomatePage.xaml.cs">
+    <Compile Include="BusinessFlowWindows\AutomatePage.xaml.cs">
       <DependentUpon>AutomatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Activities\ActivitiesPage.xaml.cs">
@@ -1812,7 +1834,6 @@
     </Compile>
     <Compile Include="Run\RunsetExecutor.cs" />
     <Compile Include="Reports\HTMLReports\HTMLReportBase.cs" />
-    <Compile Include="Run\RunSetConfig.cs" />
     <Compile Include="SolutionWindows\AddSolutionPage.xaml.cs">
       <DependentUpon>AddSolutionPage.xaml</DependentUpon>
     </Compile>
@@ -1835,14 +1856,10 @@
     <Compile Include="Repository\VariableRepositoryPage.xaml.cs">
       <DependentUpon>VariableRepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\LocalRepository.cs" />
     <Compile Include="Repository\RepositoryPage.xaml.cs">
       <DependentUpon>RepositoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\GingerRunner.cs" />
-    <Compile Include="SolutionWindows\SolutionExplorerPage.xaml.cs">
-      <DependentUpon>SolutionExplorerPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SolutionWindows\TreeViewItems\AgentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\AgentTreeItem.cs" />
     <Compile Include="ALM\QC\TreeViewItems\QCTestSetTreeItem.cs" />
@@ -1856,17 +1873,17 @@
     <Compile Include="SolutionWindows\TreeViewItems\DocumentTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvApplicationTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvironmentTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ExecutionResultsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\ExecutionResultsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\RunSetFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\RunSetTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedActionsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedActionTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedActivitiesFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedActivityTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SharedRepositoryTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\SharedRepositoryTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedVariablesFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\SharedVariableTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SolutionTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\SolutionTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\TreeViewItemBase.cs" />
     <Compile Include="ALM\QC\UploadBusinessFlowsPage.xaml.cs">
       <DependentUpon>UploadBusinessFlowsPage.xaml</DependentUpon>
@@ -1890,16 +1907,16 @@
     <Compile Include="SourceControl\SourceControlConnDetailsPage.xaml.cs">
       <DependentUpon>SourceControlConnDetailsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControlsLib\GridColView.cs" />
-    <Compile Include="UserControlsLib\GridViewDef.cs" />
+    <Compile Include="UserControlsLib\ucGridView\GridColView.cs" />
+    <Compile Include="UserControlsLib\ucGridView\GridViewDef.cs" />
     <Compile Include="UserControlsLib\UCDataColGrid.xaml.cs">
       <DependentUpon>UCDataColGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControlsLib\ucGrid.xaml.cs">
+    <Compile Include="UserControlsLib\ucGridView\ucGrid.xaml.cs">
       <DependentUpon>ucGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\UIHelpers.cs" />
-    <Compile Include="UserProfile.cs" />
+    <Compile Include="User\UserProfile.cs" />
     <Compile Include="Variables\AddVariablePage.xaml.cs">
       <DependentUpon>AddVariablePage.xaml</DependentUpon>
     </Compile>
@@ -2523,7 +2540,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml">
+    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElementPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2715,7 +2732,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\BusinessFlowAutomatePage.xaml">
+    <Page Include="BusinessFlowsLibNew\NewAutomatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2738,6 +2755,10 @@
     <Page Include="BusinessFlowsLibNew\GingerActionEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dictionaries\Skins\GingerDefualtSkinDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2779,6 +2800,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="SolutionLibNew\LoadingSolutionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SolutionWindows\TargetApplicationsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TestLib\WizardLib\MyWizardDetailsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2787,11 +2816,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TwoLevelMenuLib\LoadingPage.xaml">
+    <Page Include="UserControlsLib\TwoLevelMenuLib\LoadingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TwoLevelMenuLib\TwoLevelMenuPage.xaml">
+    <Page Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenuPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2915,6 +2944,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControlsLib\VisualFlow\FlowDiagramPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2930,6 +2963,14 @@
     <Page Include="UserControlsLib\VisualFlow\ZoomPanel.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="User\UserProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="User\UserSettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Variables\VariablePasswordStringPage.xaml">
       <SubType>Designer</SubType>
@@ -2978,6 +3019,7 @@
     </Content>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_16x16.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_32x32.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -3330,7 +3372,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TagsLib\SolutionTagsEditorPage.xaml">
+    <Page Include="TagsLib\TagsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4046,7 +4088,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="AutomatePage.xaml">
+    <Page Include="BusinessFlowWindows\AutomatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4134,10 +4176,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SolutionWindows\SolutionExplorerPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="ALM\QC\UploadBusinessFlowsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -4170,7 +4208,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControlsLib\ucGrid.xaml">
+    <Page Include="UserControlsLib\ucGridView\ucGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

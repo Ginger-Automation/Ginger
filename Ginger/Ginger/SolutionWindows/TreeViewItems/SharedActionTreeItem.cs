@@ -24,26 +24,30 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using GingerWPF.TreeViewItemsLib;
+using Amdocs.Ginger.Common.Enums;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class SharedActionTreeItem : TreeViewItemBase, ITreeViewItem
+    class SharedActionTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private ActionEditPage mActionEditPage;
-        public Act Act { get; set; }
+        Act mAct;
+        private ActionEditPage mActionEditPage;        
         private SharedActionsFolderTreeItem.eActionsItemsShowMode mShowMode;
-        public SharedActionTreeItem(SharedActionsFolderTreeItem.eActionsItemsShowMode showMode = SharedActionsFolderTreeItem.eActionsItemsShowMode.ReadWrite)
+
+        public SharedActionTreeItem(Act act, SharedActionsFolderTreeItem.eActionsItemsShowMode showMode = SharedActionsFolderTreeItem.eActionsItemsShowMode.ReadWrite)
         {
+            mAct = act;
             mShowMode = showMode;
         }
 
         Object ITreeViewItem.NodeObject()
         {
-            return Act;
+            return mAct;
         }
         override public string NodePath()
         {
-            return Act.FileName;
+            return mAct.FileName;
         }
         override public Type NodeObjectType()
         {
@@ -52,7 +56,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateLinkedItemHeader(Act, Act.Fields.Description, "@Flash_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Act.FileName, ref ItemSourceControlStatus));
+            return NewTVItemHeaderStyle(mAct);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -69,7 +73,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActionEditPage == null)
             {
-                mActionEditPage = new ActionEditPage(Act, General.RepositoryItemPageViewMode.SharedReposiotry);
+                mActionEditPage = new ActionEditPage(mAct, General.RepositoryItemPageViewMode.SharedReposiotry);
             }
             return mActionEditPage;
         }
@@ -87,27 +91,27 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
 
-                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, "@Link_16x16.png");
+                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
 
                 AddSourceControlOptions(mContextMenu);
             }
             else
             {
-                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, "@Link_16x16.png");
+                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
             }
         }       
 
         private void ShowUsage(object sender, RoutedEventArgs e)
         {
-            RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage(Act);
+            RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage(mAct);
             usagePage.ShowAsWindow();
         }
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            if (LocalRepository.CheckIfSureDoingChange(Act, "delete") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mAct, "delete") == true)
             {
-                return (base.DeleteTreeItem(Act, deleteWithoutAsking, refreshTreeAfterDelete));                
+                return (base.DeleteTreeItem(mAct, deleteWithoutAsking, refreshTreeAfterDelete));                
             }
             return false;
         }       

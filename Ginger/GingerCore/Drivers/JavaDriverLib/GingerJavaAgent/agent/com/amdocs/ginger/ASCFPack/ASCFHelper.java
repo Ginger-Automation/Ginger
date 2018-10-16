@@ -162,37 +162,7 @@ public class ASCFHelper {
 		GingerAgent.WriteLog("I am the Value to Set: " + milliseconds);
 		return milliseconds;
 	}
-	public PayLoad setUIFDatePickerValue(Component c, String value) 
-	{				
-		GingerAgent.WriteLog("I am the Value to Set: " + value);
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
-		Date date = new Date();
-		try {
-			date = sdf.parse(value);
-		} catch (Exception pe) {
-			GingerAgent.WriteLog("exception while parsing date"+pe.getMessage());
-			return PayLoad.Error("Invalid date format. Expected format is MM/dd/yyyy hh:mm:ss a  e.g. 01/15/2017 01:20:05 AM");		   
-		}
-		GingerAgent.WriteLog("date"+date);
-		setSelectedDate(c, date);
-		
-		Object o = getSelectedDate(c);
-			
-		if(o == null)
-			return PayLoad.Error("Not able to set the value");
-		
-		String CurrentSelectedDate=o.toString().substring(0, 11) + o.toString().substring(20);
-		String ExpectedDate=date.toString().substring(0, 11) + o.toString().substring(20);
-		
-		if(!CurrentSelectedDate.equalsIgnoreCase(ExpectedDate))
-			return PayLoad.Error("Current Selected Value::" + CurrentSelectedDate + " - Expected Value::" + ExpectedDate);
-		
-		// Special for UIF we need to mark it modified, otherwise the field value will not go to the server
-		setModfied(c);
-		startEditComplete(c);
-		return PayLoad.OK("UIFDatePicker value set to..." + value);
-	}
+
 	
 	public void startEditComplete(Component c) 
 	{				
@@ -372,7 +342,7 @@ public class ASCFHelper {
 		}	    
 	}	
 
-	public void setSelectedDate(Component c, Date value) 
+	public Boolean SetComponentDate(Component c, Date value) 
 	{				
 			try 
 			{
@@ -382,16 +352,18 @@ public class ASCFHelper {
 				GingerAgent.WriteLog("value:: " + value);
 				Class DumpME = c.getClass().getSuperclass().getSuperclass().getSuperclass();
 				GingerAgent.WriteLog("Dump Class Method: " + DumpME.getName() );
-			 	
-				// Get the setModified method using reflection
+							
+				// Get the setModified method using reflection			
 				Method method = DumpME.getMethod("setSelectedDate",Date.class); 				
-				method.setAccessible(true);					
-				method.invoke(c,value);				
+				method.setAccessible(true);							
+				method.invoke(c,value);		
+				return true;
 			}		
 			catch (Exception e) 
-			{
-				// TODO Auto-generated catch block
+			{				
+				GingerAgent.WriteLog("Exception in ASCF helper-SetSelectedDate:"+ e.getMessage());
 				e.printStackTrace();
+				return false;
 			}			    		
 	}
 	

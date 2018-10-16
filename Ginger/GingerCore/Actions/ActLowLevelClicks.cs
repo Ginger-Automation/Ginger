@@ -126,7 +126,7 @@ namespace GingerCore.Actions
                 {
                     int getLengthFilePath = LocatorImgFile.Length;
                     int getDocumentLastIndex = LocatorImgFile.LastIndexOf("Documents");
-                    locatorImgFilePath = SolutionFolder + LocatorImgFile.Substring(getDocumentLastIndex, getLengthFilePath - getDocumentLastIndex);
+                    locatorImgFilePath = System.IO.Path.Combine(SolutionFolder, LocatorImgFile.Substring(getDocumentLastIndex, getLengthFilePath - getDocumentLastIndex));
                     if (!File.Exists(locatorImgFilePath)) 
                     {
                          Error= "Failed to find the image file at: " + LocatorImgFile;

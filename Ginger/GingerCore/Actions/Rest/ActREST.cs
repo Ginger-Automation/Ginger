@@ -71,30 +71,25 @@ namespace GingerCore.Actions.REST
             public static string UseLegacyJSONParsing = "UseLegacyJSONParsing";
 
         }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue EndPointURL { get { return GetOrCreateInputParam(Fields.EndPointURL); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue RequestBody { get { return GetOrCreateInputParam(Fields.RequestBody); } }
-        private string ReqBody=String.Empty;
-        [IsSerializedForLocalRepository]
+
+        private string ReqBody=String.Empty;        
         public ActInputValue TemplateFile { get { return GetOrCreateInputParam(Fields.TemplateFile); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue SaveRequestResponseFolderPath { get { return GetOrCreateInputParam(Fields.SaveRequestResponseFolderPath); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue URLUser { get { return GetOrCreateInputParam(Fields.URLUser); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue URLPass { get { return GetOrCreateInputParam(Fields.URLPass); }  }
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue URLDomain { get { return GetOrCreateInputParam(Fields.URLDomain); }  }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
+
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> HttpHeaders = new ObservableList<ActInputValue>();
 
@@ -120,7 +115,14 @@ namespace GingerCore.Actions.REST
         {
             get
             {
-              return  WebReqResponse.StatusCode;
+                if (WebReqResponse == null)
+                { 
+                    return HttpStatusCode.Ambiguous;
+                }
+                else
+                { 
+                    return WebReqResponse.StatusCode;
+                }
             }
         }
 
@@ -545,10 +547,10 @@ namespace GingerCore.Actions.REST
                 
                 //TODO: check if UTF8 is good for all
                 StreamReader reader=new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
-                Reporter.ToLog(eLogLevel.INFO, "Response");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Response");
 
                 string resp = reader.ReadToEnd().ToString();
-                Reporter.ToLog(eLogLevel.INFO, resp);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, resp);
 
                 if (RestRequestSave==true && RequestType!=eRequestType.GET)
                 {

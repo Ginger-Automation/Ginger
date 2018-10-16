@@ -85,7 +85,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 System.IO.Directory.CreateDirectory(targetPath);
             }
             
-            ReportPathWithXMLFolder = ReportExportDirectoryPath.Replace(@"~\", SolutionFolder) + "\\" + mAct.Description + mTimestamp;
+            ReportPathWithXMLFolder = System.IO.Path.Combine(ReportExportDirectoryPath.Replace(@"~\", SolutionFolder), mAct.Description + mTimestamp);
             ReportPath = ReportPathWithXMLFolder;
             Directory.CreateDirectory(ReportPath);
             mAct.LastExecutionFolderPath = ReportPath;
@@ -102,7 +102,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     string XMLFiledValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile);
                     if (XMLFiledValue.Substring(0, 1).Equals("~"))
                     {
-                        XMLFiledValue = mAct.SolutionFolder + XMLFiledValue.Substring(2);
+                        XMLFiledValue = System.IO.Path.Combine(mAct.SolutionFolder, XMLFiledValue.Substring(2));
                     }
                     commandParam = '\u0022' + XMLFiledValue + '\u0022';
                 }
@@ -516,7 +516,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     if (XMLFiledValue.Substring(0, 1).Equals("~"))
                     {
                         string SolutionFolder = mAct.SolutionFolder;
-                        XMLFiledValue = SolutionFolder + XMLFiledValue.Substring(2);
+                        XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
                     }
 
                     XmlDocument doc = new XmlDocument();

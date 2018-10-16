@@ -63,35 +63,35 @@ namespace GingerCoreNETUnitTests.GeneralTestsLib
             // for JSON
             assemblies.Add("Newtonsoft.Json");
             // For Ginger Plugins
-            assemblies.Add("GingerPlugInsNET");
-            // For evaluatng C# code at run time, will replace te VB script, so we can run on Linux - cross platform
+            assemblies.Add("GingerPluginCore");
+            // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
             assemblies.Add("Microsoft.CodeAnalysis");
-            // For evaluatng C# code at run time, will replace te VB script, so we can run on Linux - cross platform
+            // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
             assemblies.Add("Microsoft.CodeAnalysis.Scripting");
             // ??? TODO: verify
             assemblies.Add("System.Collections.Immutable");
-            // For evaluatng C# code at run time, will replace te VB script, so we can run on Linux - cross platform
+            // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
             assemblies.Add("Microsoft.CSharp");
-            // For evaluatng C# code at run time, will replace te VB script, so we can run on Linux - cross platform
+            // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
             assemblies.Add("Microsoft.CodeAnalysis.CSharp.Scripting");
-            // For evaluatng C# code at run time, will replace te VB script, so we can run on Linux - cross platform
+            // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
             assemblies.Add("Microsoft.CodeAnalysis.CSharp");
             // Added for RemoteObjectServerClient - enable to cretae object proxy/wrapper in .NET standards 2.0, repalces RealProxy from 4.6
             assemblies.Add("System.Reflection.DispatchProxy");
 
             //Act
-            AssemblyName[] aaa = a.GetReferencedAssemblies();
+            AssemblyName[] referencedAssemblies = a.GetReferencedAssemblies();
 
 
 
             //Assert
 
             // We make sure we have exact ref count - if ref are added please add with explanantion 
-            Assert.AreEqual(aaa.Length, 11);
+            Assert.AreEqual(referencedAssemblies.Length, 11);
 
             foreach  (string s in assemblies)
             {
-                AssemblyName name = (from x in aaa where x.Name == s select x).FirstOrDefault();                
+                AssemblyName name = (from x in referencedAssemblies where x.Name == s select x).FirstOrDefault();                
                 Assert.IsTrue(name != null, "Verify assembly ref exist - " + s);
             }
             

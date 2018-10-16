@@ -52,7 +52,7 @@ namespace Ginger
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
                 }
 
             }
@@ -341,15 +341,6 @@ namespace Ginger
         public static void RemoveValidations(this FrameworkElement frameworkElement, DependencyProperty SelectedProperty)
         {
             BindingExpression bd = frameworkElement.GetBindingExpression(SelectedProperty);
-
-            //if (frameworkElement is ucAgentControl)
-            //{
-            //    bd = frameworkElement.GetBindingExpression(ucAgentControl.SelectedAgentProperty);
-            //}
-            //else if(frameworkElement is ComboBox)
-            //{
-            //    bd = frameworkElement.GetBindingExpression(ComboBox.SelectedValueProperty);
-            //}
 
             if (bd != null)
             {

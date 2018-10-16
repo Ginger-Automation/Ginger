@@ -280,7 +280,7 @@ namespace GingerCore.Actions.WebAPI
                 mAct.ExInfo = "URL is missing";
                 return false;
             }
-            Reporter.ToLog(eLogLevel.INFO, "EndPointURL: " + url, null, true, true);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "EndPointURL: " + url, null, true, true);
             return true;
         }
 
@@ -350,20 +350,20 @@ namespace GingerCore.Actions.WebAPI
         {
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Client Sending Async Request", null, true, true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Client Sending Async Request", null, true, true);
                 Response = Client.SendAsync(RequestMessage).Result;
-                Reporter.ToLog(eLogLevel.INFO, "Response status: " + Response.StatusCode, null, true, true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Response status: " + Response.StatusCode, null, true, true);
                 ResponseMessage = Response.Content.ReadAsStringAsync().Result;
-                Reporter.ToLog(eLogLevel.INFO, "ResponseMessage: " + ResponseMessage, null, true, true);
-                Reporter.ToLog(eLogLevel.INFO, "Returning true on the end of the try in SendRequest method", null, true, true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "ResponseMessage: " + ResponseMessage, null, true, true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Returning true on the end of the try in SendRequest method", null, true, true);
                 return true;
             }
             catch (Exception WE)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Send Request went to exception: " + WE.Message + Environment.NewLine + WE.InnerException, null, true, true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Send Request went to exception: " + WE.Message + Environment.NewLine + WE.InnerException, null, true, true);
                 if (WE.InnerException.ToString().Contains("The character set provided in ContentType is invalid. Cannot read content as string using an invalid character set."))
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Caught Content Type Exception:" + WE.Message);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Caught Content Type Exception:" + WE.Message);
                     byte[] data = Response.Content.ReadAsByteArrayAsync().Result;
                     ResponseMessage = Encoding.Default.GetString(data);
                     return false;
@@ -371,7 +371,7 @@ namespace GingerCore.Actions.WebAPI
                 mAct.Error = "Request execution failed, reason: " + WE.Message;
                 mAct.ExInfo += Environment.NewLine + WE.Message;
             }
-            Reporter.ToLog(eLogLevel.INFO, "Returning true on the end of the SendRequest method", null, true, true);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Returning true on the end of the SendRequest method", null, true, true);
             return true;
         }
 
@@ -405,8 +405,16 @@ namespace GingerCore.Actions.WebAPI
         {
             try
             {
-                Response.EnsureSuccessStatusCode();
-                return true;
+                if (Response != null)
+                {
+                    Response.EnsureSuccessStatusCode();
+                    return true;
+                }
+                else
+                {
+                    mAct.Error = "Response returned as Null";
+                    return false;
+                }
             }
             catch (Exception WE)
             {
@@ -421,7 +429,7 @@ namespace GingerCore.Actions.WebAPI
             if (Response != null)
             {
                 mAct.AddOrUpdateReturnParamActual("Header: Status Code ", Response.StatusCode.ToString());
-                Reporter.ToLog(eLogLevel.INFO, "Retrieve Response Status Code passed successfully", null, true, true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Retrieve Response Status Code passed successfully", null, true, true);
                 foreach (var Header in Response.Headers)
                 {
                     string headerValues = string.Empty;
@@ -430,7 +438,7 @@ namespace GingerCore.Actions.WebAPI
                     headerValues = headerValues.Remove(headerValues.Length - 1);
                     mAct.AddOrUpdateReturnParamActual("Header: " + Header.Key.ToString(), headerValues);
                 }
-                Reporter.ToLog(eLogLevel.INFO, "responseHeadersCollection passed successfully", null, true, true);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "responseHeadersCollection passed successfully", null, true, true);
             }
             else
             {
@@ -440,7 +448,7 @@ namespace GingerCore.Actions.WebAPI
             bool XMLResponseCanBeParsed = false;
             XMLResponseCanBeParsed = XMLStringCanBeParsed(ResponseMessage);
             
-            Reporter.ToLog(eLogLevel.INFO, "XMLResponseCanBeParsed Indicator: " + XMLResponseCanBeParsed, null, true, true);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "XMLResponseCanBeParsed Indicator: " + XMLResponseCanBeParsed, null, true, true);
 
             string prettyResponse = XMLDocExtended.PrettyXml(ResponseMessage);
 
@@ -470,7 +478,14 @@ namespace GingerCore.Actions.WebAPI
                     }
                     else
                     {
-                        ResponseFileContent = Response.Headers.ToString();
+                        if (Response != null && Response.Headers != null)
+                        {
+                            ResponseFileContent = Response.Headers.ToString();
+                        }
+                        else
+                        {
+                            ResponseFileContent = string.Empty;
+                        }
                     }
                 }
 
@@ -605,7 +620,7 @@ namespace GingerCore.Actions.WebAPI
         {
             //Handle response cookies
             HandleResponseCookies();
-            Reporter.ToLog(eLogLevel.INFO, "Handle response cookies Passed successfully", null, true, true);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Handle response cookies Passed successfully", null, true, true);
         }
 
         private void HandleResponseCookies()
@@ -882,7 +897,7 @@ namespace GingerCore.Actions.WebAPI
 
             BodyString = SetDynamicValues(RequestBodyWithDynamicParameters);
 
-            Reporter.ToLog(eLogLevel.INFO, "RequestBody: " + BodyString, null, true, true);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "RequestBody: " + BodyString, null, true, true);
 
             RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
 

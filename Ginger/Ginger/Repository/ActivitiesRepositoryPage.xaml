@@ -20,14 +20,14 @@
             </DataTemplate>
         </Grid.Resources>
         
-        <Ginger:ucGrid x:Name="grdActivitiesRepository" Grid.Column="3" Grid.Row="4" Grid.ColumnSpan="2" ShowTitle="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowUpDown="Collapsed" IsReadOnly="True">
+        <Ginger:ucGrid x:Name="xActivitiesRepositoryGrid" Grid.Column="3" Grid.Row="4" Grid.ColumnSpan="2" ShowTitle="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowUpDown="Collapsed" IsReadOnly="True" ShowRefresh="Collapsed">
             <Ginger:ucGrid.Title>
                 <GingerCore:ucTextDicResource Text="[Activities] Repository"/>
             </Ginger:ucGrid.Title>
         </Ginger:ucGrid>
-        <UCTreeView:TreeView2 x:Name="ActivitiesRepositoryTreeView" ShowTitle="Collapsed" Visibility="Collapsed" MouseMove="treeViewTree_MouseMove"  AllowDrop="True" Drop="ActivitiesRepositoryTreeView_Drop"/>
+        <!--<UCTreeView:TreeView2 x:Name="ActivitiesRepositoryTreeView" ShowTitle="Collapsed" Visibility="Collapsed" MouseMove="treeViewTree_MouseMove"  AllowDrop="True" Drop="ActivitiesRepositoryTreeView_Drop"/>
         <Button x:Name="GridTreeViewButton" Click="GridTreeViewButton_Click" ToolTip="Switch to Tree View" Width="26" Height="26" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,3,3,0">
             <Image Source="{StaticResource @TreeView_24x24.png}"/>
-        </Button>
+        </Button>-->
     </Grid>
 </Page>

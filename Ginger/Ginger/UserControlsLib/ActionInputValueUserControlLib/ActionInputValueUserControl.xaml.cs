@@ -29,6 +29,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
     /// </summary>
     public partial class ActionInputValueUserControl : UserControl
     {
+        ActInputValue mActInputValue;
         public ActionInputValueUserControl()
         {
             InitializeComponent();
@@ -36,6 +37,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
         public void BindControl(ActInputValue AIV)
         {
+            mActInputValue = AIV;
             this.ValueTextBox.Visibility = Visibility.Collapsed;
             this.ValueDataGrid.Visibility = Visibility.Collapsed;
             this.ValueComboBox.Visibility = Visibility.Collapsed;
@@ -73,6 +75,12 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 this.ValueComboBox.Style = App.GetStyle("@ComboBoxStyle");   // TODO: use const/enum so will pass compile check             
                 return;
             }
+        }
+
+        private void ValueExpressionButton_Click(object sender, RoutedEventArgs e)
+        {
+            ValueExpressionEditorPage valueExpressionEditorPage = new ValueExpressionEditorPage(mActInputValue, nameof(ActInputValue.Value));
+            valueExpressionEditorPage.ShowAsWindow();
         }
     }
 }

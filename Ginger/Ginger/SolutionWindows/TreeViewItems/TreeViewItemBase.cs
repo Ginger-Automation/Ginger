@@ -31,9 +31,13 @@ using GingerCore.SourceControl;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SourceControl;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
+
+    // class is obsolete !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     public class TreeViewItemBase : TreeViewItemGenericBase
     {
         public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;
@@ -95,8 +99,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (Reporter.ToUser(eUserMsgKeys.SureWantToDoRevert) == MessageBoxResult.Yes)
             {
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.RevertChangesFromSourceControl);
-                SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());
-                App.LocalRepository.RefreshCacheByItemType(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));
+                SourceControlIntegration.Revert(App.UserProfile.Solution.SourceControl, this.NodePath());                
                 mTreeView.Tree.RefreshSelectedTreeNodeParent();
                 Reporter.CloseGingerHelper();
             }
@@ -111,8 +114,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "Invalid Path provided");
             else
                 SourceControlIntegration.GetLatest(this.NodePath(), App.UserProfile.Solution.SourceControl);
-
-            App.LocalRepository.RefreshCacheByItemType(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));
+            
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
             Reporter.CloseGingerHelper();
         }
@@ -124,7 +126,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (item is RepositoryItem)
             {
                 RepositoryItem RI = (RepositoryItem)item;
-                if (saveOnlyIfDirty && RI.IsDirty == false) return false;//no need to Save because not Dirty
+                if (saveOnlyIfDirty && RI.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
+                {
+                    return false;//no need to Save because not Dirty
+                }
+
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, RI.GetNameForFileName(), "item");
                 RI.Save();                
                 Reporter.CloseGingerHelper();
@@ -157,9 +163,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool ItemIsDirty(object item)
         {
-            if (item is RepositoryItem)
+            if (item is RepositoryItem && ((RepositoryItem)item).DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
             {
-                return ((RepositoryItem)item).IsDirty;
+                return true;
             }
 
             return false;
@@ -174,7 +180,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     if (Reporter.ToUser(eUserMsgKeys.DeleteRepositoryItemAreYouSure, ((RepositoryItem)item).GetNameForFileName()) == MessageBoxResult.No)
                         return false;
 
-                App.LocalRepository.DeleteItem((RepositoryItem)item);
+                WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem((RepositoryItem)item);                
                 deleteWasDone = true;
             }
             else
@@ -218,8 +224,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 if (copiedItem != null)
                 {
                     //Save copy to target folder
-                    App.LocalRepository.SaveNewItem(copiedItem, ((RepositoryItem)item).ContainingFolderFullPath);
-                    App.LocalRepository.AddItemToCache(copiedItem);
+                    // check me                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(copiedItem);
 
                     //refresh target folder node
                     mTreeView.Tree.RefreshSelectedTreeNodeParent();
@@ -252,9 +258,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)nodeItemToCopy);
                 if (copiedItem != null)
                 {
-                    //Save copy to target folder
-                    App.LocalRepository.SaveNewItem(copiedItem, targetFolderNode.NodePath());
-                    App.LocalRepository.AddItemToCache(copiedItem);
+                    //Save copy to target folder                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(copiedItem);
 
                     //refresh target folder node
                     if (toRefreshFolder)
@@ -302,7 +307,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         //                continue;
         //            }
         //            // Validation unique business name in ginger.
-        //            Amdocs.Ginger.Common.ObservableList<BusinessFlow> allBizFlows = App.LocalRepository.GetSolutionBusinessFlows();
+        //            Amdocs.Ginger.Common.ObservableList<BusinessFlow> allBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
         //            foreach (BusinessFlow bf in allBizFlows)
         //            {
         //                if (bf.ContainingFolderFullPath.Equals(targetFolderPath.TrimEnd('\\')) && bf.Name.Equals(newFileName))
@@ -350,13 +355,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public override bool PasteCutTreeItem(object nodeItemToCut, TreeViewItemGenericBase targetFolderNode, bool toRefreshFolder = true)
         {
             if (nodeItemToCut is RepositoryItem)
-            {
-                //set target folder path + file name
-                string targetFileName = LocalRepository.GetRepoItemFileName(((RepositoryItem)nodeItemToCut), targetFolderNode.NodePath());
-                //move the item to target folder
-                Directory.Move(((RepositoryItem)nodeItemToCut).FileName, targetFileName);
-                ((RepositoryItem)nodeItemToCut).FileName = targetFileName;
-
+            {  
                 //refresh source and target folder nodes
                 if (toRefreshFolder)
                 {
@@ -421,9 +420,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {                
                 if (Reporter.ToUser(eUserMsgKeys.RefreshFolder) == MessageBoxResult.Yes)
-                {
-                    App.LocalRepository.RefreshCacheByItemType(itemType, path);
-
+                {                    
                     //refresh Tree
                     mTreeView.Tree.RefreshHeader((ITreeViewItem)this);
                     mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
@@ -431,7 +428,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to refresh the item type cache for the folder: '" + path + "'", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to refresh the item type cache for the folder: '" + path + "'", ex);
             }
         }
 
@@ -449,7 +446,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                                                                 BindingFlags.Public |
                                                                 BindingFlags.Instance |
                                                                 BindingFlags.OptionalParamBinding, null, new object[] { Type.Missing }, CultureInfo.CurrentCulture);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
             if (folderItem == null)
             {
@@ -464,7 +461,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             catch (Exception ex)
             {
                 //return null;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
 
             
@@ -513,7 +510,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return false;
             }
 

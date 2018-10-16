@@ -78,18 +78,18 @@ namespace GingerCore.Drivers.Common
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when GetActElement Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "COM Exception when GetActElement Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
 
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Element not available Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Argument Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
             }
             return CurAE;

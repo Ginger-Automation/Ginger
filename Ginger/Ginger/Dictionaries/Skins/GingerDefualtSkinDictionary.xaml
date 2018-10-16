@@ -62,9 +62,19 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontFamily" Value="Open Sans"/>
         <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="-5,0,0,0"/>
         <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
     </Style>
-    
+
+    <Style TargetType="Label"  x:Key="$HeaderStyle" >
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FontFamily" Value="Open Sans"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Margin" Value="-5,0,0,0"/>
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
+    </Style>
+
     <Style TargetType="Label" x:Key="$InputLabelStyle_NoFill">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
@@ -77,6 +87,15 @@
         </Style.Triggers>
     </Style>
 
+    <Style TargetType="TextBox" x:Key="$TextBoxStyle" >
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+        
     <Style TargetType="TextBlock"  x:Key="$TextBlockStyle" >
         <Setter Property="FontFamily" Value="Open Sans"/>
         <Setter Property="FontSize" Value="12"/>
@@ -110,7 +129,6 @@
     </Style>
 
     <Style TargetType="Button" x:Key="$ImageButtonStyle_Disabled">
-      
         <Setter Property="Foreground" Value="Gray" />
         <Setter Property="Template">
             <Setter.Value>
@@ -163,7 +181,7 @@
 
     <Style TargetType="Button" x:Key="$ImageButtonStyle_Menu">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_Gray}" />
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_LightGray}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -415,7 +433,7 @@
                                 VerticalAlignment="Center" 
                                 Margin="4,0,4,0"
                                 Focusable="False"                                 
-                                Foreground="{DynamicResource @Skin1_ColorA}"
+                                Foreground="{DynamicResource $BackgroundColor_DarkBlue}"
                                 Visibility="Hidden"
                                 IsReadOnly="{TemplateBinding IsReadOnly}"/>
                         <Popup 
@@ -433,7 +451,7 @@
                                         x:Name="DropDownBorder"
                                         Background="White"
                                         BorderThickness="1"
-                                        BorderBrush="{DynamicResource @Skin1_ColorA}"/>
+                                        BorderBrush="{DynamicResource $BackgroundColor_DarkBlue}"/>
                                 <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
                                     <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                 </ScrollViewer>
@@ -514,20 +532,23 @@
     </Style>
 
     <Style TargetType="MenuItem" x:Key="$MenuItemStyle_ButtonMenu">
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
-        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_LightGray}" />
         <Setter Property="Height" Value="35" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
+                <!--<Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>-->
                 <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
-                <Setter Property="Background" Value="Transparent"/>
+                <!--<Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>-->
+                <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter Property="Background" Value="Transparent"/>
+                <!--<Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>-->
                 <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
+                <!--<Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>-->
+                <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -536,21 +557,55 @@
         <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_Gray}" />
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
+        <Setter Property="FontSize" Value="16" />
         <Setter Property="Height" Value="30" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
                 <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="Cursor" Value="Hand"></Setter>
             </Trigger>
         </Style.Triggers>
     </Style>
 
+    <Style TargetType="MenuItem" x:Key="$MenuItemStyle_ButtonSubMenuItem">
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Height" Value="25" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Cursor" Value="Hand"></Setter>
+            </Trigger>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="Cursor" Value="Hand"></Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+        
+    <Style TargetType="Label" x:Key="$ucGridTitleLightStyle">
+        <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+        
     <Style TargetType="RibbonTabHeader" x:Key="$RibbonTabHeaderStyle">
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontFamily" Value="Open Sans" />
@@ -600,7 +655,7 @@
         <Setter Property="Background" Value="White" />
     </Style>
 
-    <Style TargetType="ListViewItem" x:Key="$MainListViewItemStyle">
+    <Style TargetType="ListViewItem" x:Key="$TopListViewItemStyle">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Gray}" />
         <Setter Property="FontFamily" Value="Open Sans" />
@@ -622,8 +677,8 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-
                             <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
+                            <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
@@ -636,36 +691,24 @@
         </Setter>
     </Style>
 
-    <Style TargetType="ListViewItem" x:Key="$ListViewItemStyle">
+    <Style TargetType="Label" x:Key="$MainListViewItemLabelStyle">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="DarkGray" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+    </Style>
+
+    <Style TargetType="Label" x:Key="$SubListViewItemLabelStyle">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="Gray" />
         <Setter Property="FontFamily" Value="Open Sans" />
-        <Setter Property="FontSize" Value="13" />
-        <Setter Property="Margin" Value="25,0,0,0" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Border Background="{TemplateBinding Background}">
-                        <ContentPresenter 
-                                TextElement.Foreground="{TemplateBinding Foreground}" 
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                RecognizesAccessKey="True"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        
-                        <Trigger Property="IsSelected" Value="false">
-                            <Setter Property="Foreground" Value="Gray" />
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="true">
-                            <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Margin" Value="0,0,0,0" />
     </Style>
+
     <Style TargetType="ListViewItem" x:Key="$ListViewItemUnderlineStyle">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="Gray" />
@@ -716,7 +759,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="false">
-                            <Setter  TargetName="Border"  Property="BorderBrush" Value="{DynamicResource @Skin1_ColorA}" />
+                            <Setter  TargetName="Border"  Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkBlue}" />
                             <Setter  TargetName="Border"  Property="BorderThickness" Value="1" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
@@ -818,7 +861,74 @@
             </Setter.Value>
         </Setter>
     </Style>
-   
+
+    <Style TargetType="Button" x:Key="$WindowButtonStyle">
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="Height" Value="25" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="25,0,25,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="Gray" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="Button" x:Key="$InputButtonStyle">
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="Height" Value="25" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Margin" Value="2,0,0,2" />
+        <Setter Property="Padding" Value="5,0,5,0"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{DynamicResource $BackgroundColor_DarkBlue}" BorderThickness="1">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
     <!-- $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ New Design 2018 -END -->
 
 
@@ -1645,14 +1755,7 @@
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
     </Style>
-    <Style TargetType="Label" x:Key="@ucGridTitleLightStyle">
-        <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}"/>
-        <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="Background" Value="{DynamicResource @Skin1_ColorC}"/>
-        <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-    </Style>
+    
     <Style TargetType="Label" x:Key="@ucGridTitleTransparentBackground">
         <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}"/>
         <Setter Property="FontWeight" Value="Bold"/>
@@ -2128,6 +2231,15 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style TargetType="RibbonTabHeader" x:Key="@RibbonTabHeaderStyle_Hidden">
+        <Setter Property="Foreground" Value="Transparent" />
+        <Setter Property="FontSize" Value="1" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0,0,0,0" />
+        <Setter Property="Width" Value="0" />
     </Style>
 
     <Style TargetType="TabItem" x:Key="@TabItemStyle">

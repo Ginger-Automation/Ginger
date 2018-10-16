@@ -21,6 +21,8 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore;
 using Ginger.UserControls;
+using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -28,16 +30,22 @@ namespace Ginger.BusinessFlowWindows
     /// Interaction logic for ExplorerBusinessFlowsPage.xaml
     /// </summary>
     public partial class ExplorerBusinessFlowsPage : Page
-    {
-        string mFolder;
-        public ExplorerBusinessFlowsPage(string Folder)
+    {        
+        public ExplorerBusinessFlowsPage(RepositoryFolder<BusinessFlow> repositoryFolder)
         {
             InitializeComponent();
-            
-            mFolder = Folder;
-            grdBusinessFlows.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
+                        
+            grdBusinessFlows.btnRefresh.Visibility = Visibility.Collapsed; 
             SetBusinessFlowsGridView();
-            SetGridData();
+
+            if (repositoryFolder.IsRootFolder)
+            {
+                grdBusinessFlows.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            }
+            else
+            {
+                grdBusinessFlows.DataSourceList = repositoryFolder.GetFolderItems();
+            }
         }
 
         private void SetBusinessFlowsGridView()
@@ -45,24 +53,18 @@ namespace Ginger.BusinessFlowWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = BusinessFlow.Fields.Name, WidthWeight = 250 });
-            view.GridColsView.Add(new GridColView() { Field = BusinessFlow.Fields.Description, WidthWeight = 250 });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.FileName,Header = "Local Path", WidthWeight = 250 });
-            view.GridColsView.Add(new GridColView() { Field = BusinessFlow.Fields.Status, WidthWeight = 50 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Name), WidthWeight = 250 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Description), WidthWeight = 250 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.FilePath) ,Header = "Local Path", WidthWeight = 250 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Status), WidthWeight = 50 });
 
             grdBusinessFlows.SetAllColumnsDefaultView(view);
             grdBusinessFlows.InitViewItems();
             grdBusinessFlows.ShowTagsFilter = Visibility.Visible;
         }
 
-        private void RefreshGrid(object sender, RoutedEventArgs e)
-        {
-            SetGridData();
-        }
+        
 
-        private void SetGridData()
-        {
-            grdBusinessFlows.DataSourceList = App.LocalRepository.GetSolutionBusinessFlows(specificFolderPath: mFolder, includeSubFolders: true);
-        }
+
     }
 }

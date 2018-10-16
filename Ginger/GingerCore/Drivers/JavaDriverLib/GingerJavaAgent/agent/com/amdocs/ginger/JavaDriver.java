@@ -2391,15 +2391,29 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 	
 private PayLoad GetComponentValue(Component c) 
 	{	
-
+		//TODO: Change this method to return payload with single value instead of list of string. 
 		GingerAgent.WriteLog("Inside GetComponentValue");
 		PayLoad Response = new PayLoad("ComponentValue");
 		List<String> val = mSwingHelper.GetCompValue(c);
-		
-		if (c.getClass().getName() != null && c.getClass().getName().contains("com.amdocs.uif.widgets.DateTimeNative"))
+		String componentClassName=c.getClass().getName();
+		if (componentClassName != null )
 		{
-			String dateValue = mASCFHelper.getUIFDatePickerValue(c);
-			if (dateValue != null || dateValue == "" )
+			String dateValue=null;
+			if(componentClassName.contains("com.amdocs.uif.widgets.DateTimeNative"))
+			{
+				dateValue = mASCFHelper.getUIFDatePickerValue(c);
+			}
+			else if(componentClassName.contains("JDateField"))
+			{
+				Object obj = mSwingHelper.GetComponentDate(c);
+				if(obj!=null)
+				{
+					SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a"); 
+					dateValue= formatter.format(obj);  
+				}
+			}		
+			
+			if (dateValue != null && dateValue != "" )
 			{
 				if(val.size()==1 && val.get(0)=="")
 					val.remove(0);				
@@ -3280,17 +3294,76 @@ private PayLoad GetComponentState(Component c)
 	{
 		GingerAgent.WriteLog("c.tostring::"+c.toString());
 		GingerAgent.WriteLog("c.class::"+c.getClass().getName());
-					
-		if (c.getClass().toString().contains("uif"))			
+		
+		String componentClassName= c.getClass().getName();
+		
+		if(componentClassName != null)
 		{
-			return mASCFHelper.setUIFDatePickerValue(c, value);	
-		}
-		else
-		{
-			return PayLoad.Error("SetComponentValue - Unknown Component type");
+			Date date=null;
+			Object o=null;
+			try 
+			{
+				date= Utils.parseDateValue(value);
+				
+			} 
+			catch (Exception e) 
+			{
+				GingerAgent.WriteLog("exception while parsing date"+e.getMessage());
+				return PayLoad.Error("Invalid date format. Expected format is MM/dd/yyyy hh:mm:ss a  e.g. 01/15/2017 01:20:05 AM");	
+			}			
+			
+			if (componentClassName.contains("uif"))			
+			{				
+				Boolean result= mASCFHelper.SetComponentDate(c, date);
+				
+				if(result == false)
+				{
+					return PayLoad.Error("Failed to set date. Exception occured during set date");
+				}
+				
+				// Special for UIF we need to mark it modified, otherwise the field value will not go to the server
+				mASCFHelper.setModfied(c);
+				mASCFHelper.startEditComplete(c);
+				
+				o= mASCFHelper.getSelectedDate(c);
+			}
+			else if (componentClassName.contains("JDateField"))
+			{
+				Boolean result= mSwingHelper.SetComponentDate(c, date);
+				
+				if(result == false)
+				{
+					return PayLoad.Error("Failed to set date. Exception occured during set date");
+				}
+				o= mSwingHelper.GetComponentDate(c);		
+			}
+			
+			
+			if(o == null)
+			{
+				return PayLoad.Error("Failed to set date");
+			}
+			
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a"); 
+			String actualDateValue= formatter.format(date);  
+			//TODO: Below is ugly. Change it do compare 2 dates instead of string manipulations
+			String CurrentSelectedDate=actualDateValue.toString().substring(0, 11) + actualDateValue.toString().substring(20);
+			String ExpectedDate=value.toString().substring(0, 11) + actualDateValue.toString().substring(20);
+			
+			if(!CurrentSelectedDate.equalsIgnoreCase(ExpectedDate))
+				return PayLoad.Error("Current Selected Value::" + CurrentSelectedDate + " - Expected Value::" + ExpectedDate);
+			
+			return PayLoad.OK("Date value set to..." + value);
+			
 		}		
+	
+		return PayLoad.Error("SetComponentValue - Unknown Component type:"+componentClassName);
+			
 
 	}
+	
+	
 
 private PayLoad SetComponentFocus(Component c)
 	{
@@ -3302,81 +3375,87 @@ private PayLoad SetComponentFocus(Component c)
 		// based on control type handle the way to set value
 		
 		//TODO: check control is enabled
-		GingerAgent.WriteLog("c.tostring :: "+c.toString());		
+		GingerAgent.WriteLog("c.tostring :: "+c.toString());	
+		
+		String componentClassName=c.getClass().getName();
+		
+		if(componentClassName==null)
+		{
+			return PayLoad.Error("SetComponentValue - not supported for Component type"+c.getClass().getName());
+		}
 
 		if (c instanceof JTextField)
-		{		
-
-			if(c.getClass().getName().equals("javax.swing.JTextField"))
+		{	
+			if(componentClassName.equals("javax.swing.JTextField"))
 			{
 				JTextField f = (JTextField)c;				
 				f.setText(value);
 				return PayLoad.OK("Text Field Value Set to - " + value);
 			}
 			
-			else if (c.getClass().toString().contains("uif"))
-				{
+			else if (componentClassName.contains("uif"))
+			{
 					GingerAgent.WriteLog("UIF Control");
 					return mASCFHelper.setUIFTextField(c, value);	
-				}
+			}
 			else 
 			{				
 				 mASCFHelper.setText(c,value);				 
 				 return PayLoad.OK("TextBox value set using reflection "+ value);
-
 			}		
 		}
 		else if (c instanceof JTextArea)
 		{		
-				if (c.getClass().toString().contains("uif"))
-				{
-					GingerAgent.WriteLog("UIF Control");
-					return mASCFHelper.setUIFTextArea(c, value);	
-				}		
-				//TODO: need else?? check at start if contain uif and do the rest in Uif helper...
+			if (componentClassName.contains("uif"))
+			{
+				GingerAgent.WriteLog("UIF Control");
+				return mASCFHelper.setUIFTextArea(c, value);	
+			}	
+			else
+			{
 				JTextArea f = (JTextArea)c;
 				f.setText(value);
 				return PayLoad.OK("Text Area Value Set to - " + value);
-
+			}		
 		}
 		else if (c instanceof JTextPane)
 		{
-			if (c.getClass().toString().contains("uif"))
-				{
-					GingerAgent.WriteLog("UIF Control");
-					return mASCFHelper.setUIFTextPane(c, value);	
-				}
-			   	JTextPane f = (JTextPane)c;
-			   	javax.swing.text.Document doc = f.getDocument();
-			   	try {
-			   		doc.remove(0, doc.getLength());
-			   		doc.insertString(doc.getLength(), value, null);			   		
-
-				} catch (BadLocationException e) {
-					// TODO Auto-generated catch block
-					GingerAgent.WriteLog("Exception on SetComponentValue JTextPane = "+e.getMessage());
-					e.printStackTrace();
-				}
-			   	GingerAgent.WriteLog("JTextPane.getText() = "+f.getText());
-				return PayLoad.OK("Text pane Value Set to - " + value);								
+			if (componentClassName.contains("uif"))
+			{
+				GingerAgent.WriteLog("UIF Control");
+				return mASCFHelper.setUIFTextPane(c, value);	
+			}
+			JTextPane f = (JTextPane)c;
+			javax.swing.text.Document doc = f.getDocument();
+			try 
+			{
+				doc.remove(0, doc.getLength());
+			   	doc.insertString(doc.getLength(), value, null);		
+			} 
+			catch (BadLocationException e) 
+			{
+				// TODO Auto-generated catch block
+				GingerAgent.WriteLog("Exception on SetComponentValue JTextPane = "+e.getMessage());
+				e.printStackTrace();
+			}
+			GingerAgent.WriteLog("JTextPane.getText() = "+f.getText());
+			return PayLoad.OK("Text pane Value Set to - " + value);								
 			
 		}
 		else if (c instanceof JTree)
 		{						
-			JTree f = (JTree)c;
-			
+			JTree f = (JTree)c;			
 			TreePath path = new TreePath(value);
 			f.scrollPathToVisible(path);
 			f.setSelectionPath(path);				
-			return PayLoad.OK("Tree Value Set to - " + value);								
-			
+			return PayLoad.OK("Tree Value Set to - " + value);
 		}
 		else if (c instanceof JCheckBox)
 		{
 			((JCheckBox)c).doClick(100);
 			
 			boolean b = true;
-if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
+			if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
 				b=true;
 			else
 				b=false;
@@ -3387,45 +3466,46 @@ if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
 				return PayLoad.Error("Failed to set JCheckBox Value Set to - " + value);
 			return PayLoad.OK("JCheckBox Value Set to - " + value);	
 		}
-		else if (c instanceof JList) {
+		else if (c instanceof JList) 
+		{
 			JList jl = (JList) c;
 
 			jl.clearSelection();
 
 			List<String> items = Arrays.asList(value.split(","));
+					
 		
-			
-		
-			if (jl.getSelectionMode() == ListSelectionModel.SINGLE_SELECTION && items.size()>1) {
+			if (jl.getSelectionMode() == ListSelectionModel.SINGLE_SELECTION && items.size()>1) 
+			{
 				return PayLoad.Error("Failure : Trying to Select multiple values in Single Section List ");
 			}
 
 			List<Integer> selectedItems = new ArrayList<Integer>();
 
-			for (String s : items) {
-
+			for (String s : items) 
+			{
 				ListModel model = jl.getModel();
-				for (int i = 0; i < model.getSize(); i++) {
-
+				for (int i = 0; i < model.getSize(); i++) 
+				{
 					GingerAgent.WriteLog(s);
-					if (s.equals(String.valueOf(model.getElementAt(i)))) {
+					if (s.equals(String.valueOf(model.getElementAt(i)))) 
+					{
 						selectedItems.add(i);
 						break;
 					}
 				}
-
 			}
 
 			int[] selectItems = new int[selectedItems.size()];
 
-			for (int i = 0; i < selectedItems.size(); i++) {
-
+			for (int i = 0; i < selectedItems.size(); i++)
+			{
 				selectItems[i] = selectedItems.get(i);
 			}
 
-			if(selectItems.length<items.size()){
-				return PayLoad.Error("Failure : Element(s) doesn't exist in the List ");
-				
+			if(selectItems.length<items.size())
+			{
+				return PayLoad.Error("Failure : Element(s) doesn't exist in the List ");				
 			}
 			jl.setSelectedIndices(selectItems);
 
@@ -3448,12 +3528,15 @@ if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
 				}
 			}
 			
-			if(c.getClass().getName().equals("javax.swing.JComboBox") || c.getClass().getName().contains("uif"))
+			if(componentClassName.equals("javax.swing.JComboBox") || componentClassName.contains("uif"))
 			{
 				jcb.requestFocus(true);		
-						try {				
+				try 
+				{				
 					Thread.sleep(100);
-				} catch (InterruptedException e) {
+				} 
+				catch (InterruptedException e) 
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -3475,28 +3558,9 @@ if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
 			
 			return PayLoad.OK(respString);
 		}
-		else if (c.getClass().getName() != null && c.getClass().getName().toString().contains("uif.widgets.DateTimeNative"))
-		{	
-			if(!mASCFHelper.validateDateTimeValue(value))
-			{
-				// this is millisecond value
-				Date date = new Date(Long.parseLong(value));
-				DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
-				String dateFormatted = formatter.format(date);
-				if(dateFormatted!=null)
-				{
-					return SetComponentDate(c, dateFormatted);	
-				}
-			}
-			else if(mASCFHelper.validateDateTimeValue(value))
-			{
-				// this is in MM/dd/yyyy hh:mm:ss a format
-				return mASCFHelper.setUIFDatePickerValue(c, value);	
-			}
-			else
-				return PayLoad.Error("SetComponentValue - Unknown Component type");
-	
-			return PayLoad.OK("DateTime Value Set to - " + value);	
+		else if (componentClassName.contains("uif") || componentClassName.contains("lt.monarch.swing.JDateField"))
+		{				
+			return SetComponentDate(c, value);
 		}	
 		else
 		{

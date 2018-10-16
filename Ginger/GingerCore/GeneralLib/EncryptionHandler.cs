@@ -22,6 +22,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using Amdocs.Ginger.Common;
 using GingerExternal;
 
 namespace GingerCore
@@ -97,7 +98,7 @@ namespace GingerCore
                 catch (Exception ex)
                 {
                     result = false;
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                     return string.Empty;
                 }
             }
@@ -160,7 +161,7 @@ namespace GingerCore
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                     result = false;
                     return string.Empty;
                 }

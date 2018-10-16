@@ -33,6 +33,7 @@ using System.Windows.Media.Imaging;
 using GingerPlugIns.TextEditorLib;
 using Ginger.TagsLib;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -275,7 +276,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         }
 
         // if we want to add tool bar item and handler this is the place
-        public override List<TextEditorToolBarItem> Tools
+        public override List<ITextEditorToolBarItem> Tools
         {
             get { return null; }
         }
