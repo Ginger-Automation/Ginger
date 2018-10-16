@@ -42,8 +42,8 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         public string FetaureFileName;
         ImportGherkinTargetFolder importGherkinTargetFolder;
         //RepositoryFolder<BusinessFlow> bizFlowTargetFolder;
-        public ITreeViewItem targetFolder { get; internal set; }
-        ITreeViewItem featureTargetFolder, bizFlowTargetFolder;
+        public ITreeViewItem bizFlowTargetFolder;
+        public ITreeViewItem featureTargetFolder;
 
         public ImportGherkinFeatureWizard(ITreeViewItem folder, eImportGherkinFileContext context)
         {            
@@ -52,9 +52,6 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 bizFlowTargetFolder = folder;
             else
                 featureTargetFolder = folder;
-
-            targetFolder = (ITreeViewItem)folder;
-            
             importGherkinTargetFolder = new ImportGherkinTargetFolder(mContext);
 
             AddPage(Name: "Intro", Title: "Import Gherkin Intro", SubTitle: "Importing BDD Gherkin File...", Page: new ImportGherkinIntroPage());
@@ -81,8 +78,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
                 featureTargetFolder = (ITreeViewItem)importGherkinTargetFolder.mTargetFolder;
             else
-                bizFlowTargetFolder = (ITreeViewItem)importGherkinTargetFolder.mTargetFolder;
-            targetFolder = (ITreeViewItem)importGherkinTargetFolder.mTargetFolder;
+                bizFlowTargetFolder = (ITreeViewItem)importGherkinTargetFolder.mTargetFolder;           
             mFeatureFile = Import();
             if (mFeatureFile == "")
             {

@@ -39,6 +39,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         public object mTargetFolder;
         eImportGherkinFileContext mContext;
         SingleItemTreeViewSelectionPage mTargetFolderSelectionPage = null;
+        ImportGherkinFeatureWizard wiz;
         public ImportGherkinTargetFolder(eImportGherkinFileContext context)
         {
             InitializeComponent();
@@ -50,7 +51,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    ImportGherkinFeatureWizard wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard;
+                    wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard;
                     if (mContext == eImportGherkinFileContext.DocumentsFolder)
                     {
                         BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(),eBusinessFlowsTreeViewMode.ReadOnly);
@@ -71,6 +72,12 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                    // mTargetFolderSelectionPage.Click += MTargetFolderSelectionPage_Click;
 
                     TargetPath.Content = mTargetFolderSelectionPage;
+                    break;
+                case EventType.LeavingForNextPage:
+                    if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
+                        wiz.featureTargetFolder = (ITreeViewItem)mTargetFolder;
+                    else
+                        wiz.bizFlowTargetFolder = (ITreeViewItem)mTargetFolder;
                     break;
                 case EventType.Validate:
                     {
