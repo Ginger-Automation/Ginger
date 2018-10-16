@@ -11,8 +11,8 @@ namespace GingerCore
 
         static List<KeyValuePair<string, string>> gingerTermDefaultList = new List<KeyValuePair<string, string>>()
         {
-            new KeyValuePair<string, string>("BusinessFlow", "Business Flow Feature"),
-            new KeyValuePair<string, string>("BusinessFlows", "Business Flow Features"),
+            new KeyValuePair<string, string>("BusinessFlow", "Business Flow"),
+            new KeyValuePair<string, string>("BusinessFlows", "Business Flows"),
             new KeyValuePair<string, string>("ActivitiesGroup", "Activities Group"),
             new KeyValuePair<string, string>("ActivitiesGroups", "Activities Groups"),
             new KeyValuePair<string, string>("Activity", "Activity"),
@@ -21,7 +21,7 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variables", "Variables"),
             new KeyValuePair<string, string>("RunSet", "Run Set"),
             new KeyValuePair<string, string>("RunSets", "Run Sets"),
-            new KeyValuePair<string, string>("ALM", "ALM"),
+            new KeyValuePair<string, string>("ALM", "ALM")
         };
 
         static List<KeyValuePair<string, string>> gingerTermGherkinList = new List<KeyValuePair<string, string>>()
@@ -35,8 +35,9 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variable", "Parameter"),
             new KeyValuePair<string, string>("Variables", "Parameters"),
             new KeyValuePair<string, string>("RunSet", "Run Set"),
-            new KeyValuePair<string, string>("RunSets", "Run Sets"),
+            new KeyValuePair<string, string>("RunSets", "Run Sets")
         };
+
 
         static List<KeyValuePair<string, string>> gingerTermTestingList = new List<KeyValuePair<string, string>>()
         {
@@ -49,7 +50,7 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variable", "Parameter"),
             new KeyValuePair<string, string>("Variables", "Parameters"),
             new KeyValuePair<string, string>("RunSet", "Calendar"),
-            new KeyValuePair<string, string>("RunSets", "Calendars"),
+            new KeyValuePair<string, string>("RunSets", "Calendars")
         };
 
         public static string GetTerminologyValue(eTermResKey key)
