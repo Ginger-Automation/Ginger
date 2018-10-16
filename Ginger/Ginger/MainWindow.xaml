@@ -27,7 +27,7 @@
 
             <!--Main Menu- Ginger Icon-->
             <DockPanel Grid.Column="0" VerticalAlignment="Center">
-                <usercontrols:ImageMakerControl x:Name="xGingerIconImg" ImageType="GingerIcon" SetAsFontImageWithSize="18" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                <usercontrols:ImageMakerControl x:Name="xGingerIconImg" ImageType="GingerIconWhite" SetAsFontImageWithSize="18" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="0,0,0,0"/>
                 <GridSplitter Width="1" Height="40" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" Margin="10,0,10,0" IsEnabled="False"/>
             </DockPanel>
 
@@ -255,7 +255,7 @@
         </Grid>
 
         <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderThickness="1"/>
-        <usercontrols:ImageMakerControl x:Name="xUmbrellaImg" Grid.Row="1" ImageType="Coffee" SetAsFontImageWithSize="100" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerIconGray" Width="100" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
         <Border Grid.Row="2" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderThickness="1" >
             <DockPanel VerticalAlignment="Center">

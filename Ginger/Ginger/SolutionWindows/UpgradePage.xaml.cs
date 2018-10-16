@@ -150,10 +150,6 @@ namespace Ginger.SolutionWindows
                             //Do Upgrade by unserilize and serlize the item using new serilizer
                             //unserilize
                             string itemXML = File.ReadAllText(filePath);
-                            if(filePath.Contains("Ginger.Solution.xml"))//workaround due to namespaces change, TODO: replace with better solution
-                            {
-                                itemXML = itemXML.Replace("Ginger.Environments.Solution", "Ginger.SolutionGeneral.Solution");
-                            }
                             RepositoryItemBase itemObject = (RepositoryItemBase)NewRepositorySerializer.DeserializeFromText(itemXML);
                             itemObject.FilePath = filePath;
                             //serlize
