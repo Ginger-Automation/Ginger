@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -69,16 +68,18 @@ namespace Ginger.Actions
             {
                 try
                 {
-                    ObservableList<StandAloneAction> actions = pluginPackage.GetStandAloneActions();
+                    List<StandAloneAction> actions = pluginPackage.LoadServicesInfoFromFile(); // GetStandAloneActions();
                     
-                    foreach (StandAloneAction SAA in actions)
+                    foreach (StandAloneAction standAloneAction in actions)
                     {
                         ActPlugIn act = new ActPlugIn();                        
-                        act.Description = SAA.Description;
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.ServiceId), pluginPackage.PluginID);
-                        act.GetOrCreateInputParam(nameof(ActPlugIn.GingerActionID),SAA.ID);
-                        foreach (var v in SAA.InputValues)
+                        act.Description = standAloneAction.Description;
+                        act.PluginId = pluginPackage.PluginID;
+                        act.ServiceId = standAloneAction.ServiceId;
+                        act.ActionId = standAloneAction.ActionId;
+                        foreach (var v in standAloneAction.InputValues)
                         {
+                            if (v.Param == "GA") continue; // not needed
                             act.InputValues.Add(new ActInputValue() { Param = v.Param });
                         }                        
                         act.Active = true;                        
@@ -87,7 +88,7 @@ namespace Ginger.Actions
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginID + "'", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginID + "'", ex);
                 }
             }
           
@@ -195,6 +196,7 @@ namespace Ginger.Actions
 
             if (actionsGrid == PlugInsActionsGrid)
             {
+                view.GridColsView.Add(new GridColView() { Field = nameof(ActPlugIn.PluginId), Header = "Plugin ID", WidthWeight = 6, ReadOnly = true, BindingMode = BindingMode.OneWay });
                 view.GridColsView.Add(new GridColView() { Field = nameof (ActPlugIn.ServiceId), Header = "Service ID", WidthWeight = 6, ReadOnly = true , BindingMode = BindingMode.OneWay});
             }
             else
@@ -330,7 +332,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in PlugIn tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in PlugIn tabs style", ex);
             }
             ShowSelectedActionDetails();
         }

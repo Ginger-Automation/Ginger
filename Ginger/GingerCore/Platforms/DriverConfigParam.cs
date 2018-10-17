@@ -20,8 +20,7 @@ using Amdocs.Ginger.Repository;
 namespace GingerCore
 {
     public class DriverConfigParam : RepositoryItemBase
-    {
-        public override bool UseNewRepositorySerializer { get { return true; } }
+    {        
 
         public static partial class Fields
         {

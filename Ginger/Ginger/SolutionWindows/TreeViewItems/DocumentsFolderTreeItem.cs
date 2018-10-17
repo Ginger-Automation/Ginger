@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.GherkinLib;
 using Ginger.UserControlsLib.TextEditor;
@@ -27,13 +28,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using Ginger.UserControlsLib.TextEditor.Gherkin;
+using GingerWPF.WizardLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
+    //public enum eDocumentsItemViewMode
+    //{
+    //    All = 0,
+    //    FoldersOnly = 1
+    //};
     class DocumentsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         public string Folder { get; set; }
-
+                
         string mPath;
         public string Path
         {
@@ -49,8 +58,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 mPath = value;
             }
-        }
-        
+        }  
         Object ITreeViewItem.NodeObject()
         {
             return null;
@@ -65,19 +73,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {            
-            //string ImageFile;
-            //if (IsGingerDefualtFolder)
-            //{
-            //    ImageFile = "@Documents_16x16.png";
-            //}
-            //else
-            //{
-            //    ImageFile = "@Folder2_16x16.png";
-            //}
-
-            //return TreeViewUtils.CreateItemHeader(Folder, ImageFile, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
-
+        {                       
             return TreeViewUtils.NewRepositoryItemTreeHeader(null, Folder, eImageType.Folder, GetSourceControlImageByPath(Path), false);
         }
 
@@ -86,8 +82,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
-            AddSubFolders(Path, Childrens);            
-         
+            AddSubFolders(Path, Childrens);
+
             //Add Current folder Docs 
             foreach (string f in Directory.GetFiles(Path))
             {                
@@ -119,7 +115,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (System.Exception excpt)
             {
-               Reporter.ToLog(eLogLevel.ERROR, "Failed to add Document Folder to tree",excpt,true);
+               Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add Document Folder to tree",excpt,true);
             }
         }
 
@@ -149,17 +145,21 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-
-            if (IsGingerDefualtFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document",allowSaveAll:false, allowAddNew:false,allowCopyItems:false,allowCutItems:false,allowPaste:false, allowRenameFolder: false, allowDeleteFolder: false);
+            if(TV.Tree.TreeChildFolderOnly == true)
+            { 
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", true, false, false, false, false, false, false, true, false, false);
+            }
             else
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
-            AddSourceControlOptions(mContextMenu, false, false);
+            {
+                if (IsGingerDefualtFolder)
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document",allowSaveAll:false, allowAddNew:false,allowCopyItems:false,allowCutItems:false,allowPaste:false, allowRenameFolder: false, allowDeleteFolder: false);
+                else
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
+                AddSourceControlOptions(mContextMenu, false, false);
 
-            //if(IsGingerDefualtFolder || this.Path.Contains("\\Documents\\Features")) 
-            //    AddGherkinOptions(mContextMenu);
-
-            AddImportsAndCreateDocumentsOptions();
+                AddImportsAndCreateDocumentsOptions();
+            }
+            
         }
 
         private void AddImportsAndCreateDocumentsOptions()
@@ -169,46 +169,23 @@ namespace Ginger.SolutionWindows.TreeViewItems
             MenuItem CreateDocumentMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Create Document");
 
             //Creating text and VBS menus
-            TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import txt Document", ImportNewDocument, ".txt", eImageType.Download);
+            TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import TXT Document", ImportNewDocument, ".txt", eImageType.Download);
             TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import VBS Document", ImportNewDocument, ".vbs", eImageType.Download);
-            TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import Feature Document", ImportGherkinFeatureFile, null, eImageType.Download);
-            TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create txt Document", CreateNewDocument, ".txt", eImageType.Add);
+            TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import Gherkin Feature Document", ImportGherkinFeatureFile, null, eImageType.Download);
+            TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create TXT Document", CreateNewDocument, ".txt", eImageType.Add);
             TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create VBS Document", CreateNewDocument, ".vbs", eImageType.Add);
-            TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create Feature Document", CreateGherkinFeatureFile, null, eImageType.Add);
+            TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create Gherkin Feature Document", CreateGherkinFeatureFile, null, eImageType.Add);
+            TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Add Other File Type", CreateNewDocument, "", eImageType.Add);
         }
-
-        //public void AddGherkinOptions(ContextMenu CM)
-        //{
-        //    MenuItem GherkinMenu = TreeViewUtils.CreateSubMenu(CM, "Gherkin");
-        //    //TOD Change Icon
-        //    TreeViewUtils.AddSubMenuItem(GherkinMenu, "Create Feature file", CreateGherkinFeatureFile, null, "@FeatureFile_16X16.png");
-        //    TreeViewUtils.AddSubMenuItem(GherkinMenu, "Import Feature file", ImportGherkinFeatureFile, null, "@FeatureFile_16X16.png");
-        //}
-
-        //private void AddSolutionPlugInEditorsOptions(MenuItem ImportDocumentMenu, MenuItem CreateDocumentMenu)
-        //{
-        //   ObservableList<PlugInWrapper> PlugInLists = App.LocalRepository.GetSolutionPlugIns();
-
-        //    foreach (PlugInWrapper PIW in PlugInLists)
-        //    {
-        //        foreach (PlugInTextFileEditorBase PITFEB in PIW.TextEditors())
-        //        {
-        //            foreach (string extension in PITFEB.Extensions)
-        //            {
-        //                String DocumentName = extension.Substring(1).ToUpper();
-        //                TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create " + DocumentName + " Document", CreateNewDocument, extension, "@Add_16x16.png");
-        //                TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import " + DocumentName + " Document", ImportNewDocument, extension, "@Import_16x16.png");
-        //            }
-        //        }
-        //    }
-        //}
 
         private void CreateNewDocument(object sender, RoutedEventArgs e)
         {
             mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
 
-            string FileContent = string.Empty;
             string FileExtension = ((string)((MenuItem)sender).CommandParameter);
+           
+            string FileContent = string.Empty;
+            
             if (FileExtension == ".txt")
             {
                 FileContent = "Some text";
@@ -217,16 +194,28 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 FileContent = Properties.Resources.VBSTemplate;
             }
-            // else
-            //{
-            //     FileContent = PlugInsIntegration.GetTamplateContentByPlugInExtension(FileExtension);
-            //}
 
             string NewFileName = string.Empty;
             string FullFilePath = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("New " + FileExtension.Substring(1).ToUpper() + " File", "File Name:", ref NewFileName, System.IO.Path.GetInvalidFileNameChars()))
+            string headerToShow;
+            string lblToShow;
+            if (string.IsNullOrEmpty(FileExtension))
             {
-                FullFilePath = Path + @"\" + NewFileName + FileExtension;
+                headerToShow = "New File";
+                lblToShow = "File Name & Extension:";
+            }
+           else
+            {
+                headerToShow = string.Format("New {0} File", FileExtension.ToUpper().TrimStart(new char[] { '.' }));
+                lblToShow = "File Name:";
+            }
+            if (GingerCore.General.GetInputWithValidation(headerToShow, lblToShow, ref NewFileName, System.IO.Path.GetInvalidFileNameChars()))
+            {
+                FullFilePath = System.IO.Path.Combine(Path, NewFileName + FileExtension);
+                if (string.IsNullOrEmpty(System.IO.Path.GetExtension(FullFilePath)))
+                {
+                    FullFilePath = FullFilePath + ".txt";
+                }
                 if (!System.IO.Directory.Exists(Path))
                     Directory.CreateDirectory(System.IO.Path.GetFullPath(Path));
                 if (!System.IO.File.Exists(FullFilePath))
@@ -267,59 +256,24 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
          //Gherkin BDD functions
         private void ImportGherkinFeatureFile(object sender, RoutedEventArgs e)
-        {
-            string FeatureFolder = Folder;
-            if (this.Path.IndexOf("Documents\\Features\\") > 0)
-                FeatureFolder = this.Path.Substring(this.Path.IndexOf("Documents\\Features\\") + 19);
-            ImportGherkinFeatureFilePage IFP = new ImportGherkinFeatureFilePage(FeatureFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
-            IFP.ShowAsWindow();
-            string featureFile = IFP.mFeatureFile;
-
-            if(!String.IsNullOrEmpty(featureFile))
-            {               
-                if(Folder == "Documents")
-                {
-                    DocumentsFolderTreeItem DFTI = new DocumentsFolderTreeItem();
-                    DFTI.Path = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";
-                    DFTI.Folder = "Features";
-                    mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                    mTreeView.Tree.GetChildItembyNameandSelect("Features", this);                    
-                }
+        {   
+            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
+            mWizard.mFolder = this.Path;
+            WizardWindow.ShowWizard(mWizard);
+            
+            if(!String.IsNullOrEmpty(mWizard.FetaureFileName))
+            {
                 mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                mTreeView.Tree.GetChildItembyNameandSelect(System.IO.Path.GetFileName(featureFile), mTreeView.Tree.CurrentSelectedTreeViewItem);
-            }         
+                mTreeView.Tree.GetChildItembyNameandSelect(System.IO.Path.GetFileName(mWizard.FetaureFileName), mTreeView.Tree.CurrentSelectedTreeViewItem);
+            }
         }
 
         private void CreateGherkinFeatureFile(object sender, RoutedEventArgs e)
         { 
             string FileName = string.Empty;
             if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars()))
-            {
-                string FullDirectoryPath = "";
-                DocumentsFolderTreeItem DFTI = null;
-                if (this.Folder == "Documents")
-                {
-                    FullDirectoryPath = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";                    
-                    
-                    if (!System.IO.Directory.Exists(FullDirectoryPath))
-                    {
-                        System.IO.Directory.CreateDirectory(FullDirectoryPath);
-                        DFTI = new DocumentsFolderTreeItem();
-                        DFTI.Path = FullDirectoryPath;
-                        DFTI.Folder = "Features";
-                        mTreeView.Tree.AddChildItemAndSelect(this, DFTI);
-                        mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                    }
-                    else
-                    {
-                        DFTI = (DocumentsFolderTreeItem)mTreeView.Tree.GetChildItembyNameandSelect("Features",this);                        
-                    }
-                    
-                }
-                else
-                    FullDirectoryPath = this.Path;
-
-                string FullFilePath = FullDirectoryPath + @"\" + FileName + ".feature";
+            {                
+                string FullFilePath = System.IO.Path.Combine(this.Path + @"\" , FileName + ".feature");
                 if (!System.IO.File.Exists(FullFilePath))
                 {
                     string FileContent = "Feature: Description\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario1 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario2 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n@Tag1 @Tag2\r\n\r\n\r\nScenario Outline: eating\r\n  Given there are <start> cucumbers\r\n  When I eat <eat> cucumbers\r\n  Then I should have <left> cucumbers\r\n\r\n  Examples:\r\n    | start | eat | left |\r\n    |  12   |  5  |  7   |\r\n    |  20   |  5  |  15  |";

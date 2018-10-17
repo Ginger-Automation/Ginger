@@ -55,11 +55,21 @@ namespace GingerCore
             }
         }
 
-        public GingerHelperEventArgs(eGingerHelperEventActions EventAction , RoutedEventHandler btnHandler = null, GingerHelperMsg helperMsg=null)
+        private eGingerHelperMsgType mMessageType;
+        public eGingerHelperMsgType MessageType
+        {
+            get
+            {
+                return mMessageType;
+            }
+        }
+
+public GingerHelperEventArgs(eGingerHelperEventActions EventAction, eGingerHelperMsgType messageType, RoutedEventHandler btnHandler = null, GingerHelperMsg helperMsg=null)
         {
             mHelperMsg = helperMsg;
             mGingerHelperEventActions = EventAction;
             mbtnHandler = btnHandler;
+            mMessageType = messageType;
         }
     }
 }

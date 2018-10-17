@@ -27,7 +27,7 @@ using System.Xml;
 
 namespace Ginger.UserControlsLib.TextEditor.Common
 {
-    public class PlugInTextEditorWrapper : TextEditorBase
+    public class PlugInTextEditorWrapper : TextEditorBase, ITextEditor
     {
         ITextEditor mPlugInTextFileEditor;
 
@@ -63,10 +63,18 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             }
         }
 
+        byte[] ITextEditor.HighlightingDefinition => throw new System.NotImplementedException();
+
+        Amdocs.Ginger.Plugin.Core.IFoldingStrategy ITextEditor.FoldingStrategy => throw new System.NotImplementedException();
 
 
-        public override List<TextEditorToolBarItem> Tools { get { return null; } }
-            //{ return mPlugInTextFileEditor.Tools; }
+        public override List<ITextEditorToolBarItem> Tools
+        {
+            get
+            {
+                return mPlugInTextFileEditor.Tools;
+            }
+        }
             
 
         public override IFoldingStrategy FoldingStrategy
@@ -77,6 +85,10 @@ namespace Ginger.UserControlsLib.TextEditor.Common
                 return null;
             }
         }
+
+        public string Name => throw new System.NotImplementedException();
+
+        public ITextHandler TextHandler { get { return mPlugInTextFileEditor.TextHandler; } set { mPlugInTextFileEditor.TextHandler = value; } }        
 
         //public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
         //{

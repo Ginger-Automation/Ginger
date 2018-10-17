@@ -24,7 +24,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
-    class JavaPlatform : PlatformInfoBase
+    public class JavaPlatform : PlatformInfoBase
     {
         public override List<ActUIElement.eElementAction> GetPlatformUIValidationTypesList()
         {

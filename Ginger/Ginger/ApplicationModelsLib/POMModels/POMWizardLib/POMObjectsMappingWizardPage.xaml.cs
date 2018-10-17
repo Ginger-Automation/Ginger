@@ -56,12 +56,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             InitializeComponent();                       
         }
 
+
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             ElementInfo EI = ((ObservableList<ElementInfo>)sender).Last();
 
             mWizard.IWindowExplorerDriver.UpdateElementInfoFields(EI);
             EI.Locators = mWizard.IWindowExplorerDriver.GetElementLocators(EI);
+            
             EI.Properties = mWizard.IWindowExplorerDriver.GetElementProperties(EI);
             EI.ElementName = GetBestElementName(EI);
             EI.WindowExplorer = mWizard.IWindowExplorerDriver;
@@ -75,6 +77,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 mWizard.POM.UnMappedUIElements.Add(EI);
             }
+
         }
 
         PomAllElementsPage pomAllElementsPage = null;
@@ -83,7 +86,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (pomAllElementsPage == null)
             {
-                pomAllElementsPage = new PomAllElementsPage(mWizard.POM, mWizard.IWindowExplorerDriver);
+                pomAllElementsPage = new PomAllElementsPage(mWizard.POM);
+                pomAllElementsPage.ShowTestAllElementsButton = Visibility.Collapsed;
+                pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
                 xPomElementsMappingPageFrame.Content = pomAllElementsPage;
             }
         }
@@ -104,9 +109,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.Active:
                     //if (xPomElementsMappingPageFrame.Content == null)
                     //    InitilizePomElementsMappingPage();
-                    if (pomAllElementsPage.mWinExplorer == null)
+                    if (pomAllElementsPage.mAgent == null)
                     {
-                        pomAllElementsPage.SetWindowExplorer(mWizard.IWindowExplorerDriver);
+                        pomAllElementsPage.SetAgent(mWizard.Agent);
                     }
 
                     if (mWizard.ManualElementConfiguration)
@@ -120,8 +125,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
 
                         xReLearnButton.Visibility = Visibility.Visible;
-                        mWizard.IWindowExplorerDriver.UnHighLightElements();
-                        mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
+
                         mSelectedElementTypesList = mWizard.AutoMapElementTypesList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
                         Learn();
                     }
@@ -135,7 +139,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (!mWizard.IsLearningWasDone)
             {
                 mWizard.ProcessStarted();
-                pomAllElementsPage.unmappedUIElementsPage.DriverIsBusy = true;
+                mWizard.IWindowExplorerDriver.UnHighLightElements();
+                mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
+
                 xStopLoadButton.Visibility = Visibility.Visible;
                 xReLearnButton.Visibility = Visibility.Collapsed;
                
@@ -144,13 +150,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                 mWizard.POM.Name = mWizard.IWindowExplorerDriver.GetActiveWindow().Title;
 
-                //mRequestedElementTypesDict = SeleniumDriver.GetFilteringCreteriaDict(mWizard.AutoMapElementTypesList);//TODO: need to be done diffrently- talk with Eliran
-                //mRequestedElementTagList = mRequestedElementTypesDict.Keys.Select(x => x.ToUpper()).ToList();
 
                 mWizard.IsLearningWasDone = await GetElementsFromPage();
                 xStopLoadButton.Visibility = Visibility.Collapsed;
                 xReLearnButton.Visibility = Visibility.Visible;
-                pomAllElementsPage.unmappedUIElementsPage.DriverIsBusy = false;
                 mWizard.ProcessEnded();
             }
         }

@@ -19,6 +19,7 @@ limitations under the License.
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Ginger.Run;
+using Ginger;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Platforms;
@@ -59,7 +60,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.AddVariable(v1);
 
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.Environments.Solution();
+            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             Agent a = new Agent();
             //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have knowen firefox issues with selenium 3

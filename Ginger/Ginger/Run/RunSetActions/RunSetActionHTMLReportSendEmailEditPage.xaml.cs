@@ -28,6 +28,7 @@ using GingerCore.GeneralLib;
 using Ginger.Reports;
 using GingerCore.Actions;
 using Ginger.Actions;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -200,12 +201,13 @@ namespace Ginger.Run.RunSetActions
         {
             DefaultTemplatePickerCbx.ItemsSource = null;
 
-            if ((App.UserProfile.Solution != null) && (App.LocalRepository.GetSolutionHTMLReportConfigurations() != null) && (App.LocalRepository.GetSolutionHTMLReportConfigurations().Count > 0))
+            ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+            if ((App.UserProfile.Solution != null) &&  (HTMLReportConfigurations.Count > 0))
             {
-                DefaultTemplatePickerCbx.ItemsSource = App.LocalRepository.GetSolutionHTMLReportConfigurations();
+                DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
                 DefaultTemplatePickerCbx.SelectedValuePath = HTMLReportConfiguration.Fields.ID;
-                DefaultTemplatePickerCbx.SelectedIndex = DefaultTemplatePickerCbx.Items.IndexOf(App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).FirstOrDefault());
+                DefaultTemplatePickerCbx.SelectedIndex = DefaultTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault());
             }
         }
         private void EmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

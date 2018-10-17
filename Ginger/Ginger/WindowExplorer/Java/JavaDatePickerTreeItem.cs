@@ -38,7 +38,7 @@ namespace Ginger.WindowExplorer.Java
             ObservableList<Act> list = new ObservableList<Act>();
             list.Add(new ActJavaElement()
             {
-                Description = "Select UIF Date " + Name,
+                Description = "Set Component Date",
                 ControlAction = ActJavaElement.eControlAction.SelectDate
             });
             return list;

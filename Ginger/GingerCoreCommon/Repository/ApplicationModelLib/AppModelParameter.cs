@@ -25,23 +25,84 @@ namespace Amdocs.Ginger.Repository
 
     public class AppModelParameter : RepositoryItemBase
     {
-        public override bool UseNewRepositorySerializer { get { return true; } }
+        
         public virtual string ParamLevel { get { return "Local"; } set { } }
-       
-        [IsSerializedForLocalRepository]
-        public string PlaceHolder { get; set; } = string.Empty;
 
+        string mPlaceHolder = string.Empty;
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }
+        public string PlaceHolder
+        {
+            get
+            {
+                return mPlaceHolder;
+            }
+            set
+            {
+                if (mPlaceHolder != value)
+                {
+                    mPlaceHolder = value;
+                    OnPropertyChanged(nameof(PlaceHolder));
+                }
+            }
+        }
 
+        string mDescription;
         [IsSerializedForLocalRepository]
-        public bool RequiredAsInput { get; set; } = true;
+        public string Description
+        {
+            get
+            {
+                return mDescription;
+            }
+            set
+            {
+                if(mDescription != value)
+                {
+                    mDescription = value;
+                    OnPropertyChanged(nameof(Description));
+                }
+            }
+        }
+
+        bool mRequiredAsInput = true;
+        [IsSerializedForLocalRepository]
+        public bool RequiredAsInput
+        {
+            get
+            {
+                return mRequiredAsInput;
+            }
+            set
+            {
+                if (mRequiredAsInput != value)
+                {
+                    mRequiredAsInput = value;
+                    OnPropertyChanged(nameof(RequiredAsInput));
+                }
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public string TagName { get; set; }
 
+
+        string mPath;
         [IsSerializedForLocalRepository]
-        public string Path { get; set; }
+        public string Path
+        {
+            get
+            {
+                return mPath;
+            }
+            set
+            {
+                if (mPath != value)
+                {
+                    mPath = value;
+                    OnPropertyChanged(nameof(Path));
+                }
+            }
+        }
 
         /// <summary>
         /// Backward Support- please use 'Path' field instead

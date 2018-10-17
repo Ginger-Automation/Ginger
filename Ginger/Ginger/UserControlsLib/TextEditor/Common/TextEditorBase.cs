@@ -24,10 +24,11 @@ using System.Xml;
 using Ginger.UserControlsLib.TextEditor.Common;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using GingerPlugIns.TextEditorLib;
+using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor
 {
-    public abstract class TextEditorBase
+    public abstract class TextEditorBase 
     {
         // TODO: clean or virtual        
 
@@ -61,7 +62,7 @@ namespace Ginger.UserControlsLib.TextEditor
             }
         }
 
-        public abstract List<TextEditorToolBarItem> Tools { get; }
+        public abstract List<ITextEditorToolBarItem> Tools { get; }       
 
         public virtual string Title()
         {

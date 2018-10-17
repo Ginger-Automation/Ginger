@@ -27,6 +27,7 @@ using GingerCore.DataSource;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.DataSource
 {
@@ -87,7 +88,7 @@ namespace Ginger.DataSource
             
            
 
-            ObservableList<DataSourceBase> DSList = App.LocalRepository.GetSolutionDataSources();
+            ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             foreach(DataSourceBase ds in DSList)
                 if(ds.FilePath == mDSDetails.FilePath)
                 { Reporter.ToUser(eUserMsgKeys.DuplicateDSDetails, FilePathTextBox.Text.Trim()); return; }
@@ -128,7 +129,7 @@ namespace Ginger.DataSource
             if (path != "")
                 dlg.InitialDirectory = Path.GetDirectoryName(path);
             else
-                dlg.InitialDirectory = App.UserProfile.Solution.Folder + "DataSources";
+                dlg.InitialDirectory = System.IO.Path.Combine(App.UserProfile.Solution.Folder, "DataSources");
             dlg.Title = "Select DB File";
             if(mFileType != "")
                 dlg.Filter = mFileType.ToUpper() + " Files (*." + mFileType + ")|*." + mFileType + "|All Files (*.*)|*.*";

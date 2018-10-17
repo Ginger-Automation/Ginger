@@ -57,7 +57,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return NewTVItemStyle(DSDetails, eImageType.DataSource, nameof(DataSourceBase.Name));
+            return NewTVItemHeaderStyle(DSDetails);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -221,7 +221,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Error while deleteing Data Soucre File", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Error while deleteing Data Soucre File", ex);
                     Reporter.ToUser(eUserMsgKeys.DeleteDSFileError, DSDetails.FileFullPath);                    
                 }
             }

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using System;
 using System.Windows.Controls;
@@ -43,7 +44,7 @@ namespace Ginger
         {
             lstActivities.ItemsSource = App.BusinessFlow.Activities;
             lstActivities.DisplayMemberPath = "ActivityName";
-            lstActivities.SelectedValue = RepositoryItem.Fields.Guid;
+            lstActivities.SelectedValue = nameof(RepositoryItemBase.Guid);
             try
             {
                 lstActivities.SelectedItem = App.BusinessFlow.CurrentActivity;

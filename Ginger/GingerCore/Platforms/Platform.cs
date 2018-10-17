@@ -23,7 +23,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Platforms
 {
-    public class Platform : RepositoryItem
+    public class Platform : RepositoryItemBase
     {
         public new static partial class Fields
         {            

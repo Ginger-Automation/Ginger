@@ -28,31 +28,20 @@ using GingerCore.Actions;
 using System.Linq;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
     public class ItemValidationBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public static class Fields
-        {
-            public static string Selected = "Selected";
-            public static string ItemName = "ItemName";
-            public static string ItemGUID = "ItemGUID";
-            public static string IssueDescription = "IssueDescription";
-            public static string IssueResolution = "IssueResolution";
-            public static string Details = "Details";
-            public static string IssueType = "IssueType";
-            public static string ItemClass = "ItemClass";
-            public static string Impact = "Impact";
-        }
-        public RepositoryItem UsageItem { get; set; }
+       
+        public RepositoryItemBase UsageItem { get; set; }
 
         public static ObservableList<ItemValidationBase> mIssuesList = new ObservableList<ItemValidationBase>();
 
         private bool mSelected;
-        public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(Fields.Selected); } } }
+        public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(nameof(Selected)); } } }
         public string ItemName { get; set; }
         public string ItemClass { get; set; }
         public string IssueDescription { get; set; }
@@ -94,7 +83,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             bool isDuplicateFound = CheckForItemWithDuplicateName(selectedItem);
             if (isDuplicateFound)
             {
-                    ItemValidationBase VA = CreateNewIssue((RepositoryItem)selectedItem.UsageItem);
+                    ItemValidationBase VA = CreateNewIssue((RepositoryItemBase)selectedItem.UsageItem);
                     VA.IssueDescription = "Item with same name already exists";
                     VA.mIssueType = eIssueType.DuplicateName;
                     VA.ItemNewName = GetUniqueItemName(selectedItem);
@@ -112,12 +101,27 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
         public static bool CheckForItemWithDuplicateName(UploadItemSelection selectedItem)
         {
-            List<RepositoryItem> existingRepoItems = new List<RepositoryItem>();
-
-            if (selectedItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Cast<RepositoryItem>().ToList();
-            else if (selectedItem.UsageItem is Activity) existingRepoItems = App.LocalRepository.GetSolutionRepoActivities().Cast<RepositoryItem>().ToList();
-            else if (selectedItem.UsageItem is Act) existingRepoItems =App.LocalRepository.GetSolutionRepoActions().Cast<RepositoryItem>().ToList();
-            else if (selectedItem.UsageItem is VariableBase) existingRepoItems = App.LocalRepository.GetSolutionRepoVariables().Cast<RepositoryItem>().ToList();
+            List<RepositoryItemBase> existingRepoItems = new List<RepositoryItemBase>();
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+            ObservableList<VariableBase> variables= WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+            ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            if (selectedItem.UsageItem is ActivitiesGroup)
+            {
+                existingRepoItems = activitiesGroup.Cast<RepositoryItemBase>().ToList();
+            }
+            else if (selectedItem.UsageItem is Activity)
+            {
+                existingRepoItems = activities.Cast<RepositoryItemBase>().ToList();
+            }
+            else if (selectedItem.UsageItem is Act)
+            {
+                existingRepoItems = SharedActions.Cast<RepositoryItemBase>().ToList();
+            }
+            else if (selectedItem.UsageItem is VariableBase)
+            {
+                existingRepoItems = variables.Cast<RepositoryItemBase>().ToList();
+            }
             
             if (selectedItem.ItemUploadType == UploadItemSelection.eItemUploadType.Overwrite)
             {
@@ -126,7 +130,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
             foreach (object o in existingRepoItems)
             {       
-                if (((RepositoryItem)o).GetNameForFileName() == selectedItem.ItemName)
+                if (((RepositoryItemBase)o).GetNameForFileName() == selectedItem.ItemName)
                 {
                     return true;
                 }
@@ -137,11 +141,27 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         public static string GetUniqueItemName(UploadItemSelection duplicateItem)
         {
             List<string> existingRepoItems = new List<string>();
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<Act> actions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+            ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
 
-            if (duplicateItem.UsageItem is ActivitiesGroup) existingRepoItems = App.LocalRepository.GetSolutionRepoActivitiesGroups().Select(x => x.ItemName).ToList();
-            else if (duplicateItem.UsageItem is Activity) existingRepoItems = App.LocalRepository.GetSolutionRepoActivities().Select(x => x.ItemName).ToList(); 
-            else if (duplicateItem.UsageItem is Act) existingRepoItems = App.LocalRepository.GetSolutionRepoActions().Select(x => x.ItemName).ToList(); 
-            else if (duplicateItem.UsageItem is VariableBase) existingRepoItems = App.LocalRepository.GetSolutionRepoVariables().Select(x => x.ItemName).ToList();
+            ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            if (duplicateItem.UsageItem is ActivitiesGroup)
+            {
+                existingRepoItems = activitiesGroup.Select(x => x.ItemName).ToList();
+            }
+            else if (duplicateItem.UsageItem is Activity)
+            {
+                existingRepoItems = activities.Select(x => x.ItemName).ToList();
+            }
+            else if (duplicateItem.UsageItem is Act)
+            {
+                existingRepoItems = actions.Select(x => x.ItemName).ToList();
+            }
+            else if (duplicateItem.UsageItem is VariableBase)
+            {
+                existingRepoItems = variables.Select(x => x.ItemName).ToList();
+            }
 
             string newItemName = duplicateItem.ItemName;
            
@@ -157,11 +177,12 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             //TODO - find better way to get unique name
         }
 
-        public static ItemValidationBase CreateNewIssue(RepositoryItem rItem)
+        public static ItemValidationBase CreateNewIssue(RepositoryItemBase rItem)
         {
             ItemValidationBase ITB = new ItemValidationBase();
             ITB.UsageItem = rItem;
             ITB.ItemName = rItem.ItemName;
+            // TODO: remove me and use RepositoryItemBase
             ITB.ItemClass = RepositoryItem.GetShortType(rItem.GetType());          
             return ITB;
         }

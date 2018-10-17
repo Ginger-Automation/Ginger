@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SourceControl;
@@ -134,6 +135,22 @@ namespace amdocs.ginger.GingerCoreNET
                     mLocalGingerGrid.Start();
                 }
                 return mLocalGingerGrid;
+            }
+        }
+
+        public string LocalUserApplicationDataFolderPath
+        {
+            get
+            {
+                return General.LocalUserApplicationDataFolderPath;
+            }
+        }
+
+        public string DefualtUserLocalWorkingFolder
+        {
+            get
+            {
+                return General.DefualtUserLocalWorkingFolder;
             }
         }
 

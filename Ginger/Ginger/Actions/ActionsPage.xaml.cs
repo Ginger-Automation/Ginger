@@ -30,6 +30,9 @@ using System.Windows.Data;
 using System.Windows.Media;
 using Ginger.BusinessFlowFolder;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
+using Ginger.Repository;
 
 namespace Ginger.Actions
 {
@@ -48,8 +51,7 @@ namespace Ginger.Actions
             EditMode = editMode;
             if (activity != null)
             {
-                //static Activity
-                EditMode = General.RepositoryItemPageViewMode.SharedReposiotry;
+                //static Activity               
                 mCurrentActivity = activity;
                 grdActions.Title = "Actions";
                 grdActions.DataSourceList = mCurrentActivity.Acts;
@@ -69,8 +71,8 @@ namespace Ginger.Actions
 
                 grdActions.AddToolbarTool("@Split_16x16.png", "Split to " + GingerDicser.GetTermResValue(eTermResKey.Activities), new RoutedEventHandler(Split));
                 grdActions.AddToolbarTool(eImageType.Reset, "Reset Run Details", new RoutedEventHandler(ResetAction));
-                grdActions.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Action", App.MainWindow.FloatingContinueRunActionButton_Click, 4);
-                grdActions.AddFloatingImageButton("@RunAction_20x20.png", "Run Action", App.MainWindow.FloatingRunActionButton_Click, 4);
+                grdActions.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Action", FloatingContinueRunActionButton_Click, 4);
+                grdActions.AddFloatingImageButton("@RunAction_20x20.png", "Run Action", FloatingRunActionButton_Click, 4);
             }            
             SetActionsGridView();
                                    
@@ -81,6 +83,17 @@ namespace Ginger.Actions
                 SetViewMode();
             }
         }
+
+        public void FloatingRunActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.RunCurrentAction, null);
+            
+        }
+        public void FloatingContinueRunActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.ContinueActionRun, null);            
+        }
+        
 
         private void ResetAction(object sender, RoutedEventArgs e)
         {
@@ -268,7 +281,7 @@ namespace Ginger.Actions
 
         private void AddToRepository(object sender, RoutedEventArgs e)
         {
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdActions.Grid.SelectedItems.Cast<RepositoryItem>().ToList());
+            Repository.SharedRepositoryOperations.AddItemsToRepository(grdActions.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
         } 
 
         private void RefreshGrid(object sender, RoutedEventArgs e)
@@ -296,8 +309,8 @@ namespace Ginger.Actions
             //# Default View
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();          
-            view.GridColsView.Add(new GridColView() { Field = Act.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItem.Fields.SharedRepoInstanceImage, Header = "S.R.", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+            view.GridColsView.Add(new GridColView() { Field = Act.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });            
+            view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Active, WidthWeight = 2.5, MaxWidth=50, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.BreakPoint, Header="B. Point", WidthWeight = 2.5, MaxWidth = 55, StyleType = GridColView.eGridColStyleType.CheckBox });            
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Description, WidthWeight = 20 });
@@ -376,7 +389,8 @@ namespace Ginger.Actions
                     mCurrentActivity.Acts.PropertyChanged += ActsPropChanged;                    
                 }
                 grdActions.Title = "'" + mCurrentActivity.ActivityName + "' - Actions";
-                App.LocalRepository.MarkSharedRepositoryItems((IEnumerable<object>)mCurrentActivity.Acts, (IEnumerable<object>)App.LocalRepository.GetSolutionRepoActions());
+                ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+                SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mCurrentActivity.Acts, (IEnumerable<object>)SharedActions);
                 grdActions.DataSourceList = mCurrentActivity.Acts;
             }
             else

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,24 +30,14 @@ using static GingerCore.GingerHelperEventArgs;
 
 namespace GingerCore
 {
-    public enum eAppLogLevel
+    public enum eGingerHelperMsgType
     {
-        Normal, Debug
-    }
-
-    public enum eLogLevel
-    {
-        DEBUG,INFO,WARN,ERROR,FATAL
-    }
-
-    public enum eMessageType
-    {
-        INFO,WARN,ERROR,QUESTION
+        INFO, PROCESS
     }
 
     public class UserMessage
     {
-        public UserMessage(eMessageType MessageType, string Caption, string Message, MessageBoxButton ButtonsType, MessageBoxResult DefualtResualt)
+        public UserMessage(eAppReporterMessageType MessageType, string Caption, string Message, MessageBoxButton ButtonsType, MessageBoxResult DefualtResualt)
         {
             this.MessageType = MessageType;
             this.Caption = Caption;
@@ -55,16 +46,11 @@ namespace GingerCore
             this.DefualtResualt = DefualtResualt;
         }
 
-        public eMessageType MessageType { get; set; }
+        public eAppReporterMessageType MessageType { get; set; }
         public string Caption {get;set;}
         public string Message {get;set;}        
         public MessageBoxButton ButtonsType { get; set; }
         public MessageBoxResult DefualtResualt { get; set; }
-    }
-
-    public enum eGingerHelperMsgType
-    {
-        INFO, PROCESS
     }
 
     public class GingerHelperMsg
@@ -101,12 +87,54 @@ namespace GingerCore
 
     public class Reporter
     {
+        public static void AppReporter_ReportEvent(Amdocs.Ginger.Common.ReporterLib.AppReportEventArgs reportEventArgs)
+        {
+            try
+            {
+                switch (reportEventArgs.ReportType)
+                {
+                    case eAppReportType.ToLog:
+                        ToLog(reportEventArgs.ReportLogLevel, reportEventArgs.ReportMessage, reportEventArgs.ReportExceptionToRecord, writeOnlyInDebugMode: reportEventArgs.LogOnlyOnDebugMode);
+                        break;
+
+                    case eAppReportType.ToUser:
+                        switch (reportEventArgs.ReportMessageType) //temp solution for user message
+                        {
+                            case eAppReporterMessageType.INFO:
+                                ToUser(eUserMsgKeys.StaticInfoMessage, reportEventArgs.ReportMessage);
+                                break;
+                            case eAppReporterMessageType.WARN:
+                                ToUser(eUserMsgKeys.StaticWarnMessage, reportEventArgs.ReportMessage);
+                                break;
+                            case eAppReporterMessageType.ERROR:
+                                ToUser(eUserMsgKeys.StaticErrorMessage, reportEventArgs.ReportMessage);
+                                break;
+                            default:
+                                //not supported Message Type yet
+                                break;
+                        }
+                        break;
+
+                    case eAppReportType.ToConsole:
+                        ToConsole(reportEventArgs.ReportMessage, reportEventArgs.ReportExceptionToRecord);
+                        break;
+
+                    default:
+                        //not supported reporting yet
+                        break;
+                }
+            }
+            catch(Exception ex)
+            {
+                //failed to report from AppReporter
+            }
+        }
+
         public static Dispatcher MainWindowDispatcher { get; set; }
-        public static eAppLogLevel CurrentAppLogLevel;
+        public static eAppReporterLoggingLevel CurrentAppLogLevel;
         private static bool RunningFromConfigFile = false;
 
         public static event ReporterEventHandler ReporterMessage;
-
         public class ReporterEventArgs : EventArgs
         {
             string mMessage;
@@ -136,45 +164,58 @@ namespace GingerCore
             }
         }
 
-        public static void OnGingerHelperEvent(eGingerHelperEventActions EventAction, RoutedEventHandler btnHandler = null, GingerHelperMsg helperMsg=null)
+       
+        public static event GingerHelperEventHandler HandlerGingerHelperEvent;
+        public delegate void GingerHelperEventHandler(GingerHelperEventArgs e);
+        public static void OnGingerHelperEvent( eGingerHelperEventActions EventAction, eGingerHelperMsgType messageType, RoutedEventHandler btnHandler = null, GingerHelperMsg helperMsg=null)
         {
             GingerHelperEventHandler handler = HandlerGingerHelperEvent;
             if (handler != null)
             {
-                handler(new GingerHelperEventArgs(EventAction, btnHandler, helperMsg));
+                handler(new GingerHelperEventArgs(EventAction, messageType, btnHandler, helperMsg));
             }
         }
 
-        public delegate void GingerHelperEventHandler( GingerHelperEventArgs e);
-        public static event GingerHelperEventHandler HandlerGingerHelperEvent;
-        
+        public static event ErrorReportedEventHandler ErrorReportedEvent;
+        public delegate void ErrorReportedEventHandler();
+        public static void OnErrorReportedEvent()
+        {
+            ErrorReportedEventHandler handler = ErrorReportedEvent;
+            if (handler != null)
+            {
+                handler();
+            }
+        }
+
+
         #region ReportToLog
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
                                         (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         
-        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded=true, bool writeOnlyInDebugMode = false)
+        public static void ToLog(eAppReporterLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded=true, bool writeOnlyInDebugMode = false)
         {
             try
             {
                 if (writeOnlyInDebugMode)
-                    if (CurrentAppLogLevel != eAppLogLevel.Debug)                    
+                    if (CurrentAppLogLevel != eAppReporterLoggingLevel.Debug)                    
                         return;
                 switch (logLevel)
                 {
-                    case eLogLevel.DEBUG:
+                    case eAppReporterLogLevel.DEBUG:
                         log.Debug(messageToLog, exceptionToLog);
                         break;
-                    case eLogLevel.ERROR:
+                    case eAppReporterLogLevel.ERROR:
                         log.Error(messageToLog, exceptionToLog);
+                        OnErrorReportedEvent();
                         break;
-                    case eLogLevel.FATAL:
+                    case eAppReporterLogLevel.FATAL:
                         log.Fatal(messageToLog, exceptionToLog);
                         break;
-                    case eLogLevel.INFO:
+                    case eAppReporterLogLevel.INFO:
                         log.Info(messageToLog, exceptionToLog);
                         break;
-                    case eLogLevel.WARN:
+                    case eAppReporterLogLevel.WARN:
                         log.Warn(messageToLog, exceptionToLog);
                         break;
                     default:
@@ -185,13 +226,13 @@ namespace GingerCore
                 //if (writeAlsoToConsoleIfNeeded && AddAllReportingToConsole)
                     ToConsole(logLevel.ToString() + ": " + messageToLog, exceptionToLog);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 //failed to write to log
             }
         }
 
-        public static void ToLogAndConsole(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
+        public static void ToLogAndConsole(eAppReporterLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             ToLog(logLevel, messageToLog, exceptionToLog, false);
             ToConsole(messageToLog);
@@ -222,23 +263,23 @@ namespace GingerCore
                     }
                     MessageBox.Show(messageKey.ToString() + " - " + mess);
 
-                    ToLog(eLogLevel.WARN, "The user message with key: '" + messageKey + "' was not found! and won't show to the user!");
+                    ToLog(eAppReporterLogLevel.WARN, "The user message with key: '" + messageKey + "' was not found! and won't show to the user!");
                     return MessageBoxResult.None;
                 }
 
                 //set the message type
                 switch (messageToShow.MessageType)
                 {
-                    case eMessageType.ERROR:
+                    case eAppReporterMessageType.ERROR:
                         messageImage = MessageBoxImage.Error;
                         break;
-                    case eMessageType.INFO:
+                    case eAppReporterMessageType.INFO:
                         messageImage = MessageBoxImage.Information;
                         break;
-                    case eMessageType.QUESTION:
+                    case eAppReporterMessageType.QUESTION:
                         messageImage = MessageBoxImage.Question;
                         break;
-                    case eMessageType.WARN:
+                    case eAppReporterMessageType.WARN:
                         messageImage = MessageBoxImage.Warning;
                         break;
                     default:
@@ -256,8 +297,8 @@ namespace GingerCore
                 //adding owner window to the message so it will appear on top of any other window including splash screen
                 //return MessageBox.Show(messageText, messageToShow.Caption, messageToShow.ButtonsType, messageImage, messageToShow.DefualtResualt);
 
-                if (CurrentAppLogLevel == eAppLogLevel.Debug)
-                    ToLog(eLogLevel.INFO, "Showing User Message (Pop-Up): '" + messageText + "'");
+                if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                    ToLog(eAppReporterLogLevel.INFO, "Showing User Message (Pop-Up): '" + messageText + "'");
                 else if (AddAllReportingToConsole)
                     ToConsole("Showing User Message (Pop-Up): '" + messageText + "'");
 
@@ -287,8 +328,8 @@ namespace GingerCore
                     });
                 }
 
-                if (CurrentAppLogLevel == eAppLogLevel.Debug)
-                    ToLog(eLogLevel.INFO, "User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");
+                if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                    ToLog(eAppReporterLogLevel.INFO, "User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");
                 else if (AddAllReportingToConsole)
                     ToConsole("User Selection for Pop-Up Message: '" + userSelection.ToString() + "'");
 
@@ -297,7 +338,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                ToLog(eLogLevel.ERROR, "Failed to show the user message with the key: " + messageKey, ex);
+                ToLog(eAppReporterLogLevel.ERROR, "Failed to show the user message with the key: " + messageKey, ex);
                 MessageBox.Show("Failed to show the user message with the key: " + messageKey);
                 return MessageBoxResult.None;
             }
@@ -327,7 +368,7 @@ namespace GingerCore
                     }
                     MessageBox.Show(messageKey.ToString() + " - " + mess);
 
-                    ToLog(eLogLevel.WARN, "The Ginger Helper message with key: '" + messageKey + "' was not found! and won't show to the user!");
+                    ToLog(eAppReporterLogLevel.WARN, "The Ginger Helper message with key: '" + messageKey + "' was not found! and won't show to the user!");
                 }
                 orgMessageContent = messageToShow.MsgContent;
                 //enter message args if exist
@@ -335,27 +376,27 @@ namespace GingerCore
                     messageToShow.MsgContent = string.Format(messageToShow.MsgContent, messageArgs);
                
 
-                if (CurrentAppLogLevel == eAppLogLevel.Debug)
-                    ToLog(eLogLevel.INFO, "Showing User Message (GingerHelper): " + messageContent);
+                if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                    ToLog(eAppReporterLogLevel.INFO, "Showing User Message (GingerHelper): " + messageContent);
                 else if (AddAllReportingToConsole)
                     ToConsole("Showing User Message (GingerHelper): " + messageContent);
 
             
-                OnGingerHelperEvent(eGingerHelperEventActions.Show, btnHandler, messageToShow);
+                OnGingerHelperEvent(eGingerHelperEventActions.Show, messageToShow.MessageType, btnHandler, messageToShow);
                 messageToShow.MsgContent = orgMessageContent;
             }
             catch (Exception ex)
             {                
-                ToLog(eLogLevel.ERROR, "Failed to show the Ginger Helper message with the key: " + messageKey, ex);
+                ToLog(eAppReporterLogLevel.ERROR, "Failed to show the Ginger Helper message with the key: " + messageKey, ex);
             }
          
         }
         
         public static void CloseGingerHelper()
         {
-            OnGingerHelperEvent(eGingerHelperEventActions.Close);
-            if (CurrentAppLogLevel == eAppLogLevel.Debug)
-                ToLog(eLogLevel.INFO, "User Message (GingerHelper) Closed.");
+            OnGingerHelperEvent(eGingerHelperEventActions.Close, eGingerHelperMsgType.PROCESS);
+            if (CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
+                ToLog(eAppReporterLogLevel.INFO, "User Message (GingerHelper) Closed.");
             else if (AddAllReportingToConsole)
                 ToConsole("User Message (GingerHelper) Closed.");
         }
@@ -380,7 +421,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                ToLog(eLogLevel.ERROR, "Failed to report to Console", ex);
+                ToLog(eAppReporterLogLevel.ERROR, "Failed to report to Console", ex);
             }
         }
 

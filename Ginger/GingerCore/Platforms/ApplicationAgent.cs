@@ -21,7 +21,7 @@ using System.ComponentModel;
 
 namespace GingerCore.Platforms
 {
-    public class ApplicationAgent : RepositoryItem
+    public class ApplicationAgent : RepositoryItemBase
     {
         private Agent mAgent;
 

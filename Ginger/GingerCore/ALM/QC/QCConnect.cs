@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -50,7 +51,7 @@ namespace GingerCore.ALM.QC
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                     return false;
                 }
             }
@@ -70,7 +71,7 @@ namespace GingerCore.ALM.QC
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                     return false;
                 }
             }
@@ -129,7 +130,7 @@ namespace GingerCore.ALM.QC
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return false;
             }
             if (mTDConn.Connected == true)
@@ -267,7 +268,7 @@ namespace GingerCore.ALM.QC
             catch (Exception e)
             {
                 tsFilter["CY_FOLDER_ID"] = "\"" + tsFolder.Path.ToString() + "\"";
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
             }
 
             List TestsetList = TSetFact.NewList(tsFilter.Text);

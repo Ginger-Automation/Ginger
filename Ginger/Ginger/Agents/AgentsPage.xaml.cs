@@ -38,7 +38,15 @@ namespace Ginger.Agents
         {
             InitializeComponent();           
             SetAgentsGridView();
-            xAgentsGrd.DataSourceList = agentsFolder.GetFolderItems();            
+
+            if (agentsFolder.IsRootFolder)
+            {
+                xAgentsGrd.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+            }
+            else
+            {
+                xAgentsGrd.DataSourceList = agentsFolder.GetFolderItems();
+            }
         }
         
         private void SetAgentsGridView()

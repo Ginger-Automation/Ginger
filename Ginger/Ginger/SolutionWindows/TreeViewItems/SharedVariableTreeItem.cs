@@ -24,27 +24,30 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using GingerWPF.TreeViewItemsLib;
+using Amdocs.Ginger.Common.Enums;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
-    class SharedVariableTreeItem : TreeViewItemBase, ITreeViewItem
+    class SharedVariableTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private VariableEditPage mVariableEditPage;
-        public VariableBase VariableBase { get; set; }
+        readonly VariableBase mVariableBase;
         private SharedVariablesFolderTreeItem.eVariablesItemsShowMode mShowMode;
 
-        public SharedVariableTreeItem(SharedVariablesFolderTreeItem.eVariablesItemsShowMode showMode = SharedVariablesFolderTreeItem.eVariablesItemsShowMode.ReadWrite)
+        public SharedVariableTreeItem(VariableBase variableBase, SharedVariablesFolderTreeItem.eVariablesItemsShowMode showMode = SharedVariablesFolderTreeItem.eVariablesItemsShowMode.ReadWrite)
         {
+            mVariableBase = variableBase;
             mShowMode = showMode;
         }
 
         Object ITreeViewItem.NodeObject()
         {
-            return VariableBase;
+            return mVariableBase;
         }
         override public string NodePath()
         {
-            return VariableBase.FileName;
+            return mVariableBase.FileName;
         }
         override public Type NodeObjectType()
         {
@@ -53,7 +56,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(VariableBase.Name, "@Variable_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(VariableBase.FileName, ref ItemSourceControlStatus));
+            return NewTVItemHeaderStyle(mVariableBase);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -70,7 +73,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mVariableEditPage == null)
             {
-                mVariableEditPage = new VariableEditPage(VariableBase);
+                mVariableEditPage = new VariableEditPage(mVariableBase);
             }
             return mVariableEditPage;
         }
@@ -88,27 +91,27 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
 
-                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, "@Link_16x16.png");
+                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
 
                 AddSourceControlOptions(mContextMenu);
             }
             else
             {
-                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, "@Link_16x16.png");
+                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
             }
         }
 
         private void ShowUsage(object sender, RoutedEventArgs e)
         {
-            RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage(VariableBase);
+            RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage(mVariableBase);
             usagePage.ShowAsWindow();
         }
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            if (LocalRepository.CheckIfSureDoingChange(VariableBase, "delete") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mVariableBase, "delete") == true)
             {
-                return (base.DeleteTreeItem(VariableBase, deleteWithoutAsking, refreshTreeAfterDelete));                
+                return (base.DeleteTreeItem(mVariableBase, deleteWithoutAsking, refreshTreeAfterDelete));                
             }
             return false;
         }       

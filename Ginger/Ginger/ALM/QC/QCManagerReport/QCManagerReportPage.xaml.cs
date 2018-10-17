@@ -31,6 +31,7 @@ using GingerCore.Activities;
 using System.Reflection;
 using GingerCore.ALM.QC;
 using GingerCoreNET.GeneralLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM.QC
 {
@@ -219,10 +220,12 @@ namespace Ginger.ALM.QC
 
                         //check if the TC is already exist in repository
                         ActivitiesGroup repoActivsGroup = null;
+
+                        ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
                         if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
-                            repoActivsGroup = App.LocalRepository.GetSolutionRepoActivitiesGroups().Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
+                            repoActivsGroup = activitiesGroup.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
                         if (repoActivsGroup == null)
-                            repoActivsGroup = App.LocalRepository.GetSolutionRepoActivitiesGroups().Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
+                            repoActivsGroup = activitiesGroup.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
                         if (repoActivsGroup != null)
                         {
                             testCaseDetails.ActivitiesGroupID = repoActivsGroup.Guid;
@@ -230,7 +233,8 @@ namespace Ginger.ALM.QC
                             //check for automation precentage
                             foreach (QCTSTestStep step in tc.Steps)
                             {
-                                Activity repoStepActivity = App.LocalRepository.GetSolutionRepoActivities().Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                                Activity repoStepActivity = activities.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
                                 if (repoStepActivity != null)
                                     if (repoStepActivity.AutomationStatus == Activity.eActivityAutomationStatus.Automated)
                                         automatedStepsCouter++;
@@ -312,7 +316,7 @@ namespace Ginger.ALM.QC
                 catch (Exception ex)
                 {
                     testCaseDetails.LastExecutionTime = (filteredRuns[0].ExecutionDate);
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 }
                 testCaseDetails.LastExecutionStatus = filteredRuns[0].Status;
             }

@@ -34,6 +34,7 @@ namespace Ginger.Actions
             mAct = act;
             TextFileNameTextBox.Init(mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextFilePath));
             TextToWrite.Init(mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextToWrite));
+            LineNumber.Init(mAct.GetOrCreateInputParam(ActReadTextFile.Fields.AppendLineNumber));
 
             mAct.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
 
@@ -42,6 +43,9 @@ namespace Ginger.Actions
 
             App.FillComboFromEnumVal (TextFileEncoding, mAct.TextFileEncoding);
             App.ObjFieldBinding (TextFileEncoding, ComboBox.SelectedValueProperty, mAct, "TextFileEncoding");
+
+            App.FillComboFromEnumVal(TextFileAppendType, mAct.AppendAt);
+            App.ObjFieldBinding(TextFileAppendType, ComboBox.SelectedValueProperty, mAct, "AppendAt");
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -69,6 +73,26 @@ namespace Ginger.Actions
             else
             {
                 PanelToWrite.Visibility = Visibility.Collapsed;
+            }
+            if ((ActReadTextFile.eTextFileActionMode)FileActionMode.SelectedValue == ActReadTextFile.eTextFileActionMode.Append)
+            {
+                PanelAppendAt.Visibility = Visibility.Visible;                
+            }
+            else
+            {
+                PanelAppendAt.Visibility = Visibility.Collapsed;                
+            }
+        }
+
+        private void TextFileAppendType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if ((ActReadTextFile.eAppendAt)TextFileAppendType.SelectedValue == ActReadTextFile.eAppendAt.SpecificLine)
+            {                
+                PanelAppendLine.Visibility = Visibility.Visible;
+            }
+            else
+            {                
+                PanelAppendLine.Visibility = Visibility.Collapsed;
             }
         }
     }

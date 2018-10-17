@@ -30,6 +30,7 @@ using System.Reflection;
 using Amdocs.Ginger.Repository;
 using GingerCore.ALM.QC;
 using GingerCore.ALM.QCRestAPI;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM
 {
@@ -166,7 +167,7 @@ namespace Ginger.ALM
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error connecting to ALM project", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error connecting to ALM project", e);
                 if (almConectStyle == eALMConnectType.Manual)
                     Reporter.ToUser(eUserMsgKeys.ALMLoginFailed, e.Message);
                 else if (almConectStyle == eALMConnectType.Auto)
@@ -194,7 +195,7 @@ namespace Ginger.ALM
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error disconnecting from ALM", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error disconnecting from ALM", e);
                 if (almConectStyle == eALMConnectType.Manual)
                     Reporter.ToUser(eUserMsgKeys.ALMOperationFailed, "disconnect server", e.Message);
             }
@@ -247,7 +248,7 @@ namespace Ginger.ALM
                         {
                             if (BizFlow.ExternalID != "0" && !String.IsNullOrEmpty(BizFlow.ExternalID))
                             {
-                                Reporter.ToLog(eLogLevel.INFO, "Executing RunSet Action Publish to ALM for Business flow: " + BizFlow.Name);
+                                Reporter.ToLog(eAppReporterLogLevel.INFO, "Executing RunSet Action Publish to ALM for Business flow: " + BizFlow.Name);
                                 Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
 
                                 if (publishToALMConfig.ToAttachActivitiesGroupReport)
@@ -272,14 +273,14 @@ namespace Ginger.ALM
                             {
                                 BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
                                 result += GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + BizFlow.Name + " - dosen't have ExternalID, cannot execute publish to ALM RunSet Action" + Environment.NewLine;
-                                Reporter.ToLog(eLogLevel.INFO, BizFlow.Name + " - dosen't have ExternalID, cannot execute publish to ALM RunSet Action");                               
+                                Reporter.ToLog(eAppReporterLogLevel.INFO, BizFlow.Name + " - dosen't have ExternalID, cannot execute publish to ALM RunSet Action");                               
                             }
                         }
                         catch (Exception ex)
                         {
                             result = ex.Message.ToString();
                             BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
-                            Reporter.ToLog(eLogLevel.ERROR, BizFlow.Name + " - Export results to ALM failed due to exception", ex);
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, BizFlow.Name + " - Export results to ALM failed due to exception", ex);
                         }
                     }
 
@@ -295,7 +296,7 @@ namespace Ginger.ALM
                 if (exectutedFromAutomateTab)
                 {
                     result += "Execution results were not published, Failed to connect to ALM";
-                    Reporter.ToLog(eLogLevel.WARN, "Execution results were not published, Failed to connect to ALM");
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Execution results were not published, Failed to connect to ALM");
                 }
                 else
                 {
@@ -304,7 +305,7 @@ namespace Ginger.ALM
                         BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
                     }
                     result += "Didn't execute " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " action 'Publish to ALM', Failed to connect to ALM";
-                    Reporter.ToLog(eLogLevel.WARN, "Didn't execute " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " action Publish to ALM, Failed to connect to ALM");
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Didn't execute " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " action Publish to ALM, Failed to connect to ALM");
                 }
                 return false;
             }
@@ -313,10 +314,10 @@ namespace Ginger.ALM
         public void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Reporter.ToLog(eLogLevel.INFO, ("Update selected Activities Groups of business flow: " + businessFlow.Name + " from ALM"));
+            Reporter.ToLog(eAppReporterLogLevel.INFO, ("Update selected Activities Groups of business flow: " + businessFlow.Name + " from ALM"));
 
-            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = App.LocalRepository.GetSolutionRepoActivities(false);
+            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
@@ -329,10 +330,10 @@ namespace Ginger.ALM
         public void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Reporter.ToLog(eLogLevel.INFO, ("Update business flow: " + businessFlow.Name + " from ALM"));
+            Reporter.ToLog(eAppReporterLogLevel.INFO, ("Update business flow: " + businessFlow.Name + " from ALM"));
 
-            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = App.LocalRepository.GetSolutionRepoActivities(false);
+            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
@@ -345,7 +346,7 @@ namespace Ginger.ALM
         public void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Reporter.ToLog(eLogLevel.INFO, ("Exporting Activity Groups of business flow: " + businessFlow.Name + " to ALM"));
+            Reporter.ToLog(eAppReporterLogLevel.INFO, ("Exporting Activity Groups of business flow: " + businessFlow.Name + " to ALM"));
             ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
@@ -405,7 +406,7 @@ namespace Ginger.ALM
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-            Reporter.ToLog(eLogLevel.INFO, ("Exporting business flow: " + businessFlow.Name + " to ALM"));
+            Reporter.ToLog(eAppReporterLogLevel.INFO, ("Exporting business flow: " + businessFlow.Name + " to ALM"));
             //Passing Solution Folder path to GingerCore
             ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
 
@@ -434,10 +435,10 @@ namespace Ginger.ALM
             return null;
         }
 
-        public void ImportALMTests(string importDestinationFolderPath = "")
+        public void ImportALMTests(string importDestinationFolderPath = null)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Reporter.ToLog(eLogLevel.INFO, "Importing Business flow from ALM");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Importing Business flow from ALM");
             if (AutoALMProjectConnect(eALMConnectType.Auto, true, true))
             {
                 ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
@@ -449,7 +450,7 @@ namespace Ginger.ALM
 
         public void ImportALMTestsById(string importDestinationFolderPath = "")
         {
-            Reporter.ToLog(eLogLevel.INFO, "Importing Business flow from ALM By Id");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Importing Business flow from ALM By Id");
             if (AutoALMProjectConnect(eALMConnectType.Auto, true, true))
             {
                 ALMCore.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
@@ -461,7 +462,7 @@ namespace Ginger.ALM
         public void RefreshAllGroupsFromALM(BusinessFlow businessFlow)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Reporter.ToLog(eLogLevel.INFO, "Refreshing All Activities Groups From ALM");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Refreshing All Activities Groups From ALM");
             ALMIntegration.Instance.UpdateBusinessFlow(ref businessFlow);
             Mouse.OverrideCursor = null;
         }
@@ -553,7 +554,7 @@ namespace Ginger.ALM
             while (!isConnected && retryConnect < 2)
             {
                 try { isConnected = ConnectALMProject(); }
-                catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}"); }
+                catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}"); }
                 retryConnect++;
             }
             if (!isConnected && almConnectStyle != eALMConnectType.Silence)
@@ -562,7 +563,7 @@ namespace Ginger.ALM
                     ALMConnectionPage almConnPage = new ALMConnectionPage(almConnectStyle, asConnWin);
                     almConnPage.ShowAsWindow();
                     try { isConnected = ConnectALMProject(); }
-                    catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}"); }
+                    catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}"); }
                 }
 
             return isConnected;
