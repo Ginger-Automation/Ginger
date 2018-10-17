@@ -89,20 +89,11 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public eScriptInterpreterType ScriptInterpreterType { get; set; }
 
-        public static string mScriptNname;
+        
         [IsSerializedForLocalRepository]
         public string ScriptName
         {
             get; set;
-            //get
-            //{
-            //    return mScriptNname;
-            //}
-            //set
-            //{
-            //    mScriptNname = value;
-            //    OnPropertyChanged(Fields.ScriptName);
-            //}
         }
 
 
@@ -167,13 +158,13 @@ namespace GingerCore.Actions
 
             switch (ScriptInterpreterType)
             {
-                case eScriptInterpreterType.JS:
                 case eScriptInterpreterType.BAT:
                     if (File.Exists(GetSystemDirectory() + @"\cmd.exe"))
                         p.StartInfo.FileName = GetSystemDirectory() + @"\cmd.exe";
                     else
                         p.StartInfo.FileName = @"cmd";
                     break;
+                case eScriptInterpreterType.JS:
                 case eScriptInterpreterType.VBS:
                    if(File.Exists(GetSystemDirectory()+@"\cscript.exe"))
                        p.StartInfo.FileName = GetSystemDirectory() + @"\cscript.exe";

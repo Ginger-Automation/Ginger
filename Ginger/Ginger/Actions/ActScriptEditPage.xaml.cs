@@ -65,6 +65,8 @@ namespace Ginger.Actions
 
                 case ActScript.eScriptAct.Script:
                     ScriptStackPanel.Visibility = System.Windows.Visibility.Visible;
+                    f.RemoveAllButOneInputParam("Value");
+                    f.AddInputValueParam("Value");
                     FillScriptNameCombo();
                     break;
             }
