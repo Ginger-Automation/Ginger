@@ -883,7 +883,10 @@ namespace Ginger
                     });
                     while (analyzerPage.IsAnalyzeDone == false)
                     {
-                        System.Threading.Thread.Sleep(100);
+                        await Task.Run(() =>
+                        {
+                            System.Threading.Thread.Sleep(100);
+                        });
                     }
                     Reporter.CloseGingerHelper();
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)

@@ -139,38 +139,49 @@ namespace Ginger.AnalyzerLib
             Analyze();
         }
 
-        private void Analyze()
+        private async void Analyze()
         {
-            // Each anlyzer will set to true once completed, this is prep for multi run in threads for speed
-            BusyInProcess = true;
-            mAnalyzerCompleted = false;
-            mAnalyzeDoneOnce = true;
-            try
+          // Running it on another task to release UI while processing
+            await Task.Run(() =>
             {
-                if (mAnalyzeWithUI)
+                // Each anlyzer will set to true once completed, this is prep for multi run in threads for speed
+                BusyInProcess = true;
+                mAnalyzerCompleted = false;
+                mAnalyzeDoneOnce = true;
+                try
                 {
-                    SetStatus("Analyzing Started");
-                    StatusLabel.Visibility = Visibility.Visible;
-                }
-                switch (mAnalyzedObject)
-                {
-                    case AnalyzedObject.Solution:
-                        RunSolutionAnalyzer();
-                        break;
-                    case AnalyzedObject.BusinessFlow:
+                    StatusLabel.Dispatcher.Invoke(
+                  System.Windows.Threading.DispatcherPriority.Normal,
+                      new Action(
+                          delegate ()
+                          {
+                              if (mAnalyzeWithUI)
+                              {
+                                  SetStatus("Analyzing Started");
+                                  StatusLabel.Visibility = Visibility.Visible;
+                              }
+                          }
+                            ));
+                    switch (mAnalyzedObject)
+                    {
+                        case AnalyzedObject.Solution:
+                            RunSolutionAnalyzer();
+                            break;
+                        case AnalyzedObject.BusinessFlow:
                             RunBusinessFlowAnalyzer(businessFlow, true);
-                      
-                        break;
-                    case AnalyzedObject.RunSetConfig:
-                        RunRunSetConfigAnalyzer(mRunSetConfig);
-                        break;
+
+                            break;
+                        case AnalyzedObject.RunSetConfig:
+                            RunRunSetConfigAnalyzer(mRunSetConfig);
+                            break;
+                    }
                 }
-            }
-            finally
-            {
-                BusyInProcess = false;
-                mAnalyzerCompleted = true;
-            }
+                finally
+                {
+                    BusyInProcess = false;
+                    mAnalyzerCompleted = true;
+                }
+            });
         }
 
         private void SetAnalayzeProceesAsCompleted()
