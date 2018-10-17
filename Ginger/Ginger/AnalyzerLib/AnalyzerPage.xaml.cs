@@ -141,7 +141,19 @@ namespace Ginger.AnalyzerLib
 
         private async void Analyze()
         {
-          // Running it on another task to release UI while processing
+            try
+            {
+                if (mAnalyzeWithUI)
+                {
+                    SetStatus("Analyzing Started");
+                    StatusLabel.Visibility = Visibility.Visible;
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured :", ex);
+            }
+            // Running it on another task to release UI while processing
             await Task.Run(() =>
             {
                 // Each anlyzer will set to true once completed, this is prep for multi run in threads for speed
@@ -150,18 +162,6 @@ namespace Ginger.AnalyzerLib
                 mAnalyzeDoneOnce = true;
                 try
                 {
-                    StatusLabel.Dispatcher.Invoke(
-                  System.Windows.Threading.DispatcherPriority.Normal,
-                      new Action(
-                          delegate ()
-                          {
-                              if (mAnalyzeWithUI)
-                              {
-                                  SetStatus("Analyzing Started");
-                                  StatusLabel.Visibility = Visibility.Visible;
-                              }
-                          }
-                            ));
                     switch (mAnalyzedObject)
                     {
                         case AnalyzedObject.Solution:
