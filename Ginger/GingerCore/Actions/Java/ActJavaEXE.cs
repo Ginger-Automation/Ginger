@@ -28,6 +28,7 @@ using GingerCore.Properties;
 using GingerCore.Repository;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Actions.Java
 {
@@ -179,7 +180,7 @@ namespace GingerCore.Actions.Java
                     process.StartInfo.WorkingDirectory = ScriptPath;
             }
             else
-                process.StartInfo.WorkingDirectory = SolutionFolder + @"Documents\Java\";
+                process.StartInfo.WorkingDirectory = System.IO.Path.Combine(SolutionFolder, @"Documents\Java\");
             try
             {
                 process.StartInfo.Arguments = "-jar " + ScriptName + " " + parms;
@@ -201,7 +202,7 @@ namespace GingerCore.Actions.Java
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
                 this.Error = "Failed to execute the script. Details: " + e.Message;
 
                 return DataBuffer + "\n" + ErrorBuffer;

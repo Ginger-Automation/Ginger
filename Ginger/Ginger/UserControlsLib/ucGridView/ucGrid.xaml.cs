@@ -108,7 +108,7 @@ namespace Ginger
                             grdMain.CommitEdit();
                             grdMain.CancelEdit();
                             mCollectionView.Filter = FilterGridRows;
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                         }
                     }
                     this.Dispatcher.Invoke(() =>
@@ -129,7 +129,7 @@ namespace Ginger
                 catch (InvalidOperationException ioe)
                 {
                     //Think this happen I tried to rename an activity I'd just added.
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set ucGrid.DataSourceList", ioe);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to set ucGrid.DataSourceList", ioe);
                 }
                 if (mObjList != null)
                 {
@@ -200,6 +200,7 @@ namespace Ginger
         public static ObservableList<RepositoryItemBase> mCopiedorCutItems = new ObservableList<RepositoryItemBase>();
         public static IObservableList mCutSourceList = null;
 
+
         /// <summary>
         ///  Function to return grid object/columns values as one long string + toUpper
         ///  Used for Search in Grid 
@@ -232,7 +233,7 @@ namespace Ginger
                                 sb.Append(PI.GetValue(obj).ToString()).Append("~");
                             }
                         }
-                        catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
                     }
                 }
             }
@@ -250,7 +251,7 @@ namespace Ginger
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 }
             }
             return sb.ToString().ToUpper();
@@ -286,6 +287,19 @@ namespace Ginger
             }
             return sb.ToString().ToUpper();
         }
+
+        public event PasteItemEventHandler PasteItemEvent;
+        public delegate void PasteItemEventHandler(PasteItemEventArgs EventArgs);
+
+        public void OnPasteItemEvent(PasteItemEventArgs.eEventType evType, RepositoryItemBase repositoryItemBaseObj)
+        {
+            PasteItemEventHandler handler = PasteItemEvent;
+            if (handler != null)
+            {
+                handler(new PasteItemEventArgs(evType, repositoryItemBaseObj));
+            }
+        }
+
 
         public ucGrid()
         {
@@ -713,6 +727,8 @@ namespace Ginger
         {
             CutItems();
         }
+
+        
         private void btnPaste_Click(object sender, RoutedEventArgs e)
         {
             PasteItems();
@@ -1798,7 +1814,7 @@ public void RemoveCustomView(string viewName)
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
 
@@ -1814,7 +1830,7 @@ public void RemoveCustomView(string viewName)
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
 
@@ -1857,6 +1873,8 @@ public void RemoveCustomView(string viewName)
                         RepositoryItemBase copiedItem = item.CreateCopy();
                         //set unique name
                         SetItemUniqueName(copiedItem, "_Copy");
+                        //Triger event for changing sub classes fields
+                        OnPasteItemEvent(PasteItemEventArgs.eEventType.PasteCopiedItem, copiedItem);
                         //add                        
                         AddItemAfterCurrent(copiedItem);
                     }
@@ -2086,6 +2104,24 @@ public void RemoveCustomView(string viewName)
                 Grid.BorderBrush = FindResource("@Skin1_ColorA") as Brush;
 
             return validationRes;
+        }
+    }
+
+    public class PasteItemEventArgs
+    {
+        public enum eEventType
+        {
+            PasteCopiedItem,
+            PasteCutedItem,
+        }
+
+        public eEventType EventType;
+        public RepositoryItemBase RepositoryItemBaseObject;
+
+        public PasteItemEventArgs(eEventType eventType, RepositoryItemBase repositoryItemBaseObjectObject)
+        {
+            this.EventType = eventType;
+            this.RepositoryItemBaseObject = repositoryItemBaseObjectObject;
         }
     }
 }

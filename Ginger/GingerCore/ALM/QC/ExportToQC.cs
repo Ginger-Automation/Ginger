@@ -228,7 +228,7 @@ namespace GingerCore.ALM.QC
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- "+ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
                 //if (!silentMode)
                 //    Reporter.ToUser(eUserMsgKeys.ErrorWhileExportingExecDetails, ex.Message);
                 return false;
@@ -317,7 +317,7 @@ namespace GingerCore.ALM.QC
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
                 return false;
             }
         }
@@ -368,7 +368,7 @@ namespace GingerCore.ALM.QC
                         testParams.Save();
                         test.Post();
                     }
-                    catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
                 }
             }
             description = description.Replace("<<&Parameters&>>", paramsSigns);
@@ -453,7 +453,7 @@ namespace GingerCore.ALM.QC
                     if (ex.Message.Contains("The Test Set already exists"))
                     {
                         result = "Cannot export Business Flow - The Test Set already exists in the selected folder. ";
-                        Reporter.ToLog(eLogLevel.ERROR, result, ex);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, result, ex);
                         return false;
                     }
 
@@ -470,7 +470,7 @@ namespace GingerCore.ALM.QC
                     catch(Exception e)
                     {
                         tsFilter["CY_FOLDER_ID"] = "\"" + testSetParentFolder.Path.ToString() + "\"";
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
                     }
 
                     List TestsetList = TSetFact.NewList(tsFilter.Text);
@@ -504,7 +504,7 @@ namespace GingerCore.ALM.QC
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
                 return false;
             }
         }
@@ -577,7 +577,7 @@ namespace GingerCore.ALM.QC
             catch (Exception ex)
             {
                 //String Text = "Defect Creation Failed.";
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return 0;
             }
         }

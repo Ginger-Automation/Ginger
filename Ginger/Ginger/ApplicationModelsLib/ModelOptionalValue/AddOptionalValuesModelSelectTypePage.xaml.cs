@@ -207,7 +207,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 }
             }
             else
@@ -243,9 +243,21 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xSheetLable.Visibility = Visibility.Visible;
                 xDBStackPanel.Visibility = Visibility.Collapsed;
                 xImportOptionalValuesGrid.Visibility = Visibility.Collapsed;
+
+                xPathTextBox.BindControl(this, nameof(Path));
+                xPathTextBox.RemoveValidations(TextBox.TextProperty);
+                xPathTextBox.AddValidationRule(new EmptyValidationRule());
+
+                xSheetNameComboBox.BindControl(this, nameof(SheetName));
+                xSheetNameComboBox.RemoveValidations(ComboBox.TextProperty);
+                xSheetNameComboBox.AddValidationRule(new EmptyValidationRule());
+                xPathTextBox.Focus();
             }
             else if (FileType == eSourceType.XML.ToString() || FileType == eSourceType.Json.ToString())
             {
+                xPathTextBox.RemoveValidations(TextBox.TextProperty);
+                xSheetNameComboBox.RemoveValidations(ComboBox.TextProperty);
+
                 xExcelFileStackPanel.Visibility = Visibility.Collapsed;
                 xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
                 xExcelViewDataButton.Visibility = Visibility.Collapsed;
@@ -260,6 +272,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             else if (FileType == eSourceType.DB.ToString())
             {
+                xPathTextBox.RemoveValidations(TextBox.TextProperty);
+                xSheetNameComboBox.RemoveValidations(ComboBox.TextProperty);
+
                 xExcelFileStackPanel.Visibility = Visibility.Collapsed;
                 xExcelDataGridDockPanel.Visibility = Visibility.Collapsed;
                 xExcelViewDataButton.Visibility = Visibility.Collapsed;

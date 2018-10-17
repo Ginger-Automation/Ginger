@@ -270,13 +270,6 @@ namespace Ginger
             }
         }
 
-        public static List<Page> PageList { get; set; }
-
-        public static Page GetPage(Type PageType)
-        {
-            Page p = (from p1 in PageList where p1.GetType() == PageType select p1).FirstOrDefault();
-            return p;
-        }
 
         //public static string LocalApplicationData
         //{
@@ -345,6 +338,8 @@ namespace Ginger
 
         public static void InitApp()
         {
+            AppReporter.ReportEvent += Reporter.AppReporter_ReportEvent;
+
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
@@ -361,7 +356,7 @@ namespace Ginger
                 {
                     // This Ginger is running with run set config will do the run and close Ginger
                     RunningFromConfigFile = true;
-                    Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
+                    Reporter.CurrentAppLogLevel = eAppReporterLoggingLevel.Debug;
                     Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)               
                 }
             }
@@ -382,7 +377,7 @@ namespace Ginger
                 WorkSpace.Instance.BetaFeatures.DisplayStatus();
             }
 
-            Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + App.AppVersion + " Started ! ########################");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "######################## Application version " + App.AppVersion + " Started ! ########################");
            
             AppSplashWindow.LoadingInfo("Init Application");
 
@@ -392,35 +387,35 @@ namespace Ginger
             // TODO: need to add a switch what we get from old ginger based on magic key
 
             phase = "Loading User Profile";
-            Reporter.ToLog(eLogLevel.INFO, phase);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, phase);
             AppSplashWindow.LoadingInfo(phase);
             App.UserProfile = UserProfile.LoadUserProfile();
 
             phase = "Configuring User Type";
-            Reporter.ToLogAndConsole(eLogLevel.INFO, phase);
+            Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, phase);
             AppSplashWindow.LoadingInfo(phase);
             UserProfile.LoadUserTypeHelper();
 
             phase = "Loading User Selected Resource Dictionaries";
-            Reporter.ToLog(eLogLevel.INFO, phase);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, phase);
             AppSplashWindow.LoadingInfo(phase);
             if (App.UserProfile != null)
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, App.UserProfile.TerminologyDictionaryType);
             else
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, Amdocs.Ginger.Core.eTerminologyDicsType.Default);
 
-            Reporter.ToLog(eLogLevel.INFO, "Loading user messages pool");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Loading user messages pool");
             UserMessagesPool.LoadUserMessgaesPool();
             GingerHelperMsgsPool.LoadGingerHelperMsgsPool();
 
-            Reporter.ToLog(eLogLevel.INFO, "Init the Centralized Auto Log");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Init the Centralized Auto Log");
             AutoLogProxy.Init(App.AppVersion);
 
-            Reporter.ToLog(eLogLevel.INFO, "Initializing the Source control");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Initializing the Source control");
             AppSplashWindow.LoadingInfo(phase);
 
             phase = "Loading the Main Window";
-            Reporter.ToLog(eLogLevel.INFO, phase);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, phase);
             AppSplashWindow.LoadingInfo(phase);
             MainWindow = new Ginger.MainWindow();
             MainWindow.Show();
@@ -433,7 +428,7 @@ namespace Ginger
             }
 
             phase = "Application was loaded and ready";
-            Reporter.ToLog(eLogLevel.INFO, phase);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, phase);
             AppSplashWindow.LoadingInfo("Ready!");
             App.AppSplashWindow = null;
             
@@ -464,7 +459,7 @@ namespace Ginger
                     return;
                 }
             }
-            Reporter.ToLog(eLogLevel.FATAL, ">>>>>>>>>>>>>> Error occured on stand alone thread(non UI) - " + e.ExceptionObject.ToString());            
+            Reporter.ToLog(eAppReporterLogLevel.FATAL, ">>>>>>>>>>>>>> Error occured on stand alone thread(non UI) - " + e.ExceptionObject.ToString());            
             Reporter.ToUser(eUserMsgKeys.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
             App.AppSolutionAutoSave.DoAutoSave();
 
@@ -542,28 +537,28 @@ namespace Ginger
         private static async void HandleAutoRunMode()
         {
             string phase = "Running in Automatic Execution Mode";
-            Reporter.ToLog(eLogLevel.INFO, phase);
-            Reporter.CurrentAppLogLevel = eAppLogLevel.Debug;
+            Reporter.ToLog(eAppReporterLogLevel.INFO, phase);
+            Reporter.CurrentAppLogLevel = eAppReporterLoggingLevel.Debug;
             Reporter.SetRunConfigMode(true);
             AutoLogProxy.LogAppOpened();
             AppSplashWindow.LoadingInfo(phase);
 
             var result = await App.RunsetExecutor.RunRunSetFromCommandLine();
 
-            Reporter.ToLog(eLogLevel.INFO, "Closing Ginger automatically...");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Closing Ginger automatically...");
             App.MainWindow.CloseWithoutAsking();
             //TODO: find a way not to open Main window at all
-            Reporter.ToLog(eLogLevel.INFO, "Ginger UI Closed.");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Ginger UI Closed.");
 
             //setting the exit code based on execution status
             if (result == 0)
             {
-                Reporter.ToLog(eLogLevel.INFO, ">> Run Set executed and passed, exit code: 0");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, ">> Run Set executed and passed, exit code: 0");
                 Environment.ExitCode = 0;//success                    
             }
             else
             {
-                Reporter.ToLog(eLogLevel.INFO, ">> No indication found for successfull execution, exit code: 1");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, ">> No indication found for successfull execution, exit code: 1");
                 Environment.ExitCode = 1;//failure
             }
 
@@ -659,8 +654,8 @@ namespace Ginger
         {
             //clear existing solution data
             try
-            {                
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
+            {
+                Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
                 mLoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
 
@@ -678,7 +673,7 @@ namespace Ginger
                 WorkSpace.Instance.SourceControl = null;
 
                 if (!SolutionFolder.EndsWith(@"\")) SolutionFolder += @"\";
-                string SolFile = SolutionFolder + @"Ginger.Solution.xml";
+                string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
                 if (File.Exists(PathHelper.GetLongPath(SolFile)))
                 {
                     //get Solution files
@@ -687,7 +682,7 @@ namespace Ginger
                     //check if Ginger Upgrade is needed for loading this Solution
                     try
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Checking if Ginger upgrade is needed for loading the Solution");
+                        Reporter.ToLog(eAppReporterLogLevel.INFO, "Checking if Ginger upgrade is needed for loading the Solution");
                         ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFiles, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
                         if (higherVersionFiles.Count > 0)
                         {
@@ -696,13 +691,13 @@ namespace Ginger
                                 UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
                                 gingerUpgradePage.ShowAsWindow();
                             }
-                            Reporter.ToLog(eLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
+                            Reporter.ToLog(eAppReporterLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
                             return false;
                         }
                     }
                     catch(Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking if Solution requires Ginger Upgrade", ex);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while checking if Solution requires Ginger Upgrade", ex);
                     }
 
                     Solution sol = Solution.LoadSolution(SolFile);
@@ -723,10 +718,12 @@ namespace Ginger
                         App.UserProfile.LoadRecentAppAgentMapping();
                         AutoLogProxy.SetAccount(sol.Account);
 
-                        LoadRecentBusinessFlow();
+                        SetDefaultBusinessFlow();
 
                         if (!App.RunningFromConfigFile)
+                        {
                             DoSolutionAutoSaveAndRecover();
+                        }
 
                         //Offer to upgrade Solution items to current version
                         try
@@ -743,7 +740,7 @@ namespace Ginger
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking if Solution files should be Upgraded", ex);
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while checking if Solution files should be Upgraded", ex);
                         }
 
                         App.UserProfile.AddSolutionToRecent(sol);
@@ -765,14 +762,14 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while loading the solution", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while loading the solution", ex);
                 throw ex;
             }
             finally
             {
                 mLoadingSolution = false;
                 OnPropertyChanged(nameof(LoadingSolution));
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", SolutionFolder));
+                Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", SolutionFolder));
             }
         }
 
@@ -898,80 +895,7 @@ namespace Ginger
             //mRootFolders.Add(new RepositoryFolder(this, "*", @"~\Documents";, false, "Documents"));
 
             return SR;
-        }
-        
-        private static void LoadRecentBusinessFlow()
-        {
-            try
-            {
-                if (App.UserProfile.Solution == null) return;
-                ObservableList<BusinessFlow> allBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-
-                if (App.UserProfile.RecentBusinessFlow != null &&
-                            App.UserProfile.RecentBusinessFlow != Guid.Empty)
-                {
-                    BusinessFlow recentBizFlow = allBizFlows.Where(biz => biz.Guid == App.UserProfile.RecentBusinessFlow).FirstOrDefault();
-                    if (recentBizFlow != null)
-                    {
-                        recentBizFlow.SaveBackup();
-                        App.BusinessFlow = recentBizFlow;
-                        return;
-                    }
-                }
-
-                if (allBizFlows.Count > 0)
-                {
-                    allBizFlows[0].SaveBackup();
-                    App.BusinessFlow = allBizFlows[0];
-                    return;
-                }
-
-                //load new Business Flow as default
-                App.BusinessFlow = LoadDefaultBusinessFlow();
-
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the recent " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " used", ex);
-                LoadDefaultBusinessFlow();
-            }
-        }
-
-        //public static void UpdateEnvironmentsCombo(ComboBox envsCombo)
-        //{
-        //    envsCombo.ItemsSource = null;
-
-        //    if (UserProfile.Solution != null)
-        //    {
-        //        envsCombo.ItemsSource = App.LocalRepository.GetSolutionEnvironments();
-        //        envsCombo.DisplayMemberPath = ProjEnvironment.Fields.Name;
-        //        envsCombo.SelectedValuePath = RepositoryItem.Fields.Guid;
-
-        //        //select last used environment
-        //        if (envsCombo.Items != null && envsCombo.Items.Count > 0)
-        //        {
-        //            if (envsCombo.Items.Count > 1 && App.UserProfile.RecentEnvironment != null && App.UserProfile.RecentEnvironment != Guid.Empty)
-        //            {
-        //                foreach (object env in envsCombo.Items)
-        //                {
-        //                    if (((ProjEnvironment)env).Guid == App.UserProfile.RecentEnvironment)
-        //                    {
-        //                        envsCombo.SelectedIndex = envsCombo.Items.IndexOf(env);
-        //                        return;
-        //                    }
-        //                }
-        //            }
-
-        //            //defualt selection
-        //            envsCombo.SelectedIndex = 0;
-        //        }
-        //    }
-        //    if (envsCombo.Items.Count == 0)
-        //    {
-        //        LoadDefaultENV();
-        //        UpdateEnvironmentsCombo(envsCombo);
-        //    }
-        //}
+        }               
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
@@ -984,7 +908,7 @@ namespace Ginger
             }
 
             //log it
-            Reporter.ToLog(eLogLevel.ERROR, ex.ToString(), ex);
+            Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.ToString(), ex);
 
             //add to dictenery to make sure same excption won't show more than 3 times
             if (_exceptionsDic.ContainsKey(ex.Message))
@@ -1001,11 +925,24 @@ namespace Ginger
             e.Handled = true;
         }
 
-        public static BusinessFlow LoadDefaultBusinessFlow()
+        public static BusinessFlow SetDefaultBusinessFlow()
         {
-            BusinessFlow biz = CreateNewBizFlow(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " 1");
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(biz);
-            return biz;
+            BusinessFlow defualtBF;
+
+            ObservableList<BusinessFlow> allBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            if (allBizFlows.Count > 0)
+            {
+                defualtBF = allBizFlows[0];
+            }
+            else
+            {
+                defualtBF = CreateNewBizFlow(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " 1");
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(defualtBF);
+            }
+
+            defualtBF.SaveBackup();
+            App.BusinessFlow = defualtBF;
+            return defualtBF;
         }
 
         public static BusinessFlow CreateNewBizFlow(string Name)
@@ -1122,12 +1059,6 @@ namespace Ginger
 
         private static void BetaFeatureChanged(object sender, PropertyChangedEventArgs e)
         {
-        }
-
-        internal static void ErrorLogged(int errorsCounter)
-        {
-            MainWindow.ErrorsLabel.Visibility = Visibility.Visible;
-            MainWindow.ErrorsLabel.Content = "Errors (" + errorsCounter + ")";
         }
 
         public Dispatcher GetMainWindowDispatcher()

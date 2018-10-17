@@ -348,7 +348,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to updated the Model Global Param name change for the property '{0}' in the item '{1}'", mi.Name, item.ToString()), ex);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to updated the Model Global Param name change for the property '{0}' in the item '{1}'", mi.Name, item.ToString()), ex);
                 }
             }
         }

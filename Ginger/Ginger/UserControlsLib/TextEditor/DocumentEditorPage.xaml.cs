@@ -59,9 +59,9 @@ namespace Ginger.UserControlsLib.TextEditor
                     UCTextEditor UCTE = new UCTextEditor();                    
                     UCTE.Init(FileName, TE, enableEdit, RemoveToolBar);
                     if (UCTextEditorTitle != null)
-                       UCTE.ContentEditorTitleLabel.Content = UCTextEditorTitle;
+                       UCTE.SetContentEditorTitleLabel(UCTextEditorTitle);
                     else if (!string.IsNullOrEmpty(TE.Title()))
-                        UCTE.ContentEditorTitleLabel.Content = TE.Title();
+                        UCTE.SetContentEditorTitleLabel(TE.Title());
                     EditorFrame.Content = UCTE;
                 }
             }
@@ -76,7 +76,7 @@ namespace Ginger.UserControlsLib.TextEditor
                     TE = AD;                    
                     UCTE.Init(FileName, TE, enableEdit, RemoveToolBar, EnableWrite:true);
                     if (UCTextEditorTitle != null)
-                        UCTE.ContentEditorTitleLabel.Content = UCTextEditorTitle;
+                        UCTE.SetContentEditorTitleLabel(UCTextEditorTitle);
                     EditorFrame.Content = UCTE;
                 }
                 else

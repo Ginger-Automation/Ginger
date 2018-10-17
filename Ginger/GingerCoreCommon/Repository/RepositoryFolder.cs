@@ -237,9 +237,9 @@ namespace Amdocs.Ginger.Repository
 
             if (FullPath == null || !Directory.Exists(PathHelper.GetLongPath(FullPath)))
             {
-                throw new Exception("LoadFolderFiles: Invalid folder - " + Folder);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "RepositoryFolder/LoadFolderFiles- Invalid folder: " + Folder);
+                return null;                
             }
-
 
             // TODO: move from here to better place                
             string ContainingFolder = Folder.Replace(SolutionRepository.SolutionFolder, SolutionRepository.cSolutionRootFolderSign); 
@@ -248,17 +248,23 @@ namespace Amdocs.Ginger.Repository
 
             string[] fileEntries = FileSystem.GetDirectoryFiles(FullPath, mSolutionRepositoryItemInfo.Pattern);
 
-
             Parallel.ForEach(fileEntries, FileName =>
             {
-                // Check if item exist in cache if yes use it, no need to load from file, yay!
-                T item = (T)mFolderItemsCache[FileName];
-                if (item == null)
+                try
                 {
-                    item = LoadItemfromFile<T>(FileName, ContainingFolder);
-                    AddItemtoCache(FileName, item);
+                    // Check if item exist in cache if yes use it, no need to load from file, yay!
+                    T item = (T)mFolderItemsCache[FileName];
+                    if (item == null)
+                    {
+                        item = LoadItemfromFile<T>(FileName, ContainingFolder);
+                        AddItemtoCache(FileName, item);
+                    }
+                    list.Add(item);
                 }
-                list.Add(item);
+                catch(Exception ex)
+                {
+                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("RepositoryFolder/LoadFolderFiles- Failed to load the Repository Item XML which in file: '{0}'.", FileName), ex);
+                }
             });
 
             return new ObservableList<T>(list); //TODO: order by name .OrderBy(x => ((RepositoryItem)x).FilePath)); ??
@@ -382,7 +388,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                NewReporter.ToConsole(string.Format("Exception thrown from ReposiotryFolder FileWatcher, Error:'{0}'", ex.Message));
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
             }
 
         }
@@ -403,7 +409,7 @@ namespace Amdocs.Ginger.Repository
         Mutex m = new Mutex();
         private void FileWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            Console.WriteLine("FileWatcher change detected: " + e.FullPath + " , " + e.ChangeType);
+            AppReporter.ToConsole("FileWatcher change detected: " + e.FullPath + " , " + e.ChangeType);
             try
             {                
                 m.WaitOne();
@@ -434,14 +440,14 @@ namespace Amdocs.Ginger.Repository
             }
             catch(Exception ex)
             {
-                NewReporter.ToConsole(string.Format("Exception thrown from ReposiotryFolder FileWatcher, Error:'{0}'", ex.Message));
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex, true);
             }
                         
             finally
             {
                 m.ReleaseMutex();
             }
-            Console.WriteLine("FileWatcher change handled: " + e.FullPath + " , " + e.ChangeType);
+            AppReporter.ToConsole("FileWatcher change handled: " + e.FullPath + " , " + e.ChangeType);
         }
 
         private void HandleFileChange(FileSystemEventArgs e)

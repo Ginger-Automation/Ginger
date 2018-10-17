@@ -403,8 +403,8 @@
     <Compile Include="Actions\ActDataSourcePage.xaml.cs">
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml.cs">
-      <DependentUpon>LocateByPOMElement.xaml</DependentUpon>
+    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElementPage.xaml.cs">
+      <DependentUpon>LocateByPOMElementPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\_Common\ActUIElementLib\UIElementSendKeysAndValidate.xaml.cs">
       <DependentUpon>UIElementSendKeysAndValidate.xaml</DependentUpon>
@@ -970,6 +970,9 @@
       <DependentUpon>ImportGherkinFeatureSummaryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinFeatureWizard.cs" />
+    <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml.cs">
+      <DependentUpon>ImportGherkinTargetFolder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinIntroPage.xaml.cs">
       <DependentUpon>ImportGherkinIntroPage.xaml</DependentUpon>
     </Compile>
@@ -2554,7 +2557,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml">
+    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElementPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2975,6 +2978,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControlsLib\PieChart\NewPiePlotter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

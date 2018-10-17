@@ -22,6 +22,7 @@ using Ginger.UserControlsLib.TextEditor.Gherkin;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System.IO;
+using Ginger.SolutionWindows.TreeViewItems;
 
 namespace Ginger.BDD
 {
@@ -32,7 +33,7 @@ namespace Ginger.BDD
             string FileName = string.Empty;
             if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars()))
             {
-                string FullDirectoryPath = App.UserProfile.Solution.Folder + "Documents" + @"\" + "Features";
+                string FullDirectoryPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, "Documents", "Features");
                 if (!System.IO.Directory.Exists(FullDirectoryPath))
                 {
                     System.IO.Directory.CreateDirectory(FullDirectoryPath);
@@ -54,19 +55,13 @@ namespace Ginger.BDD
         }
 
         public bool ImportFeatureFile()
-        {
-            ImportGherkinFeatureFilePage IFP = null;
-            string Folder = App.UserProfile.Solution.Folder + @"\BusinessFlows";
+        {            
+            BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(), eBusinessFlowsTreeViewMode.ReadOnly);
             if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
             {
-                WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(Folder));                
+                WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(bfsFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder));                
             }
-            else
-            {
-                IFP = new ImportGherkinFeatureFilePage(Folder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
-                IFP.ShowAsWindow();
-            }
-            return IFP.Imported;
+            return true;
         }
     }
 }

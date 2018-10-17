@@ -25,6 +25,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Windows.Media;
 using GingerCore;
+using Amdocs.Ginger.Common;
 
 #endregion
 
@@ -427,7 +428,7 @@ namespace Ginger.UserControlsLib.PieChart
                         }
                         catch (Exception e)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
                         }
                     }
                 }
@@ -455,7 +456,7 @@ namespace Ginger.UserControlsLib.PieChart
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
                     }
                 }
             }

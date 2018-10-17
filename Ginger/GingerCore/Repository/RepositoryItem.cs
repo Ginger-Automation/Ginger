@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
@@ -162,7 +163,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Failed to InvokPropertyChanngedForAllObjectFields for the object: " + this.ToString(), ex);
+                Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to InvokPropertyChanngedForAllObjectFields for the object: " + this.ToString(), ex);
             }
         }
 

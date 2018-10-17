@@ -129,7 +129,6 @@ namespace GingerWPF
                     Label l = new Label() { Content = "=======>", Foreground = Brushes.Red };
                     mTextBlock.Inlines.Add(l);
                     ErrorsCounter++;
-                    App.ErrorLogged(ErrorsCounter);
                 }
 
                 if (value.Contains("INFO"))

@@ -344,7 +344,7 @@ namespace Ginger.SolutionGeneral
                 if (mRecentUsedBusinessFlows == null)
                 {
                     mRecentUsedBusinessFlows = new MRUManager();
-                    mRecentUsedBusinessFlows.Init(Folder + "RecentlyUsed.dat");
+                    mRecentUsedBusinessFlows.Init(Path.Combine(Folder, "RecentlyUsed.dat"));
                 }
                 return mRecentUsedBusinessFlows;
             }
@@ -357,9 +357,11 @@ namespace Ginger.SolutionGeneral
         {
             get
             {
-                string folderPath = Folder + @"BusinessFlows\";
-                if (Directory.Exists(folderPath) == false)
+                string folderPath = Path.Combine(Folder , @"BusinessFlows\");
+                if(!Directory.Exists(folderPath))
+                {
                     Directory.CreateDirectory(folderPath);
+                }
                 return folderPath;
             }
         }
@@ -378,7 +380,7 @@ namespace Ginger.SolutionGeneral
                 counter++;
             app.AppName += counter.ToString();
         }
-        
+
         /// <summary>
         ///  Return enumerator of all valid files in solution
         /// </summary>
@@ -386,42 +388,36 @@ namespace Ginger.SolutionGeneral
         /// <returns></returns>
         public static IEnumerable<string> SolutionFiles(string solutionFolder)
         {
+            //List only need directories which have repo items
+            //Do not add documents, ExecutionResults, HTMLReports
+            ConcurrentBag<string> fileEntries = new ConcurrentBag<string>();
 
-                //List only need directories which have repo items
-                //Do not add documents, ExecutionResults, HTMLReports
-                ConcurrentBag<string> fileEntries = new ConcurrentBag<string>();
+            //add Solution.xml
+            fileEntries.Add(Path.Combine(solutionFolder, "Ginger.Solution.xml"));
 
-                string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments",  "HTMLReportConfigurations", "PluginPackages", "RunSetConfigs", "SharedRepository" };
-                
-                Parallel.ForEach(SolutionMainFolders, folder =>
-                {
+            string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "RunSetConfigs", "SharedRepository" };
+            Parallel.ForEach(SolutionMainFolders, folder =>
+            {
                     // Get each main folder sub folder all levels
                     string MainFolderFullPath = Path.Combine(solutionFolder, folder);
 
-                    if (Directory.Exists(MainFolderFullPath))
-                    {
-                        // Add main folder files
-                        AddFolderFiles(fileEntries, MainFolderFullPath);
+                if (Directory.Exists(MainFolderFullPath))
+                {
+                    // Add folder and it sub folders files
+                    AddFolderFiles(fileEntries, MainFolderFullPath);
+                }
+            });
 
-                        //Now drill down to ALL sub folders
-                        string[] SubFolders = Directory.GetDirectories(MainFolderFullPath, "*", SearchOption.AllDirectories);
-
-                        Parallel.ForEach(SubFolders, sf =>
-                        {
-                            // Add all files of sub folder
-                            if (sf != "PrevVersions")  //TODO: use const
-                            {
-                                AddFolderFiles(fileEntries, sf);
-                            }
-                        });
-                    }
-                });
-               
-                return fileEntries.ToList();
+            return fileEntries.ToList();
         }
 
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
         {
+            if (folder == "PrevVersions")//TODO: use const
+            {
+                return;
+            }
+
             IEnumerable<string> files = Directory.EnumerateFiles(folder, "*Ginger.*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
             {

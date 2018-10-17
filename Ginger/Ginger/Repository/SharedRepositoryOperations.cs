@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
@@ -74,6 +75,8 @@ namespace Ginger.Repository
 
                 itemCopy.UpdateItemFieldForReposiotryUse();
 
+               
+
                 bool blockingIssuesHandled= HandleItemValidationIssues(itemToUpload, itemCopy, ref isOverwrite);
 
                 if(blockingIssuesHandled==false)
@@ -85,8 +88,11 @@ namespace Ginger.Repository
                 if (isOverwrite)
                 {
                     
-                    MovePrevVersion(itemToUpload.ExistingItem, itemToUpload.ExistingItem.FileName);                    
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(itemToUpload.ExistingItem);
+                    MovePrevVersion(itemToUpload.ExistingItem, itemToUpload.ExistingItem.FileName);
+                    //To be removed from here. And and need to handle from solution repository
+                    itemCopy.ContainingFolder = itemToUpload.ExistingItem.ContainingFolder;
+                    itemCopy.ContainingFolderFullPath = itemToUpload.ExistingItem.ContainingFolderFullPath;
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(itemCopy);
                 }
                 else
                 {
@@ -105,7 +111,7 @@ namespace Ginger.Repository
             }
             catch(Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "failed to upload the repository item", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "failed to upload the repository item", e);
                 itemToUpload.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.FailedToUpload;
                 return false;
             }
@@ -296,7 +302,7 @@ namespace Ginger.Repository
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Save Previous File got error " + ex.Message);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Save Previous File got error " + ex.Message);
                 }
             }
         }
