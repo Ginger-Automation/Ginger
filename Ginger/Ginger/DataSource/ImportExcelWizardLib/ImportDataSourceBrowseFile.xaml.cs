@@ -32,7 +32,7 @@ using Amdocs.Ginger.ValidationRules;
 using GingerWPF;
 using GingerWPF.WizardLib;
 
-namespace Ginger.SolutionWindows
+namespace Ginger.DataSource.ImportExcelWizardLib
 {
     /// <summary>
     /// Interaction logic for ImportDataSourceBrowseFile.xaml
@@ -41,20 +41,21 @@ namespace Ginger.SolutionWindows
     {
         ImportOptionalValuesForParameters impParams;
 
-        /// <summary>
-        /// Gets sets the File path
-        /// </summary>
-        public string Path { get; set; }
-                
+        ImportDataSourceFromExcelWizard mWizard;
+
         /// <summary>
         /// This method is default wizard action event
         /// </summary>
         /// <param name="WizardEventArgs"></param>
         public void WizardEvent(WizardEventArgs WizardEventArgs)
-        {
+        {            
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
+                    mWizard = (ImportDataSourceFromExcelWizard)WizardEventArgs.Wizard;
+                    xPathTextBox.BindControl(mWizard.Path, nameof(ImportDataSourceFromExcelWizard.Path));
+                    //xPathTextBox.TextChanged += XPathTextBox_TextChanged;
+                    xPathTextBox.AddValidationRule(new EmptyValidationRule());
                     break;
                 case EventType.Active:
                     break;
@@ -71,11 +72,14 @@ namespace Ginger.SolutionWindows
             InitializeComponent();
             impParams = new ImportOptionalValuesForParameters();
             ShowRelevantPanel();
-
-            xPathTextBox.BindControl(this, nameof(Path));
-            xPathTextBox.AddValidationRule(new EmptyValidationRule());
+            
             xPathTextBox.Focus();
         }
+
+        //private void XPathTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    mWizard.Path = xPathTextBox.Text;
+        //}
 
         /// <summary>
         /// This method is used to ShowRelevantPanel

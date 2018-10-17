@@ -16,90 +16,83 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Data;
-using System.Reflection;
-using System.Text;
-using System.Windows.Controls;
-using System.Windows.Input;
+using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
+using Ginger.DataSource;
+using Ginger.Environments;
 using Ginger.SolutionWindows.TreeViewItems;
+using Ginger.WizardLib;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerWPF.WizardLib;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Reflection;
+using System.Text;
 using Amdocs.Ginger.Common;
 
-namespace Ginger.SolutionWindows
+namespace Ginger.DataSource.ImportExcelWizardLib
 {
-    /// <summary>
-    /// Interaction logic for ImportDataSourceFinishPage.xaml
-    /// </summary>
-    public partial class ImportDataSourceFinishPage : Page, IWizardPage
+    public class ImportDataSourceFromExcelWizard : WizardBase
     {
         public DataSourceBase DSDetails { get; set; }
-        public WizardEventArgs mWizardEventArgs;
+
+        public override string Title { get { return "Create new solution wizard"; } }
+
+        public List<PluginPackage> SelectedPluginPackages = new List<PluginPackage>();
+
+        public string Path { get; set; }
+        public string SheetName { get; set; }
+        public DataSet ExcelImportData { get; set; }
 
         /// <summary>
-        /// This method is default wizard action event
+        /// Gets sets the HeadingRow
         /// </summary>
-        /// <param name="WizardEventArgs"></param>
-        public void WizardEvent(WizardEventArgs WizardEventArgs)
+        public bool HeadingRow
         {
-            switch (WizardEventArgs.EventType)
-            {
-                case EventType.Init:
-                    break;
-                case EventType.Active:
-                    mWizardEventArgs = WizardEventArgs;
-                    xLable.Content = "Proceed for Data Import, Click Finish!";
-                    break;
-                default:
-                    break;
-            }
+            get;
+            set;
         }
 
         /// <summary>
-        /// Constrtuctor for ImportDataSourceFinishPage class
+        /// Gets sets the IsModelParamsFile
         /// </summary>
-        public ImportDataSourceFinishPage(DataSourceBase mDSDetails)
-        {           
-            InitializeComponent();
+        public bool IsModelParamsFile
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// This is used to initialise the wizard
+        /// </summary>
+        public ImportDataSourceFromExcelWizard(DataSourceBase mDSDetails)
+        {
             DSDetails = mDSDetails;
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Import DataSource From Excel File", Page: new WizardIntroPage("/DataSource/ImportExcelWizardLib/ImportDataSourceIntro.md"));
+            AddPage(Name: "Browse File", Title: "Browse File", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceBrowseFile());
+            AddPage(Name: "Sheet Selection", Title: "Sheet Selection", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceSheetSelection());
+            AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData());
+            //AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData(), AlternatePage: new ImportDataSourceDisplayAllData());
+            AddPage(Name: "Finish", Title: "Finish", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceFinishPage(DSDetails));
         }
 
         /// <summary>
-        /// This method is the final FinishImport method
+        /// This method is the final finish method
         /// </summary>
-        public void FinishImport()
-        {
+        public override void Finish()
+        {   
             try
             {
-                xLable.Content = "Data Importing...";
-                Mouse.OverrideCursor = Cursors.Wait;
-                mWizardEventArgs.Wizard.ProcessStarted();
-
                 ImportOptionalValuesForParameters impParams = new ImportOptionalValuesForParameters();
-                string path = ((ImportDataSourceBrowseFile)(mWizardEventArgs.Wizard.Pages[1].Page)).Path;
-                string sheetName = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).SheetName;
-                bool headingRow = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2]).Page).HeadingRow;
-                bool isModelParamsFile = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).IsModelParamsFile;
-
-                impParams.ExcelFileName = path;
-                impParams.ExcelSheetName = sheetName;
-
-                DataSet ExcelImportData = new DataSet();
-                if(!((ImportDataSourceDisplayData)(mWizardEventArgs.Wizard.Pages[3]).Page).IsAlternatePageToLoad())
-                {
-                    ExcelImportData = ((ImportDataSourceDisplayData)(mWizardEventArgs.Wizard.Pages[3]).Page).ExcelImportData;
-                }
-                else
-                {
-                    ExcelImportData = ((ImportDataSourceDisplayAllData)(mWizardEventArgs.Wizard.Pages[3]).AlternatePage).ExcelImportData;
-                }
+                
+                impParams.ExcelFileName = Path;
+                impParams.ExcelSheetName = SheetName;                
 
                 if (ExcelImportData == null || ExcelImportData.Tables.Count <= 0)
                 {
-                    ExcelImportData = impParams.GetExcelAllSheetData(sheetName, headingRow, true, isModelParamsFile);
+                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, true, IsModelParamsFile);
                 }
                 foreach (DataTable dt in ExcelImportData.Tables)
                 {
@@ -107,19 +100,15 @@ namespace Ginger.SolutionWindows
                     AddDefaultColumn(dt);
                     string fileName = CreateTable(dt.TableName, cols);
                     ((AccessDataSource)(DSDetails)).Init(fileName);
-                    ((AccessDataSource)(DSDetails)).SaveTable(dt); 
-                }
-
-                mWizardEventArgs.Wizard.ProcessEnded();
-                Mouse.OverrideCursor = null;
-                xLable.Content = "Data Imported Successfully!";
+                    ((AccessDataSource)(DSDetails)).SaveTable(dt);
+                }                
             }
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
-        
+
         /// <summary>
         /// This method is used to get the columnList for exporting the parameters to datasource
         /// </summary>
@@ -208,15 +197,6 @@ namespace Ginger.SolutionWindows
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return fileName;
-        }
-
-        /// <summary>
-        /// This method is used to cehck whether alternate page is required to load
-        /// </summary>
-        /// <returns></returns>
-        public bool IsAlternatePageToLoad()
-        {
-            return false;
         }
     }
 }

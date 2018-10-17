@@ -28,8 +28,9 @@ using GingerWPF.WizardLib;
 using System.Windows.Input;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common;
+using Ginger.UserControlsLib.UCDataGridView;
 
-namespace Ginger.SolutionWindows
+namespace Ginger.DataSource.ImportExcelWizardLib
 {
     /// <summary>
     /// Interaction logic for ImportDataSourceDisplayData.xaml
@@ -38,36 +39,13 @@ namespace Ginger.SolutionWindows
     {
         public DataSourceBase DSDetails { get; set; }
         ImportOptionalValuesForParameters impParams;
-        public DataSet ExcelImportData = null;
+        public DataSet ExcelImportData;
         WizardEventArgs mWizardEventArgs;
-        
-        /// <summary>
-        /// Gets sets the File path
-        /// </summary>
-        public string Path { get; set; }
-
-        /// <summary>
-        /// Gets sets the SheetName
-        /// </summary>
-        public string SheetName { get; set; }
-
-        /// <summary>
-        /// Gets sets the HeadingRow
-        /// </summary>
-        public bool HeadingRow
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets sets the IsModelParamsFile
-        /// </summary>
-        public bool IsModelParamsFile
-        {
-            get;
-            set;
-        }
+                
+        private string Path;
+        private string SheetName;
+        private bool HeadingRow;
+        private bool IsModelParamsFile;
 
         private List<TabItem> _tabItems;
 
@@ -83,10 +61,10 @@ namespace Ginger.SolutionWindows
                 case EventType.Init:
                     break;
                 case EventType.Active:                    
-                    Path = ((ImportDataSourceBrowseFile)(WizardEventArgs.Wizard.Pages[1].Page)).Path;
-                    SheetName = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).SheetName;
-                    HeadingRow = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).HeadingRow;
-                    IsModelParamsFile = ((ImportDataSourceSheetSelection)(WizardEventArgs.Wizard.Pages[2].Page)).IsModelParamsFile;
+                    Path = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).Path;
+                    SheetName = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).SheetName;
+                    HeadingRow = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).HeadingRow;
+                    IsModelParamsFile = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).IsModelParamsFile;
 
                     impParams.ExcelFileName = Path;
                     impParams.ExcelSheetName = SheetName;
@@ -94,6 +72,9 @@ namespace Ginger.SolutionWindows
                     break;
                 case EventType.AfterLoad:
                     DisplayData();
+                    break;
+                case EventType.LeavingForNextPage:
+                    ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).ExcelImportData = ExcelImportData;
                     break;
                 default:
                     break;
@@ -213,7 +194,7 @@ namespace Ginger.SolutionWindows
             tab.Name = string.Format("{0}", name);
 
             var stackPanel = new StackPanel();
-            stackPanel.Children.Add(new GridPage() { ExcelData = dt });
+            stackPanel.Children.Add(new ucDataGrid() { ExcelData = dt });
             tab.Content = stackPanel;
 
             _tabItems.Add(tab);

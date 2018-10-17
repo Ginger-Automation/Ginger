@@ -1,4 +1,4 @@
-﻿<Page x:Class="Ginger.SolutionWindows.ImportDataSourceDisplayAllData"
+﻿<Page x:Class="Ginger.DataSource.ImportExcelWizardLib.ImportDataSourceSheetSelection"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -33,20 +33,20 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                
                 <DockPanel Grid.Row="0" Grid.ColumnSpan="3">
-                    <CheckBox VerticalAlignment="Center" x:Name="chkHeadingRow" Content="Sheet first row as Column name" IsChecked="True" Visibility="Hidden" />
-                    <usercontrols:ucButton x:Name="xExcelViewDataButton" ToolTip="View All Data" ButtonType="ImageButton" Visibility="Hidden" ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="View" Click="xExcelViewDataButton_Click"  HorizontalAlignment="Left"  />
+                    <StackPanel >
+                        <Label Name="xSheetLable"   HorizontalAlignment="Left" Content="Sheet:" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"  />
+                        <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"  Margin="5,0,0,5"  VerticalAlignment="Center" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
+                    </StackPanel>
                 </DockPanel>
 
-                <GridSplitter x:Name="xExcelGridSplitter" Grid.Row="1" Grid.ColumnSpan="3" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource @Skin1_ColorA}" IsEnabled="False" Margin="0,0,0,5" />
+                <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="5,10,0,0" >
+                    <CheckBox VerticalAlignment="Center" x:Name="chkHeadingRow" Content="Sheet first row as Column name" IsChecked="True"  />
+                </DockPanel>
 
-                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">
-                    <DockPanel x:Name="xExcelDataGridDockPanel" Margin="0,5,5,5">                        
-                        <TabControl Name="tabDynamic" Height="340" ItemsSource="{Binding}" >
-                        </TabControl>
-                    </DockPanel>
-                </StackPanel>
+                <DockPanel Grid.Row="2" Grid.ColumnSpan="3" Margin="5,10,0,0" >
+                    <CheckBox VerticalAlignment="Center" x:Name="chkModelParamsFile" Content="Is the Model Parameter File" IsChecked="True"  />
+                </DockPanel>
             </Grid>
         </StackPanel>
     </Grid>

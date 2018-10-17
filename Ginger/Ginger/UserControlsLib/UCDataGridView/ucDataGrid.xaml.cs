@@ -1,14 +1,14 @@
 ﻿using System.Data;
 using System.Windows.Controls;
 
-namespace Ginger.SolutionWindows
+namespace Ginger.UserControlsLib.UCDataGridView
 {
     /// <summary>
     /// Interaction logic for GridPage.xaml
     /// </summary>
-    public partial class GridPage : UserControl
+    public partial class ucDataGrid : UserControl
     {
-        public GridPage()
+        public ucDataGrid()
         {
             InitializeComponent();
         }

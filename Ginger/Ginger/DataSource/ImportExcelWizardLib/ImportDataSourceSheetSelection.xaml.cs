@@ -36,7 +36,7 @@ using System.Windows.Data;
 using GingerWPF;
 using GingerWPF.WizardLib;
 
-namespace Ginger.SolutionWindows
+namespace Ginger.DataSource.ImportExcelWizardLib
 {
     /// <summary>
     /// Interaction logic for ImportDataSourceSheetSelection.xaml
@@ -45,38 +45,8 @@ namespace Ginger.SolutionWindows
     {
         ImportOptionalValuesForParameters impParams;
 
-        /// <summary>
-        /// Gets sets the File path
-        /// </summary>
-        public string Path { get; set; }
-
-        /// <summary>
-        /// Gets sets the SheetName
-        /// </summary>
-        public string SheetName { get; set; }
-
-        /// <summary>
-        /// Gets sets the HeadingRow
-        /// </summary>
-        public bool HeadingRow
-        {
-            get
-            {
-                return Convert.ToBoolean(chkHeadingRow.IsChecked);
-            }
-        }
-
-        /// <summary>
-        /// Gets sets the IsModelParamsFile
-        /// </summary>
-        public bool IsModelParamsFile
-        {
-            get
-            {
-                return Convert.ToBoolean(chkModelParamsFile.IsChecked);
-            }
-        }
-
+        ImportDataSourceFromExcelWizard mWizard;
+        
         /// <summary>
         /// This method is default wizard action event
         /// </summary>
@@ -85,18 +55,20 @@ namespace Ginger.SolutionWindows
         {
             switch (WizardEventArgs.EventType)
             {
-                case EventType.Init:                    
+                case EventType.Init:
+                    mWizard = (ImportDataSourceFromExcelWizard)WizardEventArgs.Wizard;
+                    xSheetNameComboBox.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.SheetName));                    
+                    xSheetNameComboBox.AddValidationRule(new EmptyValidationRule());
                     break;
                 case EventType.Active:
-                    Path = ((ImportDataSourceBrowseFile)(WizardEventArgs.Wizard.Pages[1].Page)).Path;
-                    if (!string.IsNullOrEmpty(Path))
+                    string excelPath = ((ImportDataSourceFromExcelWizard)WizardEventArgs.Wizard).Path;
+                    if (!string.IsNullOrEmpty(excelPath))
                     {
-                        impParams.ExcelFileName = Path;
+                        impParams.ExcelFileName = excelPath;
                         List<string> SheetsList = impParams.GetSheets(false);
                         SheetsList.Insert(0, "-- All --");
                         GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
-                    }
-                    
+                    }                    
                     break;
                 default:
                     break;
@@ -112,10 +84,25 @@ namespace Ginger.SolutionWindows
             impParams = new ImportOptionalValuesForParameters();
             ShowRelevantPanel();
 
-            xSheetNameComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
-            xSheetNameComboBox.BindControl(this, nameof(SheetName));
-            xSheetNameComboBox.AddValidationRule(new EmptyValidationRule());
+            xSheetNameComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;            
+            chkHeadingRow.Checked += ChkHeadingRow_Checked;
+            chkModelParamsFile.Checked += ChkModelParamsFile_Checked;            
             xSheetNameComboBox.Focus();
+        }
+
+        private void ChkModelParamsFile_Checked(object sender, RoutedEventArgs e)
+        {
+            mWizard.IsModelParamsFile = Convert.ToBoolean(chkModelParamsFile.IsChecked);            
+        }
+
+        private void ChkHeadingRow_Checked(object sender, RoutedEventArgs e)
+        {
+            mWizard.HeadingRow = Convert.ToBoolean(chkHeadingRow.IsChecked);
+        }
+
+        private void XSheetNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            mWizard.SheetName = xSheetNameComboBox.Text;
         }
 
         /// <summary>
@@ -147,8 +134,8 @@ namespace Ginger.SolutionWindows
             {
                 if (xSheetNameComboBox.SelectedValue != null)
                 {
-                    SheetName = Convert.ToString(xSheetNameComboBox.SelectedValue);
-                    impParams.ExcelSheetName = SheetName;
+                    mWizard.SheetName = Convert.ToString(xSheetNameComboBox.SelectedValue);
+                    impParams.ExcelSheetName = mWizard.SheetName;
                 }
             }
             catch (System.Exception ex)

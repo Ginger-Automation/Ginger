@@ -30,8 +30,9 @@ using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.WizardLib;
 using System.Windows.Input;
 using Amdocs.Ginger.Common;
+using Ginger.UserControlsLib.UCDataGridView;
 
-namespace Ginger.SolutionWindows
+namespace Ginger.DataSource.ImportExcelWizardLib
 {
     /// <summary>
     /// Interaction logic for ImportDataSourceDisplayAllData.xaml
@@ -46,12 +47,12 @@ namespace Ginger.SolutionWindows
         /// <summary>
         /// Gets sets the File path
         /// </summary>
-        public string Path { get; set; }
+        private string Path;
 
         /// <summary>
         /// Gets sets the SheetName
         /// </summary>
-        public string SheetName { get; set; }
+        private string SheetName { get; set; }
 
         /// <summary>
         /// Gets sets the IsModelParamsFile
@@ -69,9 +70,9 @@ namespace Ginger.SolutionWindows
                 case EventType.Init:
                     break;
                 case EventType.Active:
-                    Path = ((ImportDataSourceBrowseFile)(mWizardEventArgs.Wizard.Pages[1].Page)).Path;
-                    SheetName = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).SheetName;
-                    IsModelParamsFile = ((ImportDataSourceSheetSelection)(mWizardEventArgs.Wizard.Pages[2].Page)).IsModelParamsFile;
+                    Path = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).Path;
+                    SheetName = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).SheetName;
+                    IsModelParamsFile = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).IsModelParamsFile;
 
                     WizardEventArgs = mWizardEventArgs;
                     impParams.ExcelFileName = Path;
@@ -170,7 +171,7 @@ namespace Ginger.SolutionWindows
             tab.Name = string.Format("{0}", name);
 
             var stackPanel = new StackPanel();
-            stackPanel.Children.Add(new GridPage() { ExcelData = dt });
+            stackPanel.Children.Add(new ucDataGrid() { ExcelData = dt });
             tab.Content = stackPanel;
 
             _tabItems.Add(tab);

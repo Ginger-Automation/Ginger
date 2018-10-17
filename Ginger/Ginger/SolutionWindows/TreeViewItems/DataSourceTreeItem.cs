@@ -31,7 +31,7 @@ using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using GingerWPF.WizardLib;
-using GingerWPF.SolutionLib;
+using Ginger.DataSource.ImportExcelWizardLib;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
