@@ -40,7 +40,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public event EventHandler ItemDoubleClick;
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DI);
-        public bool TreeItemDoubleClicked = false;        
+        public bool TreeItemDoubleClicked = false;
+        public bool TreeChildFolderOnly { get; set; }
 
         public Tuple<string, string> TreeNodesFilterByField { get; set; } 
 
@@ -235,6 +236,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 {
                     foreach (ITreeViewItem item in Childs)
                     {
+                        if (TreeChildFolderOnly == true && item.IsExpandable() == false)
+                        {
+                            continue;
+                        }
                         if (TreeNodesFilterByField != null)
                         {
                             if (IsTreeItemFitsFilter(item))
@@ -258,8 +263,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (treeItemToCheckObject is RepositoryFolderBase)
             {
                 return true;
-            }
-
+            }            
+                
             //get the object to filter by
             List<string> filterByfieldHierarchyList = TreeNodesFilterByField.Item1.ToString().Split('.').ToList();
             object filterByObject = treeItemToCheckObject;

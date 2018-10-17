@@ -28,13 +28,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using Ginger.UserControlsLib.TextEditor.Gherkin;
+using GingerWPF.WizardLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
+    //public enum eDocumentsItemViewMode
+    //{
+    //    All = 0,
+    //    FoldersOnly = 1
+    //};
     class DocumentsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         public string Folder { get; set; }
-
+                
         string mPath;
         public string Path
         {
@@ -50,8 +58,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 mPath = value;
             }
-        }
-        
+        }  
         Object ITreeViewItem.NodeObject()
         {
             return null;
@@ -75,8 +82,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
-            AddSubFolders(Path, Childrens);            
-         
+            AddSubFolders(Path, Childrens);
+
             //Add Current folder Docs 
             foreach (string f in Directory.GetFiles(Path))
             {                
@@ -138,13 +145,21 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-            if (IsGingerDefualtFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document",allowSaveAll:false, allowAddNew:false,allowCopyItems:false,allowCutItems:false,allowPaste:false, allowRenameFolder: false, allowDeleteFolder: false);
+            if(TV.Tree.TreeChildFolderOnly == true)
+            { 
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", true, false, false, false, false, false, false, true, false, false);
+            }
             else
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
-            AddSourceControlOptions(mContextMenu, false, false);
+            {
+                if (IsGingerDefualtFolder)
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document",allowSaveAll:false, allowAddNew:false,allowCopyItems:false,allowCutItems:false,allowPaste:false, allowRenameFolder: false, allowDeleteFolder: false);
+                else
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
+                AddSourceControlOptions(mContextMenu, false, false);
 
-            AddImportsAndCreateDocumentsOptions();
+                AddImportsAndCreateDocumentsOptions();
+            }
+            
         }
 
         private void AddImportsAndCreateDocumentsOptions()
@@ -241,59 +256,24 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
          //Gherkin BDD functions
         private void ImportGherkinFeatureFile(object sender, RoutedEventArgs e)
-        {
-            string FeatureFolder = Folder;
-            if (this.Path.IndexOf("Documents\\Features\\") > 0)
-                FeatureFolder = this.Path.Substring(this.Path.IndexOf("Documents\\Features\\") + 19);
-            ImportGherkinFeatureFilePage IFP = new ImportGherkinFeatureFilePage(FeatureFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
-            IFP.ShowAsWindow();
-            string featureFile = IFP.mFeatureFile;
-
-            if(!String.IsNullOrEmpty(featureFile))
-            {               
-                if(Folder == "Documents")
-                {
-                    DocumentsFolderTreeItem DFTI = new DocumentsFolderTreeItem();
-                    DFTI.Path = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Features\");
-                    DFTI.Folder = "Features";
-                    mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                    mTreeView.Tree.GetChildItembyNameandSelect("Features", this);                    
-                }
+        {   
+            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
+            mWizard.mFolder = this.Path;
+            WizardWindow.ShowWizard(mWizard);
+            
+            if(!String.IsNullOrEmpty(mWizard.FetaureFileName))
+            {
                 mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                mTreeView.Tree.GetChildItembyNameandSelect(System.IO.Path.GetFileName(featureFile), mTreeView.Tree.CurrentSelectedTreeViewItem);
-            }         
+                mTreeView.Tree.GetChildItembyNameandSelect(System.IO.Path.GetFileName(mWizard.FetaureFileName), mTreeView.Tree.CurrentSelectedTreeViewItem);
+            }
         }
 
         private void CreateGherkinFeatureFile(object sender, RoutedEventArgs e)
         { 
             string FileName = string.Empty;
             if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars()))
-            {
-                string FullDirectoryPath = "";
-                DocumentsFolderTreeItem DFTI = null;
-                if (this.Folder == "Documents")
-                {
-                    FullDirectoryPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Features\");                    
-                    
-                    if (!System.IO.Directory.Exists(FullDirectoryPath))
-                    {
-                        System.IO.Directory.CreateDirectory(FullDirectoryPath);
-                        DFTI = new DocumentsFolderTreeItem();
-                        DFTI.Path = FullDirectoryPath;
-                        DFTI.Folder = "Features";
-                        mTreeView.Tree.AddChildItemAndSelect(this, DFTI);
-                        mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                    }
-                    else
-                    {
-                        DFTI = (DocumentsFolderTreeItem)mTreeView.Tree.GetChildItembyNameandSelect("Features",this);                        
-                    }
-                    
-                }
-                else
-                    FullDirectoryPath = this.Path;
-
-                string FullFilePath = FullDirectoryPath + @"\" + FileName + ".feature";
+            {                
+                string FullFilePath = System.IO.Path.Combine(this.Path + @"\" , FileName + ".feature");
                 if (!System.IO.File.Exists(FullFilePath))
                 {
                     string FileContent = "Feature: Description\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario1 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario2 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n@Tag1 @Tag2\r\n\r\n\r\nScenario Outline: eating\r\n  Given there are <start> cucumbers\r\n  When I eat <eat> cucumbers\r\n  Then I should have <left> cucumbers\r\n\r\n  Examples:\r\n    | start | eat | left |\r\n    |  12   |  5  |  7   |\r\n    |  20   |  5  |  15  |";
