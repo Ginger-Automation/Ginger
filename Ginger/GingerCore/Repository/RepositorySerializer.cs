@@ -464,8 +464,9 @@ namespace GingerCore.Repository
                     obj = targetObj; //used for DeepCopy to objects fields
                 }
 
-                if (obj == null)
+                if (obj == null) //Ginger assembly
                 {
+                    if (ClassName == "Ginger.Environments.Solution") ClassName = "Ginger.SolutionGeneral.Solution";
                     obj = GingerAssembly.CreateInstance(ClassName);
                     obj = System.Reflection.Assembly.Load("Ginger").CreateInstance(ClassName);
                 }
@@ -475,15 +476,15 @@ namespace GingerCore.Repository
                     obj = GingerCoreCommon.CreateInstance(ClassName);
                 }
 
-                if (obj == null)
+                if (obj == null) //GingerCoreCommon assembly
                 {
                     if (ClassName == "GingerCore.Actions.ActInputValue" || ClassName == "GingerCore.Common.Actions.ActInputValue") ClassName = typeof(ActInputValue).FullName;
                     if (ClassName == "GingerCore.Actions.ActReturnValue") ClassName = typeof(ActReturnValue).FullName;
                     if (ClassName == "GingerCore.Environments.GeneralParam") ClassName = typeof(GeneralParam).FullName;
                     if (ClassName == "Ginger.TagsLib.RepositoryItemTag") ClassName = typeof(RepositoryItemTag).FullName;
                     if (ClassName == "GingerCore.Platforms.ApplicationPlatform") ClassName = typeof(ApplicationPlatform).FullName;
-
-
+                    
+                    
                     obj = GingerCoreCommon.CreateInstance(ClassName);
                 }
 
