@@ -36,7 +36,7 @@ namespace GingerCoreCommonTest.TerminologyTests
             //after every test
         }
 
-        //Business Flows
+        #region Business Flows
 
         [TestMethod]
         public void GingerDefaultTerm_TestBusinessFlows()
@@ -80,7 +80,9 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Test Sets", termValue);
         }
 
-        //ActivitiesGroup
+        #endregion
+
+        #region ActivitiesGroup
 
         [TestMethod]
         public void GingerDefaultTerm_TestActivitiesGroup()
@@ -123,8 +125,9 @@ namespace GingerCoreCommonTest.TerminologyTests
             //Assert
             Assert.AreEqual("Test Case", termValue);
         }
+        #endregion
 
-        //Activities
+        #region Activities
 
         [TestMethod]
         public void GingerDefaultTerm_TestActivities()
@@ -167,8 +170,9 @@ namespace GingerCoreCommonTest.TerminologyTests
             //Assert
             Assert.AreEqual("Steps", termValue);
         }
+        #endregion
 
-        //Variable
+        #region Variable
 
         [TestMethod]
         public void GingerDefaultTerm_TestVariable()
@@ -211,9 +215,9 @@ namespace GingerCoreCommonTest.TerminologyTests
             //Assert
             Assert.AreEqual("Parameter", termValue);
         }
-
-
-        //Runset
+        #endregion
+        
+        #region Runset
 
         [TestMethod]
         public void GingerDefaultTerm_TestRunset()
@@ -256,10 +260,9 @@ namespace GingerCoreCommonTest.TerminologyTests
             //Assert
             Assert.AreEqual("Calendar", termValue);
         }
-
-
-
-        //Prefix and Suffix Tests
+        #endregion
+                
+        #region Prefix and Suffix Tests for Business Flow - Gherkin Terminology
 
         [TestMethod]
         public void GingerGherkinTerm_TestBusinessFlowPrefix()
@@ -273,7 +276,6 @@ namespace GingerCoreCommonTest.TerminologyTests
             //Assert
             Assert.AreEqual("TestPre Business Flow Feature", termResValue);
         }
-
 
         [TestMethod]
         public void GingerGherkinTerm_TestBusinessFlowSuffix()
@@ -326,6 +328,9 @@ namespace GingerCoreCommonTest.TerminologyTests
             //Assert
             Assert.AreEqual("TestPre Business Flow Feature TestSuffix".ToUpper(), termResValue);
         }
+        #endregion
+
+        #region Prefix and Suffix Tests for Business Flow - Testing Terminology
 
         [TestMethod]
         public void GingerTestingTerm_TestBusinessFlowPrefix()
@@ -392,7 +397,9 @@ namespace GingerCoreCommonTest.TerminologyTests
             //Assert
             Assert.AreEqual("TestPre Test Set TestSuffix".ToUpper(), termResValue);
         }
+        #endregion
 
+        #region Prefix and Suffix Tests for Activity - Gherkin Terminology
 
         [TestMethod]
         public void GingerGherkinTerm_TestActivityPrefix()
@@ -459,9 +466,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             //Assert
             Assert.AreEqual("TestPre Step TestSuffix".ToUpper(), termResValue);
         }
-
-
-
+        #endregion
+        
     }
 
 } //namespace
