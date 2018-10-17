@@ -1659,9 +1659,6 @@
     <Compile Include="ALM\ALMConnectionPage.xaml.cs">
       <DependentUpon>ALMConnectionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dictionaries\SetTerminologyTypePage.xaml.cs">
-      <DependentUpon>SetTerminologyTypePage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Imports\QTP\QTPImportPage.xaml.cs">
       <DependentUpon>QTPImportPage.xaml</DependentUpon>
     </Compile>
@@ -2750,7 +2747,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dictionaries\Skins\GingerDefualtSkinDictionary.xaml">
+    <Page Include="Dictionaries\Skins\GingerDefaultSkinDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3931,10 +3928,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ALM\ALMConnectionPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dictionaries\SetTerminologyTypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

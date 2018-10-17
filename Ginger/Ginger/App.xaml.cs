@@ -313,39 +313,20 @@ namespace Ginger
                 case Amdocs.Ginger.Core.eSkinDicsType.Default:
                     Application.Current.Resources.MergedDictionaries.Add(
                             new ResourceDictionary() {
-                                Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefualtSkinDictionary.xaml")
+                                Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefaultSkinDictionary.xaml")
                             });
                     break;
 
                 default:
                     Application.Current.Resources.MergedDictionaries.Add(
                             new ResourceDictionary() {
-                                Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefualtSkinDictionary.xaml")
+                                Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefaultSkinDictionary.xaml")
                             });
                     break;
             }
 
             // set terminology type
             GingerTerminology.TERMINOLOGY_TYPE = TerminologyType;
-
-            //Terminologies
-            //switch (TerminologyDicType)
-            //{
-            //    case GingerCore.eTerminologyDicsType.Testing:
-            //        Application.Current.Resources.MergedDictionaries.Add(
-            //                                    new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Terminologies/GingerTestingTerminologyDictionary.xaml") });
-            //        break;
-
-            //    case GingerCore.eTerminologyDicsType.Gherkin:
-            //        Application.Current.Resources.MergedDictionaries.Add(
-            //                                    new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Terminologies/GherkinTerminologyDictionary.xaml") });
-            //        break;
-
-            //    default:
-            //        Application.Current.Resources.MergedDictionaries.Add(
-            //                                    new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Terminologies/GingerDefualtTerminologyDictionary.xaml") });
-            //        break;
-            //}
         }
 
         public static void InitApp()
