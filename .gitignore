@@ -328,3 +328,4 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+/Ginger/GingerCore/Drivers/JavaDriverLib/GingerJavaAgent/.externalToolBuilders
