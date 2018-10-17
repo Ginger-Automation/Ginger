@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Reflection;
 using System.Windows;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore
 {    
@@ -63,8 +64,7 @@ namespace GingerCore
             catch (Exception ex)
             {
                 termResValue = null;
-                //TODO: Fix it 
-                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                NewReporter.ToLog(eNewLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
 
             if (termResValue != null)
