@@ -182,9 +182,9 @@ namespace Ginger
             {
                 if (App.LoadingSolution)
                 {
-                    xMainWindowFrame.Content = new LoadingSolutionPage();
-                    xMainWindowFrame.Visibility = Visibility.Visible;
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
+                    xMainWindowFrame.Content = new LoadingSolutionPage();
+                    xMainWindowFrame.Visibility = Visibility.Visible;                    
                     GingerCore.General.DoEvents();
                 }
                 else if (xMainWindowFrame.Content is LoadingSolutionPage && SelectedSolutionTab == eSolutionTabType.None)
@@ -311,8 +311,7 @@ namespace Ginger
                 if (App.UserProfile.Solution == null)
                 {
                     xSolutionTabsListView.SelectedItem = null;
-                    xSolutionNameTextBlock.Text = "Please Load Solution";
-                    xNoLoadedSolutionImg.Visibility = Visibility.Visible;
+                    xSolutionNameTextBlock.Text = "Please Load Solution";                    
                 }
                 else
                 {

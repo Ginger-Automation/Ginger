@@ -748,9 +748,8 @@ namespace Ginger.Run
                 {
                     mIsRunning = false;
                 }
-
-                OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.ActionEnd, null);
-               
+                act.OnPropertyChanged(nameof(Act.ReturnValuesInfo));
+                OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.ActionEnd, null);               
             }
         }
 
