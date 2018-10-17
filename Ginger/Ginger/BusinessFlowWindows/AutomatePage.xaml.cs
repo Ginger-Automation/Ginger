@@ -57,6 +57,7 @@ using Ginger.Agents;
 using Ginger.Extensions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Ginger
 {
@@ -880,14 +881,14 @@ namespace Ginger
                     {
                         analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
                         analyzerPage.AnalyzeWithoutUI();
-                    });
-                    while (analyzerPage.IsAnalyzeDone == false)
-                    {
-                        await Task.Run(() =>
+                        SpinWait.SpinUntil(() =>
                         {
-                            System.Threading.Thread.Sleep(100);
+                            if (analyzerPage.IsAnalyzeDone)
+                                return true;
+                            else
+                                return false;
                         });
-                    }
+                    });
                     Reporter.CloseGingerHelper();
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)
                     {

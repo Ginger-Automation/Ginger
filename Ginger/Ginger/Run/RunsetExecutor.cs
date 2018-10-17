@@ -761,14 +761,15 @@ namespace Ginger.Run
                     {
                         analyzerPage.Init(App.UserProfile.Solution, mRunSetConfig);
                         analyzerPage.AnalyzeWithoutUI();
-                    });
-                    while (analyzerPage.IsAnalyzeDone == false)
-                    {
-                        await Task.Run(() =>
+                        SpinWait.SpinUntil(() =>
                         {
-                            System.Threading.Thread.Sleep(100);
+                            if (analyzerPage.IsAnalyzeDone)
+                                return true;
+                            else
+                                return false;
                         });
-                    }
+                    });
+                    
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)
                     {
                         if (!runInSilentMode)
