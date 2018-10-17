@@ -27,6 +27,7 @@ using System;
 using GingerWPF.WizardLib;
 using System.Windows.Input;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows
 {
@@ -124,7 +125,7 @@ namespace Ginger.SolutionWindows
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
         
@@ -141,7 +142,7 @@ namespace Ginger.SolutionWindows
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
 
@@ -199,7 +200,7 @@ namespace Ginger.SolutionWindows
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
         private TabItem AddTabItem(string name, DataTable dt)
@@ -246,7 +247,7 @@ namespace Ginger.SolutionWindows
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
                 

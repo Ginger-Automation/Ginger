@@ -27,6 +27,7 @@ using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerWPF.WizardLib;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows
 {
@@ -115,7 +116,7 @@ namespace Ginger.SolutionWindows
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
         
@@ -139,7 +140,7 @@ namespace Ginger.SolutionWindows
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return cols;
         }
@@ -175,7 +176,7 @@ namespace Ginger.SolutionWindows
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
 
@@ -204,7 +205,7 @@ namespace Ginger.SolutionWindows
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return fileName;
         }

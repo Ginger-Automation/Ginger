@@ -1422,7 +1422,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -1442,7 +1442,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return defColList;
         }
@@ -1463,7 +1463,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
         }
 

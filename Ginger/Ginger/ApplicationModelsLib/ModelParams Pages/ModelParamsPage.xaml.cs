@@ -184,7 +184,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -206,7 +206,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return parameters;
         }
@@ -234,7 +234,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
         }        
         

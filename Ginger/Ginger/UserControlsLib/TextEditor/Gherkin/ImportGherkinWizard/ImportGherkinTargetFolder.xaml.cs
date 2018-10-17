@@ -94,5 +94,9 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         {
             mTargetFolder = e.SelectedItems[0];           
         }
+        public bool IsAlternatePageToLoad()
+        {
+            return false;
+        }
     }
 }

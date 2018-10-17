@@ -29,6 +29,7 @@ using System.Text;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.WizardLib;
 using System.Windows.Input;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows
 {
@@ -108,7 +109,7 @@ namespace Ginger.SolutionWindows
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
         
@@ -125,7 +126,7 @@ namespace Ginger.SolutionWindows
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
 
@@ -196,7 +197,7 @@ namespace Ginger.SolutionWindows
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return cols;
         }
@@ -232,7 +233,7 @@ namespace Ginger.SolutionWindows
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
 
@@ -261,7 +262,7 @@ namespace Ginger.SolutionWindows
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return fileName;
         }

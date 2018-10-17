@@ -368,7 +368,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             catch (Exception ex)
             {
                 xSaveExcelLable.Visibility = Visibility.Visible;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
 
             GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);

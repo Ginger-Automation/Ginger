@@ -152,7 +152,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -173,7 +173,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -194,7 +194,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
         }
 
@@ -224,7 +224,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return fileName;
         }
