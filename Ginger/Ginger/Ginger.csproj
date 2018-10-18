@@ -2981,17 +2981,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\%40Environment_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\ApiModel_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\ApiModel_32x32.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Ginger.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemAdded_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemChange_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemDeleted_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemUnchanged_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Lock_Red_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Lock_Red_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\DataSource_16x16.png" />
     <Content Include="Reports\GingerExecutionReport\assets\js\babel.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -3010,9 +3000,8 @@
     <Content Include="Reports\GingerExecutionReport\assets\js\Recharts.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_32x32.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconInGrayNoBackground.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>

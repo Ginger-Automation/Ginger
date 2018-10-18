@@ -21,7 +21,8 @@ namespace Amdocs.Ginger.Common.Enums
         /// Ginger Icon image
         /// </summary>
         Ginger,
-        GingerIcon,
+        GingerIconWhite,
+        GingerIconGray,
         #endregion
 
 
