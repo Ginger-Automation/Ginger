@@ -2074,17 +2074,17 @@ namespace GingerCore.Drivers
                     {
                         ClickOnXYPoint(lineUp, "5,5");
                         iCount++;
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "lineDown:iCount:" + iCount);
+                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "lineDown:iCount:" + iCount);
                     }
                     //Thread.Sleep(100);
                     
                     for (int i = 0; i < iClick; i++)
                     {
                         ClickOnXYPoint(lineDown, "5,5");
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "lineDown:" + iClick + ":" + i);
+                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "lineDown:" + iClick + ":" + i);
                     }
                     ClickOnXYPoint(subElement, "10," + (10 + iPaneY));
-                    Reporter.ToLogAndConsole(eLogLevel.INFO, "iPaneY:" + iPaneY);
+                    Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "iPaneY:" + iPaneY);
                     //pageDown = subElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
 
 
@@ -2096,7 +2096,7 @@ namespace GingerCore.Drivers
                         int? loadTime = mLoadTimeOut.Value;
                         mLoadTimeOut = -1;
                         ishandled = LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, subElementType, handleActionType);
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "ishandled:" + ishandled);
+                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "ishandled:" + ishandled);
                         if (ishandled)
                         {
                             iClick++;                            
@@ -2106,7 +2106,7 @@ namespace GingerCore.Drivers
                             iClick = 1;
                         }                            
                         mLoadTimeOut = loadTime;                        
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "DefineHandleAction:" + iClick);
+                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "DefineHandleAction:" + iClick);
                     }
                     else
                         iClick = 1;
@@ -2134,14 +2134,14 @@ namespace GingerCore.Drivers
                     else
                     {
                         iClick = 0;
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "in end pane:");
+                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "in end pane:");
                         endPane = true;
                         if (iPaneY < subElement.Current.BoundingRectangle.Height)
                             iPaneY += 10;
                         else
                             break;
                     }
-                    Reporter.ToLogAndConsole(eLogLevel.INFO, "iLoop now:" + iLoop);
+                    Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "iLoop now:" + iLoop);
                     //if ((!flag) && (iLoop >= 30))
                     //{
                     //    return "Validation Failed";
@@ -2251,10 +2251,10 @@ namespace GingerCore.Drivers
         {
             object obj = FindElementByLocator(LocateBy, LocateValue);
             AutomationElement AE = (AutomationElement)obj;
-            Reporter.ToLogAndConsole(eLogLevel.INFO, "Check if AE NUll:");
+            Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "Check if AE NUll:");
             if (AE == null)
                 return false;
-            Reporter.ToLogAndConsole(eLogLevel.INFO, "After AE not NUll:");
+            Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "After AE not NUll:");
             switch (actionType)
             {
                 case ActUIElement.eElementAction.Click:                    
@@ -2290,7 +2290,7 @@ namespace GingerCore.Drivers
                 case ActUIElement.eElementAction.AcceptDialog:
                     if (AE != null)
                     {
-                        Reporter.ToLogAndConsole(eLogLevel.INFO, "In Accept Dialog:");
+                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "In Accept Dialog:");
                         UIAElementInfo EI = new UIAElementInfo();
 
                         EI.ElementObject = AE;
@@ -2300,12 +2300,12 @@ namespace GingerCore.Drivers
                             if (((AutomationElement)elemInfo.ElementObject).Current.Name.ToString().ToLower() == "ok" )
                             {
                                 result = ClickElement(elemInfo.ElementObject);
-                                Reporter.ToLogAndConsole(eLogLevel.INFO, "after click ok:" + result);
+                                Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "after click ok:" + result);
                                 if (result.ToLower().Contains("clicked successfully"))
                                 {
                                     return true;
                                 }
-                                Reporter.ToLogAndConsole(eLogLevel.INFO, "for break:");
+                                Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "for break:");
                                 break;
                             }
                         }
