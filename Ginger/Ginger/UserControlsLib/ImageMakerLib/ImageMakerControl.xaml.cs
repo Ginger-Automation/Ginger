@@ -163,8 +163,11 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Ginger:
                     SetAsStaticImage("Ginger.png");
                     break;
-                case eImageType.GingerIcon:
+                case eImageType.GingerIconWhite:
                     SetAsStaticImage("GingerIconWhite.png");
+                    break;
+                case eImageType.GingerIconGray:
+                    SetAsStaticImage("GingerIconInGrayNoBackground.png");
                     break;
                 #endregion
 
