@@ -35,14 +35,5 @@ namespace GingerWPF.SolutionLib
         {
 
         }
-
-        /// <summary>
-        /// This method is used to cehck whether alternate page is required to load
-        /// </summary>
-        /// <returns></returns>
-        public bool IsAlternatePageToLoad()
-        {
-            return false;
-        }
     }
 }

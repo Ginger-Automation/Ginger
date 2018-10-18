@@ -322,15 +322,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             //    AddAPIModelWizard.NextEnabled = true;
             //else
             //    AddAPIModelWizard.NextEnabled = false;
-        }
-
-        /// <summary>
-        /// This method is used to cehck whether alternate page is required to load
-        /// </summary>
-        /// <returns></returns>
-        public bool IsAlternatePageToLoad()
-        {
-            return false;
-        }
+        }        
     }
 }

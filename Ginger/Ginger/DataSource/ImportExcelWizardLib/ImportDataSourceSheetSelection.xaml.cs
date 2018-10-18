@@ -143,14 +143,5 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
-        
-        /// <summary>
-        /// This method is used to cehck whether alternate page is required to load
-        /// </summary>
-        /// <returns></returns>
-        public bool IsAlternatePageToLoad()
-        {
-            return false;
-        }
     }
 }

@@ -182,16 +182,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             SetAutoMapElementTypes();
             xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
         }
-        
-        /// <summary>
-        /// This method is used to cehck whether alternate page is required to load
-        /// </summary>
-        /// <returns></returns>
-        public bool IsAlternatePageToLoad()
-        {
-            return false;
-        }
-
         private void xAutomaticElementConfigurationRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             if (mWizard != null)

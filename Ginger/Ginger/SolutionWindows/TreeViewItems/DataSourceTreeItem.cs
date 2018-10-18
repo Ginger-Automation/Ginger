@@ -147,7 +147,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 WizardWindow.ShowWizard(new ImportDataSourceFromExcelWizard(DSDetails));
-                mTreeView.Tree.RefresTreeNodeChildrens(this);
+                mTreeView.Tree.RefresTreeNodeChildrens(this);                
                 //   RefreshTreeItems();
             }
             catch (Exception ex)
@@ -168,7 +168,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 string name = string.Empty;
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Customized Table", "Table Name", ref name, System.IO.Path.GetInvalidPathChars()))
                 {
-                    CreateTale(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
+                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
                 }
             }
             catch (Exception ex)
@@ -187,9 +187,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 string name = string.Empty;
+
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Key Value Table", "Table Name", ref name, System.IO.Path.GetInvalidPathChars()))
                 {
-                    CreateTale(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
+                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
                 }
             }
             catch (Exception ex)
@@ -202,7 +203,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         /// This method is used to create the table
         /// </summary>
         /// <param name="query"></param>
-        private string CreateTale(string name, string query)
+        private string CreateTable(string name, string query)
         {
             string fileName = string.Empty;
             try

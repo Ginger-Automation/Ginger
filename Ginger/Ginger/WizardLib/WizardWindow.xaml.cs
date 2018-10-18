@@ -72,11 +72,7 @@ namespace GingerWPF.WizardLib
             foreach (WizardPage page in mWizard.Pages)
             {                
                 // send init event
-                ((IWizardPage)page.Page).WizardEvent(WizardEventArgs);
-                if ((IWizardPage)page.AlternatePage != null)
-                {
-                    ((IWizardPage)page.AlternatePage).WizardEvent(WizardEventArgs);
-                }
+                ((IWizardPage)page.Page).WizardEvent(WizardEventArgs);               
 
                 // TODO: attach validation error handler
                 ((Page)page.Page).AddHandler(Validation.ErrorEvent, new RoutedEventHandler(ValidationErrorHandler));
@@ -111,18 +107,8 @@ namespace GingerWPF.WizardLib
         void RefreshCurrentPage()
         {
             WizardPage page = mWizard.GetCurrentPage();
-            IWizardPage pg = mWizard.GetCurrentPage().Page;
-            if (!pg.IsAlternatePageToLoad())
-            {
-                PageFrame.Content = page.Page; 
-            }
-            else
-            {
-                if (page.AlternatePage != null)
-                {
-                    PageFrame.Content = page.AlternatePage; 
-                }
-            }           
+            IWizardPage pg = mWizard.GetCurrentPage().Page;            
+            PageFrame.Content = page.Page; 
 
             tbSubTitle.Text = page.SubTitle;
             // sync the list too

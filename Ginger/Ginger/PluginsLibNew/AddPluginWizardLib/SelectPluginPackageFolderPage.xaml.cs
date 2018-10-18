@@ -60,14 +60,5 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
             // TODO: check folder exist and info file exist
             wiz.PluginPackage = new PluginPackage(FolderTextBox.Text);
         }
-
-        /// <summary>
-        /// This method is used to cehck whether alternate page is required to load
-        /// </summary>
-        /// <returns></returns>
-        public bool IsAlternatePageToLoad()
-        {
-            return false;
-        }
     }
 }

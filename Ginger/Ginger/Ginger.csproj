@@ -486,9 +486,6 @@
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceFinishPage.xaml.cs">
       <DependentUpon>ImportDataSourceFinishPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceDisplayAllData.xaml.cs">
-      <DependentUpon>ImportDataSourceDisplayAllData.xaml</DependentUpon>
-    </Compile>
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceDisplayData.xaml.cs">
       <DependentUpon>ImportDataSourceDisplayData.xaml</DependentUpon>
     </Compile>
@@ -2822,10 +2819,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceFinishPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceDisplayAllData.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

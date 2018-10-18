@@ -76,33 +76,12 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             Mouse.OverrideCursor = Cursors.Wait;
             mWizardEventArgs.Wizard.ProcessStarted();
 
-            DataSet ExcelImportData = new DataSet();
-            if (!((ImportDataSourceDisplayData)(mWizardEventArgs.Wizard.Pages[3]).Page).IsAlternatePageToLoad())
-            {
-                ExcelImportData = ((ImportDataSourceDisplayData)(mWizardEventArgs.Wizard.Pages[3]).Page).ExcelImportData;
-            }
-            else
-            {
-                ExcelImportData = ((ImportDataSourceDisplayAllData)(mWizardEventArgs.Wizard.Pages[3]).AlternatePage).ExcelImportData;
-            }
-
             ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).Finish();
 
             mWizardEventArgs.Wizard.ProcessEnded();
             Mouse.OverrideCursor = null;
             xLable.Content = "Data Imported Successfully!";
 
-        }
-        
-        
-
-        /// <summary>
-        /// This method is used to cehck whether alternate page is required to load
-        /// </summary>
-        /// <returns></returns>
-        public bool IsAlternatePageToLoad()
-        {
-            return false;
         }
     }
 }

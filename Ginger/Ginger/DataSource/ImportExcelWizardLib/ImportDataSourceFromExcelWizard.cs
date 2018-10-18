@@ -36,7 +36,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
 {
     public class ImportDataSourceFromExcelWizard : WizardBase
     {
-        public DataSourceBase DSDetails { get; set; }
+        public DataSourceBase mDSDetails;
 
         public override string Title { get { return "Create new solution wizard"; } }
 
@@ -67,14 +67,13 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         /// <summary>
         /// This is used to initialise the wizard
         /// </summary>
-        public ImportDataSourceFromExcelWizard(DataSourceBase mDSDetails)
+        public ImportDataSourceFromExcelWizard(DataSourceBase DSDetails)
         {
-            DSDetails = mDSDetails;
+            mDSDetails = DSDetails;
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Import DataSource From Excel File", Page: new WizardIntroPage("/DataSource/ImportExcelWizardLib/ImportDataSourceIntro.md"));
             AddPage(Name: "Browse File", Title: "Browse File", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceBrowseFile());
             AddPage(Name: "Sheet Selection", Title: "Sheet Selection", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceSheetSelection());
-            AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData());
-            //AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData(), AlternatePage: new ImportDataSourceDisplayAllData());
+            AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData());            
             AddPage(Name: "Finish", Title: "Finish", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceFinishPage(DSDetails));
         }
 
@@ -98,9 +97,8 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 {
                     string cols = GetColumnNameListForTableCreation(dt);
                     AddDefaultColumn(dt);
-                    string fileName = CreateTable(dt.TableName, cols);
-                    ((AccessDataSource)(DSDetails)).Init(fileName);
-                    ((AccessDataSource)(DSDetails)).SaveTable(dt);
+                    CreateTable(dt.TableName, cols);                    
+                    mDSDetails.DSC.SaveTable(dt);
                 }                
             }
             catch (System.Exception ex)
@@ -179,19 +177,15 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             try
             {
                 DataSourceTable dsTableDetails = new DataSourceTable();
-                if (dsTableDetails != null)
-                {
-                    dsTableDetails.DSTableType = DataSourceTable.eDSTableType.Customized;
-                    dsTableDetails.Name = name;
-                    dsTableDetails.DSC = DSDetails.DSC;
-                    DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
-                    DSTTI.DSTableDetails = dsTableDetails;
-                    DSTTI.DSDetails = DSDetails;
-                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, query);
-                    DSDetails.DSTableList.Add(dsTableDetails);
-
-                    fileName = DSDetails.FileFullPath;
-                }
+                dsTableDetails.DSTableType = DataSourceTable.eDSTableType.Customized;
+                dsTableDetails.Name = name;
+                dsTableDetails.DSC = mDSDetails.DSC;
+                DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
+                DSTTI.DSTableDetails = dsTableDetails;
+                DSTTI.DSDetails = mDSDetails;
+                dsTableDetails.DSC.AddTable(dsTableDetails.Name, query);
+                mDSDetails.DSTableList.Add(dsTableDetails);
+                fileName = mDSDetails.FileFullPath;
             }
             catch (Exception ex)
             {

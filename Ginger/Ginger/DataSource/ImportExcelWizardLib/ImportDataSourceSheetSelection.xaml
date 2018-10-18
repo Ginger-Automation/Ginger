@@ -41,11 +41,11 @@
                 </DockPanel>
 
                 <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="5,10,0,0" >
-                    <CheckBox VerticalAlignment="Center" x:Name="chkHeadingRow" Content="Sheet first row as Column name" IsChecked="True"  />
+                    <CheckBox VerticalAlignment="Center" x:Name="chkHeadingRow" Content="Sheet first row as Column name" IsChecked="False"  />
                 </DockPanel>
 
                 <DockPanel Grid.Row="2" Grid.ColumnSpan="3" Margin="5,10,0,0" >
-                    <CheckBox VerticalAlignment="Center" x:Name="chkModelParamsFile" Content="Is the Model Parameter File" IsChecked="True"  />
+                    <CheckBox VerticalAlignment="Center" x:Name="chkModelParamsFile" Content="Is the Model Parameter File" IsChecked="False"  />
                 </DockPanel>
             </Grid>
         </StackPanel>

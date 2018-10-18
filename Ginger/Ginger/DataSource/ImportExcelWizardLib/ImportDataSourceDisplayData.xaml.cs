@@ -182,6 +182,8 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                mWizardEventArgs.Wizard.ProcessEnded();
+                Mouse.OverrideCursor = null;
             }
         }
         private TabItem AddTabItem(string name, DataTable dt)
@@ -230,20 +232,6 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             {
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
-        }
-                
-        /// <summary>
-        /// This method is used to cehck whether alternate page is required to load
-        /// </summary>
-        /// <returns></returns>
-        public bool IsAlternatePageToLoad()
-        {
-            bool isAlternatePage = false;
-            //if (SheetName == "-- All --")
-            //{
-            //    isAlternatePage = true;
-            //}
-            return isAlternatePage;
         }
     }
 }

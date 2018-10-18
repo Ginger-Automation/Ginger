@@ -21,12 +21,6 @@ namespace GingerWPF.WizardLib
 {
     public interface IWizardPage
     {
-        void WizardEvent(WizardEventArgs WizardEventArgs);
-
-        /// <summary>
-        /// This method is used to cehck whether alternate page is required to load
-        /// </summary>
-        /// <returns></returns>
-        bool IsAlternatePageToLoad();
+        void WizardEvent(WizardEventArgs WizardEventArgs);       
     }
 }

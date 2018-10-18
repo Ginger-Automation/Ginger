@@ -662,6 +662,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             StringBuilder cName = new StringBuilder();
             try
             {
+                if (String.IsNullOrEmpty(columnName))
+                    return "";
                 columnName = columnName.Replace("#", "");
                 foreach (char ch in columnName)
                 {

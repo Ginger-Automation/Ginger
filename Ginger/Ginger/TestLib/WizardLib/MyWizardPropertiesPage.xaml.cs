@@ -26,15 +26,6 @@ namespace Ginger.TestLib.WizardLib
             InitializeComponent();
         }
 
-        /// <summary>
-        /// This method is used to cehck whether alternate page is required to load
-        /// </summary>
-        /// <returns></returns>
-        public bool IsAlternatePageToLoad()
-        {
-            return false;
-        }
-
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
             // throw new NotImplementedException();
