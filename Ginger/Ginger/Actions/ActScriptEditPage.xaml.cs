@@ -196,7 +196,7 @@ namespace Ginger.Actions
 
         private void ScriptInterpreterComboBox_Loaded(object sender, RoutedEventArgs e)
         {
-
+            throw new NotSupportedException();
         }
     }
 

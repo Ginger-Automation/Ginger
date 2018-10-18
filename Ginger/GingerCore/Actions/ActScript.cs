@@ -160,9 +160,13 @@ namespace GingerCore.Actions
             {
                 case eScriptInterpreterType.BAT:
                     if (File.Exists(GetSystemDirectory() + @"\cmd.exe"))
+                    {
                         p.StartInfo.FileName = GetSystemDirectory() + @"\cmd.exe";
+                    }
                     else
+                    {
                         p.StartInfo.FileName = @"cmd";
+                    }
                     break;
                 case eScriptInterpreterType.JS:
                 case eScriptInterpreterType.VBS:
