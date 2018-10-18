@@ -33,6 +33,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-        }
+        }        
     }
 }
