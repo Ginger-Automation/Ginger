@@ -62,7 +62,7 @@ namespace Ginger.Variables
             InitializeComponent();
 
             mParentObject = parentObject;
-            ((RepositoryItemBase)mParentObject).SaveBackup();
+            ((RepositoryItem)mParentObject).SaveBackup();
 
             if (mParentObject is Activity)
             {
@@ -661,7 +661,7 @@ namespace Ginger.Variables
         private void UndoChangesAndClose()
         {
             Mouse.OverrideCursor = Cursors.Wait;            
-            ((RepositoryItemBase)mParentObject).RestoreFromBackup(true);
+            ((RepositoryItem)mParentObject).RestoreFromBackup(true);
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();
