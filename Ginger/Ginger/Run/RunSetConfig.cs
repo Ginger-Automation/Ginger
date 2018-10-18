@@ -110,19 +110,11 @@ namespace Ginger.Run
             }
         }
 
-        public bool mRunWithAnalyzer = true;
-        [IsSerializedForLocalRepository]
+        
+        [IsSerializedForLocalRepository(true)]
         public bool RunWithAnalyzer
         {
-            get
-            {
-                return mRunWithAnalyzer;
-            }
-            set
-            {
-                mRunWithAnalyzer = value;
-                OnPropertyChanged(nameof(this.RunWithAnalyzer));
-            }
+            get;set;
         }
 
         public override string ItemName
