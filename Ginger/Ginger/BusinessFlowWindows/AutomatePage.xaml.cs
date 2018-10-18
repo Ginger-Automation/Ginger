@@ -877,22 +877,10 @@ namespace Ginger
                 try
                 {
                     AnalyzerPage analyzerPage = new AnalyzerPage();
-                    await Task.Run(() =>
-                    {
+                   
                         analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
-                        analyzerPage.AnalyzeWithoutUI();
-                        SpinWait.SpinUntil(() =>
-                        {
-                            if (analyzerPage.IsAnalyzeDone)
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        });
-                    });
+                        await analyzerPage.AnalyzeWithoutUI();
+                        
                     Reporter.CloseGingerHelper();
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)
                     {

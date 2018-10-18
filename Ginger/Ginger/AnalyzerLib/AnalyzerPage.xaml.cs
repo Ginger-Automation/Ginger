@@ -112,13 +112,13 @@ namespace Ginger.AnalyzerLib
             AnalyzerItemsGrid.Title = "'" + RSC.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " Issues";
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (mAnalyzeDoneOnce == false)
-                Analyze();
+               await Analyze();
         }
 
-        private void RerunButton_Click(object sender, RoutedEventArgs e)
+        private async Task RerunButton_Click(object sender, RoutedEventArgs e)
         {
             if (BusyInProcess)
             {
@@ -130,16 +130,16 @@ namespace Ginger.AnalyzerLib
             CriticalAndHighIssuesLabelCounter.Content = "0";
             CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#20334f");   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
-            Analyze();
+            await Analyze();
         }
 
-        public void AnalyzeWithoutUI()
+        public async Task AnalyzeWithoutUI()
         {
             mAnalyzeWithUI = false;
-            Analyze();
+            await Analyze();
         }
 
-        private async void Analyze()
+        private async Task Analyze()
         {
             try
             {
@@ -607,7 +607,10 @@ namespace Ginger.AnalyzerLib
             Button RerunButton = new Button();
             RerunButton.Content = "Re-Analyze";
             RerunButton.Margin = new Thickness(0, 0, 60, 0);
-            RerunButton.Click += new RoutedEventHandler(RerunButton_Click);
+            RerunButton.Click += async (o, e) =>
+            {
+               await RerunButton_Click(o,e);
+            };
             winButtons.Add(RerunButton);
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons);
