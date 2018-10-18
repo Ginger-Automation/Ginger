@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         bool mRequiredAsInput = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool RequiredAsInput
         {
             get
