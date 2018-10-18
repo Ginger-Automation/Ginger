@@ -39,7 +39,7 @@ namespace GingerWPF.TreeViewItemsLib
 {
     public class NewTreeViewItemBase : TreeViewItemGenericBase
     {
-        public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one
+        public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one      
         static bool mBulkOperationIsInProcess = false;
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
         {         
@@ -186,12 +186,7 @@ namespace GingerWPF.TreeViewItemsLib
         {
             if (nodeItemToCut is RepositoryItemBase)
             {
-                // TODO: change me, ugly but will work for now
-                string relativeFolder = targetFolderNode.NodePath().Replace(WorkSpace.Instance.SolutionRepository.SolutionFolder, @"~\");
-                WorkSpace.Instance.SolutionRepository.MoveItem((RepositoryItemBase)nodeItemToCut, relativeFolder);
-
-              
-
+                WorkSpace.Instance.SolutionRepository.MoveItem((RepositoryItemBase)nodeItemToCut, targetFolderNode.NodePath());
                 return true;
             }
             else
@@ -263,7 +258,7 @@ namespace GingerWPF.TreeViewItemsLib
             catch (Exception ex)
             {                
                 Reporter.ToUser(eUserMsgKeys.RefreshFailed, "Failed to refresh the item type cache for the folder: " + path);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 mBulkOperationIsInProcess = false;
             }
         }
@@ -289,7 +284,7 @@ namespace GingerWPF.TreeViewItemsLib
                                                                     BindingFlags.Public |
                                                                     BindingFlags.Instance |
                                                                     BindingFlags.OptionalParamBinding, null, new object[] { repoFolder }, CultureInfo.CurrentCulture);
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 }
                 if (folderItem == null)
                 {
@@ -300,7 +295,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return null;
             }
         }
@@ -314,7 +309,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return false;
             }
             return true;
@@ -438,14 +433,10 @@ namespace GingerWPF.TreeViewItemsLib
                 if (App.UserProfile.Solution.SourceControl.IsSupportingGetLatestForIndividualFiles)
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Get Latest Version", SourceControlGetLatestVersion, null, "@GetLatest2_16x16.png");
                 if (App.UserProfile.Solution.ShowIndicationkForLockedItems && App.UserProfile.Solution.SourceControl.IsSupportingLocks && addLocksOption)
-                    if (ItemSourceControlStatus == SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser || ItemSourceControlStatus == SourceControlFileInfo.eRepositoryItemStatus.LockedByMe)
-                    {
-                        TreeViewUtils.AddSubMenuItem(sourceControlMenu, "UnLock Item", SourceControlUnlock, null, "@Unlock_16x16.png");
-                    }
-                    else
-                    {
-                        TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Lock Item", SourceControlLock, null, "@Lock_16x16.png");
-                    }
+                {
+                    TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Lock Item", SourceControlLock, null, "@Lock_16x16.png");
+                    TreeViewUtils.AddSubMenuItem(sourceControlMenu, "UnLock Item", SourceControlUnlock, null, "@Unlock_16x16.png");                    
+                }  
                 TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Undo Changes", SourceControlUndoChanges, null, "@Undo_16x16.png");
             }
         }
@@ -459,12 +450,26 @@ namespace GingerWPF.TreeViewItemsLib
 
         private void SourceControlUnlock(object sender, RoutedEventArgs e)
         {
+            RepositoryItemBase RI = ((ITreeViewItem)this).NodeObject() as RepositoryItemBase;
+
+            if (RI != null && RI.SourceControlStatus != eImageType.SourceControlLockedByMe && RI.SourceControlStatus != eImageType.SourceControlLockedByAnotherUser)
+            {
+                Reporter.ToUser(eUserMsgKeys.SoruceControlItemAlreadyUnlocked);
+                return;
+            }
             SourceControlIntegration.UnLock(App.UserProfile.Solution.SourceControl, this.NodePath());
             mTreeView.Tree.RefreshHeader((ITreeViewItem)this);
         }
 
         private void SourceControlLock(object sender, RoutedEventArgs e)
         {
+            RepositoryItemBase RI= ((ITreeViewItem)this).NodeObject() as RepositoryItemBase;
+         
+            if(RI != null && (RI.SourceControlStatus== eImageType.SourceControlLockedByMe || RI.SourceControlStatus == eImageType.SourceControlLockedByAnotherUser))
+            {
+               Reporter.ToUser(eUserMsgKeys.SourceControlItemAlreadyLocked);
+               return;
+            }
             string lockComment = string.Empty;
             if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment, System.IO.Path.GetInvalidFileNameChars()))
             {
@@ -527,12 +532,13 @@ namespace GingerWPF.TreeViewItemsLib
 
             ObservableList<RepositoryFolder<T>> subFolders = RF.GetSubFolders();
             foreach (RepositoryFolder<T> envFolder in subFolders)
-            {
+            {                
                 Childrens.Add(GetTreeItem(envFolder));
             }
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // track sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
+            
             //Add direct childrens        
             ObservableList<T> folderItems = RF.GetFolderItems();
             // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once
@@ -544,7 +550,7 @@ namespace GingerWPF.TreeViewItemsLib
                 object sampleItem = folderItems[0];               
                 foreach (T item in folderItems.OrderBy(((RepositoryItemBase)sampleItem).ItemNameField))
                 {
-                    ITreeViewItem tvi = GetTreeItem(item);
+                    ITreeViewItem tvi = GetTreeItem(item);                    
                     Childrens.Add(tvi);
                 }
             }
@@ -558,8 +564,8 @@ namespace GingerWPF.TreeViewItemsLib
         /// <param name="imageType">The image type which assosicated with the repository item- should be pulled from the repoItem</param>
         /// <param name="NameProperty">The field of the item which holds the item name or static name in case the repository item is null</param>
         /// <returns></returns>
-        protected StackPanel NewTVItemHeaderStyle(RepositoryItemBase repoItem, eImageType imageType= eImageType.Null, string NameProperty= "")
-        {            
+        protected StackPanel NewTVItemHeaderStyle(RepositoryItemBase repoItem, eImageType imageType = eImageType.Null, string NameProperty = "")
+        {
             //TODO: Move to biz flow page?
             repoItem.StartDirtyTracking();
 
@@ -570,11 +576,11 @@ namespace GingerWPF.TreeViewItemsLib
             if (WorkSpace.Instance.SourceControl != null)
             {
                 // Source control image
-                ImageMakerControl sourceControlImage = new ImageMakerControl();                
+                ImageMakerControl sourceControlImage = new ImageMakerControl();
                 sourceControlImage.BindControl(repoItem, nameof(RepositoryItemBase.SourceControlStatus));
                 repoItem.RefreshSourceControlStatus();
                 sourceControlImage.Width = 8;
-                sourceControlImage.Height = 8;                
+                sourceControlImage.Height = 8;
                 stack.Children.Add(sourceControlImage);
             }
 
@@ -583,34 +589,38 @@ namespace GingerWPF.TreeViewItemsLib
             if (imageType == eImageType.Null)
             {
                 NodeImageType.ImageType = repoItem.ItemImageType;
-            }                
+            }
             else
             {
                 NodeImageType.ImageType = imageType;
             }
-                
+
             NodeImageType.Width = 16;
             NodeImageType.Height = 16;
             stack.Children.Add(NodeImageType);
 
             // Add Item header text 
             Label itemHeaderLabel = new Label();
+
+            string nameFieldProperty;
             if (string.IsNullOrEmpty(NameProperty))
             {
-                BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, repoItem.ItemNameField, BindingMode: System.Windows.Data.BindingMode.OneWay);
-            }                
+                nameFieldProperty = repoItem.ItemNameField;
+            }
             else
             {
-                itemHeaderLabel.Content = NameProperty;
+                nameFieldProperty = NameProperty;
             }
-                
+            BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, nameFieldProperty, BindingMode: System.Windows.Data.BindingMode.OneWay);
+
+
             stack.Children.Add(itemHeaderLabel);
 
             // add icon of dirty status            
-            ImageMakerControl dirtyStatusImage = new ImageMakerControl();            
+            ImageMakerControl dirtyStatusImage = new ImageMakerControl();
             dirtyStatusImage.BindControl(repoItem, nameof(RepositoryItemBase.DirtyStatusImage));
             dirtyStatusImage.Width = 6;
-            dirtyStatusImage.Height = 6;            
+            dirtyStatusImage.Height = 6;
             dirtyStatusImage.VerticalAlignment = VerticalAlignment.Top;
             dirtyStatusImage.Margin = new Thickness(0, 10, 10, 0);
             stack.Children.Add(dirtyStatusImage);

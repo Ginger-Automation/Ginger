@@ -10,9 +10,9 @@
 
     <Grid>
         <StackPanel>
-            <Label>Import Gherkin Feature file</Label>
+            <Label>Import Gherkin Feature</Label>
             <Label>Into folder:</Label>
-            <Label x:Name="FolderLabel" FontSize="18" >folder</Label>
+            <Label x:Name="FolderLabel" FontSize="14" >folder</Label>
             <Label>This Wizard will help you import '.feature' text file</Label>
             <Label>the text file should be written using Gherkin keywords like: Scenario:, Given, When and Then.</Label>
             <Label>Gherkin langauge is helping developing in BDD approach - Behavior Driven Development</Label>

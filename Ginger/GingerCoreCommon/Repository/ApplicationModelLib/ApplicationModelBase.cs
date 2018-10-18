@@ -121,7 +121,7 @@ namespace Amdocs.Ginger.Repository
             var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property);
             foreach (MemberInfo mi in properties)
             {
-                if (mi.Name == "mName" || mi.Name == "Name" || mi.Name == "ItemName" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" || mi.Name == "ObjFileExt" || mi.Name == "ObjFolderName") continue;
+                if (mi.Name == "mName" || mi.Name == "Name" || mi.Name == "ItemName" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" || mi.Name == "ObjFileExt" || mi.Name == "ObjFolderName" || mi.Name == "ItemNameField") continue;                
 
                 PropertyInfo PI = this.GetType().GetProperty(mi.Name);
                 dynamic value = null;

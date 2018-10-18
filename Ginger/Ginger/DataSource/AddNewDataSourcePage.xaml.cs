@@ -129,7 +129,7 @@ namespace Ginger.DataSource
             if (path != "")
                 dlg.InitialDirectory = Path.GetDirectoryName(path);
             else
-                dlg.InitialDirectory = App.UserProfile.Solution.Folder + "DataSources";
+                dlg.InitialDirectory = System.IO.Path.Combine(App.UserProfile.Solution.Folder, "DataSources");
             dlg.Title = "Select DB File";
             if(mFileType != "")
                 dlg.Filter = mFileType.ToUpper() + " Files (*." + mFileType + ")|*." + mFileType + "|All Files (*.*)|*.*";

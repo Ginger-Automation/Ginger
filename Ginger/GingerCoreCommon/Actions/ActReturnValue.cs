@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -85,14 +85,14 @@ namespace Amdocs.Ginger.Repository
 
         private string mExpectedCalculated;
         public string ExpectedCalculated { get { return mExpectedCalculated; } set { mExpectedCalculated = value; OnPropertyChanged(Fields.ExpectedCalculated); } }
-        
+
         public string ExpectedCalculatedValue { get; set; }
         private eStatus mStatus { get; set; }
         public eStatus Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(Fields.Status); } }
 
         [IsSerializedForLocalRepository]
         public bool AddedAutomatically { get; set; }
-        
+
         public enum eStoreTo
         {
             None,
@@ -117,7 +117,7 @@ namespace Amdocs.Ginger.Repository
         /// <summary>
         /// Do not use - check if can be deleted
         /// </summary>
-        public string StoreToVariable 
+        public string StoreToVariable
         {
             get
             {
@@ -134,7 +134,7 @@ namespace Amdocs.Ginger.Repository
                 }
             }
         }
-        
+
         private string mStoreToValue;
         [IsSerializedForLocalRepository]
         public string StoreToValue
@@ -172,7 +172,7 @@ namespace Amdocs.Ginger.Repository
             get
             {
                 // No need to save to XML if there is no expected value or no StoreToValue and no simulated Actual
-                if (string.IsNullOrEmpty(Expected) && string.IsNullOrEmpty(StoreToValue) && string.IsNullOrEmpty(SimulatedActual))
+                if (DoNotConsiderAsTemp == false && string.IsNullOrEmpty(Expected) && string.IsNullOrEmpty(StoreToValue) && string.IsNullOrEmpty(SimulatedActual))
                 {
                     return true;
                 }
@@ -183,7 +183,8 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-
+        [IsSerializedForLocalRepository]
+        public bool DoNotConsiderAsTemp { get; set; }
 
     }
 }

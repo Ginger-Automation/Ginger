@@ -1141,7 +1141,7 @@ namespace Ginger.Run.RunSetActions
                 {
                     ZipFileName = Path.GetFileNameWithoutExtension(FileName) + DateTime.Now.ToString("MMddyyyy_HHmmss") + ".zip";
                     ZipFile.CreateFromDirectory(FileName, tempFolder + @"\" + ZipFileName);
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 }
                 e.Attachments.Add(tempFolder + @"\" + ZipFileName);
             }

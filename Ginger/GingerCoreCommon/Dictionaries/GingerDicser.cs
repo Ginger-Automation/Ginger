@@ -18,11 +18,10 @@ limitations under the License.
 
 using System;
 using System.Reflection;
-using System.Windows;
 using Amdocs.Ginger.Common;
 
 namespace GingerCore
-{    
+{
     public enum eTermResKey
     {
         BusinessFlow, BusinessFlows,
@@ -64,7 +63,7 @@ namespace GingerCore
             catch (Exception ex)
             {
                 termResValue = null;
-                NewReporter.ToLog(eNewLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
 
             if (termResValue != null)

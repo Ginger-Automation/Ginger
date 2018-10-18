@@ -38,7 +38,8 @@
                     </DataTrigger>
                 </DataTemplate.Triggers>    
             </DataTemplate>
-            
+
+
         </Grid.Resources>
 
         <Grid.RowDefinitions>
@@ -47,7 +48,7 @@
         </Grid.RowDefinitions>
 
 
-        <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" RowChangedEvent="MappedElementsGrid_RowChangedEvent" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" />
+        <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" RowChangedEvent="MappedElementsGrid_RowChangedEvent" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" Unloaded="xMainElementsGrid_Unloaded" />
 
         <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
 
@@ -66,7 +67,7 @@
                                     <TextBlock x:Name="xPropertiesTextBlock" Text="Control Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
                                 </StackPanel>
                             </TabItem.Header>
-                            <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
+                            <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" Unloaded="xPropertiesGrid_Unloaded" />
                         </TabItem>
                         <TabItem>
                             <TabItem.Header>
@@ -74,7 +75,7 @@
                                     <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
                                 </StackPanel>
                             </TabItem.Header>
-                            <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopyCutPast="Visible" ShowTitle="Collapsed" />
+                            <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" Unloaded="xLocatorsGrid_Unloaded"/>
                         </TabItem>
 
                     </TabControl>

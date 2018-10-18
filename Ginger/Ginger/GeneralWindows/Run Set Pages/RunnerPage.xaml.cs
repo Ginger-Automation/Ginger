@@ -438,7 +438,7 @@ namespace Ginger.Run
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Stats", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Update Stats", e);
             }
         }
         //ToDo : move to piechart section or create usercontrol

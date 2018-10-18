@@ -96,8 +96,8 @@ namespace Ginger
             xToBusinessFlowsListBtn.Visibility = Visibility.Visible;
             xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 32);
             xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 16);
-            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
-            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
+            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
+            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
             xToBusinessFlowsListBtn.Click += clickHandler;
         }
 
@@ -107,7 +107,7 @@ namespace Ginger
 
             if (App.BusinessFlow == null) //Not supposed to happen because now Automate is done from BF itself           
             {
-                App.LoadDefaultBusinessFlow();
+                App.SetDefaultBusinessFlow();
             }
 
             //Ribbon
@@ -725,7 +725,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured on Reset Status Run from Automate Tab", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured on Reset Status Run from Automate Tab", ex);
                 throw ex;                
             }
         }
@@ -876,8 +876,11 @@ namespace Ginger
                 try
                 {
                     AnalyzerPage analyzerPage = new AnalyzerPage();
-                    analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
-                    analyzerPage.AnalyzeWithoutUI();
+                    await Task.Run(() =>
+                    {
+                        analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
+                        analyzerPage.AnalyzeWithoutUI();
+                    });
                     while (analyzerPage.IsAnalyzeDone == false)
                     {
                         System.Threading.Thread.Sleep(100);
@@ -989,7 +992,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to disable Automate Tab grids for execution", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to disable Automate Tab grids for execution", ex);
             }
         }
 
@@ -1222,7 +1225,7 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full business flow report", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to generate offline full business flow report", ex);
                     Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Failed to generate the report for the '" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
                 }
             }

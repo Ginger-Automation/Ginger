@@ -21,7 +21,6 @@ using Ginger.DataSource;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
 using GingerCore.DataSource;
-using GingerCore.SourceControl;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -31,6 +30,8 @@ using Amdocs.Ginger.Common.Enums;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using GingerWPF.WizardLib;
+using Ginger.DataSource.ImportExcelWizardLib;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -114,9 +115,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddMenuItem(mContextMenu, "Duplicate", Duplicate, null, "@Duplicate_16x16.png");
             TV.AddToolbarTool("@Duplicate_16x16.png", "Duplicate", new RoutedEventHandler(Duplicate));
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Add New Table", AddNewTable, null, "@Add_16x16.png");
-            TV.AddToolbarTool("@Add_16x16.png", "Add New Table", AddNewTable);
+            MenuItem importMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Add New Table");
 
+            TreeViewUtils.AddSubMenuItem(importMenu, "Add New Customized Table", AddNewCustomizedTable, null, "@Add_16x16.png");
+            TreeViewUtils.AddSubMenuItem(importMenu, "Add New Key Value Table", AddNewKeyValueTable, null, "@Add_16x16.png");
+            
             TreeViewUtils.AddMenuItem(mContextMenu, "Commit All", CommitAll,null, "@Commit_16x16.png");
             TV.AddToolbarTool("@Commit_16x16.png", "Commit All", new RoutedEventHandler(CommitAll));
 
@@ -129,31 +132,102 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
             TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
 
+            TreeViewUtils.AddMenuItem(mContextMenu, "Import from Excel", AddNewTableFromExcel, null, eImageType.ExcelFile);
+
             AddSourceControlOptions(mContextMenu);
-        }  
-        
-        private void AddNewTable(object sender, System.Windows.RoutedEventArgs e)
+        }
+
+        /// <summary>
+        /// This method is used to add the new table from excel file
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddNewTableFromExcel(object sender, System.Windows.RoutedEventArgs e)
         {
-            AddNewTablePage ANTP = new AddNewTablePage();
-            ANTP.ShowAsWindow();
-
-            DataSourceTable dsTableDetails = ANTP.DSTableDetails;            
-
-            if (dsTableDetails != null)
+            try
             {
-                dsTableDetails.DSC = DSDetails.DSC;
-                DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
-                DSTTI.DSTableDetails = dsTableDetails;
-                DSTTI.DSDetails = DSDetails;
-
-              if (dsTableDetails.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
-                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
-                else if(dsTableDetails.DSTableType == DataSourceTable.eDSTableType.Customized)
-                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
-
-                mTreeView.Tree.AddChildItemAndSelect(this, DSTTI);
-                DSDetails.DSTableList.Add(dsTableDetails);
+                WizardWindow.ShowWizard(new ImportDataSourceFromExcelWizard(DSDetails));
+                mTreeView.Tree.RefresTreeNodeChildrens(this);                
+                //   RefreshTreeItems();
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to add the new Customized table
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddNewCustomizedTable(object sender, System.Windows.RoutedEventArgs e)
+        {
+            try
+            {
+                string name = string.Empty;
+                if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Customized Table", "Table Name", ref name, System.IO.Path.GetInvalidPathChars()))
+                {
+                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to add new KeyValue table
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddNewKeyValueTable(object sender, System.Windows.RoutedEventArgs e)
+        {
+            try
+            {
+                string name = string.Empty;
+
+                if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Key Value Table", "Table Name", ref name, System.IO.Path.GetInvalidPathChars()))
+                {
+                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to create the table
+        /// </summary>
+        /// <param name="query"></param>
+        private string CreateTable(string name, string query)
+        {
+            string fileName = string.Empty;
+            try
+            {
+                DataSourceTable dsTableDetails = new DataSourceTable();
+                if (dsTableDetails != null)
+                {
+                    dsTableDetails.Name = name;
+                    dsTableDetails.DSC = DSDetails.DSC;
+                    DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
+                    DSTTI.DSTableDetails = dsTableDetails;
+                    DSTTI.DSDetails = DSDetails;
+                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, query);
+                    mTreeView.Tree.AddChildItemAndSelect(this, DSTTI);
+                    DSDetails.DSTableList.Add(dsTableDetails);
+
+                    fileName = this.DSDetails.FileFullPath;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+            return fileName;
         }
 
         private void ExportToExcel(object sender, System.Windows.RoutedEventArgs e)
@@ -196,8 +270,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)
-        {
-            RefreshTreeItems();            
+        {            
+            mTreeView.Tree.RefresTreeNodeChildrens(this);
+            //RefreshTreeItems();
         }
         private void RefreshTreeItems()
         {
@@ -221,7 +296,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Error while deleteing Data Soucre File", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Error while deleteing Data Soucre File", ex);
                     Reporter.ToUser(eUserMsgKeys.DeleteDSFileError, DSDetails.FileFullPath);                    
                 }
             }

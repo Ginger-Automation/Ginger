@@ -225,7 +225,7 @@ namespace GingerCore.Drivers.Common
             {
                 retryForCOMExceptionDoneFlag = true;
                 mUIAutomationHelper.SwitchToWindow(mUIAutomationHelper.CurrentWindowRootElement.ElementName);
-                Reporter.ToLog(eLogLevel.INFO, "Retrying the action" + act.GetType() + " Description is" + act.Description);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Retrying the action" + act.GetType() + " Description is" + act.Description);
                 RunAction(act);
                 retryForCOMExceptionDoneFlag = false;
             }

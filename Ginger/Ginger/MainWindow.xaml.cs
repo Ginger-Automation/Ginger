@@ -47,6 +47,7 @@ using Ginger.User;
 using Amdocs.Ginger.UserControls;
 using System.Drawing;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common;
 
 namespace Ginger
 {
@@ -69,6 +70,7 @@ namespace Ginger
             {
                 //General
                 this.WindowState = System.Windows.WindowState.Maximized;
+                Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
 
                 //App
                 App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
@@ -84,9 +86,9 @@ namespace Ginger
                 App.UserProfile.SaveUserProfile();
                 App.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
-                //Reporter
-                Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
+                //Reporter                
                 Reporter.HandlerGingerHelperEvent += Reporter_HandlerGingerHelperEvent;
+                Reporter.ErrorReportedEvent += Reporter_ErrorReportedEvent;
 
                 //Main Menu                            
                 xGingerIconImg.ToolTip = App.AppFullProductName + Environment.NewLine + "Version " + App.AppVersion;
@@ -98,7 +100,7 @@ namespace Ginger
                 }
 
                 //Status Bar            
-                ErrorsLabel.Visibility = Visibility.Collapsed;
+                xLogErrorsPnl.Visibility = Visibility.Collapsed;
                 xProcessMsgPnl.Visibility = Visibility.Collapsed;                
                 WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatures_PropertyChanged;
                 SetBetaFlagIconVisibility();
@@ -121,8 +123,37 @@ namespace Ginger
             {
                 App.AppSplashWindow.Close();
                 Reporter.ToUser(eUserMsgKeys.ApplicationInitError, ex.Message);
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Init Main Window", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Init Main Window", ex);
             }
+        }
+
+        private int mErrorsNum = 0;
+        private void Reporter_ErrorReportedEvent()
+        {
+            try
+            {
+                UpdateErrorNotification();
+            }
+            catch(Exception ex)
+            {
+                //something went wrong
+            }
+        }
+
+        private void UpdateErrorNotification()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    if (xLogErrorsPnl != null)
+                    {
+                        xLogErrorsPnl.Visibility = Visibility.Visible;
+                        xLogErrorsLbl.Content = "[" + ++mErrorsNum + "]";
+                        xLogErrorsPnl.ToolTip = mErrorsNum + " Errors were logged to Ginger log, click to view log file";
+                    }
+                });
+            });
         }
 
         private void BetaFeatures_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -151,13 +182,15 @@ namespace Ginger
             {
                 if (App.LoadingSolution)
                 {
+                    xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
                     xMainWindowFrame.Content = new LoadingSolutionPage();
-                    xMainWindowFrame.Visibility = Visibility.Visible;
+                    xMainWindowFrame.Visibility = Visibility.Visible;                    
                     GingerCore.General.DoEvents();
                 }
                 else if (xMainWindowFrame.Content is LoadingSolutionPage && SelectedSolutionTab == eSolutionTabType.None)
                 {
                     xMainWindowFrame.Visibility = Visibility.Collapsed;
+                    xNoLoadedSolutionImg.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -223,8 +256,17 @@ namespace Ginger
             {
                 if (e.GingerHelperEventActions == GingerHelperEventArgs.eGingerHelperEventActions.Show)
                 {
+                    if (e.MessageType == eGingerHelperMsgType.PROCESS)
+                    {
+                        xProcessMsgIcon.ImageType = eImageType.Processing;
+                    }
+                    else
+                    {
+                        xProcessMsgIcon.ImageType = eImageType.Info;
+                    }
                     xProcessMsgPnl.Visibility = Visibility.Visible;
                     xProcessMsgTxtBlock.Text = e.HelperMsg.MsgContent;
+                    xProcessMsgTxtBlock.ToolTip= e.HelperMsg.MsgContent;
                     mProcessMsgShowTime = DateTime.Now;
                     GingerCore.General.DoEvents();
                 }
@@ -269,10 +311,11 @@ namespace Ginger
                 if (App.UserProfile.Solution == null)
                 {
                     xSolutionTabsListView.SelectedItem = null;
-                    xSolutionNameTextBlock.Text = "Please Load Solution";
+                    xSolutionNameTextBlock.Text = "Please Load Solution";                    
                 }
                 else
                 {
+                    xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
                     App.LastBusinessFlow = null;
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty, App.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty, App.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
@@ -299,7 +342,7 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Auto Save folder", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to delete Auto Save folder", ex);
                 }
             }
             if (Directory.Exists(App.AppSolutionRecover.RecoverFolderPath))
@@ -310,7 +353,7 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Recover folder", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to delete Recover folder", ex);
                 }
             }
             if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKeys.AskIfSureWantToClose) == MessageBoxResult.Yes)
@@ -340,7 +383,7 @@ namespace Ginger
             }
             catch
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
             }
             CW.Close();
         }
@@ -404,7 +447,7 @@ namespace Ginger
             string solutionFolder = General.OpenSelectFolderDialog("Select Ginger Solution Folder");
             if (solutionFolder != null)
             {
-                string solutionFileName = solutionFolder + @"\Ginger.Solution.xml";
+                string solutionFileName = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
                 if (System.IO.File.Exists(PathHelper.GetLongPath(solutionFileName)))
                 {
                     App.SetSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder)));
@@ -653,13 +696,17 @@ namespace Ginger
 
         private void xBetaFeaturesIcon_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            
             BetaFeaturesPage p = new BetaFeaturesPage();
             p.ShowAsWindow();
         }
 
-        private void ErrorsLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void xLogErrors_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             ShowGingerLog();
+
+            xLogErrorsPnl.Visibility = Visibility.Collapsed;
+            mErrorsNum = 0;
         }
 
         private void xFindAndReplaceSolutionButton_Click(object sender, RoutedEventArgs e)

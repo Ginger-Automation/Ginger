@@ -80,7 +80,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Variables folder");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error unknown item added to Variables folder");
                 throw new NotImplementedException();
             }
         }

@@ -154,9 +154,9 @@ namespace Ginger.Actions.PlugIns
         private void AutoCreateEditPage()
         {
 
-            string pluginId = mAct.GetInputParamValue("PluginId");  //TODO: use const
-            string serviceId = mAct.GetInputParamValue("ServiceId");  //TODO: use const
-            string actionId = mAct.GetInputParamValue("GingerActionId");  //TODO: use const
+            string pluginId = mAct.PluginId;
+            string serviceId = mAct.ServiceId;
+            string actionId = mAct.ActionId;
             PluginIdLabel.Content = pluginId;
             ServiceIdLabel.Content = serviceId;
             ActionIdLabel.Content = actionId;
@@ -176,11 +176,7 @@ namespace Ginger.Actions.PlugIns
 
 
             foreach (ActInputValue param in mAct.InputValues)
-            {                
-                if (param.Param == "PluginId" ||  param.Param == "ServiceId" || param.Param == "GingerActionId" || param.Param == "GA")  // TODO: use const
-                {
-                    continue;
-                }
+            {                               
 
                 // update the type based on the info json of the plugin
                 param.ParamType = (from x in list where x.Param == param.Param select x.ParamType).SingleOrDefault();

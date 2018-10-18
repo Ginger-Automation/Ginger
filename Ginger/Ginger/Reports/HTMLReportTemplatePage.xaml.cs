@@ -478,32 +478,34 @@ namespace Ginger.Reports
             System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
             op.Title = "Select a picture";
             op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
-            op.ShowDialog();
-            var fileLength = new FileInfo(op.FileName).Length;
-            if (fileLength<= 30000)
+            if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                imgLogo.Source = new BitmapImage(new Uri(op.FileName));
-                if ((op.FileName != null) && (op.FileName != string.Empty))
+                var fileLength = new FileInfo(op.FileName).Length;
+                if (fileLength <= 30000)
                 {
-                    using (var ms = new MemoryStream())
+                    imgLogo.Source = new BitmapImage(new Uri(op.FileName));
+                    if ((op.FileName != null) && (op.FileName != string.Empty))
                     {
-                        BitmapImage bi = new BitmapImage(new Uri(op.FileName));
-                        Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
+                        using (var ms = new MemoryStream())
+                        {
+                            BitmapImage bi = new BitmapImage(new Uri(op.FileName));
+                            Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
 
-                        BitmapImage bi_resized = new BitmapImage();
-                        bi_resized.BeginInit();
-                        bi_resized.UriSource = new Uri(op.FileName);
-                        bi_resized.DecodePixelHeight = sizes.Item2;
-                        bi_resized.DecodePixelWidth = sizes.Item1;
-                        bi_resized.EndInit();
+                            BitmapImage bi_resized = new BitmapImage();
+                            bi_resized.BeginInit();
+                            bi_resized.UriSource = new Uri(op.FileName);
+                            bi_resized.DecodePixelHeight = sizes.Item2;
+                            bi_resized.DecodePixelWidth = sizes.Item1;
+                            bi_resized.EndInit();
 
-                        _HTMLReportConfiguration.LogoBase64Image = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(bi_resized));
+                            _HTMLReportConfiguration.LogoBase64Image = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(bi_resized));
+                        }
                     }
                 }
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKeys.ImageSize);
+                else
+                {
+                    Reporter.ToUser(eUserMsgKeys.ImageSize, "30");
+                }
             }
         }
 
@@ -715,7 +717,7 @@ namespace Ginger.Reports
                     string unzippedDataTestPath= System.IO.Path.Combine(mPreviewDummyReportDataPath, "RunSet.txt");
                     if (File.Exists(unzippedDataTestPath) == false)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Missing HTML Report preview unzipped data on: " + unzippedDataTestPath);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Missing HTML Report preview unzipped data on: " + unzippedDataTestPath);
                         mPreviewDummyReportPath = string.Empty;
                     }
                     else
@@ -726,12 +728,12 @@ namespace Ginger.Reports
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Missing HTML Report preview Dummy report Zip file on: " + dummyReportOriginalZipFilePath);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Missing HTML Report preview Dummy report Zip file on: " + dummyReportOriginalZipFilePath);
                 }                
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to prepare the dummy report data for HTML Report Preview", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to prepare the dummy report data for HTML Report Preview", ex);
             }
         }
 

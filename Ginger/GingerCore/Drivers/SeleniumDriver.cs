@@ -49,6 +49,8 @@ using System.Reflection;
 using Protractor;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Drivers
 {
@@ -487,7 +489,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in start driver", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in start driver", ex);
                 ErrorMessageFromDriver = ex.Message;
             }
         }
@@ -506,11 +508,11 @@ namespace GingerCore.Drivers
             }
             catch (System.InvalidOperationException)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "got System.InvalidOperationException when trying to close Selenium Driver");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "got System.InvalidOperationException when trying to close Selenium Driver");
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Selenium Driver - " + e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Selenium Driver - " + e.Message);
             }
         }
 
@@ -569,7 +571,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return null;
             }
         }
@@ -764,7 +766,7 @@ namespace GingerCore.Drivers
             {
                 if (Driver.WindowHandles.Count == 1)
                     Driver.SwitchTo().Window(Driver.WindowHandles[0]);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
 
             if (act.Timeout != null && act.Timeout != 0)
@@ -1828,21 +1830,21 @@ namespace GingerCore.Drivers
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                             try
                             {
                                 se.SelectByValue(act.GetInputParamCalculatedValue("Value"));
                             }
                             catch (Exception ex2)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex2.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex2.Message}");
                                 try
                                 {
                                     se.SelectByIndex(Convert.ToInt32(act.GetInputParamCalculatedValue("Value")));
                                 }
                                 catch (Exception ex3)
                                 {
-                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex3.Message}");
+                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex3.Message}");
                                 }
                             }
                         }
@@ -1866,7 +1868,7 @@ namespace GingerCore.Drivers
                         catch (Exception ex3)
                         {
                             act.Error = "Error: Failed to select the value ' + " + value + "' for the object - " + act.LocateBy + " " + act.LocateValue;
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex3.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex3.Message}");
                             return;
                         }
                     }
@@ -1886,7 +1888,7 @@ namespace GingerCore.Drivers
                     catch (Exception ex)
                     {
                         act.Error = "Error: Failed to select value using digit from object with ID: '" + act.LocateValue + "' and Value: '" + act.GetInputParamCalculatedValue("Value") + "'";
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                         return;
                     }
                     break;
@@ -1925,7 +1927,7 @@ namespace GingerCore.Drivers
                             catch (InvalidOperationException ex)
                             {
                                 ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                             }
                         }
                         else
@@ -2308,7 +2310,7 @@ namespace GingerCore.Drivers
             }
             catch (System.ArgumentException ae)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ae.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ae.Message}");
                 return;
             }
         }
@@ -2919,35 +2921,66 @@ namespace GingerCore.Drivers
 
         public IWebElement LocateElement(Act act, bool AlwaysReturn = false, string ValidationElementLocateBy = null, string ValidationElementLocateValue = null)
         {
-            eLocateBy LocatorType = act.LocateBy;
-            string LocValue = act.LocateValueCalculated;
+            IWebElement elem = null;
+            eLocateBy locateBy = act.LocateBy;
+            string locateValue = act.LocateValueCalculated;
 
             if (ValidationElementLocateBy != null)
             {
-                Enum.TryParse<eLocateBy>(ValidationElementLocateBy, true, out LocatorType);
+                Enum.TryParse<eLocateBy>(ValidationElementLocateBy, true, out locateBy);
             }
-            else
-            {
-                if (act is ActUIElement)
-                {
-                    ActUIElement aev = (ActUIElement)act;
-                    Enum.TryParse<eLocateBy>(aev.ElementLocateBy.ToString(), true, out LocatorType);
-                }
-            }
-
             if (ValidationElementLocateValue != null)
-                LocValue = ValidationElementLocateValue;
-            else
             {
-                if (act is ActUIElement)
+                locateValue = ValidationElementLocateValue;
+            }
+
+            if (act is ActUIElement)
+            {
+                ActUIElement aev = (ActUIElement)act;
+                Enum.TryParse<eLocateBy>(aev.ElementLocateBy.ToString(), true, out locateBy);
+                locateValue = aev.ElementLocateValue;
+            }
+
+            if (locateBy == eLocateBy.POMElement)
+            {
+                string[] pOMandElementGUIDs = locateValue.ToString().Split('_');
+                Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+                ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+                if (currentPOM == null)
                 {
-                    LocValue = ((ActUIElement)act).ElementLocateValueForDriver;
+                    act.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
+                    return null;
+                }
+                else
+                {
+                    Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                    ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                    if (selectedPOMElement == null)
+                    {
+                        act.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
+                        return null;
+                    }
+                    else
+                    {
+                        elem = LocateElementByLocators(selectedPOMElement.Locators);
+                        selectedPOMElement.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
+                    }
                 }
             }
-            
-            return LocateElementByLocator(new ElementLocator() { LocateBy = LocatorType, LocateValue = LocValue }, AlwaysReturn);
-        }
+            else
+            {
+                ElementLocator locator = new ElementLocator();
+                locator.LocateBy = locateBy;
+                locator.LocateValue = locateValue;
+                elem= LocateElementByLocator(locator, AlwaysReturn);
+                if (elem == null)
+                {
+                    act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
+                }                
+            }
 
+            return elem;
+        }
 
         private IWebElement LocateElementByLocators(ObservableList<ElementLocator> Locators)
         {
@@ -2975,7 +3008,6 @@ namespace GingerCore.Drivers
 
             return null;
         }
-
 
         private IWebElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
         {
@@ -3012,7 +3044,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                     if (AlwaysReturn)
                     {
                         elem = null;
@@ -3052,13 +3084,14 @@ namespace GingerCore.Drivers
                         else
                             elem = Driver.FindElement(By.XPath(sel));
                     }
-                    catch (NoSuchElementException)
+                    catch (NoSuchElementException ex)
                     {
                         try
                         {
                             sel = "//a[href='@']";
                             sel = sel.Replace("@", locator.LocateValue);
                             elem = Driver.FindElement(By.XPath(sel));
+                            locator.StatusError = ex.Message;
                         }
                         catch (Exception)
                         { }
@@ -3091,7 +3124,10 @@ namespace GingerCore.Drivers
 
                             }
                         }
-                        catch { }
+                        catch (Exception ex2)
+                        {
+                            locator.StatusError = ex2.Message;
+                        }
                     }
 
                 }
@@ -3149,7 +3185,10 @@ namespace GingerCore.Drivers
             }
 
             if (elem != null)
+            {
                 locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+            }
+
             return elem;
         }
 
@@ -3323,17 +3362,17 @@ namespace GingerCore.Drivers
                         {
                             exceptioncount = 0;
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                         }
                         catch (System.NullReferenceException ex)
                         {
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                         }
                         catch (Exception ex)
                         {
                             //throw exception to outer catch
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                             throw;
                         }
 
@@ -3367,7 +3406,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.NoSuchWindowException ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}");
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                         return true;
@@ -3379,7 +3418,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverTimeoutException ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}");
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                         return true;
@@ -3391,7 +3430,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverException ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.WebDriverException ex"}, Error - {ex.ToString()}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {"IsRunning() OpenQA.Selenium.WebDriverException ex"}, Error - {ex.ToString()}");
 
                     if (PreviousRunStopped && ex.Message == "Unexpected error. Error 404: Not Found\r\nNot Found")
                         return true;
@@ -3404,7 +3443,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex2)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {"IsRunning(): ex2"}, Error - {ex2.ToString()}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {"IsRunning(): ex2"}, Error - {ex2.ToString()}");
                     if (ex2.Message.ToString().ToUpper().Contains("DIALOG"))
                         return true;
 
@@ -3491,16 +3530,26 @@ namespace GingerCore.Drivers
                     // grab only visible elements
                     if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0) continue;
 
-                    ElementInfo foundElemntInfo = GetElementInfoWithIWebElement(el, path);  
+                    eElementType ElementTypeEnum = GetElementTypeEnum(el);
+
+                    ElementInfo foundElemntInfo = null;
+                   
                     
                     //filter element if needed
                     if (filteredElementType != null && filteredElementType.Count > 0)
                     {
-                        if (filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                        if (filteredElementType.Contains(ElementTypeEnum))
+                        {
+                            foundElemntInfo = GetElementInfoWithIWebElement(el, path);
+                            foundElemntInfo.IsAutoLearned = true;
                             foundElementsList.Add(foundElemntInfo);
+                        }
+                            
                     }
                     else
                     {
+                        foundElemntInfo = GetElementInfoWithIWebElement(el, path);
+                        foundElemntInfo.IsAutoLearned = true;
                         foundElementsList.Add(foundElemntInfo);
                     }                                     
 
@@ -4555,7 +4604,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");                
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");                
             }
         }
 
@@ -4816,7 +4865,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
             }
         }
 
@@ -4935,7 +4984,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting Alert Box - " + e.Message);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when Accepting Alert Box - " + e.Message);
                         return;
                     }
 
@@ -4948,7 +4997,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error when Dismiss Alert Box - " + e.Message);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when Dismiss Alert Box - " + e.Message);
                         return;
                     }
                     break;
@@ -4963,7 +5012,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error to Get Text Alert Box - " + e.Message);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error to Get Text Alert Box - " + e.Message);
                         return;
                     }
                     break;
@@ -4976,7 +5025,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error to Get Text Alert Box - " + e.Message);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error to Get Text Alert Box - " + e.Message);
                         return;
                     }
                     break;
@@ -5308,7 +5357,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
                         return;
                     }
                     break;
@@ -5320,7 +5369,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error when Dismiss Alert Box - " + e.Message);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when Dismiss Alert Box - " + e.Message);
                         return;
                     }
                     break;
@@ -5335,7 +5384,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error to Get Text Message Box - " + e.Message);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error to Get Text Message Box - " + e.Message);
                         return;
                     }
                     break;
@@ -5347,7 +5396,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error to Get Text Alert Box - " + e.Message);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error to Get Text Alert Box - " + e.Message);
                         return;
                     }
                     break;
@@ -5441,7 +5490,6 @@ namespace GingerCore.Drivers
                 e = LocateElement(act);
                 if (e == null)
                 {
-                    //TODO: if multiple props the message needs to be different... or by X,Y
                     act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
                 }
             }
@@ -5493,7 +5541,7 @@ namespace GingerCore.Drivers
                         catch (InvalidOperationException ex)
                         {
                             ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                         }
                     }
                     else
@@ -5995,7 +6043,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to create Selenuim WebDriver Browser Page Screenshot", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to create Selenuim WebDriver Browser Page Screenshot", ex);
                 return null;
             }
         }
@@ -6085,6 +6133,11 @@ namespace GingerCore.Drivers
         void IWindowExplorer.UpdateElementInfoFields(ElementInfo ei)
         {
             //TODO: remove from here and put in EI - do lazy loading if needed + why the switch frame?
+            if (ei == null)
+            {
+                return;
+            }
+
             SwitchFrame(ei.Path, ei.XPath, true);
             if (string.IsNullOrEmpty(ei.XPath))
                 ei.XPath = GenerateXpathForIWebElement((IWebElement)ei.ElementObject, "");

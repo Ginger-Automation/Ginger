@@ -102,7 +102,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     AddAPIModelWizard.APIType = eAPIType.WSDL;
                     AddAPIModelWizard.mWSDLParser = mWSDLParser;
-                    //mWSDLParser.ValidateWSDLInputs(URLTextBox.Text,URLRadioButton.IsChecked, WizardEventArgs);
                 }
                 else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString())
                 {
@@ -118,12 +117,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                     AddAPIModelWizard.APIType = eAPIType.Swagger;
                 }
             }
-            //else if (WizardEventArgs.EventType == EventType.Active)
-            //{
-            //    AddAPIModelWizard.NextEnabled = true;
-            //    AddAPIModelWizard.FinishEnabled = false;
-            //    AddAPIModelWizard.PrevEnabled = false;
-            //}
         }
 
         private void ValidateXMLTemplatesInputs(WizardEventArgs WizardEventArgs)
@@ -176,27 +169,29 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void APIType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //if (AddAPIModelWizard != null)
-                //AddAPIModelWizard.NextEnabled = false;
-
             if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString() || APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
             {
                 SecondRow.Height = new GridLength(30);
                 ThirdRow.Height = new GridLength(40);
                 XMLTemplatesGrid.Visibility = Visibility.Collapsed;
                 xURLTextBox.IsEnabled = true;
-                if (string.IsNullOrEmpty(xURLTextBox.Text) || APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
-                    xBrowseLoadButton.Visibility = Visibility.Collapsed;
-                else
+
+                xURLTextBox.Text = string.Empty;
+
+                if (URLRadioButton.IsChecked == true)
+                {
+                    if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString() || (string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString()))
+                        xBrowseLoadButton.Visibility = Visibility.Collapsed;
+                    else if ((!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString()))
+                        xBrowseLoadButton.Visibility = Visibility.Visible;
+                }
+                else if (FileRadioButton.IsChecked == true)
+                {
                     xBrowseLoadButton.Visibility = Visibility.Visible;
-                xBrowseLoadButton.ButtonText = "Load";
+                }
+
                 XMLTemplatesLable.Visibility = Visibility.Collapsed;
 
-                if (AddAPIModelWizard != null)
-                {
-                    GingerCore.General.ObjFieldBinding(xURLTextBox, TextBox.TextProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.URL));
-                    xURLTextBox.AddValidationRule(eValidationRule.CannotBeEmpty);
-                }
             }
             else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString() || APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
             {
@@ -222,10 +217,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         private void XMLTemplatesGrid_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             AddAPIModelWizard.IsParsingWasDone = false;
-            //if (XMLTemplatesGrid.DataSourceList.Count == 0)
-            //    AddAPIModelWizard.NextEnabled = false;
-            //else
-            //    AddAPIModelWizard.NextEnabled = true;
         }
 
         private void URLRadioButtonChecked(object sender, RoutedEventArgs e)
@@ -275,7 +266,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             xPreviewButton.Visibility = Visibility.Collapsed;
             SourceRviewLable.Visibility = Visibility.Collapsed;
             XMLViewer.Visibility = Visibility.Collapsed;
-            // AddAPIModelWizard.NextEnabled = false;
             XMLViewer.xmlDocument = new XmlDocument();
             if (URLRadioButton.IsChecked == true)
             {
@@ -286,12 +276,11 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 else
                 {
                     xBrowseLoadButton.Visibility = Visibility.Collapsed;
-                    // AddAPIModelWizard.NextEnabled = false;
                 }
             }
             else if (FileRadioButton.IsChecked == true)
             {
-                if (!string.IsNullOrEmpty(xURLTextBox.Text))
+                if (!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
                 {
                     xBrowseLoadButton.ButtonText = "Load";
                 }
@@ -320,7 +309,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                         if (result == System.Windows.Forms.DialogResult.OK)
                         {
                            xURLTextBox.Text = dlg.FileName;
-                            // AddAPIModelWizard.NextEnabled = true;
                             LoadFileValidation();
                         }
                     }
@@ -349,7 +337,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                     if (result == System.Windows.Forms.DialogResult.OK)
                     {
                         xURLTextBox.Text = dlg2.FileName;
-                        // AddAPIModelWizard.NextEnabled = true;
                         AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = dlg2.FileName });
 
                     }
@@ -360,7 +347,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                     string filecontent = Amdocs.Ginger.Common.GeneralLib.HttpUtilities.Download(new System.Uri(xURLTextBox.Text));
                     System.IO.File.WriteAllText(tempfile, filecontent);
                     AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = tempfile });
-                    // AddAPIModelWizard.NextEnabled = true;
                 }
             }
 
@@ -410,7 +396,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 await Task.Run(() => doc = GetDocumentFromWeb(s));
                 PreviewContent = doc;
                 xPreviewButton.Visibility = Visibility.Visible;
-                // AddAPIModelWizard.NextEnabled = true;
             }
             catch (Exception ex)
             {                
@@ -419,7 +404,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 xPreviewButton.Visibility = Visibility.Collapsed;
                 SourceRviewLable.Visibility = Visibility.Collapsed;
                 XMLViewer.Visibility = Visibility.Collapsed;
-                // AddAPIModelWizard.NextEnabled = false;
             }
             finally
             {
@@ -476,8 +460,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
 
             return string.Empty ;
-        }
-
+        }       
     }
 
 }
