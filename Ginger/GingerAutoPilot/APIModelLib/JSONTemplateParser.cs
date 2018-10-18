@@ -67,7 +67,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
             {
                 string tagName = Jn.Path.Split('.').LastOrDefault();
 
-                ReturnValues.Add(new ActReturnValue() { Param = tagName, Path = Jn.Path, Active = true });
+                ReturnValues.Add(new ActReturnValue() { Param = tagName, Path = Jn.Path, Active = true, DoNotConsiderAsTemp=true });
             }
 
             return ReturnValues;

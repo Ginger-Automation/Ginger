@@ -24,6 +24,7 @@ using Ginger.UserControls;
 using GingerCore.Environments;
 using GingerCore;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Environments
 {
@@ -106,7 +107,7 @@ namespace Ginger.Environments
                         {
                             if (env.Applications.Where(x => x.Name == ((EnvApplication)obj).Name).FirstOrDefault() == null)
                             {
-                                EnvApplication app = (EnvApplication)(((RepositoryItem)obj).CreateCopy());
+                                EnvApplication app = (EnvApplication)(((RepositoryItemBase)obj).CreateCopy());
                                 env.Applications.Add(app);                                
                                 appsWereAdded = true;
                             }

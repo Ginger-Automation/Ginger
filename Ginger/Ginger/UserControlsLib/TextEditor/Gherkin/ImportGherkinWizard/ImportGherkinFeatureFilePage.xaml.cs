@@ -68,7 +68,6 @@ namespace Ginger.GherkinLib
             FileContentViewer.ToolBarTray.Visibility = Visibility.Collapsed;
             FileContentViewer.lblTitle.Content = "Text";
             FileContentViewer.toolbar.Visibility = Visibility.Collapsed;
-
         }       
 
         private void FilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)
