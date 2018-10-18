@@ -53,7 +53,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             {
                 case EventType.Init:
                     mWizard = (ImportDataSourceFromExcelWizard)WizardEventArgs.Wizard;
-                    xPathTextBox.BindControl(mWizard.Path, nameof(ImportDataSourceFromExcelWizard.Path));
+                    xPathTextBox.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.Path));
                     //xPathTextBox.TextChanged += XPathTextBox_TextChanged;
                     xPathTextBox.AddValidationRule(new EmptyValidationRule());
                     break;

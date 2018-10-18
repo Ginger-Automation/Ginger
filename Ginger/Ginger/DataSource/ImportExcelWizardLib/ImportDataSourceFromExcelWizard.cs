@@ -160,7 +160,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 }
                 foreach (DataRow dr in dataTable.Rows)
                 {
-                    dr["GINGER_USED"] = "True";
+                    dr["GINGER_USED"] = "False";
                 }
             }
             catch (System.Exception ex)
@@ -181,6 +181,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 DataSourceTable dsTableDetails = new DataSourceTable();
                 if (dsTableDetails != null)
                 {
+                    dsTableDetails.DSTableType = DataSourceTable.eDSTableType.Customized;
                     dsTableDetails.Name = name;
                     dsTableDetails.DSC = DSDetails.DSC;
                     DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
