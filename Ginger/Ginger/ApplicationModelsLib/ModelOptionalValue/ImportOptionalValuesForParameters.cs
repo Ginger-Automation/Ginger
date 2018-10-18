@@ -663,7 +663,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             try
             {
                 if (String.IsNullOrEmpty(columnName))
+                {
                     return "";
+                }                    
                 columnName = columnName.Replace("#", "");
                 foreach (char ch in columnName)
                 {
@@ -1197,8 +1199,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <returns></returns>
         public DataSet GetExcelAllSheetData(string sheetName, bool isFirstRowHeader, bool exactValues, bool pivoteTable)
         {
-            DataSet ds = new DataSet();
-            ds = GetExcelAllSheetsData(sheetName, isFirstRowHeader);
+            DataSet ds = GetExcelAllSheetsData(sheetName, isFirstRowHeader);
 
             DataSet dsExact = new DataSet();
             if(exactValues)
