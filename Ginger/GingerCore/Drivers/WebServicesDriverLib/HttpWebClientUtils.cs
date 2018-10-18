@@ -405,8 +405,16 @@ namespace GingerCore.Actions.WebAPI
         {
             try
             {
-                Response.EnsureSuccessStatusCode();
-                return true;
+                if (Response != null)
+                {
+                    Response.EnsureSuccessStatusCode();
+                    return true;
+                }
+                else
+                {
+                    mAct.Error = "Response returned as Null";
+                    return false;
+                }
             }
             catch (Exception WE)
             {
@@ -470,7 +478,14 @@ namespace GingerCore.Actions.WebAPI
                     }
                     else
                     {
-                        ResponseFileContent = Response.Headers.ToString();
+                        if (Response != null && Response.Headers != null)
+                        {
+                            ResponseFileContent = Response.Headers.ToString();
+                        }
+                        else
+                        {
+                            ResponseFileContent = string.Empty;
+                        }
                     }
                 }
 

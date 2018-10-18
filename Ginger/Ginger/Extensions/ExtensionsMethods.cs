@@ -342,15 +342,6 @@ namespace Ginger
         {
             BindingExpression bd = frameworkElement.GetBindingExpression(SelectedProperty);
 
-            //if (frameworkElement is ucAgentControl)
-            //{
-            //    bd = frameworkElement.GetBindingExpression(ucAgentControl.SelectedAgentProperty);
-            //}
-            //else if(frameworkElement is ComboBox)
-            //{
-            //    bd = frameworkElement.GetBindingExpression(ComboBox.SelectedValueProperty);
-            //}
-
             if (bd != null)
             {
                 bd.ParentBinding.ValidationRules.Clear();
