@@ -181,7 +181,7 @@ namespace Ginger.AnalyzerLib
                     BusyInProcess = false;
                     mAnalyzerCompleted = true;
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         private void SetAnalayzeProceesAsCompleted()

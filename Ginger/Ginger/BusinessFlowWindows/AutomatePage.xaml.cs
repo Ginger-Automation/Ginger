@@ -884,9 +884,13 @@ namespace Ginger
                         SpinWait.SpinUntil(() =>
                         {
                             if (analyzerPage.IsAnalyzeDone)
+                            {
                                 return true;
+                            }
                             else
+                            {
                                 return false;
+                            }
                         });
                     });
                     Reporter.CloseGingerHelper();

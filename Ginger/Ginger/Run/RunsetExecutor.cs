@@ -764,9 +764,13 @@ namespace Ginger.Run
                         SpinWait.SpinUntil(() =>
                         {
                             if (analyzerPage.IsAnalyzeDone)
+                            {
                                 return true;
+                            }
                             else
+                            {
                                 return false;
+                            }
                         });
                     });
                     
