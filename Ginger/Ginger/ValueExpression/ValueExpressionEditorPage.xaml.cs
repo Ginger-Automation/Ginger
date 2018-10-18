@@ -42,6 +42,7 @@ using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionGeneral;
+using System.IO;
 
 namespace Ginger
 {
@@ -439,7 +440,7 @@ namespace Ginger
                 if (ds.FilePath.StartsWith("~"))
                 {
                     ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
-                    ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
+                    ds.FileFullPath = Path.Combine(App.UserProfile.Solution.Folder , ds.FileFullPath);
                 }
                 ds.Init(ds.FileFullPath);
                 TreeViewItem tviDataSource = new TreeViewItem();
