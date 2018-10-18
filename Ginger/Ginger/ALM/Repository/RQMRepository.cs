@@ -70,19 +70,19 @@ namespace Ginger.ALM.Repository
         public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
         {
             bool isConnectSucc = false;
-            Reporter.ToLog(eLogLevel.INFO, "Connecting to RQM server");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Connecting to RQM server");
             try
             {
                 isConnectSucc = ALMIntegration.Instance.AlmCore.ConnectALMServer();
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error connecting to RQM server", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error connecting to RQM server", e);
             }
 
             if (!isConnectSucc)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Could not connect to RQM server");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Could not connect to RQM server");
                 if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
                     Reporter.ToUser(eUserMsgKeys.ALMConnectFailure);
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
@@ -161,7 +161,7 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, App.UserProfile.Solution.Folder + @"Documents\ALM\RQM_Configs").OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalID, "RQMID"))
                 {
@@ -173,7 +173,7 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, App.UserProfile.Solution.Folder + @"Documents\ALM\RQM_Configs").OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalID, "RQMID"))
                 {

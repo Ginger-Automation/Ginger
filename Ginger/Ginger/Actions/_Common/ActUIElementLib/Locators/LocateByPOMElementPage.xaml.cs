@@ -33,40 +33,53 @@ using System.Windows.Data;
 using System;
 using System.Linq;
 using GingerCore.Platforms;
+using GingerCore.Actions;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
     /// <summary>
     /// Interaction logic for LocateValueEditPage.xaml
     /// </summary>
-    public partial class LocateByPOMElement : Page
+    public partial class LocateByPOMElementPage : Page
     {
-        ActUIElement mAction;
+        Act mAction;
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
         ApplicationPOMModel mSelectedPOM = null;
-        RepositoryFolder<ApplicationPOMModel> mPOMModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
-        //mWinExplorer = winExplorer;
+        RepositoryFolder<ApplicationPOMModel> mPOMModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();       
+        eLocateBy mLocateBy;
+        string mLocateValue;
 
-        public LocateByPOMElement(ActUIElement Action)
+        public LocateByPOMElementPage(Act Action)
         {
             InitializeComponent();
             DataContext = this;
             mAction = Action;
             SetControlsGridView();
 
-            if (Action.ElementLocateBy == eLocateBy.POMElement)
+            if (mAction is ActUIElement)
             {
-                if ((mAction.ElementLocateValue != null) && (mAction.ElementLocateValue != string.Empty))
+                mLocateBy = ((ActUIElement)mAction).ElementLocateBy;
+                mLocateValue = ((ActUIElement)mAction).ElementLocateValue;
+            }
+            else
+            {
+                mLocateBy = mAction.LocateBy;
+                mLocateValue = mAction.LocateValue;
+            }
+
+            if (mLocateBy == eLocateBy.POMElement)
+            {
+                if ((mLocateValue != null) && (mLocateValue != string.Empty))
                 {
                     try
                     {
-                        string[] pOMandElementGUIDs = mAction.ElementLocateValue.ToString().Split('_');
+                        string[] pOMandElementGUIDs = mLocateValue.Split('_');
                         Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
                         mSelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
                         if (mSelectedPOM == null)
                         {
                             Reporter.ToUser(eUserMsgKeys.POMSearchByGUIDFailed);
-                            mAction.ElementLocateValue = string.Empty;
+                            mLocateValue = string.Empty;
                             SelectPOM_Click(null, null);
                         }
                         else
@@ -82,11 +95,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
                             {
                                 xPOMElementsGrid.DataSourceList = mSelectedPOM.MappedUIElements;
                                 xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
-                                mAction.ElementType = selectedPOMElement.ElementTypeEnum;
-                                POMElementComboBox.IsEnabled = true;
-                                HeaderTextBlock.Text = selectedPOMElement.ElementName; 
-                                HeaderTextBlock.Visibility = Visibility.Visible;
-                                POMElementComboBox.SelectedItem = HeaderTextBlock;
+                                if (mAction is ActUIElement)
+                                {
+                                    ((ActUIElement)mAction).ElementType = selectedPOMElement.ElementTypeEnum;
+                                }
+                                xPOMElementComboBox.IsEnabled = true;
+                                xHeaderTextBlock.Text = selectedPOMElement.ElementName; 
+                                xHeaderTextBlock.Visibility = Visibility.Visible;
+                                xPOMElementComboBox.SelectedItem = xHeaderTextBlock;
                                 HighlightButton.IsEnabled = true;
                             }
                         }
@@ -94,7 +110,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     catch
                     {
                         Reporter.ToUser(eUserMsgKeys.POMSearchByGUIDFailed);
-                        mAction.ElementLocateValue = string.Empty;
+                        mLocateValue = string.Empty;
                         SelectPOM_Click(null, null);
                     }
                 }
@@ -120,7 +136,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 SetPOMPathToShow();
 
                 xPOMElementsGrid.DataSourceList = mSelectedPOM.MappedUIElements;
-                POMElementComboBox.IsEnabled = true;
+                xPOMElementComboBox.IsEnabled = true;
             }
         }
 
@@ -128,7 +144,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             string pathToShow;
             pathToShow = mSelectedPOM.FilePath.Substring(0, mSelectedPOM.FilePath.LastIndexOf("\\")).Substring(mPOMModelFolder.FolderFullPath.Length) + @"\" + mSelectedPOM.ItemName;
-            HTMLReportFolderTextBox.Text = pathToShow;
+            xHTMLReportFolderTextBox.Text = pathToShow;
         }
 
         private void POMElementComboBox_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -138,15 +154,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void POMElementComboBox_DropDownOpened(object sender, System.EventArgs e)
         {
-            HeaderTextBlock.Visibility = Visibility.Collapsed;
+            xHeaderTextBlock.Visibility = Visibility.Collapsed;
             xPOMElementsGrid.Refresh();
         }
 
         private void POMElementComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
-            HeaderTextBlock.Visibility = Visibility.Visible;
-            HeaderTextBlock.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
-            POMElementComboBox.SelectedItem = HeaderTextBlock;
+            xHeaderTextBlock.Visibility = Visibility.Visible;
+            xHeaderTextBlock.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
+            xPOMElementComboBox.SelectedItem = xHeaderTextBlock;
         }
 
         private void SetControlsGridView()
@@ -163,10 +179,23 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void xPOMElementsGrid_RowChangedEvent(object sender, System.EventArgs e)
         {
-            if ((POMElementComboBox.IsEnabled) && ((DataGrid)sender).SelectedItem != null)
+            if ((xPOMElementComboBox.IsEnabled) && ((DataGrid)sender).SelectedItem != null)
             {
-                mAction.ElementType = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
-                mAction.ElementLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+                if (mAction is ActUIElement)
+                {
+                    ((ActUIElement)mAction).ElementType = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
+                }
+                mLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+
+                if (mAction is ActUIElement)
+                {
+                    ((ActUIElement)mAction).ElementLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+                }
+                else
+                {
+                    mAction.LocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+                }
+
                 HighlightButton.IsEnabled = true;
             }
         }
@@ -182,7 +211,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 ((IWindowExplorer)currentAgent.Agent.Driver).HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true);
             }
-
         }
     }
 }

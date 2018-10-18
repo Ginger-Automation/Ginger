@@ -53,7 +53,7 @@
                 <TabItem x:Name="xDBsTab">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-                            <UserControls:ImageMakerControl x:Name="xDBsTabTabHeaderImage" ImageType="Solution" Height="20" Width="20"/>
+                            <UserControls:ImageMakerControl x:Name="xDBsTabTabHeaderImage" ImageType="DataSource" Height="20" Width="20"/>
                             <TextBlock x:Name="xDBsTabHeaderText" Text="DataBases" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>

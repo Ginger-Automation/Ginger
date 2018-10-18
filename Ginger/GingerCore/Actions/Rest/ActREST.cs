@@ -71,30 +71,25 @@ namespace GingerCore.Actions.REST
             public static string UseLegacyJSONParsing = "UseLegacyJSONParsing";
 
         }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue EndPointURL { get { return GetOrCreateInputParam(Fields.EndPointURL); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue RequestBody { get { return GetOrCreateInputParam(Fields.RequestBody); } }
-        private string ReqBody=String.Empty;
-        [IsSerializedForLocalRepository]
+
+        private string ReqBody=String.Empty;        
         public ActInputValue TemplateFile { get { return GetOrCreateInputParam(Fields.TemplateFile); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue SaveRequestResponseFolderPath { get { return GetOrCreateInputParam(Fields.SaveRequestResponseFolderPath); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue URLUser { get { return GetOrCreateInputParam(Fields.URLUser); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue URLPass { get { return GetOrCreateInputParam(Fields.URLPass); }  }
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue URLDomain { get { return GetOrCreateInputParam(Fields.URLDomain); }  }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
+
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> HttpHeaders = new ObservableList<ActInputValue>();
 
@@ -112,44 +107,35 @@ namespace GingerCore.Actions.REST
 
         [IsSerializedForLocalRepository]
         public bool AcceptAllSSLCertificate { get; set; }
-
-        public bool mUseTemplateFile = true;
-
+        
         private HttpWebResponse WebReqResponse = null;
         public HttpStatusCode ResponseCode
         {
             get
             {
-              return  WebReqResponse.StatusCode;
+                if (WebReqResponse == null)
+                { 
+                    return HttpStatusCode.Ambiguous;
+                }
+                else
+                { 
+                    return WebReqResponse.StatusCode;
+                }
             }
         }
 
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool UseTemplateFile
         {
-            get
-            {
-                return mUseTemplateFile;
-            }
-            set
-            {
-                mUseTemplateFile = value;
-            }
+            get;
+            set;            
         }
-
-        public bool mUseRequestBody = true;
-
-        [IsSerializedForLocalRepository]
+       
+        [IsSerializedForLocalRepository(true)]
         public bool UseRequestBody
         {
-            get
-            {
-                return mUseRequestBody;
-            }
-            set
-            {
-                mUseRequestBody = value;
-            }
+            get;
+            set;
         } 
 
         public enum eRequestType
@@ -159,6 +145,7 @@ namespace GingerCore.Actions.REST
             PUT,
             PATCH
         }
+
         public enum eCookieMode
         {
             [EnumValueDescription("Use Session Cookies")]
@@ -176,7 +163,6 @@ namespace GingerCore.Actions.REST
             [EnumValueDescription("Version 1.1")]
            HTTPV11,
         }
-
 
         public enum eSercurityType
         {
@@ -545,10 +531,10 @@ namespace GingerCore.Actions.REST
                 
                 //TODO: check if UTF8 is good for all
                 StreamReader reader=new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
-                Reporter.ToLog(eLogLevel.INFO, "Response");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Response");
 
                 string resp = reader.ReadToEnd().ToString();
-                Reporter.ToLog(eLogLevel.INFO, resp);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, resp);
 
                 if (RestRequestSave==true && RequestType!=eRequestType.GET)
                 {

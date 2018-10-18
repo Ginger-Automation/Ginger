@@ -21,8 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="NJsonSchema" Version="9.10.64" />
-    <PackageReference Include="NSwag.Core" Version="11.17.19" />
+    <PackageReference Include="NJsonSchema" Version="9.11.1" />
     <PackageReference Include="NSwag.Core.Yaml" Version="11.17.19" />
   </ItemGroup>
 

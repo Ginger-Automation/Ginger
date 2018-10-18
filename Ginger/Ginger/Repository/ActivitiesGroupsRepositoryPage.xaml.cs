@@ -168,7 +168,7 @@ namespace Ginger.Repository
         {
             if (xActivitiesGroupsRepositoryGrid.Grid.SelectedItem != null)
             {
-                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItem)xActivitiesGroupsRepositoryGrid.Grid.SelectedItem);
+                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItemBase)xActivitiesGroupsRepositoryGrid.Grid.SelectedItem);
                 usagePage.ShowAsWindow();
             }
             else
@@ -199,7 +199,7 @@ namespace Ginger.Repository
                     if (dragedItemInGrid != null)
                         xActivitiesGroupsRepositoryGrid.Grid.SelectedItem = dragedItemInGrid;
                 }
-                catch(Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                catch(Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
             }
         }
 

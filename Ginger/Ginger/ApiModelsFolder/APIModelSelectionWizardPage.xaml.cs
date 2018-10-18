@@ -100,8 +100,6 @@ namespace Ginger.ApiModelsFolder
         private void AddApiButtonClicked(object sender, RoutedEventArgs e)
         {
             OpenAPITreeSelection();
-        }
-
-        
+        }        
     }
 }

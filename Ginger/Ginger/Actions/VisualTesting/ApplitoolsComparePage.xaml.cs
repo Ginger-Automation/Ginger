@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
@@ -141,13 +142,13 @@ namespace Ginger.Actions.VisualTesting
                     {
                         //Try open with Firefox
                         System.Diagnostics.Process.Start("firefox.exe", url);
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                     }
                     catch (Exception ee)
                     {
                         //Show message that Applitools can't be open with Explorer Browser
                         Reporter.ToUser(eUserMsgKeys.ApplitoolsMissingChromeOrFirefoxBrowser);
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ee.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ee.Message}");
                     }
                 }
             }

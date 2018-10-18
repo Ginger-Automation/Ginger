@@ -84,7 +84,7 @@ namespace Amdocs.Ginger.Repository
 
                 foreach (XMLDocExtended XDN in NodeListResponseBody)
                 {
-                    ReturnValues.Add(new ActReturnValue() { Param = XDN.LocalName, Path = XDN.XPathWithoutNamspaces, Active = true });
+                    ReturnValues.Add(new ActReturnValue() { Param = XDN.LocalName, Path = XDN.XPathWithoutNamspaces, Active = true, DoNotConsiderAsTemp=true });
                 }
             }
 

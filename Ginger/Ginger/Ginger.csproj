@@ -175,11 +175,11 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NJsonSchema, Version=9.10.64.0, Culture=neutral, PublicKeyToken=c2f9c3bdfae56102, processorArchitecture=MSIL">
-      <HintPath>..\packages\NJsonSchema.9.10.64\lib\net45\NJsonSchema.dll</HintPath>
+    <Reference Include="NJsonSchema, Version=9.11.1.0, Culture=neutral, PublicKeyToken=c2f9c3bdfae56102, processorArchitecture=MSIL">
+      <HintPath>..\packages\NJsonSchema.9.11.1\lib\net45\NJsonSchema.dll</HintPath>
     </Reference>
-    <Reference Include="NSwag.Core, Version=11.17.19.0, Culture=neutral, PublicKeyToken=c2d88086e098d109, processorArchitecture=MSIL">
-      <HintPath>..\packages\NSwag.Core.11.17.19\lib\net45\NSwag.Core.dll</HintPath>
+    <Reference Include="NSwag.Core, Version=11.20.1.0, Culture=neutral, PublicKeyToken=c2d88086e098d109, processorArchitecture=MSIL">
+      <HintPath>..\packages\NSwag.Core.11.20.1\lib\net45\NSwag.Core.dll</HintPath>
     </Reference>
     <Reference Include="NSwag.Core.Yaml, Version=11.17.19.0, Culture=neutral, PublicKeyToken=c2d88086e098d109, processorArchitecture=MSIL">
       <HintPath>..\packages\NSwag.Core.Yaml.11.17.19\lib\net45\NSwag.Core.Yaml.dll</HintPath>
@@ -313,8 +313,8 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="YamlDotNet, Version=4.2.2.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
-      <HintPath>..\packages\YamlDotNet.Signed.4.2.2\lib\net35\YamlDotNet.dll</HintPath>
+    <Reference Include="YamlDotNet, Version=5.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.Signed.5.2.1\lib\net45\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -403,8 +403,8 @@
     <Compile Include="Actions\ActDataSourcePage.xaml.cs">
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml.cs">
-      <DependentUpon>LocateByPOMElement.xaml</DependentUpon>
+    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElementPage.xaml.cs">
+      <DependentUpon>LocateByPOMElementPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\_Common\ActUIElementLib\UIElementSendKeysAndValidate.xaml.cs">
       <DependentUpon>UIElementSendKeysAndValidate.xaml</DependentUpon>
@@ -483,6 +483,20 @@
     </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
+    <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceFinishPage.xaml.cs">
+      <DependentUpon>ImportDataSourceFinishPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceDisplayData.xaml.cs">
+      <DependentUpon>ImportDataSourceDisplayData.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceSheetSelection.xaml.cs">
+      <DependentUpon>ImportDataSourceSheetSelection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceFromExcelWizard.cs" />
+    <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
+      <DependentUpon>ucDataGrid.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WizardLib\ValidationDetails.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
     <Compile Include="GeneralValidationRules\GridValidationRule.cs" />
     <Compile Include="MenusLib\ConfigurationsMenu.cs" />
@@ -623,6 +637,9 @@
       <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\GingerRunnerLogger.cs" />
+    <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml.cs">
+      <DependentUpon>ImportDataSourceBrowseFile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
@@ -950,6 +967,9 @@
       <DependentUpon>ImportGherkinFeatureSummaryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinFeatureWizard.cs" />
+    <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml.cs">
+      <DependentUpon>ImportGherkinTargetFolder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinIntroPage.xaml.cs">
       <DependentUpon>ImportGherkinIntroPage.xaml</DependentUpon>
     </Compile>
@@ -2534,7 +2554,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElement.xaml">
+    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElementPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2798,6 +2818,26 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceFinishPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceDisplayData.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceSheetSelection.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TestLib\WizardLib\MyWizardDetailsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2934,6 +2974,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControlsLib\VisualFlow\FlowDiagramPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2974,17 +3018,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\%40Environment_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\ApiModel_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\ApiModel_32x32.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Ginger.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemAdded_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemChange_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemDeleted_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemUnchanged_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Lock_Red_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Lock_Red_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\DataSource_16x16.png" />
     <Content Include="Reports\GingerExecutionReport\assets\js\babel.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -3003,9 +3037,8 @@
     <Content Include="Reports\GingerExecutionReport\assets\js\Recharts.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_32x32.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconInGrayNoBackground.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -4309,6 +4342,7 @@
     <Resource Include="TestLib\WizardLib\Intro.md">
       <Generator>MSBuild:Compile</Generator>
     </Resource>
+    <Resource Include="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
     <None Include="UserControlsLib\TextEditor\Gherkin\GherkinHighlighting.xshd">
       <SubType>Designer</SubType>
     </None>

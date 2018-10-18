@@ -27,12 +27,15 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Environments;
+using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
+using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -136,7 +139,8 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             }
             xModelsGlobalParamsGrid.DataSourceList = mModelsGlobalParamsList;
             xModelsGlobalParamsGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForGlobalParameters));
-            xModelsGlobalParamsGrid.AddToolbarTool(eImageType.ExcelFile, "Export Optional Values For Parameters", new RoutedEventHandler(ExportOptionalValuesForParameters));
+            xModelsGlobalParamsGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parametrs to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
+            xModelsGlobalParamsGrid.AddToolbarTool(eImageType.DataSource, "Export Parameters to DataSource", new RoutedEventHandler(ExportParametersToDataSource));
         }
 
         private void ImportOptionalValuesForGlobalParameters(object sender, RoutedEventArgs e)
@@ -147,14 +151,68 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
         private void ExportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {
+            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GlobalParameters.xlsx");
+            bool overrideFile = true;
+            if (File.Exists(fileName))
+            {
+                if (MessageBox.Show("File already exists, do you want to override?", "File Exists", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                {
+                    overrideFile = false;
+                }
+            }
+
+            if (overrideFile)
+            {
+                ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                List<AppParameters> parameters = GetParameterList();
+                string filePath = im.ExportParametersToExcelFile(parameters, "GlobalParameters");
+                Process.Start(filePath); 
+            }
+        }
+
+        private void ExportParametersToDataSource(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>());
+                SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
+                List<object> selectedRunSet = mDataSourceSelectionPage.ShowAsWindow();
+                if (selectedRunSet != null && selectedRunSet.Count > 0)
+                {
+                    ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                    AccessDataSource mDSDetails = (AccessDataSource)(((DataSourceTable)selectedRunSet[0]).DSC);
+                    string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
+                    List<AppParameters> parameters = GetParameterList();
+                    im.ExportSelectedParametersToDataSouce(parameters, mDSDetails, tableName);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to Get Parameter List
+        /// </summary>
+        /// <param name="im"></param>
+        /// <returns></returns>
+        private List<AppParameters> GetParameterList()
+        {
             ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
             List<AppParameters> parameters = new List<AppParameters>();
-            foreach (var prms in mModelsGlobalParamsList)
+            try
             {
-                im.AddNewParameterToList(parameters, prms);                
+                foreach (var prms in mModelsGlobalParamsList)
+                {
+                    im.AddNewParameterToList(parameters, prms);
+                }
             }
-            string filePath = im.ExportParametersToExcelFile(parameters, "GlobalParameters");
-            Process.Start(filePath);
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+            return parameters;
         }
 
         string PlaceholderBeforeEdit = string.Empty;
@@ -290,7 +348,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to updated the Model Global Param name change for the property '{0}' in the item '{1}'", mi.Name, item.ToString()), ex);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to updated the Model Global Param name change for the property '{0}' in the item '{1}'", mi.Name, item.ToString()), ex);
                 }
             }
         }

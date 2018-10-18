@@ -62,7 +62,7 @@ namespace Ginger.Variables
             InitializeComponent();
 
             mParentObject = parentObject;
-            ((RepositoryItem)mParentObject).SaveBackup();
+            ((RepositoryItemBase)mParentObject).SaveBackup();
 
             if (mParentObject is Activity)
             {
@@ -266,7 +266,7 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Actions-Variables dependencies grid data", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Actions-Variables dependencies grid data", ex);
                 Reporter.ToUser(eUserMsgKeys.ActionsDependenciesLoadFailed, ex.Message);
             }
         }
@@ -305,7 +305,7 @@ namespace Ginger.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid columns", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid columns", ex);
                 }
                 grdDependencies.SetGridColumnsWidth();//fix columns width
 
@@ -322,7 +322,7 @@ namespace Ginger.Variables
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid data", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid data", ex);
             }
         }
 
@@ -477,7 +477,7 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to set the " + mDepededItemType.ToString() + "-Variables dependencies helper text", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to set the " + mDepededItemType.ToString() + "-Variables dependencies helper text", ex);
             }
         }
 
@@ -629,7 +629,7 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Auto check in 'VariablesDependenciesPage' grid", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Auto check in 'VariablesDependenciesPage' grid", ex);
             }
         }
 
@@ -661,7 +661,7 @@ namespace Ginger.Variables
         private void UndoChangesAndClose()
         {
             Mouse.OverrideCursor = Cursors.Wait;            
-            ((RepositoryItem)mParentObject).RestoreFromBackup(true);
+            ((RepositoryItemBase)mParentObject).RestoreFromBackup(true);
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();
@@ -770,7 +770,7 @@ namespace Ginger.Variables
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, ex.Message);
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to save the " + mDepededItemType.ToString() + "-Variables dependencies configurations", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to save the " + mDepededItemType.ToString() + "-Variables dependencies configurations", ex);
                 _pageGenericWin.Close();
             }
         }

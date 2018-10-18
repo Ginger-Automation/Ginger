@@ -464,8 +464,9 @@ namespace GingerCore.Repository
                     obj = targetObj; //used for DeepCopy to objects fields
                 }
 
-                if (obj == null)
+                if (obj == null) //Ginger assembly
                 {
+                    if (ClassName == "Ginger.Environments.Solution") ClassName = "Ginger.SolutionGeneral.Solution";
                     obj = GingerAssembly.CreateInstance(ClassName);
                     obj = System.Reflection.Assembly.Load("Ginger").CreateInstance(ClassName);
                 }
@@ -475,15 +476,15 @@ namespace GingerCore.Repository
                     obj = GingerCoreCommon.CreateInstance(ClassName);
                 }
 
-                if (obj == null)
+                if (obj == null) //GingerCoreCommon assembly
                 {
                     if (ClassName == "GingerCore.Actions.ActInputValue" || ClassName == "GingerCore.Common.Actions.ActInputValue") ClassName = typeof(ActInputValue).FullName;
                     if (ClassName == "GingerCore.Actions.ActReturnValue") ClassName = typeof(ActReturnValue).FullName;
                     if (ClassName == "GingerCore.Environments.GeneralParam") ClassName = typeof(GeneralParam).FullName;
                     if (ClassName == "Ginger.TagsLib.RepositoryItemTag") ClassName = typeof(RepositoryItemTag).FullName;
                     if (ClassName == "GingerCore.Platforms.ApplicationPlatform") ClassName = typeof(ApplicationPlatform).FullName;
-
-
+                    
+                    
                     obj = GingerCoreCommon.CreateInstance(ClassName);
                 }
 
@@ -679,12 +680,12 @@ namespace GingerCore.Repository
                                 }
                                 else
                                 {
-                                    Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
+                                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
                                 }
                             }
                             else
                             {
-                                Reporter.ToLog(eLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
+                                Reporter.ToLog(eAppReporterLogLevel.WARN, "Property not Found: " + xdr.Name, writeOnlyInDebugMode: true);
                             }
 
                             xdr.MoveToNextAttribute();
@@ -702,7 +703,7 @@ namespace GingerCore.Repository
             }
             catch (Exception ex)
             {                
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.Message);
             }
         }
 
@@ -899,13 +900,13 @@ namespace GingerCore.Repository
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
                     return null;//failed to get the version
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
+                Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath), writeOnlyInDebugMode: true);
                 Console.WriteLine(ex.StackTrace);
                 return null;//failed to get the version
             }
@@ -980,7 +981,7 @@ namespace GingerCore.Repository
             switch (EventArgs.EventType)
             {
                 case NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired:
-                    Reporter.ToLog(eLogLevel.INFO, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath), null, writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath), null, writeAlsoToConsoleIfNeeded: true, writeOnlyInDebugMode: true);
                     return DeserializeFromText(EventArgs.XML, EventArgs.TargetObj);
             }
 

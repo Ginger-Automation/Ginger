@@ -38,6 +38,7 @@ using System.Diagnostics;
 using DocumentFormat.OpenXml;
 using amdocs.ginger.GingerCoreNET;
 using System.Text;
+using GingerCore.DataSource;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -165,7 +166,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             Tuple<string, string> tuple = new Tuple<string, string>(XDN.LocalName, XDN.XPath);
             string Value = XDN.Value;
-            
+
             if (OptionalValuesPerParameterDict.ContainsKey(tuple))
             {
                 OptionalValuesPerParameterDict[tuple].Add(Value);
@@ -288,7 +289,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
                 }
             }
         }
@@ -646,7 +647,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return value;
         }
@@ -661,6 +662,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             StringBuilder cName = new StringBuilder();
             try
             {
+                if (String.IsNullOrEmpty(columnName))
+                {
+                    return "";
+                }                    
                 columnName = columnName.Replace("#", "");
                 foreach (char ch in columnName)
                 {
@@ -677,7 +682,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return cName.ToString();
         }
@@ -707,7 +712,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return res;
         }
@@ -715,23 +720,35 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <summary>
         /// This method is used to get the sheets list
         /// </summary>
+        /// <param name="validateSheet"></param>
         /// <returns></returns>
-        public List<string> GetSheets()
+        public List<string> GetSheets(bool validateSheet)
         {
             List<string> lst = new List<string>();
-            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(ExcelFileName, false))
+            if (!string.IsNullOrEmpty(ExcelFileName))
             {
-                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-                foreach (var item in workbookPart.Workbook.Descendants<Sheet>())
+                using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(ExcelFileName, false))
                 {
-                    string sheetName = item.Name;
-                    DataTable dt = GetExcelSheetDataBySheetName(sheetName);
-                    bool isValid = CheckIsSheetDataValid(dt);
-                    if (isValid)
+                    WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+                    IEnumerable<WorksheetPart> worksheetPart = workbookPart.WorksheetParts;
+                    foreach (var item in workbookPart.Workbook.Descendants<Sheet>())
                     {
-                        lst.Add(sheetName); 
+                        string sheetName = item.Name;
+                        DataTable dt = GetExcelSheetDataBySheetName(sheetName);
+                        if (validateSheet)
+                        {
+                            bool isValid = CheckIsSheetDataValid(dt);
+                            if (isValid)
+                            {
+                                lst.Add(sheetName);
+                            } 
+                        }
+                        else
+                        {
+                            lst.Add(sheetName);
+                        }
                     }
-                }
+                } 
             }
             return lst;
         }
@@ -768,7 +785,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return isValid;
         }
@@ -980,7 +997,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
 
             return filePath;
@@ -1012,15 +1029,15 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     sSheetName = table.TableName;
 
                 if (File.Exists(sFilePath))
-                    workbook = SpreadsheetDocument.Open(sFilePath, true);
-                else
                 {
-                    workbook = SpreadsheetDocument.Create(sFilePath, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
-                    WorkbookPart workbookPart = workbook.AddWorkbookPart();
-                    workbook.WorkbookPart.Workbook = new Workbook();
-                    workbook.WorkbookPart.Workbook.Sheets = new Sheets();
+                    File.Delete(sFilePath);
                 }
                                 
+                workbook = SpreadsheetDocument.Create(sFilePath, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
+                WorkbookPart workbookPart = workbook.AddWorkbookPart();
+                workbook.WorkbookPart.Workbook = new Workbook();
+                workbook.WorkbookPart.Workbook.Sheets = new Sheets();
+                                                
                 if (workbook.WorkbookPart.WorkbookStylesPart == null)
                 {
                     WorkbookStylesPart stylePart = workbook.WorkbookPart.AddNewPart<WorkbookStylesPart>();
@@ -1090,12 +1107,21 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <returns></returns>
         private Cell GetCell(string value, CellValues dataType, uint styleIndex = 0)
         {
-            return new Cell()
+            Cell cl = new Cell()
             {
-                CellValue = new CellValue(value),
                 DataType = new EnumValue<CellValues>(dataType),
                 StyleIndex = styleIndex
             };
+
+            long lng;
+            string val = value;
+            if (long.TryParse(value, out lng))
+            {
+                cl.DataType = CellValues.Number;
+            }
+            cl.CellValue = new CellValue(val);
+            
+            return cl;
         }
 
         /// <summary>
@@ -1152,8 +1178,303 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 par.OptionalValuesList = prms.OptionalValuesList;
                 par.OptionalValuesString = prms.OptionalValuesString;
                 par.Description = prms.Description;
-                parameters.Add(par); 
+                parameters.Add(par);
             }
+        }
+
+        /// <summary>
+        /// This method is used to get the excel sheet data
+        /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="isFirstRowHeader"></param>
+        /// <returns></returns>
+        public DataSet GetExcelAllSheetData(string sheetName, bool isFirstRowHeader)
+        {
+            return GetExcelAllSheetsData(sheetName, isFirstRowHeader);
+        }
+
+        /// <summary>
+        /// This method is used to get the excel sheet data
+        /// </summary>
+        /// <returns></returns>
+        public DataSet GetExcelAllSheetData(string sheetName, bool isFirstRowHeader, bool exactValues, bool pivoteTable)
+        {
+            DataSet ds = GetExcelAllSheetsData(sheetName, isFirstRowHeader);
+
+            DataSet dsExact = new DataSet();
+            if(exactValues)
+            {
+                foreach (DataTable dt in ds.Tables)
+                {
+                    List<string> lstColumn = new List<string>();
+                    foreach (DataColumn dc in dt.Columns)
+                    {
+                        bool colEmpty = true;
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            if (!string.IsNullOrEmpty(Convert.ToString(dr[dc.ColumnName])))
+                            {
+                                colEmpty = false;
+                            }
+                        }
+                        if(colEmpty)
+                        {
+                            lstColumn.Add(dc.ColumnName);
+                        }
+                    }
+
+                    foreach (string colName in lstColumn)
+                    {
+                        dt.Columns.Remove(colName);
+                    }
+
+                    DataTable dtNew = dt.Copy();
+                    dtNew.TableName = dt.TableName;
+                    dsExact.Tables.Add(dtNew);
+                }
+            }
+
+            DataSet dsPivote = new DataSet();
+            if (pivoteTable)
+            {
+                foreach (DataTable dt in ds.Tables)
+                {
+                    DataTable dtNew = PivotTable(dt);
+                    dtNew.TableName = dt.TableName;
+                    dsPivote.Tables.Add(dtNew);
+                }
+                dsExact = dsPivote;
+            }
+
+            return dsExact;
+        }
+
+        /// <summary>
+        /// This method pivot table i.e. convert rows to column
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        private DataTable PivotTable(DataTable dt)
+        {
+            DataTable dtNew = new DataTable();
+
+            //adding columns    
+            for (int cols = 0; cols < dt.Rows.Count; cols++)
+            {
+                string colName = Convert.ToString(dt.Rows[cols].ItemArray[0]).Replace("[", "_").Replace("]", "");
+                dtNew.Columns.Add(colName);
+            }
+
+            //Adding Row Data
+            for (int cols = 1; cols < dt.Columns.Count; cols++)
+            {
+                DataRow row = dtNew.NewRow();
+                for (int indx = 0; indx < dt.Rows.Count; indx++)
+                {
+                    row[indx] = Convert.ToString(dt.Rows[indx][cols]);
+                }
+                dtNew.Rows.Add(row);
+            }
+            return dtNew;
+        }
+
+        /// <summary>
+        /// This method is used to get the excel sheet data
+        /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="isFirstRowHeader"></param>
+        /// <returns></returns>
+        private DataSet GetExcelAllSheetsData(string sheetName, bool isFirstRowHeader)
+        {
+            DataSet ds = new DataSet();
+            if (!string.IsNullOrEmpty(ExcelFileName))
+            {
+                using (SpreadsheetDocument spreadSheetDocument = SpreadsheetDocument.Open(ExcelFileName, false))
+                {
+                    try
+                    {
+                        WorkbookPart workbookPart = spreadSheetDocument.WorkbookPart;
+                        IEnumerable<Sheet> sheets = workbookPart.Workbook.Descendants<Sheet>();
+                        if (!string.IsNullOrEmpty(sheetName) && sheetName != "-- All --")
+                        {
+                            sheets = workbookPart.Workbook.Descendants<Sheet>().Where(s => s.Name == sheetName);
+                        }
+                        foreach (Sheet sheet in sheets)
+                        {
+                            if (sheet != null)
+                            {
+                                DataTable dt = new DataTable(sheet.Name);
+                                string relId = sheet.Id;
+                                WorksheetPart worksheetPart = (WorksheetPart)spreadSheetDocument.WorkbookPart.GetPartById(relId);
+                                if (worksheetPart != null)
+                                {
+                                    SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+                                    if (sheetData != null)
+                                    {
+                                        IEnumerable<Row> rows = sheetData.Descendants<Row>();
+                                        if (rows != null && rows.Count() > 0)
+                                        {
+                                            int i = 1;
+                                            foreach (Cell cell in rows.ElementAt(0))
+                                            {
+                                                if (isFirstRowHeader)
+                                                {
+                                                    dt.Columns.Add(GetCellValue(spreadSheetDocument, cell));
+                                                }
+                                                else
+                                                {
+                                                    dt.Columns.Add(string.Format("Field_{0}", i));
+                                                }
+                                                i++;
+                                            }
+
+                                            foreach (Row row in rows)
+                                            {
+                                                DataRow tempRow = dt.NewRow();
+                                                i = 0;
+                                                int preColIndx = 0;
+                                                foreach (Cell cel in row.Descendants<Cell>())
+                                                {
+                                                    if (dt.Columns.Count <= i)
+                                                    {
+                                                        int cnt = dt.Columns.Count + 1;
+                                                        dt.Columns.Add(string.Format("Field_{0}", cnt));
+                                                    }
+
+                                                    int curColIndx = GetColumnIndexFromColumnName(cel.CellReference);
+                                                    if ((preColIndx + 1) < curColIndx)
+                                                    {
+                                                        i++;
+                                                    }
+                                                    tempRow[i] = GetCellValue(spreadSheetDocument, cel);
+                                                    preColIndx = curColIndx;
+                                                    i++;
+                                                }
+                                                dt.Rows.Add(tempRow);
+                                            }
+                                            if (isFirstRowHeader)
+                                            {
+                                                dt.Rows.RemoveAt(0);
+                                            }
+                                            ds.Tables.Add(dt);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        switch (ex.Message)
+                        {
+                            case "Syntax error in FROM clause.":
+                                break;
+                            case "No value given for one or more required parameters.":
+                                if (ShowMessage)
+                                    Reporter.ToUser(eUserMsgKeys.ExcelBadWhereClause);
+                                break;
+                            default:
+                                if (ShowMessage)
+                                    System.Windows.MessageBox.Show(ex.Message);
+                                break;
+                        }
+                        return null;
+                    }
+                }
+            }
+            return ds;
+        }
+
+        /// <summary>
+        /// This method will export the parameters to DataSource
+        /// </summary>
+        /// <param name="parameters"></param>
+        public void ExportSelectedParametersToDataSouce(List<AppParameters> parameters, AccessDataSource mDSDetails, string tableName)
+        {
+            try
+            {
+                if (mDSDetails != null)
+                {                    
+                    ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                    List<string> colList = mDSDetails.GetColumnList(tableName);
+                    List<string> defColList = GetDefaultColumnNameListForTableCreation();
+                    foreach (string colName in colList)
+                    {
+                        if (!defColList.Contains(colName))
+                        {
+                            mDSDetails.RemoveColumn(tableName, colName);
+                        }
+                    }
+                    mDSDetails.AddColumn(tableName, "ItemName", "Text");
+                    mDSDetails.AddColumn(tableName, "Description", "Text");
+                    mDSDetails.AddColumn(tableName, "OptionalValuesString", "Text");
+
+                    mDSDetails.RunQuery("DELETE FROM " + tableName);
+
+                    foreach (AppParameters parms in parameters)
+                    {
+                        InsertParameterData(mDSDetails, tableName, parms.ItemName, parms.Description, parms.OptionalValuesString);
+                    }
+                    Reporter.ToUser(eUserMsgKeys.ExportExcelFileDetails); 
+                }
+                
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to get the default columnList for exporting the parameters to datasource
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetDefaultColumnNameListForTableCreation()
+        {
+            List<string> defColList = new List<string>();
+            try
+            {
+                defColList.Add("GINGER_ID");
+                defColList.Add("GINGER_USED");
+                defColList.Add("GINGER_LAST_UPDATED_BY");
+                defColList.Add("GINGER_LAST_UPDATE_DATETIME");
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+            return defColList;
+        }
+
+        /// <summary>
+        /// This method is used to insert the data parameter data in table
+        /// </summary>
+        /// <param name="mDSDetails"></param>
+        /// <param name="itemName"></param>
+        /// <param name="description"></param>
+        /// <param name="optionalValuesString"></param>
+        private void InsertParameterData(AccessDataSource mDSDetails, string tableName, string itemName, string description, string optionalValuesString)
+        {
+            try
+            {
+                string query = GetInsertQueryForParameter(tableName, itemName, description, optionalValuesString);
+                mDSDetails.RunQuery(query);
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to get the columnList for exporting the parameters to datasource
+        /// </summary>
+        /// <returns></returns>
+        private string GetInsertQueryForParameter(string tableName, string itemName, string description, string optionalValuesString)
+        {
+            string query = string.Format("INSERT INTO {0} (GINGER_USED, GINGER_LAST_UPDATED_BY, GINGER_LAST_UPDATE_DATETIME, ItemName, Description, OptionalValuesString) "
+                                       + " VALUES ('True', '{1}', '{2}', '{3}', '{4}', '{5}')", tableName, System.Environment.UserName, DateTime.Now.ToString(), itemName, description, optionalValuesString);
+            return query;
         }
 
         #endregion

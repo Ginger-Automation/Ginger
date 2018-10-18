@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
@@ -79,7 +80,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Activitiess folder");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error unknown item added to Activitiess folder");
                 throw new NotImplementedException();
             }
         }
