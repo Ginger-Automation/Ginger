@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -90,6 +91,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.jsoup.nodes.Element;
@@ -1581,8 +1584,8 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			
 				if(c instanceof JTree)  
 				{
-					Object treeNode=getTreeNodeFromPathAndSet((JTree) c, Value);
-					if(treeNode == null)				
+					TreePath treePath = SearchTreeNodes((JTree)c,Value);
+					if(treePath == null)				
 					{				
 						return PayLoad.Error("Path " + Value + " not found");
 					}
@@ -1591,17 +1594,10 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 						Thread.sleep(500);
 					} catch (InterruptedException e) {						
 						e.printStackTrace();
-					}					
-					TreePath p = null;
-					String[] nodes = Value.split("/");					
-					for (String node : nodes) {
-						int row = (p == null ? 0 : ((JTree)c).getRowForPath(p));
-						((JTree)c).expandRow(row);
-						p = ((JTree)c).getNextMatch(node.trim(), row, Position.Bias.Forward);
-					}				
-				     Rectangle rect = ((JTree)c).getPathBounds(p);
-				     ((JTree)c).scrollPathToVisible(p);				   				   
-				     //Value = rect.x + "," + rect.y;
+					}
+			
+				     Rectangle rect = ((JTree)c).getPathBounds(treePath);
+				     ((JTree)c).scrollPathToVisible(treePath);
 					 Value = (rect.x+rect.width/2) + "," + (rect.y+rect.height/2);
 				}
 				PayLoad plrc =  MousePressAndReleaseComponent(c,Value,mCommandTimeout,2);
@@ -1712,6 +1708,70 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			return PayLoad.Error("Element not found - " + locateBy + " " + locateValue);
 		}
 	}
+
+private TreePath SearchTreeNodes(JTree tree,String locateValue) 
+{
+	TreePath treePath = null;
+	int startNodeNumber = 0;
+	String[] nodes = locateValue.split("/");					
+
+	(tree).expandRow(startNodeNumber);
+	
+		for(int row = startNodeNumber; row < tree.getRowCount(); row++)
+		{
+				treePath = tree.getNextMatch(nodes[0].trim(), row, Position.Bias.Forward);
+				
+				if(treePath != null)
+				{
+					
+						DefaultMutableTreeNode lastNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+						
+						if(nodes[0].equalsIgnoreCase((String)lastNode.getUserObject()))
+						{
+							
+						  if(nodes.length > 1)
+							{
+								treePath = SearchChildNodes(tree, treePath, nodes);
+							}
+							break;
+						}
+				}
+			
+	}
+	return treePath;
+}
+
+private TreePath SearchChildNodes(JTree tree, TreePath treePath, String[] nodes) 
+{
+	boolean nodeFound = false;
+	for (int i =1; i < nodes.length; i++)
+	{
+		nodeFound = false;
+		String nodeToSearch = nodes[i];
+		
+		TreeNode startNode = (TreeNode) treePath.getLastPathComponent();
+		
+		Enumeration<?> children =  startNode.children();
+		while(children.hasMoreElements())
+		{
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
+			String userObject = (String) child.getUserObject();
+			if(userObject.equalsIgnoreCase(nodeToSearch))
+			{
+				nodeFound = true;
+				(tree).expandRow((tree).getRowForPath(treePath));
+			 	Object[] nodePath = child.getPath();
+			 	treePath = new TreePath(nodePath);
+			 	break;
+			}
+		}
+	}
+	if(nodeFound)
+	{
+		return treePath;
+	}
+	return null;
+}
 
 	
 	private Boolean IsImplicitSyncRequired(String controlAction, String Value, String ValueToSelect)
@@ -2602,18 +2662,12 @@ private PayLoad GetComponentState(Component c)
 		 if (c instanceof JTree)
 		 {
 			GingerAgent.WriteLog("c instanceof JTree");
-			TreePath p = null;
-			String[] nodes = value.split("/");					
-			for (String node : nodes) {
-				int row = (p == null ? 0 : ((JTree)c).getRowForPath(p));
-				((JTree)c).expandRow(row);
-				p = ((JTree)c).getNextMatch(node.trim(), row, Position.Bias.Forward);
-			}
-			if (p != null)
+			TreePath nodePath = SearchTreeNodes(((JTree)c),value);
+			if (nodePath != null)
 			{
 				GingerAgent.WriteLog("TreePath != null");
-				 Rectangle rect = ((JTree)c).getPathBounds(p);
-			     ((JTree)c).scrollPathToVisible(p);				   				   
+				 Rectangle rect = ((JTree)c).getPathBounds(nodePath);
+			     ((JTree)c).scrollPathToVisible(nodePath);				   				   
 			     String value1 = rect.x + "," + rect.y;
 				
 				PayLoad plrc =  MousePressAndReleaseComponent(c,value1,mCommandTimeout,1);
@@ -3573,30 +3627,12 @@ private PayLoad SetComponentFocus(Component c)
 		
 	private Object getTreeNodeFromPathAndSet(JTree tr,String locate) {	
 		GingerAgent.WriteLog( "  getTreeNodeFromPathAndSet::locate  " +  locate);
-		String path = locate;
-		TreePath p = null;
-		String[] nodes = path.split("/");
-				
-		TreePath p1=null;
-		for (String node : nodes) {
-			int row = (p == null ? 0 : tr.getRowForPath(p));
-			tr.expandRow(row);
-			p1 = tr.getNextMatch(node.trim(), row, Position.Bias.Forward);
-			// TODO: Handle full Path for JTREE now we are supporting only Last node .
-			//Add for Handling Same Prefix on the node, need to create new way to handle Jtree  
-			if(p1==p)
-			{
-				p=tr.getNextMatch(node.trim(), row+1, Position.Bias.Forward);
-				tr.expandRow(row);
-			}
-			else
-				p=p1;
-		}
-		if (p==null)
+	    TreePath nodePath = SearchTreeNodes(tr,locate);
+		if (nodePath==null)
 			return null;
 		else
-			tr.setSelectionPath(p);
-		return (p.getLastPathComponent());
+			tr.setSelectionPath(nodePath);
+		return (nodePath.getLastPathComponent());
 
 	}
 	
