@@ -163,11 +163,7 @@ namespace Ginger.ApiModelsFolder
                 }
             }
         }
-
-       
-
-        
-
+              
         private void SetParamsGrid()
         {
             xAPIModelParamsValueUCGrid.Title = "API Parameters Consolidation";
@@ -190,6 +186,6 @@ namespace Ginger.ApiModelsFolder
             EnhancedActInputValue AIV = (EnhancedActInputValue)xAPIModelParamsValueUCGrid.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
             VEEW.ShowAsWindow();
-        }
+        }       
     }
 }

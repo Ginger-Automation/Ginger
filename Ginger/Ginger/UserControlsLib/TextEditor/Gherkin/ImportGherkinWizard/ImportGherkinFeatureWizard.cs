@@ -43,7 +43,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         ImportGherkinTargetFolder importGherkinTargetFolder;        
         public ITreeViewItem bizFlowTargetFolder { get; set; }
         public ITreeViewItem featureTargetFolder { get; set; }
-
+        
         public ImportGherkinFeatureWizard(ITreeViewItem folder, eImportGherkinFileContext context)
         {            
             mContext = context;            

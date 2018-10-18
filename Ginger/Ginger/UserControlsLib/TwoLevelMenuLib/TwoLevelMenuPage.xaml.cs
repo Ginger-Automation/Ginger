@@ -60,9 +60,12 @@ namespace Ginger.GeneralWindows
         {
             mTwoLevelMenu.Reset();
             xMainNavigationListView.SelectedItem = null;
-            xSubNavigationListView.SelectedItem = null;
-            xSelectedItemFrame.SetContent(null);            
-            SelectFirstTopMenu();
+            xSubNavigationListView.SelectedItem = null;            
+            xSelectedItemFrame.SetContent(null);
+            if (App.UserProfile.Solution != null)
+            {
+                SelectFirstTopMenu();
+            }
         }
 
         private void LoadMenus()

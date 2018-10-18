@@ -72,7 +72,7 @@ namespace GingerWPF.WizardLib
             foreach (WizardPage page in mWizard.Pages)
             {                
                 // send init event
-                ((IWizardPage)page.Page).WizardEvent(WizardEventArgs);
+                ((IWizardPage)page.Page).WizardEvent(WizardEventArgs);               
 
                 // TODO: attach validation error handler
                 ((Page)page.Page).AddHandler(Validation.ErrorEvent, new RoutedEventHandler(ValidationErrorHandler));
@@ -84,6 +84,20 @@ namespace GingerWPF.WizardLib
             CurrentWizardWindow = this;            
         }
 
+        private void UpdateFinishButton()
+        {
+            xFinishButton.IsEnabled = false;
+            if (mValidationErrors.Count > 0)
+            {
+                return;
+            }
+
+            if (mWizard.IsLastPage())
+            {
+                xFinishButton.IsEnabled = true;
+            }
+        }
+
         ~WizardWindow()
         {
             CurrentWizardWindow = null;
@@ -92,7 +106,7 @@ namespace GingerWPF.WizardLib
 
         void RefreshCurrentPage()
         {
-            WizardPage page = mWizard.GetCurrentPage();
+            WizardPage page = mWizard.GetCurrentPage();            
             PageFrame.Content = page.Page;
             tbSubTitle.Text = page.SubTitle;
             // sync the list too
@@ -141,7 +155,7 @@ namespace GingerWPF.WizardLib
             mWizard.Next();
             //UpdateFinishButton();
             UpdatePrevNextButton();
-            RefreshCurrentPage();
+            RefreshCurrentPage();            
         }
 
 
@@ -225,7 +239,8 @@ namespace GingerWPF.WizardLib
             
             if (mWizard.IsLastPage())
             {
-                xNextButton.IsEnabled = false;
+                xNextButton.IsEnabled = false;                
+                xFinishButton.IsEnabled = true;
             }
             else
             {
@@ -324,9 +339,12 @@ namespace GingerWPF.WizardLib
         private void NavigationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mWizard.Pages.CurrentItem = NavigationList.SelectedItem;
-            tbSubTitle.Text= ((WizardPage)mWizard.Pages.CurrentItem).SubTitle;
-            UpdatePrevNextButton();
-            RefreshCurrentPage();
+            if (!HasValidationsIssues())
+            {
+                tbSubTitle.Text = ((WizardPage)mWizard.Pages.CurrentItem).SubTitle;
+                UpdatePrevNextButton();
+                RefreshCurrentPage(); 
+            }
         }
 
         public void ProcessStarted()
