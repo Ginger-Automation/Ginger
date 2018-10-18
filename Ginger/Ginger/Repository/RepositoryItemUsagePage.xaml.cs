@@ -303,7 +303,7 @@ namespace Ginger.Repository
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to update the repository item usage", ex);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to update the repository item usage", ex);
                         usage.Status = RepositoryItemUsage.eStatus.UpdateFailed;
                     }
                 }
@@ -332,7 +332,7 @@ namespace Ginger.Repository
                        {
                            usage.Status = RepositoryItemUsage.eStatus.SaveFailed;
                            Reporter.CloseGingerHelper();
-                           Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                           Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                        }
                    }
                }

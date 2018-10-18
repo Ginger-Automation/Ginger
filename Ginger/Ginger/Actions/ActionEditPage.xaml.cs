@@ -103,7 +103,7 @@ namespace Ginger.Actions
 
             EditMode = editMode;
             mAction.PropertyChanged += ActionPropertyChanged;
-
+            
             GingerHelpProvider.SetHelpString(this, act.ActionDescription);
 
             if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
@@ -223,17 +223,17 @@ namespace Ginger.Actions
 
             InitActionLog();
         }
-        
 
-        
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateOutputTabVisual();
+            mAction.OnPropertyChanged(nameof(Act.ReturnValuesInfo));
         }
 
         private void FlowControls_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateFlowControlTabVisual();
+            mAction.OnPropertyChanged(nameof(Act.FlowControlsInfo));
         }
 
         private void ClearUnusedParameter(object sender, RoutedEventArgs e)
@@ -994,7 +994,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             if (ActionTab.SelectedItem == ScreenShotTab)
@@ -1293,7 +1293,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 

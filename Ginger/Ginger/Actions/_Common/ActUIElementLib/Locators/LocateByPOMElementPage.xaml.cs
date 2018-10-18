@@ -73,7 +73,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 {
                     try
                     {
-                        string[] pOMandElementGUIDs = mLocateValue.ToString().Split('_');
+                        string[] pOMandElementGUIDs = mLocateValue.Split('_');
                         Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
                         mSelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
                         if (mSelectedPOM == null)

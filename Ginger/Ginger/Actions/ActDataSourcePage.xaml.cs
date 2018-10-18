@@ -402,7 +402,7 @@ namespace Ginger.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
                 return;
             }
         }
@@ -920,7 +920,7 @@ namespace Ginger.Actions
             catch (Exception ex)
             {                
                 mActDSTblElem.ValueExp = "";
-                Reporter.ToLog(eLogLevel.ERROR, "Failed", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed", ex);
             }
         }
 

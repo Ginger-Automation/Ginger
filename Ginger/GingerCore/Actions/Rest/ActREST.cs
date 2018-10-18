@@ -107,9 +107,7 @@ namespace GingerCore.Actions.REST
 
         [IsSerializedForLocalRepository]
         public bool AcceptAllSSLCertificate { get; set; }
-
-        public bool mUseTemplateFile = true;
-
+        
         private HttpWebResponse WebReqResponse = null;
         public HttpStatusCode ResponseCode
         {
@@ -126,32 +124,18 @@ namespace GingerCore.Actions.REST
             }
         }
 
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool UseTemplateFile
         {
-            get
-            {
-                return mUseTemplateFile;
-            }
-            set
-            {
-                mUseTemplateFile = value;
-            }
+            get;
+            set;            
         }
-
-        public bool mUseRequestBody = true;
-
-        [IsSerializedForLocalRepository]
+       
+        [IsSerializedForLocalRepository(true)]
         public bool UseRequestBody
         {
-            get
-            {
-                return mUseRequestBody;
-            }
-            set
-            {
-                mUseRequestBody = value;
-            }
+            get;
+            set;
         } 
 
         public enum eRequestType
@@ -161,6 +145,7 @@ namespace GingerCore.Actions.REST
             PUT,
             PATCH
         }
+
         public enum eCookieMode
         {
             [EnumValueDescription("Use Session Cookies")]
@@ -178,7 +163,6 @@ namespace GingerCore.Actions.REST
             [EnumValueDescription("Version 1.1")]
            HTTPV11,
         }
-
 
         public enum eSercurityType
         {
@@ -547,10 +531,10 @@ namespace GingerCore.Actions.REST
                 
                 //TODO: check if UTF8 is good for all
                 StreamReader reader=new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
-                Reporter.ToLog(eLogLevel.INFO, "Response");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Response");
 
                 string resp = reader.ReadToEnd().ToString();
-                Reporter.ToLog(eLogLevel.INFO, resp);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, resp);
 
                 if (RestRequestSave==true && RequestType!=eRequestType.GET)
                 {

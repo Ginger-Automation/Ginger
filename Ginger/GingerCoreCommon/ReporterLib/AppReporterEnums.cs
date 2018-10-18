@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -18,17 +18,22 @@ limitations under the License.
 
 namespace Amdocs.Ginger.Common
 {
-    public enum eNewAppLogLevel
+    public enum eAppReporterLoggingLevel
     {
         Normal, Debug
     }
 
-    public enum eNewLogLevel
+    public enum eAppReportType
+    {
+       ToLog, ToUser, ToConsole, ToStatusBar 
+    }
+
+    public enum eAppReporterLogLevel
     {
         DEBUG, INFO, WARN, ERROR, FATAL
     }
 
-    public enum eNewMessageType
+    public enum eAppReporterMessageType
     {
         INFO, WARN, ERROR, QUESTION
     }

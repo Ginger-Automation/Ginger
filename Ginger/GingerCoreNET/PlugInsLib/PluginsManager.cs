@@ -362,7 +362,7 @@ namespace Amdocs.Ginger.Repository
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
 
             string nodeFileName = NodeConfigFile.CreateNodeConfigFile(PluginId + "1");  // TODO: check if 1 exist then try 2,3 in case more than one same id service start
-            string cmd = "dotnet " + dll + " " + nodeFileName;
+            string cmd = "dotnet \"" + dll + "\" \"" + nodeFileName + "\"";
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);            
             procStartInfo.UseShellExecute = true;             
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
@@ -376,7 +376,7 @@ namespace Amdocs.Ginger.Repository
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
         {
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
-            StandAloneAction standAloneAction = (from x in pluginPackage.LoadServicesInfoFromFile() where x.ServiceID == serviceId && x.ID == actionId select x).SingleOrDefault();
+            StandAloneAction standAloneAction = (from x in pluginPackage.LoadServicesInfoFromFile() where x.ServiceId == serviceId && x.ActionId == actionId select x).SingleOrDefault();
             return standAloneAction.InputValues;
         }
 

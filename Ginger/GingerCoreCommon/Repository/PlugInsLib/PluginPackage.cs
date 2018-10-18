@@ -223,10 +223,10 @@ namespace Amdocs.Ginger.Repository
                 {
                     GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);
                     StandAloneAction DA = new StandAloneAction();
-                    DA.ID = token.Id;
+                    DA.ActionId = token.Id;
                     // AssemblyName AN = MI.DeclaringType.Assembly.GetName();
-                    DA.PluginID = PluginID;  //AN.Name;
-                    DA.ServiceID = pluginService.ServiceId;
+                    DA.PluginId = PluginID;  //AN.Name;
+                    DA.ServiceId = pluginService.ServiceId;
                     DA.Description = token.Description;
                     foreach (ParameterInfo PI in MI.GetParameters())
                     {
@@ -400,14 +400,27 @@ namespace Amdocs.Ginger.Repository
             ObservableList<ITextEditor> textEditors = new ObservableList<ITextEditor>();
             foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
             {
-                var list = from type in PAI.Assembly.GetTypes()
+
+                Assembly assembly = null;
+                if (string.IsNullOrEmpty(mPluginPackageInfo.UIDLL))
+                {
+                    continue;
+                }
+                string UIDLLFileName = Path.Combine(mFolder, "UI", mPluginPackageInfo.UIDLL);                
+                if (!File.Exists(UIDLLFileName))
+                {
+                    throw new Exception("Plugin UI DLL not found: " + UIDLLFileName);
+                }                
+                assembly = Assembly.UnsafeLoadFrom(UIDLLFileName);               
+
+                var list = from type in assembly.GetTypes()
                            where typeof(ITextEditor).IsAssignableFrom(type) && type.IsAbstract == false
                            select type;
 
                 foreach (Type t in list)
-                {
-                    ITextEditor textEditor = (ITextEditor)PAI.Assembly.CreateInstance(t.FullName);
-                    textEditors.Add(textEditor);
+                {                    
+                    ITextEditor textEditor = (ITextEditor)assembly.CreateInstance(t.FullName); // Activator.CreateInstance(t);
+                    textEditors.Add(textEditor);                    
                 }
             }
             return textEditors;

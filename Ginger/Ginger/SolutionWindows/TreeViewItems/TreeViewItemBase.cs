@@ -32,6 +32,7 @@ using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SourceControl;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -427,7 +428,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to refresh the item type cache for the folder: '" + path + "'", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to refresh the item type cache for the folder: '" + path + "'", ex);
             }
         }
 
@@ -445,7 +446,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                                                                 BindingFlags.Public |
                                                                 BindingFlags.Instance |
                                                                 BindingFlags.OptionalParamBinding, null, new object[] { Type.Missing }, CultureInfo.CurrentCulture);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
             if (folderItem == null)
             {
@@ -460,7 +461,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             catch (Exception ex)
             {
                 //return null;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
 
             
@@ -509,7 +510,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return false;
             }
 

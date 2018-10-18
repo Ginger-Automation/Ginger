@@ -60,9 +60,12 @@ namespace Ginger.GeneralWindows
         {
             mTwoLevelMenu.Reset();
             xMainNavigationListView.SelectedItem = null;
-            xSubNavigationListView.SelectedItem = null;
-            xSelectedItemFrame.SetContent(null);            
-            SelectFirstTopMenu();
+            xSubNavigationListView.SelectedItem = null;            
+            xSelectedItemFrame.SetContent(null);
+            if (App.UserProfile.Solution != null)
+            {
+                SelectFirstTopMenu();
+            }
         }
 
         private void LoadMenus()
@@ -188,7 +191,7 @@ namespace Ginger.GeneralWindows
             }
             catch(Exception ex)
             {
-                GingerCore.Reporter.ToLog(GingerCore.eLogLevel.ERROR, "Failed to Set Selected ListItem Style", ex);
+                GingerCore.Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Set Selected ListItem Style", ex);
             }
         }
 

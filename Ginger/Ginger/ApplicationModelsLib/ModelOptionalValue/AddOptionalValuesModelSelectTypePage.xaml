@@ -81,7 +81,10 @@
                         <usercontrols:ucButton x:Name="xCreateTemplateExcelButton" ToolTip="Create Template" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="ExcelFile" Click="xCreateTemplateExcelButton_Click" VerticalAlignment="Bottom" Margin="-10,0,0,-10" />
                     </DockPanel>
 
-                    <Label Grid.Row="1" Name="xSaveExcelLable" Style="{StaticResource @LabelStyle}"  Content="Please save and close Excel after editing it." VerticalAlignment="Bottom" Margin="0,10,0,0" />
+                    <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Height="25">
+                        <Label Name="xSaveExcelLable" Style="{StaticResource @LabelStyle}" Foreground="Red" Content="Please save and close Excel after editing it." VerticalAlignment="Bottom" Margin="0,2,0,-2" />
+                    </DockPanel>
+                    
                     <DockPanel Grid.Row="2" Grid.ColumnSpan="3">
                         <StackPanel >
                             <Label Name="xSheetLable"   HorizontalAlignment="Left" Content="Sheet:" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"  />

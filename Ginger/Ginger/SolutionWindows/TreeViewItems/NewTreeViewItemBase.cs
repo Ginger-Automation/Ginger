@@ -39,7 +39,7 @@ namespace GingerWPF.TreeViewItemsLib
 {
     public class NewTreeViewItemBase : TreeViewItemGenericBase
     {
-        public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one
+        public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one      
         static bool mBulkOperationIsInProcess = false;
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
         {         
@@ -258,7 +258,7 @@ namespace GingerWPF.TreeViewItemsLib
             catch (Exception ex)
             {                
                 Reporter.ToUser(eUserMsgKeys.RefreshFailed, "Failed to refresh the item type cache for the folder: " + path);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 mBulkOperationIsInProcess = false;
             }
         }
@@ -284,7 +284,7 @@ namespace GingerWPF.TreeViewItemsLib
                                                                     BindingFlags.Public |
                                                                     BindingFlags.Instance |
                                                                     BindingFlags.OptionalParamBinding, null, new object[] { repoFolder }, CultureInfo.CurrentCulture);
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 }
                 if (folderItem == null)
                 {
@@ -295,7 +295,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return null;
             }
         }
@@ -309,7 +309,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return false;
             }
             return true;
@@ -433,14 +433,10 @@ namespace GingerWPF.TreeViewItemsLib
                 if (App.UserProfile.Solution.SourceControl.IsSupportingGetLatestForIndividualFiles)
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Get Latest Version", SourceControlGetLatestVersion, null, "@GetLatest2_16x16.png");
                 if (App.UserProfile.Solution.ShowIndicationkForLockedItems && App.UserProfile.Solution.SourceControl.IsSupportingLocks && addLocksOption)
-                    if (ItemSourceControlStatus == SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser || ItemSourceControlStatus == SourceControlFileInfo.eRepositoryItemStatus.LockedByMe)
-                    {
-                        TreeViewUtils.AddSubMenuItem(sourceControlMenu, "UnLock Item", SourceControlUnlock, null, "@Unlock_16x16.png");
-                    }
-                    else
-                    {
-                        TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Lock Item", SourceControlLock, null, "@Lock_16x16.png");
-                    }
+                {
+                    TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Lock Item", SourceControlLock, null, "@Lock_16x16.png");
+                    TreeViewUtils.AddSubMenuItem(sourceControlMenu, "UnLock Item", SourceControlUnlock, null, "@Unlock_16x16.png");                    
+                }  
                 TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Undo Changes", SourceControlUndoChanges, null, "@Undo_16x16.png");
             }
         }
@@ -454,12 +450,26 @@ namespace GingerWPF.TreeViewItemsLib
 
         private void SourceControlUnlock(object sender, RoutedEventArgs e)
         {
+            RepositoryItemBase RI = ((ITreeViewItem)this).NodeObject() as RepositoryItemBase;
+
+            if (RI != null && RI.SourceControlStatus != eImageType.SourceControlLockedByMe && RI.SourceControlStatus != eImageType.SourceControlLockedByAnotherUser)
+            {
+                Reporter.ToUser(eUserMsgKeys.SoruceControlItemAlreadyUnlocked);
+                return;
+            }
             SourceControlIntegration.UnLock(App.UserProfile.Solution.SourceControl, this.NodePath());
             mTreeView.Tree.RefreshHeader((ITreeViewItem)this);
         }
 
         private void SourceControlLock(object sender, RoutedEventArgs e)
         {
+            RepositoryItemBase RI= ((ITreeViewItem)this).NodeObject() as RepositoryItemBase;
+         
+            if(RI != null && (RI.SourceControlStatus== eImageType.SourceControlLockedByMe || RI.SourceControlStatus == eImageType.SourceControlLockedByAnotherUser))
+            {
+               Reporter.ToUser(eUserMsgKeys.SourceControlItemAlreadyLocked);
+               return;
+            }
             string lockComment = string.Empty;
             if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment, System.IO.Path.GetInvalidFileNameChars()))
             {
@@ -522,12 +532,13 @@ namespace GingerWPF.TreeViewItemsLib
 
             ObservableList<RepositoryFolder<T>> subFolders = RF.GetSubFolders();
             foreach (RepositoryFolder<T> envFolder in subFolders)
-            {
+            {                
                 Childrens.Add(GetTreeItem(envFolder));
             }
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // track sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
+            
             //Add direct childrens        
             ObservableList<T> folderItems = RF.GetFolderItems();
             // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once
@@ -539,7 +550,7 @@ namespace GingerWPF.TreeViewItemsLib
                 object sampleItem = folderItems[0];               
                 foreach (T item in folderItems.OrderBy(((RepositoryItemBase)sampleItem).ItemNameField))
                 {
-                    ITreeViewItem tvi = GetTreeItem(item);
+                    ITreeViewItem tvi = GetTreeItem(item);                    
                     Childrens.Add(tvi);
                 }
             }
@@ -591,11 +602,16 @@ namespace GingerWPF.TreeViewItemsLib
             // Add Item header text 
             Label itemHeaderLabel = new Label();
 
+            string nameFieldProperty;
             if (string.IsNullOrEmpty(NameProperty))
             {
-                NameProperty = repoItem.ItemNameField;
+                nameFieldProperty = repoItem.ItemNameField;
             }
-            BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, NameProperty, BindingMode: System.Windows.Data.BindingMode.OneWay);
+            else
+            {
+                nameFieldProperty = NameProperty;
+            }
+            BindingLib.ControlsBinding.ObjFieldBinding(itemHeaderLabel, Label.ContentProperty, repoItem, nameFieldProperty, BindingMode: System.Windows.Data.BindingMode.OneWay);
 
 
             stack.Children.Add(itemHeaderLabel);
