@@ -186,12 +186,7 @@ namespace GingerWPF.WizardLib
                 GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));                
             }            
         }
-
-        public void AfterLoadEvent()
-        {
-            GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.AfterLoad));            
-        }
-
+        
         public void Prev()
         {
             WizardEventArgs WizardEventArgs = new WizardEventArgs(this, EventType.Prev);

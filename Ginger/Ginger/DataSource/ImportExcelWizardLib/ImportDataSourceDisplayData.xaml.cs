@@ -68,11 +68,8 @@ namespace Ginger.DataSource.ImportExcelWizardLib
 
                     impParams.ExcelFileName = Path;
                     impParams.ExcelSheetName = SheetName;
-
-                    break;
-                case EventType.AfterLoad:
                     DisplayData();
-                    break;
+                    break;                
                 case EventType.LeavingForNextPage:
                     ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).ExcelImportData = ExcelImportData;
                     break;

@@ -1393,34 +1393,30 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             try
             {
                 if (mDSDetails != null)
-                {
-                    mDSDetails.FileFullPath = mDSDetails.CurrentFilePath;
-
-                    if (File.Exists(mDSDetails.FileFullPath))
+                {                    
+                    ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                    List<string> colList = mDSDetails.GetColumnList(tableName);
+                    List<string> defColList = GetDefaultColumnNameListForTableCreation();
+                    foreach (string colName in colList)
                     {
-                        ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-                        List<string> colList = mDSDetails.GetColumnList(tableName);
-                        List<string> defColList = GetDefaultColumnNameListForTableCreation();
-                        foreach (string colName in colList)
+                        if (!defColList.Contains(colName))
                         {
-                            if (!defColList.Contains(colName))
-                            {
-                                mDSDetails.RemoveColumn(tableName, colName);
-                            }
+                            mDSDetails.RemoveColumn(tableName, colName);
                         }
-                        mDSDetails.AddColumn(tableName, "ItemName", "Text");
-                        mDSDetails.AddColumn(tableName, "Description", "Text");
-                        mDSDetails.AddColumn(tableName, "OptionalValuesString", "Text");
-
-                        mDSDetails.EmptyTable(tableName);
-
-                        foreach (AppParameters parms in parameters)
-                        {
-                            InsertParameterData(mDSDetails, tableName, parms.ItemName, parms.Description, parms.OptionalValuesString);
-                        }
-                        Reporter.ToUser(eUserMsgKeys.ExportExcelFileDetails); 
                     }
+                    mDSDetails.AddColumn(tableName, "ItemName", "Text");
+                    mDSDetails.AddColumn(tableName, "Description", "Text");
+                    mDSDetails.AddColumn(tableName, "OptionalValuesString", "Text");
+
+                    mDSDetails.RunQuery("DELETE FROM " + tableName);
+
+                    foreach (AppParameters parms in parameters)
+                    {
+                        InsertParameterData(mDSDetails, tableName, parms.ItemName, parms.Description, parms.OptionalValuesString);
+                    }
+                    Reporter.ToUser(eUserMsgKeys.ExportExcelFileDetails); 
                 }
+                
             }
             catch (System.Exception ex)
             {

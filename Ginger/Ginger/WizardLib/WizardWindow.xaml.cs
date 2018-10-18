@@ -106,10 +106,8 @@ namespace GingerWPF.WizardLib
 
         void RefreshCurrentPage()
         {
-            WizardPage page = mWizard.GetCurrentPage();
-            IWizardPage pg = mWizard.GetCurrentPage().Page;            
-            PageFrame.Content = page.Page; 
-
+            WizardPage page = mWizard.GetCurrentPage();            
+            PageFrame.Content = page.Page;
             tbSubTitle.Text = page.SubTitle;
             // sync the list too
             NavigationList.SelectedItem = page;
@@ -157,8 +155,7 @@ namespace GingerWPF.WizardLib
             mWizard.Next();
             //UpdateFinishButton();
             UpdatePrevNextButton();
-            RefreshCurrentPage();
-            mWizard.AfterLoadEvent();
+            RefreshCurrentPage();            
         }
 
 
@@ -242,8 +239,7 @@ namespace GingerWPF.WizardLib
             
             if (mWizard.IsLastPage())
             {
-                xNextButton.IsEnabled = false;
-                xNextButton.IsEnabled = false;
+                xNextButton.IsEnabled = false;                
                 xFinishButton.IsEnabled = true;
             }
             else

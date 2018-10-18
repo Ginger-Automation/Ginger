@@ -93,10 +93,6 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         private void MTargetFolderSelectionPage_OnSelectItem(object sender, SelectionTreeEventArgs e)
         {
             mTargetFolder = e.SelectedItems[0];           
-        }
-        public bool IsAlternatePageToLoad()
-        {
-            return false;
-        }
+        }        
     }
 }

@@ -30,7 +30,6 @@ using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.WizardLib;
 using amdocs.ginger.GingerCoreNET;
 using static Ginger.ExtensionMethods;
-using Amdocs.Ginger.ValidationRules;
 
 namespace Ginger.GherkinLib
 {
@@ -69,8 +68,6 @@ namespace Ginger.GherkinLib
             FileContentViewer.ToolBarTray.Visibility = Visibility.Collapsed;
             FileContentViewer.lblTitle.Content = "Text";
             FileContentViewer.toolbar.Visibility = Visibility.Collapsed;
-            FetaureFileName.FilePathTextBox.AddValidationRule(new EmptyValidationRule());
-
         }       
 
         private void FilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)

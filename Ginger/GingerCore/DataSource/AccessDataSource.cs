@@ -33,14 +33,6 @@ namespace GingerCore.DataSource
         OleDbConnection myAccessConn;
         string mFilePath = "";
 
-        public string CurrentFilePath
-        {
-            get
-            {
-                return mFilePath;
-            }
-        }
-
         public override void Init(string sFilePath,string sMode="Read")
         {
             string strAccessConn = "";
@@ -225,18 +217,6 @@ namespace GingerCore.DataSource
             OleDbCommand myCommand = new OleDbCommand();
             myCommand.Connection = myAccessConn;
             myCommand.CommandText = query;
-            myCommand.ExecuteNonQuery();
-            myAccessConn.Close();
-            Init(mFilePath, "Read");
-        }
-
-        public void EmptyTable(string tableName)
-        {
-            myAccessConn.Close();
-            Init(mFilePath, "Write");
-            OleDbCommand myCommand = new OleDbCommand();
-            myCommand.Connection = myAccessConn;
-            myCommand.CommandText = "DELETE FROM " + tableName;
             myCommand.ExecuteNonQuery();
             myAccessConn.Close();
             Init(mFilePath, "Read");
