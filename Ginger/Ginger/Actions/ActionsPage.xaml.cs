@@ -315,13 +315,15 @@ namespace Ginger.Actions
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.BreakPoint, Header="B. Point", WidthWeight = 2.5, MaxWidth = 55, StyleType = GridColView.eGridColStyleType.CheckBox });            
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Description, WidthWeight = 20 });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.ActionDescription, Header = "Type", WidthWeight = 7, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = Act.Fields.Details, Header = "Details", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColActionDetailsTemplate("Details"), ReadOnly = true, BindingMode = BindingMode.OneWay });
+            //view.GridColsView.Add(new GridColView() { Field = Act.Fields.Details, Header = "Details", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.getDataColActionDetailsTemplate("Details"), ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(Act.WaitVE), WidthWeight = 3, Header = "Wait", MaxWidth = 50 });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.EnableRetryMechanism, WidthWeight = 2.5, Header = "Retry", MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.TakeScreenShot, WidthWeight = 6, MaxWidth = 100, Header = "Take S. Shot", StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = Act.Fields.FlowControls, Header = "Flow Control", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetDataColGridTemplate("ActFlowControls"), ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.SupportSimulation, Header = "S. Simulation", WidthWeight = 6, MaxWidth = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = Act.Fields.ReturnValues, Header = "Output Values", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetDataColGridTemplate("ActReturnValues"), ReadOnly = true, BindingMode = BindingMode.OneWay });          
+            //view.GridColsView.Add(new GridColView() { Field = Act.Fields.FlowControls, Header = "Flow Control", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetDataColGridTemplate("ActFlowControls"), ReadOnly = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Act.FlowControlsInfo), Header = "Flow Controls", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            //view.GridColsView.Add(new GridColView() { Field = Act.Fields.ReturnValues, Header = "Output Values", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetDataColGridTemplate("ActReturnValues"), ReadOnly = true, BindingMode = BindingMode.OneWay });  
+            view.GridColsView.Add(new GridColView() { Field = nameof(Act.ReturnValuesInfo), Header = "Output Values", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay });  
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Status, Header="Run Status", WidthWeight = 5, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new StatusConverter(), TextBlock.ForegroundProperty)) });           
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.ElapsedSecs, Header="Elapsed", WidthWeight = 5, BindingMode = BindingMode.OneWay, HorizontalAlignment= System.Windows.HorizontalAlignment.Right});
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Error, WidthWeight = 10, BindingMode = BindingMode.OneWay });
@@ -339,9 +341,9 @@ namespace Ginger.Actions
 
             GridViewDef execView = new GridViewDef(eAutomatePageViewStyles.Execution.ToString());
             execView.GridColsView = new ObservableList<GridColView>();
-            execView.GridColsView.Add(new GridColView() { Field = Act.Fields.Details, Visible = false });
-            execView.GridColsView.Add(new GridColView() { Field = Act.Fields.FlowControls, Visible = false });
-            execView.GridColsView.Add(new GridColView() { Field = Act.Fields.ReturnValues, Visible = false });
+            //execView.GridColsView.Add(new GridColView() { Field = Act.Fields.Details, Visible = false });
+            execView.GridColsView.Add(new GridColView() { Field = nameof(Act.FlowControlsInfo), Visible = false });
+            execView.GridColsView.Add(new GridColView() { Field = nameof(Act.ReturnValuesInfo), Visible = false });
             execView.GridColsView.Add(new GridColView() { Field = Act.Fields.TakeScreenShot, Visible = false });
             grdActions.AddCustomView(execView);
             
