@@ -175,11 +175,11 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NJsonSchema, Version=9.10.64.0, Culture=neutral, PublicKeyToken=c2f9c3bdfae56102, processorArchitecture=MSIL">
-      <HintPath>..\packages\NJsonSchema.9.10.64\lib\net45\NJsonSchema.dll</HintPath>
+    <Reference Include="NJsonSchema, Version=9.11.1.0, Culture=neutral, PublicKeyToken=c2f9c3bdfae56102, processorArchitecture=MSIL">
+      <HintPath>..\packages\NJsonSchema.9.11.1\lib\net45\NJsonSchema.dll</HintPath>
     </Reference>
-    <Reference Include="NSwag.Core, Version=11.17.19.0, Culture=neutral, PublicKeyToken=c2d88086e098d109, processorArchitecture=MSIL">
-      <HintPath>..\packages\NSwag.Core.11.17.19\lib\net45\NSwag.Core.dll</HintPath>
+    <Reference Include="NSwag.Core, Version=11.20.1.0, Culture=neutral, PublicKeyToken=c2d88086e098d109, processorArchitecture=MSIL">
+      <HintPath>..\packages\NSwag.Core.11.20.1\lib\net45\NSwag.Core.dll</HintPath>
     </Reference>
     <Reference Include="NSwag.Core.Yaml, Version=11.17.19.0, Culture=neutral, PublicKeyToken=c2d88086e098d109, processorArchitecture=MSIL">
       <HintPath>..\packages\NSwag.Core.Yaml.11.17.19\lib\net45\NSwag.Core.Yaml.dll</HintPath>
@@ -313,8 +313,8 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="YamlDotNet, Version=4.2.2.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
-      <HintPath>..\packages\YamlDotNet.Signed.4.2.2\lib\net35\YamlDotNet.dll</HintPath>
+    <Reference Include="YamlDotNet, Version=5.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.Signed.5.2.1\lib\net45\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -3018,17 +3018,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\%40Environment_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\ApiModel_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\ApiModel_32x32.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Ginger.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemAdded_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemChange_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemDeleted_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\SourceControlItemUnchanged_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Lock_Red_10x10.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Lock_Red_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\DataSource_16x16.png" />
     <Content Include="Reports\GingerExecutionReport\assets\js\babel.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -3047,9 +3037,8 @@
     <Content Include="Reports\GingerExecutionReport\assets\js\Recharts.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_16x16.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\Plugin_32x32.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconInGrayNoBackground.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
