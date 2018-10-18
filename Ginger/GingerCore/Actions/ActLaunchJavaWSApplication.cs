@@ -111,7 +111,7 @@ namespace GingerCore.Actions
 
         //------------------- Launch Java Application args 
         private bool mLaunchJavaApplication = true;        
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool LaunchJavaApplication //flag to determine if to launch java application
         {
             get
@@ -215,7 +215,7 @@ namespace GingerCore.Actions
         }
 
         private bool mShowAgent = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool ShowAgent //flag to determine if to show Ginger Agent Console
         {
             get
@@ -225,7 +225,7 @@ namespace GingerCore.Actions
             set
             {
                 mShowAgent = value;
-                OnPropertyChanged(Fields.ShowAgent);
+                OnPropertyChanged(nameof(ShowAgent));
             }
         }
 
