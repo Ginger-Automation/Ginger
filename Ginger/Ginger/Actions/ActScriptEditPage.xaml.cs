@@ -122,12 +122,12 @@ namespace Ginger.Actions
         private void ScriptInterpreterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string[] fileEntries = null;
-            bool changeFileNamesList = false;
+            
             
             if (ScriptInterpreterComboBox.SelectedValue.ToString() == "Other")
             {
                 InterpreterPanel.Visibility = Visibility.Visible;
-                InterpreterPanelLabel.Visibility = Visibility.Visible;
+               
                 if (  string.IsNullOrEmpty(f.ScriptName) || f.ScriptName.EndsWith(".vbs") || f.ScriptName.EndsWith(".js"))
                 {
                     ScriptNameComboBox.ItemsSource = null;
@@ -135,7 +135,7 @@ namespace Ginger.Actions
                         Directory.CreateDirectory(SHFilesPath);
                     fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
                    .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
-                    changeFileNamesList = true;
+                    
                 }
             }
             else if (ScriptInterpreterComboBox.SelectedValue.ToString() == "BAT")
@@ -143,13 +143,12 @@ namespace Ginger.Actions
                 if (string.IsNullOrEmpty(f.ScriptName) || !f.ScriptName.EndsWith(".bat"))
                 {
                     InterpreterPanel.Visibility = Visibility.Visible;
-                    InterpreterPanelLabel.Visibility = Visibility.Collapsed;
-
+                   
                     ScriptNameComboBox.ItemsSource = null;
                     if (!Directory.Exists(SHFilesPath))
                         Directory.CreateDirectory(SHFilesPath);
                     fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".bat");
-                    changeFileNamesList = true;
+                    
                 }
 
             }
@@ -159,12 +158,12 @@ namespace Ginger.Actions
                 if (string.IsNullOrEmpty(f.ScriptName) || !f.ScriptName.EndsWith(".vbs") )
                 {
                     InterpreterPanel.Visibility = Visibility.Visible;
-                    InterpreterPanelLabel.Visibility = Visibility.Collapsed;
+                   
                     ScriptNameComboBox.ItemsSource = null;
                     if (!Directory.Exists(SHFilesPath))
                         Directory.CreateDirectory(SHFilesPath);
                     fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".vbs");
-                    changeFileNamesList = true;
+                   
                 }
 
             }
@@ -179,7 +178,7 @@ namespace Ginger.Actions
                         Directory.CreateDirectory(SHFilesPath);
 
                     fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".js");
-                    changeFileNamesList = true;
+                    
                 }
 
             }
@@ -192,11 +191,6 @@ namespace Ginger.Actions
                 ScriptNameComboBox.SelectedValue = f.ScriptName;
             }
             
-        }
-
-        private void ScriptInterpreterComboBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            throw new NotSupportedException();
         }
     }
 
