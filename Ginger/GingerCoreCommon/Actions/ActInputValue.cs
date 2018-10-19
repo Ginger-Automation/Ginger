@@ -115,7 +115,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 if (string.IsNullOrEmpty(mValue))
                 {
-                    ListStringWrapper list = new ListStringWrapper();
+                    DynamicListWrapper list = new DynamicListWrapper();
                     mList = list.GetList(); 
                 }
                 else
