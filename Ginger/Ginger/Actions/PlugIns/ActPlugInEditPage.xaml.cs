@@ -164,7 +164,7 @@ namespace Ginger.Actions.PlugIns
             int rows = mAct.InputValues.Count;
             for (int i = 0; i < rows; i++)
             {
-                ActionConfigGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(35) });
+                ActionConfigGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(35, GridUnitType.Auto) });
             }
 
             ActionConfigGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30, GridUnitType.Star) });
