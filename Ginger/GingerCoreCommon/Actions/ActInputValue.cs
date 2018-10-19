@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,8 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
+using Ginger.UserControlsLib.ActionInputValueUserControlLib;
+using GingerCore.GeneralLib;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -94,6 +100,49 @@ namespace Amdocs.Ginger.Repository
                 OnPropertyChanged(Fields.Value);
             }
         }
+
+
+        ObservableList<dynamic> mList;        
+       
+        [DoNotBackup]  // ?? do bak only to seri items
+        public ObservableList<dynamic> ListStringValue
+        {
+            get
+            {                
+                if (mList != null)
+                {
+                    return mList;
+                }
+                if (string.IsNullOrEmpty(mValue))
+                {
+                    ListStringWrapper list = new ListStringWrapper();
+                    mList = list.GetList(); 
+                }
+                else
+                {
+                    dynamic dynList = JsonConvert.DeserializeObject(mValue);
+                    mList = new ObservableList<dynamic>();
+                    foreach (dynamic item in dynList)
+                    {
+                        mList.Add(item);
+                    }                    
+                }
+
+                return mList;
+            }
+
+            set
+            {
+                // Keep the list as string
+                mValue = JsonConvert.SerializeObject(value, Formatting.None);
+                // Keep the actual list objects
+                mList = value;
+                OnPropertyChanged(nameof(Value));
+            }
+        }
+
+      
+
 
         private string mValueForDriver;
 
