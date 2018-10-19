@@ -908,7 +908,7 @@ namespace Ginger
                 foreach (System.Data.DataRowView item in mObjList)
                 {
                     index++;
-                    if (item.Row.ItemArray[0] == (((System.Data.DataRowView)e.Row.Item).Row.ItemArray[0]))
+                    if (item.Row.RowState != DataRowState.Deleted && item.Row.ItemArray[0] == (((System.Data.DataRowView)e.Row.Item).Row.ItemArray[0]))
                     {
                         e.Row.Header = index + 1;
                         break;
