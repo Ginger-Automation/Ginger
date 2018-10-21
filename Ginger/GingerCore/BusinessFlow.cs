@@ -188,7 +188,7 @@ namespace GingerCore
         }
 
         private bool mActive = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool Active
         {
             get { return mActive; }

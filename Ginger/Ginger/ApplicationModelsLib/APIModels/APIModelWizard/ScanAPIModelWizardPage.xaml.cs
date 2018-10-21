@@ -323,6 +323,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             //    AddAPIModelWizard.NextEnabled = true;
             //else
             //    AddAPIModelWizard.NextEnabled = false;
-        }
+        }        
     }
 }
