@@ -49,7 +49,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private Dictionary<string, int> AllPlaceHolders = new Dictionary<string, int>();
         private List<Element> ElementsList = new List<Element>();
         private List<ComplexType> ComplexTypesList = new List<ComplexType>();
-        //private string ContainingFolder;
         private ObservableList<ApplicationAPIModel> AAMList = new ObservableList<ApplicationAPIModel>();
         private List<Tuple<string,string>> AllURLs = new List<Tuple<string, string>>();
         private List<ServiceDescriptionExtended> mServiceDescriptionsExtendedList = new List<ServiceDescriptionExtended>();
@@ -58,7 +57,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private PortTypeCollection portTypColl;
         private MessageCollection Messages;
         private List<XmlSchemasExtended> mSchemasList = new List<XmlSchemasExtended>();
-        //private XmlSchemas mSchemasList;
         private string mURL;
         public bool ErrorFound;
         public string ErrorReason;
@@ -99,13 +97,21 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 else
                 {
                     foreach (Binding b in SDExtended.mServiceDescription.Bindings)
+                    {
                         bindColl.Add(b);
+                    }
                     foreach (Service s in SDExtended.mServiceDescription.Services)
+                    {
                         Services.Add(s);
+                    }
                     foreach (PortType p in SDExtended.mServiceDescription.PortTypes)
+                    {
                         portTypColl.Add(p);
+                    }
                     foreach (Message m in SDExtended.mServiceDescription.Messages)
+                    {
                         Messages.Add(m);
+                    }
                 }
 
             }
@@ -1659,17 +1665,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             int lastFolderInderSlash = URL.LastIndexOf("/");
 
             containingFolder = URL.Substring(0, Math.Max(lastFolderIndexBackSlash, lastFolderInderSlash));
-
-            //if (lastFolderIndexBackSlash != -1 && lastFolderInderSlash == -1)
-            //    containingFolder = URL.Substring(0, lastFolderIndexBackSlash);
-            //else if (lastFolderIndexBackSlash == -1 && lastFolderInderSlash != -1)
-            //{
-            //    containingFolder = URL.Substring(0, lastFolderInderSlash);
-            //}
-            //else
-            //{
-            //    containingFolder = URL.Substring(0, Math.Max(lastFolderIndexBackSlash, lastFolderInderSlash));
-            //}
             return containingFolder;
         }
 
