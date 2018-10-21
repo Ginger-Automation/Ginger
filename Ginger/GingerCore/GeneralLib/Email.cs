@@ -118,7 +118,7 @@ namespace GingerCore.GeneralLib
         public eEmailMethod EmailMethod { get; set; }
 
         private bool mEnableSSL = true;
-        [IsSerializedForLocalRepository]        
+        [IsSerializedForLocalRepository(true)]        
         public bool EnableSSL
         {
             get { return mEnableSSL; }
