@@ -252,7 +252,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             ObservableList<ApplicationAPIModel> AAMSList = new ObservableList<ApplicationAPIModel>();
             try
             {
-                WSDLP = new WSDLParser();
                 AAMSList = await Task.Run(() => WSDLP.ParseDocument(AddAPIModelWizard.URL));
             }
             catch (Exception ex)
