@@ -99,7 +99,11 @@ namespace GingerCore.SourceControl
             if (Path == null ||  Path.Length == 0) return SourceControlFileInfo.eRepositoryItemStatus.Unknown;
 
             if (client == null) Init();
+
             System.Collections.ObjectModel.Collection<SvnStatusEventArgs> statuses;
+
+            Uri targetUri = null;
+
             try
             {
                 int lastDotIndex = Path.LastIndexOf(".");
@@ -107,7 +111,8 @@ namespace GingerCore.SourceControl
                 {
 
                     Collection<SvnListEventArgs> ListEventArgs;
-                    Uri targetUri = GetRemoteUriFromPath(Path, out ListEventArgs);
+                    targetUri = GetRemoteUriFromPath(Path, out ListEventArgs);
+
 
                     if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner == SourceControlUser)
                         return SourceControlFileInfo.eRepositoryItemStatus.LockedByMe;
@@ -421,7 +426,7 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 ListEventArgs = null;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.WARN, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 return null;
             }
         }

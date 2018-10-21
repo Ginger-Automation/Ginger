@@ -60,14 +60,6 @@ namespace Ginger.ALM
                     App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.QC;
             }
 
-            if (!WorkSpace.Instance.BetaFeatures.RestAPI)
-            {
-                RestAPICheckBox.Visibility = Visibility.Hidden;
-                App.UserProfile.Solution.UseRest = false;
-                RestAPICheckBox.IsChecked = false;
-                RestAPICheckBox.IsEnabled = false;
-            }
-
             if (almConnectStyle != ALMIntegration.eALMConnectType.Silence)
             {
                 if (GetProjectsDetails())
@@ -362,12 +354,10 @@ namespace Ginger.ALM
                     RQMRadioButton.IsChecked = false;
                     RallyRadioButton.FontWeight = FontWeights.Regular;
                     RallyRadioButton.Foreground = Brushes.Black;
-                    RallyRadioButton.IsChecked = false;
-                    if (WorkSpace.Instance.BetaFeatures.RestAPI)
-                    {
-                        RestAPICheckBox.Visibility = Visibility.Visible;
-                    }
+                    RallyRadioButton.IsChecked = false;                    
+                    RestAPICheckBox.Visibility = Visibility.Visible;                    
                     break;
+
                 case ALMIntegration.eALMType.RQM:
                     RQMRadioButton.IsChecked = true;
                     RQMRadioButton.FontWeight = FontWeights.ExtraBold;
