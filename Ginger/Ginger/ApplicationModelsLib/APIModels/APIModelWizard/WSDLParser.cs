@@ -2114,10 +2114,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 XmlTextReader reader = new XmlTextReader(URL);
 
                 ServiceDescription sd = ServiceDescription.Read(reader);
-                string containingFolder = GetContainingFolderFromURL(URL);
-                ServiceDescriptionExtended serviceDescriptionExtended = new ServiceDescriptionExtended() { mServiceDescription = sd, ContainingFolder = containingFolder };
-
-                mServiceDescriptionsExtendedList.Add(serviceDescriptionExtended);
             }
             catch (Exception ex)
             {
