@@ -247,10 +247,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         private async Task<bool> ShowWSDLOperations()
         {
             bool parseSuccess = true;
+            
             AddAPIModelWizard.ProcessStarted();
             ObservableList<ApplicationAPIModel> AAMSList = new ObservableList<ApplicationAPIModel>();
             try
             {
+                WSDLP = new WSDLParser();
                 AAMSList = await Task.Run(() => WSDLP.ParseDocument(AddAPIModelWizard.URL));
             }
             catch (Exception ex)
