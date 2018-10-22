@@ -285,6 +285,8 @@ namespace Ginger.BusinessFlowFolder
         public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
             string title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+            RoutedEventHandler closeHandler = CloseWinClicked;
+            string closeContent = "Undo & Close";
             ObservableList<Button> winButtons = new ObservableList<Button>();
             switch (mEditMode)
             {
@@ -315,24 +317,22 @@ namespace Ginger.BusinessFlowFolder
                     okBtnView.Content = "Ok";
                     okBtnView.Click += new RoutedEventHandler(okBtn_Click);
                     winButtons.Add(okBtnView);
+                    closeHandler = new RoutedEventHandler(okBtn_Click);
+                    closeContent = okBtnView.Content.ToString();
                     break;
             }
             
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, closeContent, closeHandler, startupLocationWithOffset: startupLocationWithOffset);
             return saveWasDone;
         }
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (mEditMode != General.RepositoryItemPageViewMode.View && mEditMode != General.RepositoryItemPageViewMode.Automation)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
             {
-                if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
-                    UndoChanges();
-                else
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
-                
+                UndoChanges();
+                _pageGenericWin.Close();
             }
-            _pageGenericWin.Close();
         }
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)

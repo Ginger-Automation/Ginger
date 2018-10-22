@@ -918,9 +918,6 @@
     <Compile Include="PlugInsWindows\PluginPackagePage.xaml.cs">
       <DependentUpon>PluginPackagePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\SetAppLogLevelPage.xaml.cs">
-      <DependentUpon>SetAppLogLevelPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="TestLib\ListsPage.xaml.cs">
       <DependentUpon>ListsPage.xaml</DependentUpon>
     </Compile>
@@ -930,9 +927,6 @@
     <Compile Include="UserControlsLib\TwoLevelMenuLib\SubMenuItem.cs" />
     <Compile Include="UserControlsLib\TwoLevelMenuLib\TopMenuItem.cs" />
     <Compile Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenu.cs" />
-    <Compile Include="UserConfig\SetUserTypePage.xaml.cs">
-      <DependentUpon>SetUserTypePage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserConfig\UserTypeHelper.cs" />
     <Compile Include="UserControlsLib\ActionInputValueUserControlLib\ActionInputValueUserControl.xaml.cs">
       <DependentUpon>ActionInputValueUserControl.xaml</DependentUpon>
@@ -1678,9 +1672,6 @@
     </Compile>
     <Compile Include="ALM\ALMConnectionPage.xaml.cs">
       <DependentUpon>ALMConnectionPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dictionaries\SetTerminologyTypePage.xaml.cs">
-      <DependentUpon>SetTerminologyTypePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Imports\QTP\QTPImportPage.xaml.cs">
       <DependentUpon>QTPImportPage.xaml</DependentUpon>
@@ -3323,10 +3314,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Reports\SetAppLogLevelPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Repository\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -3408,10 +3395,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TagsLib\ucTagsViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserConfig\SetUserTypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3976,10 +3959,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ALM\ALMConnectionPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dictionaries\SetTerminologyTypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -319,35 +319,12 @@ namespace GingerWPF.TreeViewItemsLib
         {
             try
             {
-                //TODO: Fix with New Reporter (on GingerWPF)
-                //if (System.Windows.MessageBox.Show(string.Format("Are you sure you want to delete the '{0}' folder and all of it content?", mTreeView.Tree.GetSelectedTreeNodeName()), "Delete Foler", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.No) == System.Windows.MessageBoxResult.Yes)
-                //{
-                //    ITreeViewItem TVI = (ITreeViewItem)(mTreeView.Tree.CurrentSelectedTreeViewItem);
-                //    RepositoryFolderBase RF = (RepositoryFolderBase)TVI.NodeObject();
-                //    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)((ITreeViewItem)this).NodeObject());
-
-
-                //    mBulkOperationIsInProcess = true;
-                //    List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
-                //    childNodes.Reverse();
-                //    foreach (ITreeViewItem node in childNodes)
-                //    {
-                //        if (node == null || node.NodeObject() == null) continue;
-                //        if ((node.NodeObject().GetType().BaseType != typeof(RepositoryFolderBase)))
-                //        {
-                //            DeleteTreeItem(node.NodeObject(), true, false);
-                //        }
-                //        else
-                //        {
-                //            if (Directory.Exists(((TreeViewItemBase)node).NodePath()))
-                //                WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)node.NodeObject());
-                //        }
-                //    }
-
+                if (Reporter.ToUser(eUserMsgKeys.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == MessageBoxResult.Yes)
+                {
                     //delete root and refresh tree                    
                     WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)((ITreeViewItem)this).NodeObject());
                     mTreeView.Tree.RefreshSelectedTreeNodeParent();
-               //}
+                }
             }
             finally
             {
