@@ -27,6 +27,7 @@ using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -50,11 +51,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             HandleLocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
             HandleLocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
 
-            //ValidationType.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationType), Platform.GetPlatformUIValidationTypesList(), false, null);
             SubElement.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementType), Platform.GetSubElementType(mAct.ElementType).ToList(), false, null);
             SubElementLocateBy.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
-            SubElementLocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
-            //ValidationElementValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementValue), true, false, UCValueExpression.eBrowserType.Folder);
+            SubElementLocatorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);            
             GingerCore.General.ActInputValueBinding(DefineHandleAction, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.DefineHandleAction, "False"));         
         }        
         
@@ -67,7 +66,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 Type t = Assembly.GetExecutingAssembly().GetType(classname);
                 if (t == null)
                 {
-                    throw new Exception("Action edit page not found - " + classname);
+                    Reporter.ToLog(eAppReporterLogLevel.FATAL,"Action edit page not found - " + classname);
+                    return null;
                 }
                 Page platformPage = (Page)Activator.CreateInstance(t, mAct);
 

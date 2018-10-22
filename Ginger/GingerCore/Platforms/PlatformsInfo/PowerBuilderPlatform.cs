@@ -79,12 +79,9 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
         {
             List<ActUIElement.eSubElementType> list = new List<ActUIElement.eSubElementType>();
-            switch (elementType)
-            {
-                case eElementType.List:
-                case eElementType.ComboBox:
-                    list.Add(ActUIElement.eSubElementType.Pane);
-                    break;
+            if (elementType== eElementType.List || elementType == eElementType.ComboBox)
+            {                
+                list.Add(ActUIElement.eSubElementType.Pane);                
             }
             return list;
         }
