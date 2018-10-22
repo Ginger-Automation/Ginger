@@ -371,7 +371,22 @@ namespace Amdocs.Ginger.Repository
         public void CreateServicesInfo()
         {
             ObservableList<StandAloneAction> actions = GetStandAloneActions();
-            
+
+            // Verify no dup IDs
+            var query = actions.GroupBy(x => new { x.ServiceId, x.ActionId } )
+                          .Where(g => g.Count() > 1)
+                          .Select(y => y.Key)
+                          .ToList();
+            if (query.Count > 0)
+            {
+                string errorText = "Error: Plugin contains duplicate Action ID for same service" + Environment.NewLine;
+                foreach (object item in query)
+                {
+                    errorText += item.ToString() + Environment.NewLine;
+                }
+                throw new Exception(errorText);
+            }
+
             string txt = JsonConvert.SerializeObject(actions, Formatting.Indented);
             File.WriteAllText(PluginPackageServicesInfoFileName(), txt);  
         }
