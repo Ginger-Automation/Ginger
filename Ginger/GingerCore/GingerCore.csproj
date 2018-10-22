@@ -583,7 +583,6 @@
     <Compile Include="DataSource\DataSourceBase.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="DataSource\DataSourceTable.cs" />
-    <Compile Include="Dictionaries\GingerDicser.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">
       <DependentUpon>AndroidADBDriverWindow.xaml</DependentUpon>
