@@ -182,7 +182,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             SetAutoMapElementTypes();
             xAutoMapElementTypesGrid.DataSourceList = mWizard.AutoMapElementTypesList;
         }
-
         private void xAutomaticElementConfigurationRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             if (mWizard != null)

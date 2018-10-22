@@ -142,6 +142,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     CurrentSelectedAPIModel.OptionalValuesTemplates.Add(new TemplateFile() { FilePath = file });
                 }
             }
-        }
+        }      
     }
 }

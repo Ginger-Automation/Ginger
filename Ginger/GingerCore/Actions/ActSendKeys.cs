@@ -112,7 +112,7 @@ namespace Ginger.Actions
 
         
         private bool mISWindowFocusRequired = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool ISWindowFocusRequired 
         {
             get

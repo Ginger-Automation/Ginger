@@ -483,6 +483,20 @@
     </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
+    <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceFinishPage.xaml.cs">
+      <DependentUpon>ImportDataSourceFinishPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceDisplayData.xaml.cs">
+      <DependentUpon>ImportDataSourceDisplayData.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceSheetSelection.xaml.cs">
+      <DependentUpon>ImportDataSourceSheetSelection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceFromExcelWizard.cs" />
+    <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
+      <DependentUpon>ucDataGrid.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WizardLib\ValidationDetails.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
     <Compile Include="GeneralValidationRules\GridValidationRule.cs" />
     <Compile Include="MenusLib\ConfigurationsMenu.cs" />
@@ -623,6 +637,9 @@
       <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\GingerRunnerLogger.cs" />
+    <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml.cs">
+      <DependentUpon>ImportDataSourceBrowseFile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
@@ -2801,6 +2818,26 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceFinishPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceDisplayData.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceSheetSelection.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TestLib\WizardLib\MyWizardDetailsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -4305,6 +4342,7 @@
     <Resource Include="TestLib\WizardLib\Intro.md">
       <Generator>MSBuild:Compile</Generator>
     </Resource>
+    <Resource Include="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
     <None Include="UserControlsLib\TextEditor\Gherkin\GherkinHighlighting.xshd">
       <SubType>Designer</SubType>
     </None>
