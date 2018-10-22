@@ -405,7 +405,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
         }
 
@@ -426,7 +426,7 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 ListEventArgs = null;
-                Reporter.ToLog(eAppReporterLogLevel.WARN, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.WARN, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }

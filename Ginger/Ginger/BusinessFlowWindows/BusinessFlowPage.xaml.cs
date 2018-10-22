@@ -96,11 +96,6 @@ namespace Ginger.BusinessFlowFolder
                 mVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
                 BfVariablesFrame.Content = mVariablesPage;
                 if (mBusinessFlow.Variables.Count == 0) VariablesExpander.IsExpanded = false;
-
-                mReposiotryPage = new RepositoryPage(mBusinessFlow);
-                mReposiotryPage.ShowActionsRepository = System.Windows.Visibility.Collapsed;
-                mReposiotryPage.ShowVariablesRepository = System.Windows.Visibility.Collapsed;
-                RepositoryFrame.Content = mReposiotryPage;                
             }
             else
             {
@@ -120,7 +115,6 @@ namespace Ginger.BusinessFlowFolder
                 TagsViewer.IsEnabled = false;
                 xBusinessflowinfo.IsEnabled = false;
                 xTargetApplication.IsEnabled = false;
-                RepositoryExpander.IsEnabled = false;
                 xAutomateBtn.Visibility = Visibility.Collapsed;
             }
 
@@ -135,7 +129,7 @@ namespace Ginger.BusinessFlowFolder
             mBusinessFlow.Activities.CollectionChanged += mBusinessFlowActivities_CollectionChanged;
             foreach (Activity activity in mBusinessFlow.Activities)
             {
-                try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; }catch(Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }  //to make sure wont be added twice              
+                try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; }catch(Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }  //to make sure wont be added twice              
                 activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
             }
         }
@@ -159,7 +153,7 @@ namespace Ginger.BusinessFlowFolder
             {
                 foreach (Activity activity in mBusinessFlow.Activities)
                 {
-                    try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; } catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }  //to make sure wont be added twice              
+                    try { activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged; } catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }  //to make sure wont be added twice              
                     activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
                 }
             }
@@ -238,40 +232,7 @@ namespace Ginger.BusinessFlowFolder
             Row5.Height = new GridLength(0);
             if (ActivitiesGroupsExpander.IsExpanded == false)
                 ActivitiesExpander.IsExpanded = true;
-        }
-        
-        private void RepositoryExpander_ExpandedCollapsed(object sender, RoutedEventArgs e)
-        {
-            if (RepositoryExpander.IsExpanded)
-            {
-                RepositoryExpanderLabel.Visibility = System.Windows.Visibility.Collapsed;
-                RepositoryGridColumn.Width = mlastRepositoryColWidth;
-            }
-            else
-            {
-                mlastRepositoryColWidth = RepositoryGridColumn.Width;
-                RepositoryExpanderLabel.Visibility = System.Windows.Visibility.Visible;
-                RepositoryGridColumn.Width = mMinColsExpanderSize;
-            }
-        }
-
-        private void RepositoryExpander_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (RepositoryExpander.IsExpanded == false && e.NewSize.Width > mMinColsExpanderSize.Value)
-            {
-                RepositoryGridColumn.Width = mMinColsExpanderSize;
-            }
-        }
-
-        private void RepositoryFrame_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (RepositoryExpander.IsExpanded && e.NewSize.Width <= 50)
-            {
-                RepositoryExpander.IsExpanded = false;
-                mlastRepositoryColWidth = new GridLength(300);
-                RepositoryGridColumn.Width = mMinColsExpanderSize;
-            }
-        }
+        }        
 
         private void VariablesExpander_Expanded(object sender, RoutedEventArgs e)
         {

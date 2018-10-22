@@ -289,7 +289,7 @@ namespace GingerCore.Drivers
             }
             catch (ElementNotAvailableException ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 //TODO: Need to handle the exception
             }
             //Check that the item in focus is in our window we are recording as focus can go to any desktop window and we get a call            
@@ -322,7 +322,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -814,7 +814,7 @@ namespace GingerCore.Drivers
                             catch (Exception e)
                             {
                                 element = OLD_GetElementByXpath_OLD(locateValue);
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                             }
                             break;
                         case eLocateBy.ByAutomationID:
@@ -853,7 +853,7 @@ namespace GingerCore.Drivers
                     ecount++;
                     Thread.Sleep(100);
                     Reporter.ToLog(eAppReporterLogLevel.INFO, "FindElementByLocator In Exception-" + count);
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     if (ecount<5)
                         continue;
                 }
@@ -972,7 +972,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
             return result;
         }
@@ -2746,7 +2746,7 @@ namespace GingerCore.Drivers
                             {
                                 winAPI.SetElementText(element, value);
                                 element.TryGetCurrentPattern(ValuePattern.Pattern, out vp);
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                             }
                         }
                         else
@@ -2851,7 +2851,7 @@ namespace GingerCore.Drivers
                                 catch (Exception e)
                                 {
                                     winAPI.SetElementText(element, value);
-                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                                 }
                             }
                         }
@@ -4820,7 +4820,7 @@ namespace GingerCore.Drivers
             catch (System.Runtime.InteropServices.COMException e)
             {
                 parentDictionary.Remove(AE);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 throw new System.Runtime.InteropServices.COMException();
             }
         }

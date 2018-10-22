@@ -493,6 +493,9 @@
       <DependentUpon>ImportDataSourceSheetSelection.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceFromExcelWizard.cs" />
+    <Compile Include="GeneralLib\LoadingPage.xaml.cs">
+      <DependentUpon>LoadingPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
@@ -630,9 +633,6 @@
     <Compile Include="MenusLib\RunMenu.cs" />
     <Compile Include="RunSetLib\RunSetOperations.cs" />
     <Compile Include="Run\RunSetConfig.cs" />
-    <Compile Include="SolutionLibNew\LoadingSolutionPage.xaml.cs">
-      <DependentUpon>LoadingSolutionPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
       <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
     </Compile>
@@ -650,9 +650,6 @@
       <DependentUpon>MyWizardPropertiesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TestLib\WizardLib\MyWizardSubItem.cs" />
-    <Compile Include="UserControlsLib\TwoLevelMenuLib\LoadingPage.xaml.cs">
-      <DependentUpon>LoadingPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControlsLib\TwoLevelMenuLib\MenuItemBase.cs" />
     <Compile Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenuPage.xaml.cs">
       <DependentUpon>TwoLevelMenuPage.xaml</DependentUpon>
@@ -2797,13 +2794,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="GeneralLib\LoadingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GeneralLib\TestWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="SolutionLibNew\LoadingSolutionPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SolutionWindows\TargetApplicationsPage.xaml">
       <SubType>Designer</SubType>
@@ -2834,10 +2831,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="TestLib\WizardLib\MyWizardPropertiesPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControlsLib\TwoLevelMenuLib\LoadingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

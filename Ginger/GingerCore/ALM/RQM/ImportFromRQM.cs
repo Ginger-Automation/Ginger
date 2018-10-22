@@ -261,7 +261,7 @@ namespace GingerCore.ALM.RQM
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
                         }
                     }
@@ -498,7 +498,7 @@ namespace GingerCore.ALM.RQM
                                             if (stepActivityVar is VariableString)
                                                 ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                         }
-                                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                                     }
                                 }
                             }
@@ -713,7 +713,7 @@ namespace GingerCore.ALM.RQM
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
                         }
                     }
@@ -811,7 +811,7 @@ namespace GingerCore.ALM.RQM
                     ItemFieldsPossibleValues.Add(itemField);
                 }
             }
-            catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}"); }
+            catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
 
             return ItemFieldsPossibleValues;
         }
@@ -1217,7 +1217,7 @@ namespace GingerCore.ALM.RQM
                     }
                 }
             }
-            catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}"); }
+            catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
 
             SaveItemFields(fields);
             return fields;

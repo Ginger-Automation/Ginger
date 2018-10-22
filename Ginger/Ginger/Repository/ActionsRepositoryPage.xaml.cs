@@ -87,7 +87,7 @@ namespace Ginger.Repository
                    if (dragedItemInGrid != null)
                        xActionsGrid.Grid.SelectedItem = dragedItemInGrid;
                }
-               catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+               catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
         }
 

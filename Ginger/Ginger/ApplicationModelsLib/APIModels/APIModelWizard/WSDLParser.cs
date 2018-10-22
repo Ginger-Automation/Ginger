@@ -2084,7 +2084,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             catch (Exception ex)
             {
                 error += "There is a problem in this WSDL file format, please verify the WSDL format and re-try";
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
             return true;

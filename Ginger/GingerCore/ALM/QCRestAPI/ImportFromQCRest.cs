@@ -397,7 +397,7 @@ namespace GingerCore.ALM.QCRestAPI
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
 
                             //add linked variable if needed
@@ -448,7 +448,7 @@ namespace GingerCore.ALM.QCRestAPI
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                     }
                 }
@@ -535,7 +535,7 @@ namespace GingerCore.ALM.QCRestAPI
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - { MethodBase.GetCurrentMethod().Name }, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - { MethodBase.GetCurrentMethod().Name }, Error - {ex.Message}", ex);
                         //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                     }
                 }
@@ -917,7 +917,7 @@ namespace GingerCore.ALM.QCRestAPI
                         if (stepActivityVar is VariableString)
                             ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                     }
-                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 }
 
                 //add linked variable if needed

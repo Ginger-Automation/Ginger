@@ -69,7 +69,7 @@ namespace GingerCoreNET.Dictionaries
             catch (Exception ex)
             {
                 termResValue = null;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 
             if (termResValue != null)
