@@ -2108,9 +2108,9 @@ namespace GingerCore.Drivers
                         iClick = 1;
                     }
 
-                    if (newValue == Value)
+                    if (newValue.Replace("&", "") == Value.Replace("&", ""))
                     {
-                        if(GetControlValue(AE) == Value)
+                        if(GetControlValue(AE).Replace("&", "") == Value.Replace("&", ""))
                         {
                             return "true";                           
                         }
