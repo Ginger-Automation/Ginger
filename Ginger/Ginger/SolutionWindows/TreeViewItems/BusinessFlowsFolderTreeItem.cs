@@ -46,7 +46,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     public enum eBusinessFlowsTreeViewMode
     {
         ReadWrite = 0,
-        ReadOnly = 1
+        ReadOnly = 1        
     }
 
     public class BusinessFlowsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
@@ -96,7 +96,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Business Flows folder");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error unknown item added to Business Flows folder");
                 throw new NotImplementedException();
             }
         }
@@ -131,7 +131,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-            if (mViewMode == eBusinessFlowsTreeViewMode.ReadWrite)
+            if (mTreeView.Tree.TreeChildFolderOnly == true)
+            {
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), true, false, false, false, false, false, false, true, false, false);
+            }
+            else if (mViewMode == eBusinessFlowsTreeViewMode.ReadWrite)
             {
                 if (mBusFlowsFolder.IsRootFolder)
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false);
@@ -151,8 +155,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportAllToALM, null, "@ALM_16x16.png");
             }
             else
-            {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), false, false, false, false, false, false, false, false, false, false);
+            {   
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), false, false, false, false, false, false, false, false, false, false);                               
             }
         }
 
@@ -257,43 +261,17 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }        
 
         private void ImportGherkinFeature(object sender, RoutedEventArgs e)
-        {
-            BusinessFlow BF = null;
-            if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
-            {
-                WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(mBusFlowsFolder.FolderFullPath));                
-            }
-            else
-            {
-                // TODO: check test me
-                string FeatureFolder = mBusFlowsFolder.FolderFullPath;
-                if (!mBusFlowsFolder.FolderFullPath.EndsWith("BusinessFlows"))
+        {            
+            ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
+            WizardWindow.ShowWizard(mWizard);                
+         
+                if (mWizard.BizFlow != null)
                 {
-                    FeatureFolder = mBusFlowsFolder.FolderFullPath.Substring(mBusFlowsFolder.FolderFullPath.IndexOf("BusinessFlows\\") + 14);
-                }                    
-                ImportGherkinFeatureFilePage IFP = new ImportGherkinFeatureFilePage(FeatureFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
-                IFP.ShowAsWindow();
-                BF = IFP.BizFlow;
-
-                if (BF != null)
-                {
-                    //Refresh and select Faetures Folder
-                    DocumentsFolderTreeItem DFTI = (DocumentsFolderTreeItem)mTreeView.Tree.GetChildItembyNameandSelect("Documents");
-                    DFTI = (DocumentsFolderTreeItem)mTreeView.Tree.GetChildItembyNameandSelect("Features", DFTI);
-                    if (mBusFlowsFolder.FolderFullPath != "Business Flows")
-                    {
-                        mTreeView.Tree.GetChildItembyNameandSelect(mBusFlowsFolder.FolderFullPath, DFTI);
-                    }
-                    mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-
                     //Select Business Folder
                     mTreeView.Tree.SelectItem(this);
-                    mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                    BusinessFlowTreeItem BFTI = new BusinessFlowTreeItem(BF);                    
-
-                    mTreeView.Tree.GetChildItembyNameandSelect(BF.Name, this);
-                }
-            }
+                    mTreeView.Tree.RefreshSelectedTreeNodeChildrens();                    
+                    mTreeView.Tree.GetChildItembyNameandSelect(mWizard.BizFlow.Name, this);
+                }            
         }
 
         private void ExportAllToALM(object sender, System.Windows.RoutedEventArgs e)

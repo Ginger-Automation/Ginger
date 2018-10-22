@@ -163,8 +163,11 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Ginger:
                     SetAsStaticImage("Ginger.png");
                     break;
-                case eImageType.GingerIcon:
+                case eImageType.GingerIconWhite:
                     SetAsStaticImage("GingerIconWhite.png");
+                    break;
+                case eImageType.GingerIconGray:
+                    SetAsStaticImage("GingerIconInGrayNoBackground.png");
                     break;
                 #endregion
 
@@ -546,7 +549,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Purple, toolTip: "Locked by Other User");
                     break;
                 case eImageType.SourceControlLockedByMe:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Yellow, toolTip: "Locked by You");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.SaddleBrown, toolTip: "Locked by You");
                     break;
                 case eImageType.Check:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircleOutline);
@@ -590,6 +593,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Beta:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Android, Brushes.Orange);
+                    break;
+                case eImageType.Error:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle);
+                    break;
+                case eImageType.Coffee:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee);
                     break;
                 #endregion
 

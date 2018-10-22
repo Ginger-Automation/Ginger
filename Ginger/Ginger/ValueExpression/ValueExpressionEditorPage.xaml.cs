@@ -42,6 +42,7 @@ using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionGeneral;
+using System.IO;
 
 namespace Ginger
 {
@@ -265,7 +266,7 @@ namespace Ginger
             catch (Exception ex)
             {
 
-                Reporter.ToLog(eLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
             }
         }
 
@@ -438,8 +439,8 @@ namespace Ginger
             {
                 if (ds.FilePath.StartsWith("~"))
                 {
-                    ds.FileFullPath = ds.FilePath.Replace("~", "");
-                    ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
+                    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
+                    ds.FileFullPath = Path.Combine(App.UserProfile.Solution.Folder , ds.FileFullPath);
                 }
                 ds.Init(ds.FileFullPath);
                 TreeViewItem tviDataSource = new TreeViewItem();

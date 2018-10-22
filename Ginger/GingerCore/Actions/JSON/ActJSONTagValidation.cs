@@ -69,7 +69,7 @@ namespace GingerCore.Actions.JSON
         }
 
         public bool mReqisFromFile = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool ReqisFromFile
         {
             get

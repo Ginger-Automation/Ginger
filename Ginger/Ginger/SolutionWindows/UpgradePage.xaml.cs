@@ -132,7 +132,9 @@ namespace Ginger.SolutionWindows
                     string filePath = filePathToConvert;
                     //remove info extention
                     if (filePath.Contains("-->"))
+                    {
                         filePath = filePath.Remove(filePath.IndexOf("-->"));
+                    }
 
                     //do upgrade
                     try
@@ -160,7 +162,9 @@ namespace Ginger.SolutionWindows
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
+
+
+                        Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
                         mFailedFiles.Add(filePathToConvert);
                     }
                 }
@@ -179,7 +183,7 @@ namespace Ginger.SolutionWindows
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to upgrade the solution files", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to upgrade the solution files", ex);
                 Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Error occurred during upgrade, details: " + ex.Message);
                 _pageGenericWin.Close();
             }

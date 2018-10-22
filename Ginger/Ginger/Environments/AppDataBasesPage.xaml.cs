@@ -120,7 +120,7 @@ namespace Ginger.Environments
             grdAppDbs.ShowUpDown = Visibility.Collapsed;
             grdAppDbs.ShowUndo = Visibility.Visible;
             grdAppDbs.ShowHeader = Visibility.Collapsed;
-            grdAppDbs.AddToolbarTool(eImageType.Solution, "Test Connection", new RoutedEventHandler(TestDBConnection));
+            grdAppDbs.AddToolbarTool(eImageType.DataSource, "Test Connection", new RoutedEventHandler(TestDBConnection));
 
             grdAppDbs.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddNewDB));
 

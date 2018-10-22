@@ -27,6 +27,7 @@ using Ginger.SolutionWindows.TreeViewItems;
 using System.Diagnostics;
 using System.Collections.Generic;
 using GingerCore;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Help
 {
@@ -70,7 +71,7 @@ namespace Ginger.Help
                 }
                 catch(Exception ex)
                 {
-                    ShowFile(Path.Combine(mHelpFolder, @"Index.mht")); Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    ShowFile(Path.Combine(mHelpFolder, @"Index.mht")); Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                 }
             }            
         }
@@ -161,7 +162,7 @@ namespace Ginger.Help
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
 
@@ -190,7 +191,7 @@ namespace Ginger.Help
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
     }

@@ -30,6 +30,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace GingerCore
 {
@@ -305,8 +306,8 @@ namespace GingerCore
             {
                 if (DataSource.FileFullPath.StartsWith("~"))
                 {
-                    DataSource.FileFullPath = DataSource.FileFullPath.Replace("~", "");
-                    DataSource.FileFullPath = DataSource.ContainingFolderFullPath.Replace("DataSources", "") + DataSource.FileFullPath;
+                    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
+                    DataSource.FileFullPath = Path.Combine(DataSource.ContainingFolderFullPath.Replace("DataSources", "") , DataSource.FileFullPath);
                 }
                 DataSource.Init(DataSource.FileFullPath);
             }
@@ -886,7 +887,7 @@ namespace GingerCore
             catch (Exception ex)
             {
 
-                Reporter.ToLog(eLogLevel.ERROR, "Replace General Function Error:", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Replace General Function Error:", ex);
             }
         }
 

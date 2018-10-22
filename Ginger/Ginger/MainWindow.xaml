@@ -27,7 +27,7 @@
 
             <!--Main Menu- Ginger Icon-->
             <DockPanel Grid.Column="0" VerticalAlignment="Center">
-                <usercontrols:ImageMakerControl x:Name="xGingerIconImg" ImageType="GingerIcon" SetAsFontImageWithSize="18" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                <usercontrols:ImageMakerControl x:Name="xGingerIconImg" ImageType="GingerIconWhite" SetAsFontImageWithSize="18" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="0,0,0,0"/>
                 <GridSplitter Width="1" Height="40" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" Margin="10,0,10,0" IsEnabled="False"/>
             </DockPanel>
 
@@ -41,7 +41,7 @@
                             <MenuItem.Icon>
                                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="20" ImageType="ArrowDown" Width="20" Height="20" Margin="0,0,0,0"/>
                             </MenuItem.Icon>
-                            <MenuItem x:Name="xRecentSolutionsMenuItem" Header="Recent Used Solutions" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xRecentSolutionsMenuItem_Click" StaysOpenOnClick="True" Visibility="Collapsed" >
+                            <MenuItem x:Name="xRecentSolutionsMenuItem" Header="Recently Used Solutions" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xRecentSolutionsMenuItem_Click" StaysOpenOnClick="True" Visibility="Collapsed" >
                                 <MenuItem.Icon>
                                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="History"  Margin="0,0,0,0"/>
                                 </MenuItem.Icon>
@@ -254,15 +254,19 @@
             </DockPanel>
         </Grid>
 
-        <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderThickness="1" />
+        <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderThickness="1"/>
+        <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerIconGray" Width="100" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
         <Border Grid.Row="2" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_VeryDarkBlue}" BorderThickness="1" >
             <DockPanel VerticalAlignment="Center">
                 <usercontrols:ImageMakerControl x:Name="xBetaFeaturesIcon" ImageType="Beta" ToolTip="Running With Beta Features" SetAsFontImageWithSize="18" Foreground="OrangeRed" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="5,0,0,0" MouseLeftButtonDown="xBetaFeaturesIcon_MouseLeftButtonDown"/>
-                <Label x:Name="ErrorsLabel" DockPanel.Dock="Left" Content="Errors" Style="{StaticResource $LabelStyle}" Foreground="Red" FontWeight="Bold" MouseLeftButtonDown="ErrorsLabel_MouseLeftButtonDown" ToolTip="Click to view erros" Margin="10,0,0,0"/>
+                <StackPanel x:Name="xLogErrorsPnl" Orientation="Horizontal" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <usercontrols:ImageMakerControl x:Name="xLogErrorsIcon" ImageType="Error" SetAsFontImageWithSize="18" Foreground="Red" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="10,0,0,0" MouseLeftButtonDown="xLogErrors_MouseLeftButtonDown"/>
+                    <Label x:Name="xLogErrorsLbl" Content="[0]" Style="{StaticResource $LabelStyle}" Foreground="Red" FontWeight="Bold" MouseLeftButtonDown="xLogErrors_MouseLeftButtonDown" Margin="-5,0,0,0"/>
+                </StackPanel>
                 <StackPanel x:Name="xProcessMsgPnl" Orientation="Horizontal" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <usercontrols:ImageMakerControl x:Name="xProcessMsgIcon" ImageType="Processing" ToolTip="Running With Beta Features" SetAsFontImageWithSize="18" Foreground="OrangeRed" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="10,0,5,0"/>
-                    <TextBlock x:Name="xProcessMsgTxtBlock" TextTrimming="CharacterEllipsis" MaxWidth="400"  TextWrapping="NoWrap" Text="Showing something is running" />
+                    <TextBlock x:Name="xProcessMsgTxtBlock" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Text="Showing something is running" MaxWidth="400" />
                 </StackPanel>
                 <Label x:Name="lblVersion" DockPanel.Dock="Right"  Content="Version" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Right" Margin="0,0,5,0"/>
             </DockPanel>

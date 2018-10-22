@@ -31,6 +31,7 @@ using Ginger.Help;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Drawing;
+using Amdocs.Ginger.Common;
 
 namespace Ginger
 {
@@ -340,7 +341,7 @@ namespace Ginger
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Error Occurred while doing DoEvents()", ex);
+                Reporter.ToLog(eAppReporterLogLevel.WARN, "Error Occurred while doing DoEvents()", ex);
             }
         }
 

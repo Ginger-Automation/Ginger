@@ -80,7 +80,7 @@ namespace GingerCore.Variables
         }
 
         private bool mSetAsInputValue=true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool SetAsInputValue
         {
             get { return mSetAsInputValue; }
@@ -95,7 +95,7 @@ namespace GingerCore.Variables
         }
 
         private bool mSetAsOutputValue = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool SetAsOutputValue
         {
             get { return mSetAsOutputValue; }
@@ -233,9 +233,16 @@ namespace GingerCore.Variables
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
                 dynamic value = null;
                 if (mi.MemberType == MemberTypes.Property)
-                    value = PI.GetValue(item);
+                {
+                    if (PI.CanWrite)
+                    {
+                        value = PI.GetValue(item);
+                    }
+                }
                 else if (mi.MemberType == MemberTypes.Field)
+                {
                     value = item.GetType().GetField(mi.Name).GetValue(item);
+                }
 
                 if (value is IObservableList)
                 {

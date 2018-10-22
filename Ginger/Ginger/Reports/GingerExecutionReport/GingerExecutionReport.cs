@@ -2589,8 +2589,7 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/jquery.js'></script>");
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/bootstrap.js'></script>");
-                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/babel.js'></script>");
-                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/browser.js'></script>");
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/babel.js'></script>");                
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/react-with-addons.min.js'></script>");
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/react-dom.min.js'></script>");                
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/prop-types.min.js'></script>");
@@ -2600,10 +2599,9 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>");
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.js'></script>");
-                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js'></script>");
-                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-core/6.1.19/browser.js'></script>");
-                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0-alpha1/react-with-addons.js'></script>");
-                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/react/0.14.1/react-dom.min.js'></script>");
+                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js'></script>");                
+                mJSBundle.Append(@"<script src='https://unpkg.com/react@15/dist/react-with-addons.js'></script>");
+                mJSBundle.Append(@"<script src='https://unpkg.com/react-dom@15.6.1/dist/react-dom.min.js'></script>");
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.2/prop-types.min.js'></script>");
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/recharts/1.1.0/Recharts.min.js'></script>");
             }
@@ -2811,7 +2809,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
             }
         }
 
@@ -2832,7 +2830,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             catch (Exception)
             {
-                logsFolder = App.UserProfile.Solution.Folder + @"\HTMLReports\";
+                logsFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"HTMLReports\");
                 System.IO.Directory.CreateDirectory(logsFolder);
                 App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
             }
