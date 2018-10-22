@@ -615,7 +615,7 @@ namespace Ginger
 
 
         bool mAskToSaveBusinessFlow = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool AskToSaveBusinessFlow
         {
             get
