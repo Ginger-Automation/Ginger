@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,18 +16,29 @@ limitations under the License.
 */
 #endregion
 
-using GingerCoreNET.ReporterLib;
 using System;
 using System.Reflection;
+using Amdocs.Ginger.Common;
 
-namespace GingerCoreNET.Dictionaries
+// replacing resources which is not supported in .net standard
+namespace GingerCore
 {
+    public enum eTermResKey
+    {
+        BusinessFlow, BusinessFlows,
+        ActivitiesGroup, ActivitiesGroups,
+        Activity, Activities,
+        ConversionMechanism,
+        Variable, Variables,
+        RunSet, RunSets
+    }
+
     public enum eSkinDicsType
     {
         Default
     }
 
-    public enum eTerminologyDicsType
+    public enum eTerminologyType
     {
         Default,
         Testing,
@@ -40,47 +51,36 @@ namespace GingerCoreNET.Dictionaries
         Business
     }
 
-    public enum eTermResKey
-    {
-        BusinessFlow, BusinessFlows,
-        ActivitiesGroup, ActivitiesGroups,
-        Activity, Activities,
-        ConversionMechanism,
-        Variable, Variables,
-        RunSet, RunSets
-    }
-
     public class GingerDicser
     {
         public static string GetTermResValue(eTermResKey termResourceKey, string prefixString = "", string suffixString = "", bool setToUpperCase = false)
         {
             object termResValue = null;
+
             try
             {
-                // temp ugly code since we cannot load ResourceDic in GingerCoreNET - need another solution
-                if (termResourceKey == eTermResKey.Activity) termResValue = "Activity";
-                if (termResourceKey == eTermResKey.BusinessFlows) termResValue = "Business Flows";
-
-                if (termResValue == null)
-                {
-                    termResValue = "!!!termResValue!!!";  //FIXME
-                }
+                termResValue = GingerTerminology.GetTerminologyValue(termResourceKey);
             }
             catch (Exception ex)
             {
                 termResValue = null;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 
             if (termResValue != null)
             {
-                string strValue = prefixString + termResValue.ToString() + suffixString;
+                string strValue = "";
+                if (!string.IsNullOrEmpty(prefixString)) strValue = prefixString;
+                if (!string.IsNullOrEmpty(strValue)) strValue = strValue + " " + termResValue.ToString();  else strValue = termResValue.ToString();
+                if (!string.IsNullOrEmpty(suffixString)) strValue = strValue + " " + suffixString;
                 if (setToUpperCase) strValue = strValue.ToUpper();
                 return strValue;
             }
             else
-                //key not found
-                return string.Empty;
-        } 
+            {
+                return string.Empty;  //key not found
+            }
+        }        
+
     }
 }

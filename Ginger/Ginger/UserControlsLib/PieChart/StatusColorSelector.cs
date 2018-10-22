@@ -51,7 +51,7 @@ namespace Ginger.UserControlsLib.PieChart
         {
             StatItem st = (StatItem)item;
             resourceDictionary = new ResourceDictionary();
-            resourceDictionary.Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefualtSkinDictionary.xaml");
+            resourceDictionary.Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefaultSkinDictionary.xaml");
             //TODO: find better pallete colors
             switch (st.Description)
             {
