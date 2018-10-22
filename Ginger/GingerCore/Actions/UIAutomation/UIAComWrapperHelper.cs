@@ -2004,14 +2004,7 @@ namespace GingerCore.Drivers
                 }
                 handleElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.HandleElementLocatorValue);
                 handleActionType = act.HandleActionType;
-            }
-
-            //ActUIElement.eElementAction validationType;
-            //if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
-            //{
-            //    act.Error = "Unkown Validation Type";
-            //    return "false";
-            //}
+            }           
             string subElementType = act.GetInputParamValue(ActUIElement.Fields.SubElementType);
 
             eLocateBy subElementLocateby;
@@ -2020,11 +2013,7 @@ namespace GingerCore.Drivers
                 act.Error = "Unkown Validation Element Locate By";
                 return "false";
             }
-            string subElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.SubElementLocatorValue);
-            //string validationValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.ValidationElementValue);
-
-            
-
+            string subElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.SubElementLocatorValue);            
             string Value = act.GetInputParamCalculatedValue(ActUIElement.Fields.Value).ToString();
 
 
@@ -2035,11 +2024,14 @@ namespace GingerCore.Drivers
             if(subElementType == ActUIElement.eSubElementType.Pane.ToString())
             {
                 if (GetControlValue(AE) == Value)
+                { 
                     return "true";
+                }
+
                 int iClick = 0;
+                string oldValue = "&*%^%$#";
                 while (flag == false && iLoop < 30)
-                {                    
-                    string oldValue = "&*%^%$#";
+                {   
                     ClickOnXYPoint(AE, "10,10");
                     AutomationElement subElement = (AutomationElement)FindElementByLocator(subElementLocateby, subElementLocateValue);
                     if (subElement == null || subElement.Current.LocalizedControlType != "pane")
@@ -2060,13 +2052,21 @@ namespace GingerCore.Drivers
                         foreach (AutomationElement subChild in gridControls)
                         {
                             if (subChild.Current.Name == "Page down")
+                            { 
                                 pageDown = subChild;
+                            }
                             else if (subChild.Current.Name == "Page up")
+                            { 
                                 pageUp = subChild;
+                            }
                             else if (subChild.Current.Name == "Line up")
+                            { 
                                 lineUp = subChild;
+                            }
                             else if (subChild.Current.Name == "Line down")
+                            { 
                                 lineDown = subChild;
+                            }
                         }
                     }                    
                     int iCount = 0;
@@ -2074,20 +2074,15 @@ namespace GingerCore.Drivers
                     {
                         ClickOnXYPoint(lineUp, "5,5");
                         iCount++;
-                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "lineDown:iCount:" + iCount);
-                    }
-                    //Thread.Sleep(100);
-                    
+                        Reporter.ToLog(eAppReporterLogLevel.INFO, "lineDown:iCount:" + iCount,null,true,true);
+                    }                    
                     for (int i = 0; i < iClick; i++)
                     {
                         ClickOnXYPoint(lineDown, "5,5");
-                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "lineDown:" + iClick + ":" + i);
+                        Reporter.ToLog(eAppReporterLogLevel.INFO, "lineDown:" + iClick + ":" + i, null, true, true);
                     }
                     ClickOnXYPoint(subElement, "10," + (10 + iPaneY));
-                    Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "iPaneY:" + iPaneY);
-                    //pageDown = subElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, "Page down"));
-
-
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "iPaneY:" + iPaneY, null, true, true);                   
 
                     string newValue = GetControlValue(AE);
                     bool ishandled = false;
@@ -2096,7 +2091,7 @@ namespace GingerCore.Drivers
                         int? loadTime = mLoadTimeOut.Value;
                         mLoadTimeOut = -1;
                         ishandled = LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, subElementType, handleActionType);
-                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "ishandled:" + ishandled);
+                        Reporter.ToLog(eAppReporterLogLevel.INFO, "ishandled:" + ishandled, null, true, true);
                         if (ishandled)
                         {
                             iClick++;                            
@@ -2106,46 +2101,53 @@ namespace GingerCore.Drivers
                             iClick = 1;
                         }                            
                         mLoadTimeOut = loadTime;                        
-                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "DefineHandleAction:" + iClick);
+                        Reporter.ToLog(eAppReporterLogLevel.INFO, "DefineHandleAction:" + iClick, null, true, true);
                     }
                     else
+                    { 
                         iClick = 1;
+                    }
 
                     if (newValue == Value)
                     {
-                        if(ishandled && GetControlValue(AE) == Value)
+                        if(GetControlValue(AE) == Value)
                         {
                             return "true";                           
                         }
                         else
                         {
-                            return "could not select the provided value";
+                            return "Error Occured while selecting :" + Value;
                         }
                     }
-                    
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "oldValue:" + oldValue + " newValue:" + newValue + " endPane:" + endPane, null, true, true);
                     if (oldValue != newValue && endPane==false)
                     {
+                        Reporter.ToLog(eAppReporterLogLevel.INFO, "in not end pane:", null, true, true);
                         if (iLoop == 0 && iClick == 2)
+                        { 
                             iLoop = 0;
+                        }
                         else
+                        { 
                             iLoop++;
+                        }
                         oldValue = newValue;
                     }                        
                     else
                     {
                         iClick = 0;
-                        Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "in end pane:");
+                        Reporter.ToLog(eAppReporterLogLevel.INFO, "in end pane:", null, true, true);
                         endPane = true;
                         if (iPaneY < subElement.Current.BoundingRectangle.Height)
+                        { 
                             iPaneY += 10;
+                        }
                         else
+                        { 
                             break;
+                        }
                     }
-                    Reporter.ToLogAndConsole(eAppReporterLogLevel.INFO, "iLoop now:" + iLoop);
-                    //if ((!flag) && (iLoop >= 30))
-                    //{
-                    //    return "Validation Failed";
-                    //}
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "iLoop now:" + iLoop, null, true, true);                    
                 }                          
             }
             return "Could not find the Value in the list-" + Value;
