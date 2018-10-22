@@ -20,6 +20,7 @@ using System;
 using System.Reflection;
 using Amdocs.Ginger.Common;
 
+// replacing resources which is not supported in .net standard
 namespace GingerCore
 {
     public enum eTermResKey
