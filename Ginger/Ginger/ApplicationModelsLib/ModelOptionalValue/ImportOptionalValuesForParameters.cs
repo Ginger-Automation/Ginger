@@ -1252,7 +1252,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 foreach (DataTable dt in ds.Tables)
                 {
                     DataTable dtNew = PivotTable(dt);
-                    dtNew.Columns.Remove(PARAMETER_NAME);                    
+                    //Removing Paramter Name Column
+                    if (dtNew.Columns.Contains(PARAMETER_NAME))
+                    {                                             
+                        dtNew.Columns.Remove(PARAMETER_NAME);
+                    }                        
                     dsPivote.Tables.Add(dtNew);
                 }
                 dsExact = dsPivote;
@@ -1269,11 +1273,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         private DataTable PivotTable(DataTable dt)
         {
             DataTable dtNew = new DataTable();
-            dtNew.TableName = dt.TableName;
+            dtNew.TableName = dt.TableName;            
             //adding columns    
             for (int cols = 0; cols < dt.Rows.Count; cols++)
             {
-                string colName = Convert.ToString(dt.Rows[cols].ItemArray[0]).Replace("[", "_").Replace("]", "");
+                string colName = Convert.ToString(dt.Rows[cols].ItemArray[0]).Replace("[", "_").Replace("]", "").Replace("{","").Replace("}","");
                 dtNew.Columns.Add(colName);
             }
 
@@ -1281,11 +1285,20 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             for (int cols = 1; cols < dt.Columns.Count; cols++)
             {
                 DataRow row = dtNew.NewRow();
+                bool emptyRow = true;
                 for (int indx = 0; indx < dt.Rows.Count; indx++)
                 {
-                    row[indx] = Convert.ToString(dt.Rows[indx][cols]);
+                    if (Convert.ToString(dt.Rows[indx][cols]) != "")
+                    {
+                        emptyRow = false;
+                    }                        
+                    row[indx] = Convert.ToString(dt.Rows[indx][cols]);                       
                 }
-                dtNew.Rows.Add(row);
+                if(emptyRow == false)
+                {
+                    dtNew.Rows.Add(row);
+                }
+                    
             }
             return dtNew;
         }
@@ -1411,9 +1424,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     List<string> defColList = GetDefaultColumnNameListForTableCreation();                    
                     foreach (AppParameters appParam in parameters)
                     {
-                        if (!colList.Contains(appParam.ItemName))
-                        { 
-                            mDSDetails.AddColumn(tableName, appParam.ItemName, "Text");
+                        string sColName = appParam.ItemName.Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "");
+                        if (!colList.Contains(sColName))
+                        {                            
+                            mDSDetails.AddColumn(tableName, sColName, "Text");
                         }
                     }
                     if (!colList.Contains("GINGER_USED"))
@@ -1421,9 +1435,15 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         mDSDetails.AddColumn(tableName, "GINGER_USED", "Text");
                     }
 
-                    DataTable dtTemplate = exportParametertoDataTable(parameters, tableName);
+                    DataTable dtTemplate = exportParametertoDataTable(parameters, tableName);                    
                     dtTemplate = PivotTable(dtTemplate);
-                    foreach(string colName in defColList)
+                    //Removing Paramter Name Column                    
+                    if (dtTemplate.Columns.Contains(PARAMETER_NAME))
+                    {                                                
+                        dtTemplate.Columns.Remove(PARAMETER_NAME);
+                    }                        
+
+                    foreach (string colName in defColList)
                     {
                         if (!dtTemplate.Columns.Contains(colName))
                         { 

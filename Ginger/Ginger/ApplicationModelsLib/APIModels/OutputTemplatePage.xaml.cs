@@ -51,9 +51,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             xOutputValuesGrid.AddToolbarTool("@Share_16x16.png", "Push Changes to All Relevant Actions", new RoutedEventHandler(PushChangesClicked));
             xOutputValuesGrid.AddToolbarTool("@Import_16x16.png", "Import output values from Response sample file", new RoutedEventHandler(ImpurtButtonClicked));
-            xOutputValuesGrid.AddToolbarTool(eImageType.DataSource, "Map Output Parameters to DataSource", new RoutedEventHandler(MapOutputToDataSource));
-
-
+            
             xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
             xOutputValuesGrid.AddSeparator();
 
@@ -130,9 +128,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Header = "Simulated Value", WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Header = "Expected Value", WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = ".....", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });
-            //viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, ComboboxDisplayMemberField = nameof(GlobalAppModelParameter.PlaceHolder), ComboboxSelectedValueField = nameof(GlobalAppModelParameter.Guid), ComboboxSortBy = nameof(GlobalAppModelParameter.PlaceHolder), CellValuesList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>() });
-
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = Ginger.ucGrid.GetStoreToTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, mVariableList: new List<string>(), mAppGlobalParamList: WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>()) });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, ComboboxDisplayMemberField = nameof(GlobalAppModelParameter.PlaceHolder), ComboboxSelectedValueField = nameof(GlobalAppModelParameter.Guid), ComboboxSortBy = nameof(GlobalAppModelParameter.PlaceHolder), CellValuesList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>() });
+            
 
             //Default mode view
             GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString());
@@ -192,35 +189,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             if (selectedParam != null)
                 ((ActReturnValue)xOutputValuesGrid.Grid.SelectedItem).Path = GetParamWithStringTemplate(selectedParam);
         }
-        private void MapOutputToDataSource(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                DataSourceTablesListPage dataSourceTablesListPage = new DataSourceTablesListPage();
-                dataSourceTablesListPage.ShowAsWindow();
-                
-                if(dataSourceTablesListPage.DSName == "" || dataSourceTablesListPage.DSTableName == "")
-                {
-                    Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
-                    return;
-                }
-
-                //mApplicationAPIModel.ReturnValues.Clear();
-                //FOREACH                
-                foreach (ActReturnValue ReturnValue in mApplicationAPIModel.ReturnValues)
-                {
-                    ReturnValue.StoreTo = ActReturnValue.eStoreTo.DataSource;
-                    ReturnValue.StoreToValue = "{DS Name=" + dataSourceTablesListPage.DSName  + " DST=" + dataSourceTablesListPage.DSTableName + " ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=" + ReturnValue.Param + " IROW=NxtAvail}";
-                }
-                
-            }
-            catch (System.Exception ex)
-            {                
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
-                Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
-            }
-        }
-
+        
         private string GetParamWithStringTemplate(AppModelParameter param)
         {
             return "{AppModelParam Name = " + param.PlaceHolder + "}";
