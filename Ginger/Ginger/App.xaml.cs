@@ -294,7 +294,7 @@ namespace Ginger
             GingerCore.General.ObjFieldBinding(control, dependencyProperty, obj, property, BindingMode);
         }
 
-        public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, Amdocs.Ginger.Core.eTerminologyDicsType TerminologyDicType = Amdocs.Ginger.Core.eTerminologyDicsType.Default)
+        public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType TerminologyType = GingerCore.eTerminologyType.Default)
         {
             //Clear all Dictionaries
             Application.Current.Resources.MergedDictionaries.Clear();
@@ -305,35 +305,21 @@ namespace Ginger
             {
                 case Amdocs.Ginger.Core.eSkinDicsType.Default:
                     Application.Current.Resources.MergedDictionaries.Add(
-               new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefualtSkinDictionary.xaml") });
-                    break;
-
-
-                default:
-                    Application.Current.Resources.MergedDictionaries.Add(
-               new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefualtSkinDictionary.xaml") });
-                    break;
-            }
-
-
-            //Terminologies
-            switch (TerminologyDicType)
-            {
-                case Amdocs.Ginger.Core.eTerminologyDicsType.Testing:
-                    Application.Current.Resources.MergedDictionaries.Add(
-                                                new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Terminologies/GingerTestingTerminologyDictionary.xaml") });
-                    break;
-
-                case Amdocs.Ginger.Core.eTerminologyDicsType.Gherkin:
-                    Application.Current.Resources.MergedDictionaries.Add(
-                                                new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Terminologies/GherkinTerminologyDictionary.xaml") });
+                            new ResourceDictionary() {
+                                Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefaultSkinDictionary.xaml")
+                            });
                     break;
 
                 default:
                     Application.Current.Resources.MergedDictionaries.Add(
-                                                new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Terminologies/GingerDefualtTerminologyDictionary.xaml") });
+                            new ResourceDictionary() {
+                                Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefaultSkinDictionary.xaml")
+                            });
                     break;
             }
+
+            // set terminology type
+            GingerTerminology.TERMINOLOGY_TYPE = TerminologyType;
         }
 
         public static void InitApp()
@@ -396,13 +382,14 @@ namespace Ginger
             AppSplashWindow.LoadingInfo(phase);
             UserProfile.LoadUserTypeHelper();
 
+
             phase = "Loading User Selected Resource Dictionaries";
             Reporter.ToLog(eAppReporterLogLevel.INFO, phase);
             AppSplashWindow.LoadingInfo(phase);
             if (App.UserProfile != null)
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, App.UserProfile.TerminologyDictionaryType);
             else
-                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, Amdocs.Ginger.Core.eTerminologyDicsType.Default);
+                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
 
             Reporter.ToLog(eAppReporterLogLevel.INFO, "Loading user messages pool");
             UserMessagesPool.LoadUserMessgaesPool();
