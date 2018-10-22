@@ -247,6 +247,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         private async Task<bool> ShowWSDLOperations()
         {
             bool parseSuccess = true;
+            
             AddAPIModelWizard.ProcessStarted();
             ObservableList<ApplicationAPIModel> AAMSList = new ObservableList<ApplicationAPIModel>();
             try
@@ -322,6 +323,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             //    AddAPIModelWizard.NextEnabled = true;
             //else
             //    AddAPIModelWizard.NextEnabled = false;
-        }
+        }        
     }
 }

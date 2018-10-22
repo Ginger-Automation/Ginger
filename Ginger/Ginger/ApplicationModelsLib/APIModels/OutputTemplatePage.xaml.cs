@@ -102,7 +102,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void AddReturnValue(object sender, RoutedEventArgs e)
         {
-            mApplicationAPIModel.ReturnValues.Add(new ActReturnValue() { Active = true });
+            mApplicationAPIModel.ReturnValues.Add(new ActReturnValue() { Active = true, DoNotConsiderAsTemp=true });
         }
 
         private void RefreshOutputColumns(object sender, RoutedEventArgs e)

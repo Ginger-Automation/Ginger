@@ -1613,7 +1613,35 @@ namespace GingerCore.Actions
             }
         }
 
+        public string ReturnValuesInfo
+        {
+            get
+            {
+                if (ReturnValues != null && ReturnValues.Count > 0)
+                {
+                    return string.Format("{0} Output Values", ReturnValues.Count);
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+        }
 
+        public string FlowControlsInfo
+        {
+            get
+            {
+                if (FlowControls != null && FlowControls.Count > 0)
+                {
+                    return string.Format("{0} Flow Controls Rules", FlowControls.Count);
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+        }
 
     }
 }
