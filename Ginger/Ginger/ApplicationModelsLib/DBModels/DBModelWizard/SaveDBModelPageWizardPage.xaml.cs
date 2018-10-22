@@ -43,6 +43,5 @@ namespace Ginger.ApplicationModels.DBModels.DBModelWizard
         {
         }
 
-       
     }
 }

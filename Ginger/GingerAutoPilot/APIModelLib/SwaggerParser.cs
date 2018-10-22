@@ -234,6 +234,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                             ActReturnValue arv = new ActReturnValue();
                             arv.ItemName = currModel.ItemName;
                             arv.Path = currModel.XPath;
+                            arv.DoNotConsiderAsTemp = true;
                             basicModal.ReturnValues.Add(arv);
                         }
 
@@ -250,6 +251,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                             ActReturnValue arv = new ActReturnValue();
                             arv.ItemName = currModel.ItemName;
                             arv.Path = currModel.XPath;
+                            arv.DoNotConsiderAsTemp = true;
                             basicModal.ReturnValues.Add(arv);
                         }
 

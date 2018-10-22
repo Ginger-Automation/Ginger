@@ -88,6 +88,6 @@ namespace Ginger.Agents.AddAgentWizardLib
         private void xDriverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mWizard.Agent.InitDriverConfigs();
-        }
+        }        
     }
 }
