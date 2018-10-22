@@ -57,7 +57,7 @@ namespace GingerCore.Actions.MainFrame
 
        private bool mReloadvalue = true;
 
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool ReloadValue{
             get{
                 return mReloadvalue;
