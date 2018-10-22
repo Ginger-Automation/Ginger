@@ -73,8 +73,8 @@ namespace GingerCore.DataSource
         }
 
         public override ObservableList<DataSourceTable> GetTablesList()
-        {            
-           
+        {         
+            
             ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
             try
             {

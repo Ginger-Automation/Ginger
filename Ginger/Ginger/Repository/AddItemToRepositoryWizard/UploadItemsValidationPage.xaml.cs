@@ -103,7 +103,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                         xLabelMessage.Content = "No Validation Issues Found. Proceed with Item/s Upload";
                     }
                     break;
-            }        
+            }
         }
     }
 }

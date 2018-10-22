@@ -104,7 +104,7 @@
                                 <MenuItem.Header>
                                     <DockPanel>
                                         <usercontrols:ImageMakerControl ImageType="ShareExternal" SetAsFontImageWithSize="22"  Width="20" HorizontalAlignment="Left" Margin="0 5 5 5"/>
-                                        <GingerCore:ucTextDicResource Text="Create [RunSet] Executer Shotcut" ToolTip="Create [RunSet] Executer Shotcut on Dektop" FontSize="15" Margin="5 5 0 0"/>
+                                        <GingerCore:ucTextDicResource Text="Create [RunSet] Executer Shortcut" ToolTip="Create [RunSet] Executer Shotcut on Dektop" FontSize="15" Margin="5 5 0 0"/>
                                     </DockPanel>
                                 </MenuItem.Header>
                             </MenuItem>
