@@ -113,11 +113,10 @@ namespace Ginger.SourceControl
             App.UserProfile.Solution.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);           
         }
 
-        private void Close_Click(object sender, EventArgs e)
+        private void Close_Click(object sender, RoutedEventArgs e)
         {
             if (App.UserProfile.Solution != null && App.UserProfile.Solution.SourceControl != null)
             {
-
                 App.UserProfile.SolutionSourceControlUser = App.UserProfile.Solution.SourceControl.SourceControlUser;
                 App.UserProfile.SolutionSourceControlPass = App.UserProfile.Solution.SourceControl.SourceControlPass;
                 App.UserProfile.SolutionSourceControlAuthorName = App.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorName;
@@ -138,7 +137,7 @@ namespace Ginger.SourceControl
             SaveBtn.Content = "Save Configuration";
             SaveBtn.Click += new RoutedEventHandler(SaveConfiguration_Click);
      
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn, SaveBtn },true,"Close", new EventHandler(Close_Click));
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn, SaveBtn },true,"Close", new RoutedEventHandler(Close_Click));
         }
       
         private void SourceControlUserDetails_TextChanged(object sender, TextChangedEventArgs e)

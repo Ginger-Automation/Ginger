@@ -106,17 +106,41 @@ namespace Ginger.User
         {
             App.UserProfile.SaveBackup();
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();            
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+            Button saveBtn = new Button();
+            saveBtn.Content = "Save";
+            saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
+            winButtons.Add(saveBtn);
+
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
             winButtons.Add(undoBtn);            
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit User Profile", this, winButtons, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit User Profile", this, winButtons, false, "Undo & Close", CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
         }
 
         private void UndoBtn_Click(object sender, RoutedEventArgs e)
-        {            
+        {
+            UndoChangesAndClose();
+        }
+
+        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            App.UserProfile.SaveUserProfile();
+            _pageGenericWin.Close();
+        }
+
+        private void CloseWinClicked(object sender, EventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            {
+                UndoChangesAndClose();
+            }
+        }
+
+        private void UndoChangesAndClose()
+        {
             App.UserProfile.RestoreFromBackup(true);
             _pageGenericWin.Close();
         }

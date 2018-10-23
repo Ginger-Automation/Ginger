@@ -830,7 +830,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                 try {
                 actButton.AddOrUpdateReturnParamActual("Actual",e1.style.font);
                 }
-                catch (Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                catch (Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 return;
             }
             else if (actButton.ButtonAction == ActButton.eButtonAction.IsDisplayed)
@@ -838,7 +838,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                 try {
                 actButton.AddOrUpdateReturnParamActual("Actual", e1.style.display);
                 }
-                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 return;
             }
             else

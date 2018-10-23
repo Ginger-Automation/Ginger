@@ -635,6 +635,9 @@ namespace Ginger.Variables
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
+            RoutedEventHandler closeHandler = null;
+            string closeContent = string.Empty;
+
             Button okBtn = new Button();
             okBtn.Content = "Ok";
             okBtn.Click += new RoutedEventHandler(okBtn_Click);
@@ -650,10 +653,10 @@ namespace Ginger.Variables
             switch (mDepededItemType)
             {
                 case (eDependedItemsType.Actions):
-                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((Activity)mParentObject).ActivityName + "' Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, string.Empty, CloseWinClicked);           
+                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((Activity)mParentObject).ActivityName + "' Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, "Undo & Close" , CloseWinClicked);           
                     break;
                 case (eDependedItemsType.Activities):
-                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((BusinessFlow)mParentObject).Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, string.Empty, CloseWinClicked);            
+                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((BusinessFlow)mParentObject).Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, "Undo & Close", CloseWinClicked);            
                     break;
             }            
         }
@@ -669,12 +672,10 @@ namespace Ginger.Variables
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
             }
-            else
-                _pageGenericWin.Close();
         }
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)
