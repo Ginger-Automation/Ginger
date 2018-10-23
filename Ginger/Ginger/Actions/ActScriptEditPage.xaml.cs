@@ -117,6 +117,14 @@ namespace Ginger.Actions
                     f.AddOrUpdateInputParamValue(line.Replace("'GINGER_$", "").Replace("#GINGER_$", "").Replace("//GINGER_$", "").Replace("REM GINGER_$", ""), "");
                 }
             }
+            if(String.IsNullOrEmpty(ScriptDescriptionLabel.Content.ToString()))
+            {
+                ScriptDescriptionLabel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ScriptDescriptionLabel.Visibility = Visibility.Visible;
+            }
         }
 
         private void ScriptInterpreterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
