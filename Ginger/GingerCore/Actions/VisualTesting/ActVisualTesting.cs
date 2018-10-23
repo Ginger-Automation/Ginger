@@ -418,7 +418,7 @@ namespace GingerCore.Actions
             baseImage = mDriver.GetScreenShot();
             
             //Verify we have screenshots folder
-            string SAVING_PATH = SolutionFolder + @"Documents\ScreenShots\";
+            string SAVING_PATH = System.IO.Path.Combine(SolutionFolder, @"Documents\ScreenShots\");
             if (!Directory.Exists(SAVING_PATH)) Directory.CreateDirectory(SAVING_PATH);
 
             // Create default file name if not exist

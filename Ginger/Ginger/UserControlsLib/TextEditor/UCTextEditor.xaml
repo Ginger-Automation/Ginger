@@ -20,8 +20,11 @@
 
         </Grid.ColumnDefinitions>
 
-        <Border Visibility="{Binding ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource @Skin1_ColorA}" Grid.ColumnSpan="1" >
-            <Label x:Name="lblTitle" Style="{DynamicResource @ucGridTitleLightStyle}">Document Title</Label>            
+        <Border Grid.Row="0" BorderThickness="1" BorderBrush="{StaticResource @Skin1_ColorA}" Grid.ColumnSpan="1" >
+            <DockPanel>
+                <Label x:Name="lblTitle" Style="{DynamicResource @ucGridTitleLightStyle}" >Document Title</Label>
+                <Label x:Name="ContentEditorTitleLabel" Style="{DynamicResource @ucGridTitleLightStyle}" Visibility="Collapsed" >Document Editor</Label>
+            </DockPanel>
         </Border>
 
         <ToolBarTray x:Name="ToolBarTray" Grid.Row="1" Grid.ColumnSpan="1">
@@ -59,10 +62,6 @@
                 Grid.Row="2">
 
         </avalonEdit:TextEditor>
-
-        <Border Visibility="{Binding ElementName=lblTitle, Path=Visibility}" Grid.Column="1" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource @Skin1_ColorA}" >
-            <Label x:Name="ContentEditorTitleLabel" Style="{DynamicResource @ucGridTitleLightStyle}">Document Editor</Label>
-        </Border>
 
         <GridSplitter x:Name="SelectionEditorFrameSplitter" Grid.Row="3"  ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Top"  Style="{StaticResource @HorizontalGridSplitterStyle}" Height="5" Width="Auto"/>
 

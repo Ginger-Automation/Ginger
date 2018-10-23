@@ -12,13 +12,34 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="100*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="140"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        
-        <agents:ucAgentControl x:Name="xAgentControlUC"></agents:ucAgentControl>
 
-        <Expander x:Name="xAutoMapElementTypesExpander" Margin="0,20,0,0" Grid.Row="1" Visibility="Visible" IsExpanded="False" >
+        <StackPanel Margin="0,10,0,0" Grid.Row="0">
+            <Label Content="Target Appllication:" Style="{StaticResource @LabelStyle}"/>
+            <ComboBox x:Name="xTargetApplicationComboBox"  AutomationProperties.AutomationId="Platform Type AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+        </StackPanel>
+
+        <Grid Margin="0,25,0,0" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Page Elements Setup Method:"/>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <RadioButton x:Name="xAutomaticElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup"  Style="{StaticResource @InputRadioButtonStyle}" IsChecked="True" Checked="xAutomaticElementConfigurationRadioButton_Checked" Content="Automatic Learning"></RadioButton>
+                <RadioButton x:Name="xManualElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup" Style="{StaticResource @InputRadioButtonStyle}" IsChecked="False" Checked="xAutomaticElementConfigurationRadioButton_Checked" Margin="10,0,0,0"  Content="Manual"></RadioButton>
+            </StackPanel>
+        </Grid>
+
+        <agents:ucAgentControl x:Name="xAgentControlUC" Margin="0,20,0,0" Grid.Row="2"></agents:ucAgentControl>
+
+        <Expander x:Name="xAutoMapElementTypesExpander" Margin="0,20,0,0" Grid.Row="3" Visibility="Visible" IsExpanded="False" >
             <Expander.Header>
                 <Label x:Name="PropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12">
                     <Label.Content>

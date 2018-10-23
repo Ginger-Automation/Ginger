@@ -25,7 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore;
 using Ginger.UserControls;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using GingerCore.Actions;
 using GingerCore.Actions.ActionConversion;
 using GingerCore.Actions.Common;
@@ -323,7 +323,7 @@ namespace Ginger.Actions.ActionConversion
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert activities - ", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while trying to convert activities - ", ex);
                     Reporter.ToUser(eUserMsgKeys.ActivitiesConversionFailed);
                 }
                 finally

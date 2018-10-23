@@ -62,7 +62,7 @@ namespace Ginger.WindowExplorer
             InitActionsGrid();
             InitLocatorsGrid();
             InitDataPage();
-            AddToPageList();            
+             
             SelectLocatorButton.Visibility = System.Windows.Visibility.Collapsed;
         }
 
@@ -106,7 +106,6 @@ namespace Ginger.WindowExplorer
             AddActionButton.Visibility = System.Windows.Visibility.Collapsed;
 
             InitLocatorsGrid();
-            AddToPageList();
         }
 
         private void InitLocatorsGrid()
@@ -155,16 +154,6 @@ namespace Ginger.WindowExplorer
             AvailableControlActionsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
         }
 
-        private void AddToPageList()
-        {
-            ControlActionsPage tempPage = App.PageList.FirstOrDefault(Page => Page is ControlActionsPage) as ControlActionsPage;
-            if (tempPage == null) App.PageList.Add(this);
-            else
-            {
-                App.PageList.Remove(tempPage);
-                App.PageList.Add(this);
-            }
-        }
 
         private void AddActionButton_Click(object sender, RoutedEventArgs e)
         {
@@ -186,12 +175,15 @@ namespace Ginger.WindowExplorer
                 actUI.ElementLocateValue = EL.LocateValue;
                 actUI.Value = ValueTextBox.Text;
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlActionValue, ValueTextBox.Text);
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementType, aaa.GetInputParamValue(ActUIElement.Fields.ElementType));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, aaa.GetInputParamValue(ActUIElement.Fields.ControlAction));
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementAction, aaa.GetInputParamValue(ActUIElement.Fields.ElementAction));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, aaa.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, aaa.GetInputParamValue(ActUIElement.Fields.WhereOperator));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, aaa.GetInputParamValue(ActUIElement.Fields.WhereProperty));
+                act = actUI;
             }
             else
             {                
@@ -199,8 +191,6 @@ namespace Ginger.WindowExplorer
                 act.LocateValue = EL.LocateValue;
                 act.Value = ValueTextBox.Text;
             }
-            // Copy from the selected Locator
-
             App.BusinessFlow.AddAct(act);
 
             int selectedActIndex = -1;
@@ -244,12 +234,15 @@ namespace Ginger.WindowExplorer
                 actUI.ElementLocateValue = EL.LocateValue;
                 actUI.Value = ValueTextBox.Text;
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlActionValue, ValueTextBox.Text);
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementType, aaa.GetInputParamValue(ActUIElement.Fields.ElementType));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, aaa.GetInputParamValue(ActUIElement.Fields.ControlAction));
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementAction, aaa.GetInputParamValue(ActUIElement.Fields.ElementAction));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, aaa.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, aaa.GetInputParamValue(ActUIElement.Fields.WhereOperator));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, aaa.GetInputParamValue(ActUIElement.Fields.WhereProperty));
+                act = actUI;
             }
             else
             {

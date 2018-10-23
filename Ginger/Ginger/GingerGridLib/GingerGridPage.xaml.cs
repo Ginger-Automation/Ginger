@@ -132,19 +132,19 @@ namespace Ginger.GingerGridLib
             GingersGrid.Children.Clear();
         }
 
-        private void UIViewButton_Click(object sender, RoutedEventArgs e)
+        private void xUIViewButton_Click(object sender, RoutedEventArgs e)
         {
             ClearGingersGrid();
             ShowUIGrid();
         }
 
-        private void ListButton_Click(object sender, RoutedEventArgs e)
+        private void xListButton_Click(object sender, RoutedEventArgs e)
         {
             ClearGingersGrid();            
             ShowNodes();
         }
 
-        private void PingButton_Click(object sender, RoutedEventArgs e)
+        private void xPingButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: make me work to ping each node
             foreach  (GingerNodeInfo GNI in  mGingerGrid.NodeList)
@@ -157,7 +157,7 @@ namespace Ginger.GingerGridLib
             }
         }
 
-        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        private void xClearButton_Click(object sender, RoutedEventArgs e)
         {
             mGingerGrid.NodeList.Clear();
         }

@@ -100,7 +100,7 @@ namespace Ginger.Drivers.Common
         private void DeviceListBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
 
-            mDeviceConfigFolder = App.UserProfile.Solution.Folder + @"\Documents\Devices\" + DeviceListBox.SelectedValue + @"\";
+            mDeviceConfigFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Devices", DeviceListBox.SelectedValue + @"\");
 
             mDeviceViewPage = new DeviceViewPage(mDeviceConfigFolder);
             mDeviceConfig = mDeviceViewPage.AndroidDeviceConfig;

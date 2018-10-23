@@ -46,12 +46,12 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = UploadItemSelection.Fields.Selected, Header = "Accept Resolution", StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
-            view.GridColsView.Add(new GridColView() { Field = ItemValidationBase.Fields.ItemClass, ReadOnly = true, Header = "Item Type", WidthWeight = 10, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = ItemValidationBase.Fields.ItemName, ReadOnly = true, Header = "Item Name", WidthWeight = 20, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = ItemValidationBase.Fields.IssueType, ReadOnly = true, Header = "Issue Type", WidthWeight = 10, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = ItemValidationBase.Fields.IssueDescription, ReadOnly = true, Header = "Issue Description", WidthWeight = 15, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = ItemValidationBase.Fields.IssueResolution, ReadOnly = true, Header = "Issue Resolution", WidthWeight = 25, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.Selected), Header = "Accept Resolution", StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.ItemClass), ReadOnly = true, Header = "Item Type", WidthWeight = 10, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.ItemName), ReadOnly = true, Header = "Item Name", WidthWeight = 20, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.IssueType), ReadOnly = true, Header = "Issue Type", WidthWeight = 10, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.IssueDescription), ReadOnly = true, Header = "Issue Description", WidthWeight = 15, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ItemValidationBase.IssueResolution), ReadOnly = true, Header = "Issue Resolution", WidthWeight = 25, AllowSorting = true });
 
 
             itemValidationGrid.SetAllColumnsDefaultView(view);
@@ -103,7 +103,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                         xLabelMessage.Content = "No Validation Issues Found. Proceed with Item/s Upload";
                     }
                     break;
-            }        
+            }
         }
     }
 }

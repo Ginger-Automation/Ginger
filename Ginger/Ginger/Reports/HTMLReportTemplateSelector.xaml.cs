@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using System.Collections.Generic;
 using System.Windows;
@@ -35,7 +36,7 @@ namespace Ginger.Reports
         {
             InitializeComponent();
 
-            HTMLReportTemplateList = App.LocalRepository.GetSolutionHTMLReportTemplates();
+            HTMLReportTemplateList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>();
             AddInternalTemplates();
             ReportsListBox.DisplayMemberPath = ReportTemplate.Fields.Name;
             ReportsListBox.ItemsSource = HTMLReportTemplateList;

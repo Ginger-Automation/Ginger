@@ -27,7 +27,7 @@ using OutLook = Microsoft.Office.Interop.Outlook;
 
 namespace GingerCore.GeneralLib
 {
-    public class Email : RepositoryItem
+    public class Email : RepositoryItemBase
     {
         OutLook.MailItem mOutlookMail;
         
@@ -70,10 +70,10 @@ namespace GingerCore.GeneralLib
         public string Subject { get; set; }
         
         [IsSerializedForLocalRepository]
-        public string Body { get; set; }       
+        public string Body { get; set; }
 
         [IsSerializedForLocalRepository]
-        public List<string> Attachments { get; set; } // File names
+        public List<string> Attachments; // { get; set; } // File names
 
         public List<KeyValuePair<string, string>> EmbededAttachment = new List<KeyValuePair<string, string>>();
 
@@ -118,7 +118,7 @@ namespace GingerCore.GeneralLib
         public eEmailMethod EmailMethod { get; set; }
 
         private bool mEnableSSL = true;
-        [IsSerializedForLocalRepository]        
+        [IsSerializedForLocalRepository(true)]        
         public bool EnableSSL
         {
             get { return mEnableSSL; }

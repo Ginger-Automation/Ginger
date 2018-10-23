@@ -73,8 +73,8 @@ namespace GingerCore.DataSource
         }
 
         public override ObservableList<DataSourceTable> GetTablesList()
-        {            
-           
+        {         
+            
             ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
             try
             {
@@ -372,7 +372,7 @@ namespace GingerCore.DataSource
                         catch (Exception e)
                         {
                             dataTable.RejectChanges();
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
                             //Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
                         }
                     }

@@ -19,7 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.DataSource;
@@ -45,8 +45,8 @@ namespace Ginger.SolutionWindows
         {
             InitializeComponent();
             mSolution = s;
-            App.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, Solution.Fields.Name);
-            App.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, Solution.Fields.Folder);
+            App.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, nameof(Solution.Name));
+            App.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
             App.FillComboFromEnumVal(MainPlatformComboBox, s.MainPlatform);
         }
 
@@ -75,7 +75,7 @@ namespace Ginger.SolutionWindows
                 //TODO: check AppName and platform validity - not empty + app exist in list of apps
 
                 //validate solution
-                if (!mSolution.Folder.EndsWith(@"\")) mSolution.Folder += @"\";
+                if (!mSolution.Folder.EndsWith(@"\")) mSolution.Folder += @"\"; 
 
                 //make sure main folder exist
                 if (!System.IO.Directory.Exists(mSolution.Folder))
@@ -91,9 +91,10 @@ namespace Ginger.SolutionWindows
                 }
 
                 //check solution not already exist
-                if (System.IO.File.Exists(mSolution.Folder + @"\Ginger.Solution.xml") == false)
+                if (System.IO.File.Exists(System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml")) == false)
                 {
-                    mSolution.SaveToFile(mSolution.Folder + @"\Ginger.Solution.xml");
+                    mSolution.FilePath = System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml");
+                    mSolution.SaveSolution(false);
                 }
                 else
                 {
@@ -109,9 +110,7 @@ namespace Ginger.SolutionWindows
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
                 App.UpdateApplicationsAgentsMapping();
                 AddDefaultDataSource();
-                AddDeafultReportTemplate();
-                //Refersh the solution loaded in the solution tab
-                App.UserProfile.AddsolutionToRecent(mSolution);
+                AddDeafultReportTemplate();                
 
                 //show success message to user
                 Mouse.OverrideCursor = null;
@@ -181,10 +180,10 @@ namespace Ginger.SolutionWindows
         {
             byte[] obj= Properties.Resources.GingerDataSource;
 
-            if(File.Exists(mSolution.Folder + @"DataSources\GingerDataSource.mdb") == false)
+            if(!File.Exists(System.IO.Path.Combine(mSolution.Folder, @"DataSources\GingerDataSource.mdb")))
             {
-                Directory.CreateDirectory(mSolution.Folder + "DataSources");
-                System.IO.FileStream fs = new System.IO.FileStream(mSolution.Folder + @"DataSources\GingerDataSource.mdb", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                Directory.CreateDirectory(System.IO.Path.Combine(mSolution.Folder, "DataSources"));
+                System.IO.FileStream fs = new System.IO.FileStream(System.IO.Path.Combine(mSolution.Folder, @"DataSources\GingerDataSource.mdb"), System.IO.FileMode.Create, System.IO.FileAccess.Write);
                 fs.Write(obj, 0, obj.Count());
                 fs.Close();
                 fs.Dispose();
@@ -192,10 +191,10 @@ namespace Ginger.SolutionWindows
 
             DataSourceBase a = new AccessDataSource();
             a.Name = "GingerDataSource";             
-            a.FilePath = @"~DataSources\GingerDataSource.mdb";
+            a.FilePath = @"~\DataSources\GingerDataSource.mdb";
             a.DSType = DataSourceBase.eDSType.MSAccess;
-            string sFileName = mSolution.Folder + @"DataSources\" + a.GetNameForFileName() + "." + a.ObjFileExt + ".xml";
-            a.SaveToFile(sFileName);
+            RepositoryFolder<DataSourceBase> dsTargetFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
+            dsTargetFolder.AddRepositoryItem(a);
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)

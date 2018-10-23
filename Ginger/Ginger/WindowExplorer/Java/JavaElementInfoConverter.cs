@@ -59,6 +59,7 @@ namespace Ginger.WindowExplorer.Java
                     return JRBTI;
                 case "com.amdocs.uif.widgets.CalendarComponent":
                 case "com.amdocs.uif.widgets.DateTimeNative$2":
+                case "lt.monarch.swing.JDateField$Editor":
                     JavaDatePickerTreeItem JDP = new JavaDatePickerTreeItem();
                     JDP.JavaElementInfo = JEI;
                     return JDP;

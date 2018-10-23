@@ -26,6 +26,8 @@ namespace Amdocs.Ginger.Common.UIElement
     public class ElementLocator : RepositoryItemBase 
     {
         private bool mActive { get; set; }
+
+        [IsSerializedForLocalRepository]
         public bool Active { get { return mActive; } set { mActive = value; OnPropertyChanged(nameof(Active)); } }
 
         private eLocateBy mLocateBy;
@@ -35,6 +37,9 @@ namespace Amdocs.Ginger.Common.UIElement
             get { return mLocateBy; }
             set { mLocateBy = value; OnPropertyChanged(nameof(LocateBy)); }
         }
+
+        [IsSerializedForLocalRepository]
+        public bool IsAutoLearned { get; set; }
 
         private string mLocateValue { get; set; }
         [IsSerializedForLocalRepository]
@@ -49,7 +54,27 @@ namespace Amdocs.Ginger.Common.UIElement
         private int? mCount { get; set; }
         public int? Count { get { return mCount; } set { mCount = value; OnPropertyChanged(nameof(Count)); } }
 
-        public override string ItemName { get { return this.LocateBy.ToString() + "-" + this.LocateValue.ToString(); } set { } }
+
+        private string mItemName;
+
+        public override string ItemName
+        {
+            get
+            {
+                string currentExpectedName = LocateBy.ToString() + "-" + LocateValue;
+                if (mItemName == null)
+                {
+                    mItemName = currentExpectedName;
+
+                }
+                return mItemName;
+            }
+            set
+            {
+                mItemName = value;
+            }
+
+        }
 
         public enum eLocateStatus
         {
@@ -68,13 +93,13 @@ namespace Amdocs.Ginger.Common.UIElement
             set
             {
                 mLocateStatus = value;
-                OnPropertyChanged(nameof(LocateStatusError));
-                OnPropertyChanged(nameof(LocateStatusIcon));
+                OnPropertyChanged(nameof(StatusError));
+                OnPropertyChanged(nameof(StatusIcon));
 
             }
         }
 
-        public eImageType LocateStatusIcon
+        public eImageType StatusIcon
         {
             get
             {
@@ -93,7 +118,7 @@ namespace Amdocs.Ginger.Common.UIElement
         }
 
         private string mLocateStatusError;
-        public string LocateStatusError
+        public string StatusError
         {
             get
             {
