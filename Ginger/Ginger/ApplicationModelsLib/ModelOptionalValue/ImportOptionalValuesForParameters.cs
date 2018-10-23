@@ -935,9 +935,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             try
             {
-                string tableName = fileName.StartsWith("GlobalParameters") ? "GlobalModelParameters" : "ModelParameters";
+                string tableName = ParameterType == eParameterType.Global ? "GlobalModelParameters" : "ModelParameters";
 
-                DataTable dtTemplate = exportParametertoDataTable(parameters, tableName);
+                DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName);
 
                 if (!string.IsNullOrEmpty(fPath))
                 {
@@ -956,13 +956,13 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR,"Error while exporting Paramters to File", ex);
             }
 
             return filePath;
         }
 
-        private DataTable exportParametertoDataTable(List<AppParameters> parameters,string tableName)
+        private DataTable ExportParametertoDataTable(List<AppParameters> parameters,string tableName)
         {
             int colCount = 0;
             foreach (var paramVal in parameters)
@@ -1435,7 +1435,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         mDSDetails.AddColumn(tableName, "GINGER_USED", "Text");
                     }
 
-                    DataTable dtTemplate = exportParametertoDataTable(parameters, tableName);                    
+                    DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName);                    
                     dtTemplate = PivotTable(dtTemplate);
                     //Removing Paramter Name Column                    
                     if (dtTemplate.Columns.Contains(PARAMETER_NAME))
