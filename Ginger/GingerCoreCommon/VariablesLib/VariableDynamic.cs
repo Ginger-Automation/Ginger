@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -22,6 +22,7 @@ using GingerCore.Environments;
 using GingerCore.Properties;
 using GingerCore.Actions;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Variables
 {
@@ -111,12 +112,12 @@ namespace GingerCore.Variables
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.Random; } }
+        public override eImageType Image { get { return eImageType.Random; } }
         public override string VariableType() { return "Dynamic"; }
 
         public override bool SupportSetValue { get { return true; } }
 
-        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        public override List<eSetValueOptions> GetSupportedOperations()
         {
             throw new NotImplementedException();
         }        

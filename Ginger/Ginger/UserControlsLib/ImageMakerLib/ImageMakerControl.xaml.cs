@@ -217,9 +217,6 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.HtmlReport:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Html5);
                     break;
-                case eImageType.Variable:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Code);
-                    break;
                 case eImageType.SharedRepositoryItem:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Star, Brushes.Orange);
                     break;
@@ -235,6 +232,29 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.PluginPackage:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Plug);
+                    break;
+                #endregion
+
+
+                #region Variables
+                //############################## Variables Images:
+                case eImageType.Variable:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Code);
+                    break;
+                case eImageType.VariableList:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.List);
+                    break;
+                case eImageType.Password:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Key);
+                    break;
+                case eImageType.Random:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Random);
+                    break;
+                case eImageType.Sequence:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.StackOverflow);
+                    break;
+                case eImageType.Timer:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline);
                     break;
                 #endregion
 

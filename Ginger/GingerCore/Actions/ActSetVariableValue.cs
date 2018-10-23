@@ -177,7 +177,6 @@ namespace GingerCore.Actions
                 {
                     Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
-
                     return;
                 }
             }
@@ -206,7 +205,6 @@ namespace GingerCore.Actions
                 {
                     Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
-
                     return;
                 }
             }

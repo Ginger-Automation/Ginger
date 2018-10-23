@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Threading;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using GingerCore.Properties;
 
 namespace GingerCore.Variables
 {
@@ -46,8 +42,7 @@ namespace GingerCore.Variables
         }
 
         public void StartTimer(bool isContinue=false)
-        {
-           
+        {           
             if(isContinue==false)
                 RunWatch.Reset();
 
@@ -74,7 +69,6 @@ namespace GingerCore.Variables
                 DispatcherTimerElapsed.Stop();
                 DispatcherTimerElapsed.Tick -= dispatcherTimerElapsedTick;
             }
-
         }
 
         public void ContinueTimer()
@@ -108,7 +102,6 @@ namespace GingerCore.Variables
 
         private void UpdateTimervalue()
         {
-
             switch (TimerUnit)
             {
                 case eTimerUnit.MilliSeconds:
@@ -127,7 +120,6 @@ namespace GingerCore.Variables
                     Value = "" + Math.Round(RunWatch.Elapsed.TotalHours, 2);
                     break;
             }
-
         }
 
         public override void GenerateAutoValue()
@@ -135,19 +127,19 @@ namespace GingerCore.Variables
             //NA
         }
 
-        public override System.Drawing.Image Image { get { return Resources.Const; } }
+        public override eImageType Image { get { return eImageType.Timer; } }
+        public override bool SupportSetValue { get { return false; } }
         public override string VariableType() { return "Timer"; }
 
-        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        public override List<eSetValueOptions> GetSupportedOperations()
         {
-            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.StartTimer);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.StopTimer);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ContinueTimer);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ResetValue);
+            List<eSetValueOptions> supportedOperations = new List<eSetValueOptions>();
+            supportedOperations.Add(eSetValueOptions.StartTimer);
+            supportedOperations.Add(eSetValueOptions.StopTimer);
+            supportedOperations.Add(eSetValueOptions.ContinueTimer);
+            supportedOperations.Add(eSetValueOptions.ResetValue);
             return supportedOperations;
         }
-        public override bool SupportSetValue { get { return false; } }
 
     }
 }

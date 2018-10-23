@@ -42,7 +42,6 @@ namespace Amdocs.Ginger.Common.Enums
         Operations,
         Environment,
         HtmlReport,
-        Variable,
         SharedRepositoryItem,
         NonSharedRepositoryItem,
         Tag,
@@ -50,6 +49,14 @@ namespace Amdocs.Ginger.Common.Enums
         PluginPackage,
         #endregion
 
+        #region Variables
+        Variable,
+        VariableList,
+        Password,
+        Random,
+        Sequence,
+        Timer,
+        #endregion
 
         #region Execution Status Images
         //############################## Execution Status Images:

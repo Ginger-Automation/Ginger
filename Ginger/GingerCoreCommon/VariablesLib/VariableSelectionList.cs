@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,13 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GingerCore.Properties;
-using GingerCore.Actions;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
@@ -47,7 +46,7 @@ namespace GingerCore.Variables
 
         public override string VariableEditPage { get { return "VariableSelectionListPage"; } }
 
-        public override System.Drawing.Image Image { get { return Resources.List; } }
+        public override eImageType Image { get { return eImageType.VariableList; } }
 
         public override string VariableType() { return "Selection List"; }
 
@@ -173,11 +172,11 @@ namespace GingerCore.Variables
 
         public override bool SupportSetValue { get { return true; } }
 
-        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        public override List<eSetValueOptions> GetSupportedOperations()
         {
-            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.SetValue);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ResetValue);
+            List<eSetValueOptions> supportedOperations = new List<eSetValueOptions>();
+            supportedOperations.Add(eSetValueOptions.SetValue);
+            supportedOperations.Add(eSetValueOptions.ResetValue);
             return supportedOperations;
         }
     }

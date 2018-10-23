@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
-using GingerCore.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
-using GingerCore.Actions;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
@@ -187,7 +185,7 @@ namespace GingerCore.Variables
         public abstract string VariableType();
         public abstract void ResetValue();
         public abstract void GenerateAutoValue();
-        public virtual System.Drawing.Image Image { get{return Resources.Const;} }//TODO: replace with ItemImageType
+        public virtual eImageType Image { get { return eImageType.Variable; } }
         public override string GetNameForFileName() { return Name; }
         public abstract string VariableEditPage { get; }
 
@@ -432,18 +430,20 @@ namespace GingerCore.Variables
                     {
                         //replace old instance object with new
                         int originalIndex = 0;
-                        if (hostItem is Activity)
-                        {
-                            originalIndex = ((Activity)hostItem).Variables.IndexOf(variableBaseInstance);
-                            ((Activity)hostItem).Variables.Remove(variableBaseInstance);
-                            ((Activity)hostItem).Variables.Insert(originalIndex, newInstance);                            
-                        }
-                        else
-                        {
-                            originalIndex = ((BusinessFlow)hostItem).Variables.IndexOf(variableBaseInstance);
-                            ((BusinessFlow)hostItem).Variables.Remove(variableBaseInstance);
-                            ((BusinessFlow)hostItem).Variables.Insert(originalIndex, newInstance);                            
-                        }
+
+                        //TODO: Fix the issues 
+                        //if (hostItem is Activity)
+                        //{
+                        //    originalIndex = ((Activity)hostItem).Variables.IndexOf(variableBaseInstance);
+                        //    ((Activity)hostItem).Variables.Remove(variableBaseInstance);
+                        //    ((Activity)hostItem).Variables.Insert(originalIndex, newInstance);                            
+                        //}
+                        //else
+                        //{
+                        //    originalIndex = ((BusinessFlow)hostItem).Variables.IndexOf(variableBaseInstance);
+                        //    ((BusinessFlow)hostItem).Variables.Remove(variableBaseInstance);
+                        //    ((BusinessFlow)hostItem).Variables.Insert(originalIndex, newInstance);                            
+                        //}
                     }
                     break;
             }           
@@ -535,7 +535,7 @@ namespace GingerCore.Variables
         }
         public abstract bool SupportSetValue { get; }
 
-        public abstract List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations();
+        public abstract List<eSetValueOptions> GetSupportedOperations();
 
         public abstract String VariableUIType { get; }
 

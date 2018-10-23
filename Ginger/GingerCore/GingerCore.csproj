@@ -746,9 +746,6 @@
     <Compile Include="Platforms\ApplicationPlatform.cs" />
     <Compile Include="Platforms\TargetApplication.cs" />
     <Compile Include="Reporter\GingerHelperMsgsPool.cs" />
-    <Compile Include="Variables\VariableDynamic.cs" />
-    <Compile Include="Variables\VariableSelectionList.cs" />
-    <Compile Include="Variables\VariablePasswordString.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1050000_to_V1060000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1040000_to_V1050000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1030000_to_V1040000.cs" />
@@ -791,13 +788,6 @@
     </Compile>
     <Compile Include="Repository\RepositoryItem.cs" />
     <Compile Include="ValueExpression.cs" />
-    <Compile Include="Variables\VariableBase.cs" />
-    <Compile Include="Variables\VariableRandomString.cs" />
-    <Compile Include="Variables\VariableSequence.cs" />
-    <Compile Include="Variables\VariableTimer.cs" />
-    <Compile Include="Variables\VariableString.cs" />
-    <Compile Include="Variables\VariableList.cs" />
-    <Compile Include="Variables\VariableRandomNumber.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1020000_to_V1030000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2010000_to_V2020000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2000000_to_V2010000.cs" />
