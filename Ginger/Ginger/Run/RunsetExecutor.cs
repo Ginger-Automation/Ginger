@@ -691,7 +691,7 @@ namespace Ginger.Run
                             catch (Exception ex)
                             {
                                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the Solution");
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                                 return false;
                             }
                             break;

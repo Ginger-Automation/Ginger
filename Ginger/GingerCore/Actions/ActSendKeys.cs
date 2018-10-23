@@ -161,7 +161,7 @@ namespace Ginger.Actions
             catch (Exception e)
             {
                 Error = "Failed to get the window Locate By/Value";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}", e);
                 return;
             }
 

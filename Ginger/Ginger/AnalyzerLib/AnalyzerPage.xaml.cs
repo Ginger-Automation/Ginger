@@ -214,7 +214,7 @@ namespace Ginger.AnalyzerLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -319,7 +319,7 @@ namespace Ginger.AnalyzerLib
                     variableSourceName = activity.ActivityName;                    
                 }
             }
-            else
+            else if(typeof(Solution).Equals(obj.GetType()))
             {
                 Solution solution = (Solution)obj;
                 AvailableAllVariables = solution.Variables;

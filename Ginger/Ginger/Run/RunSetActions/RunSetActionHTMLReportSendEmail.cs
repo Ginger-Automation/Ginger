@@ -139,7 +139,7 @@ namespace Ginger.Run.RunSetActions
         public string reportsResultFolder = string.Empty;
 
         public string ReportPath = string.Empty;
-
+        private string reportTimeStamp = string.Empty;
         public override void Execute(ReportInfo RI)
         {
             long s1 = new long();
@@ -317,6 +317,12 @@ namespace Ginger.Run.RunSetActions
             }
             if (HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
             {
+                Email.EmbededAttachment.Clear();
+                emailReadyHtml = emailReadyHtml.Replace("cid:gingerRunner", "cid:gingerRunner" + reportTimeStamp);
+                emailReadyHtml = emailReadyHtml.Replace("cid:Businessflow", "cid:Businessflow" + reportTimeStamp);
+                emailReadyHtml = emailReadyHtml.Replace("cid:Activity", "cid:Activity" + reportTimeStamp);
+                emailReadyHtml = emailReadyHtml.Replace("cid:Action", "cid:Action" + reportTimeStamp);
+
                 if (Email.EmailMethod.ToString() == "SMTP")
                 {
                     AlternateView alternativeView = AlternateView.CreateAlternateViewFromString(emailReadyHtml, null, MediaTypeNames.Text.Html);
@@ -331,10 +337,10 @@ namespace Ginger.Run.RunSetActions
                     }
                     if (IsExecutionStatistic)
                     {
-                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\GingerRunner.jpeg"), "gingerRunner"));
-                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Action.jpeg"), "Action"));
-                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Activity.jpeg"), "Activity"));
-                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Businessflow.jpeg"), "Businessflow"));
+                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\GingerRunner" + reportTimeStamp + ".jpeg"), "gingerRunner" + reportTimeStamp));
+                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Action" + reportTimeStamp + ".jpeg"), "Action" + reportTimeStamp));
+                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Activity" + reportTimeStamp + ".jpeg"), "Activity" + reportTimeStamp));
+                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Businessflow" + reportTimeStamp + ".jpeg"), "Businessflow" + reportTimeStamp));
                     }
                     Email.alternateView = alternativeView;
                 }
@@ -349,10 +355,10 @@ namespace Ginger.Run.RunSetActions
                     }
                     if (IsExecutionStatistic)
                     {
-                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\GingerRunner.jpeg", "gingerRunner"));
-                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\Action.jpeg", "Action"));
-                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\Activity.jpeg", "Activity"));
-                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\Businessflow.jpeg", "Businessflow"));
+                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\GingerRunner" + reportTimeStamp + ".jpeg", "gingerRunner" + reportTimeStamp));
+                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\Action" + reportTimeStamp + ".jpeg", "Action" + reportTimeStamp));
+                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\Activity" + reportTimeStamp + ".jpeg", "Activity" + reportTimeStamp));
+                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\Businessflow" + reportTimeStamp + ".jpeg", "Businessflow" + reportTimeStamp));
                     }
                 }
             }
@@ -379,6 +385,7 @@ namespace Ginger.Run.RunSetActions
         }
         public void CreateSummaryViewReportForEmailAction(ReportInfo RI)
         {
+            reportTimeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
             HTMLReportConfiguration currentTemplate = new HTMLReportConfiguration();
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
             currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault();
@@ -478,7 +485,7 @@ namespace Ginger.Run.RunSetActions
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).TotalGingerRunnersFailed, 1));
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).TotalGingerRunnersStopped, 2));
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).TotalGingerRunnersOther, 3));
-                        CreateChart(chartData, "GingerRunner.jpeg", "Ginger Runners");
+                        CreateChart(chartData, "GingerRunner" + reportTimeStamp + ".jpeg", "Ginger Runners");
 
                         // Business Flows Place Holders                        
                         chartData = new List<KeyValuePair<int, int>>();
@@ -486,7 +493,7 @@ namespace Ginger.Run.RunSetActions
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsFailed).ToList().Sum(), 1));
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsStopped).ToList().Sum(), 2));
                         chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsOther).ToList().Sum(), 3));
-                        CreateChart(chartData, "Businessflow.jpeg", "Business Flows");
+                        CreateChart(chartData, "Businessflow" + reportTimeStamp + ".jpeg", "Business Flows");
 
                         List<BusinessFlowReport> bfTotalList = new List<BusinessFlowReport>();
                         ((RunSetReport)RI.ReportInfoRootObject).GingerReports.ForEach(x => x.BusinessFlowReports.ForEach(y => bfTotalList.Add(y)));
@@ -496,7 +503,7 @@ namespace Ginger.Run.RunSetActions
                         chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesFailed).ToList().Sum(), 1));
                         chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesStopped).ToList().Sum(), 2));
                         chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesOther).ToList().Sum(), 3));
-                        CreateChart(chartData, "Activity.jpeg", "Activities");
+                        CreateChart(chartData, "Activity" + reportTimeStamp + ".jpeg", "Activities");
 
                         List<ActivityReport> activitiesTotalList = new List<ActivityReport>();
                         bfTotalList.ForEach(x => x.Activities.ForEach(y => activitiesTotalList.Add(y)));
@@ -506,7 +513,7 @@ namespace Ginger.Run.RunSetActions
                         chartData.Add(new KeyValuePair<int, int>(activitiesTotalList.Select(x => x.TotalActionsFailed).ToList().Sum(), 1));
                         chartData.Add(new KeyValuePair<int, int>(activitiesTotalList.Select(x => x.TotalActionsStopped).ToList().Sum(), 2));
                         chartData.Add(new KeyValuePair<int, int>(activitiesTotalList.Select(x => x.TotalActionsOther).ToList().Sum(), 3));
-                        CreateChart(chartData, "Action.jpeg", "Actions");
+                        CreateChart(chartData, "Action" + reportTimeStamp + ".jpeg", "Actions");
                     }
                 }
                 else if (selectedField.FieldKey == RunSetReport.Fields.ExecutedBusinessFlowsDetails)
@@ -1141,7 +1148,7 @@ namespace Ginger.Run.RunSetActions
                 {
                     ZipFileName = Path.GetFileNameWithoutExtension(FileName) + DateTime.Now.ToString("MMddyyyy_HHmmss") + ".zip";
                     ZipFile.CreateFromDirectory(FileName, tempFolder + @"\" + ZipFileName);
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
                 e.Attachments.Add(tempFolder + @"\" + ZipFileName);
             }
