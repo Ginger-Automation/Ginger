@@ -402,7 +402,7 @@ namespace Ginger
             {
                 SaveRecentAppAgentsMapping();
             }
-            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             
             RepositorySerializer.SaveToFile(this, UserProfileFilePath);
         }

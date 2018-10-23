@@ -218,6 +218,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 UIElementActionEditPageFrame.Content = new UIElementSendKeysAndValidate(mAction, mPlatform);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
             }
+            else if (mAction.ElementAction == ActUIElement.eElementAction.SelectandValidate)
+            {
+                //TODO insert implementation for UIMouseClickAndValidate
+                UIElementActionEditPageFrame.Content = new UIElementSelectAndValidate(mAction, mPlatform);
+                UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
+            }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.JEditorPaneElementAction))// ||
                // (mAction.ElementAction == ActUIElement.eElementAction.JEditorPaneElementAction))
             {

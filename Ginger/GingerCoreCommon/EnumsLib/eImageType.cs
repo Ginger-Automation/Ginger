@@ -202,6 +202,7 @@ namespace Amdocs.Ginger.Common.Enums
         SourceControlEquel,
         SourceControlLockedByAnotherUser,
         SourceControlLockedByMe,
+        SourceControlError,
         #endregion
 
         Times_Red,
