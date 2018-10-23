@@ -748,9 +748,8 @@ namespace Ginger.Run
                 {
                     mIsRunning = false;
                 }
-
-                OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.ActionEnd, null);
-               
+                act.OnPropertyChanged(nameof(Act.ReturnValuesInfo));
+                OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.ActionEnd, null);               
             }
         }
 
@@ -3499,12 +3498,12 @@ namespace Ginger.Run
             CloseAgents();
             ApplicationAgents.Clear();
         }
-        
+
         internal void UpdateApplicationAgents()
         {
             // Make sure Ginger Runner have all Application/Platforms mapped to agent - create the list based on selected BFs to run
             // Make it based on currnt if we run from automate tab
-             
+
             //Get the TargetApplication list
             ObservableList<TargetApplication> bfsTargetApplications = new ObservableList<TargetApplication>();
             if (BusinessFlows.Count() != 0)// Run Tab
@@ -3528,9 +3527,9 @@ namespace Ginger.Run
             }
 
             //Remove the non relevant ApplicationAgents
-            for (int indx = 0; indx < ApplicationAgents.Count; )
+            for (int indx = 0; indx < ApplicationAgents.Count;)
             {
-                if (bfsTargetApplications.Where(x => x.AppName == ApplicationAgents[indx].AppName).FirstOrDefault() == null)
+                if (bfsTargetApplications.Where(x => x.AppName == ApplicationAgents[indx].AppName).FirstOrDefault() == null || ApplicationAgents[indx].Agent == null)
                     ApplicationAgents.RemoveAt(indx);
                 else
                     indx++;
@@ -3569,7 +3568,7 @@ namespace Ginger.Run
                     ag.AppName = TA.AppName;
 
                     //Map agent to the application
-                    ApplicationPlatform ap=null;
+                    ApplicationPlatform ap = null;
                     if (CurrentSolution.ApplicationPlatforms != null)
                     {
                         ap = CurrentSolution.ApplicationPlatforms.Where(x => x.AppName == ag.AppName).FirstOrDefault();
@@ -3609,11 +3608,6 @@ namespace Ginger.Run
 
                     ApplicationAgents.Add(ag);
                 }
-            }
-            //special case when we create new solution and the agent is not mapped
-            if (ApplicationAgents != null && ApplicationAgents.Count == 1 &&  SolutionAgents.Count ==1 & ApplicationAgents[0].Agent == null)
-            {
-                ApplicationAgents[0].Agent = SolutionAgents[0];
             }
 
             this.OnPropertyChanged(nameof(ApplicationAgents));//to notify who shows this list

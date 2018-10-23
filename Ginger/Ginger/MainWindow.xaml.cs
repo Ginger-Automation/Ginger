@@ -42,7 +42,6 @@ using Amdocs.Ginger.IO;
 using Ginger.ConfigurationsLib;
 using Ginger.MenusLib;
 using Amdocs.Ginger;
-using Ginger.SolutionLibNew;
 using Ginger.User;
 using Amdocs.Ginger.UserControls;
 using System.Drawing;
@@ -182,15 +181,15 @@ namespace Ginger
             {
                 if (App.LoadingSolution)
                 {
-                    xMainWindowFrame.Content = new LoadingSolutionPage();
-                    xMainWindowFrame.Visibility = Visibility.Visible;
-                    xUmbrellaImg.Visibility = Visibility.Collapsed;
+                    xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
+                    xMainWindowFrame.Content = new LoadingPage("Loading Solution...");
+                    xMainWindowFrame.Visibility = Visibility.Visible;                    
                     GingerCore.General.DoEvents();
                 }
-                else if (xMainWindowFrame.Content is LoadingSolutionPage && SelectedSolutionTab == eSolutionTabType.None)
+                else if (xMainWindowFrame.Content is LoadingPage && SelectedSolutionTab == eSolutionTabType.None)
                 {
                     xMainWindowFrame.Visibility = Visibility.Collapsed;
-                    xUmbrellaImg.Visibility = Visibility.Visible;
+                    xNoLoadedSolutionImg.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -311,10 +310,11 @@ namespace Ginger
                 if (App.UserProfile.Solution == null)
                 {
                     xSolutionTabsListView.SelectedItem = null;
-                    xSolutionNameTextBlock.Text = "Please Load Solution";
+                    xSolutionNameTextBlock.Text = "Please Load Solution";                    
                 }
                 else
                 {
+                    xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
                     App.LastBusinessFlow = null;
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty, App.UserProfile.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
                     GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty, App.UserProfile.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
@@ -395,10 +395,9 @@ namespace Ginger
             }
 
             SelectedSolutionTab = eSolutionTabType.None;
-            if (!(xMainWindowFrame.Content is LoadingSolutionPage))
+            if (!(xMainWindowFrame.Content is LoadingPage))
             {
                 xMainWindowFrame.Visibility = Visibility.Collapsed;
-                xUmbrellaImg.Visibility = Visibility.Visible;
             }
             ListViewItem selectedTopListItem = (ListViewItem)xSolutionTabsListView.SelectedItem;
 
@@ -439,7 +438,6 @@ namespace Ginger
 
                 xMainWindowFrame.Content = selectedTopListItem.Tag;
                 xMainWindowFrame.Visibility = Visibility.Visible;
-                xUmbrellaImg.Visibility = Visibility.Collapsed;
             }
         }
 

@@ -84,7 +84,7 @@ namespace Ginger.Run.RunSetActions
         }
 
         private bool mActive = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public Boolean Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(Fields.Active); } } }
 
         private string mName;

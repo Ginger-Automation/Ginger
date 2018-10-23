@@ -355,12 +355,12 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public string EncryptedALMPassword { get; set; }
 
-        Amdocs.Ginger.Core.eTerminologyDicsType mTerminologyDictionaryType;
+        GingerCore.eTerminologyType mTerminologyType;
         [IsSerializedForLocalRepository]
-        public Amdocs.Ginger.Core.eTerminologyDicsType TerminologyDictionaryType
+        public GingerCore.eTerminologyType TerminologyDictionaryType
         {
-            get { return mTerminologyDictionaryType; }
-            set { mTerminologyDictionaryType = value; OnPropertyChanged(nameof(TerminologyDictionaryType)); }
+            get { return mTerminologyType; }
+            set { mTerminologyType = value; OnPropertyChanged(nameof(TerminologyDictionaryType)); }
         }
 
         eAppReporterLoggingLevel mAppLogLevel;
@@ -402,7 +402,7 @@ namespace Ginger
             {
                 SaveRecentAppAgentsMapping();
             }
-            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             
             RepositorySerializer.SaveToFile(this, UserProfileFilePath);
         }
@@ -552,14 +552,14 @@ namespace Ginger
             switch (dictObj["TerminologyDictionaryType"])
             {
                 case "Default":
-                    TerminologyDictionaryType = Amdocs.Ginger.Core.eTerminologyDicsType.Default;
+                    TerminologyDictionaryType = GingerCore.eTerminologyType.Default;
                     break;
 
                 case "Testing":
-                    TerminologyDictionaryType = Amdocs.Ginger.Core.eTerminologyDicsType.Testing;
+                    TerminologyDictionaryType = GingerCore.eTerminologyType.Testing;
                     break;
                 case "Gherkin":
-                    TerminologyDictionaryType = Amdocs.Ginger.Core.eTerminologyDicsType.Gherkin;
+                    TerminologyDictionaryType = GingerCore.eTerminologyType.Gherkin;
                     break;
             }
         }
@@ -615,7 +615,7 @@ namespace Ginger
 
 
         bool mAskToSaveBusinessFlow = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool AskToSaveBusinessFlow
         {
             get

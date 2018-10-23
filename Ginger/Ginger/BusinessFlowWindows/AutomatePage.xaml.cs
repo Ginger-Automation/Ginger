@@ -57,6 +57,7 @@ using Ginger.Agents;
 using Ginger.Extensions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Ginger
 {
@@ -96,8 +97,8 @@ namespace Ginger
             xToBusinessFlowsListBtn.Visibility = Visibility.Visible;
             xToBusinessFlowsListBtn.LargeImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 32);
             xToBusinessFlowsListBtn.SmallImageSource = ImageMakerControl.GetImageSource(eImageType.GoBack, width: 16);
-            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
-            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ");
+            xToBusinessFlowsListBtn.Label = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
+            xToBusinessFlowsListBtn.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, "Back to ", " List");
             xToBusinessFlowsListBtn.Click += clickHandler;
         }
 
@@ -852,19 +853,19 @@ namespace Ginger
         }
 
 
-        private void btnRunFlow_Click(object sender, RoutedEventArgs e)
+        private async void btnRunFlow_Click(object sender, RoutedEventArgs e)
         {
-            RunAutomateTabFlow(true);
+            await RunAutomateTabFlow(true);
         }
 
-        private void btnRunFlowNoAnaylze_Click(object sender, RoutedEventArgs e)
+        private async void btnRunFlowNoAnaylze_Click(object sender, RoutedEventArgs e)
         {
-            RunAutomateTabFlow();
+            await RunAutomateTabFlow();
         }
 
-        private void btnRunFlowAndGenerateReport_Click(object sender, RoutedEventArgs e)
+        private async void btnRunFlowAndGenerateReport_Click(object sender, RoutedEventArgs e)
         {
-            RunAutomateTabFlow(true, true);
+            await RunAutomateTabFlow(true, true);
         }
         
         private async Task RunAutomateTabFlow(bool Analyz = false, bool ReportNeeded = false)
@@ -876,15 +877,9 @@ namespace Ginger
                 try
                 {
                     AnalyzerPage analyzerPage = new AnalyzerPage();
-                    await Task.Run(() =>
-                    {
-                        analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
-                        analyzerPage.AnalyzeWithoutUI();
-                    });
-                    while (analyzerPage.IsAnalyzeDone == false)
-                    {
-                        System.Threading.Thread.Sleep(100);
-                    }
+                    analyzerPage.Init(App.UserProfile.Solution, App.BusinessFlow);
+                    await analyzerPage.AnalyzeWithoutUI();
+
                     Reporter.CloseGingerHelper();
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)
                     {

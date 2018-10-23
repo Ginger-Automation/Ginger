@@ -157,25 +157,7 @@ namespace Ginger.Actions.ActionConversion
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
-            Button closeBtn = new Button();
-            closeBtn.Content = "Close";
-            closeBtn.Click += new RoutedEventHandler(closeBtn_Click);
-
-
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(closeBtn);
-
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Actions Conversion", this, winButtons, false, string.Empty, CloseWinClicked);
-        }
-
-        private void CloseWinClicked(object sender, EventArgs e)
-        {
-            _pageGenericWin.Close();
-        }
-
-        private void closeBtn_Click(object sender, RoutedEventArgs e)
-        {
-            _pageGenericWin.Close();
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Actions Conversion", this);
         }
 
         private bool DoExistingPlatformCheck(ObservableList<ActionConversionHandler> lstActionToBeConverted) 

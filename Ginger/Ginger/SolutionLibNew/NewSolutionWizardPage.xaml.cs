@@ -33,7 +33,7 @@ namespace GingerWPF.SolutionLib
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            
+
         }
     }
 }

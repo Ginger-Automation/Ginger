@@ -62,7 +62,6 @@ namespace Amdocs.Ginger.Common
 
         // ALM
         public bool Rally { get { return GetFeature(nameof(Rally)).Selected; } set { UpdateFeature(nameof(Rally), value); } }
-        public bool RestAPI { get { return GetFeature(nameof(RestAPI)).Selected; } set { UpdateFeature(nameof(RestAPI), value); } }
 
         //Gherkin
         public bool ImportGherkinFeatureWizrd { get { return GetFeature(nameof(ImportGherkinFeatureWizrd)).Selected; } set { UpdateFeature(nameof(ImportGherkinFeatureWizrd), value); } }
@@ -93,8 +92,7 @@ namespace Amdocs.Ginger.Common
             mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Resources Tab", ID = nameof(ShowPOMInResourcesTab)});
 
             //ALM
-            mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Rally", ID = nameof(Rally) });
-            mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show REST API", ID = nameof(RestAPI) });
+            mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Rally", ID = nameof(Rally) });           
 
             //Gherkin
             mFeatures.Add(new BetaFeature() { Group = "Gherkin", Description = "Import Gherkin feature wizard", ID = nameof(ImportGherkinFeatureWizrd)});

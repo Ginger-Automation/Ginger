@@ -96,7 +96,7 @@ namespace GingerCoreNET.GeneralLib
                 catch (Exception ex)
                 {
                     result = false;
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     return string.Empty;
                 }
             }
@@ -160,7 +160,7 @@ namespace GingerCoreNET.GeneralLib
                 catch (Exception ex)
                 {
                     result = false;
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     return string.Empty;
                 }
             }

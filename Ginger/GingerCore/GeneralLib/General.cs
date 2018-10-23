@@ -45,7 +45,7 @@ namespace GingerCore
     public class General
     {
         public static void LoadGenericWindow(ref GenericWindow genWindow, System.Windows.Window owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage,
-                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", EventHandler closeEventHandler = null, bool startupLocationWithOffset=false)
+                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset=false)
         {
             genWindow = null;
             eWindowShowStyle winStyle;
@@ -1154,8 +1154,8 @@ namespace GingerCore
             {
                 if (DataSource.FileFullPath.StartsWith("~"))
                 {
-                    DataSource.FileFullPath = DataSource.FileFullPath.Replace("~", "");
-                    DataSource.FileFullPath = DataSource.ContainingFolderFullPath.Replace("DataSources", "") + DataSource.FileFullPath;
+                    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
+                    DataSource.FileFullPath = Path.Combine(DataSource.ContainingFolderFullPath.Replace("DataSources", "") , DataSource.FileFullPath);
                 }
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();

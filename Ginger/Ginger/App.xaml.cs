@@ -294,7 +294,7 @@ namespace Ginger
             GingerCore.General.ObjFieldBinding(control, dependencyProperty, obj, property, BindingMode);
         }
 
-        public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, Amdocs.Ginger.Core.eTerminologyDicsType TerminologyDicType = Amdocs.Ginger.Core.eTerminologyDicsType.Default)
+        public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType TerminologyType = GingerCore.eTerminologyType.Default)
         {
             //Clear all Dictionaries
             Application.Current.Resources.MergedDictionaries.Clear();
@@ -305,35 +305,21 @@ namespace Ginger
             {
                 case Amdocs.Ginger.Core.eSkinDicsType.Default:
                     Application.Current.Resources.MergedDictionaries.Add(
-               new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefualtSkinDictionary.xaml") });
-                    break;
-
-
-                default:
-                    Application.Current.Resources.MergedDictionaries.Add(
-               new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefualtSkinDictionary.xaml") });
-                    break;
-            }
-
-
-            //Terminologies
-            switch (TerminologyDicType)
-            {
-                case Amdocs.Ginger.Core.eTerminologyDicsType.Testing:
-                    Application.Current.Resources.MergedDictionaries.Add(
-                                                new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Terminologies/GingerTestingTerminologyDictionary.xaml") });
-                    break;
-
-                case Amdocs.Ginger.Core.eTerminologyDicsType.Gherkin:
-                    Application.Current.Resources.MergedDictionaries.Add(
-                                                new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Terminologies/GherkinTerminologyDictionary.xaml") });
+                            new ResourceDictionary() {
+                                Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefaultSkinDictionary.xaml")
+                            });
                     break;
 
                 default:
                     Application.Current.Resources.MergedDictionaries.Add(
-                                                new ResourceDictionary() { Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Terminologies/GingerDefualtTerminologyDictionary.xaml") });
+                            new ResourceDictionary() {
+                                Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefaultSkinDictionary.xaml")
+                            });
                     break;
             }
+
+            // set terminology type
+            GingerTerminology.TERMINOLOGY_TYPE = TerminologyType;
         }
 
         public static void InitApp()
@@ -396,13 +382,14 @@ namespace Ginger
             AppSplashWindow.LoadingInfo(phase);
             UserProfile.LoadUserTypeHelper();
 
+
             phase = "Loading User Selected Resource Dictionaries";
             Reporter.ToLog(eAppReporterLogLevel.INFO, phase);
             AppSplashWindow.LoadingInfo(phase);
             if (App.UserProfile != null)
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, App.UserProfile.TerminologyDictionaryType);
             else
-                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, Amdocs.Ginger.Core.eTerminologyDicsType.Default);
+                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
 
             Reporter.ToLog(eAppReporterLogLevel.INFO, "Loading user messages pool");
             UserMessagesPool.LoadUserMessgaesPool();
@@ -849,50 +836,32 @@ namespace Ginger
         public static SolutionRepository CreateGingerSolutionRepository()
         {
             SolutionRepository SR = new SolutionRepository();
-            //SR.AddItemInfo<ApplicationPlatform>("*.Ginger.TargetApplication.xml", @"~\TargetApplications", true, "Target Applications", addToRootFolders: true, PropertyNameForFileName: nameof(ApplicationPlatform.AppName));
-            SR.AddItemInfo<BusinessFlow>("*.Ginger.BusinessFlow.xml", @"~\BusinessFlows", true, "Business Flows", addToRootFolders: true, PropertyNameForFileName: nameof(BusinessFlow.Name));
+           
+            SR.AddItemInfo<BusinessFlow>("*.Ginger.BusinessFlow.xml", @"~\BusinessFlows", true, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), addToRootFolders: true, PropertyNameForFileName: nameof(BusinessFlow.Name));
 
             SR.AddItemInfo<ApplicationAPIModel>("*.Ginger.ApplicationAPIModel.xml", @"~\Applications Models\API Models", true, "API Models", addToRootFolders: true, PropertyNameForFileName: nameof(ApplicationAPIModel.Name));
             SR.AddItemInfo<GlobalAppModelParameter>("*.Ginger.GlobalAppModelParameter.xml", @"~\Applications Models\Global Models Parameters", true, "Global Model Parameters", addToRootFolders: true, PropertyNameForFileName: nameof(GlobalAppModelParameter.PlaceHolder));
             SR.AddItemInfo<ApplicationPOMModel>("*.Ginger.ApplicationPOMModel.xml", @"~\Applications Models\POM Models", true, "POM Models", addToRootFolders: false, PropertyNameForFileName: nameof(ApplicationPOMModel.Name));
-
 
             SR.AddItemInfo<ProjEnvironment>("*.Ginger.Environment.xml", @"~\Environments", true, "Environments", addToRootFolders: true, PropertyNameForFileName: nameof(ProjEnvironment.Name));
             SR.AddItemInfo<ALMDefectProfile>("*.Ginger.ALMDefectProfile.xml", @"~\ALMDefectProfiles", true, "ALM Defect Profiles", addToRootFolders: true, PropertyNameForFileName: nameof(ALMDefectProfile.Name));
 
             SR.AddItemInfo<Agent>("*.Ginger.Agent.xml", @"~\Agents", true, "Agents", addToRootFolders: true, PropertyNameForFileName: nameof(Agent.Name));
 
-
             SR.AddItemInfo<HTMLReportConfiguration>("*.Ginger.HTMLReportConfiguration.xml", @"~\HTMLReportConfigurations", true, "HTMLReportConfigurations", addToRootFolders: true, PropertyNameForFileName: nameof(HTMLReportsConfiguration.Name));
             SR.AddItemInfo<HTMLReportTemplate>("*.Ginger.HTMLReportTemplate.xml", @"~\HTMLReportConfigurations\HTMLReportTemplate", true, "HTMLReportTemplate", addToRootFolders: true, PropertyNameForFileName: nameof(HTMLReportTemplate.Name));
             SR.AddItemInfo<ReportTemplate>("*.Ginger.ReportTemplate.xml", @"~\HTMLReportConfigurations\ReportTemplates", true, "ReportTemplates", addToRootFolders: true, PropertyNameForFileName: nameof(ReportTemplate.Name));
 
-            SR.AddItemInfo<DataSourceBase>("*.Ginger.DataSource.xml", @"~\DataSources", true, "DataSources", addToRootFolders: true, PropertyNameForFileName: nameof(DataSourceBase.Name));
+            SR.AddItemInfo<DataSourceBase>("*.Ginger.DataSource.xml", @"~\DataSources", true, "Data Sources", addToRootFolders: true, PropertyNameForFileName: nameof(DataSourceBase.Name));
 
             SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", addToRootFolders: true, PropertyNameForFileName: nameof(PluginPackage.PluginID));
 
-            SR.AddItemInfo<Activity>("*.Ginger.Activity.xml", @"~\SharedRepository\Activities", true, "Shared Activities", addToRootFolders: false, PropertyNameForFileName: nameof(Activity.ActivityName));
+            SR.AddItemInfo<ActivitiesGroup>("*.Ginger.ActivitiesGroup.xml", @"~\SharedRepository\ActivitiesGroup", true, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, "Shared "), addToRootFolders: false, PropertyNameForFileName: nameof(ActivitiesGroup.Name));
+            SR.AddItemInfo<Activity>("*.Ginger.Activity.xml", @"~\SharedRepository\Activities", true, GingerDicser.GetTermResValue(eTermResKey.Activities, "Shared "), addToRootFolders: false, PropertyNameForFileName: nameof(Activity.ActivityName));
             SR.AddItemInfo<Act>("*.Ginger.Action.xml", @"~\SharedRepository\Actions", true, "Shared Actions", addToRootFolders: false, PropertyNameForFileName: nameof(Act.Description));
+            SR.AddItemInfo<VariableBase>("*.Ginger.Variable.xml", @"~\SharedRepository\Variables", true, GingerDicser.GetTermResValue(eTermResKey.Variables, "Shared "), addToRootFolders: false, PropertyNameForFileName: nameof(VariableBase.Name));
 
-            SR.AddItemInfo<VariableBase>("*.Ginger.Variable.xml", @"~\SharedRepository\Variables", true, "Shared Variables", addToRootFolders: false, PropertyNameForFileName: nameof(VariableBase.Name));
-
-            ////SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", @"~\RunSetConfigs", true, "Run Set Configs", addToRootFolders: true);, PropertyNameForFileName: nameof(VariableBase.Name));
-
-            SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", @"~\RunSetConfigs", true, "Run Set Configs", addToRootFolders: true, PropertyNameForFileName: nameof(RunSetConfig.Name));
-            SR.AddItemInfo<ActivitiesGroup>("*.Ginger.ActivitiesGroup.xml", @"~\SharedRepository\ActivitiesGroup", true, "Shared Activities Group", addToRootFolders: false, PropertyNameForFileName: nameof(ActivitiesGroup.Name));
-            ////// Note the | which enable to define multiple pattern for same folder
-            ////// Shared repository can contains Activities and Actions            
-            //SR.AddItemInfo<Activity>("*.Ginger.Activity.xml", @"~\SharedRepository\Activities", true, @"Shared Repository\Activites", addToRootFolders: false);
-            //SR.AddItemInfo<Act>("*.Ginger.Action.xml", @"~\SharedRepository\Actions", true, @"Shared Repository\Actions", addToRootFolders: false);
-            //mSolutionRootFolders.Add(new RepositoryFolder<object>(SR, null, "*.Ginger.Activity.xml|*.Ginger.Action.xml", @"~\SharedRepository", true, "Shared Repository"));
-
-            ////SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", @"~\RunSetConfigs", true, "Run Set Configs", addToRootFolders: true);g
-
-            //mSolutionRootFolders.Add(new RepositoryFolder<object>(SR, null, "*.Ginger.PluginPackage.xml|*.Ginger.ApplicationAPIModel.xml", @"~\Resources", true, "Resources"));
-            //SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\PluginPackages", true, "Plugin Packages", addToRootFolders: false);
-
-            ////// Docs do not contains repo items
-            //mRootFolders.Add(new RepositoryFolder(this, "*", @"~\Documents";, false, "Documents"));
+            SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", @"~\RunSetConfigs", true, GingerDicser.GetTermResValue(eTermResKey.RunSets), addToRootFolders: true, PropertyNameForFileName: nameof(RunSetConfig.Name));           
 
             return SR;
         }               

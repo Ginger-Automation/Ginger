@@ -21,7 +21,8 @@ namespace Amdocs.Ginger.Common.Enums
         /// Ginger Icon image
         /// </summary>
         Ginger,
-        GingerIcon,
+        GingerIconWhite,
+        GingerIconGray,
         #endregion
 
 
@@ -194,6 +195,7 @@ namespace Amdocs.Ginger.Common.Enums
         SourceControlEquel,
         SourceControlLockedByAnotherUser,
         SourceControlLockedByMe,
+        SourceControlError,
         #endregion
 
         Times_Red,

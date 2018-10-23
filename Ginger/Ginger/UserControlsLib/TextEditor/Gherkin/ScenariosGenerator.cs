@@ -42,7 +42,7 @@ namespace Ginger.GherkinLib
             string FileName = string.Empty;
             
             if (BF.ExternalID != null)
-                    FileName = BF.ExternalID.Replace(@"~\", App.UserProfile.Solution.Folder);
+                    FileName = BF.ExternalID.Replace(@"~", App.UserProfile.Solution.Folder);
 
             if (!System.IO.File.Exists(FileName))
             {

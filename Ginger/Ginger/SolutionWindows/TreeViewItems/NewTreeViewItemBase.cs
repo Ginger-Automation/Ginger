@@ -39,7 +39,7 @@ namespace GingerWPF.TreeViewItemsLib
 {
     public class NewTreeViewItemBase : TreeViewItemGenericBase
     {
-        public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one
+        public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one      
         static bool mBulkOperationIsInProcess = false;
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
         {         
@@ -258,7 +258,7 @@ namespace GingerWPF.TreeViewItemsLib
             catch (Exception ex)
             {                
                 Reporter.ToUser(eUserMsgKeys.RefreshFailed, "Failed to refresh the item type cache for the folder: " + path);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 mBulkOperationIsInProcess = false;
             }
         }
@@ -284,7 +284,7 @@ namespace GingerWPF.TreeViewItemsLib
                                                                     BindingFlags.Public |
                                                                     BindingFlags.Instance |
                                                                     BindingFlags.OptionalParamBinding, null, new object[] { repoFolder }, CultureInfo.CurrentCulture);
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
                 if (folderItem == null)
                 {
@@ -295,7 +295,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -309,7 +309,7 @@ namespace GingerWPF.TreeViewItemsLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
             return true;
@@ -319,35 +319,12 @@ namespace GingerWPF.TreeViewItemsLib
         {
             try
             {
-                //TODO: Fix with New Reporter (on GingerWPF)
-                //if (System.Windows.MessageBox.Show(string.Format("Are you sure you want to delete the '{0}' folder and all of it content?", mTreeView.Tree.GetSelectedTreeNodeName()), "Delete Foler", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.No) == System.Windows.MessageBoxResult.Yes)
-                //{
-                //    ITreeViewItem TVI = (ITreeViewItem)(mTreeView.Tree.CurrentSelectedTreeViewItem);
-                //    RepositoryFolderBase RF = (RepositoryFolderBase)TVI.NodeObject();
-                //    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)((ITreeViewItem)this).NodeObject());
-
-
-                //    mBulkOperationIsInProcess = true;
-                //    List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
-                //    childNodes.Reverse();
-                //    foreach (ITreeViewItem node in childNodes)
-                //    {
-                //        if (node == null || node.NodeObject() == null) continue;
-                //        if ((node.NodeObject().GetType().BaseType != typeof(RepositoryFolderBase)))
-                //        {
-                //            DeleteTreeItem(node.NodeObject(), true, false);
-                //        }
-                //        else
-                //        {
-                //            if (Directory.Exists(((TreeViewItemBase)node).NodePath()))
-                //                WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)node.NodeObject());
-                //        }
-                //    }
-
+                if (Reporter.ToUser(eUserMsgKeys.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == MessageBoxResult.Yes)
+                {
                     //delete root and refresh tree                    
                     WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)((ITreeViewItem)this).NodeObject());
                     mTreeView.Tree.RefreshSelectedTreeNodeParent();
-               //}
+                }
             }
             finally
             {
@@ -532,12 +509,13 @@ namespace GingerWPF.TreeViewItemsLib
 
             ObservableList<RepositoryFolder<T>> subFolders = RF.GetSubFolders();
             foreach (RepositoryFolder<T> envFolder in subFolders)
-            {
+            {                
                 Childrens.Add(GetTreeItem(envFolder));
             }
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // track sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
+            
             //Add direct childrens        
             ObservableList<T> folderItems = RF.GetFolderItems();
             // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once
@@ -549,7 +527,7 @@ namespace GingerWPF.TreeViewItemsLib
                 object sampleItem = folderItems[0];               
                 foreach (T item in folderItems.OrderBy(((RepositoryItemBase)sampleItem).ItemNameField))
                 {
-                    ITreeViewItem tvi = GetTreeItem(item);
+                    ITreeViewItem tvi = GetTreeItem(item);                    
                     Childrens.Add(tvi);
                 }
             }
