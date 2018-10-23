@@ -840,5 +840,10 @@ namespace GingerCore.Drivers.WindowsLib
         {
             throw new NotImplementedException();
         }
+
+        public override string SelectAndValidateHandler(object element, ActUIElement action)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
