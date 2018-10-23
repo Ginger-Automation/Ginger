@@ -332,7 +332,7 @@ namespace Ginger.Repository
                        {
                            usage.Status = RepositoryItemUsage.eStatus.SaveFailed;
                            Reporter.CloseGingerHelper();
-                           Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                           Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                        }
                    }
                }

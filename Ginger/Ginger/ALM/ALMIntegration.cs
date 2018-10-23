@@ -554,7 +554,7 @@ namespace Ginger.ALM
             while (!isConnected && retryConnect < 2)
             {
                 try { isConnected = ConnectALMProject(); }
-                catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}"); }
+                catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
                 retryConnect++;
             }
             if (!isConnected && almConnectStyle != eALMConnectType.Silence)
@@ -563,7 +563,7 @@ namespace Ginger.ALM
                     ALMConnectionPage almConnPage = new ALMConnectionPage(almConnectStyle, asConnWin);
                     almConnPage.ShowAsWindow();
                     try { isConnected = ConnectALMProject(); }
-                    catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}"); }
+                    catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
                 }
 
             return isConnected;

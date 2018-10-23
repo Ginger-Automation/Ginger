@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Core;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace Ginger.User
     public partial class UserSettingsPage : Page
     {
         GenericWindow _pageGenericWin;
-        readonly eTerminologyDicsType mOriginalTerminologyType;
+        readonly GingerCore.eTerminologyType mOriginalTerminologyType;
 
         public UserSettingsPage()
         {
@@ -42,7 +43,7 @@ namespace Ginger.User
 
         private void xTerminologyTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((eTerminologyDicsType)xTerminologyTypeComboBox.SelectedValue != mOriginalTerminologyType)
+            if ((GingerCore.eTerminologyType)xTerminologyTypeComboBox.SelectedValue != mOriginalTerminologyType)
             {
                 xTerminologyTypeNoteLbl.Visibility = Visibility.Visible;
             }
@@ -56,16 +57,40 @@ namespace Ginger.User
         {
             App.UserProfile.SaveBackup();
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();            
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+            Button saveBtn = new Button();
+            saveBtn.Content = "Save";
+            saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
+            winButtons.Add(saveBtn);
+
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
             winButtons.Add(undoBtn);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit User Settings", this, winButtons, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit User Settings", this, winButtons, false, "Undo & Close", CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
         }
 
         private void UndoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UndoChangesAndClose();
+        }
+
+        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            App.UserProfile.SaveUserProfile();
+            _pageGenericWin.Close();
+        }
+
+        private void CloseWinClicked(object sender, EventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            {
+                UndoChangesAndClose();
+            }
+        }
+
+        private void UndoChangesAndClose()
         {
             App.UserProfile.RestoreFromBackup(true);
             _pageGenericWin.Close();

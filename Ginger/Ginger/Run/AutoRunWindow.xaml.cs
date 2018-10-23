@@ -70,7 +70,7 @@ namespace Ginger.Run
             catch (Exception ex)
             {
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to setup the RunsetExecutor for the {0} '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), runSetName));
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }            
 

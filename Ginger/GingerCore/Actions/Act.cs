@@ -794,7 +794,7 @@ namespace GingerCore.Actions
                 catch (Exception ex)
                 {
                     Array a = Enum.GetValues(typeof(T));
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     return a.GetValue(0).ToString();
                 }
             }
@@ -922,9 +922,9 @@ namespace GingerCore.Actions
                                     k++;
                                 }
                             }
-                            catch (Exception e)
+                            catch (Exception ex)
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                             }
                         }
                     }
@@ -939,14 +939,14 @@ namespace GingerCore.Actions
                             AddOrUpdateReturnParamActualWithPath(Key, null, Path.ToString());
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                     }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
             }
         }   // end of AddJsonKeyValueToOutputValue
 
