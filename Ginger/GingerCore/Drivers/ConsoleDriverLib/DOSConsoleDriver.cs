@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -51,7 +52,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             RestartOutputs();
             if (CMDFileName == null || CMDFileName.Length == 0)
             {               
-                Reporter.ToLog(eLogLevel.INFO, "DOS Console Agent missing CMD FileName");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "DOS Console Agent missing CMD FileName");
                 ErrorMessageFromDriver = "DOS Console Agent missing CMD FileName";
                 return false;
             }
@@ -186,7 +187,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 case ActConsoleCommand.eConsoleCommand.IsFileExist:      
                     return "dir " + GetParameterizedCommand(act);                   
                 default:                    
-                    Reporter.ToLog(eLogLevel.INFO, "Unkonwn Console command");
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Unkonwn Console command");
                     ErrorMessageFromDriver = "Unkonwn Console command";
                     return "Error - unknown command";                    
             }

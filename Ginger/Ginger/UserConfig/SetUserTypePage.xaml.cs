@@ -36,7 +36,7 @@ namespace Ginger.UserConfig
         {
             InitializeComponent();
             UserTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eUserType));
-            App.ObjFieldBinding(UserTypeCombo, ComboBox.TextProperty, App.UserProfile, UserProfile.Fields.UserType);
+            App.ObjFieldBinding(UserTypeCombo, ComboBox.TextProperty, App.UserProfile, nameof(UserProfile.UserType));
 
             mInitialType = App.UserProfile.UserType;
         }

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
@@ -230,9 +231,8 @@ namespace GingerWPF.TreeViewItemsLib
 
             //make sure the source item and dest folder are from same item type
             if (this.NodeObjectType() != ((TreeViewItemGenericBase)mNodeManipulationsSource).NodeObjectType())
-            {
-                //TODO: Fix with New Reporter (on GingerWPF)
-                MessageBox.Show("The source item type do not match to the destination folder type", "Not Same Item Type", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.DifferentItemType);
                 return;
             }
 
@@ -250,9 +250,8 @@ namespace GingerWPF.TreeViewItemsLib
                 case eFolderNodePastOperations.CutItems:
                     PasteCutTreeItems();
                     break;
-                default:
-                    //TODO: Fix with New Reporter (on GingerWPF)
-                    MessageBox.Show("Please select Copy/Cut operation first.", "Copy/Cut Operation", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
+                default:                    
+                    Reporter.ToUser(eUserMsgKeys.CopyCutOperation);
                     break;
             }
 
@@ -307,9 +306,8 @@ namespace GingerWPF.TreeViewItemsLib
                 {
                     string path = Path.Combine(this.NodePath(), folderName);
                     if (System.IO.Directory.Exists(path) == true)
-                    {
-                        //TODO: Fix with New Reporter (on GingerWPF)
-                        MessageBox.Show("Folder with same name already exists. Please choose a different name for the folder.", "Folder Creation Failed", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                    {                        
+                        Reporter.ToUser(eUserMsgKeys.FolderExistsWithName);
                         mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
                     }
                     else
@@ -331,9 +329,8 @@ namespace GingerWPF.TreeViewItemsLib
                 {
                     string path = Path.Combine(Path.GetDirectoryName(this.NodePath().TrimEnd('\\', '/')), newFolderName);
                     if (System.IO.Directory.Exists(path) == true && originalName.ToUpper() != newFolderName.ToUpper())
-                    {
-                        //TODO: Fix with New Reporter (on GingerWPF)
-                        MessageBox.Show("Folder with same name already exists. Please choose a different name for the folder.", "Folder Creation Failed", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                    {                        
+                        Reporter.ToUser(eUserMsgKeys.FolderExistsWithName);
                         mTreeView.Tree.RefreshSelectedTreeNodeParent();
                         return;
                     }
@@ -343,16 +340,14 @@ namespace GingerWPF.TreeViewItemsLib
                         {
                             if (RenameTreeFolder(originalName, newFolderName, path) == false)
                             {                                
-                                //TODO: Fix with New Reporter (on GingerWPF)
-                                MessageBox.Show(string.Format("Rename the folder to '{0}' failed.", path), "Folder Rename Failed", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                                Reporter.ToUser(eUserMsgKeys.RenameItemError, path);
                                 return;
                             }
                         }
                         catch (Exception ex)
-                        {
-                            //TODO: Fix with New Reporter (on GingerWPF)
-                            MessageBox.Show(string.Format("Rename the folder to '{0}' failed.", path), "Folder Rename Failed", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        {                            
+                            Reporter.ToUser(eUserMsgKeys.RenameItemError, ex.Message);
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
                             return;
                         }
                     }

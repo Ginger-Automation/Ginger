@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.ALM.QC.TreeViewItems;
 using Ginger.ALM.RQM;
@@ -69,19 +70,19 @@ namespace Ginger.ALM.Repository
         public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
         {
             bool isConnectSucc = false;
-            Reporter.ToLog(eLogLevel.INFO, "Connecting to RQM server");
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Connecting to RQM server");
             try
             {
                 isConnectSucc = ALMIntegration.Instance.AlmCore.ConnectALMServer();
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error connecting to RQM server", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error connecting to RQM server", e);
             }
 
             if (!isConnectSucc)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Could not connect to RQM server");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Could not connect to RQM server");
                 if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
                     Reporter.ToUser(eUserMsgKeys.ALMConnectFailure);
                 else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
@@ -99,13 +100,12 @@ namespace Ginger.ALM.Repository
                 {
                     //Refresh Ginger repository and allow GingerRQM to use it
 
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = App.LocalRepository.GetSolutionRepoActivitiesGroups(false);
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = App.LocalRepository.GetSolutionRepoActivities(false);
+                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+                    ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
                     try
                     {
-                        BusinessFlow existedBF = App.LocalRepository.GetSolutionBusinessFlows().Where(x => x.ExternalID == RQMID + "=" + testPlan.RQMID).FirstOrDefault();
+                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == RQMID + "=" + testPlan.RQMID).FirstOrDefault();
                         if (existedBF != null)
                         {
                             MessageBoxResult userSelection = Reporter.ToUser(eUserMsgKeys.TestSetExists, testPlan.Name);
@@ -143,21 +143,14 @@ namespace Ginger.ALM.Repository
                             foreach (Activity activ in tsBusFlow.Activities)
                                 activ.TargetApplication = null; // no app configured on solution level
                         }
-
-                        //save bf
-                        tsBusFlow.FileName = LocalRepository.GetRepoItemFileName(tsBusFlow, importDestinationPath);
-                        tsBusFlow.SaveToFile(tsBusFlow.FileName);
-                        //add to cach
-                        App.LocalRepository.AddItemToCache(tsBusFlow);
+                        
+                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);                        
                         Reporter.CloseGingerHelper();
                     }
                     catch (Exception ex)
                     {
                         Reporter.ToUser(eUserMsgKeys.ErrorInTestsetImport, testPlan.Name, ex.Message);
                     }
-
-                    //Refresh the solution tree
-                    App.MainWindow.RefreshSolutionPage();
 
                     Reporter.ToUser(eUserMsgKeys.TestSetsImportedSuccessfully);
                 }
@@ -168,7 +161,7 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, App.UserProfile.Solution.Folder + @"Documents\ALM\RQM_Configs").OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalID, "RQMID"))
                 {
@@ -180,7 +173,7 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, App.UserProfile.Solution.Folder + @"Documents\ALM\RQM_Configs").OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(App.UserProfile.Solution.ALMServerURL, App.UserProfile.ALMUserName, App.UserProfile.ALMPassword, App.UserProfile.Solution.ALMProject, System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalID, "RQMID"))
                 {
@@ -246,7 +239,8 @@ namespace Ginger.ALM.Repository
                 if (performSaveAfterExport)
                 {
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    businessFlow.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
+
                 }
                 if(almConectStyle != ALMIntegration.eALMConnectType.Auto && almConectStyle != ALMIntegration.eALMConnectType.Silence)
                     Reporter.ToUser(eUserMsgKeys.ExportItemToALMSucceed);

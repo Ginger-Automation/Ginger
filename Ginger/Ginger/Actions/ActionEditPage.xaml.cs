@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.UIElement;
@@ -102,7 +103,7 @@ namespace Ginger.Actions
 
             EditMode = editMode;
             mAction.PropertyChanged += ActionPropertyChanged;
-
+            
             GingerHelpProvider.SetHelpString(this, act.ActionDescription);
 
             if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
@@ -168,7 +169,7 @@ namespace Ginger.Actions
             LoadActionFlowcontrols(mAction);
             TagsViewer.Init(mAction.Tags);
 
-            mDSList = App.LocalRepository.GetSolutionDataSources();
+            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
                 AddOutDS.IsEnabled = false;
 
@@ -222,17 +223,17 @@ namespace Ginger.Actions
 
             InitActionLog();
         }
-        
 
-        
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateOutputTabVisual();
+            mAction.OnPropertyChanged(nameof(Act.ReturnValuesInfo));
         }
 
         private void FlowControls_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateFlowControlTabVisual();
+            mAction.OnPropertyChanged(nameof(Act.FlowControlsInfo));
         }
 
         private void ClearUnusedParameter(object sender, RoutedEventArgs e)
@@ -628,7 +629,7 @@ namespace Ginger.Actions
 
         private void StopRunBtn_Click(object sender, RoutedEventArgs e)
         {
-            App.MainWindow.StopAutomateRun();
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.StopRun, null);
         }
 
         private void ShowHideRunStopButtons()
@@ -657,8 +658,8 @@ namespace Ginger.Actions
                 if (mAction.GetType() == typeof(ActLowLevelClicks))
                     App.MainWindow.WindowState = WindowState.Minimized;
                 mAction.IsSingleAction = true;
-                
-                App.MainWindow.SetAutomateTabRunnerForExecution();
+
+                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.SetupRunnerForExecution, null);
 
                 //No need for agent for some actions like DB and read for excel. For other need agent   
                 if (!(typeof(ActWithoutDriver).IsAssignableFrom(mAction.GetType())))
@@ -750,16 +751,18 @@ namespace Ginger.Actions
             string title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
+            Button okBtn = new Button();
+            okBtn.Content = "Ok";
+            okBtn.Click += new RoutedEventHandler(okBtn_Click);
+            Button undoBtn = new Button();
+            undoBtn.Content = "Undo & Close";
+            undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+            Button saveBtn = new Button();
+            saveBtn.Content = "Save";
             switch (EditMode)
             {
-                case General.RepositoryItemPageViewMode.Automation:
-                    Button okBtn = new Button();
-                    okBtn.Content = "Ok";
-                    okBtn.Click += new RoutedEventHandler(okBtn_Click);
-                    winButtons.Add(okBtn);
-                    Button undoBtn = new Button();
-                    undoBtn.Content = "Undo & Close";
-                    undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+                case General.RepositoryItemPageViewMode.Automation:                   
+                    winButtons.Add(okBtn);                    
                     winButtons.Add(undoBtn);
 
                     Button nextAction = new Button();
@@ -790,37 +793,33 @@ namespace Ginger.Actions
 
 
                 case General.RepositoryItemPageViewMode.SharedReposiotry:
-                    title = "Edit Shared Repository " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    Button saveBtn = new Button();
-                    saveBtn.Content = "Save";
-                    saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
-                    Button closeBtn = new Button();
-                    closeBtn.Content = "Undo & Close";
-                    closeBtn.Click += new RoutedEventHandler(undoBtn_Click);
-                    winButtons.Add(saveBtn);
-                    winButtons.Add(closeBtn);
+                    title = "Edit Shared Repository " + RemoveActionWord(mAction.ActionDescription) + " Action";                   
+                    saveBtn.Click += new RoutedEventHandler(SharedRepoSaveBtn_Click);
+                    winButtons.Add(saveBtn);                    
+                    winButtons.Add(undoBtn);
                     break;
 
                 case General.RepositoryItemPageViewMode.Child:
                     title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    Button saveButton = new Button();
-                    saveButton.Content = "Save";
-                    saveButton.Click += new RoutedEventHandler(saveButton_Click);
-                    Button closeButton = new Button();
-                    closeButton.Content = "Undo & Close";
-                    closeButton.Click += new RoutedEventHandler(undoBtn_Click);
-                    winButtons.Add(saveButton);
-                    winButtons.Add(closeButton);
+                    winButtons.Add(okBtn);
+                    winButtons.Add(undoBtn);
                     break;
+
+                case General.RepositoryItemPageViewMode.ChildWithSave:
+                    title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
+                    saveBtn.Click += new RoutedEventHandler(ParentSaveButton_Click);
+                    winButtons.Add(saveBtn);
+                    winButtons.Add(undoBtn);
+                    break;
+
                 case General.RepositoryItemPageViewMode.View:
                     title = "View " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    Button okBtnView = new Button();
-                    okBtnView.Content = "Ok";
-                    okBtnView.Click += new RoutedEventHandler(okBtn_Click);
-                    winButtons.Add(okBtnView);
+                    winButtons.Add(okBtn);                    
                     break;
             }
 
+            this.Height = 800;
+            this.Width = 1000;
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
             SwitchingInputValueBoxAndGrid(mAction);
             return saveWasDone;
@@ -889,20 +888,21 @@ namespace Ginger.Actions
             }
         }
 
-        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        private void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
         {
             CheckIfUserWantToSave();
         }
 
-        private void saveButton_Click(object sender, RoutedEventArgs e)
+        private void ParentSaveButton_Click(object sender, RoutedEventArgs e)
         {
             if ((mActParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow),mActParentBusinessFlow.Name) == MessageBoxResult.Yes) 
                 || (mActParentActivity != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == MessageBoxResult.Yes))
             {
-                if(mActParentBusinessFlow != null)
-                    mActParentBusinessFlow.Save();
+                if(mActParentBusinessFlow != null)                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActParentBusinessFlow);
                 else
-                    mActParentActivity.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActParentActivity);
+                
                 saveWasDone = true;
             }
 
@@ -911,9 +911,9 @@ namespace Ginger.Actions
         }
         private void CheckIfUserWantToSave()
         {
-            if (LocalRepository.CheckIfSureDoingChange(mAction, "change") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mAction, "change") == true)
             {
-                mAction.Save();
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mAction);
                 saveWasDone = true;
                 IsPageClosing = true;
                 _pageGenericWin.Close();
@@ -994,7 +994,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             if (ActionTab.SelectedItem == ScreenShotTab)
@@ -1293,7 +1293,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 
@@ -1321,7 +1321,7 @@ namespace Ginger.Actions
 
         private void AddOutDS_Checked(object sender, RoutedEventArgs e)
         {
-            mDSList = App.LocalRepository.GetSolutionDataSources();
+            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
                 return;
             mDSNames.Clear();
@@ -1495,8 +1495,8 @@ namespace Ginger.Actions
                     mDataSourceName = cmbDataSourceName.SelectedValue.ToString();
                     if (ds.FilePath.StartsWith("~"))
                     {
-                        ds.FileFullPath = ds.FilePath.Replace("~", "");
-                        ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
+                        ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
+                        ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
                     }
                     ds.Init(ds.FileFullPath);
                     List<string> dsTableNames = new List<string>();

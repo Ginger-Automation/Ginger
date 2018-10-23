@@ -13,10 +13,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowFolder;
 using Ginger.Repository;
+using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
 
@@ -48,11 +50,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
         private void closeEventHandler(object sender, EventArgs e)
         {
-            App.AppSolutionRecover.CleanUp();
-            if (mRecoverwasDone)
-            {
-                App.MainWindow.RefreshSolutionPage();
-            }
+            App.AppSolutionRecover.CleanUp();            
         }
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
@@ -98,12 +96,12 @@ namespace Ginger.SolutionAutoSaveAndRecover
                 {                    
                     if (ri.RecoveredItemObject is BusinessFlow)
                     {
-                        ObservableList<BusinessFlow> businessFlows = App.LocalRepository.GetSolutionBusinessFlows();
+                        ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
                         originalItem = businessFlows.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
                     }
                     else if (ri.RecoveredItemObject is Run.RunSetConfig)
                     {
-                        ObservableList<Run.RunSetConfig> Runsets = App.LocalRepository.GetSolutionRunSets();
+                        ObservableList<RunSetConfig> Runsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
                         originalItem = Runsets.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
                     }
                     if (originalItem == null)
@@ -122,7 +120,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
                 catch(Exception ex)
                 {
                     ri.Status = eRecoveredItemStatus.RecoveredFailed;
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to recover the original file '{0}' with the recovered file '{1}'", originalItem.FileName, ri.RecoveredItemObject.FileName), ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to recover the original file '{0}' with the recovered file '{1}'", originalItem.FileName, ri.RecoveredItemObject.FileName), ex);
                 }
             }
 
@@ -142,7 +140,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
             view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.Status), Header = "Status", WidthWeight = 15, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.RecoveredItems.Resources["ViewDetailsButton"] });
 
-            App.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty, App.UserProfile, UserProfile.Fields.DoNotAskToRecoverSolutions);
+            App.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty, App.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
 
             xRecoveredItemsGrid.SetAllColumnsDefaultView(view);
             xRecoveredItemsGrid.InitViewItems();

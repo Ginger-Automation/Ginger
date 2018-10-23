@@ -30,6 +30,7 @@ using System.Xml;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Drivers.Mobile.Perfecto {
 
@@ -101,7 +102,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error, Could not create Perfecto Mobile Automation Driver, " + e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error, Could not create Perfecto Mobile Automation Driver, " + e.Message);
             }
             Driver.Manage().Timeouts().ImplicitWait=TimeSpan.FromSeconds(15);
 
@@ -632,7 +633,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
                 return null;
             }
             catch (Exception ex) {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
 
                 return null;
             }

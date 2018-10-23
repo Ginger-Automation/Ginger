@@ -133,7 +133,17 @@ namespace Ginger.ApiModelsFolder
                             AIV.Description = AMDP.Description;
                             string OldValue = string.Empty;
                             if (OldList != null && OldList.Count() > 0)
-                                OldValue = OldList.Where(x => x.ParamGuid == AMDP.Guid).FirstOrDefault().Value;
+                            {
+                                EnhancedActInputValue oldAIV = OldList.Where(x => x.ParamGuid == AMDP.Guid).FirstOrDefault();
+                                if (oldAIV != null)
+                                {
+                                    OldValue = oldAIV.Value;
+                                }
+                                else
+                                {
+                                    OldValue = null;
+                                }
+                            }
                             foreach (OptionalValue optionalValue in AMDP.OptionalValuesList)
                             {
                                 AIV.OptionalValues.Add(optionalValue.Value);
@@ -153,11 +163,7 @@ namespace Ginger.ApiModelsFolder
                 }
             }
         }
-
-       
-
-        
-
+              
         private void SetParamsGrid()
         {
             xAPIModelParamsValueUCGrid.Title = "API Parameters Consolidation";
@@ -180,6 +186,6 @@ namespace Ginger.ApiModelsFolder
             EnhancedActInputValue AIV = (EnhancedActInputValue)xAPIModelParamsValueUCGrid.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
             VEEW.ShowAsWindow();
-        }
+        }       
     }
 }

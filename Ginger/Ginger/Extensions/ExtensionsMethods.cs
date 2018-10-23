@@ -52,7 +52,7 @@ namespace Ginger
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
                 }
 
             }
@@ -337,6 +337,16 @@ namespace Ginger
         // ------------------------------------------------------------
         // Validations
         // ------------------------------------------------------------
+
+        public static void RemoveValidations(this FrameworkElement frameworkElement, DependencyProperty SelectedProperty)
+        {
+            BindingExpression bd = frameworkElement.GetBindingExpression(SelectedProperty);
+
+            if (bd != null)
+            {
+                bd.ParentBinding.ValidationRules.Clear();
+            }
+        }
 
         private static void AddValidation(this FrameworkElement frameworkElement, DependencyProperty dependencyProperty, ValidationRule validationRule)
         {

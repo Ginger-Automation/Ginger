@@ -19,7 +19,6 @@
             <Button x:Name="OnTopButton" Click="OnTopButton_Click">On Top</Button>
             <Button x:Name="CrashButton" Click="CrashButton_Click">Crash</Button>
             <Button x:Name="LongPathButton" Click="LongPathButton_Click" >LongPath</Button>
-            <Button x:Name="NewMainWindowButton" Click="NewMainWindowButton_Click">New Main Window</Button>
         </StackPanel>
 
         <ScrollViewer x:Name="ConsoleScrollViewer" Grid.Row="1">

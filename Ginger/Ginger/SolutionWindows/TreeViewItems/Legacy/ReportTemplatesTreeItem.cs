@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -31,10 +32,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         private ReportTemplatesPage mReportTemplatesPage;
 
-        public string Folder { get; set; }
-        public string Path { get; set; }
-
+        RepositoryFolder<ReportTemplate> mReportFolder;
+        
         ITreeView mTV;
+
+        public ReportTemplatesTreeItem(RepositoryFolder<ReportTemplate> reportFolder)
+        {
+            mReportFolder = reportFolder;
+        }
 
         Object ITreeViewItem.NodeObject()
         {
@@ -42,21 +47,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.CreateItemHeader("Document Report Templates", "@Report_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));            
+        {            
+            return TreeViewUtils.NewRepositoryItemTreeHeader("Document Report Templates", nameof(RepositoryFolder<ReportTemplate>.DisplayName), eImageType.Report, GetSourceControlImage(mReportFolder), false);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-            ObservableList<ReportTemplate> Reports = App.LocalRepository.GetSolutionReportTemplates(UseCache:false, specificFolderPath: Path);
-            foreach (ReportTemplate rep in Reports)
-            {
-                ReportTemplateTreeItem RTTI = new ReportTemplateTreeItem();
-                RTTI.ReportTemplate = rep;
-                Childrens.Add(RTTI);
-            }
-            return Childrens;
+            return GetChildrentGeneric<ReportTemplate>(mReportFolder);         
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -80,7 +77,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddMenuItem(CM, "Save All", SaveAll, null, eImageType.Save);
             
             TreeViewUtils.AddMenuItem(CM, "Set Default Report Template", SetDefaultTemplate, null, eImageType.Check);
-            AddViewFolderFilesMenuItem(CM, Path);
+            AddViewFolderFilesMenuItem(CM, mReportFolder.FolderFullPath);
             return CM;
         }
 
@@ -90,7 +87,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TV.AddToolbarTool(eImageType.Refresh, "Refresh", RefreshItems);
             TV.AddToolbarTool("@SaveAll_16x16.png", "Save All", SaveAll);
             TV.AddToolbarTool("@Add_16x16.png", "Add New", AddNewReport);
-            TV.AddToolbarTool("@Glass_16x16.png", "Open Folder in File Explorer", ViewFolderFilesFromTool, System.Windows.Visibility.Visible, Path);
+            TV.AddToolbarTool("@Glass_16x16.png", "Open Folder in File Explorer", ViewFolderFilesFromTool, System.Windows.Visibility.Visible, mReportFolder.FolderFullPath);
         }
 
         private void RefreshItems(object sender, System.Windows.RoutedEventArgs e)

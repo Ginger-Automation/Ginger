@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -90,6 +91,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.jsoup.nodes.Element;
@@ -1581,8 +1584,8 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			
 				if(c instanceof JTree)  
 				{
-					Object treeNode=getTreeNodeFromPathAndSet((JTree) c, Value);
-					if(treeNode == null)				
+					TreePath treePath = SearchTreeNodes((JTree)c,Value);
+					if(treePath == null)				
 					{				
 						return PayLoad.Error("Path " + Value + " not found");
 					}
@@ -1591,17 +1594,10 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 						Thread.sleep(500);
 					} catch (InterruptedException e) {						
 						e.printStackTrace();
-					}					
-					TreePath p = null;
-					String[] nodes = Value.split("/");					
-					for (String node : nodes) {
-						int row = (p == null ? 0 : ((JTree)c).getRowForPath(p));
-						((JTree)c).expandRow(row);
-						p = ((JTree)c).getNextMatch(node.trim(), row, Position.Bias.Forward);
-					}				
-				     Rectangle rect = ((JTree)c).getPathBounds(p);
-				     ((JTree)c).scrollPathToVisible(p);				   				   
-				     //Value = rect.x + "," + rect.y;
+					}
+			
+				     Rectangle rect = ((JTree)c).getPathBounds(treePath);
+				     ((JTree)c).scrollPathToVisible(treePath);
 					 Value = (rect.x+rect.width/2) + "," + (rect.y+rect.height/2);
 				}
 				PayLoad plrc =  MousePressAndReleaseComponent(c,Value,mCommandTimeout,2);
@@ -1712,6 +1708,70 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			return PayLoad.Error("Element not found - " + locateBy + " " + locateValue);
 		}
 	}
+
+private TreePath SearchTreeNodes(JTree tree,String locateValue) 
+{
+	TreePath treePath = null;
+	int startNodeNumber = 0;
+	String[] nodes = locateValue.split("/");					
+
+	(tree).expandRow(startNodeNumber);
+	
+		for(int row = startNodeNumber; row < tree.getRowCount(); row++)
+		{
+				treePath = tree.getNextMatch(nodes[0].trim(), row, Position.Bias.Forward);
+				
+				if(treePath != null)
+				{
+					
+						DefaultMutableTreeNode lastNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+						
+						if(nodes[0].equalsIgnoreCase((String)lastNode.getUserObject()))
+						{
+							
+						  if(nodes.length > 1)
+							{
+								treePath = SearchChildNodes(tree, treePath, nodes);
+							}
+							break;
+						}
+				}
+			
+	}
+	return treePath;
+}
+
+private TreePath SearchChildNodes(JTree tree, TreePath treePath, String[] nodes) 
+{
+	boolean nodeFound = false;
+	for (int i =1; i < nodes.length; i++)
+	{
+		nodeFound = false;
+		String nodeToSearch = nodes[i];
+		
+		TreeNode startNode = (TreeNode) treePath.getLastPathComponent();
+		
+		Enumeration<?> children =  startNode.children();
+		while(children.hasMoreElements())
+		{
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
+			String userObject = (String) child.getUserObject();
+			if(userObject.equalsIgnoreCase(nodeToSearch))
+			{
+				nodeFound = true;
+				(tree).expandRow((tree).getRowForPath(treePath));
+			 	Object[] nodePath = child.getPath();
+			 	treePath = new TreePath(nodePath);
+			 	break;
+			}
+		}
+	}
+	if(nodeFound)
+	{
+		return treePath;
+	}
+	return null;
+}
 
 	
 	private Boolean IsImplicitSyncRequired(String controlAction, String Value, String ValueToSelect)
@@ -2391,15 +2451,29 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 	
 private PayLoad GetComponentValue(Component c) 
 	{	
-
+		//TODO: Change this method to return payload with single value instead of list of string. 
 		GingerAgent.WriteLog("Inside GetComponentValue");
 		PayLoad Response = new PayLoad("ComponentValue");
 		List<String> val = mSwingHelper.GetCompValue(c);
-		
-		if (c.getClass().getName() != null && c.getClass().getName().contains("com.amdocs.uif.widgets.DateTimeNative"))
+		String componentClassName=c.getClass().getName();
+		if (componentClassName != null )
 		{
-			String dateValue = mASCFHelper.getUIFDatePickerValue(c);
-			if (dateValue != null || dateValue == "" )
+			String dateValue=null;
+			if(componentClassName.contains("com.amdocs.uif.widgets.DateTimeNative"))
+			{
+				dateValue = mASCFHelper.getUIFDatePickerValue(c);
+			}
+			else if(componentClassName.contains("JDateField"))
+			{
+				Object obj = mSwingHelper.GetComponentDate(c);
+				if(obj!=null)
+				{
+					SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a"); 
+					dateValue= formatter.format(obj);  
+				}
+			}		
+			
+			if (dateValue != null && dateValue != "" )
 			{
 				if(val.size()==1 && val.get(0)=="")
 					val.remove(0);				
@@ -2588,18 +2662,12 @@ private PayLoad GetComponentState(Component c)
 		 if (c instanceof JTree)
 		 {
 			GingerAgent.WriteLog("c instanceof JTree");
-			TreePath p = null;
-			String[] nodes = value.split("/");					
-			for (String node : nodes) {
-				int row = (p == null ? 0 : ((JTree)c).getRowForPath(p));
-				((JTree)c).expandRow(row);
-				p = ((JTree)c).getNextMatch(node.trim(), row, Position.Bias.Forward);
-			}
-			if (p != null)
+			TreePath nodePath = SearchTreeNodes(((JTree)c),value);
+			if (nodePath != null)
 			{
 				GingerAgent.WriteLog("TreePath != null");
-				 Rectangle rect = ((JTree)c).getPathBounds(p);
-			     ((JTree)c).scrollPathToVisible(p);				   				   
+				 Rectangle rect = ((JTree)c).getPathBounds(nodePath);
+			     ((JTree)c).scrollPathToVisible(nodePath);				   				   
 			     String value1 = rect.x + "," + rect.y;
 				
 				PayLoad plrc =  MousePressAndReleaseComponent(c,value1,mCommandTimeout,1);
@@ -3280,17 +3348,76 @@ private PayLoad GetComponentState(Component c)
 	{
 		GingerAgent.WriteLog("c.tostring::"+c.toString());
 		GingerAgent.WriteLog("c.class::"+c.getClass().getName());
-					
-		if (c.getClass().toString().contains("uif"))			
+		
+		String componentClassName= c.getClass().getName();
+		
+		if(componentClassName != null)
 		{
-			return mASCFHelper.setUIFDatePickerValue(c, value);	
-		}
-		else
-		{
-			return PayLoad.Error("SetComponentValue - Unknown Component type");
+			Date date=null;
+			Object o=null;
+			try 
+			{
+				date= Utils.parseDateValue(value);
+				
+			} 
+			catch (Exception e) 
+			{
+				GingerAgent.WriteLog("exception while parsing date"+e.getMessage());
+				return PayLoad.Error("Invalid date format. Expected format is MM/dd/yyyy hh:mm:ss a  e.g. 01/15/2017 01:20:05 AM");	
+			}			
+			
+			if (componentClassName.contains("uif"))			
+			{				
+				Boolean result= mASCFHelper.SetComponentDate(c, date);
+				
+				if(result == false)
+				{
+					return PayLoad.Error("Failed to set date. Exception occured during set date");
+				}
+				
+				// Special for UIF we need to mark it modified, otherwise the field value will not go to the server
+				mASCFHelper.setModfied(c);
+				mASCFHelper.startEditComplete(c);
+				
+				o= mASCFHelper.getSelectedDate(c);
+			}
+			else if (componentClassName.contains("JDateField"))
+			{
+				Boolean result= mSwingHelper.SetComponentDate(c, date);
+				
+				if(result == false)
+				{
+					return PayLoad.Error("Failed to set date. Exception occured during set date");
+				}
+				o= mSwingHelper.GetComponentDate(c);		
+			}
+			
+			
+			if(o == null)
+			{
+				return PayLoad.Error("Failed to set date");
+			}
+			
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a"); 
+			String actualDateValue= formatter.format(date);  
+			//TODO: Below is ugly. Change it do compare 2 dates instead of string manipulations
+			String CurrentSelectedDate=actualDateValue.toString().substring(0, 11) + actualDateValue.toString().substring(20);
+			String ExpectedDate=value.toString().substring(0, 11) + actualDateValue.toString().substring(20);
+			
+			if(!CurrentSelectedDate.equalsIgnoreCase(ExpectedDate))
+				return PayLoad.Error("Current Selected Value::" + CurrentSelectedDate + " - Expected Value::" + ExpectedDate);
+			
+			return PayLoad.OK("Date value set to..." + value);
+			
 		}		
+	
+		return PayLoad.Error("SetComponentValue - Unknown Component type:"+componentClassName);
+			
 
 	}
+	
+	
 
 private PayLoad SetComponentFocus(Component c)
 	{
@@ -3302,81 +3429,87 @@ private PayLoad SetComponentFocus(Component c)
 		// based on control type handle the way to set value
 		
 		//TODO: check control is enabled
-		GingerAgent.WriteLog("c.tostring :: "+c.toString());		
+		GingerAgent.WriteLog("c.tostring :: "+c.toString());	
+		
+		String componentClassName=c.getClass().getName();
+		
+		if(componentClassName==null)
+		{
+			return PayLoad.Error("SetComponentValue - not supported for Component type"+c.getClass().getName());
+		}
 
 		if (c instanceof JTextField)
-		{		
-
-			if(c.getClass().getName().equals("javax.swing.JTextField"))
+		{	
+			if(componentClassName.equals("javax.swing.JTextField"))
 			{
 				JTextField f = (JTextField)c;				
 				f.setText(value);
 				return PayLoad.OK("Text Field Value Set to - " + value);
 			}
 			
-			else if (c.getClass().toString().contains("uif"))
-				{
+			else if (componentClassName.contains("uif"))
+			{
 					GingerAgent.WriteLog("UIF Control");
 					return mASCFHelper.setUIFTextField(c, value);	
-				}
+			}
 			else 
 			{				
 				 mASCFHelper.setText(c,value);				 
 				 return PayLoad.OK("TextBox value set using reflection "+ value);
-
 			}		
 		}
 		else if (c instanceof JTextArea)
 		{		
-				if (c.getClass().toString().contains("uif"))
-				{
-					GingerAgent.WriteLog("UIF Control");
-					return mASCFHelper.setUIFTextArea(c, value);	
-				}		
-				//TODO: need else?? check at start if contain uif and do the rest in Uif helper...
+			if (componentClassName.contains("uif"))
+			{
+				GingerAgent.WriteLog("UIF Control");
+				return mASCFHelper.setUIFTextArea(c, value);	
+			}	
+			else
+			{
 				JTextArea f = (JTextArea)c;
 				f.setText(value);
 				return PayLoad.OK("Text Area Value Set to - " + value);
-
+			}		
 		}
 		else if (c instanceof JTextPane)
 		{
-			if (c.getClass().toString().contains("uif"))
-				{
-					GingerAgent.WriteLog("UIF Control");
-					return mASCFHelper.setUIFTextPane(c, value);	
-				}
-			   	JTextPane f = (JTextPane)c;
-			   	javax.swing.text.Document doc = f.getDocument();
-			   	try {
-			   		doc.remove(0, doc.getLength());
-			   		doc.insertString(doc.getLength(), value, null);			   		
-
-				} catch (BadLocationException e) {
-					// TODO Auto-generated catch block
-					GingerAgent.WriteLog("Exception on SetComponentValue JTextPane = "+e.getMessage());
-					e.printStackTrace();
-				}
-			   	GingerAgent.WriteLog("JTextPane.getText() = "+f.getText());
-				return PayLoad.OK("Text pane Value Set to - " + value);								
+			if (componentClassName.contains("uif"))
+			{
+				GingerAgent.WriteLog("UIF Control");
+				return mASCFHelper.setUIFTextPane(c, value);	
+			}
+			JTextPane f = (JTextPane)c;
+			javax.swing.text.Document doc = f.getDocument();
+			try 
+			{
+				doc.remove(0, doc.getLength());
+			   	doc.insertString(doc.getLength(), value, null);		
+			} 
+			catch (BadLocationException e) 
+			{
+				// TODO Auto-generated catch block
+				GingerAgent.WriteLog("Exception on SetComponentValue JTextPane = "+e.getMessage());
+				e.printStackTrace();
+			}
+			GingerAgent.WriteLog("JTextPane.getText() = "+f.getText());
+			return PayLoad.OK("Text pane Value Set to - " + value);								
 			
 		}
 		else if (c instanceof JTree)
 		{						
-			JTree f = (JTree)c;
-			
+			JTree f = (JTree)c;			
 			TreePath path = new TreePath(value);
 			f.scrollPathToVisible(path);
 			f.setSelectionPath(path);				
-			return PayLoad.OK("Tree Value Set to - " + value);								
-			
+			return PayLoad.OK("Tree Value Set to - " + value);
 		}
 		else if (c instanceof JCheckBox)
 		{
 			((JCheckBox)c).doClick(100);
 			
 			boolean b = true;
-if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
+			if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
 				b=true;
 			else
 				b=false;
@@ -3387,45 +3520,46 @@ if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
 				return PayLoad.Error("Failed to set JCheckBox Value Set to - " + value);
 			return PayLoad.OK("JCheckBox Value Set to - " + value);	
 		}
-		else if (c instanceof JList) {
+		else if (c instanceof JList) 
+		{
 			JList jl = (JList) c;
 
 			jl.clearSelection();
 
 			List<String> items = Arrays.asList(value.split(","));
+					
 		
-			
-		
-			if (jl.getSelectionMode() == ListSelectionModel.SINGLE_SELECTION && items.size()>1) {
+			if (jl.getSelectionMode() == ListSelectionModel.SINGLE_SELECTION && items.size()>1) 
+			{
 				return PayLoad.Error("Failure : Trying to Select multiple values in Single Section List ");
 			}
 
 			List<Integer> selectedItems = new ArrayList<Integer>();
 
-			for (String s : items) {
-
+			for (String s : items) 
+			{
 				ListModel model = jl.getModel();
-				for (int i = 0; i < model.getSize(); i++) {
-
+				for (int i = 0; i < model.getSize(); i++) 
+				{
 					GingerAgent.WriteLog(s);
-					if (s.equals(String.valueOf(model.getElementAt(i)))) {
+					if (s.equals(String.valueOf(model.getElementAt(i)))) 
+					{
 						selectedItems.add(i);
 						break;
 					}
 				}
-
 			}
 
 			int[] selectItems = new int[selectedItems.size()];
 
-			for (int i = 0; i < selectedItems.size(); i++) {
-
+			for (int i = 0; i < selectedItems.size(); i++)
+			{
 				selectItems[i] = selectedItems.get(i);
 			}
 
-			if(selectItems.length<items.size()){
-				return PayLoad.Error("Failure : Element(s) doesn't exist in the List ");
-				
+			if(selectItems.length<items.size())
+			{
+				return PayLoad.Error("Failure : Element(s) doesn't exist in the List ");				
 			}
 			jl.setSelectedIndices(selectItems);
 
@@ -3448,12 +3582,15 @@ if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
 				}
 			}
 			
-			if(c.getClass().getName().equals("javax.swing.JComboBox") || c.getClass().getName().contains("uif"))
+			if(componentClassName.equals("javax.swing.JComboBox") || componentClassName.contains("uif"))
 			{
 				jcb.requestFocus(true);		
-						try {				
+				try 
+				{				
 					Thread.sleep(100);
-				} catch (InterruptedException e) {
+				} 
+				catch (InterruptedException e) 
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -3475,28 +3612,9 @@ if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
 			
 			return PayLoad.OK(respString);
 		}
-		else if (c.getClass().getName() != null && c.getClass().getName().toString().contains("uif.widgets.DateTimeNative"))
-		{	
-			if(!mASCFHelper.validateDateTimeValue(value))
-			{
-				// this is millisecond value
-				Date date = new Date(Long.parseLong(value));
-				DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
-				String dateFormatted = formatter.format(date);
-				if(dateFormatted!=null)
-				{
-					return SetComponentDate(c, dateFormatted);	
-				}
-			}
-			else if(mASCFHelper.validateDateTimeValue(value))
-			{
-				// this is in MM/dd/yyyy hh:mm:ss a format
-				return mASCFHelper.setUIFDatePickerValue(c, value);	
-			}
-			else
-				return PayLoad.Error("SetComponentValue - Unknown Component type");
-	
-			return PayLoad.OK("DateTime Value Set to - " + value);	
+		else if (componentClassName.contains("uif") || componentClassName.contains("lt.monarch.swing.JDateField"))
+		{				
+			return SetComponentDate(c, value);
 		}	
 		else
 		{
@@ -3509,30 +3627,12 @@ if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on"))
 		
 	private Object getTreeNodeFromPathAndSet(JTree tr,String locate) {	
 		GingerAgent.WriteLog( "  getTreeNodeFromPathAndSet::locate  " +  locate);
-		String path = locate;
-		TreePath p = null;
-		String[] nodes = path.split("/");
-				
-		TreePath p1=null;
-		for (String node : nodes) {
-			int row = (p == null ? 0 : tr.getRowForPath(p));
-			tr.expandRow(row);
-			p1 = tr.getNextMatch(node.trim(), row, Position.Bias.Forward);
-			// TODO: Handle full Path for JTREE now we are supporting only Last node .
-			//Add for Handling Same Prefix on the node, need to create new way to handle Jtree  
-			if(p1==p)
-			{
-				p=tr.getNextMatch(node.trim(), row+1, Position.Bias.Forward);
-				tr.expandRow(row);
-			}
-			else
-				p=p1;
-		}
-		if (p==null)
+	    TreePath nodePath = SearchTreeNodes(tr,locate);
+		if (nodePath==null)
 			return null;
 		else
-			tr.setSelectionPath(p);
-		return (p.getLastPathComponent());
+			tr.setSelectionPath(nodePath);
+		return (nodePath.getLastPathComponent());
 
 	}
 	

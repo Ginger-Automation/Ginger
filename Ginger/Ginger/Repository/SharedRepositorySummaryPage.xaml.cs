@@ -16,6 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.Variables;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -34,10 +40,13 @@ namespace Ginger.Repository
 
         private void ShowData(bool fromCache=true)
         {
-            ActivitiesGroupsCountLabel.Text = App.LocalRepository.GetSolutionRepoActivitiesGroups(fromCache).Count.ToString();
-            ActivitiesCountLabel.Text = App.LocalRepository.GetSolutionRepoActivities(fromCache).Count.ToString();
-            ActionsCountLabel.Text = App.LocalRepository.GetSolutionRepoActions(fromCache).Count.ToString();
-            VariablesCountLabel.Text = App.LocalRepository.GetSolutionRepoVariables(fromCache).Count.ToString();
+            ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            ActivitiesGroupsCountLabel.Text = activitiesGroup.Count.ToString();
+            ActivitiesCountLabel.Text = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Count.ToString();
+            ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+            ActionsCountLabel.Text = SharedActions.Count.ToString();
+            ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+            VariablesCountLabel.Text = variables.Count.ToString();
         }
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)

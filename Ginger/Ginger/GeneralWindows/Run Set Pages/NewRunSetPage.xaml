@@ -73,7 +73,7 @@
                     </usercontrols:ucButton>
                     <usercontrols:ucButton x:Name="xFindAndReplace" ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Search" Click="xFindAndReplace_Click">
                         <usercontrols:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Find And Repalce in [RunSet]"/>
+                            <GingerCore:ucTextDicResource Text="Find And Replace in [RunSet]"/>
                         </usercontrols:ucButton.ToolTip>
                     </usercontrols:ucButton>
                     <Menu x:Name="xOtherRunSetOperationsMenu" Background="Transparent">
@@ -104,7 +104,7 @@
                                 <MenuItem.Header>
                                     <DockPanel>
                                         <usercontrols:ImageMakerControl ImageType="ShareExternal" SetAsFontImageWithSize="22"  Width="20" HorizontalAlignment="Left" Margin="0 5 5 5"/>
-                                        <GingerCore:ucTextDicResource Text="Create [RunSet] Executer Shotcut" ToolTip="Create [RunSet] Executer Shotcut on Dektop" FontSize="15" Margin="5 5 0 0"/>
+                                        <GingerCore:ucTextDicResource Text="Create [RunSet] Executer Shortcut" ToolTip="Create [RunSet] Executer Shotcut on Dektop" FontSize="15" Margin="5 5 0 0"/>
                                     </DockPanel>
                                 </MenuItem.Header>
                             </MenuItem>

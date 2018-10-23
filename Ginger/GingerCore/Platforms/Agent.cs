@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -54,8 +55,7 @@ namespace GingerCore
 
     public class Agent : RepositoryItemBase
     {
-
-        public override bool UseNewRepositorySerializer { get { return true; } }
+        
 
         public enum eDriverType
         {
@@ -251,7 +251,7 @@ namespace GingerCore
                 lock (thisLock)
                         {
                             DriverIsRunning = Driver.IsRunning();
-                            Reporter.ToLog(eLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}");
+                            Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}");
                         }
                 if (DriverIsRunning) return eStatus.Running;
                               
@@ -361,7 +361,7 @@ namespace GingerCore
                                 break;
                             case eDriverType.UnixShell:
                                 Driver = new UnixShellDriver(BusinessFlow, ProjEnvironment);
-                                ((UnixShellDriver)Driver).SetScriptsFolder(SolutionFolder + @"\Documents\sh\");
+                                ((UnixShellDriver)Driver).SetScriptsFolder(System.IO.Path.Combine(SolutionFolder, @"Documents\sh\"));
                                 break;
 
                             case eDriverType.MobileAppiumAndroid:
@@ -410,7 +410,7 @@ namespace GingerCore
                                 string DeviceConfigFolder = GetOrCreateParam("DeviceConfigFolder").Value;
                                 if (!string.IsNullOrEmpty(DeviceConfigFolder))
                                 {
-                                    Driver = new AndroidADBDriver(BusinessFlow, SolutionFolder + @"\Documents\Devices\" + DeviceConfigFolder + @"\");
+                                    Driver = new AndroidADBDriver(BusinessFlow, System.IO.Path.Combine(SolutionFolder, @"Documents\Devices", DeviceConfigFolder, @"\"));
                                 }
                                 else
                                 {
@@ -424,8 +424,8 @@ namespace GingerCore
                     }
                 }
                 catch (Exception e)
-                {
-                    System.Windows.MessageBox.Show(e.Message);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, e.Message);
                 }
                 Driver.BusinessFlow = this.BusinessFlow;            
                 SetDriverConfiguration();
@@ -931,7 +931,7 @@ namespace GingerCore
             //ProjEnvironment = App.AutomateTabEnvironment;
             //BusinessFlow = App.BusinessFlow; ;
             //SolutionFolder = App.UserProfile.Solution.Folder;
-            //DSList = App.LocalRepository.GetSolutionDataSources();
+            //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             try
             {
                 StartDriver();
@@ -957,6 +957,22 @@ namespace GingerCore
         }
 
         public object Tag;
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Agent;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
 
     }
 }

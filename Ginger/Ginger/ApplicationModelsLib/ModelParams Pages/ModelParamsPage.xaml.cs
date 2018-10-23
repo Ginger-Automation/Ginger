@@ -21,17 +21,25 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.APIModels;
+using Ginger;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
+using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using System;
 
 namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 {
@@ -142,12 +150,94 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             ModelParametersGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteParams_Clicked));
             ModelParametersGrid.SetbtnClearAllHandler(new RoutedEventHandler(ClearAllParams_Clicked));
+            ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parametrs to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
+            ModelParametersGrid.AddToolbarTool(eImageType.DataSource, "Export Parameters to DataSource", new RoutedEventHandler(ExportParametersToDataSource));
         }
+
         private void ImportOptionalValuesForParameters(object sender, RoutedEventArgs e)
         {            
             WizardWindow.ShowWizard(new AddModelOptionalValuesWizard((ApplicationModelBase)mApplicationModel));
             ModelParametersGrid.DataSourceList = mApplicationModel.AppModelParameters;
         }
+
+        private void ExportOptionalValuesForParameters(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), string.Format("{0}_Parameters.xlsx", mApplicationModel.Name));
+                bool overrideFile = true;
+                if (File.Exists(fileName))
+                {
+                    if (MessageBox.Show("File already exists, do you want to override?", "File Exists", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                    {
+                        overrideFile = false;
+                    }
+                }
+
+                if (overrideFile)
+                {
+                    ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                    List<AppParameters> parameters = GetParameterList();
+                    string filePath = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mApplicationModel.Name));
+                    Process.Start(filePath); 
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to Get Parameter List
+        /// </summary>
+        /// <param name="im"></param>
+        /// <returns></returns>
+        private List<AppParameters> GetParameterList()
+        {
+            ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+            List<AppParameters> parameters = new List<AppParameters>();
+            try
+            {
+                foreach (var prms in mApplicationModel.AppModelParameters)
+                {
+                    im.AddNewParameterToList(parameters, prms);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+            return parameters;
+        }
+
+        /// <summary>
+        /// This method is used to Export the Parameters To DataSource
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExportParametersToDataSource(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>());
+                SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
+                List<object> selectedRunSet = mDataSourceSelectionPage.ShowAsWindow();
+                if (selectedRunSet != null && selectedRunSet.Count > 0)
+                {
+                    ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
+                    AccessDataSource mDSDetails = (AccessDataSource)(((DataSourceTable)selectedRunSet[0]).DSC);
+                    string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
+                    List<AppParameters> parameters = GetParameterList();
+                    im.ExportSelectedParametersToDataSouce(parameters, mDSDetails, tableName); 
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
+            }
+        }        
+        
         private void UploadToGlobalParam(object sender, RoutedEventArgs e)
         {
             AppModelParameter CurrentAMDP = (AppModelParameter)ModelParametersGrid.CurrentItem;
@@ -159,8 +249,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             foreach (GlobalAppModelParameter GAMDP in ModelsGlobalParamsList)
             {
                 if (GAMDP != globalAppModelParameter && GAMDP.PlaceHolder == CurrentAMDP.PlaceHolder)
-                {
-                    MessageBox.Show("Global Model Parameters allready contains a parameter Place Holder with the same value", "Cannot upload the selected parameter" , System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                {                   
+                    Reporter.ToUser(eUserMsgKeys.ParameterAlreadyExists, "Global Model Parameters already contains a parameter Place Holder with the same value");
                     return;
                 }
             }
@@ -181,7 +271,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     AddGlobalParametertoAPIGlobalParameterList(APIGlobalParamList, GAMP);
                 }
         }
-
+        
         private void DeleteParams_Clicked(object sender, RoutedEventArgs e)
         {
             DeleteParams(false);
@@ -196,8 +286,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             MessageBoxResult messageResult = System.Windows.MessageBoxResult.No;
             if (mApplicationModel is ApplicationAPIModel && (((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.XML || ((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.JSon))
-            {
-                messageResult = System.Windows.MessageBox.Show("Do you want to delete also nodes from request body that contain those parameters?", "Delete nodes from request body?", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No);
+            {                
+                messageResult = Reporter.ToUser(eUserMsgKeys.DeleteNodesFromRequest);
             }
 
             if (messageResult == System.Windows.MessageBoxResult.Yes)
@@ -307,10 +397,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 GingerCore.General.DoEvents();
                 ModelParametersGrid.DataSourceList.Move(ModelParametersGrid.DataSourceList.Count - 1, selctedIndex);
 
-                //Update all places with new placeholder merged param name
-                //TODO: Fix with New Reporter (on GingerWPF)
-                if (System.Windows.MessageBox.Show(string.Format("Do you want to update the merged instances on all model configurations?"), "Models Parameters Merge", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.No) == System.Windows.MessageBoxResult.Yes)
+                //Update all places with new placeholder merged param name                            
+                if(Reporter.ToUser(eUserMsgKeys.ParameterMerge) == MessageBoxResult.Yes)
+                {
                     mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, placeHoldersToReplace, newParamName);
+                }
+                    
             }
         }
 
@@ -372,8 +464,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 CurrentGAMDP = (GlobalAppModelParameter)xGlobalModelParametersGrid.CurrentItem;
                 if (CurrentGAMDP != null && !CurrentGAMDP.PlaceHolder.Equals(GlobalParamOldValueBeforeEdit))
-                {
-                    System.Windows.MessageBox.Show("Global Parameter Place Holder cannot be edit.", "Global Parameter Edit", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.ParameterEdit);
                     CurrentGAMDP.PlaceHolder = GlobalParamOldValueBeforeEdit;
                 }
             }
@@ -385,8 +477,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 if (AMDP != CurrentAMDP && AMDP.PlaceHolder == CurrentAMDP.PlaceHolder)
                 {
-                    CurrentAMDP.PlaceHolder = LocalParamValueBeforeEdit;
-                    System.Windows.MessageBox.Show("Please specify unique value", "Optional Value Already Exists", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                    CurrentAMDP.PlaceHolder = LocalParamValueBeforeEdit;                    
+                    Reporter.ToUser(eUserMsgKeys.SpecifyUniqueValue);
                     return true;
                 }
             }
@@ -394,8 +486,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 if (GAMDP != CurrentAMDP && GAMDP.PlaceHolder == CurrentAMDP.PlaceHolder)
                 {
-                    CurrentAMDP.PlaceHolder = LocalParamValueBeforeEdit;
-                    System.Windows.MessageBox.Show("Please specify unique value", "Optional Value Already Exists", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                    CurrentAMDP.PlaceHolder = LocalParamValueBeforeEdit;                    
+                    Reporter.ToUser(eUserMsgKeys.SpecifyUniqueValue);
                     return true;
                 }
             }

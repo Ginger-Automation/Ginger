@@ -178,5 +178,33 @@ namespace GingerWPF.BindingLib
                 control.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
             }
         }
+
+        public static void ObjFieldBinding(TextBlock textBlockControl, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay, IValueConverter bindingConvertor = null)
+        {
+            //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
+            //TODO: check perf impact + reuse exisitng binding on same obj.prop
+            try
+            {
+                Binding b = new Binding();
+                b.Source = obj;
+                b.Path = new PropertyPath(property);
+                b.Mode = BindingMode;
+                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                textBlockControl.SetBinding(dependencyProperty, b);
+            }
+            catch (Exception ex)
+            {
+                //it is possible we load an old enum or something else which will cause the binding to fail
+                // Can happen also if the bind field name is incorrect
+                // mark the control in red, instead of not openning the Page
+                // Set a tool tip with the error
+
+                // control.IsEnabled = false; // Do not disable as the red will not show
+                textBlockControl.Style = null; // remove style so red will show
+                //control.Foreground = System.Windows.Media.Brushes.Red;
+                textBlockControl.Background = System.Windows.Media.Brushes.LightPink;
+                textBlockControl.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
+            }
+        }
     }
 }
