@@ -53,7 +53,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return NewTVItemStyle(DSTableDetails, eImageType.DataTable, nameof(DSDetails.Name));
+            return NewTVItemHeaderStyle(DSTableDetails, eImageType.DataTable, nameof(DSDetails.Name));
             //return TreeViewUtils.CreateItemHeader(DSTableDetails.Name, "@DataTable_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus), DSTableDetails, DataSourceTable.Fields.Name);
         }
 

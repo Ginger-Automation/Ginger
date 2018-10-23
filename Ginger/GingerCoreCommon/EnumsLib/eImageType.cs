@@ -206,10 +206,7 @@ namespace Amdocs.Ginger.Common.Enums
         OpenFolder,
         Check,
         Bug,
-        DataSource,
-        DataTable,
-        PluginPackage,
-        Bug,                
-        PlusSquare,
+        PlusSquare,        
+        DataTable        
     }
 }
