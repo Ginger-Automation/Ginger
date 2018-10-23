@@ -217,7 +217,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     //TODO: catch excpetion of socket not all..         
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         Thread.Sleep(500);
                     }                  
                 }

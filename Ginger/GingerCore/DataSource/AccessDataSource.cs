@@ -372,7 +372,7 @@ namespace GingerCore.DataSource
                         catch (Exception e)
                         {
                             dataTable.RejectChanges();
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                             //Reporter.ToUser(eUserMsgKeys.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
                         }
                     }

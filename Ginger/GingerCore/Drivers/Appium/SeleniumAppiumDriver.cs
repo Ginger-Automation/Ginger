@@ -346,7 +346,7 @@ namespace GingerCore.Drivers.Appium
                         File.Delete(currFileName);
                     }catch(Exception e) {
                         //Could't delete log file
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     }
                 }
             }
@@ -371,12 +371,12 @@ namespace GingerCore.Drivers.Appium
             catch (UnauthorizedAccessException ex) {
                 //Access denied - probably when file is being used by another process
                 Thread.Sleep(2000);
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
             catch(Exception e){
                 //Still launching Appium Server Or reading file exception
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 return null;
             }
             //Still launching Appium Server
@@ -539,7 +539,7 @@ namespace GingerCore.Drivers.Appium
                     DriverWindow = null;
                 }
             } catch (InvalidOperationException e) {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
 
             if (Driver != null){
@@ -733,7 +733,7 @@ namespace GingerCore.Drivers.Appium
                                     }
                                 }
                             }
-                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             switch (DriverPlatformType)
                             {
                                 case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
@@ -832,7 +832,7 @@ namespace GingerCore.Drivers.Appium
                                         return;
                                 }                               
                                 attribute = e.GetAttribute(value);
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             }
                             act.AddOrUpdateReturnParamActual("Actual", attribute);
                         }
@@ -1022,7 +1022,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
             act.AddScreenShot(tmp);
         }
