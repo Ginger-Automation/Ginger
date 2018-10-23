@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -181,13 +182,15 @@ namespace Amdocs.Ginger.Repository
         {
             if (!isLocalBackup)
             {
-                mBackupDic = new Dictionary<string, object>();                
-            }             
+                mBackupDic = new Dictionary<string, object>();
+            }
             mLocalBackupDic = new Dictionary<string, object>();
-            
+
             var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
-            {               
+            {
+                if (IsDoNotBackupAttr(mi)) continue;                
+                
                 if (!isLocalBackup)
                 {                    
                     if (mi.Name == nameof(mBackupDic)) continue; // since we are running on repo item which contain the dic we need to ignore trying to save it...
@@ -229,7 +232,22 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        
+        private bool IsDoNotBackupAttr(MemberInfo mi)
+        {
+            var IsSerializedAttr = mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
+            if (IsSerializedAttr == null)
+            {
+                return true;
+            }
+
+            var IsDoNotBackupAttr = mi.GetCustomAttribute(typeof(DoNotBackupAttribute));
+            if (IsDoNotBackupAttr != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private void BackupList(string Name, IObservableList v, bool isLocalBackup = false)
         {
             //TODO: if v is Lazy bak the text without drill down
@@ -312,9 +330,7 @@ namespace Amdocs.Ginger.Repository
             var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
-                // Console.WriteLine(this.ToString() +  " - mi:" + mi.Name + " - " + mi.ToString());                              
-                if (mi.Name == nameof(mBackupDic) || mi.Name == nameof(mLocalBackupDic) || mi.Name == nameof(FileName) || mi.Name == nameof(FilePath) || mi.Name == nameof(ObjFolderName) || mi.Name == nameof(ObjFileExt) || mi.Name == nameof(ContainingFolder) || mi.Name == nameof(ContainingFolderFullPath))
-                    continue;
+                if (IsDoNotBackupAttr(mi)) continue;
                 object v;
                 bool b;
                 if (isLocalBackup)
