@@ -56,6 +56,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                     break;                
                 case eElementType.List:
                 case eElementType.ComboBox:
+                    pbTableControlActionlist.Add(ActUIElement.eElementAction.SendKeysAndValidate);
+                    pbTableControlActionlist.Add(ActUIElement.eElementAction.SelectandValidate);
+                    break;
                 case eElementType.TextBox:
                 case eElementType.Text:
                     pbTableControlActionlist.Add(ActUIElement.eElementAction.SendKeysAndValidate);
@@ -73,6 +76,15 @@ namespace GingerCore.Platforms.PlatformsInfo
             return null;
         }
 
+        public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
+        {
+            List<ActUIElement.eSubElementType> list = new List<ActUIElement.eSubElementType>();
+            if (elementType== eElementType.List || elementType == eElementType.ComboBox)
+            {                
+                list.Add(ActUIElement.eSubElementType.Pane);                
+            }
+            return list;
+        }
         public override List<string> GetPlatformUIElementPropertiesList(eElementType ElementType)
         {
             //TODO: cache in hashmap per elem type

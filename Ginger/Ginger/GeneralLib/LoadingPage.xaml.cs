@@ -13,16 +13,18 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Ginger.SolutionLibNew
+namespace Ginger
 {
     /// <summary>
-    /// Interaction logic for LoadingSolutionPage.xaml
+    /// Interaction logic for LoadingPage.xaml
     /// </summary>
-    public partial class LoadingSolutionPage : Page //NOSONAR
+    public partial class LoadingPage : Page
     {
-        public LoadingSolutionPage()
+        public LoadingPage(string loadingLabel="Loading...")
         {
             InitializeComponent();
+
+            xProcessingLabel.Content = loadingLabel;
         }
     }
 }

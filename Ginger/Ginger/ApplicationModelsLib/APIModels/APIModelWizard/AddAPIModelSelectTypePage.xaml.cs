@@ -302,7 +302,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                     {
                         System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
 
-                        dlg.Filter = "XML Files (*.xml)|*.xml" + "|WSDL Files (*.wsdl)|*.wsdl" + "|All Files (*.*)|*.*";
+                        dlg.Filter = "WSDL Files (*.wsdl)|*.wsdl" + "|XML Files (*.xml)|*.xml" + "|All Files (*.*)|*.*";
 
                         System.Windows.Forms.DialogResult result = dlg.ShowDialog();
 

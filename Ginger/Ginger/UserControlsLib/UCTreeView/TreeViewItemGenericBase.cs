@@ -347,7 +347,7 @@ namespace GingerWPF.TreeViewItemsLib
                         catch (Exception ex)
                         {                            
                             Reporter.ToUser(eUserMsgKeys.RenameItemError, ex.Message);
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             return;
                         }
                     }

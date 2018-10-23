@@ -691,7 +691,7 @@ namespace Ginger.Run
                             catch (Exception ex)
                             {
                                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to load the Solution");
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                                 return false;
                             }
                             break;
@@ -757,12 +757,11 @@ namespace Ginger.Run
                 try
                 {
                     AnalyzerPage analyzerPage = new AnalyzerPage();
-                    await Task.Run(() =>
-                    {
-                        analyzerPage.Init(App.UserProfile.Solution, mRunSetConfig);
-                        analyzerPage.AnalyzeWithoutUI();
-                    });
-                    
+
+                    analyzerPage.Init(App.UserProfile.Solution, mRunSetConfig);
+                    await analyzerPage.AnalyzeWithoutUI();
+
+
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)
                     {
                         if (!runInSilentMode)

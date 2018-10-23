@@ -96,7 +96,7 @@ namespace Ginger.Run
         public Email Email{ get; set; }
 
         public bool mRunModeParallel = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool RunModeParallel
         {
             get
@@ -111,7 +111,7 @@ namespace Ginger.Run
         }
 
         public bool mRunWithAnalyzer = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool RunWithAnalyzer
         {
             get

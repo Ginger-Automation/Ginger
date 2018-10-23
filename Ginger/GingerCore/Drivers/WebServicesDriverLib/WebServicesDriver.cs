@@ -182,8 +182,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             try
             {
-                mDriverWindow.Close();
-                mDriverWindow = null;
+                if (mDriverWindow != null)
+                {
+                    mDriverWindow.Close();
+                    mDriverWindow = null;
+                }
             }
             catch (Exception ex)
             {

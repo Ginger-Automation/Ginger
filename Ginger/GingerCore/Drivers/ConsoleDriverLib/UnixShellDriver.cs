@@ -203,7 +203,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 {
                     ss.WriteByte(System.Convert.ToByte(Convert.ToInt32(command)));
                 }
-                catch(Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                catch(Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
             else
             {
