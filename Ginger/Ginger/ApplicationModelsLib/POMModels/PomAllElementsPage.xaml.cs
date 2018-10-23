@@ -183,17 +183,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xCreateNewElement.Visibility = Visibility.Collapsed;
                 GingerCore.General.DoEvents();
                 mSpyElement = mWinExplorer.GetControlFromMousePosition();
-
-                mWinExplorer.UpdateElementInfoFields(mSpyElement);
-                mSpyElement.Locators = mWinExplorer.GetElementLocators(mSpyElement);
-                mSpyElement.Properties = mWinExplorer.GetElementProperties(mSpyElement);
-                mSpyElement.WindowExplorer = mWinExplorer;
-                mSpyElement.IsAutoLearned = true;
-
                 if (mSpyElement != null)
                 {
+                    
+                    mWinExplorer.UpdateElementInfoFields(mSpyElement);
+                    mSpyElement.Locators = mWinExplorer.GetElementLocators(mSpyElement);
+                    mSpyElement.Properties = mWinExplorer.GetElementProperties(mSpyElement);
+                    mSpyElement.WindowExplorer = mWinExplorer;
+                    mSpyElement.IsAutoLearned = true;
                     xStatusLable.Content = "Element found";
-
                     FocusSpyItemOnElementsGrid();
                     mWinExplorer.HighLightElement(mSpyElement);
                 }
@@ -273,12 +271,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
 
             //Change Grid View
-            
-            if (mAgent.Driver.IsDriverBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
 
             if (mWinExplorer == null)
             {
@@ -286,17 +278,23 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
+            if (mAgent != null && mAgent.Driver.IsDriverBusy)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                return;
+            }
+
             mappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
-            TestAllElementsAsync().ConfigureAwait(false);
+            TestAllElementsAsync();
         }
 
 
-        public async Task TestAllElementsAsync()
+        public async void TestAllElementsAsync()
         {
             xTestAllElements.Visibility = Visibility.Collapsed;
             xStopTestAllElements.Visibility = Visibility.Visible;
             mStopProcess = false;
-            await Task.Run(() => TestAllElements()).ConfigureAwait(false);
+            await Task.Run(() => TestAllElements());
             xTestAllElements.Visibility = Visibility.Visible;
             xStopTestAllElements.Visibility = Visibility.Collapsed;
         }

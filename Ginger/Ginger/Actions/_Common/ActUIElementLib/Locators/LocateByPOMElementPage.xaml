@@ -28,11 +28,11 @@
         <Label Style="{StaticResource $LabelStyle}" HorizontalContentAlignment="Right" Grid.Column="3" Content="Model Element:" VerticalAlignment="Center" />
         <ComboBox Grid.Column="4" x:Name="xPOMElementComboBox" Height="25" IsEnabled="False"
                   Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Row="0" Background="White"
-                  DropDownOpened="POMElementComboBox_DropDownOpened" DropDownClosed="POMElementComboBox_DropDownClosed">
+                  DropDownOpened="POMElementComboBox_DropDownOpened" SelectionChanged="xPOMElementComboBox_SelectionChanged" DropDownClosed="POMElementComboBox_DropDownClosed">
             <Ginger:ucGrid x:Name="xPOMElementsGrid" Width="420" Title="POM Mapped Elements" 
                            ShowTitle="Collapsed" HorizontalAlignment="Stretch" 
                            VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" 
-                           ShowAdd="Collapsed" ShowDelete="Collapsed" RowChangedEvent="xPOMElementsGrid_RowChangedEvent"/>
+                           ShowAdd="Collapsed" ShowDelete="Collapsed"/>
             <TextBlock x:Name="xHeaderTextBlock" Visibility="Hidden" Focusable="False"/>
         </ComboBox>
         <usercontrols:ucButton Grid.Column="5" x:Name="HighlightButton" ToolTip="Highlight Element" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="28" ButtonImageHeight="28" ButtonImageType="Pointer" Click="HighlightElementClicked" VerticalAlignment="Center"/>

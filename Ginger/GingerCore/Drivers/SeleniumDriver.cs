@@ -3553,7 +3553,7 @@ namespace GingerCore.Drivers
                         foundElementsList.Add(foundElemntInfo);
                     }                                     
 
-                    if (el.TagName == "iframe")
+                    if (el.TagName == "iframe" || el.TagName == "frame")
                     {
                         string xpath = GenerateXpathForIWebElement(el, "");
                         Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
@@ -4448,12 +4448,12 @@ namespace GingerCore.Drivers
             else
                 IframePath = IframeElementInfo.XPath;
             ElementInfo ElementInfo = GetHTMLElementInfoFromIWebElement(elInsideIframe, IframePath);
+            ElementInfo.ElementObject = elInsideIframe;
             if (elInsideIframe.TagName == "iframe" || elInsideIframe.TagName == "frame")
             {
                 Driver.SwitchTo().DefaultContent();
                 return GetElementFromIframe(ElementInfo);
             }
-            Driver.SwitchTo().DefaultContent();
             return ElementInfo;
         }
 
@@ -6138,7 +6138,8 @@ namespace GingerCore.Drivers
                 return;
             }
 
-            SwitchFrame(ei.Path, ei.XPath, true);
+            //Driver.SwitchTo().DefaultContent();
+            //SwitchFrame(ei.Path, ei.XPath, true);
             if (string.IsNullOrEmpty(ei.XPath))
                 ei.XPath = GenerateXpathForIWebElement((IWebElement)ei.ElementObject, "");
 
@@ -6151,7 +6152,7 @@ namespace GingerCore.Drivers
                 ei.Height = e.Size.Height;
             }
 
-            Driver.SwitchTo().DefaultContent();
+            //Driver.SwitchTo().DefaultContent();
         }
 
         XPathHelper IXPath.GetXPathHelper(ElementInfo info)

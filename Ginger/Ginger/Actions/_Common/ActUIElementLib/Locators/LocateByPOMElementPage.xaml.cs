@@ -177,9 +177,22 @@ namespace Ginger.Actions._Common.ActUIElementLib
             xPOMElementsGrid.InitViewItems();
         }
 
-        private void xPOMElementsGrid_RowChangedEvent(object sender, System.EventArgs e)
+        private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
-            if ((xPOMElementComboBox.IsEnabled) && ((DataGrid)sender).SelectedItem != null)
+            ApplicationAgent currentAgent = App.AutomateTabGingerRunner.ApplicationAgents.Where(z => z.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            if ((currentAgent == null) || !(currentAgent.Agent.Driver is IWindowExplorer) || (currentAgent.Agent.Status != Agent.eStatus.Running))
+            {
+                Reporter.ToUser(eUserMsgKeys.NoRelevantAgentInRunningStatus);
+            }
+            else
+            {
+                ((IWindowExplorer)currentAgent.Agent.Driver).HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true);
+            }
+        }
+
+        private void xPOMElementComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if ((xPOMElementComboBox.IsEnabled))
             {
                 if (mAction is ActUIElement)
                 {
@@ -197,19 +210,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 }
 
                 HighlightButton.IsEnabled = true;
-            }
-        }
-
-        private void HighlightElementClicked(object sender, RoutedEventArgs e)
-        {
-            ApplicationAgent currentAgent = App.AutomateTabGingerRunner.ApplicationAgents.Where(z => z.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
-            if ((currentAgent == null) || !(currentAgent.Agent.Driver is IWindowExplorer) || (currentAgent.Agent.Status != Agent.eStatus.Running))
-            {
-                Reporter.ToUser(eUserMsgKeys.NoRelevantAgentInRunningStatus);
-            }
-            else
-            {
-                ((IWindowExplorer)currentAgent.Agent.Driver).HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true);
             }
         }
     }

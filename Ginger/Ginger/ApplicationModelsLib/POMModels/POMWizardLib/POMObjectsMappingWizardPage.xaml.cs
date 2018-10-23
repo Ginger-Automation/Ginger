@@ -141,6 +141,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mWizard.ProcessStarted();
                 mWizard.IWindowExplorerDriver.UnHighLightElements();
                 mWizard.ScreenShot = ((IVisualTestingDriver)mWizard.Agent.Driver).GetScreenShot();
+                mWizard.POM.PageURL = ((DriverBase)mWizard.Agent.Driver).GetURL();
 
                 xStopLoadButton.Visibility = Visibility.Visible;
                 xReLearnButton.Visibility = Visibility.Collapsed;

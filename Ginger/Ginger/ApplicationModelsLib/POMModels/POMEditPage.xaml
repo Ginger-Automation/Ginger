@@ -14,7 +14,7 @@
     <ScrollViewer>
         <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="250"/>
+                <RowDefinition Height="300"/>
                 <RowDefinition  Name="SecondRow" Height="100*"/>
             </Grid.RowDefinitions>
 
@@ -24,31 +24,45 @@
                     <TextBox x:Name="xNameTextBox" Style="{StaticResource @TextBoxStyle}" FontSize="14" FontWeight="Bold" />
                 </StackPanel>
 
+
                 <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,0">
                     <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Description:"/>
                     <TextBox x:Name="xDescriptionTextBox" TextWrapping="WrapWithOverflow" Height="50" Style="{StaticResource @MultiRowsTextBoxStyle}" />
                 </StackPanel>
+                
                 <Grid Margin="0,20,10,0" >
                     <Grid.RowDefinitions>
                         <RowDefinition  Height="100"></RowDefinition>
+                                                <RowDefinition  Height="100"></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="300"></ColumnDefinition>
-                        <ColumnDefinition Width="200*"></ColumnDefinition>
+                        <ColumnDefinition Width="390"></ColumnDefinition>
+                        <ColumnDefinition Width="100*"></ColumnDefinition>
                         <ColumnDefinition Width="300*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Left" Orientation="Horizontal">
                         <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Target Application:"/>
-                        <UserControlsLib1:UCComboBox x:Name="xTargetApplicationComboBox" VerticalAlignment="Top" Width="170"></UserControlsLib1:UCComboBox>
+                        <UserControlsLib1:UCComboBox x:Name="xTargetApplicationComboBox" VerticalAlignment="Top"  Width="170"></UserControlsLib1:UCComboBox>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                    <Grid Grid.Row="0" Grid.Column="0" Margin="0,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="75"/>
+                            <ColumnDefinition Width="300*"/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
+                        <Label  Grid.Column="0" Content="Page URL:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <TextBox x:Name="xPageURLTextBox" Grid.Column="1" Style="{StaticResource @TextBoxStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Center"  FontWeight="Bold"/>
+                        <UserControls:ucButton x:Name="xPageURLBtn" Grid.Column="2" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="GoNext" Click="xPageURLBtn_Click"/>
+                    </Grid>
+                    
+                    <StackPanel  Grid.Row="1" >
                         <Ginger:ucTagsViewer x:Name="xTagsViewer" HorizontalAlignment="Left" VerticalAlignment="Center" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="2" >
-                        <agents:ucAgentControl x:Name="xAgentControlUC" HorizontalAlignment="Right" Width="284"></agents:ucAgentControl>
+                        <agents:ucAgentControl x:Name="xAgentControlUC" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Right" Width="284"></agents:ucAgentControl>
                     </StackPanel>
 
 
