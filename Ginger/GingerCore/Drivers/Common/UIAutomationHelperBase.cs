@@ -101,6 +101,7 @@ namespace GingerCore.Drivers.Common
         public abstract void DragAndDrop(object element, ActUIElement action);
         public abstract string ClickAndValidteHandler(object element, ActUIElement action);
         public abstract string SendKeysAndValidateHandler(object element, ActUIElement action);
+        public abstract string SelectAndValidateHandler(object element, ActUIElement action);
         public abstract void SelectControlByIndex(object element, string value);
         public abstract void SendKeysToControl(object element, string value);
         public abstract  String GetControlValue(object element);
