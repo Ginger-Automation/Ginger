@@ -37,7 +37,7 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
         }
 
         // TODO:
-         // if (IsEmbeddedPlugin)
+        // if (IsEmbeddedPlugin)
         //            {
         //                GingerCore.General.DirectoryCopy(PlugInSourcePath, solutionPlugInsPath, true);
         //                PlugInRootPath = solutionPlugInsPath;
@@ -49,5 +49,6 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
         //                PlugInRootPath = PlugInSourcePath;
         //                PlugInType = ePluginType.System;
         //            }
+               
     }
 }

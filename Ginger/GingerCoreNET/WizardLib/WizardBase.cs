@@ -138,7 +138,7 @@ namespace GingerWPF.WizardLib
         {
             WizardPage wp1 = new WizardPage() { Name = Name, Title = Title, SubTitle = SubTitle, Page = Page };            
             Pages.Add(wp1);
-        }
+        }        
 
         //internal void ShowWizard(int width = 800)
         //{
@@ -147,7 +147,7 @@ namespace GingerWPF.WizardLib
         //    {
         //        wp.Page.WizardEvent(WizardEventArgs);
         //    }
-            
+
         //    mWizardWindow.ShowDialog(width);                          // /TODO: pass the width
         //}
 
@@ -178,26 +178,26 @@ namespace GingerWPF.WizardLib
         public void Next()
         {            
             WizardEventArgs WizardEventArgsLeavingForNextPage = new WizardEventArgs(this, EventType.LeavingForNextPage);
-            GetCurrentPage().Page.WizardEvent(WizardEventArgsLeavingForNextPage);
+            GetCurrentPage().Page.WizardEvent(WizardEventArgsLeavingForNextPage);            
             //TODO: add check if can move next 
             if (!WizardEventArgsLeavingForNextPage.CancelEvent)
             {
                 Pages.MoveNext();
-                GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));
+                GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));                
             }            
         }
-
+        
         public void Prev()
         {
             WizardEventArgs WizardEventArgs = new WizardEventArgs(this, EventType.Prev);
             foreach (WizardPage wp in Pages)
             {
-                wp.Page.WizardEvent(WizardEventArgs);
+                wp.Page.WizardEvent(WizardEventArgs);                
             }
 
             Pages.MovePrev();
 
-            GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));
+            GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));            
         }
 
         public virtual void Cancel()
@@ -205,7 +205,7 @@ namespace GingerWPF.WizardLib
             WizardEventArgs WizardEventArgs = new WizardEventArgs(this, EventType.Cancel);
             foreach (WizardPage wp in Pages)
             {
-                wp.Page.WizardEvent(WizardEventArgs);
+                wp.Page.WizardEvent(WizardEventArgs);                
             }
         }
 
