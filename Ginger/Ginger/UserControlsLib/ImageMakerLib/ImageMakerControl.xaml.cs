@@ -531,7 +531,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.EnvelopeOutline);
                     break;
                 case eImageType.SourceControl:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cloud);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CodeFork);
                     break;
                 case eImageType.SourceControlNew:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Plus, Brushes.Green, toolTip:"New");
@@ -550,6 +550,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.SourceControlLockedByMe:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.SaddleBrown, toolTip: "Locked by You");
+                    break;
+                case eImageType.SourceControlError:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationCircle, Brushes.Red, toolTip: "Error in checking status");
                     break;
                 case eImageType.Check:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircleOutline);
