@@ -101,34 +101,37 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        
+        DynamicListWrapper mDynamicListWrapper = null;
 
-        ObservableList<dynamic> mList;        
-       
-        [DoNotBackup]  // ?? do bak only to seri items
+        public List<string> GetListItemProperties()
+        {
+            return mDynamicListWrapper.GetListItemProperties();
+        }
+
         public ObservableList<dynamic> ListStringValue
         {
             get
-            {                
-                if (mList != null)
+            {
+                if (mDynamicListWrapper == null)
                 {
-                    return mList;
-                }
-                if (string.IsNullOrEmpty(mValue))
-                {
-                    DynamicListWrapper list = new DynamicListWrapper();
-                    mList = list.GetList(); 
-                }
-                else
-                {
-                    dynamic dynList = JsonConvert.DeserializeObject(mValue);
-                    mList = new ObservableList<dynamic>();
-                    foreach (dynamic item in dynList)
+                    if (string.IsNullOrEmpty(mValue))
                     {
-                        mList.Add(item);
-                    }                    
+                        // Create empty list with one dummy item
+                        mDynamicListWrapper = new DynamicListWrapper(ParamTypeEX, true);
+                    }
+                    else
+                    {
+                        dynamic dynList = JsonConvert.DeserializeObject(mValue);
+                        mDynamicListWrapper = new DynamicListWrapper(ParamTypeEX);                        
+                        foreach (dynamic item in dynList)
+                        {
+                            mDynamicListWrapper.Items.Add(item);
+                        }
+                    }
                 }
 
-                return mList;
+                return mDynamicListWrapper.Items;
             }
 
             set
@@ -136,7 +139,7 @@ namespace Amdocs.Ginger.Repository
                 // Keep the list as string
                 mValue = JsonConvert.SerializeObject(value, Formatting.None);
                 // Keep the actual list objects
-                mList = value;
+                mDynamicListWrapper.Items = value;
                 OnPropertyChanged(nameof(Value));
             }
         }
@@ -165,6 +168,9 @@ namespace Amdocs.Ginger.Repository
                 this.Param = value;
             }
         }
+
+        // For List<T> keep the type of list item
+        public string ParamTypeEX { get; set; }
 
         public override string GetNameForFileName()
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Amdocs.Ginger.Plugin.Core;
+using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Common.Actions
@@ -40,18 +41,37 @@ namespace Amdocs.Ginger.Common.Actions
             }
             set
             {
+                ParamTypeStr = value;
                 switch (value)
                 {
                     case "string":
                         ParamType = typeof(string);
                         break;
-                    case "Int32":
+                    case "String":
+                        ParamType = typeof(String);
+                        break;
+                    case "Int32": 
                         ParamType = typeof(Int32);
+                        break;
+                    case "int":
+                        ParamType = typeof(int);
                         break;
                     case "List<string>":
                         ParamType = typeof(List<string>);
                         break;
-                        // TODO: the rest
+                    case "IGingerAction":
+                        ParamType = typeof(IGingerAction);
+                        break;
+                    default:
+                        if (value.StartsWith("List<"))
+                        {
+                            ParamType = typeof(DynamicListWrapper);                            
+                        }
+                        else
+                        {
+                            throw new Exception("Unknown param type to handle: " + ParamType.FullName);
+                        }
+                        break;
                 }
             }
         }
@@ -68,7 +88,8 @@ namespace Amdocs.Ginger.Common.Actions
         }
 
         public Type ParamType { get; set; }
-        
-        
+
+        //For List<T> keep the full type name
+        public string ParamTypeStr { get; set; }
     }
 }

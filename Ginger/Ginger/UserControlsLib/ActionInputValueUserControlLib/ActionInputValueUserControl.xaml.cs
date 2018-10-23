@@ -70,7 +70,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
             
             // List - Show in Grid
-            if (AIV.ParamType == typeof(List<string>))
+            if (AIV.ParamType == typeof(DynamicListWrapper))
             {
                 ValueExpressionButton.Visibility = Visibility.Collapsed;
                 this.ValueDataGrid.Visibility = Visibility.Visible;
@@ -100,9 +100,8 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         private void AddItem(object sender, RoutedEventArgs e)
         {
             dynamic expando = new ExpandoObject();
-            expando.Name = "";
-            expando.Country = "";
-
+            // TODO set obj with item default value - expando.Name = "";
+            
             ((ObservableList<dynamic>)xUCcGrid.DataSourceList).Add(expando);
         }
 
@@ -117,9 +116,14 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
-            viewCols.Add(new GridColView() { Field = "Name", WidthWeight = 250 });
-            viewCols.Add(new GridColView() { Field = "Country", WidthWeight = 250 });
-            viewCols.Add(new GridColView() { Field = "value", WidthWeight = 50 });
+
+            // Create grid columns based on list item properties
+            List<string> props = mActInputValue.GetListItemProperties();
+            foreach(string prop in props)
+            {
+                viewCols.Add(new GridColView() { Field = prop, WidthWeight = 10 });
+            }
+
             xUCcGrid.SetAllColumnsDefaultView(view);
             xUCcGrid.InitViewItems();
         }
