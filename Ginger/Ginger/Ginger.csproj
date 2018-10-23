@@ -2774,7 +2774,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dictionaries\Skins\GingerDefualtSkinDictionary.xaml">
+    <Page Include="Dictionaries\Skins\GingerDefaultSkinDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
