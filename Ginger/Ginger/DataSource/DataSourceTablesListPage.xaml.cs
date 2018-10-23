@@ -47,21 +47,24 @@ namespace Ginger.DataSource
 
             mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
+            { 
                 return;
-           
+            }
+
             List<string> mDSNames = new List<string>();
             foreach (DataSourceBase ds in mDSList)
+            { 
                 mDSNames.Add(ds.Name);
+            }
 
             GingerCore.General.FillComboFromList(cmbDataSourceName, mDSNames);
             cmbDataSourceName.SelectedIndex = 0;
-            mDataSourceName = mDSNames[0];
-
-            //GingerCore.General.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mDSTableDetails, DataSourceTable.Fields.Name);
+            mDataSourceName = mDSNames[0];            
         }       
 
         private void DSTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //Implament DS Type Change
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -126,8 +129,7 @@ namespace Ginger.DataSource
                         ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
                         ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
                     }
-                    ds.Init(ds.FileFullPath);
-                    //ds.Init(ds.FilePath);
+                    ds.Init(ds.FileFullPath);                    
                     List<string> dsTableNames = new List<string>();
                     mDSTableList = ds.GetTablesList();
                     if (mDSTableList != null)
@@ -144,9 +146,13 @@ namespace Ginger.DataSource
                     GingerCore.General.FillComboFromList(cmbDataSourceTableName, dsTableNames);
                     cmbDataSourceTableName.SelectedIndex = 0;
                     if (mDSTableList != null && mDSTableList.Count > 0)
+                    { 
                         mDataSourceTableName = mDSTableList[0].Name;
+                    }
                     else
+                    { 
                         mDataSourceTableName = null;
+                    }
                     break;
                 }
             }
@@ -155,7 +161,10 @@ namespace Ginger.DataSource
         private void cmbDataSourceTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cmbDataSourceTableName == null || cmbDataSourceTableName.Items.Count == 0)
+            { 
                 return;
+            }
+
             foreach (DataSourceTable dst in mDSTableList)
             {
                 if (dst.Name == cmbDataSourceTableName.SelectedValue.ToString())

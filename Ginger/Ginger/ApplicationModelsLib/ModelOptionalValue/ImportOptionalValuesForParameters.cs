@@ -980,8 +980,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             DataTable dtTemplate = new DataTable(tableName);
             dtTemplate.Columns.Add(PARAMETER_NAME, typeof(string));
             dtTemplate.Columns.Add(DESCRIPTION, typeof(string));
-            //dtTemplate.Columns.Add("GINGER_USED", typeof(string));
-
+            
             colCount = colCount+2;
             for (int index = 1; index <= colCount; index++)
             {
