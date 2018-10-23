@@ -112,13 +112,16 @@ namespace Ginger.AnalyzerLib
             AnalyzerItemsGrid.Title = "'" + RSC.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " Issues";
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (mAnalyzeDoneOnce == false)
-                Analyze();
+            {
+                await Analyze();
+            }
+             
         }
 
-        private void RerunButton_Click(object sender, RoutedEventArgs e)
+        private async void RerunButton_Click(object sender, RoutedEventArgs e)
         {
             if (BusyInProcess)
             {
@@ -130,58 +133,52 @@ namespace Ginger.AnalyzerLib
             CriticalAndHighIssuesLabelCounter.Content = "0";
             CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#20334f");   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
-            Analyze();
+            await Analyze();
         }
 
-        public void AnalyzeWithoutUI()
+        public async Task AnalyzeWithoutUI()
         {
             mAnalyzeWithUI = false;
-            Analyze();
+            await Analyze();
         }
 
-        private async void Analyze()
-        {
-          // Running it on another task to release UI while processing
-            await Task.Run(() =>
-            {
+        private async Task Analyze()
+        {         
                 // Each anlyzer will set to true once completed, this is prep for multi run in threads for speed
                 BusyInProcess = true;
                 mAnalyzerCompleted = false;
                 mAnalyzeDoneOnce = true;
                 try
                 {
-                    StatusLabel.Dispatcher.Invoke(
-                  System.Windows.Threading.DispatcherPriority.Normal,
-                      new Action(
-                          delegate ()
-                          {
-                              if (mAnalyzeWithUI)
-                              {
-                                  SetStatus("Analyzing Started");
-                                  StatusLabel.Visibility = Visibility.Visible;
-                              }
-                          }
-                            ));
-                    switch (mAnalyzedObject)
+                    if (mAnalyzeWithUI)
                     {
-                        case AnalyzedObject.Solution:
-                            RunSolutionAnalyzer();
-                            break;
-                        case AnalyzedObject.BusinessFlow:
-                            RunBusinessFlowAnalyzer(businessFlow, true);
-
-                            break;
-                        case AnalyzedObject.RunSetConfig:
-                            RunRunSetConfigAnalyzer(mRunSetConfig);
-                            break;
+                        SetStatus("Analyzing Started");
                     }
+                    await Task.Run(() =>
+                    {
+                        switch (mAnalyzedObject)
+                        {
+                            case AnalyzedObject.Solution:
+                                RunSolutionAnalyzer();
+                                break;
+                            case AnalyzedObject.BusinessFlow:
+                                RunBusinessFlowAnalyzer(businessFlow, true);
+
+                                break;
+                            case AnalyzedObject.RunSetConfig:
+                                RunRunSetConfigAnalyzer(mRunSetConfig);
+                                break;
+                        }
+                    });
+
+
                 }
                 finally
                 {
                     BusyInProcess = false;
                     mAnalyzerCompleted = true;
                 }
-            });
+
         }
 
         private void SetAnalayzeProceesAsCompleted()
@@ -449,6 +446,7 @@ namespace Ginger.AnalyzerLib
                    new Action(
                        delegate ()
                        {
+                           StatusLabel.Visibility = Visibility.Visible;
                            StatusLabel.Content = txt;
                        }
            ));

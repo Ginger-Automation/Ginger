@@ -757,19 +757,11 @@ namespace Ginger.Run
                 try
                 {
                     AnalyzerPage analyzerPage = new AnalyzerPage();
-                    await Task.Run(() =>
-                    {
-                        analyzerPage.Init(App.UserProfile.Solution, mRunSetConfig);
-                        analyzerPage.AnalyzeWithoutUI();
-                        SpinWait.SpinUntil(() =>
-                        {
-                            if (analyzerPage.IsAnalyzeDone)
-                                return true;
-                            else
-                                return false;
-                        });
-                    });
-                    
+
+                    analyzerPage.Init(App.UserProfile.Solution, mRunSetConfig);
+                    await analyzerPage.AnalyzeWithoutUI();
+
+
                     if (analyzerPage.TotalHighAndCriticalIssues > 0)
                     {
                         if (!runInSilentMode)
