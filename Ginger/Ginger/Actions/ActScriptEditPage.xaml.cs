@@ -127,7 +127,7 @@ namespace Ginger.Actions
             if (ScriptInterpreterComboBox.SelectedValue.ToString() == "Other")
             {
                 InterpreterPanel.Visibility = Visibility.Visible;
-               
+                InterpreterPanelLabel.Visibility = Visibility.Visible;
                 if (  string.IsNullOrEmpty(f.ScriptName) || f.ScriptName.EndsWith(".vbs") || f.ScriptName.EndsWith(".js"))
                 {
                     ScriptNameComboBox.ItemsSource = null;
@@ -143,7 +143,7 @@ namespace Ginger.Actions
                 if (string.IsNullOrEmpty(f.ScriptName) || !f.ScriptName.EndsWith(".bat"))
                 {
                     InterpreterPanel.Visibility = Visibility.Visible;
-                   
+                    InterpreterPanelLabel.Visibility = Visibility.Collapsed;
                     ScriptNameComboBox.ItemsSource = null;
                     if (!Directory.Exists(SHFilesPath))
                         Directory.CreateDirectory(SHFilesPath);
@@ -158,7 +158,7 @@ namespace Ginger.Actions
                 if (string.IsNullOrEmpty(f.ScriptName) || !f.ScriptName.EndsWith(".vbs") )
                 {
                     InterpreterPanel.Visibility = Visibility.Visible;
-                   
+                    InterpreterPanelLabel.Visibility = Visibility.Collapsed;
                     ScriptNameComboBox.ItemsSource = null;
                     if (!Directory.Exists(SHFilesPath))
                         Directory.CreateDirectory(SHFilesPath);
