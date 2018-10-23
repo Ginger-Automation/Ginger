@@ -36,8 +36,7 @@ using MySql.Data.MySqlClient;
 namespace GingerCore.Environments
 {
     public class Database : RepositoryItemBase
-    {
-        public override bool UseNewRepositorySerializer { get { return true; } }    
+    {        
 
         public enum eDBTypes
         {
@@ -394,7 +393,11 @@ namespace GingerCore.Environments
 
                     case eDBTypes.Cassandra:
                         GingerCassandra CassandraDriver = new GingerCassandra(this);
-                        CassandraDriver.Connect();
+                        bool isConnection;
+                        isConnection= CassandraDriver.Connect();
+                        if (isConnection == true)
+                            LastConnectionUsedTime = DateTime.Now;
+                        return true;
                         break;
 
                     case eDBTypes.MySQL:
@@ -409,10 +412,11 @@ namespace GingerCore.Environments
                     return true;
                 }
                 
+                
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + connectConnectionString, e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + connectConnectionString, e);
                 throw (e);
             }
             return false;
@@ -429,7 +433,7 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to close DB Connection", e);
                 throw (e);
             }
         }
@@ -498,7 +502,7 @@ namespace GingerCore.Environments
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list for DB:" + DBType.ToString(), e);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get table list for DB:" + DBType.ToString(), e);
                     throw (e);
                 }
             }           
@@ -510,7 +514,7 @@ namespace GingerCore.Environments
         {
             DbDataReader reader = null;
             List<string> rc = new List<string>() { "" };
-            if (oConn == null || string.IsNullOrEmpty(table))
+            if ((oConn == null || string.IsNullOrEmpty(table))&& (DBType != Database.eDBTypes.Cassandra))
             {
                 return rc;
             }
@@ -540,7 +544,7 @@ namespace GingerCore.Environments
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "", e);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "", e);
                     //Reporter.ToUser(eUserMsgKeys.DbTableError, "table columns", e.Message);
                     throw (e);
                 }
@@ -582,7 +586,7 @@ namespace GingerCore.Environments
                     catch (Exception e)
                     {
                         tran.Rollback();
-                        Reporter.ToLog(eLogLevel.ERROR,"Commit failed for:"+updateCmd, e);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR,"Commit failed for:"+updateCmd, e);
                         throw e;
                     }
                 }
@@ -675,7 +679,7 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Failed to execute query:"+ SQL,e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR,"Failed to execute query:"+ SQL,e, writeOnlyInDebugMode:true);
                 throw e;
             }
             finally
@@ -712,7 +716,7 @@ namespace GingerCore.Environments
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to execute query:" + SQL, e,writeOnlyInDebugMode: true);
                     throw e;
                 }
                 finally

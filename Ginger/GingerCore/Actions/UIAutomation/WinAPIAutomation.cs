@@ -25,6 +25,7 @@ using System.Windows.Automation;
 using System.Windows.Forms;
 using mshtml;
 using System.Threading;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Drivers 
 {
@@ -257,17 +258,17 @@ namespace GingerCore.Drivers
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when ShowWindow Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "COM Exception when ShowWindow Error details:", e);
                 throw e;
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when ShowWindow Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Element not available Exception when ShowWindow Error details:", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when ShowWindow Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Argument Exception when ShowWindow Error details:", e);
                 throw e;
             }
         }
@@ -789,7 +790,7 @@ SID_SWebBrowserApp, ref IID_IWebBrowser, out o);
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
                 }
 
                 finally

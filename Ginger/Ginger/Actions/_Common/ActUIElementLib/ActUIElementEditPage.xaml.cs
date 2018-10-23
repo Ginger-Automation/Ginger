@@ -40,17 +40,27 @@ namespace Ginger.Actions._Common.ActUIElementLib
     {
         ActUIElement mAction;
         PlatformInfoBase mPlatform;
-        
+
         public ActUIElementEditPage(ActUIElement act)
         {
             InitializeComponent();
             mAction = act;
             ePlatformType ActivityPlatform = GetActionPlatform();
             mPlatform = PlatformInfoBase.GetPlatformImpl(ActivityPlatform);
+
             ElementTypeComboBox.BindControl(mAction, ActUIElement.Fields.ElementType, mPlatform.GetPlatformUIElementsType());
+            if ((act.ElementType == eElementType.Unknown) && (act.ElementAction == ActUIElement.eElementAction.Unknown))
+            {
+                ElementLocateByComboBox.SelectedValue = Enum.GetName(typeof(eLocateBy), eLocateBy.POMElement);
+            }
+
             ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, mPlatform.GetPlatformUIElementLocatorsList());
+            SetLocateValueFrame();
+
             ShowPlatformSpecificPage();
-            ShowControlSpecificPage();
+            ShowControlSpecificPage();          
+
+            ElementLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
         }
 
         private ePlatformType GetActionPlatform()
@@ -71,6 +81,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void ElementLocateByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //clear locateValue
+            mAction.LocateValue = string.Empty;
+            mAction.LocateValueCalculated = string.Empty;
+            mAction.ElementLocateValue = string.Empty;
+
+            SetLocateValueFrame();
+        }
+
+        private void SetLocateValueFrame()
+        {
             LocateValueEditFrame.Content = null;
             if (ElementLocateByComboBox.SelectedItem == null)
             {
@@ -80,11 +100,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
             Page p = GetLocateValueEditPage(SelectedLocType);
             LocateValueEditFrame.Content = p;
             UpdateActionInfo(mAction.ElementAction);
+            if (SelectedLocType != eLocateBy.POMElement)
+            {
+                ElementTypeComboBox.IsEnabled = true;
+            }
         }
 
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // ElementActionComboBox.Items.Clear();
             ElementLocateByComboBox.IsEnabled = true;
             if (!String.IsNullOrEmpty(ElementTypeComboBox.SelectionBoxItem.ToString()))
             {
@@ -96,7 +119,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     }
                 }
             }
-            mAction.ElementType = (eElementType)ElementTypeComboBox.SelectedValue;
             List<ActUIElement.eElementAction> list = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
             ElementTypeImage.Source = GetImageSource(mAction.Image);
             ElementActionComboBox.BindControlWithGrouping(mAction, ActUIElement.Fields.ElementAction, list);
@@ -106,6 +128,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 ShowControlSpecificPage();
             }
+            ElementTypeComboBox.Refresh();
         }
 
         private void ElementActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -193,6 +216,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 //TODO insert implementation for UIMouseClickAndValidate
                 UIElementActionEditPageFrame.Content = new UIElementSendKeysAndValidate(mAction, mPlatform);
+                UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
+            }
+            else if (mAction.ElementAction == ActUIElement.eElementAction.SelectandValidate)
+            {
+                //TODO insert implementation for UIMouseClickAndValidate
+                UIElementActionEditPageFrame.Content = new UIElementSelectAndValidate(mAction, mPlatform);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
             }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.JEditorPaneElementAction))// ||
@@ -412,9 +441,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             switch (SelectedLocType)
             {
-                case eLocateBy.ByXY:
+                case eLocateBy.POMElement:                 
+                    ElementTypeComboBox.IsEnabled = false;
+                    return new LocateByPOMElementPage(mAction);
+                case eLocateBy.ByXY:                   
                     return new LocateByXYEditPage(mAction);
-                default:
+                default:                 
                     return new LocateValueEditPage(mAction);
             }
         }

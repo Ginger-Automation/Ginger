@@ -68,6 +68,7 @@ namespace Amdocs.Ginger.Repository
             AAM.RequestBody = XDE.XMLString;
             AAM.AppModelParameters = AMPList;
             AAMSList.Add(AAM);
+            AllPlaceHolders.Clear();
             return AAMSList;
         }
 
@@ -83,7 +84,7 @@ namespace Amdocs.Ginger.Repository
 
                 foreach (XMLDocExtended XDN in NodeListResponseBody)
                 {
-                    ReturnValues.Add(new ActReturnValue() { Param = XDN.LocalName, Path = XDN.XPathWithoutNamspaces, Active = true });
+                    ReturnValues.Add(new ActReturnValue() { Param = XDN.LocalName, Path = XDN.XPathWithoutNamspaces, Active = true, DoNotConsiderAsTemp=true });
                 }
             }
 

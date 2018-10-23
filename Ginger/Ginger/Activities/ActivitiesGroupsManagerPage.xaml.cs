@@ -30,6 +30,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Linq;
+using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Activities
 {
@@ -201,17 +203,14 @@ namespace Ginger.Activities
             winButtons.Add(okBtn);
             winButtons.Add(undoBtn);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "'" + mBusinessFlow.Name + "'- " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Manager", this, winButtons, false, string.Empty, CloseWinClicked);             
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "'" + mBusinessFlow.Name + "'- " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Manager", this, winButtons, false, "Undo & Close", CloseWinClicked);             
         }
 
         private void AddToRepository(object sender, RoutedEventArgs e)
         {
-            Repository.SharedRepositoryOperations.AddItemsToRepository(grdGroups.Grid.SelectedItems.Cast<RepositoryItem>().ToList());
+            Repository.SharedRepositoryOperations.AddItemsToRepository(grdGroups.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
             //if (grdGroups.Grid.SelectedItems != null)
             //{
-
-               
-
             //    //foreach (ActivitiesGroup group in grdGroups.Grid.SelectedItems)
             //    //{
             //    //    //add the Group to repository
@@ -265,7 +264,8 @@ namespace Ginger.Activities
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance();
                 App.BusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                App.BusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, App.LocalRepository.GetSolutionRepoActivities(), false);
+                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                App.BusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                 App.BusinessFlow.AttachActivitiesGroupsAndActivities();
             }
         }
@@ -281,12 +281,10 @@ namespace Ginger.Activities
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
             }
-            else
-                _pageGenericWin.Close();
         }
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)

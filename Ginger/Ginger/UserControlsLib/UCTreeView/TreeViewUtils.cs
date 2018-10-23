@@ -28,6 +28,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Ginger;
+using Amdocs.Ginger.Common;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -71,8 +73,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     icon.Width = 16;
                     headerStack.Children.Add(icon);
                 }
-                catch
+                catch(Exception e)
                 {
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, e.StackTrace);
                 }
             }
 
@@ -82,7 +85,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 try
                 {
                     ImageMakerControl sourceControlIcon = new ImageMakerControl();
-                    sourceControlIcon.ImageType = itemSourceControlStateIcon;
+                    sourceControlIcon.BindControl((RepositoryFolderBase)itemObj, nameof(RepositoryFolderBase.SourceControlStatus));
+                    ((RepositoryFolderBase)itemObj).RefreshFolderSourceControlStatus();
                     sourceControlIcon.Height = 10;
                     sourceControlIcon.Width = 10;                   
                     headerStack.Children.Add(sourceControlIcon);
@@ -90,7 +94,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 catch(Exception ex)
                 {
                     // TODO: write to log
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
 
@@ -177,9 +181,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + ImageFile));
             }
             catch
-            {
-                MessageBox.Show("Missing Image");
-
+            {               
+                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Missing Header Image");
             }
 
             //Image 2 i.e.: Source Control Image

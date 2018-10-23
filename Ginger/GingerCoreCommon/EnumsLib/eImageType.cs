@@ -21,6 +21,8 @@ namespace Amdocs.Ginger.Common.Enums
         /// Ginger Icon image
         /// </summary>
         Ginger,
+        GingerIconWhite,
+        GingerIconGray,
         #endregion
 
 
@@ -28,18 +30,24 @@ namespace Amdocs.Ginger.Common.Enums
         //############################## Repository Items Images:
         Solution,
         BusinessFlow,
+        ActivitiesGroup,
         Activity,
         Action,
         Agent,
         RunSet,
-        APIModel32,
-        APIModel16,
-        ApplicationPOM,
+        ApplicationModel,
+        APIModel,
+        ApplicationPOMModel,
         Runner,
         Operations,
         Environment,
-        Parameter,
         HtmlReport,
+        Variable,
+        SharedRepositoryItem,
+        NonSharedRepositoryItem,
+        Tag,
+        DataSource,
+        PluginPackage,
         #endregion
 
 
@@ -109,14 +117,21 @@ namespace Amdocs.Ginger.Common.Enums
         Visible,
         Invisible,
         View,
+        GetLatest,
+        CheckIn,
+        Download,
+        Fix,
         Expand,
         Collapse,
         ExpandAll,
         CollapseAll,
-        ActiveAll,
-        Info,
+        ActiveAll,        
         Exchange,
         Export,
+        Filter,
+        ImportFile,
+        Upgrade,
+        Recover,
         #endregion
 
 
@@ -130,6 +145,7 @@ namespace Amdocs.Ginger.Common.Enums
         ItemModified,
         Email,
         List,
+        Parameter,
         ListGroup,
         FlowDiagram,
         EllipsisH,
@@ -137,34 +153,55 @@ namespace Amdocs.Ginger.Common.Enums
         Clock,
         File,
         Link,
+        InstanceLink,
         Search,
         Remove,
         Report,
         Active,
         InActive,
         History,
+        ChevronDown,
+        Question,
+        Help,
+        Info,
+        Screen,        
+        Text,
+        Globe,
+        Service,
+        FileVideo,
+        Ticket,
+        Window,
         Pointer,
         Camera,
-
+        Wrench,
         Power,
-
+        ArrowDown,
+        ExcelFile,
+        User,
+        UserProfile,
+        Forum,
+        Website,
+        Beta,
+        Error,
+        Coffee,
         #endregion
 
 
-        #region Source control Images        
+        #region Source control Images     
+        SourceControl,
         SourceControlNew,
         SourceControlModified,
         SourceControlDeleted,
         SourceControlEquel,
         SourceControlLockedByAnotherUser,
         SourceControlLockedByMe,
+        SourceControlError,
         #endregion
 
         Times_Red,
         Times,
         Share,
         ShareExternal,
-        Download,
         Application,
         OpenFolder,
         Check,
@@ -172,5 +209,7 @@ namespace Amdocs.Ginger.Common.Enums
         DataSource,
         DataTable,
         PluginPackage,
+        Bug,                
+        PlusSquare,
     }
 }

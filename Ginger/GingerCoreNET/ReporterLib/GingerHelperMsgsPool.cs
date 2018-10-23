@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using GingerCoreNET.Dictionaries;
+using GingerCore;
 using System.Collections.Generic;
 
 namespace GingerCoreNET.ReporterLib

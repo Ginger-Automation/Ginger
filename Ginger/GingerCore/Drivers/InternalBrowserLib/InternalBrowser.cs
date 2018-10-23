@@ -84,7 +84,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close IB Driver - " + ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close IB Driver - " + ex.Message);
             }
             IsBrowserLoaded = false;
         }        
@@ -642,8 +642,8 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     break;
 
                 case ActGenElement.eGenElementAction.MsgBox:
-                    string msg = act.GetInputParamCalculatedValue("Value");
-                    MessageBox.Show(msg, "Script is paused!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    string msg = act.GetInputParamCalculatedValue("Value");                    
+                    Reporter.ToUser(eUserMsgKeys.ScriptPaused);
                     break;
 
                 default:
@@ -830,7 +830,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                 try {
                 actButton.AddOrUpdateReturnParamActual("Actual",e1.style.font);
                 }
-                catch (Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                catch (Exception ex){ Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 return;
             }
             else if (actButton.ButtonAction == ActButton.eButtonAction.IsDisplayed)
@@ -838,7 +838,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                 try {
                 actButton.AddOrUpdateReturnParamActual("Actual", e1.style.display);
                 }
-                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 return;
             }
             else
@@ -1353,7 +1353,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             throw new NotImplementedException();
         }
 
-        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
         }

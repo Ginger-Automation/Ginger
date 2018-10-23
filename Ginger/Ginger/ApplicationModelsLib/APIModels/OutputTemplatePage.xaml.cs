@@ -102,7 +102,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void AddReturnValue(object sender, RoutedEventArgs e)
         {
-            mApplicationAPIModel.ReturnValues.Add(new ActReturnValue() { Active = true });
+            mApplicationAPIModel.ReturnValues.Add(new ActReturnValue() { Active = true, DoNotConsiderAsTemp=true });
         }
 
         private void RefreshOutputColumns(object sender, RoutedEventArgs e)
@@ -125,9 +125,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Path, WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Header = "Simulated Value", WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Header = "Expected Value", WidthWeight = 150 });
-            viewCols.Add(new GridColView() { Field = ".....", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, ComboboxDisplayMemberField = nameof(GlobalAppModelParameter.PlaceHolder), ComboboxSelectedValueField = nameof(GlobalAppModelParameter.Guid), ComboboxSortBy = nameof(GlobalAppModelParameter.PlaceHolder), CellValuesList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>() });
-            
+            viewCols.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, ComboboxDisplayMemberField = nameof(GlobalAppModelParameter.PlaceHolder), ComboboxSelectedValueField = nameof(GlobalAppModelParameter.Guid), ComboboxSortBy = nameof(GlobalAppModelParameter.PlaceHolder), CellValuesList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>() });
+            viewCols.Add(new GridColView() { Field = "Clear Store To", Header = "Clear Store To", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ClearStoreToBtnTemplate"] });
+
             //Default mode view
             GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString());
             defView.GridColsView = new ObservableList<GridColView>();
@@ -207,6 +208,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void ActionTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void GridClearStoreToBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (xOutputValuesGrid.Grid.SelectedItem != null)
+            {
+                ((ActReturnValue)xOutputValuesGrid.Grid.SelectedItem).StoreToValue = null;
+            }
         }
     }
 

@@ -147,6 +147,10 @@ namespace GingerCore.Actions.Common
             public static string HandleElementLocateBy = "HandleElementLocateBy";
             public static string HandleElementLocatorValue = "HandleElementLocatorValue";
             public static string ValidationElementValue = "ValidationElementValue";
+
+            //used for SelectandValidate
+            public static string SubElementLocateBy = "SubElementLocateBy";
+            public static string SubElementLocatorValue = "SubElementLocatorValue";
         }
 
         // Fields Helper for specific action, will create AIV with param name based on enum
@@ -172,6 +176,8 @@ namespace GingerCore.Actions.Common
         {
             [EnumValueDescription("HTML Table")]
             HTMLTable,
+            [EnumValueDescription("Pane")]
+            Pane,
         }
 
         public enum eElementProperty
@@ -265,6 +271,9 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Open Drop Down")]
             OpenDropDown,
             [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Select and Validate")]
+            SelectandValidate,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Close Drop Down")]
             CloseDropDown,
             [Description(EElementActionTypeGeneric)]
@@ -313,7 +322,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Dismiss Dialog")]
             DismissDialog,
             [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Select UIF Date")]
+            [EnumValueDescription("Set Date")]
             SetDate,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Scroll Up")]
@@ -498,9 +507,20 @@ namespace GingerCore.Actions.Common
             MouseDragDrop,
         }
 
-        // TODO - check whether these fields are required to be serialized or not
+        eElementType mElementType;
         [IsSerializedForLocalRepository]
-        public eElementType ElementType { get; set; }
+        public eElementType ElementType
+        {
+            get { return mElementType; }
+            set
+            {
+                if (mElementType != value)
+                {
+                    mElementType = value;
+                    OnPropertyChanged(nameof(ActUIElement.ElementType));
+                }
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public eElementAction ElementAction { get; set; }

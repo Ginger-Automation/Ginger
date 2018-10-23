@@ -60,14 +60,6 @@ namespace Ginger.ALM
                     App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.QC;
             }
 
-            if (!WorkSpace.Instance.BetaFeatures.RestAPI)
-            {
-                RestAPICheckBox.Visibility = Visibility.Hidden;
-                App.UserProfile.Solution.UseRest = false;
-                RestAPICheckBox.IsChecked = false;
-                RestAPICheckBox.IsEnabled = false;
-            }
-
             if (almConnectStyle != ALMIntegration.eALMConnectType.Silence)
             {
                 if (GetProjectsDetails())
@@ -341,7 +333,7 @@ namespace Ginger.ALM
                 case ALMIntegration.eALMType.QC:
                     QCRadioButton.IsChecked = true;
                     QCRadioButton.FontWeight = FontWeights.ExtraBold;
-                    QCRadioButton.Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                    QCRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
@@ -362,13 +354,14 @@ namespace Ginger.ALM
                     RQMRadioButton.IsChecked = false;
                     RallyRadioButton.FontWeight = FontWeights.Regular;
                     RallyRadioButton.Foreground = Brushes.Black;
-                    RallyRadioButton.IsChecked = false;
-                    RestAPICheckBox.Visibility = Visibility.Visible;
+                    RallyRadioButton.IsChecked = false;                    
+                    RestAPICheckBox.Visibility = Visibility.Visible;                    
                     break;
+
                 case ALMIntegration.eALMType.RQM:
                     RQMRadioButton.IsChecked = true;
                     RQMRadioButton.FontWeight = FontWeights.ExtraBold;
-                    RQMRadioButton.Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                    RQMRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
                     DownloadPackageLink.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 1);
@@ -387,7 +380,7 @@ namespace Ginger.ALM
                 case ALMIntegration.eALMType.RALLY:
                     RallyRadioButton.IsChecked = true;
                     RallyRadioButton.FontWeight = FontWeights.ExtraBold;
-                    RallyRadioButton.Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                    RallyRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
@@ -417,15 +410,8 @@ namespace Ginger.ALM
         private void SaveALMConfigs()
         {
             ALMIntegration.Instance.SyncConfigurations();
-            //Save Solution Details
-            RepositoryItem RI = App.UserProfile.Solution;
-            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, RI.GetNameForFileName(), "item");
-            RI.Save();
-
-            //Save User Profile
             App.UserProfile.SaveUserProfile();
-
-            Reporter.CloseGingerHelper();
+            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
         }
 
         private void ALMRadioButton_Checked_Changed(object sender, RoutedEventArgs e)

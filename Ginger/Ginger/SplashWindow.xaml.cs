@@ -41,7 +41,7 @@ namespace Ginger
             //updating splash window
             //lblAppName.Content = "Amdocs Ginger Automation";// Ginger.App.AppName; TODO: pull name from App once ready
             //lblAppMoto.Content = Ginger.App.AppMoto;
-            lblAppVersion.Content = "Version " + Ginger.App.AppVersion;
+            lblAppVersion.Content = "Version " + Ginger.App.AppShortVersion;
             //End           
         }
 
@@ -53,9 +53,7 @@ namespace Ginger
             dispatcherTimer.Start();
             App.AppSplashWindow = this;
             App.InitApp();         
-            InitDone = true;
-
-            CheckShowNews();            
+            InitDone = true;  
         }
 
         private void CheckShowNews()
@@ -65,24 +63,8 @@ namespace Ginger
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
-        {           
-            switch (lblLoading.Content.ToString())
-            {
-                case "Loading...":
-                    lblLoading.Content = "Loading   ";
-                    break;
-                case "Loading   ":
-                    lblLoading.Content = "Loading.  ";
-                    break;
-                case "Loading.  ":
-                    lblLoading.Content = "Loading.. ";
-                    break;
-                case "Loading.. ":
-                    lblLoading.Content = "Loading...";
-                    break;
-            }
+        {  
             counter++;
-
 
             if (InitDone && System.Diagnostics.Debugger.IsAttached)
             {
@@ -97,8 +79,6 @@ namespace Ginger
                 dispatcherTimer.Stop();
                 dispatcherTimer = null;
                 this.Close();
-
-               
             }
             
             //close after 5 sec - since there might be error hiding below

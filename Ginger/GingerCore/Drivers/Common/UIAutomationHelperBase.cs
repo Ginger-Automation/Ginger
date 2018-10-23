@@ -78,18 +78,18 @@ namespace GingerCore.Drivers.Common
             }
             catch (COMException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "COM Exception when GetActElement Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "COM Exception when GetActElement Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
 
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Element not available Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Argument Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Argument Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
             }
             return CurAE;
@@ -101,6 +101,7 @@ namespace GingerCore.Drivers.Common
         public abstract void DragAndDrop(object element, ActUIElement action);
         public abstract string ClickAndValidteHandler(object element, ActUIElement action);
         public abstract string SendKeysAndValidateHandler(object element, ActUIElement action);
+        public abstract string SelectAndValidateHandler(object element, ActUIElement action);
         public abstract void SelectControlByIndex(object element, string value);
         public abstract void SendKeysToControl(object element, string value);
         public abstract  String GetControlValue(object element);
@@ -306,8 +307,8 @@ namespace GingerCore.Drivers.Common
                 HighlightRect(r, scr, WEI); 
             }
             else
-            {
-                MessageBox.Show("Selected Object is not available, cannot highlight the element", "Selected Object Un-Available", MessageBoxButton.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.ObjectUnavailable, "Selected Object is not available, cannot highlight the element");
             }
         }
 
@@ -376,8 +377,8 @@ namespace GingerCore.Drivers.Common
         }
         public  void StartRecording()
         {
-            //TODO : make available recording function for PBDriver and Windows Driver
-            MessageBox.Show("Recording Feature is not implemented yet for this driver..");
+            //TODO : make available recording function for PBDriver and Windows Driver            
+            Reporter.ToUser(eUserMsgKeys.MissingImplementation, "Recording");
         }
     }
 }

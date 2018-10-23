@@ -71,30 +71,25 @@ namespace GingerCore.Actions.REST
             public static string UseLegacyJSONParsing = "UseLegacyJSONParsing";
 
         }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue EndPointURL { get { return GetOrCreateInputParam(Fields.EndPointURL); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue RequestBody { get { return GetOrCreateInputParam(Fields.RequestBody); } }
-        private string ReqBody=String.Empty;
-        [IsSerializedForLocalRepository]
+
+        private string ReqBody=String.Empty;        
         public ActInputValue TemplateFile { get { return GetOrCreateInputParam(Fields.TemplateFile); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue SaveRequestResponseFolderPath { get { return GetOrCreateInputParam(Fields.SaveRequestResponseFolderPath); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue URLUser { get { return GetOrCreateInputParam(Fields.URLUser); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue URLPass { get { return GetOrCreateInputParam(Fields.URLPass); }  }
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue URLDomain { get { return GetOrCreateInputParam(Fields.URLDomain); }  }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
+
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> HttpHeaders = new ObservableList<ActInputValue>();
 
@@ -112,35 +107,35 @@ namespace GingerCore.Actions.REST
 
         [IsSerializedForLocalRepository]
         public bool AcceptAllSSLCertificate { get; set; }
-
-        public bool mUseTemplateFile = true;
-
-        [IsSerializedForLocalRepository]
-        public bool UseTemplateFile
+        
+        private HttpWebResponse WebReqResponse = null;
+        public HttpStatusCode ResponseCode
         {
             get
             {
-                return mUseTemplateFile;
-            }
-            set
-            {
-                mUseTemplateFile = value;
+                if (WebReqResponse == null)
+                { 
+                    return HttpStatusCode.Ambiguous;
+                }
+                else
+                { 
+                    return WebReqResponse.StatusCode;
+                }
             }
         }
 
-        public bool mUseRequestBody = true;
-
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
+        public bool UseTemplateFile
+        {
+            get;
+            set;            
+        }
+       
+        [IsSerializedForLocalRepository(true)]
         public bool UseRequestBody
         {
-            get
-            {
-                return mUseRequestBody;
-            }
-            set
-            {
-                mUseRequestBody = value;
-            }
+            get;
+            set;
         } 
 
         public enum eRequestType
@@ -150,6 +145,7 @@ namespace GingerCore.Actions.REST
             PUT,
             PATCH
         }
+
         public enum eCookieMode
         {
             [EnumValueDescription("Use Session Cookies")]
@@ -167,7 +163,6 @@ namespace GingerCore.Actions.REST
             [EnumValueDescription("Version 1.1")]
            HTTPV11,
         }
-
 
         public enum eSercurityType
         {
@@ -209,17 +204,24 @@ namespace GingerCore.Actions.REST
         {
             get
             {
-                if (IsInputParamExist(Fields.UseLegacyJSONParsing) == false && ReturnValues.Count > 0)
+                if (!IsInputParamExist(Fields.UseLegacyJSONParsing) && ReturnValues.Count > 0)
+                {
                     AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "True");//old action- for backward support- for not breaking existing validations using old parsing
-
-                if (IsInputParamExist(Fields.UseLegacyJSONParsing) == false)
+                }
+                if (!IsInputParamExist(Fields.UseLegacyJSONParsing))
+                {
                     AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "False"); //as defualt use new JSON parser
-
+                }
                 bool eVal = true;
                 if (bool.TryParse(GetInputParamValue(Fields.UseLegacyJSONParsing), out eVal))
+
+                {
                     return eVal;
+                }
                 else
+                {
                     return false;  //default value          
+                }
             }
             set
             {
@@ -281,6 +283,9 @@ namespace GingerCore.Actions.REST
 
             switch (SecurityType)
             {
+                case eSercurityType.None:
+                    
+                    break;
                 case eSercurityType.Ssl3:
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
                     break;
@@ -295,6 +300,8 @@ namespace GingerCore.Actions.REST
                 case eSercurityType.Tls12:
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                     break;
+                default:
+                    throw new NotSupportedException("The Configured secutrity type is not supported");
 
             }
   
@@ -385,6 +392,8 @@ namespace GingerCore.Actions.REST
                     case eCookieMode.New:
                         _sessionCokkiesDic.Clear();
                         break;
+                    default:
+                        throw new NotSupportedException("Configured mode is not supported");
                 }
 
                 //Not sending data on a get request 
@@ -405,12 +414,14 @@ namespace GingerCore.Actions.REST
                     
                    
                     string req = HttpUtility.UrlEncode(RequestBody.Value);
-                    if(ReqHttpVersion==eHttpVersion.HTTPV10)
+                    if (ReqHttpVersion == eHttpVersion.HTTPV10)
                     {
                         WebReq.ProtocolVersion = HttpVersion.Version10;
                     }
                     else
+                    {
                         WebReq.ProtocolVersion = HttpVersion.Version11;
+                    }
                     WebReq.ContentLength = dataByte.Length;
 
                     Stream Webstream = WebReq.GetRequestStream();
@@ -419,7 +430,6 @@ namespace GingerCore.Actions.REST
                 // Write the data bytes in the request stream
 
 
-                HttpWebResponse WebReqResponse = null;
                 //Get response from server
                 try
                 {
@@ -442,6 +452,7 @@ namespace GingerCore.Actions.REST
                     base.Status=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     base.Error = WE.Message;
                 }
+                  
 
                 }
                 if (CookieMode != eCookieMode.None)
@@ -520,10 +531,10 @@ namespace GingerCore.Actions.REST
                 
                 //TODO: check if UTF8 is good for all
                 StreamReader reader=new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
-                Reporter.ToLog(eLogLevel.INFO, "Response");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, "Response");
 
                 string resp = reader.ReadToEnd().ToString();
-                Reporter.ToLog(eLogLevel.INFO, resp);
+                Reporter.ToLog(eAppReporterLogLevel.INFO, resp);
 
                 if (RestRequestSave==true && RequestType!=eRequestType.GET)
                 {
@@ -658,17 +669,23 @@ namespace GingerCore.Actions.REST
                     xmlDoc.Save(DirectoryPath+ "\\"+ fileName + ".xml");                   
                 }
                 catch (Exception e)
-                {
-                    System.Windows.MessageBox.Show(e.Message);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.FileOperationError, e.Message);
                 }
         }
             else
             {
                 if (CT == eContentType.JSon)
+
+                {
                     fileName += ".json";
+                }
+
                 else
+                {
                     fileName += ".txt";
-                //string getFolderPath = GetValueForDriverParam(Fields.SaveRequestResponseFolderPath);
+                }
+                
 
                 System.IO.File.WriteAllText(DirectoryPath + "\\" + fileName, fileContent);
             }
@@ -708,10 +725,35 @@ namespace GingerCore.Actions.REST
                 WebReq.PreAuthenticate = true;
                 if (String.IsNullOrEmpty(httpHeader.ValueForDriver))
                 {
+                    
                     Ve.Value=httpHeader.Value;
                     httpHeader.ValueForDriver=Ve.ValueCalculated;
                 }
-                WebReq.Headers.Add (httpHeader.Param, httpHeader.ValueForDriver);
+
+                switch(httpHeader.Param.ToUpper())
+                {
+                    case "DATE":
+                        WebReq.Date = DateTime.Parse(httpHeader.ValueForDriver);
+                        break;
+                    case "CONTENT-TYPE":
+                        WebReq.ContentType = httpHeader.ValueForDriver;
+                        break;
+                    case "ACCEPT":
+                        WebReq.Accept = httpHeader.ValueForDriver;
+                    break;
+                    case "REFERER":
+                        WebReq.Referer = httpHeader.ValueForDriver;
+                        break;
+                    case "":
+
+                        break;
+                    default:
+                        WebReq.Headers.Add(httpHeader.Param, httpHeader.ValueForDriver);
+                        break;
+                }
+                
+      
+        
             }
            
         }

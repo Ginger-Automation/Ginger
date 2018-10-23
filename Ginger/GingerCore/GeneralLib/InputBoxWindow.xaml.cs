@@ -139,9 +139,8 @@ namespace GingerCore.GeneralLib
             {
                 resultValue = resultValue.Trim();
                 if (string.IsNullOrEmpty(resultValue.Trim()))
-                {
-                    //TODO: Fix with New Reporter (on GingerWPF)
-                    MessageBox.Show("Value cannot be empty.", "Value Issue", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                {                                        
+                    Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot be empty");
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
                 if (!(resultValue.IndexOfAny(CharsNotAllowed) < 0))
@@ -151,9 +150,8 @@ namespace GingerCore.GeneralLib
                     {
                         builder.Append(value);
                         builder.Append(" ");
-                    }
-                    //TODO: Fix with New Reporter (on GingerWPF)
-                    MessageBox.Show(string.Format("Value cannot contain charaters like: {0}", builder.ToString()), "Value Issue", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                    }                    
+                    Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot contain charaters like: {0}", builder.ToString());
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
             }

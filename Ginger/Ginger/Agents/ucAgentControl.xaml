@@ -11,21 +11,21 @@
    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="90"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="65"/>
+                <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="300*"/>
                 <ColumnDefinition Width="50"/>
             </Grid.ColumnDefinitions>
-            <Label  Grid.Column="0" Content="Agent:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label  Grid.Column="0" Content="Agent:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <ComboBox x:Name="xAgentsComboBox"  Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}"  HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="xAgentsComboBox_SelectionChanged" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
             <usercontrols:ucButton x:Name="xAgentStatusBtn" Grid.Column="2" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Power" Click="xAgentStatusBtn_Click"/>
         </Grid>
 
-        <Expander x:Name="xAgentConfigsExpander" Grid.Row="1" Margin="0,5,0,0" IsExpanded="False" IsEnabled="False" >
+        <Expander x:Name="xAgentConfigsExpander" Grid.Row="1" Margin="0,20,0,0" IsExpanded="False" IsEnabled="False" >
             <Expander.Header>
                 <Label Content="Agent Configurations" Style="{StaticResource $LabelStyle}" Margin="0,2,0,0"/>
             </Expander.Header>

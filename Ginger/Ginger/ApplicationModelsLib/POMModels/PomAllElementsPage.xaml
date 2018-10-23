@@ -4,37 +4,41 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.ApplicationModelsLib.POMModels"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PomAllElementsPage">
 
     <Grid>
-        <TabControl x:Name="POMModelTabs" Grid.Row="1" Background="{StaticResource @Skin1_ColorC}"  HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" >
-            <TabControl.Resources>
-                <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
-                    <Setter Property="Height" Value="25"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="False" >
-                            <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True" >
-                            <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="700*"/>
+        </Grid.RowDefinitions>
 
-            </TabControl.Resources>
 
-            <TabItem Margin="0,0,0,0" >
+        <StackPanel x:Name="xSpyPanel" HorizontalAlignment="Left" Orientation="Horizontal" Grid.Row="0">
+                <ToggleButton x:Name="LiveSpyButton" Click="LiveSpyHandler"  ToolTip="Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key" Width="24" Height="24" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}">
+                    <Image Source="{StaticResource @Spy_24x24}"/>
+                </ToggleButton>
+                <Label x:Name="xStatusLable" Content="Spying off" ></Label>
+                <UserControls:ucButton x:Name="xCreateNewElement" ButtonType="RoundTextAndImageButton" ButtonText="Create New Element" ButtonImageType="New" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed"  Click="CreateNewElemetClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+            </StackPanel>
+        <UserControls:ucButton x:Name="xTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Test All Elements" ButtonImageType="Play" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
+        <UserControls:ucButton x:Name="xStopTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="StopTestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
+
+
+
+        <TabControl x:Name="POMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch"  >
+
+            <TabItem Margin="0,0,0,0" x:Name="xMappedElementsTab" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock x:Name="xMappedElementsTextBlock"  VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Frame x:Name="xMappedElementsFrame" HorizontalAlignment="Stretch"/>
+                <Frame x:Name="xMappedElementsFrame" HorizontalAlignment="Stretch" />
             </TabItem>
-            <TabItem>
+            <TabItem  x:Name="xUnmappedElementsTab" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <TextBlock x:Name="xUnMappedElementsTextBlock"  Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />

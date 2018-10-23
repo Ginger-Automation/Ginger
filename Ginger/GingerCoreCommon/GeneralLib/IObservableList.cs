@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,24 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
-using System.Text;
 
 namespace Amdocs.Ginger.Common
 {
     public interface IObservableList : ICollection, IList, INotifyCollectionChanged, INotifyPropertyChanged
     {
         void Move(int oldIndex, int newIndex);
-        //object CurrentItem {get; set;}
-
-        // void MoveNext();
-
-        //object getCurrentItem();        
+       
         object CurrentItem { get; set; }
 
         void Undo();
@@ -43,15 +37,16 @@ namespace Amdocs.Ginger.Common
         void SaveUndoData();
 
         bool LazyLoad { get; set; }
+
         string StringData { get; set; }
 
         MemoryStream StringDataMS { get; set; }
+
         int DataLen { get; set; }
 
         List<object> ListItems { get; }
 
-        void DoLazyLoadItem(string s);
-        
+        void DoLazyLoadItem(string s);        
     }
 
     public enum eDirection

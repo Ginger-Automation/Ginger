@@ -95,5 +95,6 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
         //        xNameNotUniqueLbl.Visibility = System.Windows.Visibility.Collapsed;
         //    }
         //}
+        
     }
 }

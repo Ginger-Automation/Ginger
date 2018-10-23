@@ -24,6 +24,7 @@ using Cassandra;
 using GingerCore.Actions;
 using GingerCore.NoSqlBase.DataAccess;
 using System.Text.RegularExpressions;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.NoSqlBase
 {
@@ -34,7 +35,7 @@ namespace GingerCore.NoSqlBase
         ActDBValidation Act = null;
         dynamic myclass = null;
         string mUDTName = null;
-
+       
         public override List<eNoSqlOperations> GetSupportedActions()
         {
             List<eNoSqlOperations> SupportedActions = new List<eNoSqlOperations>();
@@ -43,7 +44,7 @@ namespace GingerCore.NoSqlBase
             return SupportedActions;
         }
 
-        public void Connect()
+        public bool Connect()
         {
             try
             {
@@ -70,10 +71,11 @@ namespace GingerCore.NoSqlBase
                 {
                     session = cluster.Connect();
                 }
+                return true;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Cassandra DB", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to connect to Cassandra DB", e);
                 throw (e);
             }
         }
@@ -348,7 +350,7 @@ namespace GingerCore.NoSqlBase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
         }
 
@@ -440,7 +442,7 @@ namespace GingerCore.NoSqlBase
                         catch (Exception e)
                         {
                             Act.Error = "Please check the version of the Database and update on the Environment(by default it will take 2.2)" + e;
-                            Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
                         }
                         break;
 
@@ -476,7 +478,7 @@ namespace GingerCore.NoSqlBase
                         catch (Exception e)
                         {
                             Act.Error = "Please check the version of the Database and update on the Environment(by default it will take 2.2)";
-                            Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
                         }
                         break;
 
@@ -491,7 +493,7 @@ namespace GingerCore.NoSqlBase
             catch (Exception e)
             {
                 Act.Error = "Failed to execute";
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             if (!Db.KeepConnectionOpen)
             {
@@ -577,7 +579,7 @@ namespace GingerCore.NoSqlBase
                         }
                         catch (Exception e)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                         }
 
                     }
@@ -629,7 +631,7 @@ namespace GingerCore.NoSqlBase
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     }
                 }
             }
@@ -673,13 +675,13 @@ namespace GingerCore.NoSqlBase
                             }
                             catch (Exception e)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                             }
                         }
                     }
                 }
                 catch (Exception e)
-                { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}"); }
+                { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
             }
             else
             {// to retrieve values without udt

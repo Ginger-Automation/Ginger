@@ -32,16 +32,21 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class AgentTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
+        private readonly Agent mAgent;
         private AgentEditPage mAgentEditPage;
-        public Agent Agent { get; set; }        
+                
+        public AgentTreeItem(Agent agent)
+        {
+            mAgent = agent;
+        }
 
         Object ITreeViewItem.NodeObject()
         {
-            return Agent;
+            return mAgent;
         }
         override public string NodePath()
         {
-            return Agent.FileName;
+            return mAgent.FileName;
         }
         override public Type NodeObjectType()
         {
@@ -49,9 +54,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {            
-            // TODO: have eimagetype on RIBase
-            return NewTVItemStyle(Agent, eImageType.Agent, nameof(Agent.Name));
+        {                        
+            return NewTVItemHeaderStyle(mAgent);
         }
        
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -68,7 +72,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mAgentEditPage == null)
             {
-                mAgentEditPage = new AgentEditPage(Agent);
+                mAgentEditPage = new AgentEditPage(mAgent);
             }
             return mAgentEditPage;
         }
@@ -77,12 +81,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             return mContextMenu;
         }
-
-        private void Rename(object sender, RoutedEventArgs e)
-        {
-            RenameItem("Agent Name:", Agent, Agent.Fields.Name);
-        }
-
+        
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             mTreeView = TV;

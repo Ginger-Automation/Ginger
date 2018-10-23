@@ -17,7 +17,7 @@ limitations under the License.
 #endregion
 
 using Ginger;
-using Ginger.Environments;
+using Ginger.SolutionGeneral;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System.Windows.Controls;
@@ -40,5 +40,6 @@ namespace GingerWPF.SolutionLib
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
         }
+
     }
 }

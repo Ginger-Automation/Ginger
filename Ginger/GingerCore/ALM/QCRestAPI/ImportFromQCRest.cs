@@ -52,32 +52,36 @@ namespace GingerCore.ALM.QCRestAPI
 
             foreach (QCTestInstance testInstance in testInstances)
             {
-                testSet.Tests.Add(ImportTSTest(QCRestAPIConnect.GetTestCases(new List<string>() { testInstance.TestId })[0]));
+                testSet.Tests.Add(ImportTSTest(testInstance));
             }
 
             return testSet;
         }
 
-        public static QC.QCTSTest ImportTSTest(QCTestCase testCase)
+        public static QC.QCTSTest ImportTSTest(QCTestInstance testInstance)
         {
             QC.QCTSTest newTSTest = new QC.QCTSTest();
+            QCTestCase testCase = QCRestAPIConnect.GetTestCases(new List<string>() { testInstance.TestId })[0];
             string linkedTest = CheckLinkedTSTestName(testCase);
 
-            //Get the TC general details
-            if (linkedTest != null)
+            if (testInstance != null)
             {
-                //Linked TC
-                string[] linkTest = linkedTest.Split(';');
-                newTSTest.TestID = testCase.Id;
-                newTSTest.TestName = linkTest[0];
-                newTSTest.LinkedTestID = linkTest[1];
-            }
-            else
-            {
-                //Regular TC
-                newTSTest.TestID = testCase.Id;
-                newTSTest.TestName = testCase.Name;
-                newTSTest.LinkedTestID = testCase.TestId;
+                //Get the TC general details
+                if (linkedTest != null)
+                {
+                    //Linked TC
+                    string[] linkTest = linkedTest.Split(';');
+                    newTSTest.TestID = testInstance.Id;
+                    newTSTest.TestName = linkTest[0];
+                    newTSTest.LinkedTestID = linkTest[1];
+                }
+                else
+                {
+                    //Regular TC
+                    newTSTest.TestID = testInstance.Id;
+                    newTSTest.TestName = testInstance.Name;
+                    newTSTest.LinkedTestID = testInstance.TestId;
+                }
             }
 
             //Get the TC design steps
@@ -140,7 +144,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
                 newTSTest.Runs = new List<QC.QCTSTestRun>();
             }
 
@@ -393,7 +397,7 @@ namespace GingerCore.ALM.QCRestAPI
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
 
                             //add linked variable if needed
@@ -444,7 +448,7 @@ namespace GingerCore.ALM.QCRestAPI
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                     }
                 }
@@ -466,7 +470,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -531,7 +535,7 @@ namespace GingerCore.ALM.QCRestAPI
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - { MethodBase.GetCurrentMethod().Name }, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - { MethodBase.GetCurrentMethod().Name }, Error - {ex.Message}", ex);
                         //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                     }
                 }
@@ -553,7 +557,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -913,7 +917,7 @@ namespace GingerCore.ALM.QCRestAPI
                         if (stepActivityVar is VariableString)
                             ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                     }
-                    catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 }
 
                 //add linked variable if needed
@@ -988,7 +992,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while stripping the HTML from QC TC Step Description/Expected", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while stripping the HTML from QC TC Step Description/Expected", ex);
                 return HTMLText;
             }
         }
@@ -1008,7 +1012,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while pulling the parameters names from QC TC Step Description/Expected", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while pulling the parameters names from QC TC Step Description/Expected", ex);
             }
         }
 
@@ -1071,16 +1075,15 @@ namespace GingerCore.ALM.QCRestAPI
         {
             QCTestCaseColl testCase = QCRestAPIConnect.GetTestCases(new List<string>() { testInstance.TestId });
 
-            if (testCase.Count >= 0)
+            string linkedTest = CheckLinkedTSTestName(testCase[0]);
+            if (linkedTest != null)
             {
-                QCTestCaseStepsColl testCaseSteps = GetListTSTestSteps(testCase[0]);
-
-                if (testCaseSteps.Count >= 0)
-                    return testCaseSteps[0].ElementsField["link-test"].ToString();
-                return "";
+                //Linked TC
+                string[] linkTest = linkedTest.Split(';');
+                return linkTest[1];
             }
-
-            return "";
+            else
+                return "";
         }
 
         private static QCRunColl GetListTSTestRuns(QCTestCase testCase)

@@ -31,6 +31,7 @@ using GingerCore.Drivers;
 using GingerCore.Helpers;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Actions
 {
@@ -111,7 +112,7 @@ namespace Ginger.Actions
 
         
         private bool mISWindowFocusRequired = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool ISWindowFocusRequired 
         {
             get
@@ -160,7 +161,7 @@ namespace Ginger.Actions
             catch (Exception e)
             {
                 Error = "Failed to get the window Locate By/Value";
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.StackTrace}", e);
                 return;
             }
 
@@ -271,7 +272,7 @@ namespace Ginger.Actions
                 
                 if (WindowTitle == null)
                     WindowTitle = "";
-                Reporter.ToLog(eLogLevel.INFO, $"Method - {MethodBase.GetCurrentMethod().Name}, WindowTitle - {WindowTitle}");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {MethodBase.GetCurrentMethod().Name}, WindowTitle - {WindowTitle}");
                 switch (LocateBy)
                 {
                        

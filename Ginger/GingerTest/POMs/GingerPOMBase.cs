@@ -16,38 +16,63 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
 using GingerTest;
 using GingerTest.POMs.Common;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace GingerWPFUnitTest.POMs
 {
     public abstract class GingerPOMBase
     {
-        public static Dispatcher mDispatcher;
+        public static Dispatcher Dispatcher;
 
         public VisualCompare VisualCompare = new VisualCompare();
 
-        
+
+        /// <summary>
+        /// Recursive method to find element by AutomationID
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="automationID"></param>
+        /// <returns></returns>
+        public DependencyObject FindElementByAutomationID<T>(DependencyObject context, string automationID)
+        {            
+            foreach (object o in LogicalTreeHelper.GetChildren(context))
+            {                
+                if (o is DependencyObject)
+                {
+                    DependencyObject dependencyObject = (DependencyObject)o;
+                   
+                    if (dependencyObject is T)  // the type we are searching
+                    {
+                        if (AutomationProperties.GetAutomationId(dependencyObject) == automationID)
+                        {
+                            return dependencyObject;
+                        }
+                    }
+
+                    //Drill down the tree
+                    DependencyObject childDependencyObject = FindElementByAutomationID<T>(dependencyObject, automationID);
+                    if (childDependencyObject != null)
+                    {
+                        return dependencyObject;
+                    }
+                }
+            }
+            return null;
+        }
 
 
         internal DependencyObject FindElementByName(DependencyObject context, string name)
-        {
-            // T elm = (T)context.FindName(name);
-
+        {            
             DependencyObject d = null;
             Execute(() => { 
                 d = (DependencyObject)LogicalTreeHelper.FindLogicalNode(context, name);
@@ -73,15 +98,13 @@ namespace GingerWPFUnitTest.POMs
         }
 
 
-        //TODO: Find UI Elem by AutomationID
-
         public void SleepWithDoEvents(int Milliseconds)
         {
             Stopwatch st = Stopwatch.StartNew();
             while (st.ElapsedMilliseconds < Milliseconds)
             {
                 DoEvents();
-                Thread.Sleep(50);
+                Thread.Sleep(1);
             }
 
         }
@@ -89,7 +112,7 @@ namespace GingerWPFUnitTest.POMs
         public void DoEvents()
         {
             DispatcherFrame frame = new DispatcherFrame();
-            mDispatcher.BeginInvoke(DispatcherPriority.Background, new DispatcherOperationCallback(ExitFrame), frame);
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, new DispatcherOperationCallback(ExitFrame), frame);
             Dispatcher.PushFrame(frame);
         }
 
@@ -106,7 +129,7 @@ namespace GingerWPFUnitTest.POMs
         /// <param name="action"></param>
         public void Execute(Action action)
         {
-            mDispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 action.Invoke();
                 SleepWithDoEvents(100);
