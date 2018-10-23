@@ -368,7 +368,7 @@ namespace GingerCore.ALM.QC
                         testParams.Save();
                         test.Post();
                     }
-                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 }
             }
             description = description.Replace("<<&Parameters&>>", paramsSigns);
@@ -470,7 +470,7 @@ namespace GingerCore.ALM.QC
                     catch(Exception e)
                     {
                         tsFilter["CY_FOLDER_ID"] = "\"" + testSetParentFolder.Path.ToString() + "\"";
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     }
 
                     List TestsetList = TSetFact.NewList(tsFilter.Text);
@@ -577,7 +577,7 @@ namespace GingerCore.ALM.QC
             catch (Exception ex)
             {
                 //String Text = "Defect Creation Failed.";
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return 0;
             }
         }

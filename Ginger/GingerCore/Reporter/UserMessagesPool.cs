@@ -25,7 +25,7 @@ namespace GingerCore
 {
     public enum eUserMsgKeys
     {
-        GeneralErrorOccured, MissingImplementation, MissingImplementation2, ApplicationInitError, PageLoadError, UserProfileLoadError, ItemToSaveWasNotSelected, ToSaveChanges, SaveLocalChanges, LooseLocalChanges,
+        GeneralErrorOccured, MissingImplementation, MissingImplementation2, ApplicationInitError, PageLoadError, UserProfileLoadError, ItemToSaveWasNotSelected, AskIfToUndoChanges, ToSaveChanges, SaveLocalChanges, LooseLocalChanges,
         RegistryValuesCheckFailed, AddRegistryValue, AddRegistryValueSucceed, AddRegistryValueFailed,
         NoItemWasSelected, AskToAddCheckInComment, FailedToGetProjectsListFromSVN, AskToSelectSolution, UpdateToRevision, CommitedToRevision, GitUpdateState, SourceControlConnFaild, SourceControlRemoteCannotBeAccessed, SourceControlUnlockFaild, SourceControlConnSucss, SourceControlLockSucss, SourceControlUnlockSucss, SourceControlConnMissingConnInputs, SourceControlConnMissingLocalFolderInput,
         PleaseStartAgent, AskToSelectValidation, CopiedVariableSuccessfully, AskIfShareVaribalesInRunner, ShareVariableNotSelected,
@@ -161,6 +161,7 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ItemToSaveWasNotSelected, new UserMessage(eAppReporterMessageType.WARN, "Save", "Item to save was not selected.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.RecommendNewVersion, new UserMessage(eAppReporterMessageType.WARN, "Upgrade required", "You are not using the latest version of Ginger. Please go to https://github.com/Ginger-Automation/Ginger/releases to get the latest build.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ToSaveChanges, new UserMessage(eAppReporterMessageType.QUESTION, "Save Changes?", "Do you want to save changes?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfToUndoChanges, new UserMessage(eAppReporterMessageType.QUESTION, "Undo Changes?", "Do you want to undo changes (in case changes were done) and close?", MessageBoxButton.YesNo, MessageBoxResult.No));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.UnsupportedFileFormat, new UserMessage(eAppReporterMessageType.ERROR, "Save Changes", "File format not supported.", MessageBoxButton.OK, MessageBoxResult.None));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.CtrlSsaveEnvApp, new UserMessage(eAppReporterMessageType.WARN, "Save Environment", "Please select the environment to save.", MessageBoxButton.OK, MessageBoxResult.None));

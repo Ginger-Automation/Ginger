@@ -99,11 +99,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message, ex);
             }
             IsDriverConnected = false;
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);

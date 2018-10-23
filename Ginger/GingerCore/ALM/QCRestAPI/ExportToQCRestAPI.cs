@@ -391,7 +391,7 @@ namespace GingerCore.ALM.QCRestAPI
                     return null;
                 }
 
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -454,7 +454,7 @@ namespace GingerCore.ALM.QCRestAPI
                         QCItem itemTestCaseParam = ConvertObjectValuesToQCItem(newParam, ResourceType.TEST_CASE_PARAMETERS);
                         QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
                     }
-                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                    catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 }
             }
             description = description.Replace("<<&Parameters&>>", paramsSigns);
@@ -607,7 +607,7 @@ namespace GingerCore.ALM.QCRestAPI
                             QCItem itemTestCaseParam = ConvertObjectValuesToQCItem(newParam, ResourceType.TEST_CASE_PARAMETERS);
                             QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CASE_PARAMETERS, itemTestCaseParam);
                         }
-                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                     }
                 }
 
@@ -691,7 +691,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -730,7 +730,7 @@ namespace GingerCore.ALM.QCRestAPI
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
                 }
             }

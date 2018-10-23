@@ -94,7 +94,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 catch(Exception ex)
                 {
                     // TODO: write to log
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
 

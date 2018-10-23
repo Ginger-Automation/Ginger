@@ -13,17 +13,8 @@
             <DataTemplate x:Key="ValueExpressionButton">
                 <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>
-            <DataTemplate x:Key="ParamValueExpressionButton">
-                <Button x:Name="GridParamVEButton" Content="..." Click="GridParamVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
-            </DataTemplate>
-            <DataTemplate x:Key="PathValueExpressionButton">
-                <Button x:Name="GridPathVEButton" Content="..." Click="GridPathVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
-            </DataTemplate>
-            <DataTemplate x:Key="SimulatedlValueExpressionButton">
-                <Button x:Name="GridPathVEButton" Content="...." Click="SimulatedOutputGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
-            </DataTemplate>
-            <DataTemplate x:Key="DataSourceValueExpressionButton">
-                <Button x:Name="GridDSVEButton" Content="..." Click="GridDSVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            <DataTemplate x:Key="ClearStoreToBtnTemplate">
+                <Button x:Name="GridClearStoreToBtn" Content="X" Click="GridClearStoreToBtn_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>
         </Grid.Resources>
 

@@ -203,7 +203,7 @@ namespace Ginger.Activities
             winButtons.Add(okBtn);
             winButtons.Add(undoBtn);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "'" + mBusinessFlow.Name + "'- " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Manager", this, winButtons, false, string.Empty, CloseWinClicked);             
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "'" + mBusinessFlow.Name + "'- " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " Manager", this, winButtons, false, "Undo & Close", CloseWinClicked);             
         }
 
         private void AddToRepository(object sender, RoutedEventArgs e)
@@ -211,9 +211,6 @@ namespace Ginger.Activities
             Repository.SharedRepositoryOperations.AddItemsToRepository(grdGroups.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());
             //if (grdGroups.Grid.SelectedItems != null)
             //{
-
-               
-
             //    //foreach (ActivitiesGroup group in grdGroups.Grid.SelectedItems)
             //    //{
             //    //    //add the Group to repository
@@ -284,12 +281,10 @@ namespace Ginger.Activities
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
             }
-            else
-                _pageGenericWin.Close();
         }
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)
