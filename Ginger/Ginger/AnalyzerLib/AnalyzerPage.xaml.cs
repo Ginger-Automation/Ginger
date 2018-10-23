@@ -275,10 +275,12 @@ namespace Ginger.AnalyzerLib
                     AddIssues(actionissues);
                     List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
                     usedVariablesInActivity.AddRange(tempList);
-                }                
-                ReportUnusedVariables(activity, usedVariablesInActivity);
+                }
+                List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
+                usedVariablesInActivity.AddRange(activityVarList);
+                ReportUnusedVariables(activity, usedVariablesInActivity);               
                 usedVariablesInBF.AddRange(usedVariablesInActivity);
-                usedVariablesInActivity.Clear();
+                usedVariablesInActivity.Clear();    
             }            
             ReportUnusedVariables(businessFlow, usedVariablesInBF);
 

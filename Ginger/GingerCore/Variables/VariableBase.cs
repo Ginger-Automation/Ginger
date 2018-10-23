@@ -301,7 +301,7 @@ namespace GingerCore.Variables
                     mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
                     mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ScreenShots" ||
                     mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType") continue;
-
+               
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
                 dynamic value = null;
@@ -343,6 +343,22 @@ namespace GingerCore.Variables
                                         if (value.ToString() != string.Empty)
                                             if (usedVariables.Contains(value.ToString()) == false)
                                                 usedVariables.Add(value.ToString());
+                                    }
+                                }
+                                else if(mi.Name == "ValueCalculated" && mi.DeclaringType.Name == "FlowControl")
+                                {
+                                    string[] vals = value.Split(new[] { '=' });
+                                    const int count = 2;
+                                    if (vals.Count() == count && !usedVariables.Contains(vals[0]))
+                                    {                                       
+                                        usedVariables.Add(vals[0]);                                     
+                                    }
+                                }
+                                else if (mi.Name == "VariableName" && mi.DeclaringType.Name == "VariableDependency" && usedVariables!=null)
+                                {
+                                    if(!usedVariables.Contains(value))
+                                    {
+                                        usedVariables.Add(value);
                                     }
                                 }
                                 else
