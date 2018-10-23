@@ -180,16 +180,13 @@ namespace Ginger.Actions.PlugIns
 
                 // update the type based on the info json of the plugin
                 param.ParamType = (from x in list where x.Param == param.Param select x.ParamType).SingleOrDefault();
-
-                Label l = new Label() { Content = param.Param };
+                string labelText = char.ToUpper(param.Param[0]) + param.Param.Substring(1); // Make first letter upper case
+                Label l = new Label() { Content = labelText };
                 ActionConfigGrid.Children.Add(l);
                 l.Style = App.GetStyle("@InputFieldLabelStyle");
                 Grid.SetRow(l, rnum);
 
-                
-
-                //TODO: based on the param type create textbox, check box, combo, etc...
-
+                // Add ActionInputValueUserControl for the param value to edit
                 ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl();
                 actionInputValueUserControl.BindControl(param);
                 actionInputValueUserControl.Margin = new Thickness(5);
