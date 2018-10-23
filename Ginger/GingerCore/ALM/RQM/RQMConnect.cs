@@ -207,7 +207,7 @@ namespace GingerCore.ALM.RQM
                             catch (Exception ex)
                             {
                                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error while trying to retrieve the following TestPlan page:" + responseData.RequestUri);
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             }
                         }
                     }
@@ -310,7 +310,7 @@ namespace GingerCore.ALM.RQM
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error while trying to retrieve TestPlan id:" + RQMTestPlanId);
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         }
                     }
                 }

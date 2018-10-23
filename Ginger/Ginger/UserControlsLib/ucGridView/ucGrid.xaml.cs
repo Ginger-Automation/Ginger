@@ -108,7 +108,7 @@ namespace Ginger
                             grdMain.CommitEdit();
                             grdMain.CancelEdit();
                             mCollectionView.Filter = FilterGridRows;
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         }
                     }
                     this.Dispatcher.Invoke(() =>
@@ -233,7 +233,7 @@ namespace Ginger
                                 sb.Append(PI.GetValue(obj).ToString()).Append("~");
                             }
                         }
-                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                        catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                     }
                 }
             }
@@ -251,7 +251,7 @@ namespace Ginger
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
             return sb.ToString().ToUpper();
@@ -1814,7 +1814,7 @@ public void RemoveCustomView(string viewName)
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -1830,7 +1830,7 @@ public void RemoveCustomView(string viewName)
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 

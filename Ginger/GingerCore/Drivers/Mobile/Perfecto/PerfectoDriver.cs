@@ -633,7 +633,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
                 return null;
             }
             catch (Exception ex) {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
 
                 return null;
             }

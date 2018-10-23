@@ -102,6 +102,18 @@
         <Setter Property="Foreground" Value="{DynamicResource @DarkBlue}"/>
     </Style>
 
+    <Style TargetType="TextBox" x:Key="$MultiRowsTextBoxStyle" >
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="AcceptsReturn" Value="True"/>
+        <Setter Property="IsEnabled" Value="True" />
+    </Style>
+
     <Style TargetType="Button" x:Key="$ImageButtonStyle">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
