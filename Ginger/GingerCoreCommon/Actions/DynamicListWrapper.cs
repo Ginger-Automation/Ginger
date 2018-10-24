@@ -37,6 +37,10 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
         void SetPropertiesList()
         {
+            if (string.IsNullOrEmpty(mListType))
+            {
+                return;
+            }
             mListProperties = new List<string>();
             string props = GetStringBetween(mListType, "{Properties=", "}");
             string[] arr = props.Split(',');
@@ -63,6 +67,10 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         // TODO: dup code unite
         public string GetStringBetween(string STR, string FirstString, string LastString = null)
         {
+            if (string.IsNullOrEmpty(STR))
+            {
+                return "";
+            }
             string str = "";
             int Pos1 = STR.IndexOf(FirstString) + FirstString.Length;
             int Pos2;

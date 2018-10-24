@@ -16,14 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using Ginger.UserControlsLib.ActionInputValueUserControlLib;
-using GingerCore.GeneralLib;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using Amdocs.Ginger.Common;
+using Ginger.UserControlsLib.ActionInputValueUserControlLib;
+using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Repository
 {
