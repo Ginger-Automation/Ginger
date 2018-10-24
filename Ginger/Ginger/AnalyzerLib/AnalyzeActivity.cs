@@ -115,9 +115,9 @@ namespace Ginger.AnalyzerLib
         }
         public static List<string> GetUsedVariableFromActivity(Activity activity)
         {
-            List<string> ActivityUsedVariables = new List<string>();
-            VariableBase.GetListOfUsedVariables(activity, ref ActivityUsedVariables);
-            return ActivityUsedVariables;
+            List<string> activityUsedVariables = new List<string>();
+            VariableBase.GetListOfUsedVariables(activity, ref activityUsedVariables);
+            return activityUsedVariables;
         }
     }
 }

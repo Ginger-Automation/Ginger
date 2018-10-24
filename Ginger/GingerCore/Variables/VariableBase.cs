@@ -345,7 +345,7 @@ namespace GingerCore.Variables
                                                 usedVariables.Add(value.ToString());
                                     }
                                 }
-                                else if(mi.Name == "ValueCalculated" && mi.DeclaringType.Name == "FlowControl")
+                                else if(mi.Name == "ValueCalculated" && mi.DeclaringType.Name == "FlowControl") // get used varibale in flow control with set variable action type.
                                 {
                                     string[] vals = value.Split(new[] { '=' });
                                     const int count = 2;
