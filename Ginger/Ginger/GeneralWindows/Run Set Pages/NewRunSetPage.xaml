@@ -71,9 +71,9 @@
                             <GingerCore:ucTextDicResource Text="Add New [RunSet]"/>
                         </usercontrols:ucButton.ToolTip>
                     </usercontrols:ucButton>
-                    <usercontrols:ucButton x:Name="xFindAndReplace" ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Search" Click="xFindAndReplace_Click">
+                    <usercontrols:ucButton x:Name="xFind" ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Search" Click="xFind_Click">
                         <usercontrols:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Find And Replace in [RunSet]"/>
+                            <GingerCore:ucTextDicResource Text="Find in [RunSet]"/>
                         </usercontrols:ucButton.ToolTip>
                     </usercontrols:ucButton>
                     <Menu x:Name="xOtherRunSetOperationsMenu" Background="Transparent">
