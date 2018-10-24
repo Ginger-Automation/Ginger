@@ -603,6 +603,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Coffee:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee);
                     break;
+                case eImageType.MapSigns:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
+                    break;
                 #endregion
 
 

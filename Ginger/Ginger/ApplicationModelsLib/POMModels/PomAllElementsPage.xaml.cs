@@ -348,7 +348,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xStopTestAllElements.Visibility = Visibility.Collapsed;
         }
 
-
+        public void FinishEditInAllGrids()
+        {
+            mappedUIElementsPage.FinishEditInGrids();
+            unmappedUIElementsPage.FinishEditInGrids();
+        }
 
     }
 }

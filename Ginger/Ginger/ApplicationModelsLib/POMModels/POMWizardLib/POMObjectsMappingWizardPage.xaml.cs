@@ -107,8 +107,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     break;
 
                 case EventType.Active:
-                    //if (xPomElementsMappingPageFrame.Content == null)
-                    //    InitilizePomElementsMappingPage();
                     if (pomAllElementsPage.mAgent == null)
                     {
                         pomAllElementsPage.SetAgent(mWizard.Agent);
@@ -129,6 +127,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         mSelectedElementTypesList = mWizard.AutoMapElementTypesList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
                         Learn();
                     }
+                    break;
+
+                case EventType.LeavingForNextPage:
+                case EventType.Finish:
+                    pomAllElementsPage.FinishEditInAllGrids();
                     break;
             }
         }

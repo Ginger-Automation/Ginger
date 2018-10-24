@@ -9,12 +9,11 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PomAllElementsPage">
 
-    <Grid>
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="700*"/>
         </Grid.RowDefinitions>
-
 
         <StackPanel x:Name="xSpyPanel" HorizontalAlignment="Left" Orientation="Horizontal" Grid.Row="0">
                 <ToggleButton x:Name="LiveSpyButton" Click="LiveSpyHandler"  ToolTip="Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key" Width="24" Height="24" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}">
@@ -26,10 +25,7 @@
         <UserControls:ucButton x:Name="xTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Test All Elements" ButtonImageType="Play" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
         <UserControls:ucButton x:Name="xStopTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="StopTestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
 
-
-
         <TabControl x:Name="POMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch"  >
-
             <TabItem Margin="0,0,0,0" x:Name="xMappedElementsTab" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -38,6 +34,7 @@
                 </TabItem.Header>
                 <Frame x:Name="xMappedElementsFrame" HorizontalAlignment="Stretch" />
             </TabItem>
+
             <TabItem  x:Name="xUnmappedElementsTab" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
@@ -46,7 +43,6 @@
                 </TabItem.Header>
                 <Frame x:Name="xUnMappedElementsFrame" HorizontalAlignment="Stretch"/>
             </TabItem>
-
         </TabControl>
     </Grid>
 </Page>

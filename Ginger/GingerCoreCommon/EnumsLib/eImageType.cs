@@ -184,6 +184,7 @@ namespace Amdocs.Ginger.Common.Enums
         Beta,
         Error,
         Coffee,
+        MapSigns,
         #endregion
 
 
