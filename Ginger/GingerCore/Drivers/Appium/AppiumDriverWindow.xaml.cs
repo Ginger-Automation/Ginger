@@ -626,7 +626,7 @@ namespace GingerCore.Drivers.Appium
                     sourceLbl.Visibility = System.Windows.Visibility.Visible;
                     pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
                     pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
             else
@@ -684,7 +684,7 @@ namespace GingerCore.Drivers.Appium
                                         break;
                                     }
                             }
-                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                         }
 
                         if (!skipElement)
@@ -723,7 +723,7 @@ namespace GingerCore.Drivers.Appium
                                     element_Start_Y = -1;
                                     element_Max_X = -1;
                                     element_Max_Y = -1;
-                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                                 }
                                 break;
 
@@ -741,7 +741,7 @@ namespace GingerCore.Drivers.Appium
                                     element_Start_Y = -1;
                                     element_Max_X = -1;
                                     element_Max_Y = -1;
-                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                                 }
                                 break;
                         }
@@ -780,7 +780,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }

@@ -203,7 +203,7 @@ namespace Ginger.Variables
 
             this.Height = 800;
             this.Width = 800;
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, "Undo & Close", CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
             return saveWasDone;
         }
 
@@ -235,16 +235,9 @@ namespace Ginger.Variables
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
-            }
-            else
-            {
-                if (editMode == eEditMode.SharedRepository)
-                    CheckIfUserWantToSave();
-                else
-                    _pageGenericWin.Close();
             }
         }
 

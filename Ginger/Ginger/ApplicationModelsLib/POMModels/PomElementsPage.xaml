@@ -54,13 +54,11 @@
 
         <Expander x:Name="xDetailsExpander" Grid.Row="1" ExpandDirection="Down" Expanded="DetailsGrid_Expanded" IsExpanded="False" Collapsed="DetailsGrid_Collapsed" IsEnabled="False" Style="{StaticResource @ExpanderLightStyle}">
             <Expander.Header>
-                <Label x:Name="xDetailsExpanderLabel" Content="Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}"/>
+                <Label x:Name="xDetailsExpanderLabel" Content="Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" />
             </Expander.Header>
             <Expander.Content>
                 <Grid>
-
                     <TabControl x:Name="POMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch" >
-
                         <TabItem Margin="0,0,0,0" >
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

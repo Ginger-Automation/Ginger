@@ -750,6 +750,9 @@ namespace Ginger.Actions
             // Need to find a solution if 2 windows show as Dialog...
             string title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
 
+            RoutedEventHandler closeHandler = CloseWinClicked;
+            string closeContent = "Undo & Close";
+
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button okBtn = new Button();
             okBtn.Content = "Ok";
@@ -814,13 +817,15 @@ namespace Ginger.Actions
 
                 case General.RepositoryItemPageViewMode.View:
                     title = "View " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    winButtons.Add(okBtn);                    
+                    winButtons.Add(okBtn);
+                    closeHandler = new RoutedEventHandler(okBtn_Click);
+                    closeContent = okBtn.Content.ToString();
                     break;
             }
 
             this.Height = 800;
             this.Width = 1000;
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, closeContent, closeHandler, startupLocationWithOffset: startupLocationWithOffset);
             SwitchingInputValueBoxAndGrid(mAction);
             return saveWasDone;
         }
@@ -852,16 +857,9 @@ namespace Ginger.Actions
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
-            }
-            else
-            {
-                if (EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
-                    CheckIfUserWantToSave();
-                else
-                    _pageGenericWin.Close();
             }
         }
 

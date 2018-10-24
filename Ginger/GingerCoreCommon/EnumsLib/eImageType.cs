@@ -184,6 +184,7 @@ namespace Amdocs.Ginger.Common.Enums
         Beta,
         Error,
         Coffee,
+        MapSigns,
         #endregion
 
 
@@ -195,6 +196,7 @@ namespace Amdocs.Ginger.Common.Enums
         SourceControlEquel,
         SourceControlLockedByAnotherUser,
         SourceControlLockedByMe,
+        SourceControlError,
         #endregion
 
         Times_Red,
