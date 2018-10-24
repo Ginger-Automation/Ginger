@@ -163,6 +163,24 @@ namespace Ginger.Actions._Common.ActUIElementLib
             xHeaderTextBlock.Visibility = Visibility.Visible;
             xHeaderTextBlock.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
             xPOMElementComboBox.SelectedItem = xHeaderTextBlock;
+
+            if (mAction is ActUIElement)
+            {
+                ((ActUIElement)mAction).ElementType = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
+            }
+
+            mLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+
+            if (mAction is ActUIElement)
+            {
+                ((ActUIElement)mAction).ElementLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+            }
+            else
+            {
+                mAction.LocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
+            }
+
+            HighlightButton.IsEnabled = true;
         }
 
         private void SetControlsGridView()
@@ -190,27 +208,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        private void xPOMElementComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if ((xPOMElementComboBox.IsEnabled))
-            {
-                if (mAction is ActUIElement)
-                {
-                    ((ActUIElement)mAction).ElementType = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementTypeEnum;
-                }
-                mLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
 
-                if (mAction is ActUIElement)
-                {
-                    ((ActUIElement)mAction).ElementLocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
-                }
-                else
-                {
-                    mAction.LocateValue = mSelectedPOM.Guid.ToString() + "_" + ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).Guid.ToString();
-                }
-
-                HighlightButton.IsEnabled = true;
-            }
-        }
     }
 }
