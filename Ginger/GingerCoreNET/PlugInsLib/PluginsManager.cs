@@ -24,8 +24,11 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -391,5 +394,59 @@ namespace Amdocs.Ginger.Repository
             string packagesjson = GetResponseString(url).Result;
             return packagesjson;
         }
+
+        async Task<string> GetResponseString(string url)
+        {
+            using (var client = new HttpClient())
+            {
+                var result = client.GetAsync(url).Result;
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var json = await result.Content.ReadAsStringAsync();
+                    //TODO: convert json to list of objects
+                    return json;
+                }
+                else
+                {
+                    return "Error: " + result.ReasonPhrase;
+                }
+            }
+        }
+
+        public void InstallPluginPackage()
+        {
+            //TODO: get package info and install
+
+            // Temp hard coded for test
+            string url = "https://github.com/Ginger-Automation/Ginger-PACT-Plugin/releases/download/v1.0/Ginger.PACT.PluginPackage.zip";
+            string folder = DownLoadPackage(url).Result;
+            AddPluginPackage(folder + @"\Ginger.PACT.PluginPackage");     // temp FIXME!!!
+        }
+
+        async Task<string> DownLoadPackage(string url)
+        {
+            //TODO: show user some progress... update a shared string status
+            using (var client = new HttpClient())
+            {
+                var result = client.GetAsync(url).Result;
+
+                if (result.IsSuccessStatusCode)
+                {
+                    byte[] zipContent = await result.Content.ReadAsByteArrayAsync();  // Get the Plugin package zip content
+                    string fileName = Path.GetTempFileName();  // temp file for the zip
+                    File.WriteAllBytes(fileName, zipContent);  // save content to file                    
+                    string localPluginPackageFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); // target folder to extract the plugin to on user folder
+                    localPluginPackageFolder = Path.Combine(localPluginPackageFolder, "Ginger", "PluginPackages"); // Extract it to: \users\[user]\Ginger\PluginPackages/[PluginFolder]
+                    ZipFile.ExtractToDirectory(fileName, localPluginPackageFolder); // Extract 
+                    return localPluginPackageFolder;
+                }
+                else
+                {
+                    throw new Exception("Error downloading Plugin Package: " + result.ReasonPhrase + Environment.NewLine + url);
+                }
+            }
+        }
+
     }
 }
