@@ -532,50 +532,24 @@ namespace GingerCore.Actions.REST
                 }
 
                 string resp = string.Empty;
+                byte[] data = new byte[0];
+                if (ResponseContentType != eContentType.PDF)
+                {
+                    //TODO: check if UTF8 is good for all
+                    StreamReader reader = new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Response");
 
-                if (RestResponseSave == true && ResponseContentType == eContentType.PDF)
+                    resp = reader.ReadToEnd();
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, resp);
+                }
+                else
                 {
                     MemoryStream memoryStream = new MemoryStream();
                     WebResponse webResponse = WebReq.GetResponse();
 
                     webResponse.GetResponseStream().CopyTo(memoryStream);
 
-                    var headerkey = webResponse.Headers.AllKeys;
-                    var header = string.Join(",", headerkey);
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, header);
-                    byte[] data = memoryStream.ToArray();
-
-
-                    String fileName = "";
-                    String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
-                    fileName += this.Description;
-                    fileName += "_" + "Response";
-                    fileName += "_" + timeStamp;
-
-                    string DirectoryPath = SaveRequestResponseFolderPath.ValueForDriver;
-                    if (DirectoryPath.StartsWith(@"~\"))
-                    {
-                        DirectoryPath = DirectoryPath.Replace(@"~\", SolutionFolder);
-                    }
-                    DirectoryPath += @"\" + "Response";
-
-                    if (!Directory.Exists(DirectoryPath))
-                    {
-                        Directory.CreateDirectory(DirectoryPath);
-                    }
-                    string filePath = DirectoryPath + "//" + fileName + ".pdf";
-
-                    File.WriteAllBytes(filePath, data);
-
-                }
-                else
-                {
-                    //TODO: check if UTF8 is good for all
-                    StreamReader reader=new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Response");
-
-                    resp = reader.ReadToEnd();
-                    Reporter.ToLog(eAppReporterLogLevel.INFO, resp);
+                    data = memoryStream.ToArray();
                 }
 
 
@@ -584,10 +558,17 @@ namespace GingerCore.Actions.REST
                     string fileName= createRequestOrResponseXMLInFolder("Request", ReqBody, ContentType);
                     AddOrUpdateReturnParamActual("Saved Request File Name", fileName);
                 }
-                if (RestResponseSave == true && ResponseContentType != eContentType.PDF)
+                if (RestResponseSave == true)
                 {
-                    string fileName = createRequestOrResponseXMLInFolder("Response", resp, ResponseContentType);
-                    AddOrUpdateReturnParamActual("Saved Response File Name", fileName);
+                    if (ResponseContentType != eContentType.PDF)
+                    {
+                        string fileName = createRequestOrResponseXMLInFolder("Response", resp, ResponseContentType);
+                        AddOrUpdateReturnParamActual("Saved Response File Name", fileName);
+                    }
+                    else
+                    {
+                        CreatePdfFile(data);
+                    }
                 }
 
 
@@ -666,9 +647,6 @@ namespace GingerCore.Actions.REST
             }
             catch (WebException WEx)
             {
-
-
-
                 this.ExInfo = WEx.Message;
                 base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 base.Error = WEx.Message;
@@ -676,27 +654,47 @@ namespace GingerCore.Actions.REST
 
         }
 
-        public string createRequestOrResponseXMLInFolder(string fileType, string fileContent,eContentType CT)
+        private void CreatePdfFile(byte[] data)
         {
-            String fileName = "";
-            String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
+            string filePath = CreateFolder() + "//" + CreateFileName("pdf") + ".pdf";
+            File.WriteAllBytes(filePath, data);
+        }
 
-            fileName += this.Description;
-            fileName += "_" + fileType;
-            fileName += "_" + timeStamp;
+        private string CreateFolder()
+        {
+            var DirectoryPath = string.Empty;
+            DirectoryPath = SaveRequestResponseFolderPath.ValueForDriver;
 
-
-            string DirectoryPath = SaveRequestResponseFolderPath.ValueForDriver;
-            if(DirectoryPath.StartsWith(@"~\"))
+            if (DirectoryPath.StartsWith(@"~\"))
             {
                 DirectoryPath = DirectoryPath.Replace(@"~\", SolutionFolder);
             }
+            DirectoryPath += @"\" + "Response";
 
-            DirectoryPath += @"\" + fileType;
             if (!Directory.Exists(DirectoryPath))
             {
                 Directory.CreateDirectory(DirectoryPath);
             }
+            return DirectoryPath;
+        }
+
+        private string CreateFileName(string fileType)
+        {
+            String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
+            string fileName = string.Empty;
+            fileName += this.Description;
+            fileName += "_" + fileType;
+            fileName += "_" + timeStamp;
+
+            return fileName;
+        }
+
+        public string createRequestOrResponseXMLInFolder(string fileType, string fileContent,eContentType CT)
+        {
+            var fileName = CreateFileName(fileType);
+
+            string DirectoryPath = CreateFolder();
+           
 
             if (CT == eContentType.XML)
             {
