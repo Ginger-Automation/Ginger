@@ -380,5 +380,16 @@ namespace Amdocs.Ginger.Repository
             return standAloneAction.InputValues;
         }
 
+        public string GetPluginsIndex()
+        {
+            //TODO: conver json to objects and return list to show in grid
+
+            // edit at: "https://github.com/Ginger-Automation/Ginger-Plugins-Index/blob/master/PluginsList.json";
+
+            // raw url to get the file content
+            string url = "https://raw.githubusercontent.com/Ginger-Automation/Ginger-Plugins-Index/master/PluginsList.json";
+            string packagesjson = GetResponseString(url).Result;
+            return packagesjson;
+        }
     }
 }
