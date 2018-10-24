@@ -45,7 +45,7 @@ namespace GingerCore.Actions.REST
 
         // static CookieCollection SessionCokkies = new CookieCollection();
         static Dictionary<string, Cookie> _sessionCokkiesDic = new Dictionary<string, Cookie>();
-      //  static Dictionary<string, CookieCollection> HostCookies = new Dictionary<string, CookieCollection>();
+        //  static Dictionary<string, CookieCollection> HostCookies = new Dictionary<string, CookieCollection>();
 
         public new static partial class Fields
         {
@@ -53,7 +53,7 @@ namespace GingerCore.Actions.REST
             public static string RequestType = "RequestType";
             public static string ContentType = "ContentType";
             public static string ResponseContentType = "ResponseContentType";
-            public static string RequestBody = "RequestBody";            
+            public static string RequestBody = "RequestBody";
             public static string TemplateFile = "TemplateFile";
             public static string SaveRequestResponseFolderPath = "SaveRequestResponseFolderPath";
             public static string URLUser = "URLUser";
@@ -71,20 +71,20 @@ namespace GingerCore.Actions.REST
             public static string UseLegacyJSONParsing = "UseLegacyJSONParsing";
 
         }
-        
+
         public ActInputValue EndPointURL { get { return GetOrCreateInputParam(Fields.EndPointURL); } }
-        
+
         public ActInputValue RequestBody { get { return GetOrCreateInputParam(Fields.RequestBody); } }
 
-        private string ReqBody=String.Empty;        
+        private string ReqBody=String.Empty;
         public ActInputValue TemplateFile { get { return GetOrCreateInputParam(Fields.TemplateFile); } }
-        
+
         public ActInputValue SaveRequestResponseFolderPath { get { return GetOrCreateInputParam(Fields.SaveRequestResponseFolderPath); } }
-        
+
         public ActInputValue URLUser { get { return GetOrCreateInputParam(Fields.URLUser); } }
-        
+
         public ActInputValue URLPass { get { return GetOrCreateInputParam(Fields.URLPass); }  }
-       
+
         public ActInputValue URLDomain { get { return GetOrCreateInputParam(Fields.URLDomain); }  }
 
         [IsSerializedForLocalRepository]
@@ -101,24 +101,24 @@ namespace GingerCore.Actions.REST
         [IsSerializedForLocalRepository]
         public bool RestResponseSave { get { return mRestResponseSave; } set { mRestResponseSave = value; OnPropertyChanged(Fields.RestResponseSave); } }
 
-   
+
         [IsSerializedForLocalRepository]
         public bool DoNotFailActionOnBadRespose { get; set; }
 
         [IsSerializedForLocalRepository]
         public bool AcceptAllSSLCertificate { get; set; }
-        
+
         private HttpWebResponse WebReqResponse = null;
         public HttpStatusCode ResponseCode
         {
             get
             {
                 if (WebReqResponse == null)
-                { 
+                {
                     return HttpStatusCode.Ambiguous;
                 }
                 else
-                { 
+                {
                     return WebReqResponse.StatusCode;
                 }
             }
@@ -128,15 +128,15 @@ namespace GingerCore.Actions.REST
         public bool UseTemplateFile
         {
             get;
-            set;            
+            set;
         }
-       
+
         [IsSerializedForLocalRepository(true)]
         public bool UseRequestBody
         {
             get;
             set;
-        } 
+        }
 
         public enum eRequestType
         {
@@ -152,16 +152,16 @@ namespace GingerCore.Actions.REST
             Session,
             [EnumValueDescription("Dont use Cookies")]
             None,
-             [EnumValueDescription("Use fresh Cookies")]
+            [EnumValueDescription("Use fresh Cookies")]
             New
         }
 
         public enum eHttpVersion
         {
             [EnumValueDescription("Version 1.0")]
-           HTTPV10,
+            HTTPV10,
             [EnumValueDescription("Version 1.1")]
-           HTTPV11,
+            HTTPV11,
         }
 
         public enum eSercurityType
@@ -172,7 +172,7 @@ namespace GingerCore.Actions.REST
             Tls11,
             Tls12
         }
-        
+
         [IsSerializedForLocalRepository]
         public eRequestType RequestType { set; get; }
 
@@ -182,9 +182,11 @@ namespace GingerCore.Actions.REST
             JSon,
             [EnumValueDescription("text/plain; charset=utf-8")]
             TextPlain,
-            XML
+            XML,
+            [EnumValueDescription("application/pdf")]
+            PDF
         }
-        
+
         [IsSerializedForLocalRepository]
         public eContentType ContentType { set; get; }
 
@@ -198,7 +200,7 @@ namespace GingerCore.Actions.REST
         [IsSerializedForLocalRepository]
         public eCookieMode CookieMode { set; get; }
 
-         [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public eSercurityType SecurityType { set; get; }
         public bool UseLegacyJSONParsing
         {
@@ -284,7 +286,7 @@ namespace GingerCore.Actions.REST
             switch (SecurityType)
             {
                 case eSercurityType.None:
-                    
+
                     break;
                 case eSercurityType.Ssl3:
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
@@ -304,13 +306,13 @@ namespace GingerCore.Actions.REST
                     throw new NotSupportedException("The Configured secutrity type is not supported");
 
             }
-  
-             
+
+
             try
             {
                 string strURL = EndPointURL.ValueForDriver;
 
-                HttpWebRequest WebReq = (HttpWebRequest)WebRequest.Create(strURL);         
+                HttpWebRequest WebReq = (HttpWebRequest)WebRequest.Create(strURL);
                 SetHTTPHeaders(WebReq);
                 //Nathan added customizable Network Credentials
                 NetworkCredential CustCreds = null;
@@ -378,13 +380,13 @@ namespace GingerCore.Actions.REST
                             Cookie ck = new Cookie();
                             ck.Name = cooki.Name;
                             ck.Value = cooki.Value;
-                               if (String.IsNullOrEmpty(cooki.Domain)||true) 
-                               {
-                                   cooki.Domain = null;                                                                    
-                               }
+                            if (String.IsNullOrEmpty(cooki.Domain)||true)
+                            {
+                                cooki.Domain = null;
+                            }
                             WebReq.CookieContainer.Add(domainName, ck);
-                        }       
-                               break;
+                        }
+                        break;
 
                     case eCookieMode.None:
 
@@ -405,14 +407,14 @@ namespace GingerCore.Actions.REST
                         WebReq.ContentType = "application/json";
                     }
 
-                    if (RequestType == eRequestType.PATCH) 
+                    if (RequestType == eRequestType.PATCH)
                     {
                         WebReq.Method = WebRequestMethods.Http.Post;
                         WebReq.Headers.Add("X-Http-Method-Override", "PATCH");
                     }
 
-                    
-                   
+
+
                     string req = HttpUtility.UrlEncode(RequestBody.Value);
                     if (ReqHttpVersion == eHttpVersion.HTTPV10)
                     {
@@ -434,10 +436,10 @@ namespace GingerCore.Actions.REST
                 try
                 {
                     WebReqResponse = (HttpWebResponse)WebReq.GetResponse();
-                   
-                    for (int i=0;i<WebReqResponse.Headers.Count;i++) 
+
+                    for (int i=0;i<WebReqResponse.Headers.Count;i++)
                     {
-                        AddOrUpdateReturnParamActual("Header: "+ WebReqResponse.Headers.Keys[i], WebReqResponse.Headers[i]);   
+                        AddOrUpdateReturnParamActual("Header: "+ WebReqResponse.Headers.Keys[i], WebReqResponse.Headers[i]);
                     }
 
                     AddOrUpdateReturnParamActual("Header: Status Code ", WebReqResponse.StatusDescription);
@@ -445,46 +447,46 @@ namespace GingerCore.Actions.REST
                 catch (WebException WE)
                 {
                     WebReqResponse = (HttpWebResponse)WE.Response;
-                  
+
                     this.ExInfo = WE.Message;
                     if (DoNotFailActionOnBadRespose != true)
                     {
-                    base.Status=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    base.Error = WE.Message;
-                }
-                  
+                        base.Status=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.Error = WE.Message;
+                    }
+
 
                 }
                 if (CookieMode != eCookieMode.None)
                 {
                     foreach (Cookie cooki in WebReqResponse.Cookies)
                     {
- 
+
                         if (_sessionCokkiesDic.Keys.Contains(cooki.Name) == false)
                         {
                             _sessionCokkiesDic.Add(cooki.Name, cooki);
                         }
                         else
                         {
-                            _sessionCokkiesDic[cooki.Name] = cooki;                 
+                            _sessionCokkiesDic[cooki.Name] = cooki;
                         }
                     }
 
                     for (int k = 0; k < WebReqResponse.Headers.Count; k++)
-                    {                  
+                    {
                         if (WebReqResponse.Headers.Keys[k] == "Set-Cookie")
                         {
                             foreach(string httpCookie in  WebReqResponse.Headers.GetValues(k))
                             {
-                               
+
                                 String[] cookiearray = httpCookie.Split(new char[] {';'}, 3);
                                 String[] cookiearray2 = cookiearray[0].Split(new char[] { '=' }, 2);
-                              
+
                                 Cookie cks= new Cookie();
                                 cks.Name = cookiearray2[0];
                                 cks.Value = cookiearray2[1];
                                 cks.Path = cookiearray[1].Split(new char[] { '=' }, 2)[1];
-                              
+
                                 if (cookiearray.Length == 3)
                                 {
                                     if (cookiearray[2].Contains("HttpOnly"))
@@ -494,15 +496,15 @@ namespace GingerCore.Actions.REST
                                 }
                                 if (cks.Path.Length > 1)
                                 {
-                                    if (cks.Path.StartsWith(".")) 
+                                    if (cks.Path.StartsWith("."))
                                     {
 
                                         Uri domainName = new Uri("http://"+ cks.Path.Substring(1));
-                                           cks.Domain = domainName.Host;
+                                        cks.Domain = domainName.Host;
                                     }
                                     else {
-                                    Uri domainName = new Uri(cks.Path);
-                                    cks.Domain = domainName.Host;}
+                                        Uri domainName = new Uri(cks.Path);
+                                        cks.Domain = domainName.Host;}
                                 }
                                 else
                                 {
@@ -513,46 +515,87 @@ namespace GingerCore.Actions.REST
                                 {
                                     cks.Path = cks.Path.Substring(1);
                                 }
-                                try 
-                                { 
+                                try
+                                {
                                     _sessionCokkiesDic.Remove(cks.Name);
                                 }
-                                finally 
+                                finally
                                 {
                                     _sessionCokkiesDic.Add(cks.Name, cks);
                                 }
-                               
+
                             }
                         }
                     }
-                 
+
 
                 }
-                
-                //TODO: check if UTF8 is good for all
-                StreamReader reader=new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
-                Reporter.ToLog(eAppReporterLogLevel.INFO, "Response");
 
-                string resp = reader.ReadToEnd().ToString();
-                Reporter.ToLog(eAppReporterLogLevel.INFO, resp);
+                string resp = string.Empty;
+
+                if (RestResponseSave == true && ResponseContentType == eContentType.PDF)
+                {
+                    MemoryStream memoryStream = new MemoryStream();
+                    WebResponse webResponse = WebReq.GetResponse();
+
+                    webResponse.GetResponseStream().CopyTo(memoryStream);
+
+                    var headerkey = webResponse.Headers.AllKeys;
+                    var header = string.Join(",", headerkey);
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, header);
+                    byte[] data = memoryStream.ToArray();
+
+
+                    String fileName = "";
+                    String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
+                    fileName += this.Description;
+                    fileName += "_" + "Response";
+                    fileName += "_" + timeStamp;
+
+                    string DirectoryPath = SaveRequestResponseFolderPath.ValueForDriver;
+                    if (DirectoryPath.StartsWith(@"~\"))
+                    {
+                        DirectoryPath = DirectoryPath.Replace(@"~\", SolutionFolder);
+                    }
+                    DirectoryPath += @"\" + "Response";
+
+                    if (!Directory.Exists(DirectoryPath))
+                    {
+                        Directory.CreateDirectory(DirectoryPath);
+                    }
+                    string filePath = DirectoryPath + "//" + fileName + ".pdf";
+
+                    File.WriteAllBytes(filePath, data);
+
+                }
+                else
+                {
+                    //TODO: check if UTF8 is good for all
+                    StreamReader reader=new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, "Response");
+
+                    resp = reader.ReadToEnd().ToString();
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, resp);
+                }
+
 
                 if (RestRequestSave==true && RequestType!=eRequestType.GET)
                 {
-                   string fileName= createRequestOrResponseXMLInFolder("Request", ReqBody, ContentType);
-                   AddOrUpdateReturnParamActual("Saved Request File Name", fileName);
+                    string fileName= createRequestOrResponseXMLInFolder("Request", ReqBody, ContentType);
+                    AddOrUpdateReturnParamActual("Saved Request File Name", fileName);
                 }
-                if (RestResponseSave==true)
+                if (RestResponseSave == true && ResponseContentType != eContentType.PDF)
                 {
                     string fileName = createRequestOrResponseXMLInFolder("Response", resp, ResponseContentType);
                     AddOrUpdateReturnParamActual("Saved Response File Name", fileName);
-                }             
-                
+                }
+
 
                 AddOrUpdateReturnParamActual("Respose", resp);
-              if(  String.IsNullOrEmpty(resp))
-              {
-                  return;
-              }
+                if(  String.IsNullOrEmpty(resp))
+                {
+                    return;
+                }
                 XmlDocument doc=null;
                 if (ResponseContentType == eContentType.JSon)
                 {
@@ -658,21 +701,21 @@ namespace GingerCore.Actions.REST
             if (CT == eContentType.XML)
             {
                 XmlDocument xmlDoc = new XmlDocument();
-                
+
                 xmlDoc.LoadXml(fileContent);
                 //string xmlFilesDir = "";
                 try
-                {                   
+                {
                     //xmlFilesDir = SaveRequestResponseFolderPath.ValueForDriver.Replace(@"~\", SolutionFolder) + @"\" + fileType + "XMLs";
                     //if (!Directory.Exists(xmlFilesDir))
                     //    Directory.CreateDirectory(xmlFilesDir);
-                    xmlDoc.Save(DirectoryPath+ "\\"+ fileName + ".xml");                   
+                    xmlDoc.Save(DirectoryPath+ "\\"+ fileName + ".xml");
                 }
                 catch (Exception e)
-                {                    
+                {
                     Reporter.ToUser(eUserMsgKeys.FileOperationError, e.Message);
                 }
-        }
+            }
             else
             {
                 if (CT == eContentType.JSon)
@@ -685,16 +728,16 @@ namespace GingerCore.Actions.REST
                 {
                     fileName += ".txt";
                 }
-                
+
 
                 System.IO.File.WriteAllText(DirectoryPath + "\\" + fileName, fileContent);
             }
-   
+
             return fileName;
         }
 
         private byte[] GetBody()
-        {       
+        {
             ReqBody=   RequestBody.ValueForDriver;
             ReqBody=SetDynamicValues(this,ReqBody);
             byte[] b1 = System.Text.Encoding.UTF8.GetBytes(ReqBody);
@@ -705,7 +748,7 @@ namespace GingerCore.Actions.REST
         {
             string ReqString = string.Empty;
             FileStream ReqStream = System.IO.File.OpenRead(TemplateFile.ValueForDriver.Replace(@"~\", this.SolutionFolder));
-         
+
             using (StreamReader reader = new StreamReader(ReqStream))
             {
                 ReqString = reader.ReadToEnd();
@@ -715,7 +758,7 @@ namespace GingerCore.Actions.REST
             byte[] b1 = System.Text.Encoding.UTF8.GetBytes(ReqString);
             return b1;
         }
-        
+
         private void SetHTTPHeaders(HttpWebRequest WebReq)
         {
             ValueExpression Ve=new ValueExpression(this.RunOnEnvironment,this.RunOnBusinessFlow,this.DSList);
@@ -725,7 +768,7 @@ namespace GingerCore.Actions.REST
                 WebReq.PreAuthenticate = true;
                 if (String.IsNullOrEmpty(httpHeader.ValueForDriver))
                 {
-                    
+
                     Ve.Value=httpHeader.Value;
                     httpHeader.ValueForDriver=Ve.ValueCalculated;
                 }
@@ -740,7 +783,7 @@ namespace GingerCore.Actions.REST
                         break;
                     case "ACCEPT":
                         WebReq.Accept = httpHeader.ValueForDriver;
-                    break;
+                        break;
                     case "REFERER":
                         WebReq.Referer = httpHeader.ValueForDriver;
                         break;
@@ -751,20 +794,20 @@ namespace GingerCore.Actions.REST
                         WebReq.Headers.Add(httpHeader.Param, httpHeader.ValueForDriver);
                         break;
                 }
-                
-      
-        
+
+
+
             }
-           
+
         }
 
         private string SetDynamicValues(ActREST AR, string ReqBody)
         {
-             ValueExpression Ve=new ValueExpression(this.RunOnEnvironment,this.RunOnBusinessFlow,this.DSList);
+            ValueExpression Ve=new ValueExpression(this.RunOnEnvironment,this.RunOnBusinessFlow,this.DSList);
             string NewReqBody = ReqBody;
             foreach (ActInputValue AIV in AR.DynamicElements)
             {
-            
+
                 string NewValue = AIV.ValueForDriver;
 
                 if (String.IsNullOrEmpty(NewValue))
@@ -773,9 +816,9 @@ namespace GingerCore.Actions.REST
                     AIV.ValueForDriver=Ve.ValueCalculated;
                     NewValue = AIV.ValueForDriver;
                 }
-               NewReqBody = NewReqBody.Replace(AIV.Param, NewValue);
+                NewReqBody = NewReqBody.Replace(AIV.Param, NewValue);
 
-             
+
             }
             return NewReqBody;
         }
