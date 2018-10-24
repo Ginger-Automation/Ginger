@@ -656,11 +656,11 @@ namespace GingerCore.Actions.REST
 
         private void CreatePdfFile(byte[] data)
         {
-            string filePath = CreateFolder() + "//" + CreateFileName("pdf") + ".pdf";
+            string filePath = Path.Combine(CreateFolder("Response"), CreateFileName("Response", "pdf"));
             File.WriteAllBytes(filePath, data);
         }
 
-        private string CreateFolder()
+        private string CreateFolder(string fileType)
         {
             var DirectoryPath = string.Empty;
             DirectoryPath = SaveRequestResponseFolderPath.ValueForDriver;
@@ -669,7 +669,8 @@ namespace GingerCore.Actions.REST
             {
                 DirectoryPath = DirectoryPath.Replace(@"~\", SolutionFolder);
             }
-            DirectoryPath += @"\" + "Response";
+
+            DirectoryPath = Path.Combine(DirectoryPath,fileType);
 
             if (!Directory.Exists(DirectoryPath))
             {
@@ -678,36 +679,34 @@ namespace GingerCore.Actions.REST
             return DirectoryPath;
         }
 
-        private string CreateFileName(string fileType)
+        private string CreateFileName(string fileType,string extension)
         {
             String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
             string fileName = string.Empty;
             fileName += this.Description;
             fileName += "_" + fileType;
             fileName += "_" + timeStamp;
-
+            fileName += "." + extension;
             return fileName;
         }
 
         public string createRequestOrResponseXMLInFolder(string fileType, string fileContent,eContentType CT)
         {
-            var fileName = CreateFileName(fileType);
+            string fileName = string.Empty;
+            string fileExtension = string.Empty;
 
-            string DirectoryPath = CreateFolder();
+            string DirectoryPath = CreateFolder(fileType);
            
-
             if (CT == eContentType.XML)
             {
                 XmlDocument xmlDoc = new XmlDocument();
 
                 xmlDoc.LoadXml(fileContent);
-                //string xmlFilesDir = "";
+               
                 try
                 {
-                    //xmlFilesDir = SaveRequestResponseFolderPath.ValueForDriver.Replace(@"~\", SolutionFolder) + @"\" + fileType + "XMLs";
-                    //if (!Directory.Exists(xmlFilesDir))
-                    //    Directory.CreateDirectory(xmlFilesDir);
-                    xmlDoc.Save(DirectoryPath+ "\\"+ fileName + ".xml");
+                    fileName= CreateFileName(fileType, "xml");
+                    xmlDoc.Save(Path.Combine(DirectoryPath, fileName));
                 }
                 catch (Exception e)
                 {
@@ -719,16 +718,16 @@ namespace GingerCore.Actions.REST
                 if (CT == eContentType.JSon)
 
                 {
-                    fileName += ".json";
+                    fileExtension = "json";
                 }
 
                 else
                 {
-                    fileName += ".txt";
+                    fileExtension = "txt";
                 }
 
-
-                System.IO.File.WriteAllText(DirectoryPath + "\\" + fileName, fileContent);
+                 fileName = CreateFileName(fileType, fileExtension);
+               File.WriteAllText(Path.Combine(DirectoryPath, fileName), fileContent);
             }
 
             return fileName;
