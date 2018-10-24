@@ -313,7 +313,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 if (node != null && node is DataSourceTableTreeItem)
                 {
                     if(((DataSourceTable)node.NodeObject()).DirtyStatus == eDirtyStatus.Modified)
+                    { 
                         ((DataSourceTableTreeItem)node).SaveTreeItem();
+                    }
                 }                
             }
         }        
