@@ -1384,7 +1384,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                                     ScreenshotCount++;
                                                 }
                                             }
-                                            Tuple<int, int> sizesPreview = ExtensionMethods.RecalculatingSizeWithKeptRatio(ExtensionMethods.GetImageHeightWidth(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
+                                            Tuple<int, int> sizesPreview = Ginger.General.RecalculatingSizeWithKeptRatio(Ginger.General.GetImageHeightWidth(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
                                             string id_str = @"ScreenShot_" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + act.Seq.ToString() + "_" + ScreenshotCount;
                                             fieldsValuesHTMLTableCells.Append(@"<td align='center'><img style='display:block;' src='"  + @".\" + lastActivity + "\\" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Seq).GetValue(act) + " " + act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString())  + @"\Screenshots\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png' alt='" + act.Description + " - Action - Screenshot" + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + id_str + "' onclick='show_modal(\"" + id_str + "\")'></img></td>");
                                         }
@@ -1817,7 +1817,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                                     ScreenshotCount++;
                                                 }
                                             }
-                                            Tuple<int, int> sizesPreview = ExtensionMethods.RecalculatingSizeWithKeptRatio(ExtensionMethods.GetImageHeightWidth(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
+                                            Tuple<int, int> sizesPreview = Ginger.General.RecalculatingSizeWithKeptRatio(Ginger.General.GetImageHeightWidth(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
                                             string id_str = @"ScreenShot_" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + act.Seq.ToString() + "_" + ScreenshotCount;
                                             fieldsValuesHTMLTableCells.Append(@"<td align='center'><img style='display:block;' src='" + @"..\..\" + lastActivity + "\\" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Seq).GetValue(act) + " " + act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + @"\Screenshots\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png' alt='" + act.Description + " - Action - Screenshot" + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + id_str + "' onclick='show_modal(\"" + id_str + "\")'></img></td>");
                                         }
@@ -2128,7 +2128,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                                 ScreenshotCount++;
                                             }
                                         }
-                                        Tuple<int, int> sizesPreview = ExtensionMethods.RecalculatingSizeWithKeptRatio(ExtensionMethods.GetImageHeightWidth(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
+                                        Tuple<int, int> sizesPreview = Ginger.General.RecalculatingSizeWithKeptRatio(Ginger.General.GetImageHeightWidth(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
                                         string id_str = @"ScreenShot_" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + act.Seq.ToString() + "_" + ScreenshotCount;
                                         fieldsValuesHTMLTableCells.Append(@"<td align='center'><img style='display:block;' src='" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Seq).GetValue(act) + " " + act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + @"\Screenshots\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png' alt='" + act.Description + " - Action - Screenshot" + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + id_str + "' onclick='show_modal(\"" + id_str + "\")'></img></td>");
                                     }
@@ -2394,7 +2394,7 @@ namespace Ginger.Reports.GingerExecutionReport
                             fileName = System.IO.Path.GetFileName(txt_file);
                             if (fileName.Contains("ScreenShot_"))
                             {
-                                Tuple<int, int> sizesPreview = ExtensionMethods.RecalculatingSizeWithKeptRatio(ExtensionMethods.GetImageHeightWidth(txt_file), screenShotFullWidth, screenShotFullHight);
+                                Tuple<int, int> sizesPreview = Ginger.General.RecalculatingSizeWithKeptRatio(Ginger.General.GetImageHeightWidth(txt_file), screenShotFullWidth, screenShotFullHight);
                                 strHTMLBuilder.Append(@"<tr><td align='center'><img style='display:block;' src='.\Screenshots\" + fileName.ToString() + "' alt='" + ActionReport.Description + " - Action - Screenshot" + screenshotCount.ToString() + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + fileName + "' onclick='show_modal(\"" + fileName + "\")'></img></td></tr>");
                             }
                         }
@@ -2480,8 +2480,8 @@ namespace Ginger.Reports.GingerExecutionReport
             else
             {
                 BitmapImage beatSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@BeatLogo.jpg"));
-                Tuple<int, int> sizes = ExtensionMethods.RecalculatingSizeWithKeptRatio(beatSource, logoWidth, logoHight);
-                beatLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(beatSource)) + "' style='padding-left:70px'/>";
+                Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(beatSource, logoWidth, logoHight);
+                beatLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(beatSource)) + "' style='padding-left:70px'/>";
             }
             return beatLogo;
         }
@@ -2496,8 +2496,8 @@ namespace Ginger.Reports.GingerExecutionReport
             else
             {
                 BitmapImage gingerSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@GingerLogo_lowRes.jpg"));
-                Tuple<int, int> sizes = ExtensionMethods.RecalculatingSizeWithKeptRatio(gingerSource, logoWidth, logoHight);
-                gingerLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(gingerSource)) + "' style='float:right;padding-left:70px' />";
+                Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(gingerSource, logoWidth, logoHight);
+                gingerLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(gingerSource)) + "' style='float:right;padding-left:70px' />";
             }
             return gingerLogo;
         }
@@ -2507,9 +2507,9 @@ namespace Ginger.Reports.GingerExecutionReport
             string customerLogo = string.Empty;
             if (!currentTemplate.UseLocalStoredStyling)
             {
-                System.Drawing.Image CustomerLogo = Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(currentTemplate.LogoBase64Image.ToString());
-                BitmapSource customerSourceS = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(CustomerLogo);
-                Tuple<int, int> sizes = ExtensionMethods.RecalculatingSizeWithKeptRatio(customerSourceS, logoWidth, logoHight);
+                System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
+                BitmapSource customerSourceS = Ginger.General.GetImageStream(CustomerLogo);
+                Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(customerSourceS, logoWidth, logoHight);
                 if (Directory.Exists(HTMLReportMainFolder + "/assets/img"))
                 {
                     CustomerLogo.Save(HTMLReportMainFolder + "/assets/img/CustomerLogo.png");
@@ -2518,8 +2518,8 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                BitmapSource customerSource = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(currentTemplate.LogoBase64Image.ToString()));
-                Tuple<int, int> sizes = ExtensionMethods.RecalculatingSizeWithKeptRatio(customerSource, logoWidth, logoHight);
+                BitmapSource customerSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString()));
+                Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(customerSource, logoWidth, logoHight);
                 customerLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + currentTemplate.LogoBase64Image.ToString() + "' style='padding-right:70px'/>";
             }
             return customerLogo;
@@ -2535,8 +2535,8 @@ namespace Ginger.Reports.GingerExecutionReport
             else
             {
                 BitmapImage nextImageSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@ItemNext.jpg"));
-                Tuple<int, int> sizes = ExtensionMethods.RecalculatingSizeWithKeptRatio(nextImageSource, itemPrevNextWidth, itemPrevNextHight);
-                itemNextImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(nextImageSource)) + "' style='padding-left:1px'/>";
+                Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(nextImageSource, itemPrevNextWidth, itemPrevNextHight);
+                itemNextImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(nextImageSource)) + "' style='padding-left:1px'/>";
             }
             return itemNextImage;
         }
@@ -2551,8 +2551,8 @@ namespace Ginger.Reports.GingerExecutionReport
             else
             {
                 BitmapImage prevImageSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@ItemPrev.jpg"));
-                Tuple<int, int> sizes = ExtensionMethods.RecalculatingSizeWithKeptRatio(prevImageSource, itemPrevNextWidth, itemPrevNextHight);
-                itemPrevImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapToBase64(Ginger.Reports.GingerExecutionReport.ExtensionMethods.BitmapImage2Bitmap(prevImageSource)) + "' style='padding-left:1px'/>";
+                Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(prevImageSource, itemPrevNextWidth, itemPrevNextHight);
+                itemPrevImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(prevImageSource)) + "' style='padding-left:1px'/>";
             }
             return itemPrevImage;
         }
@@ -2589,8 +2589,7 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/jquery.js'></script>");
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/bootstrap.js'></script>");
-                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/babel.js'></script>");
-                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/browser.js'></script>");
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/babel.js'></script>");                
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/react-with-addons.min.js'></script>");
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/react-dom.min.js'></script>");                
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/prop-types.min.js'></script>");
@@ -2600,10 +2599,9 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>");
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.js'></script>");
-                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js'></script>");
-                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-core/6.1.19/browser.js'></script>");
-                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0-alpha1/react-with-addons.js'></script>");
-                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/react/0.14.1/react-dom.min.js'></script>");
+                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js'></script>");                
+                mJSBundle.Append(@"<script src='https://unpkg.com/react@15/dist/react-with-addons.js'></script>");
+                mJSBundle.Append(@"<script src='https://unpkg.com/react-dom@15.6.1/dist/react-dom.min.js'></script>");
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.2/prop-types.min.js'></script>");
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/recharts/1.1.0/Recharts.min.js'></script>");
             }
@@ -2628,9 +2626,17 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                l.currentTemplate = App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).FirstOrDefault();
+                var HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+                HTMLReportConfiguration defualtConfig = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                if (defualtConfig != null)
+                {
+                    l.currentTemplate = Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig); ;
+                }
+                else
+                {
+                    l.currentTemplate = null;//not supposed to happen
+                }
             }
-            //
 
             if ((RI.ReportInfoRootObject == null) || (RI.ReportInfoRootObject.GetType() == typeof(Object)))
             {
@@ -2706,7 +2712,8 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                l.currentTemplate = App.LocalRepository.GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).FirstOrDefault();
+                ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();                
+                l.currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
             if (string.IsNullOrEmpty(BF.ExecutionFullLogFolder))
             {
@@ -2802,7 +2809,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -2823,7 +2830,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             catch (Exception)
             {
-                logsFolder = App.UserProfile.Solution.Folder + @"\HTMLReports\";
+                logsFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"HTMLReports\");
                 System.IO.Directory.CreateDirectory(logsFolder);
                 App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
             }
@@ -2865,101 +2872,6 @@ namespace Ginger.Reports.GingerExecutionReport
             }
         }
 
-        public static string BitmapToBase64(Bitmap bImage)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                bImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                byte[] byteImage = ms.ToArray();
-                return Convert.ToBase64String(byteImage).ToString(); //Get Base64
-            }
-        }
-
-        public static System.Drawing.Image Base64ToImage(string base64String)
-        {
-            // Convert base 64 string to byte[]
-            byte[] imageBytes = Convert.FromBase64String(base64String);
-            // Convert byte[] to Image
-            using (var ms = new MemoryStream(imageBytes, 0, imageBytes.Length))
-            {
-                System.Drawing.Image image = System.Drawing.Image.FromStream(ms, true);
-                return image;
-            }
-        }
-
-        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
-        public static extern bool DeleteObject(IntPtr hObject);
-
-        public static BitmapSource GetImageStream(System.Drawing.Image myImage)
-        {
-            var bitmap = new Bitmap(myImage);
-            IntPtr bmpPt = bitmap.GetHbitmap();
-            BitmapSource bitmapSource =
-             System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                   bmpPt,
-                   IntPtr.Zero,
-                   Int32Rect.Empty,
-                   BitmapSizeOptions.FromEmptyOptions());
-
-            //freeze bitmapSource and clear memory to avoid memory leaks
-            bitmapSource.Freeze();
-            DeleteObject(bmpPt);
-            bitmap.Dispose();
-            return bitmapSource;
-        }
-        public static Tuple<int, int> GetImageHeightWidth(string path)
-        {
-            Tuple<int, int> a;
-            using (Stream stream = File.OpenRead(path))
-            {
-                using (Image sourceImage = Image.FromStream(stream, false, false))
-                {
-                    a = new Tuple<int, int>(sourceImage.Width, sourceImage.Height);
-                }
-            }
-            return a;
-        }
-        public static Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
-        {
-            using (MemoryStream outStream = new MemoryStream())
-            {
-                BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
-                enc.Save(outStream);
-                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-
-                return new Bitmap(bitmap);
-            }
-        }
-        //For Screenshots
-        public static Tuple<int, int> RecalculatingSizeWithKeptRatio(Tuple<int, int> a, int boxWidth, int boxHight)
-        {
-            //calculate the ratio
-            double dbl = (double)a.Item1 / (double)a.Item2;
-            if ((int)((double)boxHight * dbl) <= boxWidth)
-            {
-                return new Tuple<int, int>((int)((double)boxHight * dbl), boxHight);
-            }
-            else
-            {
-                return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
-            }
-        }
-        //For logos
-        public static Tuple<int, int> RecalculatingSizeWithKeptRatio(BitmapSource source, int boxWidth, int boxHight)
-        {
-            //calculate the ratio
-            double dbl = (double)source.Width / (double)source.Height;
-            if ((int)((double)boxHight * dbl) <= boxWidth)
-            {
-                return new Tuple<int, int>((int)((double)boxHight * dbl), boxHight);
-            }
-            else
-            {
-                return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
-            }
-        }
-
         public static ObservableList<HTMLReportConfiguration> GetSolutionHTMLReportConfigurations()
         {
             var list = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
@@ -2980,10 +2892,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     template.IsDefault = false;
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(template);
-                }
-
-            
-        }
-        
+                }            
+        }        
     }
 }

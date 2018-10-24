@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -37,7 +38,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
     {
 
         private List<string> RegularTypesList = new List<string>() { "date", "anyType", "string", "byte", "double", "short", "int", "char", "long", "boolean", "normalizedString", "dateTime", "decimal", "integer", "Array" };
-        private List<string> HeaderNamesList = new List<string>() { "header", "MessageHeader", "Hdr", "Header"};
+        private List<string> HeaderNamesList = new List<string>() { "header", "MessageHeader", "Hdr", "Header" };
 
         string tab1 = " ";
         string tab2 = "  ";
@@ -48,72 +49,74 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private Dictionary<string, int> AllPlaceHolders = new Dictionary<string, int>();
         private List<Element> ElementsList = new List<Element>();
         private List<ComplexType> ComplexTypesList = new List<ComplexType>();
-        private string ContainingFolder;
         private ObservableList<ApplicationAPIModel> AAMList = new ObservableList<ApplicationAPIModel>();
-        private List<string> AllURLs = new List<string>();
-        private List<ServiceDescription> mServiceDescriptionsList = new List<ServiceDescription>();
+        private List<Tuple<string,string>> AllURLs = new List<Tuple<string, string>>();
+        private List<ServiceDescriptionExtended> mServiceDescriptionsExtendedList = new List<ServiceDescriptionExtended>();
         private BindingCollection bindColl;
         private ServiceCollection Services;
         private PortTypeCollection portTypColl;
         private MessageCollection Messages;
-        private XmlSchemas Schemas;
+        private List<XmlSchemasExtended> mSchemasList = new List<XmlSchemasExtended>();
         private string mURL;
         public bool ErrorFound;
         public string ErrorReason;
         public string LogFile;
         public bool mStopParsing;
 
-        private void AddServiceDescription(string URL)
-        {
-            XmlTextReader reader = new XmlTextReader(URL);
-            ServiceDescription sd = ServiceDescription.Read(reader);
-               mServiceDescriptionsList.Add(sd);
-        }
+
 
         public override ObservableList<ApplicationAPIModel> ParseDocument(string URL, bool avoidDuplicatesNodes = false)
         {
             mURL = URL;
-
-            if (mServiceDescriptionsList.Count == 0)
-            {
-                AddServiceDescription(URL);
-            }
+            
+            AddServiceDescription(URL);
 
             //Make it recursivly
-            foreach (Import import in mServiceDescriptionsList[0].Imports)
-            {
-                if (import.Location.ToUpper().EndsWith("WSDL"))
-                {
-                    AddServiceDescription(import.Location);
-                }
-            }
+            ImportAllServiceDescription(mServiceDescriptionsExtendedList[0].mServiceDescription.Imports, mServiceDescriptionsExtendedList[0].ContainingFolder);
 
-            foreach (ServiceDescription SD in mServiceDescriptionsList)
+
+
+
+            foreach (ServiceDescriptionExtended SDExtended in mServiceDescriptionsExtendedList)
             {
+                if (SDExtended.mServiceDescription.Types.Schemas.Count > 0)
+                {
+                    XmlSchemasExtended xmlSchemasExtended = new XmlSchemasExtended() { mXmlSchemas = SDExtended.mServiceDescription.Types.Schemas, ContainingFolder = SDExtended.ContainingFolder };
+
+                    mSchemasList.Add(xmlSchemasExtended);
+                }
+
+
                 if (bindColl == null && Services == null && portTypColl == null && Messages == null && Messages == null)
                 {
-                    bindColl = SD.Bindings;
-                    Services = SD.Services;
-                    portTypColl = SD.PortTypes;
-                    Messages = SD.Messages;
-                    Schemas = SD.Types.Schemas;
+                    bindColl = SDExtended.mServiceDescription.Bindings;
+                    Services = SDExtended.mServiceDescription.Services;
+                    portTypColl = SDExtended.mServiceDescription.PortTypes;
+                    Messages = SDExtended.mServiceDescription.Messages;
                 }
                 else
                 {
-                    foreach (Binding b in SD.Bindings)
+                    foreach (Binding b in SDExtended.mServiceDescription.Bindings)
+                    {
                         bindColl.Add(b);
-                    foreach (Service s in SD.Services)
+                    }
+                    foreach (Service s in SDExtended.mServiceDescription.Services)
+                    {
                         Services.Add(s);
-                    foreach (PortType p in SD.PortTypes)
+                    }
+                    foreach (PortType p in SDExtended.mServiceDescription.PortTypes)
+                    {
                         portTypColl.Add(p);
-                    foreach (Message m in SD.Messages)
+                    }
+                    foreach (Message m in SDExtended.mServiceDescription.Messages)
+                    {
                         Messages.Add(m);
-                    foreach (XmlSchema XMLSchema in SD.Types.Schemas)
-                        Schemas.Add(XMLSchema);
+                    }
                 }
+
             }
 
-            ContainingFolder = GetContainingFolderFromURL(URL);
+
 
             PopulateAllURLsList();
 
@@ -133,6 +136,38 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             File.WriteAllText(UserTempFile, LogFile);
 
             return AAMList;
+        }
+
+        private void ImportAllServiceDescription(ImportCollection imports, string containingFolder)
+        {
+
+            foreach (Import import in imports)
+            {
+                if (import.Location.ToUpper().EndsWith("WSDL"))
+                {
+                    string CompleteURL = GetCompleteURL(import.Location, containingFolder);
+
+                    ImportCollection importsList = AddServiceDescription(CompleteURL);
+                    if (importsList.Count > 0)
+                    {
+                        ImportAllServiceDescription(importsList, containingFolder);
+                    }
+
+                }
+            }
+        }
+
+        private ImportCollection AddServiceDescription(string URL)
+        {
+            XmlTextReader reader = new XmlTextReader(URL);
+
+            ServiceDescription sd = ServiceDescription.Read(reader);
+            string containingFolder = GetContainingFolderFromURL(URL);
+            ServiceDescriptionExtended serviceDescriptionExtended = new ServiceDescriptionExtended() { mServiceDescription = sd, ContainingFolder = containingFolder };
+
+            mServiceDescriptionsExtendedList.Add(serviceDescriptionExtended);
+
+            return sd.Imports;
         }
 
         private void CreateApplicationAPIModels()
@@ -159,7 +194,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     string BindingName = binding.Name;
                     string OperationName = operation.Name;
                     AAM.Name = operation.Name + "_" + binding.Name;
-                    
+
 
                     if (binding.Name.EndsWith("12"))
                         AAM.ReqHttpVersion = ApplicationAPIUtils.eHttpVersion.HTTPV10;
@@ -168,7 +203,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     string SoapEnvelopeURL = "http://schemas.xmlsoap.org/soap/envelope/";
 
-                    
+
                     PortTypeOperationDetails portTypeOperationDetails = GetOperationInputMessage(operation, portTypColl);
                     BindingOperationInputTag OperationInputTag = GetOperationInputTagByOperation(operation);
                     List<Part> messagePartsList = GetOperationInputParts(portTypeOperationDetails.InputMessageName, Messages, OperationInputTag);
@@ -323,7 +358,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 AddNameSpaceToInclude(NameSpacesToInclude, OperationInputTag.BodyNameSpace);
                 AddNameSpaceToInclude(NameSpacesToInclude, OperationInputTag.BodyEncodingStyle);
-                RequestBody.Append(tab2 + "<" + NameSpacesToInclude[OperationInputTag.BodyNameSpace] + ":" + OperationName + tab1 + "soapenv:encodingStyle=\"" + OperationInputTag.BodyEncodingStyle+ "\">" + Environment.NewLine);
+                RequestBody.Append(tab2 + "<" + NameSpacesToInclude[OperationInputTag.BodyNameSpace] + ":" + OperationName + tab1 + "soapenv:encodingStyle=\"" + OperationInputTag.BodyEncodingStyle + "\">" + Environment.NewLine);
                 tab2 = tab2 + " ";
             }
             foreach (Part part in messagePartsList)
@@ -352,7 +387,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             }
             RequestBody.Append(tab1 + "</soapenv:Body>" + Environment.NewLine);
-            
+
             RequestBody.Append("</soapenv:Envelope>" + Environment.NewLine);
 
             AppendEnvelope(RequestBody, messagePartsList, SoapEnvelopeURL, NameSpacesToInclude);
@@ -549,7 +584,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         {
                             AppendComment(RequestBody, CurrentTab, ChildElement.MinOccurs, ChildElement.MaxOccurs);
                             RequestBody.Append(CurrentTab + "<" + NameSpaceName + ":" + ChildElement.Name + ">" + Environment.NewLine);
-                            AppendComplexTypeElements(RequestBody, null, ChildElement, ChildElement.InnerElementComplexType, NameSpaceName, CurrentTab + tab1, NameSpacesToInclude, Path, AMPList);
+                            string PathToPass = Path + ChildElement.InnerElementComplexType.Source + ":" + ChildElement.InnerElementComplexType.Name + "/";
+                            AppendComplexTypeElements(RequestBody, null, ChildElement, ChildElement.InnerElementComplexType, NameSpaceName, CurrentTab + tab1, NameSpacesToInclude, PathToPass, AMPList);
                             RequestBody.Append(CurrentTab + "</" + NameSpaceName + ":" + ChildElement.Name + ">" + Environment.NewLine);
                         }
                     }
@@ -874,7 +910,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         {
             RequestBody.Append(CurrentTab + "<" + FullTagName + AttributesString + "></" + FullTagName + ">" + Environment.NewLine);
         }
-        
+
         private string GetPlaceHolderName(string ElementName)
         {
             string PlaceHolderName = ElementName.ToUpper();
@@ -906,7 +942,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
             return AttributesString;
         }
-        
+
         public ComplexType GetComplexTypeByElement(Element Element)
         {
             if (AllNameSpaces.ContainsKey(Element.TypeNameSpace))
@@ -932,7 +968,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             ComplexType ComplexType = null;
             if (ComplexElementSource.Count != 0)
-                ComplexType = ComplexTypesList.Where(x => x.Name == ComplexTypeName && ComplexElementSource.Contains(x.Source)).FirstOrDefault();
+                ComplexType = ComplexTypesList.Where(x => x.Name == ComplexTypeName && ComplexElementSource.Contains(x.Source.Replace("%20", " "))).FirstOrDefault();
             else
                 ComplexType = ComplexTypesList.Where(x => x.Name == ComplexTypeName && x.TargetNameSpace == ComplexTypeNameSpace).FirstOrDefault();
             if (ComplexType == null)
@@ -947,7 +983,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 ElementSource = AllNameSpaces[ElementNameSpace];
             Element Element = null;
             if (ElementSource.Count != 0)
-                Element = ElementsList.Where(x => x.Name == ElementName && ElementSource.Contains(x.Source)).FirstOrDefault();
+                Element = ElementsList.Where(x => x.Name == ElementName && ElementSource.Contains(x.Source.Replace("%20", " "))).FirstOrDefault();
             else
                 Element = ElementsList.Where(x => x.Name == ElementName).FirstOrDefault();
             return Element;
@@ -1032,11 +1068,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 if (WorkURL.Count() <= i)
                 {
-                    return s;
+                    break;
                 }
                 if (WorkURL[i] == '.' || WorkURL[i] == '_')
                 {
-                    return s;
+                    break;
                 }
                 else
                 {
@@ -1069,16 +1105,16 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         }
 
         #region PullingAndCreatingElements
-        
+
         private void PullDataIntoComplexTypesAndElementsLists()
         {
-            foreach (string URL in AllURLs)
+            foreach (Tuple<string, string> URLTuple in AllURLs)
             {
                 if (mStopParsing)
                     return;
-                if (!string.IsNullOrEmpty(URL))
+                if (!string.IsNullOrEmpty(URLTuple.Item1))
                 {
-                    string CompleteURL = GetCompleteURL(URL);
+                    string CompleteURL = GetCompleteURL(URLTuple.Item1, URLTuple.Item2);
                     XmlTextReader reader = new XmlTextReader(CompleteURL);
                     XmlSchema schema = XmlSchema.Read(reader, null);
 
@@ -1131,7 +1167,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     Element.Name = XmlSchemaElement.Name;
                     Element.Source = GetSourceByReferanceType(XmlSchemaElement.SourceUri);
                     Element.TargetNameSpace = XmlSchemaElement.QualifiedName.Namespace;
-                    
+
                     Element.Type = XmlSchemaElement.SchemaTypeName.Name;
                     Element.TypeNameSpace = XmlSchemaElement.SchemaTypeName.Namespace;
 
@@ -1232,7 +1268,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         if (XmlSchemaComplexContent.Content is XmlSchemaComplexContentExtension)
                         {
                             XmlSchemaComplexContentExtension XmlSchemaComplexContentExtension = XmlSchemaComplexContent.Content as XmlSchemaComplexContentExtension;
-                            ExtensionChild = CreateExtension(XmlSchemaComplexContentExtension);                            
+                            ExtensionChild = CreateExtension(XmlSchemaComplexContentExtension);
                         }
                         else if (XmlSchemaComplexContent.Content is XmlSchemaComplexContentRestriction)
                         {
@@ -1240,7 +1276,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                             Restriction Restriction = new Restriction();
                             Restriction.BaseName = XmlSchemaComplexContentRestriction.BaseTypeName.Name;
                             Restriction.BaseNameSpace = XmlSchemaComplexContentRestriction.BaseTypeName.Namespace;
-                            
+
                             if (XmlSchemaComplexContentRestriction.Attributes.Count != 0)
                             {
                                 int i = 0;
@@ -1489,8 +1525,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void GetAllElementsAndComplexTypesFromMainSchema()
         {
-            foreach (XmlSchema XmlSchema in Schemas)
-                GetAllElementsAndComplexTypesFromImportedSchema(XmlSchema);            
+            foreach (XmlSchemasExtended XMLSExtended in mSchemasList)
+                foreach (XmlSchema XmlSchema in XMLSExtended.mXmlSchemas)
+                    GetAllElementsAndComplexTypesFromImportedSchema(XmlSchema);
         }
 
         private ComplexType CreateComplexType(XmlSchemaElement XmlSchemaElement, XmlSchemaComplexType XmlSchemaComplexType)
@@ -1623,17 +1660,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private string GetContainingFolderFromURL(string URL)
         {
-            string ContainingFolder = string.Empty;
-            int LastFolderIndex = URL.LastIndexOf(@"\");
-            if (LastFolderIndex != -1)
-                ContainingFolder = URL.Substring(0, LastFolderIndex);
-            else
-            {
-                LastFolderIndex = URL.LastIndexOf("/");
-                if (LastFolderIndex != -1)
-                    ContainingFolder = URL.Substring(0, LastFolderIndex);
-            }
-            return ContainingFolder;
+            string containingFolder = string.Empty;
+            int lastFolderIndexBackSlash = URL.LastIndexOf(@"\");
+            int lastFolderInderSlash = URL.LastIndexOf("/");
+
+            containingFolder = URL.Substring(0, Math.Max(lastFolderIndexBackSlash, lastFolderInderSlash));
+            return containingFolder;
         }
 
         #endregion PullingAndCreatingElements
@@ -1655,8 +1687,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                             {
                                 string OperationInputMessageName = ((OperationInput)message).Message.Name;
                                 string OperationInputBindingName = bindingOperation.Input.Name;
-
-                                if ((!string.IsNullOrEmpty(OperationInputBindingName) && OperationInputMessageName == OperationInputBindingName) || (string.IsNullOrEmpty(OperationInputBindingName)))
+                                string OperationInputName = ((OperationInput)message).Name;
+                                if ((!string.IsNullOrEmpty(OperationInputBindingName) && OperationInputMessageName == OperationInputBindingName) || (string.IsNullOrEmpty(OperationInputBindingName) || (!string.IsNullOrEmpty(OperationInputName) && (OperationInputName == OperationInputBindingName))))
                                 {
                                     OD.InputMessageName = OperationInputMessageName;
                                     OD.ParameterOrder = portTypeOperation.ParameterOrder;
@@ -1856,10 +1888,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void PopulateAllURLsList()
         {
 
-            List<string> InnerImportsURLs = new List<string>();
+            List<Tuple<string,string>> InnerImportsURLs = new List<Tuple<string, string>>();
 
-            foreach (XmlSchema schema in Schemas)
-            {
+            foreach (XmlSchemasExtended XMLSExtended in mSchemasList)
+                foreach (XmlSchema schema in XMLSExtended.mXmlSchemas)
+                {
                 XmlSchemaObjectCollection Items = schema.Includes;
 
                 foreach (var item in Items)
@@ -1868,40 +1901,40 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     {
                         XmlSchemaImport XmlSchemaImportItem = item as XmlSchemaImport;
                         string URL = GetURLFromSchemaLocationBymURLType(XmlSchemaImportItem.SchemaLocation);
-                        AllURLs.Add(URL);
-                        InnerImportsURLs.Add(URL);
+                        AllURLs.Add(new Tuple<string,string>(URL, XMLSExtended.ContainingFolder));
+                        InnerImportsURLs.Add(new Tuple<string, string>(URL, XMLSExtended.ContainingFolder));
                     }
                     else if (item is XmlSchemaInclude)
                     {
                         XmlSchemaInclude XmlSchemaIncludeItem = item as XmlSchemaInclude;
                         string URL = GetURLFromSchemaLocationBymURLType(XmlSchemaIncludeItem.SchemaLocation);
-                        AllURLs.Add(URL);
-                        InnerImportsURLs.Add(URL);
+                        AllURLs.Add(new Tuple<string, string>(URL, XMLSExtended.ContainingFolder));
+                        InnerImportsURLs.Add(new Tuple<string, string>(URL, XMLSExtended.ContainingFolder));
                     }
                 }
             }
-            foreach (string URL in InnerImportsURLs)
+            foreach (Tuple<string, string> URLTuple in InnerImportsURLs)
             {
-                if (!string.IsNullOrEmpty(URL))
+                if (!string.IsNullOrEmpty(URLTuple.Item1))
                 {
                     string CompleteURL = string.Empty;
-                    if (!URL.Contains(ContainingFolder))
-                        CompleteURL = Path.Combine(ContainingFolder, URL);
+                    if (!URLTuple.Item1.Contains(URLTuple.Item2))
+                        CompleteURL = Path.Combine(URLTuple.Item2, URLTuple.Item1);
                     else
-                        CompleteURL = URL;
+                        CompleteURL = URLTuple.Item1;
                     XmlTextReader reader = new XmlTextReader(CompleteURL);
                     XmlSchema schema = XmlSchema.Read(reader, null);
                     XmlSchemaObjectCollection Items = schema.Includes;
-                    
+
                     string directory = this.GetDirectoryName(CompleteURL);
                     string relativeDirectories = string.Empty;
-                    if (directory != ContainingFolder)
+                    if (!directory.StartsWith(URLTuple.Item2))
                     {
-                        int ContainingFolderLeanth = ContainingFolder.Length;
+                        int ContainingFolderLeanth = URLTuple.Item2.Length;
                         if (ContainingFolderLeanth < directory.Length)
                             relativeDirectories = directory.Substring(ContainingFolderLeanth).TrimStart('\\');
                     }
-                    GetAllURLsFFromSchemaItems(Items, relativeDirectories);
+                    GetAllURLsFFromSchemaItems(Items, relativeDirectories, URLTuple.Item2);
                 }
             }
         }
@@ -1920,67 +1953,69 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         }
 
-        private void GetAllURLsFFromSchemaItems(XmlSchemaObjectCollection items, string relativeDirectories)
+        private void GetAllURLsFFromSchemaItems(XmlSchemaObjectCollection items, string relativeDirectories,string containigFolder)
         {
             foreach (var item in items)
             {
                 if (item is XmlSchemaImport)
                 {
-                    string schemaFullLocation = Path.Combine(relativeDirectories, ((XmlSchemaImport)item).SchemaLocation);
-                    if (!AllURLs.Contains(schemaFullLocation) && !AllURLs.Contains(schemaFullLocation.Replace("\\", "/")))
+                    Tuple<string, string> schemaFullLocation = new Tuple<string, string>(Path.Combine(relativeDirectories, ((XmlSchemaImport)item).SchemaLocation), containigFolder);
+                    Tuple<string, string> schemaFullLocationReplacedSlashes = new Tuple<string, string>(Path.Combine(relativeDirectories, ((XmlSchemaImport)item).SchemaLocation).Replace("\\", "/"), containigFolder);
+                    if (!AllURLs.Contains(schemaFullLocation) && !AllURLs.Contains(schemaFullLocationReplacedSlashes))
                     {
-                        string CompleteURL = GetCompleteURL(schemaFullLocation);
+                        string CompleteURL = GetCompleteURL(schemaFullLocation.Item1, containigFolder);
                         AllURLs.Add(schemaFullLocation);
-                        ReadSchemaURLs(CompleteURL);
+                        ReadSchemaURLs(CompleteURL, containigFolder);
                     }
 
                 }
                 else if (item is XmlSchemaInclude)
                 {
-                    string schemaFullLocation = Path.Combine(relativeDirectories, ((XmlSchemaInclude)item).SchemaLocation);
-                    if (!AllURLs.Contains(schemaFullLocation) && !AllURLs.Contains(schemaFullLocation.Replace("\\", "/")))
+                    Tuple<string, string> schemaFullLocation = new Tuple<string, string>(Path.Combine(relativeDirectories, ((XmlSchemaInclude)item).SchemaLocation), containigFolder);
+                    Tuple<string, string> schemaFullLocationReplacedSlashes = new Tuple<string, string>(Path.Combine(relativeDirectories, ((XmlSchemaInclude)item).SchemaLocation).Replace("\\", "/"), containigFolder);
+                    if (!AllURLs.Contains(schemaFullLocation) && !AllURLs.Contains(schemaFullLocationReplacedSlashes))
                     {
-                        string CompleteURL = GetCompleteURL(schemaFullLocation);
+                        string CompleteURL = GetCompleteURL(schemaFullLocation.Item1, containigFolder);
                         AllURLs.Add(schemaFullLocation);
-                        ReadSchemaURLs(CompleteURL);
+                        ReadSchemaURLs(CompleteURL, containigFolder);
                     }
                 }
             }
         }
 
-        public void ReadSchemaURLs(string CompleteURL)
+        public void ReadSchemaURLs(string CompleteURL,string containigFolder)
         {
             XmlTextReader reader = new XmlTextReader(CompleteURL);
             XmlSchema schema = XmlSchema.Read(reader, null);
             XmlSchemaObjectCollection Items = schema.Includes;
             string directory = this.GetDirectoryName(CompleteURL);
             string relativeDirectories = string.Empty;
-            if (directory != ContainingFolder)
+            if (directory != containigFolder)
             {
-                int ContainingFolderLeanth = ContainingFolder.Length;
+                int ContainingFolderLeanth = containigFolder.Length;
                 if (ContainingFolderLeanth < directory.Length)
                     relativeDirectories = directory.Substring(ContainingFolderLeanth).TrimStart('\\');
             }
-            GetAllURLsFFromSchemaItems(Items, relativeDirectories);
+            GetAllURLsFFromSchemaItems(Items, relativeDirectories, containigFolder);
         }
 
-        private string GetCompleteURL(string URL)
+        private string GetCompleteURL(string URL, string containingFolder)
         {
-            string CompleteURL = string.Empty;
-            if (!URL.Contains(ContainingFolder))
+            string completeURL = string.Empty;
+            if (!URL.Contains(containingFolder))
             {
-                if (ContainingFolder.StartsWith("http"))
+                if (containingFolder.StartsWith("http"))
                 {
-                    CompleteURL = ContainingFolder + "/" + URL;
+                    completeURL = containingFolder + "/" + URL;
                 }
                 else
                 {
-                    CompleteURL = Path.Combine(ContainingFolder, URL);
+                    completeURL = Path.Combine(containingFolder, URL);
                 }
             }
             else
-                CompleteURL = URL;
-            return CompleteURL;
+                completeURL = URL;
+            return completeURL;
         }
 
         private string GetDirectoryName(string URL)
@@ -2047,7 +2082,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         }
 
         #endregion Functions to check Circles
-        
+
         #region WizardFunctions
 
         public bool ValidateWSDLURL(string URL, bool? URLRadioButton, ref string error)
@@ -2072,18 +2107,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             try
             {
                 XmlTextReader reader = new XmlTextReader(URL);
-                mServiceDescriptionsList.Add(ServiceDescription.Read(reader));
+
+                ServiceDescription sd = ServiceDescription.Read(reader);
             }
             catch (Exception ex)
             {
                 error += "There is a problem in this WSDL file format, please verify the WSDL format and re-try";
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
             return true;
         }
 
-        public void ValidateWSDLInputs(string URL, bool? URLRadioButton,ref string WizardEventArgsErrorString)
+        public void ValidateWSDLInputs(string URL, bool? URLRadioButton, ref string WizardEventArgsErrorString)
         {
             if (string.IsNullOrEmpty(URL))
                 WizardEventArgsErrorString = "URL/File field cannot be empty";
@@ -2099,8 +2135,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         }
 
         #endregion WizardFunctions
-        }
-    
+    }
+
     #region Classes
 
     public class ComplexTypeChild
@@ -2176,7 +2212,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         public ePartElementType PartElementType { get; set; }
     }
 
-    
+
 
     public class MessageInputPart
     {
@@ -2206,6 +2242,18 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
     {
         public string InputMessageName { get; set; }
         public string[] ParameterOrder { get; set; }
+    }
+
+    public class ServiceDescriptionExtended
+    {
+        public ServiceDescription mServiceDescription;
+        public string ContainingFolder;
+    }
+
+    public class XmlSchemasExtended
+    {
+        public XmlSchemas mXmlSchemas;
+        public string ContainingFolder;
     }
 
     #endregion Classes

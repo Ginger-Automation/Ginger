@@ -113,7 +113,7 @@ namespace GingerCore.Actions.Java
             AcceptDialog  ,
             [EnumValueDescription("Dismiss Dialog")]
             DismissDialog  ,
-            [EnumValueDescription("Select UIF Date")]
+            [EnumValueDescription("Set Date")]
             SelectDate,
             ScrollUp,
             ScrollDown,

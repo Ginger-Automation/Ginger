@@ -26,8 +26,11 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Window;
 import java.awt.event.InputEvent;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -142,7 +145,11 @@ public class SwingHelper implements IXPath {
 		else if(LocateBy.equalsIgnoreCase("ByXPath"))
 		{
 			comp=mXPathHelper.GetComponentByXPath(CurrentWindow,LocateValue);
-		}	
+		}
+		else if(LocateBy.equalsIgnoreCase("ByMulitpleProperties"))
+		{
+			comp = mXPathHelper.GetComponentByMultipleProperties(CurrentWindow, LocateValue);
+		}
 		return comp;
 	}
 	
@@ -710,6 +717,59 @@ public class SwingHelper implements IXPath {
     	}    	
     	return false;
     }
+	
+	
+	public Boolean SetComponentDate(Component c, Date date) 
+	{	
+		try 
+		{			
+			Class dateClass = c.getClass().getEnclosingClass();
+			GingerAgent.WriteLog("DateClass Class Name: " + dateClass.getName() );
+		
+			Field dateClassReference = c.getClass().getDeclaredField("this$0");			
+			dateClassReference.setAccessible(true);		 
+
+		    Object dateClassObject = dateClassReference.get(c);	
+					
+			Method method = dateClass.getMethod("setDate",Date.class); 				
+			method.setAccessible(true);							
+			method.invoke(dateClassObject,date);		
+			return true;			
+		}		
+		catch (Exception e) 
+		{				
+			GingerAgent.WriteLog("Exception in Swing helper-SetDate:"+ e.getMessage());
+			e.printStackTrace();
+			return false;
+		}	
+	} 
+	
+	
+	public Object GetComponentDate(Component c) 
+	{	
+		try 
+		{	
+			Class dateClass = c.getClass().getEnclosingClass();
+			GingerAgent.WriteLog("DateClass Class Name: " + dateClass.getName() );
+		
+			Field dateClassReference = c.getClass().getDeclaredField("this$0");			
+			dateClassReference.setAccessible(true);		 
+
+			Object dateClassObject = dateClassReference.get(c);	
+						
+			Method method = dateClass.getMethod("getDate"); 				
+			method.setAccessible(true);							
+			Object object= method.invoke(dateClassObject);	
+			return object;
+		}		
+		catch (Exception e) 
+		{
+			GingerAgent.WriteLog("Exception in Swing helper-GetComponentDate:"+ e.getMessage());
+			e.printStackTrace();
+			return null;
+		}					    		
+	}
+	
 	
 	public String winClick(Component c,String value)
 	{

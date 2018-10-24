@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Runtime.CompilerServices;
 
 namespace GingerCore.SourceControl
 {
@@ -90,14 +91,19 @@ namespace GingerCore.SourceControl
             return true;
         }
 
-       
+
         // Get Source Control one file info
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems, ref string error)
         {
             if (Path == null ||  Path.Length == 0) return SourceControlFileInfo.eRepositoryItemStatus.Unknown;
 
             if (client == null) Init();
+
             System.Collections.ObjectModel.Collection<SvnStatusEventArgs> statuses;
+
+            Uri targetUri = null;
+
             try
             {
                 int lastDotIndex = Path.LastIndexOf(".");
@@ -105,7 +111,8 @@ namespace GingerCore.SourceControl
                 {
 
                     Collection<SvnListEventArgs> ListEventArgs;
-                    Uri targetUri = GetRemoteUriFromPath(Path, out ListEventArgs);
+                    targetUri = GetRemoteUriFromPath(Path, out ListEventArgs);
+
 
                     if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner == SourceControlUser)
                         return SourceControlFileInfo.eRepositoryItemStatus.LockedByMe;
@@ -216,7 +223,7 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 error = ex.Message + Environment.NewLine + ex.InnerException;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to communicate with SVN server through path "+Path+" got error "+ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to communicate with SVN server through path "+Path+" got error "+ex.Message);
                 return files;
             }
 
@@ -276,14 +283,14 @@ namespace GingerCore.SourceControl
                 if (result.Revision != -1)
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
+                        Reporter.ToLog(eAppReporterLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
                     else
                         Reporter.ToUser(eUserMsgKeys.UpdateToRevision, result.Revision);
                 }
                 else
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
                     else
                         Reporter.ToUser(eUserMsgKeys.SourceControlUpdateFailed, "The files are not connected to source control");
                 }
@@ -361,7 +368,7 @@ namespace GingerCore.SourceControl
                             }
                         }
                     }
-                }
+                }                
 
                 client.Commit(Paths, ca, out result);
                 if (result != null)
@@ -398,7 +405,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
         }
 
@@ -407,7 +414,7 @@ namespace GingerCore.SourceControl
             try
             {
                 string relativePath = System.IO.Path.GetFullPath(Path);
-                relativePath = relativePath.Substring(SolutionFolder.Length - 1);
+                relativePath = relativePath.Replace(SolutionFolder,"");
                 Uri targetUri = new Uri(SourceControlURL + relativePath);
                 SvnTarget target = SvnTarget.FromUri(targetUri);
                 SvnListArgs args = new SvnListArgs();
@@ -419,20 +426,23 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 ListEventArgs = null;
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.WARN, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
 
         public override bool Lock(string Path,string lockComment, ref string error)
         {
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
             bool result = false;
             try
             {
                 string relativePath = System.IO.Path.GetFullPath(Path);
-                relativePath = relativePath.Substring(SolutionFolder.Count() - 1);
-
+                relativePath = relativePath.Replace(SolutionFolder,"");
+                
                 Uri targetUri = new Uri(SourceControlURL + relativePath);
                 result = client.RemoteLock(targetUri, lockComment);
             }

@@ -38,7 +38,7 @@ namespace Ginger
     /// </summary>
     public partial class GenericWindow : Window
     {
-        private EventHandler mCloseEventHandler;
+        private RoutedEventHandler mCloseEventHandler;
 
         public eWindowShowStyle CurrentWinStyle { get; set; }
         public bool NeedToReShow { get; set; }
@@ -48,7 +48,7 @@ namespace Ginger
         double mPageOriginalHeight = -1;
 
         public GenericWindow(Window Owner, eWindowShowStyle windowStyle, string windowTitle,
-                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", EventHandler closeEventHandler = null)
+                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null)
         {
             InitializeComponent();   
             this.Owner = Owner;
@@ -165,15 +165,24 @@ namespace Ginger
                 PageFrame.Content = windowPage;
             }
 
+
             //set window buttons
+
+            //close buttons handling
+            mCloseEventHandler = closeEventHandler;
             if (!showClosebtn)
             {
                 CloseBtn.Visibility = System.Windows.Visibility.Collapsed;
+                if (mCloseEventHandler == null)
+                {
+                    UpperCloseBtn.Visibility = System.Windows.Visibility.Collapsed;
+                }
             }
-            else
+            if (!string.IsNullOrEmpty(closeBtnText))
             {
                 CloseBtn.Content = closeBtnText;
-            }
+                UpperCloseBtn.ToolTip = closeBtnText;
+            }            
 
             if (windowBtnsList != null)
             {
@@ -184,24 +193,22 @@ namespace Ginger
                     if (margin.Right < 10)
                         margin.Right = 10;
                     btn.Margin = margin;
-                    btn.Style = this.FindResource("@WindowButtonStyle") as Style;
+                    btn.Style = this.FindResource("$WindowButtonStyle") as Style;
                     DockPanel.SetDock(btn, Dock.Right);
                     BottomPanel.Children.Add(btn);
                 }
-            }
-
-            mCloseEventHandler = closeEventHandler;
-        }     
+            }            
+        }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
             Window parentWindow = Window.GetWindow((Button)sender);
             parentWindow.IsEnabled = false;
-            if (mCloseEventHandler != null) 
-                mCloseEventHandler.Invoke(this, new EventArgs());
+            if (mCloseEventHandler != null)
+                mCloseEventHandler.Invoke(this, new RoutedEventArgs());
             else
                 this.Close();
-            parentWindow.IsEnabled = true;            
+            parentWindow.IsEnabled = true;
         }
 
         private void PinBtn_Click(object sender, RoutedEventArgs e)
@@ -290,7 +297,7 @@ namespace Ginger
 
 
         public static void LoadGenericWindow(ref GenericWindow genWindow, System.Windows.Window owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage,
-                                        ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", EventHandler closeEventHandler = null, bool startupLocationWithOffset = false)
+                                        ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset = false)
         {
             //GenericWindow win = null;
             genWindow = null;

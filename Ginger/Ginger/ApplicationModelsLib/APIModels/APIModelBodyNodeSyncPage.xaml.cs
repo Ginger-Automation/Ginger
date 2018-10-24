@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerCore.Helpers;
 using Newtonsoft.Json.Linq;
 using System;
@@ -25,7 +26,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
         JsonExtended JsonDoc = null;
         List<AppModelParameter> mParamsPendingDelete = new List<AppModelParameter>();
         ApplicationAPIModel mApplicationAPIModel = null;
-        List<NodeToDelete> NodesToDeleteList = new List<NodeToDelete>();
+        List<NodeToDelete> mNodesToDeleteList = new List<NodeToDelete>();
         int RemovedCharsFromRequestBodyCounter = 0;
 
         public APIModelBodyNodeSyncPage(ApplicationAPIModel applicationAPIModel, List<AppModelParameter> paramsToDelete)
@@ -55,23 +56,23 @@ namespace Ginger.ApplicationModelsLib.APIModels
             PrepareNodesListForDeletion();
 
             //2. Removing Nodes that supposed to remove the same area
-            NodesToDeleteList = NodesToDeleteList.GroupBy(x => x.ParentOuterXml).Select(group => group.First()).ToList();
+            mNodesToDeleteList = mNodesToDeleteList.GroupBy(x => x.ParentOuterXml).Select(group => group.First()).ToList();
 
             //For Json only - remove spaces and new lines from string
             if (requestBodyType == ApplicationAPIUtils.eContentType.JSon)//For Json - remove spaces
             {
-                foreach(NodeToDelete nodeToDelete in NodesToDeleteList)
+                foreach(NodeToDelete nodeToDelete in mNodesToDeleteList)
                     nodeToDelete.ParentOuterXml = Regex.Replace(nodeToDelete.ParentOuterXml, @"\s+", string.Empty);
             }
 
-            for (int i = 0; i < NodesToDeleteList.Count; i++)
+            for (int i = 0; i < mNodesToDeleteList.Count; i++)
             {
-                NodeToDelete NodeToInspect = NodesToDeleteList[i];
+                NodeToDelete NodeToInspect = mNodesToDeleteList[i];
 
                 //3. For each node remove it if there is another node that overlap it
-                List<NodeToDelete> overlappingNodeList = NodesToDeleteList.Where(x => NodeToInspect.ParentOuterXml.Contains(x.ParentOuterXml) && !NodeToInspect.ParentOuterXml.Equals(x.ParentOuterXml)).ToList();
+                List<NodeToDelete> overlappingNodeList = mNodesToDeleteList.Where(x => NodeToInspect.ParentOuterXml.Contains(x.ParentOuterXml) && !NodeToInspect.ParentOuterXml.Equals(x.ParentOuterXml)).ToList();
                 foreach (NodeToDelete overlappingNode in overlappingNodeList)
-                    NodesToDeleteList.Remove(overlappingNode);
+                    mNodesToDeleteList.Remove(overlappingNode);
 
                 //4.Find the actual node string inside the request body and save its text range
                 if (requestBodyType == ApplicationAPIUtils.eContentType.XML)
@@ -81,7 +82,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
             }
 
             //5. Sort NodesToDelete List By text ranges in ascending order
-            NodesToDeleteList = NodesToDeleteList.OrderBy(x => x.stringNodeRange.Item1).ToList(); //Sort Tuples inside NodesToDelete list
+            mNodesToDeleteList = mNodesToDeleteList.OrderBy(x => x.stringNodeRange.Item1).ToList(); //Sort Tuples inside NodesToDelete list
             DisplayAndColorTextRanges();
         }
 
@@ -97,27 +98,27 @@ namespace Ginger.ApplicationModelsLib.APIModels
                             XmlNode xmlNodeByXpath = XMLDocExtended.GetNodeByXpath(XMLDoc, paramToDelete.Path);
                             if (xmlNodeByXpath != null && xmlNodeByXpath.InnerText == paramToDelete.PlaceHolder)
                             {
-                                NodesToDeleteList.Add(new NodeToDelete(xmlNodeByXpath.ParentNode.OuterXml));
+                                mNodesToDeleteList.Add(new NodeToDelete(xmlNodeByXpath.ParentNode.OuterXml));
                             }
                             else
                             {
                                 XDocument xDoc = XDocument.Parse(XMLDoc.OuterXml);
                                 var xmlNodeByValue = xDoc.Root.Descendants().Where(a => a.Value == paramToDelete.PlaceHolder).FirstOrDefault();
                                 if (xmlNodeByValue != null)
-                                    NodesToDeleteList.Add(new NodeToDelete(Regex.Replace(xmlNodeByValue.Parent.ToString(), @"\s+", string.Empty)));
+                                    mNodesToDeleteList.Add(new NodeToDelete(Regex.Replace(xmlNodeByValue.Parent.ToString(), @"\s+", string.Empty)));
                             }
                             break;
                         case ApplicationAPIUtils.eContentType.JSon:
                             JToken jNode = JsonDoc.SelectToken(paramToDelete.Path);
                             if (jNode != null && jNode.Value<String>() == paramToDelete.PlaceHolder)
                             {
-                                NodesToDeleteList.Add(new NodeToDelete(jNode.Parent.Parent.ToString()));
+                                mNodesToDeleteList.Add(new NodeToDelete(jNode.Parent.Parent.ToString()));
                             }
                             else
                             {
                                 List<JToken> jNodes = JsonDoc.FindTokens(paramToDelete.PlaceHolder);
                                 if (jNodes.Count > 0)
-                                    NodesToDeleteList.Add(new NodeToDelete(jNodes[0].Parent.Parent.ToString()));
+                                    mNodesToDeleteList.Add(new NodeToDelete(jNodes[0].Parent.Parent.ToString()));
                             }
                             break;
                     }
@@ -129,19 +130,19 @@ namespace Ginger.ApplicationModelsLib.APIModels
             TextBlockHelper TBH = new TextBlockHelper(xTextBlock);
             int stringIndex = 0;
             int nodeToDeleteIndex = 0;
-            while (stringIndex < mApplicationAPIModel.RequestBody.Length-1 && nodeToDeleteIndex < NodesToDeleteList.Count)
+            while (stringIndex < mApplicationAPIModel.RequestBody.Length-1 && nodeToDeleteIndex < mNodesToDeleteList.Count)
             {
-                if (NodesToDeleteList[nodeToDeleteIndex].stringNodeRange != null)
+                if (mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange != null)
                 {
-                    if (stringIndex != NodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item1) //No color
+                    if (stringIndex != mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item1) //No color
                     {
-                        TBH.AddText(mApplicationAPIModel.RequestBody.Substring(stringIndex, NodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item1 - stringIndex));
-                        stringIndex = NodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item1;
+                        TBH.AddText(mApplicationAPIModel.RequestBody.Substring(stringIndex, mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item1 - stringIndex));
+                        stringIndex = mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item1;
                     }
                     else //With color
                     {
-                        TBH.AddFormattedText(mApplicationAPIModel.RequestBody.Substring(stringIndex, NodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item2 - stringIndex), Brushes.Red, true);
-                        stringIndex = NodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item2 + 1;
+                        TBH.AddFormattedText(mApplicationAPIModel.RequestBody.Substring(stringIndex, mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item2 - stringIndex), Brushes.Red, true);
+                        stringIndex = mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item2 + 1;
                         nodeToDeleteIndex++;
                     }
                 }
@@ -165,7 +166,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
             if (match.Success)
                 nodeToDelete.stringNodeRange = new Tuple<int, int>(match.Index, match.Index + match.Length);
             else
-                NodesToDeleteList.Remove(nodeToDelete);
+                mNodesToDeleteList.Remove(nodeToDelete);
         }
 
         private void FindJSONElementAndSaveItsTextRange(NodeToDelete nodeToDelete)
@@ -211,7 +212,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
             if (match.Success)
                 nodeToDelete.stringNodeRange = new Tuple<int, int>(match.Index, match.Index + match.Length);
             else
-                NodesToDeleteList.Remove(nodeToDelete);
+                mNodesToDeleteList.Remove(nodeToDelete);
         }
 
 
@@ -229,7 +230,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
             if ((bool)xRemoveAssociatedParams.IsChecked)
                 AddAssociatedParamsForDeletion();
 
-            foreach (NodeToDelete xmlNode in NodesToDeleteList)
+            foreach (NodeToDelete xmlNode in mNodesToDeleteList)
             {
                 if(xmlNode.stringNodeRange.Item1 - RemovedCharsFromRequestBodyCounter > 0 )
                     mApplicationAPIModel.RequestBody = mApplicationAPIModel.RequestBody.Remove(xmlNode.stringNodeRange.Item1 - RemovedCharsFromRequestBodyCounter, xmlNode.stringNodeRange.Item2 - xmlNode.stringNodeRange.Item1);
@@ -251,7 +252,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
 
         private void AddAssociatedParamsForDeletion()
         {
-            foreach (NodeToDelete xmlNode in NodesToDeleteList)
+            foreach (NodeToDelete xmlNode in mNodesToDeleteList)
             {
                 List<AppModelParameter> nodeParamsList = mApplicationAPIModel.AppModelParameters.Where(x => xmlNode.ParentOuterXml.Contains(x.PlaceHolder)).ToList();
                 foreach(AppModelParameter param in nodeParamsList)
@@ -277,8 +278,8 @@ namespace Ginger.ApplicationModelsLib.APIModels
                 GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { btnDeleteParamsAndBodyNodes, btnDeleteOnlyParams },closeBtnText: "Cancel");
             }
             else
-            {
-                System.Windows.MessageBox.Show("Can't parse API Model Request Body, please check it's syntax is valid.", "Error while parsing request body", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.OK);
+            {                
+                Reporter.ToUser(eUserMsgKeys.ParsingError, "Can't parse API Model Request Body, please check it's syntax is valid.");
             }
         }
     }

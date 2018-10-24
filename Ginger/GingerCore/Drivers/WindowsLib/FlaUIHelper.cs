@@ -129,8 +129,8 @@ namespace GingerCore.Drivers.WindowsLib
 
                     break;
 
-                default:
-                    MessageBox.Show("Action is not implemented yet for control type " + controlType);
+                default:                    
+                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
                     break;
 
             }
@@ -837,6 +837,11 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
         public override string SendKeysAndValidateHandler(object element, ActUIElement action)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string SelectAndValidateHandler(object element, ActUIElement action)
         {
             throw new NotImplementedException();
         }

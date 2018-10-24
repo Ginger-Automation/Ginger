@@ -57,8 +57,8 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.NewRepositoryItemTreeHeader(mPOMModelFolder, nameof(RepositoryFolder<ApplicationPOMModel>.DisplayName), eImageType.Folder, eImageType.Null, false);
+        {           
+            return NewTVItemFolderHeaderStyle(mPOMModelFolder);
         }
 
         public override ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)
@@ -144,7 +144,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         internal void AddPOM(object sender, RoutedEventArgs e)
         {            
-            WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder));            
+            WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), DoNotShowAsDialog:true);            
         }
     }
 }

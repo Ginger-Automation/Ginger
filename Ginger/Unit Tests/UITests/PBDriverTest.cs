@@ -60,7 +60,7 @@ namespace UnitTest {
             }
             
                 mGR = new GingerRunner();
-                mGR.CurrentSolution = new Ginger.Environments.Solution();
+                mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
                 mBF = new BusinessFlow();
                 mBF.Activities = new ObservableList<Activity>();
                 mBF.Name = "BF Test PB Driver";

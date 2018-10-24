@@ -31,6 +31,8 @@ using GingerCore.Drivers.ASCF;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
+using amdocs.ginger.GingerCoreNET;
+using GingerCore.DataSource;
 
 namespace Ginger.Agents
 {
@@ -150,7 +152,7 @@ namespace Ginger.Agents
             AG.Agent.ProjEnvironment = App.AutomateTabEnvironment;
             AG.Agent.BusinessFlow = App.BusinessFlow; ;
             AG.Agent.SolutionFolder = App.UserProfile.Solution.Folder;
-            AG.Agent.DSList = App.LocalRepository.GetSolutionDataSources();
+            AG.Agent.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             AG.Agent.StartDriver();               
             //For ASCF, launch explorer automatically when launching Agent
             if (AG.Agent.IsShowWindowExplorerOnStart && AG.Agent.Status == Agent.eStatus.Running)

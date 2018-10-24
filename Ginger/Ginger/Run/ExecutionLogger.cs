@@ -33,6 +33,8 @@ using System.Text;
 
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger;
+using GingerCore.DataSource;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 
 namespace Ginger.Run
@@ -169,7 +171,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while creating temporary folder", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while creating temporary folder", ex);
             }
 
         }
@@ -185,15 +187,15 @@ namespace Ginger.Run
                 else
                 {
                     //If the path configured by user in the logger is not accessible, we set the logger path to default path
-                    logsFolder = App.UserProfile.Solution.Folder + @"\ExecutionResults\";
+                    logsFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"ExecutionResults\");
                     System.IO.Directory.CreateDirectory(logsFolder);
                     
                     App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
                 }
             }
             catch (Exception ex)
-            {               
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 
             return logsFolder;
@@ -215,7 +217,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error-{ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error-{ex.Message}");
                 return false;
             }
             
@@ -476,7 +478,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables);
+                        mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
                     }
                     mVE.Value = BusinessFlow.RunDescription;
                     BFR.RunDescription = mVE.ValueCalculated;
@@ -565,7 +567,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables);
+                        mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
                     }
                     mVE.Value = Activity.RunDescription;
                     AR.RunDescription = mVE.ValueCalculated;
@@ -674,7 +676,7 @@ namespace Ginger.Run
                         {
                             if (mVE == null)
                             {
-                                mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables);
+                                mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
                             }
                             mVE.Value = act.RunDescription;
                             AR.RunDescription = mVE.ValueCalculated;
@@ -701,7 +703,7 @@ namespace Ginger.Run
                             }
                             catch (Exception ex)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to move screen shot of the action:'" + act.Description + "' to the Execution Logger folder", ex);
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to move screen shot of the action:'" + act.Description + "' to the Execution Logger folder", ex);
                                 screenShotCountPerAction--;
                             }
                         }
@@ -711,7 +713,7 @@ namespace Ginger.Run
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + act.Description + " because directory not exists :" + executionLogFolder + act.ExecutionLogFolder);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + act.Description + " because directory not exists :" + executionLogFolder + act.ExecutionLogFolder);
                     }
                 }
 
@@ -779,13 +781,13 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured in ExecutionLogger Action end" ,ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occured in ExecutionLogger Action end" , ex);
             }                   
         }
 
         private static void AddExecutionDetailsToLog(eExecutionPahse objExecutionPhase, string objType, string objName, object obj)
         {
-            if (Reporter.CurrentAppLogLevel == eAppLogLevel.Debug)
+            if (Reporter.CurrentAppLogLevel == eAppReporterLoggingLevel.Debug)
             {
                 string prefix = string.Empty;
                 switch (objExecutionPhase)
@@ -809,7 +811,12 @@ namespace Ginger.Run
                         {
                             try
                             {
-                                FieldsType ftype = ((FieldParamsFieldType)prop.GetCustomAttribute(typeof(FieldParamsFieldType))).FieldType;
+                                FieldParamsFieldType attr = ((FieldParamsFieldType)prop.GetCustomAttribute(typeof(FieldParamsFieldType)));
+                                if (attr == null)
+                                {
+                                    continue;
+                                }
+                                FieldsType ftype = attr.FieldType;
                                 if (ftype == FieldsType.Field)
                                 {
                                     string propName = prop.Name;
@@ -818,21 +825,26 @@ namespace Ginger.Run
                                     fieldsAndValues.Add(new KeyValuePair<string, string>(propFullName, propValue));
                                 }
                             }
-                            catch (Exception) { }
+                            catch (Exception)
+                            {
+                                //TODO: !!!!!!!!!!!!!!!!!! FIXME
+                            }
                         }
                     }
-                    catch (Exception) { }
-                    
+                    catch (Exception)
+                    {
+                        //TODO: !!!!!!!!!!!!!!!!!! FIXME
+                    }
 
                     //add to Console
                     string details = string.Empty;
                     foreach (KeyValuePair<string, string> det in fieldsAndValues)
                         details += det.Key + "= " + det.Value + System.Environment.NewLine;
-                    Reporter.ToLog(eLogLevel.INFO, prefix + System.Environment.NewLine + "Details:" + System.Environment.NewLine + details);
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, prefix + System.Environment.NewLine + "Details:" + System.Environment.NewLine + details);
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.INFO, prefix + System.Environment.NewLine);
+                    Reporter.ToLog(eAppReporterLogLevel.INFO, prefix + System.Environment.NewLine);
                 }
             }
         }
@@ -965,7 +977,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -1054,7 +1066,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
                 return false;
             }
         }
@@ -1125,7 +1137,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
                 return false;
             }
         }

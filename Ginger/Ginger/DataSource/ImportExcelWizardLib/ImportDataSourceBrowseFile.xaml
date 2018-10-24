@@ -1,0 +1,49 @@
+﻿<Page x:Class="Ginger.DataSource.ImportExcelWizardLib.ImportDataSourceBrowseFile"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns:local="clr-namespace:Ginger.DataSource"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      Height="400" Width="500" 
+	Title="Import DataSource from Excel">
+
+    <Grid Background="{StaticResource @Skin1_ColorC}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width ="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel x:Name="xExcelFileStackPanel" Grid.Row="0" Grid.ColumnSpan="3" Visibility="Visible">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width ="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Row="0" Grid.ColumnSpan="2">
+                    <Label Name="xPathLable" Style="{StaticResource @InputFieldLabelStyle}"  Content="Path:" VerticalAlignment="Top"  />
+                    <TextBox x:Name="xPathTextBox" Background="White" ToolTip="Please Provide Full  Valid Path To Create Excel Template File." Margin="5,0,0,0"  Text="" HorizontalAlignment="Stretch" VerticalAlignment="Center"  IsEnabled="true" Style="{StaticResource @TextBoxStyle}" />
+                </StackPanel>
+
+                <DockPanel Grid.Row="0" Grid.Column="2">
+                    <usercontrols:ucButton x:Name="xBrowseButton" ButtonType="ImageButton" ToolTip="Browse File" ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="OpenFolder" Click="xBrowseButton_Click"  VerticalAlignment="Bottom" Margin="0,0,0,-10" />
+                </DockPanel>
+                
+                <Label Grid.Row="1" Name="xSaveExcelLable" Style="{StaticResource @LabelStyle}"  Content="Please save and close Excel after editing it." VerticalAlignment="Bottom" Margin="0,10,0,0" />                
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Page>

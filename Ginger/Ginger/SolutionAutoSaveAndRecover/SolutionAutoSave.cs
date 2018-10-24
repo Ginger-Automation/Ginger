@@ -82,18 +82,28 @@ namespace Ginger.Functionalties
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "AutoSave: Failed to clear the AutoSave folder before doing new save", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "AutoSave: Failed to clear the AutoSave folder before doing new save", ex);
                 }
 
                 //get all dirty items for AutoSave
                 //Busines Flows           
-                foreach (BusinessFlow bf in App.LocalRepository.GetSolutionBusinessFlows())
-                        if (bf.IsDirty)
-                            DirtyFileAutoSave(bf);
-                    //Run Sets           
-                    foreach (RunSetConfig runSet in App.LocalRepository.GetSolutionRunSets())
-                        if (runSet.IsDirty)
-                            DirtyFileAutoSave(runSet);
+                foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
+                {
+                    if (bf.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
+                    {
+                        DirtyFileAutoSave(bf);
+                    }
+                }
+
+                //Run Sets           
+                ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                foreach (RunSetConfig runSet in RunSets)
+                {
+                    if (runSet.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
+                    {
+                        DirtyFileAutoSave(runSet);
+                    }
+                }
                 
             });
         }
@@ -112,7 +122,7 @@ namespace Ginger.Functionalties
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "AutoSave: Failed to delete the all AutoSave folder on SolutionAutoSaveEnd", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "AutoSave: Failed to delete the all AutoSave folder on SolutionAutoSaveEnd", ex);
             }
         }
 
@@ -133,11 +143,11 @@ namespace Ginger.Functionalties
                 }
 
                 //save item
-                itemCopy.SaveToFile(Path.Combine(itemAutoSavePath, itemCopy.FileName.ToString()));
+                itemCopy.RepositorySerializer.SaveToFile(itemCopy, Path.Combine(itemAutoSavePath, itemCopy.FileName.ToString()));
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("AutoSave: Failed to AutoSave the item:'{0}'", itemToSave.ItemName), ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("AutoSave: Failed to AutoSave the item:'{0}'", itemToSave.ItemName), ex);
             }
         }
 

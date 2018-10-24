@@ -418,7 +418,7 @@ namespace GingerCore.Actions
                 if (e.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                 {
                     string message = Database.GetMissingDLLErrorDescription();
-                    Reporter.ToLog(eLogLevel.WARN, message, e);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, message, e);
                     this.Error += Environment.NewLine + message;
                 }
             }

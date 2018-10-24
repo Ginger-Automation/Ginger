@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Collections.Generic;
@@ -84,11 +85,14 @@ namespace GingerCore.Actions.PlugIns
             }
         }
 
-        // public string PlugInName { get; set; }
+        [IsSerializedForLocalRepository]
+        public string PluginId { get; set; }
 
-        public string ServiceId { get { return this.GetInputParamValue(nameof(ServiceId)); } }
+        [IsSerializedForLocalRepository]
+        public string ServiceId { get; set; }
 
-        public string GingerActionID { get { return this.GetInputParamValue(nameof(GingerActionID)); } }
+        [IsSerializedForLocalRepository]
+        public string ActionId { get; set; }
 
         
         
