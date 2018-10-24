@@ -574,7 +574,7 @@ namespace GingerCore.Actions.REST
                     StreamReader reader=new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
                     Reporter.ToLog(eAppReporterLogLevel.INFO, "Response");
 
-                    resp = reader.ReadToEnd().ToString();
+                    resp = reader.ReadToEnd();
                     Reporter.ToLog(eAppReporterLogLevel.INFO, resp);
                 }
 
