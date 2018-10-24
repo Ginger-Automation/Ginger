@@ -303,7 +303,7 @@ namespace Ginger.Functionalities
                     title = string.Format("Find & Replace in '{0}' {1}", App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     break;
                 case eContext.RunsetPage:
-                    title = string.Format("Find & Replace in '{0}' {1}", App.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                    title = string.Format("Find in '{0}' {1}", App.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                     break;
                 default:
                     title = "Find & Replace";
