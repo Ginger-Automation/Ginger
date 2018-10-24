@@ -60,7 +60,7 @@ namespace GingerCore.DataSource
             {
                 mDataTable = value;
                 mDataTable.RowChanged += new DataRowChangeEventHandler(Row_Changed);
-                mDataTable.ColumnChanged += new DataColumnChangeEventHandler(Row_Changed);
+                mDataTable.ColumnChanged += new DataColumnChangeEventHandler(Col_Changed);
                 mDataTable.RowDeleted += new DataRowChangeEventHandler(Row_Changed);
             }
         }
@@ -70,7 +70,7 @@ namespace GingerCore.DataSource
             OnPropertyChanged(nameof(Name));
         }
 
-        private void Row_Changed(object sender, DataColumnChangeEventArgs e)
+        private void Col_Changed(object sender, DataColumnChangeEventArgs e)
         {
             OnPropertyChanged(nameof(Name));
         }

@@ -170,7 +170,44 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     ((DataSourceTableTreeItem)node).SaveTreeItem();
                 }
             }
-            
+
+        }
+        public override void SaveAllTreeFolderItems()
+        {
+            List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+
+            int itemsSavedCount = 0;
+            foreach (ITreeViewItem node in childNodes)
+            {
+                if (node != null && node.NodeObject() is RepositoryItemBase)
+                {
+                    RepositoryItemBase RI = (RepositoryItemBase)node.NodeObject();
+                    if (RI != null)
+                    {
+                        //if (RI.DirtyStatus == eDirtyStatus.Modified)
+                        //{
+                        //    // Try to save only items with file name = standalone xml, avoid items like env app
+                        //    if (!string.IsNullOrEmpty(RI.ContainingFolder))
+                        //    {
+                        //        if (SaveTreeItem(node.NodeObject(), true))
+                        //        {
+                        //            itemsSavedCount++;
+                        //        }
+                        //    }
+                        //}
+                        //else 
+                        if (node is Ginger.SolutionWindows.TreeViewItems.DataSourceTableTreeItem)
+                        {
+                            ((Ginger.SolutionWindows.TreeViewItems.DataSourceTableTreeItem)node).SaveTreeItem();
+                            itemsSavedCount++;
+                        }
+                    }
+                }
+            }
+            if (itemsSavedCount == 0)
+            {
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Nothing found to Save.");
+            }
         }
         public override void AddTreeItem()
         {            

@@ -226,12 +226,7 @@ namespace GingerWPF.TreeViewItemsLib
                                 {
                                     itemsSavedCount++;
                                 }
-                            }
-                            else if (node is Ginger.SolutionWindows.TreeViewItems.DataSourceTableTreeItem)
-                            {
-                                ((Ginger.SolutionWindows.TreeViewItems.DataSourceTableTreeItem)node).SaveTreeItem();
-                                itemsSavedCount++;
-                            }
+                            }                            
                         }
                     }
                 }
