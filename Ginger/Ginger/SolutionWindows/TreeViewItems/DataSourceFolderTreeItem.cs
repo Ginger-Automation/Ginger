@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using GingerCore;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -183,22 +184,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     RepositoryItemBase RI = (RepositoryItemBase)node.NodeObject();
                     if (RI != null)
-                    {
-                        //if (RI.DirtyStatus == eDirtyStatus.Modified)
-                        //{
-                        //    // Try to save only items with file name = standalone xml, avoid items like env app
-                        //    if (!string.IsNullOrEmpty(RI.ContainingFolder))
-                        //    {
-                        //        if (SaveTreeItem(node.NodeObject(), true))
-                        //        {
-                        //            itemsSavedCount++;
-                        //        }
-                        //    }
-                        //}
-                        //else 
-                        if (node is Ginger.SolutionWindows.TreeViewItems.DataSourceTableTreeItem)
+                    {                        
+                        if (node is DataSourceTableTreeItem)
                         {
-                            ((Ginger.SolutionWindows.TreeViewItems.DataSourceTableTreeItem)node).SaveTreeItem();
+                            ((DataSourceTableTreeItem)node).SaveTreeItem();
+                            itemsSavedCount++;
+                        }
+                        else if (node is DataSourceTreeItem)
+                        {
+                            SaveTreeItem(RI);
                             itemsSavedCount++;
                         }
                     }

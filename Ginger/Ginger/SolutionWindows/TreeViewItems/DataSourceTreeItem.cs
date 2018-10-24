@@ -305,14 +305,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void CommitAll(object sender, RoutedEventArgs e)
         {
+            SaveTreeItem(DSDetails);            
             List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
-
+                
             foreach (ITreeViewItem node in childNodes)
             {
                 if (node != null && node is DataSourceTableTreeItem)
                 {
-                    ((DataSourceTableTreeItem)node).SaveTreeItem();
-                }
+                    if(((DataSourceTable)node.NodeObject()).DirtyStatus == eDirtyStatus.Modified)
+                        ((DataSourceTableTreeItem)node).SaveTreeItem();
+                }                
             }
         }        
         
