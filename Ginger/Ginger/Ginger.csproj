@@ -502,6 +502,9 @@
     <Compile Include="GeneralLib\LoadingPage.xaml.cs">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
+      <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
@@ -2801,6 +2804,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="GeneralLib\TestWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PluginsLibNew\PluginsIndexPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
