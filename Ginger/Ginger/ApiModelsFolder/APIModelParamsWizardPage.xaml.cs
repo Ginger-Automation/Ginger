@@ -27,6 +27,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common.Enums;
+using Ginger.DataSource;
+using GingerCore;
 
 namespace Ginger.ApiModelsFolder
 {
@@ -168,6 +171,7 @@ namespace Ginger.ApiModelsFolder
         {
             xAPIModelParamsValueUCGrid.Title = "API Parameters Consolidation";
             xAPIModelParamsValueUCGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
+            xAPIModelParamsValueUCGrid.AddToolbarTool(eImageType.DataSource, "Map Output Parameters to DataSource", new RoutedEventHandler(MapOutputToDataSource));
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
@@ -186,6 +190,33 @@ namespace Ginger.ApiModelsFolder
             EnhancedActInputValue AIV = (EnhancedActInputValue)xAPIModelParamsValueUCGrid.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
             VEEW.ShowAsWindow();
-        }       
+        }
+        private void MapOutputToDataSource(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                DataSourceTablesListPage dataSourceTablesListPage = new DataSourceTablesListPage();
+                dataSourceTablesListPage.ShowAsWindow();
+
+                if (dataSourceTablesListPage.DSName == "" || dataSourceTablesListPage.DSTableName == "")
+                {
+                    Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
+                    return;
+                }
+                                               
+                foreach (EnhancedActInputValue inputVal in mAddApiModelActionWizardPage.EnhancedInputValueList)
+                {
+                    string sColName = inputVal.Param.Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "");
+                    inputVal.Value = "{DS Name=" + dataSourceTablesListPage.DSName + " DST=" + dataSourceTablesListPage.DSTableName + " ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=" + sColName + " IROW=NxtAvail}";
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR,"Error occured while mapping the API Model params to Data Source", ex);
+                Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
+            }
+        }
+
     }
 }
