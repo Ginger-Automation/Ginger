@@ -484,6 +484,9 @@
     <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
       <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataSource\DataSourceTablesListPage.xaml.cs">
+      <DependentUpon>DataSourceTablesListPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceFinishPage.xaml.cs">
@@ -2764,6 +2767,10 @@
     <Page Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataSource\DataSourceTablesListPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dictionaries\Skins\GingerDefaultSkinDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
