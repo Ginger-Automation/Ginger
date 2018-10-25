@@ -30,6 +30,9 @@
                     <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Passed">
                         <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Green"/>
                     </DataTrigger>
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Unknown">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Gray"/>
+                    </DataTrigger>
                     <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Failed">
                         <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Red"/>
                     </DataTrigger>

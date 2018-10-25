@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Ginger;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -152,10 +153,17 @@ namespace GingerWPF.WizardLib
                 return;
             }
 
-            mWizard.Next();
-            //UpdateFinishButton();
-            UpdatePrevNextButton();
-            RefreshCurrentPage();            
+            if (xProcessingImage.Visibility == Visibility.Visible)
+            {
+                Reporter.ToUser(eUserMsgKeys.WizardCantMoveNextWhileInProcess);
+            }
+            else
+            {
+                mWizard.Next();
+                //UpdateFinishButton();
+                UpdatePrevNextButton();
+                RefreshCurrentPage();
+            }
         }
 
 

@@ -37,8 +37,7 @@
                         <RowDefinition  Height="100"></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="390"></ColumnDefinition>
-                        <ColumnDefinition Width="100*"></ColumnDefinition>
+                        <ColumnDefinition Width="390*"></ColumnDefinition>
                         <ColumnDefinition Width="300*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -62,7 +61,7 @@
                         <Ginger:ucTagsViewer x:Name="xTagsViewer" HorizontalAlignment="Left" VerticalAlignment="Center" />
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2" >
+                    <StackPanel Grid.Column="1" >
                         <agents:ucAgentControl x:Name="xAgentControlUC" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Right" Width="284"></agents:ucAgentControl>
                     </StackPanel>
                 </Grid>

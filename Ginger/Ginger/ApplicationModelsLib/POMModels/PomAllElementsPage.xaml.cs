@@ -38,6 +38,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 else
                 {
+                    if (mAgent != null)
+                    {
+                        mAgent.Close();
+                    }
                     return null;
                 }
             }

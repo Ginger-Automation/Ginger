@@ -4193,8 +4193,7 @@ namespace GingerCore.Drivers
             list.Add(new ControlProperty() { Name = "Width", Value = ElementInfo.Width.ToString() });
             list.Add(new ControlProperty() { Name = "X", Value = ElementInfo.X.ToString() });
             list.Add(new ControlProperty() { Name = "Y", Value = ElementInfo.Y.ToString() });
-            if (!String.IsNullOrEmpty(ElementInfo.Value))
-                list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
+            list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
 
 
             IWebElement el = null;
@@ -4219,7 +4218,6 @@ namespace GingerCore.Drivers
                 {                   
                     foreach (IWebElement value in el.FindElements(By.XPath("*")))
                         ElementInfo.OptionalValues.Add(value.Text);
-                    list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
                     list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesAsString });
                 }
 
