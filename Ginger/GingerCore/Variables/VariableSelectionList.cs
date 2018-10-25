@@ -16,13 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GingerCore.Properties;
-using GingerCore.Actions;
 
 namespace GingerCore.Variables
 {
@@ -36,7 +36,7 @@ namespace GingerCore.Variables
 
         public override string VariableEditPage { get { return "VariableSelectionListPage"; } }
 
-        public override System.Drawing.Image Image { get { return Resources.List; } }
+        public override eImageType Image { get { return eImageType.List; } }
 
         public override string VariableType() { return "Selection List"; }
 
