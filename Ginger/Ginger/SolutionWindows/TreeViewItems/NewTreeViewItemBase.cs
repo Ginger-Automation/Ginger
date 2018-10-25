@@ -219,14 +219,14 @@ namespace GingerWPF.TreeViewItemsLib
                     {
                         if (RI.DirtyStatus == eDirtyStatus.Modified)
                         {
-                            // Try to save only items with file name = standalone xml, avoid items like env app                            
+                            // Try to save only items with file name = standalone xml, avoid items like env app
                             if (!string.IsNullOrEmpty(RI.ContainingFolder))
                             {
                                 if (SaveTreeItem(node.NodeObject(), true))
                                 {
                                     itemsSavedCount++;
                                 }
-                            }
+                            }                            
                         }
                     }
                 }
