@@ -28,12 +28,6 @@ namespace GingerCore.Variables
 {
     public class VariableSelectionList : VariableBase
     {
-        public new static partial class Fields
-        {
-            public static string OptionalValues = "OptionalValues";
-            public static string SelectedValue = "SelectedValue";
-        }
-               
         
         public override string VariableUIType
         {
@@ -58,19 +52,22 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
 
-
-        public string SelectedValue { set { Value = value; OnPropertyChanged("SelectedValue"); } get { return Value; } }
+        
+        public string SelectedValue { set { Value = value; OnPropertyChanged(nameof(SelectedValue)); } get { return Value; } }
 
 
         public override string GetFormula()
         {
-            string form = "Options: ";
+            string formula = "Options: ";
             foreach (OptionalValue val in OptionalValuesList)
-                form += val.Value + ",";
-            form = form.TrimEnd(',');
-            return form;
+            {
+                formula += val.Value + ",";
+            }
+            formula = formula.TrimEnd(',');
+            return formula;
         }
  
+        // Support backword comptibility - function when we had the list with delimiter
         private ObservableList<OptionalValue> ConvertOptionalValuesStringToList(string valsString)
         {
             try
@@ -88,22 +85,6 @@ namespace GingerCore.Variables
             }
         }
 
-      
-
-        private void OptionalValuesChanged()
-        {
-            OnPropertyChanged("Formula");
-
-            //make sure the selected value is valid
-            if (OptionalValuesList != null && OptionalValuesList.Count > 0)
-            {
-                if (SelectedValue == string.Empty
-                    || OptionalValuesList.Where(v => v.Value == SelectedValue).FirstOrDefault() == null)
-                    SelectedValue = OptionalValuesList[0].Value;
-            }
-            else
-                SelectedValue = string.Empty;
-        }
         
 
         public override void ResetValue()
