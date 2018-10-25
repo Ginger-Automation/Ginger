@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.Properties;
 using System;
 using System.Collections.Generic;
 
@@ -101,7 +101,8 @@ namespace GingerCore.Variables
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.List; } }
+        public override eImageType Image { get { return eImageType.List; } }
+
         public override string VariableType() { return "List"; }
 
         public override bool SupportSetValue { get { return true; } }

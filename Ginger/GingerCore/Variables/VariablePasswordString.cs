@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.Properties;
+using System.Collections.Generic;
 
 namespace GingerCore.Variables
 {
@@ -64,7 +64,7 @@ namespace GingerCore.Variables
             //NA
         }
 
-        public override System.Drawing.Image Image { get { return Resources.Const; } }
+        public override eImageType Image { get { return eImageType.Password; } }
         public override string VariableType() { return "PasswordString"; }
 
         public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()

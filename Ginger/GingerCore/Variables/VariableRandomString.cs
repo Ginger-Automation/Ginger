@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using GingerCore.Properties;
+using GingerCore.Actions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Amdocs.Ginger.Common.Repository;
-using GingerCore.Actions;
-using System.Collections.Generic;
 
 namespace GingerCore.Variables
 {
@@ -199,7 +198,7 @@ namespace GingerCore.Variables
             Value = RandomString(c);
         }
 
-        public override System.Drawing.Image Image { get { return Resources.Random; } }
+        public override eImageType Image { get { return eImageType.Random; } }
         public override string VariableType() { return "RandomString"; }
         public override bool SupportSetValue { get { return false; } }
 
