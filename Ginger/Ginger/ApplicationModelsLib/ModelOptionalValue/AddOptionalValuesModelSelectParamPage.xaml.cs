@@ -126,7 +126,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     var item = AddModelOptionalValuesWizard.ParameterValues.FirstOrDefault(o => o.ParamName == GAMP.ItemName);
                     if (item == null)
+                    { 
                         continue;
+                    }
                 }
                 GlobalAppModelParameter temp = new GlobalAppModelParameter();
                 temp.Guid = GAMP.Guid;                
