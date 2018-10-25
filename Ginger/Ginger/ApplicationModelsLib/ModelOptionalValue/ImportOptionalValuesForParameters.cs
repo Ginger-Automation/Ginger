@@ -376,7 +376,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// </summary>
         /// <param name="AAM"></param>
         /// <param name="SelectedParametersGridList"></param>
-        public void PopulateExcelDBOptionalValuesForAPIParametersExcelDB(ApplicationModelBase AAM, List<AppModelParameter> SelectedParametersGridList, Dictionary<string, List<string>> ParameterValuesByNameDic)
+        public void PopulateExcelDBOptionalValuesForAPIParametersExcelDB(ApplicationModelBase AAM, List<AppModelParameter> SelectedParametersGridList, List<ParameterValues> ParameterValuesByNameDic)
         {
             int UpdatedParameters = 0;
             bool IsUpdate;
@@ -400,10 +400,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 IsUpdate = false;
                 if (tuple.x.RequiredAsInput)//selected
                 {
-                    if (ParameterValuesByNameDic.ContainsKey(tuple.y.ItemName))
+                    var item = ParameterValuesByNameDic.FirstOrDefault(o => o.ParamName == tuple.y.ItemName);
+                    if (item != null)
                     {
                         tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
-                        foreach (string val in ParameterValuesByNameDic[tuple.y.ItemName])
+                        foreach (string val in item.ParameterValuesByNameDic)
                         {
                             if (!string.IsNullOrEmpty(val))
                             {
@@ -446,7 +447,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 Reporter.ToUser(eUserMsgKeys.ParameterOptionalValues, UpdatedParameters);
         }
  
-        public void PopulateExcelDBOptionalValuesForAPIParametersExcelDB(ObservableList<GlobalAppModelParameter> mGlobalParamterList, List<GlobalAppModelParameter> SelectedParametersGridList, Dictionary<string, List<string>> ParameterValuesByNameDic)
+        public void PopulateExcelDBOptionalValuesForAPIParametersExcelDB(ObservableList<GlobalAppModelParameter> mGlobalParamterList, List<GlobalAppModelParameter> SelectedParametersGridList, List<ParameterValues> ParameterValuesByNameDic)
         {
             int UpdatedParameters = 0;
             bool IsUpdate;
@@ -468,16 +469,17 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 IsUpdate = false;
                 if (tuple.x.RequiredAsInput)//selected
                 {
-                    if (ParameterValuesByNameDic.ContainsKey(tuple.y.ItemName))
+                    var item = ParameterValuesByNameDic.FirstOrDefault(o => o.ParamName == tuple.y.ItemName);
+                    if (item != null)
                     {
-                        string str = ParameterValuesByNameDic.FirstOrDefault(x => x.Key == CURRENT_VAL_PARAMETER).Key;
+                        string str = ParameterValuesByNameDic.FirstOrDefault(x => x.ParamName == CURRENT_VAL_PARAMETER).ParamName;
                         tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
                         if (string.IsNullOrEmpty(str))
                         {
                             tuple.y.OptionalValuesList.Add(new OptionalValue { Value = CURRENT_VAL_PARAMETER, IsDefault = true });
                         }
                         
-                        foreach (string val in ParameterValuesByNameDic[tuple.y.ItemName])
+                        foreach (string val in item.ParameterValuesByNameDic)
                         {
                             if (!string.IsNullOrEmpty(val))
                             {
@@ -665,7 +667,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 if (String.IsNullOrEmpty(columnName))
                 {
                     return "";
-                }                    
+                }
                 columnName = columnName.Replace("#", "");
                 foreach (char ch in columnName)
                 {
@@ -856,7 +858,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             string connString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=\"Excel 12.0 Xml;HDR=YES;\"",ExcelFileName);
             return connString;
         }
-        public Dictionary<string, List<string>> UpdateParametersOptionalValuesFromCurrentExcelTable()
+        public List<ParameterValues> UpdateParametersOptionalValuesFromCurrentExcelTable()
         {
             if (dtCurrentExcelTable == null)//added as quick fix
             {
@@ -864,37 +866,40 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             return GetParametersAndValuesDictionary(dtCurrentExcelTable);
         }
-        private Dictionary<string, List<string>> GetParametersAndValuesDictionary(DataTable dt)
+        private List<ParameterValues> GetParametersAndValuesDictionary(DataTable dt)
         {
-            Dictionary<string, List<string>> ParameterValuesByNameDic = new Dictionary<string, List<string>>();
+            List<ParameterValues> ParameterValues = new List<ParameterValues>();
             //First column is parameter name and other columns are values
             foreach (DataRow row in dt.Rows)
             {
+                ParameterValues parmVal = new ParameterValues();
                 if (!string.IsNullOrEmpty(row[0].ToString()))
                 {
                     string key = row[0].ToString();
                     List<string> ValueList = new List<string>();
                     foreach (DataColumn col in dt.Columns)
                     {
-                        if (row[col] != null && row[0] != row[col])
+                        if (row[col] != null && row[0] != row[col] && !col.ColumnName.StartsWith("Desc"))
                         {
-                            string value = row[col].ToString();
+                            string value = Convert.ToString(row[col]);
                             ValueList.Add(value);
+                        }
+                        else if (row[0] == row[col])
+                        {
+                            parmVal.ParamName = Convert.ToString(row[col]);
+                        }
+                        else if(col.ColumnName.StartsWith("Desc"))
+                        {
+                            parmVal.Description = Convert.ToString(row[col]);
                         }
                     }
                     ValueList = ValueList.Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
-                    if (ParameterValuesByNameDic.ContainsKey(key))
-                    {
-                        List<string> list = ParameterValuesByNameDic[key];
-                        list = ValueList.Union(list).ToList();
-                    }
-                    else
-                    {
-                        ParameterValuesByNameDic.Add(key, ValueList);
-                    }
+
+                    parmVal.ParameterValuesByNameDic = ValueList;
+                    ParameterValues.Add(parmVal);
                 }
             }
-            return ParameterValuesByNameDic;
+            return ParameterValues;
         }
 
         /// <summary>
@@ -1546,7 +1551,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
              SQLResult = db.FreeSQL(command);
         }
-        public Dictionary<string, List<string>> UpdateParametersOptionalValuesFromDB()
+        public List<ParameterValues> UpdateParametersOptionalValuesFromDB()
         {
             Dictionary<string,List<string>> ParamAndValues = new Dictionary<string, List<string>>();
             List<string> ParamNameList = (List<string>)SQLResult.ElementAt(0);
@@ -1567,27 +1572,33 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
                 rowValue=0;
             }
-            Dictionary<string, List<string>>  ParameterValuesByNameDic =new Dictionary<string, List<string>>();
+
+            List<ParameterValues>  ParameterValuesByNameDic = new List<ParameterValues>();
             dtDB = new DataTable();
             dtDB.Columns.Add(PARAMETER_NAME, typeof(string));
             for (int i =0; i < ParamNameList.Count; i++)
             {
                 List<string> values = ParamValues[i].OfType<string>().ToList<string>();
                 values = values.Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
-                if (!ParameterValuesByNameDic.ContainsKey(ParamNameList.ElementAt(i)))
+
+                var item = ParameterValuesByNameDic.FirstOrDefault(o => o.ParamName == ParamNameList.ElementAt(i));
+                if (item == null)
                 {
-                    ParameterValuesByNameDic.Add(ParamNameList.ElementAt(i), values);
+                    ParameterValuesByNameDic.Add(new ParameterValues() { ParamName = ParamNameList.ElementAt(i), ParameterValuesByNameDic = values });
                     DataRow row = dtDB.NewRow();
                     row["Parameter Name"] = ParamNameList[i].ToString();
                     dtDB.Rows.Add(row);
                 }      
                 else//different columns with the same alias name
                 {
-                    List<string> extraValues = ParameterValuesByNameDic[ParamNameList.ElementAt(i)];
-                    extraValues.AddRange(values);
-                    values = extraValues.Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
-                    ParameterValuesByNameDic.Remove(ParamNameList.ElementAt(i));
-                    ParameterValuesByNameDic.Add(ParamNameList.ElementAt(i), values);
+                    List<string> extraValues = ParameterValuesByNameDic.Select(p => p.ParamName).ToList();
+                    if (extraValues != null)
+                    {
+                        extraValues.AddRange(values);
+                        values = extraValues.Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
+                        ParameterValuesByNameDic.RemoveAt(i);
+                        ParameterValuesByNameDic.Add(new ParameterValues() { ParamName = ParamNameList.ElementAt(i), ParameterValuesByNameDic = values });
+                    }
                 }  
             }
             return ParameterValuesByNameDic;

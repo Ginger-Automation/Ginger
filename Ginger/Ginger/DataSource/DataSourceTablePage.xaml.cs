@@ -358,6 +358,7 @@ namespace Ginger.DataSource
                 return;
             }
             mDSTableDetails.DataTable.RejectChanges();
+            mDSTableDetails.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
         }
 
         private void RefreshTable(object sender, RoutedEventArgs e)
@@ -367,12 +368,13 @@ namespace Ginger.DataSource
                 return;
             }
             SetGridData();
+            mDSTableDetails.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
         }
 
         private void SaveTable(object sender, RoutedEventArgs e)
         {
             grdTableData.Grid.SelectedItems.Clear();
-            SaveTable();
+            SaveTable();            
         }
 
         public void SaveTable()
@@ -386,6 +388,7 @@ namespace Ginger.DataSource
             mDSTableDetails.DSC.SaveTable(mDSTableDetails.DataTable);            
             Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem,null, mDSTableDetails.Name, "Data Source Table");
             SetGridData();
+            mDSTableDetails.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
             Reporter.CloseGingerHelper();
         }
 
