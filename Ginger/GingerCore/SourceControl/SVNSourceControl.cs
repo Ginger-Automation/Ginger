@@ -648,6 +648,7 @@ namespace GingerCore.SourceControl
 
         public override bool TestConnection(ref string error)
         {
+            WebResponse response = null;
             try
             {
                 ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(
@@ -656,7 +657,7 @@ namespace GingerCore.SourceControl
                        return true;
                    }
                    );
-                WebResponse response = null;
+                
                 bool result = false;
                 if (SourceControlURL.ToUpper().Trim().StartsWith("HTTP"))
                 {
@@ -692,7 +693,15 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 error = ex.Message;
+                if (response != null)
+                    response.Close();
                 return false;
+            }
+            finally
+            {
+                //Close Response
+                if (response != null)
+                    response.Close();
             }
         }
 
