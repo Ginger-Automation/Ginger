@@ -139,11 +139,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     if(mAddModelOptionalValuesWizard.mAAMB is ApplicationAPIModel)
                         ((ApplicationAPIModel)mAddModelOptionalValuesWizard.mAAMB).OptionalValuesTemplates.Clear();//XML & JSON
-                    mAddModelOptionalValuesWizard.ParameterValuesByNameDic.Clear();//Excel & DB
+                    mAddModelOptionalValuesWizard.ParameterValues.Clear();//Excel & DB
                 } 
                 else if(mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
                 {
-                    mAddModelOptionalValuesWizard.ParameterValuesByNameDic.Clear();//Excel & DB
+                    mAddModelOptionalValuesWizard.ParameterValues.Clear();//Excel & DB
                 }
             }
         }
@@ -220,13 +220,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             mAddModelOptionalValuesWizard.ProcessStarted();
             if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.Excel.ToString())
             {
-                mAddModelOptionalValuesWizard.ParameterValuesByNameDic = mAddModelOptionalValuesWizard.ImportOptionalValues.UpdateParametersOptionalValuesFromCurrentExcelTable();
-                //AddModelOptionalValuesWizard.NextEnabled = true;
+                mAddModelOptionalValuesWizard.ParameterValues = mAddModelOptionalValuesWizard.ImportOptionalValues.UpdateParametersOptionalValuesFromCurrentExcelTable();
             }
             else if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.DB.ToString())
             {
                 mAddModelOptionalValuesWizard.ImportOptionalValues.ExecuteFreeSQL(xSQLTextBox.Text.Trim());
-                mAddModelOptionalValuesWizard.ParameterValuesByNameDic = mAddModelOptionalValuesWizard.ImportOptionalValues.UpdateParametersOptionalValuesFromDB();
+                mAddModelOptionalValuesWizard.ParameterValues = mAddModelOptionalValuesWizard.ImportOptionalValues.UpdateParametersOptionalValuesFromDB();
             }
             mAddModelOptionalValuesWizard.ProcessEnded();
         }

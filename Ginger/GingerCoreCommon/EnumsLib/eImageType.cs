@@ -214,7 +214,8 @@
         Application,
         OpenFolder,
         Check,
-        Bug,                
-        PlusSquare,
+        Bug,
+        PlusSquare,        
+        DataTable        
     }
 }
