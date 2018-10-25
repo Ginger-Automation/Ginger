@@ -207,7 +207,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
             }
             else
@@ -368,7 +368,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             catch (Exception ex)
             {
                 xSaveExcelLable.Visibility = Visibility.Visible;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
 
             GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);

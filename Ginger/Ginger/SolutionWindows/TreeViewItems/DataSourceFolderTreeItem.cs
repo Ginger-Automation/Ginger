@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using GingerCore;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -170,7 +171,37 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     ((DataSourceTableTreeItem)node).SaveTreeItem();
                 }
             }
-            
+
+        }
+        public override void SaveAllTreeFolderItems()
+        {
+            List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+
+            int itemsSavedCount = 0;
+            foreach (ITreeViewItem node in childNodes)
+            {
+                if (node != null && node.NodeObject() is RepositoryItemBase)
+                {
+                    RepositoryItemBase RI = (RepositoryItemBase)node.NodeObject();
+                    if (RI != null)
+                    {                        
+                        if (node is DataSourceTableTreeItem)
+                        {
+                            ((DataSourceTableTreeItem)node).SaveTreeItem();
+                            itemsSavedCount++;
+                        }
+                        else if (node is DataSourceTreeItem)
+                        {
+                            SaveTreeItem(RI);
+                            itemsSavedCount++;
+                        }
+                    }
+                }
+            }
+            if (itemsSavedCount == 0)
+            {
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Nothing found to Save.");
+            }
         }
         public override void AddTreeItem()
         {            

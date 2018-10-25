@@ -406,6 +406,9 @@
     <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElementPage.xaml.cs">
       <DependentUpon>LocateByPOMElementPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\_Common\ActUIElementLib\UIElementSelectAndValidate.xaml.cs">
+      <DependentUpon>UIElementSelectAndValidate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\_Common\ActUIElementLib\UIElementSendKeysAndValidate.xaml.cs">
       <DependentUpon>UIElementSendKeysAndValidate.xaml</DependentUpon>
     </Compile>
@@ -481,6 +484,9 @@
     <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
       <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataSource\DataSourceTablesListPage.xaml.cs">
+      <DependentUpon>DataSourceTablesListPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Environments\EnvironemntNameValidationRule.cs" />
     <Compile Include="Functionalities\FindItemType.cs" />
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceFinishPage.xaml.cs">
@@ -493,6 +499,12 @@
       <DependentUpon>ImportDataSourceSheetSelection.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceFromExcelWizard.cs" />
+    <Compile Include="GeneralLib\LoadingPage.xaml.cs">
+      <DependentUpon>LoadingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
+      <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
@@ -630,9 +642,6 @@
     <Compile Include="MenusLib\RunMenu.cs" />
     <Compile Include="RunSetLib\RunSetOperations.cs" />
     <Compile Include="Run\RunSetConfig.cs" />
-    <Compile Include="SolutionLibNew\LoadingSolutionPage.xaml.cs">
-      <DependentUpon>LoadingSolutionPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
       <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
     </Compile>
@@ -650,9 +659,6 @@
       <DependentUpon>MyWizardPropertiesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TestLib\WizardLib\MyWizardSubItem.cs" />
-    <Compile Include="UserControlsLib\TwoLevelMenuLib\LoadingPage.xaml.cs">
-      <DependentUpon>LoadingPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControlsLib\TwoLevelMenuLib\MenuItemBase.cs" />
     <Compile Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenuPage.xaml.cs">
       <DependentUpon>TwoLevelMenuPage.xaml</DependentUpon>
@@ -918,9 +924,6 @@
     <Compile Include="PlugInsWindows\PluginPackagePage.xaml.cs">
       <DependentUpon>PluginPackagePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\SetAppLogLevelPage.xaml.cs">
-      <DependentUpon>SetAppLogLevelPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="TestLib\ListsPage.xaml.cs">
       <DependentUpon>ListsPage.xaml</DependentUpon>
     </Compile>
@@ -930,9 +933,6 @@
     <Compile Include="UserControlsLib\TwoLevelMenuLib\SubMenuItem.cs" />
     <Compile Include="UserControlsLib\TwoLevelMenuLib\TopMenuItem.cs" />
     <Compile Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenu.cs" />
-    <Compile Include="UserConfig\SetUserTypePage.xaml.cs">
-      <DependentUpon>SetUserTypePage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserConfig\UserTypeHelper.cs" />
     <Compile Include="UserControlsLib\ActionInputValueUserControlLib\ActionInputValueUserControl.xaml.cs">
       <DependentUpon>ActionInputValueUserControl.xaml</DependentUpon>
@@ -1678,9 +1678,6 @@
     </Compile>
     <Compile Include="ALM\ALMConnectionPage.xaml.cs">
       <DependentUpon>ALMConnectionPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dictionaries\SetTerminologyTypePage.xaml.cs">
-      <DependentUpon>SetTerminologyTypePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Imports\QTP\QTPImportPage.xaml.cs">
       <DependentUpon>QTPImportPage.xaml</DependentUpon>
@@ -2562,6 +2559,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Actions\_Common\ActUIElementLib\UIElementSelectAndValidate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="AgentsNew\NewAgentEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2770,19 +2771,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dictionaries\Skins\GingerDefualtSkinDictionary.xaml">
+    <Page Include="DataSource\DataSourceTablesListPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dictionaries\Terminologies\GherkinTerminologyDictionary.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Dictionaries\Terminologies\GingerDefualtTerminologyDictionary.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Dictionaries\Terminologies\GingerTestingTerminologyDictionary.xaml">
+    <Page Include="Dictionaries\Skins\GingerDefaultSkinDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2806,13 +2799,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="GeneralLib\LoadingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GeneralLib\TestWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SolutionLibNew\LoadingSolutionPage.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="PluginsLibNew\PluginsIndexPage.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="SolutionWindows\TargetApplicationsPage.xaml">
       <SubType>Designer</SubType>
@@ -2843,10 +2840,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="TestLib\WizardLib\MyWizardPropertiesPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControlsLib\TwoLevelMenuLib\LoadingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3323,10 +3316,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Reports\SetAppLogLevelPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Repository\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -3408,10 +3397,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TagsLib\ucTagsViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserConfig\SetUserTypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3976,10 +3961,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ALM\ALMConnectionPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dictionaries\SetTerminologyTypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

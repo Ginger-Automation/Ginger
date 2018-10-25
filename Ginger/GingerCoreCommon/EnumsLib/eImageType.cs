@@ -195,6 +195,7 @@ namespace Amdocs.Ginger.Common.Enums
         SourceControlEquel,
         SourceControlLockedByAnotherUser,
         SourceControlLockedByMe,
+        SourceControlError,
         #endregion
 
         Times_Red,
@@ -204,7 +205,8 @@ namespace Amdocs.Ginger.Common.Enums
         Application,
         OpenFolder,
         Check,
-        Bug,                
-        PlusSquare,
+        Bug,
+        PlusSquare,        
+        DataTable        
     }
 }

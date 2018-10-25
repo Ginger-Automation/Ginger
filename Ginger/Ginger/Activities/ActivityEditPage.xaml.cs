@@ -142,6 +142,8 @@ namespace Ginger.BusinessFlowWindows
         public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset=false)
         {
             string title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+            RoutedEventHandler closeHandler = CloseWinClicked;
+            string closeContent= "Undo & Close";
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button okBtn = new Button();
             okBtn.Content = "Ok";
@@ -162,27 +164,37 @@ namespace Ginger.BusinessFlowWindows
                     title = "Edit Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activity);                    
                     saveBtn.Click += new RoutedEventHandler(SharedRepoSaveBtn_Click);
                     winButtons.Add(saveBtn);
-                    winButtons.Add(undoBtn);                    
+                    winButtons.Add(undoBtn);
                     break;
 
                 case General.RepositoryItemPageViewMode.ChildWithSave:
                     title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     saveBtn.Click += new RoutedEventHandler(ParentItemSaveButton_Click);
                     winButtons.Add(saveBtn);
-                    winButtons.Add(undoBtn);                    
+                    winButtons.Add(undoBtn);
                     break;
 
                 case General.RepositoryItemPageViewMode.View:
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-                    winButtons.Add(okBtn);                   
+                    winButtons.Add(okBtn);
+                    closeHandler = new RoutedEventHandler(okBtn_Click);
+                    closeContent = okBtn.Content.ToString();
                     break;
             }
 
             this.Height = 800;
             this.Width = 1000;
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, closeBtnText: closeContent, closeEventHandler: closeHandler, startupLocationWithOffset: startupLocationWithOffset);
             return saveWasDone;
+        }
+
+        private void CloseWinClicked(object sender, RoutedEventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
+            {
+                UndoChangesAndClose();
+            }
         }
 
         private void SetViewMode()
@@ -207,21 +219,6 @@ namespace Ginger.BusinessFlowWindows
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();
-        }
-
-        private void CloseWinClicked(object sender, EventArgs e)
-        {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
-            {
-                UndoChangesAndClose();
-            }
-            else
-            {
-                if (editMode == General.RepositoryItemPageViewMode.SharedReposiotry)
-                    CheckIfUserWantToSave();
-                else
-                    _pageGenericWin.Close();
-            }
         }
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)

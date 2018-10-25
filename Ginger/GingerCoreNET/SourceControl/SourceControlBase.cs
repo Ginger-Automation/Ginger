@@ -207,7 +207,10 @@ namespace GingerCoreNET.SourceControl
                         return eImageType.SourceControlLockedByMe;
 
                     case eRepositoryItemStatus.LockedByAnotherUser:
-                        return eImageType.SourceControlLockedByAnotherUser; 
+                        return eImageType.SourceControlLockedByAnotherUser;
+
+                    case eRepositoryItemStatus.Unknown:
+                        return eImageType.SourceControlError;
 
                     default:
                         return eImageType.SourceControlDeleted;

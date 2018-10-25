@@ -42,7 +42,6 @@ using Amdocs.Ginger.IO;
 using Ginger.ConfigurationsLib;
 using Ginger.MenusLib;
 using Amdocs.Ginger;
-using Ginger.SolutionLibNew;
 using Ginger.User;
 using Amdocs.Ginger.UserControls;
 using System.Drawing;
@@ -183,11 +182,11 @@ namespace Ginger
                 if (App.LoadingSolution)
                 {
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
-                    xMainWindowFrame.Content = new LoadingSolutionPage();
+                    xMainWindowFrame.Content = new LoadingPage("Loading Solution...");
                     xMainWindowFrame.Visibility = Visibility.Visible;                    
                     GingerCore.General.DoEvents();
                 }
-                else if (xMainWindowFrame.Content is LoadingSolutionPage && SelectedSolutionTab == eSolutionTabType.None)
+                else if (xMainWindowFrame.Content is LoadingPage && SelectedSolutionTab == eSolutionTabType.None)
                 {
                     xMainWindowFrame.Visibility = Visibility.Collapsed;
                     xNoLoadedSolutionImg.Visibility = Visibility.Visible;
@@ -396,7 +395,7 @@ namespace Ginger
             }
 
             SelectedSolutionTab = eSolutionTabType.None;
-            if (!(xMainWindowFrame.Content is LoadingSolutionPage))
+            if (!(xMainWindowFrame.Content is LoadingPage))
             {
                 xMainWindowFrame.Visibility = Visibility.Collapsed;
             }

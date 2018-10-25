@@ -25,7 +25,7 @@ namespace GingerCore
 {
     public enum eUserMsgKeys
     {
-        GeneralErrorOccured, MissingImplementation, MissingImplementation2, ApplicationInitError, PageLoadError, UserProfileLoadError, ItemToSaveWasNotSelected, ToSaveChanges, SaveLocalChanges, LooseLocalChanges,
+        GeneralErrorOccured, MissingImplementation, MissingImplementation2, ApplicationInitError, PageLoadError, UserProfileLoadError, ItemToSaveWasNotSelected, AskIfToUndoChanges, ToSaveChanges, SaveLocalChanges, LooseLocalChanges,
         RegistryValuesCheckFailed, AddRegistryValue, AddRegistryValueSucceed, AddRegistryValueFailed,
         NoItemWasSelected, AskToAddCheckInComment, FailedToGetProjectsListFromSVN, AskToSelectSolution, UpdateToRevision, CommitedToRevision, GitUpdateState, SourceControlConnFaild, SourceControlRemoteCannotBeAccessed, SourceControlUnlockFaild, SourceControlConnSucss, SourceControlLockSucss, SourceControlUnlockSucss, SourceControlConnMissingConnInputs, SourceControlConnMissingLocalFolderInput,
         PleaseStartAgent, AskToSelectValidation, CopiedVariableSuccessfully, AskIfShareVaribalesInRunner, ShareVariableNotSelected,
@@ -69,7 +69,7 @@ namespace GingerCore
         DOSConsolemissingCMDFileName,
         ExecutionReportSent,
         CannontFindBusinessFlow, ResetBusinessFlowRunVariablesFailed,
-        AgentNotFound, MissingNewAgentDetails, MissingNewTableDetails, MissingExcelDetails, InvalidExcelDetails, ExportExcelFileFailed, ExportExcelFileDetails, InvalidTableDetails,MissingNewColumn, InvalidColumnName, ChangingAgentDriverAlert, MissingNewDSDetails,DuplicateDSDetails, DeleteDSFileError, InvalidDSPath, GingerKeyNameError, GingerKeyNameDuplicate,        
+        AgentNotFound, MissingNewAgentDetails, MissingNewTableDetails, MissingExcelDetails, InvalidExcelDetails, InvalidDataSourceDetails, ExportExcelFileFailed, ExportExcelFileDetails,MappedtoDataSourceError, InvalidTableDetails,MissingNewColumn, InvalidColumnName, ChangingAgentDriverAlert, MissingNewDSDetails,DuplicateDSDetails, DeleteDSFileError, InvalidDSPath, GingerKeyNameError, GingerKeyNameDuplicate,        
         ConfirmToAddTreeItem,
         FailedToAddTreeItem,
         SureWantToDeleteAll, NoItemToDelete, SelectItemToDelete, FailedToloadTheGrid,
@@ -161,6 +161,7 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ItemToSaveWasNotSelected, new UserMessage(eAppReporterMessageType.WARN, "Save", "Item to save was not selected.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.RecommendNewVersion, new UserMessage(eAppReporterMessageType.WARN, "Upgrade required", "You are not using the latest version of Ginger. Please go to https://github.com/Ginger-Automation/Ginger/releases to get the latest build.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ToSaveChanges, new UserMessage(eAppReporterMessageType.QUESTION, "Save Changes?", "Do you want to save changes?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfToUndoChanges, new UserMessage(eAppReporterMessageType.QUESTION, "Undo Changes?", "Do you want to undo changes (in case changes were done) and close?", MessageBoxButton.YesNo, MessageBoxResult.No));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.UnsupportedFileFormat, new UserMessage(eAppReporterMessageType.ERROR, "Save Changes", "File format not supported.", MessageBoxButton.OK, MessageBoxResult.None));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.CtrlSsaveEnvApp, new UserMessage(eAppReporterMessageType.WARN, "Save Environment", "Please select the environment to save.", MessageBoxButton.OK, MessageBoxResult.None));
@@ -348,7 +349,9 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidExcelDetails, new UserMessage(eAppReporterMessageType.ERROR, "InValid Export Sheet Details", "The Export Excel can be *.xlsx only.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportExcelFileFailed, new UserMessage(eAppReporterMessageType.ERROR, "Export Excel File Failed", "Error Occurred while exporting the Excel File: {0}", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportExcelFileDetails, new UserMessage(eAppReporterMessageType.INFO, "Export Excel File Details", "Export execution ended successfully", MessageBoxButton.OK, MessageBoxResult.None));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidTableDetails, new UserMessage(eAppReporterMessageType.ERROR, "InValid Table Details", "The Table Name provided is Invalid. It cannot contain spaces", MessageBoxButton.OK, MessageBoxResult.None));            
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidTableDetails, new UserMessage(eAppReporterMessageType.ERROR, "InValid Table Details", "The Table Name provided is Invalid. It cannot contain spaces", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.MappedtoDataSourceError, new UserMessage(eAppReporterMessageType.ERROR, "Output Param Mapping Error ", "Failed to map the Output Params to Data Source", MessageBoxButton.OK, MessageBoxResult.None));            
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidDataSourceDetails, new UserMessage(eAppReporterMessageType.ERROR, "Invalid Data Source Details", "The Data Source Details provided are Invalid.", MessageBoxButton.OK, MessageBoxResult.None));            
             Reporter.UserMessagesPool.Add(eUserMsgKeys.MissingNewDSDetails, new UserMessage(eAppReporterMessageType.WARN, "Missing Data Source Details", "The new Data Source {0} is missing.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.DuplicateDSDetails, new UserMessage(eAppReporterMessageType.ERROR, "Duplicate DataSource Details", "The Data Source with the File Path {0} already Exist. Please use another File Path", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.DeleteDSFileError, new UserMessage(eAppReporterMessageType.WARN, "Delete DataSource File", "The Data Source File with the File Path '{0}' Could not be deleted. Please Delete file Manually", MessageBoxButton.OK, MessageBoxResult.None));
