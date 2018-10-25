@@ -81,7 +81,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     var item = AddModelOptionalValuesWizard.ParameterValues.FirstOrDefault(o => o.ParamName == AMP.ItemName);
                     if (item == null)
+                    { 
                         continue;
+                    }
                 }
                 AppModelParameter temp = new AppModelParameter(AMP.PlaceHolder, AMP.Description, AMP.TagName, AMP.Path, new ObservableList<OptionalValue>());
                 AddModelOptionalValuesWizard.ParamsList.Add(temp);
