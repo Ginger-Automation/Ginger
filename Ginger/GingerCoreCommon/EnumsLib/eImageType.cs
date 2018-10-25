@@ -207,7 +207,8 @@ namespace Amdocs.Ginger.Common.Enums
         Application,
         OpenFolder,
         Check,
-        Bug,                
-        PlusSquare,
+        Bug,
+        PlusSquare,        
+        DataTable        
     }
 }
