@@ -48,7 +48,7 @@ namespace UnitTests.UITests.PBDriverTest
             }
 
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.Environments.Solution();
+            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test PB Driver";
@@ -173,7 +173,8 @@ namespace UnitTests.UITests.PBDriverTest
             {
 
                 actBrowser.LocateBy = eLocateBy.ByXPath;
-                actBrowser.LocateValue = @"/[AutomationId:1000]/[LocalizedControlType:pane]/[LocalizedControlType:pane]/file:&#x2F&#x2FC:\Ginger workspace\Devs\GingerNextVer_Dev\UnitTests\bin\Debug\TestResources\PBTestApp\Browser.html";     //\Documents\PBTestApp\Browser.html";
+                actBrowser.LocateValue = @"/[AutomationId:1000]/[LocalizedControlType:pane]/[LocalizedControlType:pane]/[LocalizedControlType:pane]";
+                                                                                                                                                                                                                                                 
                 actBrowser.ControlAction = ActBrowserElement.eControlAction.InitializeBrowser;
                 actBrowser.Wait = 2;
                 actBrowser.Timeout = 10;
@@ -741,7 +742,8 @@ namespace UnitTests.UITests.PBDriverTest
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
-            string expected = @"file://C:\Ginger workspace\Devs\GingerNextVer_Dev\UnitTests\bin\Debug\TestResources\PBTestApp\Browser.html"; // Documents\PBTestApp\Browser.html";
+            string expected = @"file://" + TestResources.GetTestResourcesFolder("PBTestApp") + @"\Browser.html"; 
+
             Assert.AreEqual(actual, expected, "True");
             Assert.AreEqual(act.Error, null, "Act.Error");
         }

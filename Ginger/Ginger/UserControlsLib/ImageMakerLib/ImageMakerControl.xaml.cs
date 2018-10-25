@@ -459,6 +459,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
                     break;
                 case eImageType.List:
+                case eImageType.DataTable:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Table);
                     break;
                 case eImageType.Parameter:
@@ -558,8 +559,8 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircleOutline);
                     break;
                 case eImageType.Bug:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bug);
-                    break;
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bug);                                   
+                    break;                
                 case eImageType.Power:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PowerOff);
                     break;
