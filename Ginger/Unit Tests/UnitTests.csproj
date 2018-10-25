@@ -369,6 +369,9 @@
     <Content Include="TestResources\PBTestApp\atl100.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\PBTestApp\Browser.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\PBTestApp\csm_grid_target.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
