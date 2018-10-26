@@ -1,4 +1,4 @@
-﻿<Page x:Class="Ginger.PlugInsWindows.PluginsIndexPage"
+﻿<Page xmlns:Ginger="clr-namespace:Ginger"  x:Class="Ginger.PlugInsWindows.PluginsIndexPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -11,16 +11,19 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="100*"/>
+            <RowDefinition Height="11*"/>
+            <RowDefinition  Height="25"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal">
-            <Button x:Name="xRefreshButton" Click="xRefreshButton_Click">Refresh</Button>
-            <Button x:Name="xInstallButton" Click="xInstallButton_Click">Install</Button>
-            <Label FontSize="16">Plugins index - available online</Label>
+            <Label FontSize="16">Online Plugins Index - to download and add to the solution select the plugin and click install</Label>
         </StackPanel>
 
-        <TextBlock x:Name="xJSON" Grid.Row="1"/>
 
+        <Ginger:ucGrid x:Name="xPluginsGrid" Grid.Row="1" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowCopy="Collapsed" ShowCut="Collapsed" ShowDelete="Collapsed" ShowDuplicate="Collapsed" ShowEdit="Collapsed" />
+        
+
+        <TextBlock x:Name="xStatusTextBlock" Grid.Row="2" Text="Loading..."/>
+        
     </Grid>
 </Page>

@@ -1890,7 +1890,7 @@ namespace Ginger.Run
 
             st.Stop();
             long millis = st.ElapsedMilliseconds;
-            actPlugin.ExInfo += Environment.NewLine + millis;
+            actPlugin.ExInfo += Environment.NewLine + "Elapsed: " +  millis + "ms";
         }
 
         private GingerNodeInfo GetGingerNode(ActPlugIn actPlugin)

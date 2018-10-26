@@ -1,19 +1,8 @@
-﻿using Amdocs.Ginger.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.PlugInsWindows
 {
@@ -25,32 +14,53 @@ namespace Ginger.PlugInsWindows
         public PluginsIndexPage()
         {
             InitializeComponent();
-            GetPluginsList();                        
+            SetGridView();
+            GetPluginsList();            
         }
 
-        private void GetPluginsList()
+        private void SetGridView()
         {
-            xJSON.Text = "Loading...";
-            xJSON.Refresh();
-            PluginsManager p = new PluginsManager();
-            string s = p.GetPluginsIndex();
-            xJSON.Text = s;
+            xPluginsGrid.btnRefresh.Click += BtnRefresh_Click;
+            xPluginsGrid.AddButton("Install", InstallPlugin);
+            // grdActions.AddToolbarTool(eImageType.Reset, "Reset Run Details", new RoutedEventHandler(ResetAction));
+
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+                                    
+            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Name), WidthWeight = 30 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Description), WidthWeight = 30 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.URL), WidthWeight = 30 });
+
+            xPluginsGrid.SetAllColumnsDefaultView(view);
+            xPluginsGrid.InitViewItems();
         }
 
-        private void xRefreshButton_Click(object sender, RoutedEventArgs e)
+        private void InstallPlugin(object sender, RoutedEventArgs e)
+        {
+            PluginsManager p = new PluginsManager();            
+            p.InstallPluginPackage((OnlinePluginPackage)xPluginsGrid.CurrentItem);
+        }
+
+        private void BtnRefresh_Click(object sender, RoutedEventArgs e)
         {
             GetPluginsList();
         }
 
-        private void xInstallButton_Click(object sender, RoutedEventArgs e)
+        private void GetPluginsList()
         {
+            SetStatus("Loading...");
             PluginsManager p = new PluginsManager();
-            //TODO: get the selected Plugin Package and install
-            p.InstallPluginPackage();
+            xPluginsGrid.DataSourceList = p.GetPluginsIndex();
+            SetStatus("Found " + xPluginsGrid.DataSourceList.Count + " Plugin Packages");
         }
 
 
-
+        private void SetStatus(string text)
+        {
+            xStatusTextBlock.Text = text;
+            xStatusTextBlock.Refresh();
+        }
+        
         
 
     }
