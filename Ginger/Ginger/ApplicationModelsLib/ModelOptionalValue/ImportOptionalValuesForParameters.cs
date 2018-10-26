@@ -956,7 +956,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 bool isExportSuccess = ExportToExcel(dtTemplate, filePath, dtTemplate.TableName);
                 if (isExportSuccess && ShowMessage)
                 {
-                    Reporter.ToUser(eUserMsgKeys.ExportExcelFileDetails);
+                    Reporter.ToUser(eUserMsgKeys.ExportDetails, "Excel File");
                 }
             }
             catch (Exception ex)
@@ -968,7 +968,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
 
         private DataTable ExportParametertoDataTable(List<AppParameters> parameters,string tableName)
-        {
+        {            
             int colCount = 0;
             foreach (var paramVal in parameters)
             {
@@ -985,8 +985,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             DataTable dtTemplate = new DataTable(tableName);
             dtTemplate.Columns.Add(PARAMETER_NAME, typeof(string));
             dtTemplate.Columns.Add(DESCRIPTION, typeof(string));
-            
-            colCount = colCount+2;
+                        
             for (int index = 1; index <= colCount; index++)
             {
                 dtTemplate.Columns.Add(string.Format("Value {0}", index), typeof(string));
@@ -1006,17 +1005,22 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         if (item.Value == null)
                         {
                             item.Value = "";
-                        }                            
+                        }
                         if (!item.Value.StartsWith(CURRENT_VAL_PARAMETER))
-                        {
-                            dr[index] = item.IsDefault ? Convert.ToString(item.Value) + "*" : Convert.ToString(item.Value);
+                        {                            
+                            dr[index] = Convert.ToString(item.Value);
                             index++;
                         }                        
                     }
-                }                
+                    while (index < colCount + 2)
+                    {
+                        dr[index] = Convert.ToString(prm.OptionalValuesList.Where(x => x.IsDefault == true).Select(x => x.Value).FirstOrDefault());
+                        index++;
+                    }
+                }
                 dtTemplate.Rows.Add(dr);
-            }            
-            return dtTemplate;
+            }
+            return dtTemplate;            
         }
 
         public bool ExportTemplateExcelFileForImportOptionalValues(List<AppModelParameter> Parameters,string PathToExport)
@@ -1031,7 +1035,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             bool IsExportSuccess = ExportToExcel(dtTemplate, PathToExport, dtTemplate.TableName);
             if (IsExportSuccess && ShowMessage)
-                Reporter.ToUser(eUserMsgKeys.ExportExcelFileDetails);
+                Reporter.ToUser(eUserMsgKeys.ExportDetails , "Excel File");
             return IsExportSuccess;
         }
 
@@ -1109,7 +1113,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             catch(Exception ex)
             {
                 if (ShowMessage)
-                    Reporter.ToUser(eUserMsgKeys.ExportExcelFileFailed, ex.Message.ToString());
+                    Reporter.ToUser(eUserMsgKeys.ExportFailed, "Excel File", ex.Message.ToString());
             }
             return false;
         }
@@ -1459,13 +1463,13 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         dr["GINGER_USED"] = "False";
                     }                    
                     mDSDetails.SaveTable(dtTemplate);                    
-                    Reporter.ToUser(eUserMsgKeys.ExportExcelFileDetails);
+                    Reporter.ToUser(eUserMsgKeys.ExportDetails,"Data Source");
                 }                
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
-                Reporter.ToUser(eUserMsgKeys.ExportExcelFileFailed);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR,"Failed to Export to Data Source",ex);
+                Reporter.ToUser(eUserMsgKeys.ExportFailed, "Data Source");
             }
         }
 
