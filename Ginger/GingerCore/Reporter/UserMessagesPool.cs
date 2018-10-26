@@ -69,7 +69,7 @@ namespace GingerCore
         DOSConsolemissingCMDFileName,
         ExecutionReportSent,
         CannontFindBusinessFlow, ResetBusinessFlowRunVariablesFailed,
-        AgentNotFound, MissingNewAgentDetails, MissingNewTableDetails, MissingExcelDetails, InvalidExcelDetails, InvalidDataSourceDetails, ExportExcelFileFailed, ExportExcelFileDetails,MappedtoDataSourceError, InvalidTableDetails,MissingNewColumn, InvalidColumnName, ChangingAgentDriverAlert, MissingNewDSDetails,DuplicateDSDetails, DeleteDSFileError, InvalidDSPath, GingerKeyNameError, GingerKeyNameDuplicate,        
+        AgentNotFound, MissingNewAgentDetails, MissingNewTableDetails, MissingExcelDetails, InvalidExcelDetails, InvalidDataSourceDetails, ExportFailed, ExportDetails,MappedtoDataSourceError, InvalidTableDetails,MissingNewColumn, InvalidColumnName, ChangingAgentDriverAlert, MissingNewDSDetails,DuplicateDSDetails, DeleteDSFileError, InvalidDSPath, GingerKeyNameError, GingerKeyNameDuplicate,        
         ConfirmToAddTreeItem,
         FailedToAddTreeItem,
         SureWantToDeleteAll, NoItemToDelete, SelectItemToDelete, FailedToloadTheGrid,
@@ -347,8 +347,8 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.MissingNewTableDetails, new UserMessage(eAppReporterMessageType.ERROR, "Missing Table Details", "The new Table {0} is missing.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.MissingExcelDetails, new UserMessage(eAppReporterMessageType.ERROR, "Missing Export Path Details", "The Export Excel File Path is missing", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidExcelDetails, new UserMessage(eAppReporterMessageType.ERROR, "InValid Export Sheet Details", "The Export Excel can be *.xlsx only.", MessageBoxButton.OK, MessageBoxResult.None));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportExcelFileFailed, new UserMessage(eAppReporterMessageType.ERROR, "Export Excel File Failed", "Error Occurred while exporting the Excel File: {0}", MessageBoxButton.OK, MessageBoxResult.None));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportExcelFileDetails, new UserMessage(eAppReporterMessageType.INFO, "Export Excel File Details", "Export execution ended successfully", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportFailed, new UserMessage(eAppReporterMessageType.ERROR, "Export Failed", "Error Occurred while exporting the {0}: {1}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportDetails, new UserMessage(eAppReporterMessageType.INFO, "Export Details", "Export execution ended successfully", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidTableDetails, new UserMessage(eAppReporterMessageType.ERROR, "InValid Table Details", "The Table Name provided is Invalid. It cannot contain spaces", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.MappedtoDataSourceError, new UserMessage(eAppReporterMessageType.ERROR, "Output Param Mapping Error ", "Failed to map the Output Params to Data Source", MessageBoxButton.OK, MessageBoxResult.None));            
             Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidDataSourceDetails, new UserMessage(eAppReporterMessageType.ERROR, "Invalid Data Source Details", "The Data Source Details provided are Invalid.", MessageBoxButton.OK, MessageBoxResult.None));            

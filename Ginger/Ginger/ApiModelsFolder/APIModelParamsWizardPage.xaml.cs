@@ -171,7 +171,7 @@ namespace Ginger.ApiModelsFolder
         {
             xAPIModelParamsValueUCGrid.Title = "API Parameters Consolidation";
             xAPIModelParamsValueUCGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
-            xAPIModelParamsValueUCGrid.AddToolbarTool(eImageType.DataSource, "Map Output Parameters to DataSource", new RoutedEventHandler(MapOutputToDataSource));
+            xAPIModelParamsValueUCGrid.AddToolbarTool(eImageType.DataSource, "Map API Parameters to DataSource", new RoutedEventHandler(MapOutputToDataSource));
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
