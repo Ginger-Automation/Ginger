@@ -195,6 +195,9 @@ namespace Ginger.ApiModelsFolder
         {
             try
             {
+                if (Reporter.ToUser(eUserMsgKeys.ParamExportMessage) == MessageBoxResult.No)
+                    return;
+
                 DataSourceTablesListPage dataSourceTablesListPage = new DataSourceTablesListPage();
                 dataSourceTablesListPage.ShowAsWindow();
 
@@ -202,8 +205,8 @@ namespace Ginger.ApiModelsFolder
                 {
                     Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
                     return;
-                }
-                                               
+                }                
+
                 foreach (EnhancedActInputValue inputVal in mAddApiModelActionWizardPage.EnhancedInputValueList)
                 {
                     string sColName = inputVal.Param.Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "");

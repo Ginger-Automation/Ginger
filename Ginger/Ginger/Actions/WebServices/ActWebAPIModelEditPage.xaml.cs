@@ -231,6 +231,9 @@ namespace Ginger.Actions.WebServices
         {
             try
             {
+                if (Reporter.ToUser(eUserMsgKeys.ParamExportMessage) == MessageBoxResult.No)
+                    return;
+
                 DataSourceTablesListPage dataSourceTablesListPage = new DataSourceTablesListPage();
                 dataSourceTablesListPage.ShowAsWindow();
 
