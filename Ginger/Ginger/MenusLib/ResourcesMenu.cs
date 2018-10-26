@@ -3,6 +3,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.GeneralWindows;
 using Ginger.GingerGridLib;
+using Ginger.PluginsLibNew;
 using Ginger.PlugInsWindows;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
@@ -94,11 +95,17 @@ namespace Ginger.MenusLib
             twoLevelMenu.Add(DocumentsMenu);
 
             TopMenuItem PluginsMenu = new TopMenuItem(eImageType.PluginPackage, "Plugins", ConsoleKey.P, "Plugins AID", "Ginger extention Add-ons");
-            PluginsMenu.Add(eImageType.PluginPackage, "", PluginsList, ConsoleKey.P, "", "AID");
-            PluginsMenu.Add(eImageType.PluginPackage, "Online", OnlinePlugins, ConsoleKey.O, "Online", "Online Plugins");
+            PluginsMenu.Add(eImageType.PluginPackage, "Installed", PluginsList, ConsoleKey.P, "Plugin which are installed in the solution", "AID");
+            PluginsMenu.Add(eImageType.PluginPackage, "Online", OnlinePlugins, ConsoleKey.O, "Online plugins which can be downloaded", "Online Plugins");
+            PluginsMenu.Add(eImageType.PluginPackage, "Local", LocalPlugins, ConsoleKey.L, "Local plugins which are already downloaded on the user machine", "Online Plugins");
             twoLevelMenu.Add(PluginsMenu);
 
             return twoLevelMenu;
+        }
+
+        private static Page LocalPlugins()
+        {
+            return new LocalPluginsPage();
         }
 
         private static Page OnlinePlugins()
