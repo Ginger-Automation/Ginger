@@ -749,8 +749,7 @@ namespace GingerCore
                                 if (val == null)
                                 {
                                     //add the val
-                                    repoVarList.OptionalValuesList.Add(usageValue);
-                                    repoVarList.SyncOptionalValuesListAndString();
+                                    repoVarList.OptionalValuesList.Add(usageValue);                                    
                                     repositoryItem.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset the status because new variable optional value was added
                                 }
                             }
