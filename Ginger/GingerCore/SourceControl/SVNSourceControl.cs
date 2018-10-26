@@ -683,7 +683,9 @@ namespace GingerCore.SourceControl
                 }
 
                 if (response != null || result)
+                {
                     return true;
+                }
                 else
                 {
                     error = "No Details";
