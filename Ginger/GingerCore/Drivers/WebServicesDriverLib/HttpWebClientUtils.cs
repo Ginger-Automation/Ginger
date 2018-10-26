@@ -351,9 +351,20 @@ namespace GingerCore.Actions.WebAPI
             try
             {
                 Reporter.ToLog(eAppReporterLogLevel.INFO, "Client Sending Async Request", null, true, true);
+
                 Response = Client.SendAsync(RequestMessage).Result;
                 Reporter.ToLog(eAppReporterLogLevel.INFO, "Response status: " + Response.StatusCode, null, true, true);
-                ResponseMessage = Response.Content.ReadAsStringAsync().Result;
+
+                if (ApplicationAPIUtils.eContentType.PDF.ToString() != mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType))
+                {
+                    ResponseMessage = Response.Content.ReadAsStringAsync().Result;
+                }
+                else
+                {
+                    ResponseMessage = ReadByteArrayAndConvertToString();
+                }
+          
+               
                 Reporter.ToLog(eAppReporterLogLevel.INFO, "ResponseMessage: " + ResponseMessage, null, true, true);
                 Reporter.ToLog(eAppReporterLogLevel.INFO, "Returning true on the end of the try in SendRequest method", null, true, true);
                 return true;
@@ -364,8 +375,7 @@ namespace GingerCore.Actions.WebAPI
                 if (WE.InnerException.ToString().Contains("The character set provided in ContentType is invalid. Cannot read content as string using an invalid character set."))
                 {
                     Reporter.ToLog(eAppReporterLogLevel.WARN, "Caught Content Type Exception:" + WE.Message);
-                    byte[] data = Response.Content.ReadAsByteArrayAsync().Result;
-                    ResponseMessage = Encoding.Default.GetString(data);
+                    ResponseMessage = ReadByteArrayAndConvertToString();
                     return false;
                 }
                 mAct.Error = "Request execution failed, reason: " + WE.Message;
@@ -374,31 +384,62 @@ namespace GingerCore.Actions.WebAPI
             Reporter.ToLog(eAppReporterLogLevel.INFO, "Returning true on the end of the SendRequest method", null, true, true);
             return true;
         }
+        private string ReadByteArrayAndConvertToString()
+        {
+            byte[] data = Response.Content.ReadAsByteArrayAsync().Result;
+            return Encoding.Default.GetString(data);
+        }
 
-        private string SaveToFile(string FileType, string RequestFileContent, string SaveDirectory)
+        private string SaveToFile(string fileType, string fileContent, string saveDirectory)
         {
             string extension = string.Empty;
-            string ContentType = string.Empty;
+            string contentType = string.Empty;
             string actName = string.Empty;
-            if (FileType == "Request")
-                ContentType = mAct.GetInputParamValue(ActWebAPIRest.Fields.RequestType);
-            else if (FileType == "Response")
-                ContentType = mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType);
-            if (ContentType == ApplicationAPIUtils.eContentType.XML.ToString())
+
+            if (fileType == "Request")
+            {
+                contentType = mAct.GetInputParamValue(ActWebAPIRest.Fields.RequestType);
+            }
+            else if (fileType == "Response")
+            {
+                contentType = mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType);
+            }
+
+            if (contentType == ApplicationAPIUtils.eContentType.XML.ToString())
+            {
                 extension = "xml";
-            else if (ContentType == ApplicationAPIUtils.eContentType.JSon.ToString())
+            }
+            else if (contentType == ApplicationAPIUtils.eContentType.JSon.ToString())
+            {
                 extension = "json";
-            else 
+            }
+            else if (contentType == ApplicationAPIUtils.eContentType.PDF.ToString())
+            {
+                extension = "pdf";
+            }
+            else
+            {
                 extension = "txt";
-            string DirectoryFullPath =Path.Combine(SaveDirectory.Replace("~//", mAct.SolutionFolder), FileType + "s");
-            if (!Directory.Exists(DirectoryFullPath))
-                Directory.CreateDirectory(DirectoryFullPath);
+            }
+               
+            string directoryFullPath =Path.Combine(saveDirectory.Replace("~//", mAct.SolutionFolder), fileType + "s");
+            if (!Directory.Exists(directoryFullPath))
+                Directory.CreateDirectory(directoryFullPath);
             String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
             actName = PathHelper.CleanInValidPathChars(mAct.Description);            
-            string FullFileName =Path.Combine(DirectoryFullPath, actName +"_"+ timeStamp + "_" + FileType + "." + extension);
-            File.WriteAllText(FullFileName, RequestFileContent);
+            string fullFileName =Path.Combine(directoryFullPath, actName +"_"+ timeStamp + "_" + fileType + "." + extension);
 
-            return FullFileName;
+            if (contentType != ApplicationAPIUtils.eContentType.PDF.ToString())
+            {
+                File.WriteAllText(fullFileName, fileContent);
+            }
+            else
+            {
+                byte[] bytes = Encoding.Default.GetBytes(fileContent);
+                File.WriteAllBytes(fullFileName, bytes);
+            }
+
+            return fullFileName;
         }
 
         public bool ValidateResponse()
