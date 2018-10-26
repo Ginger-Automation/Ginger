@@ -694,14 +694,18 @@ namespace GingerCore.SourceControl
             {
                 error = ex.Message;
                 if (response != null)
+                {
                     response.Close();
+                }
                 return false;
             }
             finally
             {
                 //Close Response
                 if (response != null)
+                {
                     response.Close();
+                }
             }
         }
 
