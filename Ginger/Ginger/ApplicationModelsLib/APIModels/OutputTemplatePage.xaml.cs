@@ -30,6 +30,9 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Amdocs.Ginger.Common.Enums;
+using Ginger.DataSource;
+using System.Collections.Generic;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels
 {
@@ -48,8 +51,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             xOutputValuesGrid.AddToolbarTool("@Share_16x16.png", "Push Changes to All Relevant Actions", new RoutedEventHandler(PushChangesClicked));
             xOutputValuesGrid.AddToolbarTool("@Import_16x16.png", "Import output values from Response sample file", new RoutedEventHandler(ImpurtButtonClicked));
-
-
+            
             xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
             xOutputValuesGrid.AddSeparator();
 
@@ -187,7 +189,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             if (selectedParam != null)
                 ((ActReturnValue)xOutputValuesGrid.Grid.SelectedItem).Path = GetParamWithStringTemplate(selectedParam);
         }
-
+        
         private string GetParamWithStringTemplate(AppModelParameter param)
         {
             return "{AppModelParam Name = " + param.PlaceHolder + "}";

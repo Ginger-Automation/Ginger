@@ -332,7 +332,7 @@ namespace GingerCore.DataSource
                                 else if (row.Table.Columns[iRow].ColumnName == "GINGER_LAST_UPDATE_DATETIME")
                                     updateCommand = updateCommand + row.Table.Columns[iRow] + "='" + DateTime.Now.ToString() + "',";
                                 else
-                                    updateCommand = updateCommand + row.Table.Columns[iRow] + "='" + row.ItemArray[iRow].ToString().Replace("'", "''") + "',";
+                                    updateCommand = updateCommand  + "["+ row.Table.Columns[iRow] + "] ='" + row.ItemArray[iRow].ToString().Replace("'", "''") + "',";
                             }
                         updateCommand = updateCommand.Substring(0, updateCommand.Length - 1);
                         updateCommand = updateCommand + " where GINGER_ID = " + row["GINGER_ID", DataRowVersion.Original];
@@ -399,6 +399,7 @@ namespace GingerCore.DataSource
             else
             {
                 workbook = SpreadsheetDocument.Create(sFilePath, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
+                workbook.AddWorkbookPart();
                 workbook.WorkbookPart.Workbook = new DocumentFormat.OpenXml.Spreadsheet.Workbook();
                 workbook.WorkbookPart.Workbook.Sheets = new DocumentFormat.OpenXml.Spreadsheet.Sheets();
             }

@@ -21,6 +21,7 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using GingerCoreNET.Drivers;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -317,9 +318,7 @@ namespace GingerCoreNET.DriversLib
         }
 
         public static void RunServiceAction(ActionHandler AH, ActionInputParams p, NodeGingerAction GA)  
-        {
-            
-
+        {            
             try
             {                    
                 ParameterInfo[] PIs = AH.MethodInfo.GetParameters();
@@ -341,7 +340,12 @@ namespace GingerCoreNET.DriversLib
                         {
                             object val = null;
                             // For each type we need to get the val correctly so the function will get it right
-                            if (PI.ParameterType.IsEnum)
+
+                            if (PI.ParameterType == typeof(string))
+                            {
+                                val = p[PI.Name].Value;
+                            }
+                            else if (PI.ParameterType.IsEnum)
                             {
                                 if (p[PI.Name].Value != null)
                                 {
@@ -354,9 +358,16 @@ namespace GingerCoreNET.DriversLib
                             }
                             else if (PI.ParameterType == typeof(Int32))
                             {
-                                val = p[PI.Name].GetValueAsInt();                                
+                                val = p[PI.Name].GetValueAsInt();
                             }
-                            //TODO: handle all types
+                            else if (PI.ParameterType.IsGenericType && PI.ParameterType.GetGenericTypeDefinition() == typeof(List<>))
+                            {                                
+                                // This is List of objects
+                                Type itemType = PI.ParameterType.GetGenericArguments()[0];  // List item type                               
+                                Type listType = typeof(List<>).MakeGenericType(itemType); // List with the item type
+                                // val = Activator.CreateInstance(listType);
+                                val = JsonConvert.DeserializeObject(p[PI.Name].Value.ToString(), listType);
+                            }                            
                             else
                             {
                                 val = p[PI.Name].Value;

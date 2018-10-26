@@ -1,4 +1,4 @@
-    <Page xmlns:Actions="clr-namespace:Ginger.Actions"  x:Class="Ginger.Actions.ActScriptEditPage"
+<Page xmlns:Actions="clr-namespace:Ginger.Actions"  x:Class="Ginger.Actions.ActScriptEditPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,24 +6,31 @@
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="ActVBScriptEditPage">
+    <Grid>
+        <StackPanel Margin="0,10,0,0">
+            <DockPanel>
+                <Label Style="{StaticResource @InputFieldLabelStyle}"  Height="35" >Script Interpreter</Label>
+                <ComboBox x:Name="ScriptInterpreterComboBox" Margin="47,0,0,0" HorizontalAlignment="Left" SelectionChanged="ScriptInterpreterComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="370"/>
+            </DockPanel>
+            <StackPanel x:Name="InterpreterPanel" >
+                <DockPanel x:Name="InterpreterPanelLabel" Visibility="Collapsed">
+                    <Label x:Name="ScriptInterpreterLabel" Style="{StaticResource @InputFieldLabelStyle}" Height="35">Script Interpreter Path</Label>
+                    <Actions:UCFileBrowser HorizontalAlignment="Left" x:Name="ScriptInterPreter"  Margin="15,0,0,0" Width="370"/>
+                </DockPanel>
+                <DockPanel x:Name="script" Visibility="Visible">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}"  Height="35">Script Action</Label>
+                    <ComboBox x:Name="ScriptActComboBox" HorizontalAlignment="Left"  Margin="75,0,0,0" SelectionChanged="ScriptActComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="370"></ComboBox>
+                </DockPanel>
+            </StackPanel>
 
-    <Grid>                        
-        <StackPanel>
-            <Label Style="{StaticResource @InputFieldLabelStyle}">Script Interpreter</Label>
-            <ComboBox x:Name="ScriptInterpreterComboBox" SelectionChanged="ScriptInterpreterComboBox_SelectionChanged"></ComboBox>
-            <StackPanel x:Name="InterpreterPanel" Visibility="Collapsed">
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Script Interpreter</Label>
-                <Actions:UCFileBrowser x:Name="ScriptInterPreter"/>
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Script Action</Label>
-                <ComboBox x:Name="ScriptActComboBox" SelectionChanged="ScriptActComboBox_SelectionChanged"></ComboBox>
-            </StackPanel>
-            
-            <StackPanel x:Name="ScriptStackPanel">
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Script Name - Located in Solution~\Documents\Scripts\</Label>                
-                <ComboBox x:Name="ScriptNameComboBox" SelectionChanged="ScriptNameComboBox_SelectionChanged" ></ComboBox>
-                <Label x:Name="ScriptDescriptionLabel">Script Description</Label>
-            </StackPanel>
-         
+            <DockPanel x:Name="ScriptStackPanel">
+                <Label Style="{StaticResource @InputFieldLabelStyle}" Height="35"  >Script Name</Label>
+                <ComboBox x:Name="ScriptNameComboBox" HorizontalAlignment="Left" Margin="75,0,0,0" SelectionChanged="ScriptNameComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="370" ></ComboBox>
+               
+            </DockPanel>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" x:Name="ScriptDescriptionLabel" HorizontalAlignment="Left" Visibility="Collapsed">Script Description</Label>
         </StackPanel>
+
     </Grid>
 </Page>
+        

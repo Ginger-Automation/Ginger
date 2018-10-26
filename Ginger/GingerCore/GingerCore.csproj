@@ -664,7 +664,6 @@
     <Compile Include="GeneralLib\StringCompressor.cs" />
     <Compile Include="Extensions\Screenshot.cs" />
     <Compile Include="DataSource\AccessDataSource.cs" />
-    <Compile Include="GeneralLib\BackupRestoreAttributes.cs" />
     <Compile Include="GeneralLib\EncryptionHandler.cs" />
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
