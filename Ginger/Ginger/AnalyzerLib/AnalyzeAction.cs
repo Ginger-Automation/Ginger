@@ -29,6 +29,8 @@ using System.Text.RegularExpressions;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions.Common;
 
 namespace Ginger.AnalyzerLib
 {
@@ -337,7 +339,10 @@ namespace Ginger.AnalyzerLib
 
                 }
             }
+
             
+
+
             GlobalAppModelParameter.GetListOfUsedGlobalParameters(a, ref mUsedGlobalParameters);
             if (mUsedGlobalParameters.Count > 0)
             {
@@ -397,6 +402,50 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
+            if (a.GetType() == typeof(ActUIElement))
+            {
+                try
+                {
+                    string[] pOMandElementGUIDs = ((ActUIElement)a).ElementLocateValue.Split('_');
+                    Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+                    ApplicationPOMModel POM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+                    if (POM == null)
+                    {
+                        AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
+                        AA.Description = "Action's mapped POM is missing";
+                        AA.Details =  "Action " + a.ActionDescription + " has mapped POM which is missing, reason can be that the POM has been deleted after mapping it to this action.";
+                        AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different POM and Element";
+                        AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;                
+                        AA.IssueType = eType.Error;
+                        AA.Impact =  "Action will fail during execution";
+                        AA.Severity = eSeverity.High;
+
+                        IssuesList.Add(AA);
+                    }
+                    else
+                    {
+                        Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                        ElementInfo selectedPOMElement = (ElementInfo)POM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                        if (selectedPOMElement == null)
+                        {
+                            AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
+                            AA.Description = "Page Element which mapped to this action is missing";
+                            AA.Details = "Action " + a.ActionDescription + " has mapped Element which is missing, reason can be that the Element has been deleted after mapping it to this action.";
+                            AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Element";
+                            AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;                
+                            AA.IssueType = eType.Error;
+                            AA.Impact = "Action will fail during execution";
+                            AA.Severity = eSeverity.High;
+
+                            IssuesList.Add(AA);
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed during ActUIElement Analizer", ex);
+                }
+            }
                 return IssuesList;
         }
 

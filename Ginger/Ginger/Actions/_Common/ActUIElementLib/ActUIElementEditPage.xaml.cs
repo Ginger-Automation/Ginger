@@ -30,6 +30,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static GingerCore.General;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -54,7 +55,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 ElementLocateByComboBox.SelectedValue = Enum.GetName(typeof(eLocateBy), eLocateBy.POMElement);
             }
 
-            ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, mPlatform.GetPlatformUIElementLocatorsList());
+            List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
+            ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, LocateByList);
+
+
+            if (mAction.ElementLocateBy == eLocateBy.NA)
+            {
+                mAction.ElementLocateBy = eLocateBy.POMElement;
+                ElementLocateByComboBox.SelectedValue = eLocateBy.POMElement;
+            }
+
+
             SetLocateValueFrame();
 
             ShowPlatformSpecificPage();

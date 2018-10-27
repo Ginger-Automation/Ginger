@@ -13,7 +13,7 @@
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="400*"/>
             <RowDefinition/>
             <RowDefinition Height="37"/>
             <RowDefinition Height="50"/>
@@ -22,8 +22,8 @@
         <StackPanel Grid.Row="0">
             <Grid x:Name="locatorsGrid">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="30*"/>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
@@ -33,13 +33,12 @@
                     <ColumnDefinition Width="140" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Label Content="Locate By:"  Style="{StaticResource $LabelStyle}"  Grid.Row="0" Grid.Column="0"/>
-                <ComboBox  x:Name="ElementLocateByComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" 
-                                                  ToolTip="How to Locate the Element on the screen"  Grid.Row="0" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
+                <Label Content="Locate By:"  Style="{StaticResource $LabelStyle}"  Grid.Row="0" Grid.Column="0" VerticalAlignment="Top"/>
+                <ComboBox  x:Name="ElementLocateByComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" VerticalAlignment="Top" ToolTip="How to Locate the Element on the screen"  Grid.Row="0" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
 
                 <Grid  Grid.Row="1" Grid.ColumnSpan="3">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="50"/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="105"/>
@@ -54,7 +53,7 @@
                     <Image x:Name="ElementTypeImage" Source="{StaticResource @Run_16x16}" Width="16" />
                 </StackPanel>
 
-                <ComboBox x:Name="ElementTypeComboBox"  SelectionChanged="ElementTypeComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Row="2" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
+                <ComboBox x:Name="ElementTypeComboBox"  SelectionChanged="ElementTypeComboBox_SelectionChanged"  Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Row="2" Grid.Column="1" Height="Auto" Margin="0,4,-48,4"/>
                 <Label Content="Element Action:"  Name="ElementActionLabel" Grid.Row="3" Grid.Column="0" Style="{StaticResource $LabelStyle}" />
                 <ComboBox x:Name="ElementActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementActionComboBox_SelectionChanged" IsSynchronizedWithCurrentItem="True" Grid.Row="3" Grid.Column="1" Height="Auto" Margin="0,4,-48,13">
                     <ComboBox.ItemTemplate>

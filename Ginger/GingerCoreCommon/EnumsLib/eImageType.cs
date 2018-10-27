@@ -52,6 +52,7 @@ namespace Amdocs.Ginger.Common.Enums
 
 
         #region Execution Status Images
+        Unknown,
         //############################## Execution Status Images:
         /// <summary>
         /// Show spinner 
