@@ -45,7 +45,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition x:Name="Row1" Height="70*" MinHeight="35"/>
-            <RowDefinition  x:Name="Row2" Height="30*" MinHeight="20"/>
+            <RowDefinition  x:Name="Row2" Height="30*" MinHeight="35"/>
         </Grid.RowDefinitions>
                
         <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed"/>

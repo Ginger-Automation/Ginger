@@ -11,62 +11,47 @@
       d:DesignHeight="800" d:DesignWidth="800"
       Title="POMEditPage">
 
-
     <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="300"/>
-            <RowDefinition  Name="SecondRow" Height="100*"/>
+            <RowDefinition Height="275"/>
+            <RowDefinition Name="SecondRow" Height="100*"/>
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="0">
+        <ScrollViewer Grid.Row="0" Margin="0,0,0,5">
             <StackPanel Orientation="Vertical">
-                <StackPanel Margin="0,0,10,0">
-                    <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Name:"/>
-                    <TextBox x:Name="xNameTextBox" Style="{StaticResource @TextBoxStyle}" FontSize="14" FontWeight="Bold" />
+                <StackPanel Margin="5,0,5,0">
+                    <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
+                    <TextBox x:Name="xNameTextBox" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" />
+
+                    <Label Style="{StaticResource $LabelStyle}" Content="Description:" Margin="-5,5,0,0"/>
+                    <TextBox x:Name="xDescriptionTextBox" TextWrapping="WrapWithOverflow" Height="50" Style="{StaticResource $MultiRowsTextBoxStyle}" />
+
+                    <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="-5,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
                 </StackPanel>
 
-
-                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,0">
-                    <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Description:"/>
-                    <TextBox x:Name="xDescriptionTextBox" TextWrapping="WrapWithOverflow" Height="50" Style="{StaticResource @MultiRowsTextBoxStyle}" />
-                </StackPanel>
-
-                <Grid Margin="0,20,10,0" >
-                    <Grid.RowDefinitions>
-                        <RowDefinition  Height="100"></RowDefinition>
-                        <RowDefinition  Height="100"></RowDefinition>
-                    </Grid.RowDefinitions>
+                <Grid Margin="5,10,5,0" >
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="390*"></ColumnDefinition>
-                        <ColumnDefinition Width="300*"></ColumnDefinition>
+                        <ColumnDefinition Width="50*"></ColumnDefinition>
+                        <ColumnDefinition Width="50*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" HorizontalAlignment="Left" Orientation="Horizontal">
-                        <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Target Application:"/>
-                        <UserControlsLib1:UCComboBox x:Name="xTargetApplicationComboBox" VerticalAlignment="Top"  Width="170"></UserControlsLib1:UCComboBox>
+                        <Label Style="{StaticResource $LabelStyle}" Content="Target Application:"/>
+                        <UserControlsLib1:UCComboBox x:Name="xTargetApplicationComboBox" VerticalAlignment="Top" Width="250"></UserControlsLib1:UCComboBox>
                     </StackPanel>
 
-                    <Grid Grid.Row="0" Grid.Column="0" Margin="0,0,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="75"/>
-                            <ColumnDefinition Width="300*"/>
-                            <ColumnDefinition Width="50"/>
-                        </Grid.ColumnDefinitions>
-                        <Label  Grid.Column="0" Content="Page URL:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <TextBox x:Name="xPageURLTextBox" Grid.Column="1" Style="{StaticResource @TextBoxStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Center"  FontWeight="Bold"/>
-                        <UserControls:ucButton x:Name="xPageURLBtn" Grid.Column="2" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="GoNext" Click="xPageURLBtn_Click"/>
-                    </Grid>
-
-                    <StackPanel  Grid.Row="1" >
-                        <Ginger:ucTagsViewer x:Name="xTagsViewer" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Left" Orientation="Horizontal">
+                        <Label Content="Page URL:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <TextBox x:Name="xPageURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Width="250" Margin="45,0,0,0"/>
+                        <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click" ToolTip="Go to Page"/>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="1" >
-                        <agents:ucAgentControl x:Name="xAgentControlUC" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Right" Width="284"></agents:ucAgentControl>
-                    </StackPanel>
+                    <agents:ucAgentControl x:Name="xAgentControlUC" Grid.Column="1" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Right" Width="350" VerticalAlignment="Top" Margin="0,-5,0,0" ></agents:ucAgentControl>
                 </Grid>
             </StackPanel>
         </ScrollViewer>
+        
+        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $BackgroundColor_VeryDarkBlue}" />
         
         <TabControl Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}" >
             <TabItem >

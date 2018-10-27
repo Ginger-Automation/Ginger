@@ -94,6 +94,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
     </Style>
         
     <Style TargetType="TextBlock"  x:Key="$TextBlockStyle" >
