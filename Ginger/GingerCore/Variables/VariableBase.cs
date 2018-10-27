@@ -16,16 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
-using GingerCore.Properties;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Amdocs.Ginger.Common;
-using GingerCore.Actions;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Variables
 {
@@ -187,7 +186,9 @@ namespace GingerCore.Variables
         public abstract string VariableType();
         public abstract void ResetValue();
         public abstract void GenerateAutoValue();
-        public virtual System.Drawing.Image Image { get{return Resources.Const;} }//TODO: replace with ItemImageType
+        public virtual eImageType Image { get { return eImageType.Variable; } }
+
+
         public override string GetNameForFileName() { return Name; }
         public abstract string VariableEditPage { get; }
 

@@ -383,7 +383,7 @@ namespace Amdocs.Ginger.Repository
             return standAloneAction.InputValues;
         }
 
-        public string GetPluginsIndex()
+        public ObservableList<OnlinePluginPackage> GetPluginsIndex()
         {
             //TODO: conver json to objects and return list to show in grid
 
@@ -392,7 +392,9 @@ namespace Amdocs.Ginger.Repository
             // raw url to get the file content
             string url = "https://raw.githubusercontent.com/Ginger-Automation/Ginger-Plugins-Index/master/PluginsList.json";
             string packagesjson = GetResponseString(url).Result;
-            return packagesjson;
+
+            ObservableList<OnlinePluginPackage> list = JsonConvert.DeserializeObject<ObservableList<OnlinePluginPackage>>(packagesjson);
+            return list;
         }
 
         async Task<string> GetResponseString(string url)
@@ -414,14 +416,22 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public void InstallPluginPackage()
+        public void InstallPluginPackage(OnlinePluginPackage onlinePluginPackage)
         {
             //TODO: get package info and install
-
             // Temp hard coded for test
-            string url = "https://github.com/Ginger-Automation/Ginger-PACT-Plugin/releases/download/v1.0/Ginger.PACT.PluginPackage.zip";
-            string folder = DownLoadPackage(url).Result;
-            AddPluginPackage(folder + @"\Ginger.PACT.PluginPackage");     // temp FIXME!!!
+
+            if (onlinePluginPackage.Name == "PACT")
+            {
+                string url = "https://github.com/Ginger-Automation/Ginger-PACT-Plugin/releases/download/v1.0/Ginger.PACT.PluginPackage.zip";
+                string folder = DownLoadPackage(url).Result;
+                AddPluginPackage(folder + @"\Ginger.PACT.PluginPackage");     // temp FIXME!!! get the url from Git of latest version
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+            
         }
 
         async Task<string> DownLoadPackage(string url)
