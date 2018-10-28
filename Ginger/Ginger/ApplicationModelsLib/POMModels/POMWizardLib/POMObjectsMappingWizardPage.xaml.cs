@@ -154,11 +154,22 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                 mWizard.POM.Name = mWizard.IWindowExplorerDriver.GetActiveWindow().Title;
 
-
-                mWizard.IsLearningWasDone = await GetElementsFromPage();
-                xStopLoadButton.Visibility = Visibility.Collapsed;
-                xReLearnButton.Visibility = Visibility.Visible;
-                mWizard.ProcessEnded();
+                try
+                {
+                    mWizard.IsLearningWasDone = await GetElementsFromPage();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKeys.POMWizardFailedToLearnElement, ex.Message);
+                    mWizard.IsLearningWasDone = false;
+                }
+                finally
+                {
+                    xStopLoadButton.Visibility = Visibility.Collapsed;
+                    xReLearnButton.Visibility = Visibility.Visible;
+                    mWizard.ProcessEnded();
+                }
+               
             }
         }
 
@@ -175,9 +186,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 ((DriverBase)mWizard.Agent.Driver).mStopProcess = false;
             }
             catch (Exception ex)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMWizardFailedToLearnElement, ex.Message);               
+            {           
                 learnSuccess = false;
+                throw ex;
             }
 
             return learnSuccess;
