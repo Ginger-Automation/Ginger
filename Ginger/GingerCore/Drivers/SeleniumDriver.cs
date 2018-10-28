@@ -3500,7 +3500,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails= false)
         {
             mIsDriverBusy = true;
 
@@ -3512,8 +3512,7 @@ namespace GingerCore.Drivers
                 List<ElementInfo> list = new List<ElementInfo>();
                 Driver.SwitchTo().DefaultContent();
 
-            list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList)));
-            // list.ForEach(z => z.XPath = GenerateXpathForIWebElement((IWebElement)z.ElementObject, "")); //  also can be fix for 6342 - to discuss
+                list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList, learnFullElementInfoDetails)));
 
                 CurrentFrame = "";
                 Driver.SwitchTo().DefaultContent();
@@ -3528,7 +3527,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -3538,50 +3537,61 @@ namespace GingerCore.Drivers
             if (ElementsList.Count != 0)
             {
                 foreach (IWebElement el in ElementsList)
-                {                    
-                    if (mStopProcess)
-                        return foundElementsList;
-
-                    // grab only visible elements
-                    if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0) continue;
-
-                    eElementType ElementTypeEnum = GetElementTypeEnum(el);
-
-                    ElementInfo foundElemntInfo = null;
-                   
-                    
-                    //filter element if needed
-                    if (filteredElementType != null && filteredElementType.Count > 0)
+                {
+                    try
                     {
-                        if (filteredElementType.Contains(ElementTypeEnum))
+                        if (mStopProcess)
                         {
-                            foundElemntInfo = GetElementInfoWithIWebElement(el, path);
-                            foundElemntInfo.IsAutoLearned = true;
-                            foundElementsList.Add(foundElemntInfo);
+                            return foundElementsList;
                         }
-                            
-                    }
-                    else
-                    {
-                        foundElemntInfo = GetElementInfoWithIWebElement(el, path);
+
+                        // grab only visible elements
+                        if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
+                        {
+                            continue;
+                        }
+
+                        //filter element if needed
+                        eElementType foundElementType = GetElementTypeEnum(el);
+                        if (filteredElementType != null && filteredElementType.Count > 0)
+                        {
+                            if (!filteredElementType.Contains(foundElementType))
+                            {
+                                continue;
+                            }
+                        }
+
+                        ElementInfo foundElemntInfo = null;
+                        foundElemntInfo = GetElementInfoWithIWebElement(el, path, learnFullElementInfoDetails);
                         foundElemntInfo.IsAutoLearned = true;
                         foundElementsList.Add(foundElemntInfo);
-                    }                                     
 
-                    if (el.TagName == "iframe" || el.TagName == "frame")
+                        if (el.TagName == "iframe" || el.TagName == "frame")
+                        {
+                            string xpath = GenerateXpathForIWebElement(el, "");
+                            Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
+                            string newPath = string.Empty;
+                            if (path == string.Empty)
+                            {
+                                newPath = xpath;
+                            }
+                            else
+                            {
+                                newPath = path + "," + xpath;
+                            }
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
+                            Driver.SwitchTo().DefaultContent();
+                        }
+
+                    }
+                    catch (Exception ex)
                     {
-                        string xpath = GenerateXpathForIWebElement(el, "");
-                        Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
-                        string newPath = string.Empty;
-                        if (path == string.Empty)
-                            newPath = xpath;
-                        else
-                            newPath = path + "," + xpath;
-                        GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
-                        Driver.SwitchTo().DefaultContent();
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Falied to learn the Web Element '{0}'", el.TagName), ex);
                     }
                 }
+
             }
+
             return foundElementsList;
         }
         
@@ -3701,11 +3711,11 @@ namespace GingerCore.Drivers
             return elementType;
         }       
 
-        private ElementInfo GetElementInfoWithIWebElement(IWebElement el, string path)
+        private ElementInfo GetElementInfoWithIWebElement(IWebElement el, string path, bool setFullElementInfoDetails=false)
         {
             HTMLElementInfo EI = new HTMLElementInfo();
-            EI.ElementTitle = GenerateElementTitle(el);
             EI.WindowExplorer = this;
+            EI.ElementTitle = GenerateElementTitle(el);            
             EI.ID = GenerateElementID(el);
             EI.Value = GenerateElementValue(el);
             EI.Name = GenerateElementName(el);
@@ -3714,7 +3724,23 @@ namespace GingerCore.Drivers
             EI.Path = path;
             EI.XPath = string.Empty;
             EI.ElementObject = el;
+
+            if (setFullElementInfoDetails)
+            {
+                ((IWindowExplorer)this).UpdateElementInfoFields(EI);
+                EI.ElementName = GetBestElementName(EI);
+                EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
+                EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
+            }
+            
             return EI;
+        }
+
+        string GetBestElementName(ElementInfo EI)
+        {
+            if (string.IsNullOrEmpty(EI.Value)) return null;
+            // temp need to be per elem etc... with smart naming for label text box etc...    need to be in the IWindowExplorer        
+            return EI.Value + " " + EI.ElementType;
         }
 
         private ElementInfo GetElementInfoWithIWebElementWithXpath(IWebElement el, string path)
@@ -4320,8 +4346,6 @@ namespace GingerCore.Drivers
                 ElementInfo.ElementObject = e;
             }
 
-
-            
             // Organize based on better locators at start
             string id = e.GetAttribute("id");
             if (!string.IsNullOrEmpty(id))
