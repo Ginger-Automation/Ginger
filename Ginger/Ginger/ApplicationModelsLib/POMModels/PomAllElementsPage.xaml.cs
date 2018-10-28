@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Common.UIElement;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.UserControls;
@@ -278,7 +279,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            mappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
+            if (xMappedElementsTab.IsSelected)
+            {
+                mappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
+            }
+            else if (xUnmappedElementsTab.IsSelected)
+            {
+                unmappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
+            }
+            
             TestAllElementsAsync();
         }
 
@@ -288,33 +297,39 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xTestAllElements.Visibility = Visibility.Collapsed;
             xStopTestAllElements.Visibility = Visibility.Visible;
             mStopProcess = false;
-            await Task.Run(() => TestAllElements());
+            if (xMappedElementsTab.IsSelected)
+            {
+                await Task.Run(() => TestAllElements(mPOM.MappedUIElements));
+            }
+            else if (xUnmappedElementsTab.IsSelected)
+            {
+                await Task.Run(() => TestAllElements(mPOM.UnMappedUIElements));
+            }
+
             xTestAllElements.Visibility = Visibility.Visible;
             xStopTestAllElements.Visibility = Visibility.Collapsed;
         }
 
-        private void TestAllElements()
+        private void TestAllElements(ObservableList<ElementInfo> Elements)
         {
-            int TotalElements = mPOM.MappedUIElements.Count;
+            int TotalElements = Elements.Count;
             int TotalFails = 0;
 
             bool WarnErrorOccured = false;
-            foreach (ElementInfo EI in mPOM.MappedUIElements)
+            foreach (ElementInfo EI in Elements)
             {
                 EI.ElementStatus = ElementInfo.eElementStatus.Pending;
             }
 
-            foreach (ElementInfo EI in mPOM.MappedUIElements)
+            foreach (ElementInfo EI in Elements)
             {
                 if (mStopProcess)
                 {
                     return;
                 }
-                    
+
                 if (mWinExplorer.TestElementLocators(EI.Locators,true))
                 {
-                    //TODO: Add Error frm locators
-                    //EI.ElementStatus = EI.Locators.Where(x=>x.StatusError)
                     EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                 }
                 else
@@ -348,5 +363,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
             unmappedUIElementsPage.FinishEditInGrids();
         }
 
+        private void POMModelTabsSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xMappedElementsTab.IsSelected)
+            {
+                xTestAllElements.ButtonText = "Test All Mapped Elements";
+            }
+            else if (xUnmappedElementsTab.IsSelected)
+            {
+                xTestAllElements.ButtonText = "Test All Unmapped Elements";
+            }
+        }
     }
 }

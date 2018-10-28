@@ -270,10 +270,17 @@ namespace GingerWPF.WizardLib
 
         private void PrevButton_Click(object sender, RoutedEventArgs e)
         {
-            mWizard.Prev();
-            UpdatePrevNextButton();
-            //UpdateFinishButton();
-            RefreshCurrentPage();
+            if (xProcessingImage.Visibility == Visibility.Visible)
+            {
+                Reporter.ToUser(eUserMsgKeys.WizardCantMovePrevWhileInProcess);
+            }
+            else
+            {
+                mWizard.Prev();
+                UpdatePrevNextButton();
+                //UpdateFinishButton();
+                RefreshCurrentPage();
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -285,46 +292,52 @@ namespace GingerWPF.WizardLib
         private void FinishButton_Click(object sender, RoutedEventArgs e)
         {
             //First we validate all pages are OK
-            foreach (WizardPage p in mWizard.Pages)
+
+            if (xProcessingImage.Visibility == Visibility.Visible)
             {
-                errorsFound = false;
-                if (VisualTreeHelper.GetChildrenCount((Page)p.Page) == 0)
+                Reporter.ToUser(eUserMsgKeys.WizardCantFinishWhileInProcess);
+            }
+            else
+            {
+                foreach (WizardPage p in mWizard.Pages)
                 {
-                    JumpToPage(p);
-                }                
-                if (HasValidationsIssues((Page)p.Page))// TODO: focus on the item and highlight
-                {
-                    if (mWizard.Pages.CurrentItem != p)
+                    errorsFound = false;
+                    if (VisualTreeHelper.GetChildrenCount((Page)p.Page) == 0)
                     {
                         JumpToPage(p);
                     }
-                    return;
+                    if (HasValidationsIssues((Page)p.Page))// TODO: focus on the item and highlight
+                    {
+                        if (mWizard.Pages.CurrentItem != p)
+                        {
+                            JumpToPage(p);
+                        }
+                        return;
+                    }
                 }
+
+                // TODO: verify all apges pass validation
+
+                NavigationList.SelectionChanged -= NavigationList_SelectionChanged;
+
+                mWizard.ProcessFinish();
+
+                CloseWizard();
+
+                //if (mWizard.mWizardWindow == null)
+                //{
+                //    // If no page cancelled the Finish then all OK and we can close
+                //    CurrentWizardWindow = null;                
+                //    mWizard = null;
+
+                //}
+                //else
+                //{
+                //    UpdatePrevNextButton();
+                //    RefreshCurrentPage();
+                //    NavigationList.SelectionChanged += NavigationList_SelectionChanged;
+                //}
             }
-            
-
-
-            // TODO: verify all apges pass validation
-
-            NavigationList.SelectionChanged -= NavigationList_SelectionChanged;
-
-            mWizard.ProcessFinish();
-
-            CloseWizard();
-
-            //if (mWizard.mWizardWindow == null)
-            //{
-            //    // If no page cancelled the Finish then all OK and we can close
-            //    CurrentWizardWindow = null;                
-            //    mWizard = null;
-
-            //}
-            //else
-            //{
-            //    UpdatePrevNextButton();
-            //    RefreshCurrentPage();
-            //    NavigationList.SelectionChanged += NavigationList_SelectionChanged;
-            //}
         }
 
         private void JumpToPage(WizardPage pageToJumpTo)
