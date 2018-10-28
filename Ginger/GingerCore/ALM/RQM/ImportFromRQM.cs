@@ -840,7 +840,11 @@ namespace GingerCore.ALM.RQM
         public static ObservableList<ExternalItemFieldBase> GetOnlineItemFields(BackgroundWorker bw)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
-
+            if(bw == null)
+            {
+                bw = new BackgroundWorker();
+                bw.WorkerReportsProgress = true;
+            }
             //TODO : receive as parameters:
 
             RqmRepository rqmRep = new RqmRepository(RQMCore.ConfigPackageFolderPath);
@@ -850,7 +854,7 @@ namespace GingerCore.ALM.RQM
             LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
             IProjectData rqmProjectsData = rqmRep.GetVisibleProjects(loginData);
             rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
-            IProjectDefinitions currentProj = rqmProjectsDataList.FirstOrDefault();
+            IProjectDefinitions currentProj = rqmProjectsDataList.Where(prj => prj.ProjectName.Equals(ALMCore.AlmConfig.ALMProjectName)).FirstOrDefault();
             string rqmDomain = currentProj.Prefix;
             string rqmProject = currentProj.ProjectName;
 
