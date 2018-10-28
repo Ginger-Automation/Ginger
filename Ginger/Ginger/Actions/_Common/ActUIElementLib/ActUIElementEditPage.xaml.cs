@@ -481,7 +481,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                
                 if (SelectedAction.ToString() != null && SelectedAction.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
-                    text.AddUnderLineText(" to perform " + SelectedAction.ToString() + " operation");
+                    text.AddBoldText(" to perform " + SelectedAction.ToString() + " operation");
                 }
             }
             else
@@ -514,7 +514,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 }
                 if (SelectedAction.ToString() != null && SelectedAction.ToString() != "" && SelectedAction != ActUIElement.eElementAction.Unknown)
                 {
-                    text.AddUnderLineText("  " + SelectedAction.ToString() + " operation");
+                    text.AddBoldText("  " + SelectedAction.ToString() + " operation");
                 }
             }
         }        

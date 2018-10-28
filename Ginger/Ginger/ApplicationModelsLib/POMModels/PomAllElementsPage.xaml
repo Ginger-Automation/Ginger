@@ -19,7 +19,7 @@
                 <ToggleButton x:Name="LiveSpyButton" Click="LiveSpyHandler"  ToolTip="Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key" Width="24" Height="24" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}">
                     <Image Source="{StaticResource @Spy_24x24}"/>
                 </ToggleButton>
-                <Label x:Name="xStatusLable" Content="Spying off" ></Label>
+                <Label x:Name="xStatusLable" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Content="Spying is Off" ></Label>
                 <UserControls:ucButton x:Name="xCreateNewElement" ButtonType="RoundTextAndImageButton" ButtonText="Create New Element" ButtonImageType="New" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed"  Click="CreateNewElemetClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
             </StackPanel>
         <UserControls:ucButton x:Name="xTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Test All Elements" ButtonImageType="Play" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />

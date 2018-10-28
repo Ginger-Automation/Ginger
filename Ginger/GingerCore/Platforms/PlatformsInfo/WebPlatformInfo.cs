@@ -342,10 +342,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByXY);
                 mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);
-                if (WorkSpace.Instance.BetaFeatures.ShowPOMInResourcesTab)
-                {
-                    mElementLocatorsTypeList.Add(eLocateBy.POMElement);
-                }
+                mElementLocatorsTypeList.Add(eLocateBy.POMElement);                
                 mElementLocatorsTypeList.Add(eLocateBy.NA);
                 mElementLocatorsTypeList.Add(eLocateBy.ByName);
                 mElementLocatorsTypeList.Add(eLocateBy.Unknown);
