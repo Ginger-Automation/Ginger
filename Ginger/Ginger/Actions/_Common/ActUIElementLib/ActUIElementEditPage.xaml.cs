@@ -472,49 +472,53 @@ namespace Ginger.Actions._Common.ActUIElementLib
             
             ActionInfoLabel.Visibility = Visibility.Visible;
             if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType != eElementType.Unknown)
-            {
-                text.AddBoldText("Select " + mAction.ElementType.ToString() + " ");
+            {                
+                text.AddBoldText(string.Format("Configured '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
                 if (mAction.ElementLocateBy.ToString() != null && mAction.ElementLocateBy.ToString() != "" && mAction.ElementLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
-                    text.AddBoldText(mAction.ElementLocateBy.ToString().ToLower());
+                    text.AddBoldText(string.Format(" to be located by '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.ElementLocateBy)));
                 }
                
                 if (SelectedAction.ToString() != null && SelectedAction.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
-                    text.AddBoldText(" to perform " + SelectedAction.ToString() + " operation");
+                    text.AddBoldText(string.Format(" to perform '{0}' operation.", GetEnumValueDescription(typeof(ActUIElement.eElementAction), SelectedAction)));
                 }
             }
             else
             {
                 if (mAction.ElementLocateBy.ToString() != null && mAction.ElementLocateBy.ToString() != "" && mAction.ElementLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-                {
-                    text.AddBoldText("  " + mAction.ElementLocateBy.ToString());
+                {                    
+                    text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.ElementLocateBy)));
                 }
                 if (mAction.TargetLocateBy.ToString() != null && mAction.TargetLocateBy.ToString() != "" && mAction.TargetLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-                {
-                    text.AddBoldText("  " + mAction.TargetLocateBy.ToString());
+                {                   
+                    text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.TargetLocateBy)));
                 }
                 if (mAction.TargetElementType.ToString() != null && mAction.TargetElementType.ToString() != "" && mAction.TargetElementType.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
                     if (!string.IsNullOrEmpty(text.GetText()))
                     {
-                        text.AddBoldText("  " + mAction.TargetElementType.ToString());
+                        text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.TargetElementType)));
                     }
                     else
-                        text.AddBoldText("  " + mAction.ElementType.ToString());
+                    {                       
+                        text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
+                    }
                 }
                 if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
                     if (!string.IsNullOrEmpty(text.GetText()))
                     {
-                        text.AddBoldText("  " + mAction.ElementType.ToString());
+                        text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
                     }
                     else
-                        text.AddBoldText("  " + mAction.ElementType.ToString());
+                    {
+                        text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
+                    }
                 }
                 if (SelectedAction.ToString() != null && SelectedAction.ToString() != "" && SelectedAction != ActUIElement.eElementAction.Unknown)
-                {
-                    text.AddBoldText("  " + SelectedAction.ToString() + " operation");
+                {                    
+                    text.AddBoldText(string.Format(" '{0}' operation", GetEnumValueDescription(typeof(ActUIElement.eElementAction), SelectedAction)));
                 }
             }
         }        

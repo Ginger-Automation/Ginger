@@ -102,7 +102,7 @@ namespace GingerCore
         ReportTemplateNotFound, DriverNotSupportingWindowExplorer, AgentNotRunningAfterWaiting,
         FoundDuplicateAgentsInRunSet, StaticErrorMessage, StaticWarnMessage, StaticInfoMessage, ApplicationAgentNotMapped,
         ActivitiesGroupAlreadyMappedToTC, ExportItemToALMFailed, AskIfToSaveBFAfterExport,
-        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, WindowClosed, TargetWindowNotSelected,
+        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, WindowClosed, TargetWindowNotSelected,AskIfToCloseAgent,
         ChangingEnvironmentParameterValue,IFSaveChangesOfBF, AskIfToDownloadPossibleValues, AskIfToDownloadPossibleValuesShortProcesss, SelectAndSaveCategoriesValues, WhetherToOpenSolution,
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderNotExistOrNotAvailible, FolderNameTextBoxIsEmpty, UserHaveNoWritePermission, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
         BusinessFlowNeedTargetApplication,HTMLReportAttachment, ImageSize,
@@ -518,6 +518,7 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMNotOnThePageWarn, new UserMessage(eAppReporterMessageType.WARN, "Not On the Same Page", "'{0}' Elements out of '{1}' Elements failed to be found on the page" + Environment.NewLine + "Looks like you are not on the right page" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.YesNo, MessageBoxResult.Yes));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMCannotDeleteAutoLearnedElement, new UserMessage(eAppReporterMessageType.WARN, "Cannot Delete Auto Leared Element", "The Element you are trying to delete has been leared automatically from page and cannot be deleted", MessageBoxButton.OK,MessageBoxResult.OK));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.WizardCantMoveNextWhileInProcess, new UserMessage(eAppReporterMessageType.WARN, "Process is still running", "Ginger cannot move next until the process will be finished or stopped" + Environment.NewLine + "please wait the process to be finished or stop it and then click next.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfToCloseAgent, new UserMessage(eAppReporterMessageType.QUESTION, "Close Agent?", "To close the Agent '{0}'?", MessageBoxButton.YesNo, MessageBoxResult.No));
             #endregion POM
 
 

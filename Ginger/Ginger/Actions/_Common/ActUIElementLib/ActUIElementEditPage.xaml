@@ -16,7 +16,7 @@
             <RowDefinition Height="400*"/>
             <RowDefinition/>
             <RowDefinition Height="37"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0">
@@ -74,8 +74,8 @@
         </StackPanel>
 
         <StackPanel Grid.Row="3"  Margin="0,20,0,0">
-            <Label Content="Action Description:" Style="{StaticResource $LabelStyle}"></Label>
-            <TextBlock x:Name="ActionInfoLabel" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" TextAlignment="Left"  FontSize="12" Margin="10,0,0,0"></TextBlock>
+            <Label Content="Configurations Description:" Style="{StaticResource $LabelStyle}"></Label>
+            <TextBlock x:Name="ActionInfoLabel" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" TextAlignment="Left"  FontSize="12" Margin="0,0,0,0"></TextBlock>
         </StackPanel>
     </Grid>
 </Page>
