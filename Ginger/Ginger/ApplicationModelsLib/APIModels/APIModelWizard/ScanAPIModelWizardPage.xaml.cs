@@ -65,6 +65,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             if (WizardEventArgs.EventType == EventType.Init)
             {
                 xApisSelectionGrid.ValidationRules.Add(Ginger.ucGrid.eUcGridValidationRules.CantBeEmpty);
+                AddAPIModelWizard = ((AddAPIModelWizard)WizardEventArgs.Wizard);
+                WSDLP = AddAPIModelWizard.mWSDLParser;
             }
             else if (WizardEventArgs.EventType == EventType.Prev)
             {
@@ -86,7 +88,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 if (WizardEventArgs != null)
                 {
-                    AddAPIModelWizard = ((AddAPIModelWizard)WizardEventArgs.Wizard);
                     Parse();
                 }
             }

@@ -30,7 +30,6 @@ namespace Amdocs.Ginger.Repository
 
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
-            //ObservableList<ApplicationAPIModel> AAMSList = new ObservableList<ApplicationAPIModel>();
             ApplicationAPIModel AAM = new ApplicationAPIModel();
             AAM.Name = Path.GetFileNameWithoutExtension(FileName);
             ObservableList <AppModelParameter> AppModelParameters = new ObservableList<AppModelParameter>();

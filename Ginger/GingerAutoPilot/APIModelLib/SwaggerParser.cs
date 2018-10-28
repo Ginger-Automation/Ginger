@@ -43,7 +43,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             string FinalFileName = "";
             Uri url = new Uri(FileName);
             
-            //ObservableList<ApplicationAPIModel> SwaggerModels = new ObservableList<ApplicationAPIModel>();
             string orignaljson = "";
             if (url.IsFile)
             {
