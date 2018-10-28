@@ -335,17 +335,14 @@ namespace GingerCore.Platforms.PlatformsInfo
             if (mElementLocatorsTypeList == null)
             {
                 mElementLocatorsTypeList = new List<eLocateBy>();
+                mElementLocatorsTypeList.Add(eLocateBy.POMElement);
                 mElementLocatorsTypeList.Add(eLocateBy.ByModelName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByID);
                 mElementLocatorsTypeList.Add(eLocateBy.ByCSS);
                 mElementLocatorsTypeList.Add(eLocateBy.ByClassName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByXY);
-                mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);
-                if (WorkSpace.Instance.BetaFeatures.ShowPOMInResourcesTab)
-                {
-                    mElementLocatorsTypeList.Add(eLocateBy.POMElement);
-                }
+                mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);                                
                 mElementLocatorsTypeList.Add(eLocateBy.NA);
                 mElementLocatorsTypeList.Add(eLocateBy.ByName);
                 mElementLocatorsTypeList.Add(eLocateBy.Unknown);

@@ -15,7 +15,7 @@
             <RowDefinition x:Name="Row" Height="27"/>
         </Grid.RowDefinitions>
 
-        <ComboBox x:Name="ComboBox" Grid.Column="0" Grid.Row="0"  VerticalAlignment="Center"  Style="{StaticResource @InputComboBoxStyle}" IsEditable="True"/>
+        <ComboBox x:Name="ComboBox" Grid.Column="0" Grid.Row="0"  VerticalAlignment="Center"  Style="{StaticResource $FlatInputComboBoxStyle}" IsEditable="True"/>
         <Button x:Name="VEButton" Grid.Column="1" Grid.Row="0"  VerticalAlignment="Center" Content="..." Click="VEButton_Click" HorizontalAlignment="Left" Style="{StaticResource @InputButtonStyle}" Height="22" Margin="2,2,0,3" Visibility="Collapsed"/>
     </Grid>
 </UserControl>

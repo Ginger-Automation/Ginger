@@ -23,7 +23,9 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.Agents;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.BindingLib;
@@ -70,6 +72,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 else
                 {
+                    if (mAgent != null)
+                    {
+                        mAgent.Close();
+                    }
                     return null;
                 }
             }
@@ -85,6 +91,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM = POM;
             ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
+            ControlsBinding.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
 
             xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             FillTargetAppsComboBox();
@@ -219,6 +226,26 @@ namespace Ginger.ApplicationModelsLib.POMModels
             
         }
 
+        private void xPageURLBtn_Click(object sender, RoutedEventArgs e)
+        {
+            GoToPageURL();
+        }
 
+        public void GoToPageURL()
+        {
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                return;
+            }
+
+            ActGotoURL act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = mPOM.PageURL, ValueForDriver = mPOM.PageURL, Active = true };
+            mAgent.Driver.RunAction(act);
+        }
+
+        private void AgentStartedHandler()
+        {
+            GoToPageURL();
+        }
     }
 }
