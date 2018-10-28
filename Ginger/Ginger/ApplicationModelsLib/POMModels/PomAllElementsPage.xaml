@@ -22,10 +22,10 @@
                 <Label x:Name="xStatusLable" Content="Spying off" ></Label>
                 <UserControls:ucButton x:Name="xCreateNewElement" ButtonType="RoundTextAndImageButton" ButtonText="Create New Element" ButtonImageType="New" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed"  Click="CreateNewElemetClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
             </StackPanel>
-        <UserControls:ucButton x:Name="xTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Test All Elements" ButtonImageType="Play" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
+        <UserControls:ucButton x:Name="xTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Test All Mapped Elements" ButtonImageType="Play" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
         <UserControls:ucButton x:Name="xStopTestAllElements"  ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right"  ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="StopTestAllElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
 
-        <TabControl x:Name="POMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch"  >
+        <TabControl x:Name="POMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="POMModelTabsSelectionChanged"  >
             <TabItem Margin="0,0,0,0" x:Name="xMappedElementsTab" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

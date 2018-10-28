@@ -133,6 +133,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.Finish:
                     pomAllElementsPage.FinishEditInAllGrids();
                     break;
+                case EventType.Cancel:
+                    if (mWizard.Agent != null && mWizard.Agent.Driver != null)
+                    {
+                        ((DriverBase)mWizard.Agent.Driver).mStopProcess = true;
+                    }
+                    break;
             }
         }
         List<eElementType> mSelectedElementTypesList = new List<eElementType>();

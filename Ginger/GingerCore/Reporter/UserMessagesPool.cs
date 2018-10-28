@@ -116,7 +116,7 @@ namespace GingerCore
         InitializeBrowser,LoseChangesWarn, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
         VisualTestingFailedToDeleteOldBaselineImage,ApplitoolsLastExecutionResultsNotExists,ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
         FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
-        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, WizardCantMoveNextWhileInProcess, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported,
+        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, WizardCantMoveNextWhileInProcess, WizardCantFinishWhileInProcess, WizardCantMovePrevWhileInProcess, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported,
         POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus, SolutionSaveWarning,
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, ValueIssue, MissingTargetApplication,
@@ -518,6 +518,8 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMNotOnThePageWarn, new UserMessage(eAppReporterMessageType.WARN, "Not On the Same Page", "'{0}' Elements out of '{1}' Elements failed to be found on the page" + Environment.NewLine + "Looks like you are not on the right page" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.YesNo, MessageBoxResult.Yes));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMCannotDeleteAutoLearnedElement, new UserMessage(eAppReporterMessageType.WARN, "Cannot Delete Auto Leared Element", "The Element you are trying to delete has been leared automatically from page and cannot be deleted", MessageBoxButton.OK,MessageBoxResult.OK));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.WizardCantMoveNextWhileInProcess, new UserMessage(eAppReporterMessageType.WARN, "Process is still running", "Ginger cannot move next until the process will be finished or stopped" + Environment.NewLine + "please wait the process to be finished or stop it and then click next.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.WizardCantMovePrevWhileInProcess, new UserMessage(eAppReporterMessageType.WARN, "Process is still running", "Ginger cannot move previous until the process will be finished or stopped" + Environment.NewLine + "please wait the process to be finished or stop it and then click previous.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.WizardCantFinishWhileInProcess, new UserMessage(eAppReporterMessageType.WARN, "Process is still running", "Ginger cannot move finish wizard until the process will be finished or stopped" + Environment.NewLine + "please wait the process to be finished or stop it and then click finish.", MessageBoxButton.OK, MessageBoxResult.None));
             #endregion POM
 
 

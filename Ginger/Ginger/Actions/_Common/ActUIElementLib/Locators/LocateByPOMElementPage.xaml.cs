@@ -151,6 +151,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             xPOMElementTextBox.Visibility = Visibility.Collapsed;
             xPOMElementsGrid.Visibility = Visibility.Visible;
+            xSelectElement.Visibility = Visibility.Visible;
             xPOMElementsGrid.Refresh();
             ArrowExpended = true;
         }
@@ -176,6 +177,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             xPOMElementTextBox.Visibility = Visibility.Visible;
             xPOMElementsGrid.Visibility = Visibility.Collapsed;
+            xSelectElement.Visibility = Visibility.Collapsed;
             xPOMElementTextBox.Text = ((ElementInfo)xPOMElementsGrid.Grid.SelectedItem).ElementName;
             ArrowExpended = false;
 
@@ -235,6 +237,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 SelectElement();
             }
+        }
+
+        private void SelectElementsClicked(object sender, RoutedEventArgs e)
+        {
+            EndSelectingElement();
         }
     }
 }
