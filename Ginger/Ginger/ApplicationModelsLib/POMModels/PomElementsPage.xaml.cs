@@ -432,7 +432,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void DetailsGrid_Expanded(object sender, RoutedEventArgs e)
         {
-            Row2.Height = new GridLength(100, GridUnitType.Star);
+            Row2.Height = new GridLength(30, GridUnitType.Star);
         }
 
         private void DetailsGrid_Collapsed(object sender, RoutedEventArgs e)

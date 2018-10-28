@@ -46,7 +46,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     return null;
                 }
             }
-
         }
 
         public Agent mAgent;
@@ -55,7 +54,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             Mapped,
             Unmapped
-
         }
 
         public PomElementsPage mappedUIElementsPage;
@@ -67,8 +65,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM = POM;
             mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
-
-
 
             mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped);
             xMappedElementsFrame.Content = mappedUIElementsPage;
@@ -93,7 +89,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             });
         }
 
-
         private void MappedUIElements_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             MappedUIElementsUpdate();
@@ -104,7 +99,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             get { return xTestAllElements.Visibility; }
             set { xTestAllElements.Visibility = value; }
         }
-
 
         private void MappedUIElementsUpdate()
         {
@@ -119,7 +113,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mAgent = agent;
             mappedUIElementsPage.SetAgent(mAgent);
             unmappedUIElementsPage.SetAgent(mAgent);
-
         }
 
         private void CreateNewElemetClicked(object sender, RoutedEventArgs e)
@@ -152,7 +145,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (LiveSpyButton.IsChecked == true)
             {
-                xStatusLable.Content = "Spying on";
+                xStatusLable.Content = "Spying is On";
                 if (dispatcherTimer == null)
                 {
                     dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
@@ -165,7 +158,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             else
             {
                 xCreateNewElement.Visibility = Visibility.Collapsed;
-                xStatusLable.Content = "Spying off";
+                xStatusLable.Content = "Spying is Off";
                 dispatcherTimer.IsEnabled = false;
             }
         }
@@ -173,7 +166,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void StopSpying()
         {
             xCreateNewElement.Visibility = Visibility.Collapsed;
-            xStatusLable.Content = "Spying off";
+            xStatusLable.Content = "Spying is Off";
             dispatcherTimer.IsEnabled = false;
         }
 
@@ -184,7 +177,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             // Get control info only if control key is pressed
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                xStatusLable.Content = "Spying Element, Please Wait...";
+                xStatusLable.Content = "Spying element, please wait...";
                 xCreateNewElement.Visibility = Visibility.Collapsed;
                 GingerCore.General.DoEvents();
                 mSpyElement = mWinExplorer.GetControlFromMousePosition();
@@ -245,7 +238,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (!elementfocused)
             {
-                xStatusLable.Content = "Element has not been found on the list, Click here to create new Element ";
+                xStatusLable.Content = "Found element is not included in below elements list, click here to add it ";
                 xCreateNewElement.Visibility = Visibility.Visible;
             }
         }
@@ -274,9 +267,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void TestAllElementsClicked(object sender, RoutedEventArgs e)
         {
-
-            //Change Grid View
-
             if (mWinExplorer == null)
             {
                 Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);

@@ -413,6 +413,7 @@
     <Style TargetType="ComboBox" x:Key="$FlatInputComboBoxStyle" >
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
@@ -941,6 +942,13 @@
         </Setter>
     </Style>
 
+    <Style TargetType="RadioButton" x:Key="$InputRadioButtonStyle" >
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_VeryDarkBlue}"/>
+    </Style>
 
     <!-- $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ New Design 2018 -END -->
 

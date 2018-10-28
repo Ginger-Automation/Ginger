@@ -42,7 +42,7 @@
 
                     <StackPanel Grid.Column="0" HorizontalAlignment="Left" Orientation="Horizontal">
                         <Label Content="Page URL:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <TextBox x:Name="xPageURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Width="250" Margin="45,0,0,0"/>
+                        <TextBox x:Name="xPageURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" TextWrapping="NoWrap" Width="250" Margin="45,0,0,0"/>
                         <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click" ToolTip="Go to Page"/>
                     </StackPanel>
 
@@ -51,7 +51,7 @@
             </StackPanel>
         </ScrollViewer>
         
-        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $BackgroundColor_VeryDarkBlue}" />
+        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $BackgroundColor_LightGray}" />
         
         <TabControl Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}" >
             <TabItem >

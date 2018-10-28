@@ -1401,7 +1401,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();

@@ -45,9 +45,10 @@ namespace GingerWPF.WizardLib
             wizardWindow.Width = width;
             
             if(DoNotShowAsDialog)
-            {
-                wizardWindow.Topmost = true;
+            {                
                 wizardWindow.Show();
+                //bring window to front
+                wizardWindow.Topmost = true;  
             }
             else
             {
