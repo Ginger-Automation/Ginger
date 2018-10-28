@@ -410,6 +410,11 @@ namespace Ginger.ALM
         private void SaveALMConfigs()
         {
             ALMIntegration.Instance.SyncConfigurations();
+            Ginger.SolutionGeneral.Solution lastSavedSolution = Ginger.SolutionGeneral.Solution.LoadSolution(App.UserProfile.Solution.FilePath, false);
+            if (!(App.UserProfile.Solution.ALMServerURL == lastSavedSolution.ALMServerURL && App.UserProfile.Solution.ALMDomain == lastSavedSolution.ALMDomain && App.UserProfile.Solution.ALMProject == lastSavedSolution.ALMProject))
+            {
+                App.UserProfile.Solution.ExternalItemsFields.Clear();
+            }
             App.UserProfile.SaveUserProfile();
             App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
         }
