@@ -447,7 +447,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 CurrentAMDP = (AppModelParameter)ModelParametersGrid.CurrentItem;
                 if (CurrentAMDP != null && !IsParamPlaceholderNameConflict(CurrentAMDP))
-                    mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, new List<string> { LocalParamValueBeforeEdit }, CurrentAMDP.PlaceHolder);
+                {
+                  mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, new List<string> { LocalParamValueBeforeEdit }, CurrentAMDP.PlaceHolder);
+                }  
             }
         }
 
