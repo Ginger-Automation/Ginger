@@ -70,7 +70,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="2"  Margin="0,10,0,0">
-            <Frame x:Name="PlatformSpecificFrame" Content="PlatformSpecificFrame" Visibility="Collapsed" Margin="0,0,859,0"/>
+            <Frame x:Name="PlatformSpecificFrame" Content="PlatformSpecificFrame" Visibility="Collapsed" Margin="0,0,859,0" NavigationUIVisibility="Hidden"/>
         </StackPanel>
 
         <StackPanel Grid.Row="3"  Margin="0,20,0,0">

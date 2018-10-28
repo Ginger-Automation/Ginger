@@ -303,6 +303,8 @@ namespace Amdocs.Ginger.Common.UIElement
         NA,
         [EnumValueDescription("")]
         Unknown,
+        [EnumValueDescription("Page Objects Model Element")]
+        POMElement,
         [EnumValueDescription("By ID")]
         ByID,
         [EnumValueDescription("By Name")]
@@ -365,8 +367,6 @@ namespace Amdocs.Ginger.Common.UIElement
         ByModelName,
         [EnumValueDescription("By CSS Selector")]
         ByCSSSelector,
-        [EnumValueDescription("Page Objects Model Element")]
-        POMElement,
     }
 
     public enum eElementType

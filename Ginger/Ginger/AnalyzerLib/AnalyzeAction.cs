@@ -402,7 +402,7 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
-            if (a.GetType() == typeof(ActUIElement))
+            if (a.LocateBy == eLocateBy.POMElement || ((a is ActUIElement) && ((ActUIElement)a).ElementLocateBy == eLocateBy.POMElement))
             {
                 try
                 {
@@ -412,9 +412,9 @@ namespace Ginger.AnalyzerLib
                     if (POM == null)
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                        AA.Description = "Action's mapped POM is missing";
-                        AA.Details =  "Action " + a.ActionDescription + " has mapped POM which is missing, reason can be that the POM has been deleted after mapping it to this action.";
-                        AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different POM and Element";
+                        AA.Description = "Action's mapped Page Objects Model is missing";
+                        AA.Details =  "Action " + a.ActionDescription + " has mapped Page Objects Model which is missing, reason can be that the Page Objects Model has been deleted after mapping it to this action.";
+                        AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Page Objects Model and Element";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;                
                         AA.IssueType = eType.Error;
                         AA.Impact =  "Action will fail during execution";
@@ -429,8 +429,8 @@ namespace Ginger.AnalyzerLib
                         if (selectedPOMElement == null)
                         {
                             AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                            AA.Description = "Page Element which mapped to this action is missing";
-                            AA.Details = "Action " + a.ActionDescription + " has mapped Element which is missing, reason can be that the Element has been deleted after mapping it to this action.";
+                            AA.Description = "Page Objects Model Element which mapped to this action is missing";
+                            AA.Details = "Action " + a.ActionDescription + " has mapped Page Objects Model Element which is missing, reason can be that the Element has been deleted after mapping it to this action.";
                             AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Element";
                             AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;                
                             AA.IssueType = eType.Error;
@@ -443,7 +443,16 @@ namespace Ginger.AnalyzerLib
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed during ActUIElement Analizer", ex);
+                    AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
+                    AA.Description = "Action's mapped Page Objects Model or Element is invalid";
+                    AA.Details = "Action " + a.ActionDescription + " has invalid mapped Page Objects Model or Element.";
+                    AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Page Objects Model and Element";
+                    AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                    AA.IssueType = eType.Error;
+                    AA.Impact = "Action will fail during execution";
+                    AA.Severity = eSeverity.High;
+
+                    IssuesList.Add(AA);
                 }
             }
                 return IssuesList;
