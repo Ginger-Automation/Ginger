@@ -62,7 +62,7 @@ namespace GingerWPFUnitTest.APIModelLib
 
             //Act
             ObservableList<ApplicationAPIModel> AAMList = new ObservableList<ApplicationAPIModel>();
-            AAMList = WSDLP.ParseDocument(filename);
+            AAMList = WSDLP.ParseDocument(filename, AAMList);
 
             //Assert
             Assert.AreEqual(AAMList.Count, 4, "Objects count");
