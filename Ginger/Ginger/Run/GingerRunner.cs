@@ -1811,7 +1811,7 @@ namespace Ginger.Run
             GingerNodeInfo GNI = GetGingerNode(actPlugin);
 
             if (GNI == null)
-            {                
+            {                   
                 // call plugin to start service and wait for ready
                 WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId);  
 
@@ -1823,6 +1823,7 @@ namespace Ginger.Run
                 }
                 if (GNI == null)
                 {
+                    actPlugin.Error = "GNI not found";  //temp fix me!!!   !!!!
                     throw new Exception("Timeout waiting for service to start");
                 }
             }
