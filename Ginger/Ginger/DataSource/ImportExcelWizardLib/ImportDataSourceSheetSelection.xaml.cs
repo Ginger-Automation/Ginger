@@ -59,6 +59,9 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     mWizard = (ImportDataSourceFromExcelWizard)WizardEventArgs.Wizard;
                     xSheetNameComboBox.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.SheetName));                    
                     xSheetNameComboBox.AddValidationRule(new EmptyValidationRule());
+
+                    chkHeadingRow.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.HeadingRow));
+                    chkModelParamsFile.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.IsModelParamsFile));
                     break;
                 case EventType.Active:
                     string excelPath = ((ImportDataSourceFromExcelWizard)WizardEventArgs.Wizard).Path;
