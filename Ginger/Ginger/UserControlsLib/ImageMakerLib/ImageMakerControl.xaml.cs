@@ -217,9 +217,6 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.HtmlReport:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Html5);
                     break;
-                case eImageType.Variable:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Code);
-                    break;
                 case eImageType.SharedRepositoryItem:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Star, Brushes.Orange);
                     break;
@@ -239,10 +236,36 @@ namespace Amdocs.Ginger.UserControls
                 #endregion
 
 
+                #region Variable Item Images
+                //############################## Variables Images:
+                case eImageType.Variable:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Code);
+                    break;
+                case eImageType.VariableList:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.List);
+                    break;
+                case eImageType.Password:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Key);
+                    break;
+                case eImageType.Random:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Random);
+                    break;
+                case eImageType.Sequence:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AlignJustify);
+                    break;
+                case eImageType.Timer:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline);
+                    break;
+                #endregion
+
+
                 #region Execution Status Images
                 //############################## Execution Status Images:
                 case eImageType.Passed:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
+                    break;
+                case eImageType.Unknown:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Question,null, 0, "Unknown");
                     break;
                 case eImageType.Failed:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
@@ -459,6 +482,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
                     break;
                 case eImageType.List:
+                case eImageType.DataTable:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Table);
                     break;
                 case eImageType.Parameter:
@@ -558,8 +582,8 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircleOutline);
                     break;
                 case eImageType.Bug:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bug);
-                    break;
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bug);                                   
+                    break;                
                 case eImageType.Power:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PowerOff);
                     break;
@@ -603,8 +627,19 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Coffee:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee);
                     break;
+                case eImageType.MapSigns:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
+                    break;
                 #endregion
 
+                #region Other Images
+                case eImageType.Database:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
+                    break;
+                case eImageType.TextBox:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.TextWidth);
+                    break;
+                #endregion
 
                 default:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Question, Brushes.Red);

@@ -91,7 +91,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 AddAPIModelWizard = ((AddAPIModelWizard)WizardEventArgs.Wizard);
                 App.ObjFieldBinding(XMLTemplatesGrid.AddCheckBox("Avoid Duplicates Nodes", null), CheckBox.IsCheckedProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.AvoidDuplicatesNodes));
                 mWSDLParser = new WSDLParser();
-
+                AddAPIModelWizard.mWSDLParser = mWSDLParser;
                 GingerCore.General.ObjFieldBinding(xURLTextBox, TextBox.TextProperty, AddAPIModelWizard, nameof(AddAPIModelWizard.URL));
                 xURLTextBox.AddValidationRule(eValidationRule.CannotBeEmpty);
             }

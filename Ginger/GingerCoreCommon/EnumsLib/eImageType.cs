@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Amdocs.Ginger.Common.Enums
+﻿namespace Amdocs.Ginger.Common.Enums
 {
 
     public enum eImageType
@@ -42,7 +38,6 @@ namespace Amdocs.Ginger.Common.Enums
         Operations,
         Environment,
         HtmlReport,
-        Variable,
         SharedRepositoryItem,
         NonSharedRepositoryItem,
         Tag,
@@ -51,7 +46,17 @@ namespace Amdocs.Ginger.Common.Enums
         #endregion
 
 
+        #region Variable Items Images
+        Variable,
+        VariableList,
+        Password,
+        Random,
+        Sequence,
+        Timer,
+        #endregion
+
         #region Execution Status Images
+        Unknown,
         //############################## Execution Status Images:
         /// <summary>
         /// Show spinner 
@@ -184,6 +189,12 @@ namespace Amdocs.Ginger.Common.Enums
         Beta,
         Error,
         Coffee,
+        MapSigns,
+        #endregion
+
+        #region Other Images
+        Database,
+        TextBox,
         #endregion
 
 
@@ -205,7 +216,8 @@ namespace Amdocs.Ginger.Common.Enums
         Application,
         OpenFolder,
         Check,
-        Bug,                
-        PlusSquare,
+        Bug,
+        PlusSquare,        
+        DataTable        
     }
 }

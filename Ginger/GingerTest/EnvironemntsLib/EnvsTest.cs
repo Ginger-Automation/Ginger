@@ -197,7 +197,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        [Ignore]
+        
         [Level3]
         [TestMethod]
         public void DeleteEnvFolderRemovedfromTree()
@@ -210,8 +210,8 @@ namespace GingerWPFUnitTest
 
             //Act
             bool existBeforeDelete = EnvsPOM.EnvironmentsTree.IsItemExist(folderName);
-            Directory.Delete(subFolder);
-            bool existAfterDelete = EnvsPOM.EnvironmentsTree.IsItemExist(folderName);
+            Directory.Delete(subFolder);            
+            bool existAfterDelete = EnvsPOM.EnvironmentsTree.IsItemNotExist(folderName);
 
             // assert            
             Assert.IsTrue(existBeforeDelete);

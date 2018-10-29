@@ -337,7 +337,10 @@ namespace Amdocs.Ginger.Repository
 
         public override void PauseFileWatcher()
         {
-            if (mFileWatcher == null) return;
+            if (mFileWatcher == null)
+            {
+                return;
+            }
             if (mFileWatcher.EnableRaisingEvents != false)
             {
                 mFileWatcher.EnableRaisingEvents = false;
@@ -501,7 +504,7 @@ namespace Amdocs.Ginger.Repository
                     //delete the folder from folders cache  
                     if (mSubFoldersCache != null)
                     {
-                        mSubFoldersCache.Remove(sf2);
+                        mSubFoldersCache.Remove(sf2);                        
                     }
 
                     break;
@@ -637,7 +640,7 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
-                throw new Exception("Failed to delete RI File not found - " + repositoryItem.FilePath);
+               //Ignore -  No need to delete as it is possible the user deleted it from the file system and not from Ginger
             }
 
             RemoveItemFromLists(repositoryItem);

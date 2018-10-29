@@ -78,6 +78,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public enum eLocateStatus
         {
+            Unknown,
             Pending,
             Passed,
             Failed
@@ -112,7 +113,7 @@ namespace Amdocs.Ginger.Common.UIElement
                     case eLocateStatus.Pending:
                         return eImageType.Pending;
                     default:
-                        return eImageType.Pending;
+                        return eImageType.Unknown;
                 }
             }
         }

@@ -80,7 +80,7 @@ namespace Ginger.Actions
                         foreach (var v in standAloneAction.InputValues)
                         {
                             if (v.Param == "GA") continue; // not needed
-                            act.InputValues.Add(new ActInputValue() { Param = v.Param });
+                            act.InputValues.Add(new ActInputValue() { Param = v.Param, ParamTypeEX = v.ParamTypeStr  });
                         }                        
                         act.Active = true;                        
                         PlugInsActions.Add(act);
@@ -233,7 +233,13 @@ namespace Ginger.Actions
 
                     if (ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
                     {
-                        aNew = (Act)(((Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem)).CreateCopy());
+                        Act selectedAction = (Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem);
+                        aNew = (Act)selectedAction.CreateCopy();
+                        // copy param ex info
+                        for (int i=0;i< selectedAction.InputValues.Count;i++)
+                        {
+                            aNew.InputValues[i].ParamTypeEX = selectedAction.InputValues[i].ParamTypeEX;
+                        }
                     }
                     else
                     {
@@ -241,7 +247,7 @@ namespace Ginger.Actions
                         return;
                     }
                     aNew.SolutionFolder = App.UserProfile.Solution.Folder.ToUpper();
-
+                    
                     //adding the new act after the selected action in the grid  
                     //TODO: Add should be after the last, Insert should be in the middle...
 

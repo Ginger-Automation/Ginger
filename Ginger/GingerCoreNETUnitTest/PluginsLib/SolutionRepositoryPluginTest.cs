@@ -108,6 +108,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         //[TestMethod]
         //public void GetPluginServices()        
 
+        [Ignore]
         [TestMethod]
         public void GetPluginTextEditor()
         {

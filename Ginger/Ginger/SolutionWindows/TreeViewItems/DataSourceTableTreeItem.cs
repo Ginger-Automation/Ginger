@@ -53,7 +53,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(DSTableDetails.Name, "@DataTable_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus), DSTableDetails, DataSourceTable.Fields.Name);
+            return NewTVItemHeaderStyle(DSTableDetails, eImageType.DataTable, nameof(DSDetails.Name));            
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -106,13 +106,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)
-        {           
-            mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+        {   
             if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == MessageBoxResult.No)
             {
                 return;
             }
-            DSTableDetails.DataTable.RejectChanges();            
+            mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+            if (mDataSourceTablePage != null)
+            {
+                mDataSourceTablePage.RefreshGrid();
+            }
+            DSTableDetails.DataTable.RejectChanges();
+            DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;                        
         }
                
         private void DeleteTable(object sender, RoutedEventArgs e)
@@ -165,8 +170,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 mDataSourceTablePage.SaveTable();
                 this.DSTableDetails.ClearBackup();
+                ResetDirtyStatusForDataSourceTable();
             }            
         }    
+
+        private void ResetDirtyStatusForDataSourceTable()
+        {
+            this.DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;
+        }
 
         private void Rename(object sender, RoutedEventArgs e)
         {            

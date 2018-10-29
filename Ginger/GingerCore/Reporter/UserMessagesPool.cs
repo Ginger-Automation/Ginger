@@ -69,7 +69,7 @@ namespace GingerCore
         DOSConsolemissingCMDFileName,
         ExecutionReportSent,
         CannontFindBusinessFlow, ResetBusinessFlowRunVariablesFailed,
-        AgentNotFound, MissingNewAgentDetails, MissingNewTableDetails, MissingExcelDetails, InvalidExcelDetails, InvalidDataSourceDetails, ExportExcelFileFailed, ExportExcelFileDetails,MappedtoDataSourceError, InvalidTableDetails,MissingNewColumn, InvalidColumnName, ChangingAgentDriverAlert, MissingNewDSDetails,DuplicateDSDetails, DeleteDSFileError, InvalidDSPath, GingerKeyNameError, GingerKeyNameDuplicate,        
+        AgentNotFound, MissingNewAgentDetails, MissingNewTableDetails, MissingExcelDetails, InvalidExcelDetails, InvalidDataSourceDetails, ExportFailed, ExportDetails, ParamExportMessage, MappedtoDataSourceError, InvalidTableDetails,MissingNewColumn, InvalidColumnName, ChangingAgentDriverAlert, MissingNewDSDetails,DuplicateDSDetails, DeleteDSFileError, InvalidDSPath, GingerKeyNameError, GingerKeyNameDuplicate,        
         ConfirmToAddTreeItem,
         FailedToAddTreeItem,
         SureWantToDeleteAll, NoItemToDelete, SelectItemToDelete, FailedToloadTheGrid,
@@ -102,7 +102,7 @@ namespace GingerCore
         ReportTemplateNotFound, DriverNotSupportingWindowExplorer, AgentNotRunningAfterWaiting,
         FoundDuplicateAgentsInRunSet, StaticErrorMessage, StaticWarnMessage, StaticInfoMessage, ApplicationAgentNotMapped,
         ActivitiesGroupAlreadyMappedToTC, ExportItemToALMFailed, AskIfToSaveBFAfterExport,
-        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, WindowClosed, TargetWindowNotSelected,
+        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, WindowClosed, TargetWindowNotSelected,AskIfToCloseAgent,
         ChangingEnvironmentParameterValue,IFSaveChangesOfBF, AskIfToDownloadPossibleValues, AskIfToDownloadPossibleValuesShortProcesss, SelectAndSaveCategoriesValues, WhetherToOpenSolution,
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderNotExistOrNotAvailible, FolderNameTextBoxIsEmpty, UserHaveNoWritePermission, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
         BusinessFlowNeedTargetApplication,HTMLReportAttachment, ImageSize,
@@ -116,12 +116,12 @@ namespace GingerCore
         InitializeBrowser,LoseChangesWarn, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
         VisualTestingFailedToDeleteOldBaselineImage,ApplitoolsLastExecutionResultsNotExists,ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
         FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
-        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported,
+        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, WizardCantMoveNextWhileInProcess, WizardCantFinishWhileInProcess, WizardCantMovePrevWhileInProcess, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported,
         POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus, SolutionSaveWarning,
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty, 
-        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn,
+        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement
     }
 
     public static class UserMessagesPool
@@ -347,8 +347,9 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.MissingNewTableDetails, new UserMessage(eAppReporterMessageType.ERROR, "Missing Table Details", "The new Table {0} is missing.", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.MissingExcelDetails, new UserMessage(eAppReporterMessageType.ERROR, "Missing Export Path Details", "The Export Excel File Path is missing", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidExcelDetails, new UserMessage(eAppReporterMessageType.ERROR, "InValid Export Sheet Details", "The Export Excel can be *.xlsx only.", MessageBoxButton.OK, MessageBoxResult.None));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportExcelFileFailed, new UserMessage(eAppReporterMessageType.ERROR, "Export Excel File Failed", "Error Occurred while exporting the Excel File: {0}", MessageBoxButton.OK, MessageBoxResult.None));
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportExcelFileDetails, new UserMessage(eAppReporterMessageType.INFO, "Export Excel File Details", "Export execution ended successfully", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportFailed, new UserMessage(eAppReporterMessageType.ERROR, "Export Failed", "Error Occurred while exporting the {0}: {1}", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportDetails, new UserMessage(eAppReporterMessageType.INFO, "Export Details", "Export execution ended successfully", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ParamExportMessage, new UserMessage(eAppReporterMessageType.QUESTION, "Param Export to Data Source", "Special Characters will be removed from Parameter Names while exporting to Data Source. Do you wish to Continue?", MessageBoxButton.YesNo, MessageBoxResult.No));            
             Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidTableDetails, new UserMessage(eAppReporterMessageType.ERROR, "InValid Table Details", "The Table Name provided is Invalid. It cannot contain spaces", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.MappedtoDataSourceError, new UserMessage(eAppReporterMessageType.ERROR, "Output Param Mapping Error ", "Failed to map the Output Params to Data Source", MessageBoxButton.OK, MessageBoxResult.None));            
             Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidDataSourceDetails, new UserMessage(eAppReporterMessageType.ERROR, "Invalid Data Source Details", "The Data Source Details provided are Invalid.", MessageBoxButton.OK, MessageBoxResult.None));            
@@ -515,7 +516,11 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMDriverIsBusy, new UserMessage(eAppReporterMessageType.WARN, "Driver Is Busy", "Operation cannot be complete because the Driver is busy with learning operation" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.OK, MessageBoxResult.OK));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMAgentIsNotRunning, new UserMessage(eAppReporterMessageType.WARN, "Agent is Down", "In order to perform this operation the Agent needs to be up and running." + Environment.NewLine + "Please start the agent and re-try", MessageBoxButton.OK, MessageBoxResult.OK));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMNotOnThePageWarn, new UserMessage(eAppReporterMessageType.WARN, "Not On the Same Page", "'{0}' Elements out of '{1}' Elements failed to be found on the page" + Environment.NewLine + "Looks like you are not on the right page" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.YesNo, MessageBoxResult.Yes));
-
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMCannotDeleteAutoLearnedElement, new UserMessage(eAppReporterMessageType.WARN, "Cannot Delete Auto Leared Element", "The Element you are trying to delete has been leared automatically from page and cannot be deleted", MessageBoxButton.OK,MessageBoxResult.OK));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.WizardCantMoveNextWhileInProcess, new UserMessage(eAppReporterMessageType.WARN, "Process is still running", "Ginger cannot move next until the process will be finished or stopped" + Environment.NewLine + "please wait the process to be finished or stop it and then click next.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.WizardCantMovePrevWhileInProcess, new UserMessage(eAppReporterMessageType.WARN, "Process is still running", "Ginger cannot move previous until the process will be finished or stopped" + Environment.NewLine + "please wait the process to be finished or stop it and then click previous.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.WizardCantFinishWhileInProcess, new UserMessage(eAppReporterMessageType.WARN, "Process is still running", "Ginger cannot move finish wizard until the process will be finished or stopped" + Environment.NewLine + "please wait the process to be finished or stop it and then click finish.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfToCloseAgent, new UserMessage(eAppReporterMessageType.QUESTION, "Close Agent?", "To close the Agent '{0}'?", MessageBoxButton.YesNo, MessageBoxResult.No));
             #endregion POM
 
 

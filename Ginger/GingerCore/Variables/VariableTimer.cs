@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Threading;
+﻿using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.Properties;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace GingerCore.Variables
 {
@@ -135,7 +132,7 @@ namespace GingerCore.Variables
             //NA
         }
 
-        public override System.Drawing.Image Image { get { return Resources.Const; } }
+        public override eImageType Image { get { return eImageType.Timer; } }
         public override string VariableType() { return "Timer"; }
 
         public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()

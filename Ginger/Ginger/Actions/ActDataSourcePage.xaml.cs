@@ -734,7 +734,7 @@ namespace Ginger.Actions
 
         private void UpdateValueExpression()
         {
-            if (txtValueExpression == null)
+            if (txtValueExpression == null || ControlActionComboBox.SelectedValue==null || ControlActionComboBox.SelectedValue== null)
                 return;
             try
             {
@@ -751,6 +751,8 @@ namespace Ginger.Actions
                     TBH.AddBoldText("DR");
                 else if (ControlActionComboBox.SelectedValue.ToString() == "RowCount")
                     TBH.AddBoldText("RC");
+                else if (ControlActionComboBox.SelectedValue.ToString() == "AvailableRowCount")
+                    TBH.AddBoldText("ARC");
                 else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll")
                     TBH.AddBoldText("DA");
                 else if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
@@ -1183,9 +1185,9 @@ namespace Ginger.Actions
             if (mDSTable == null|| ControlActionComboBox.SelectedValue == null)
                 return;
 
-            if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll" || ControlActionComboBox.SelectedValue.ToString() == "RowCount" || ControlActionComboBox.SelectedValue.ToString() == "MarkAllUnUsed" || ControlActionComboBox.SelectedValue.ToString() == "MarkAllUsed")
+            if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll" || ControlActionComboBox.SelectedValue.ToString() == "RowCount" || ControlActionComboBox.SelectedValue.ToString() == "AvailableRowCount" || ControlActionComboBox.SelectedValue.ToString() == "MarkAllUnUsed" || ControlActionComboBox.SelectedValue.ToString() == "MarkAllUsed")
             {   
-                IdentifierRow.Height = new GridLength(0);
+                IdentifierRow.Height = new GridLength(0);                
                 return;
             }
             if(ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
@@ -1305,15 +1307,15 @@ namespace Ginger.Actions
             SetTableActions();
 
             if (ControlActionComboBox.SelectedValue != null && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.ExportToExcel.ToString())
-            {
+            {                
                 ExcelGrid.Visibility = Visibility.Visible;
                 KeyGrid.Visibility = Visibility.Collapsed;
                 CustomizedGrid.Visibility = Visibility.Collapsed;
                 MarkRowPanel.Visibility = Visibility.Collapsed;
                 ExpTableCell.Text = "Excel Details";
                 return;
-            }
-            
+            }           
+
             ExpTableCell.Text = "Table Cell Identifier";
             ExcelGrid.Visibility = Visibility.Collapsed;
             if (mDSTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
@@ -1348,7 +1350,7 @@ namespace Ginger.Actions
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUnUsed);
 
-                    if (MarkRowPanel.Visibility == Visibility.Collapsed && ControlActionComboBox.SelectedValue != null && !ControlActionComboBox.SelectedValue.ToString().Contains("All"))
+                    if (MarkRowPanel.Visibility == Visibility.Collapsed && ControlActionComboBox.SelectedValue != null && !ControlActionComboBox.SelectedValue.ToString().Contains("All") && !ControlActionComboBox.SelectedValue.ToString().Contains("RowCount"))
                     {                       
                         MarkRowPanel.Visibility = Visibility.Visible;                        
                         IdentifierRow.Height = new GridLength(IdentifierRow.Height.Value + 25);
@@ -1382,7 +1384,8 @@ namespace Ginger.Actions
 
                 GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAsDone);
                 GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUnUsed);
-                GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);               
+                GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);
+                GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.AvailableRowCount);
             }
             else
             {
@@ -1392,12 +1395,14 @@ namespace Ginger.Actions
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAsDone);
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUnUsed);
+                    GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.AvailableRowCount);
                 }
                 else
                 {
                     GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAsDone);
                     GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);
                     GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUnUsed);
+                    GingerCore.General.RemoveComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.AvailableRowCount);
                 }
             }
         }
@@ -1435,7 +1440,7 @@ namespace Ginger.Actions
                     CustomizedGrid.Visibility = Visibility.Visible;
                     MarkRowPanel.Visibility = Visibility.Visible;
                 }
-            }
+            }           
         }
         private void HandleControlActionChange()
         {
@@ -1462,7 +1467,7 @@ namespace Ginger.Actions
                 ColIden.Height = new GridLength(0);
                 cmbColumnValue.Visibility = Visibility.Collapsed;
             }
-            else if (ControlActionComboBox.SelectedValue.ToString().Contains("All") || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString())
+            else if (ControlActionComboBox.SelectedValue.ToString().Contains("All") || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString()  || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AvailableRowCount.ToString())
             {
                 MarkRowPanel.Visibility = Visibility.Collapsed;
             }

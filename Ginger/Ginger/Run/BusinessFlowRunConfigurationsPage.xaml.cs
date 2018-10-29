@@ -107,7 +107,7 @@ namespace Ginger.Run
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });
+            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
             view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.ParentType, Header = "Level", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.ParentName, Header = "Parent Name", WidthWeight = 15, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 20, ReadOnly = true });

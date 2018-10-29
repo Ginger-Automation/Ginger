@@ -351,6 +351,11 @@ namespace GingerCore
                         Query = "Select COUNT(*) FROM " + DSTable;
                         p = "";
                     }
+                    else if (sAct == "ARC") // Get Available Row Count
+                    {
+                        Query = "Select COUNT(*) FROM " + DSTable + " WHERE GINGER_USED <> 'True' or GINGER_USED is null";
+                        p = "";
+                    }
                     else if (sAct == "ETE") // Get Row Count
                     {
                         Query = "";

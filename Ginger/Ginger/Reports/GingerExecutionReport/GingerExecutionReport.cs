@@ -961,10 +961,10 @@ namespace Ginger.Reports.GingerExecutionReport
                                     {
                                         fieldsValuesHTMLTableCells.Append("<td>" + ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac) + "</td>");
                                     }
-                                    else
+                                    else if (selectedField_internal.FieldKey == ActivityReport.Fields.ActivityGroupName)
                                     {
                                         if (ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac) != null)
-                                        {                                           
+                                        {
                                             fieldsValuesHTMLTableCells.Append(@"<td><a href='.\" + lastbusinessflow + "\\" + @"ActivityGroups\" + ExtensionMethods.folderNameNormalazing(ac.ActivityGroupSeq + " " + ExtensionMethods.OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString())) +
                                                                                           @"\ActivityGroupReport.html'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + @"</a></td>");
                                         }
@@ -972,6 +972,10 @@ namespace Ginger.Reports.GingerExecutionReport
                                         {
                                             fieldsValuesHTMLTableCells.Append("<td></td>");
                                         }
+                                    }
+                                    else
+                                    {
+                                        fieldsValuesHTMLTableCells.Append("<td>" + ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac) + "</td>");
                                     }
                                 }
                             }

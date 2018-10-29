@@ -2150,7 +2150,7 @@ namespace Ginger.Run
 
         FindAndReplacePage mfindAndReplacePageRunSet = null;
 
-        private void xFindAndReplace_Click(object sender, RoutedEventArgs e)
+        private void xFind_Click(object sender, RoutedEventArgs e)
         {
             ShowFindAndReplacePage();
         }
