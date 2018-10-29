@@ -138,7 +138,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private bool SelectCurrentItem()
         {
             if (bOpenasWindow == true)
+            { 
                 return true;
+            }
+
             ITreeViewItem itvItem = xTreeView.Tree.CurrentSelectedTreeViewItem;
 
             if (itvItem != null &&  mItemSelectionType != eItemSelectionType.Folder)

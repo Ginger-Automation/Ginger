@@ -112,7 +112,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 return;
             }
             mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-            if (mDataSourceTablePage == null)
+            if (mDataSourceTablePage != null)
             {
                 mDataSourceTablePage.RefreshGrid();
             }
