@@ -25,7 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Ginger
-{
+{    
     public enum eWindowShowStyle
     {
         Free,
@@ -38,6 +38,10 @@ namespace Ginger
     /// </summary>
     public partial class GenericWindow : Window
     {
+
+        // Used for Ginger Automator
+        public static GenericWindow CurrentWindow;
+
         private RoutedEventHandler mCloseEventHandler;
 
         public eWindowShowStyle CurrentWinStyle { get; set; }
@@ -52,6 +56,8 @@ namespace Ginger
         {
             InitializeComponent();   
             this.Owner = Owner;
+
+            CurrentWindow = this;
 
             //set style
             CurrentWinStyle = windowStyle;
@@ -207,8 +213,14 @@ namespace Ginger
             if (mCloseEventHandler != null)
                 mCloseEventHandler.Invoke(this, new RoutedEventArgs());
             else
-                this.Close();
+                CloseWindow();
             parentWindow.IsEnabled = true;
+        }
+
+        private void CloseWindow()
+        {
+            CurrentWindow = null;
+            this.Close();
         }
 
         private void PinBtn_Click(object sender, RoutedEventArgs e)
@@ -218,7 +230,7 @@ namespace Ginger
                 ReShowStyle = eWindowShowStyle.Free;
             else
                 ReShowStyle = eWindowShowStyle.Dialog;
-            this.Close();
+            CloseWindow();
         }
 
         private void MaximizeBtn_Click(object sender, RoutedEventArgs e)
