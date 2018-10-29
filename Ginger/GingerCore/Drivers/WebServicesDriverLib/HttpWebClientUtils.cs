@@ -424,7 +424,10 @@ namespace GingerCore.Actions.WebAPI
                
             string directoryFullPath =Path.Combine(saveDirectory.Replace("~//", mAct.SolutionFolder), fileType + "s");
             if (!Directory.Exists(directoryFullPath))
+            {
                 Directory.CreateDirectory(directoryFullPath);
+            }
+
             String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
             actName = PathHelper.CleanInValidPathChars(mAct.Description);            
             string fullFileName =Path.Combine(directoryFullPath, actName +"_"+ timeStamp + "_" + fileType + "." + extension);
