@@ -106,14 +106,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)
-        {           
-            mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+        {   
             if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == MessageBoxResult.No)
             {
                 return;
             }
+            mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+            if (mDataSourceTablePage == null)
+            {
+                mDataSourceTablePage.RefreshGrid();
+            }
             DSTableDetails.DataTable.RejectChanges();
-            DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;            
+            DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;                        
         }
                
         private void DeleteTable(object sender, RoutedEventArgs e)
