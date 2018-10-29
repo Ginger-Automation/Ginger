@@ -40,6 +40,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using System;
+using Ginger.SolutionWindows.TreeViewItems;
 
 namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 {
@@ -220,8 +221,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             try
             {
-                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>());
-                SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
+                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>(),DataSourceFolderTreeItem.eDataTableView.Customized);
+                SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource - Customized Table", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
                 List<object> selectedRunSet = mDataSourceSelectionPage.ShowAsWindow();
                 if (selectedRunSet != null && selectedRunSet.Count > 0)
                 {
