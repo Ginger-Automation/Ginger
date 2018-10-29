@@ -1,17 +1,17 @@
-﻿using Amdocs.Ginger.Common;
+﻿using ALM_Common.DataContracts;
+using ALMRestClient;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.Activities;
+using GingerCore.Variables;
 using QCRestClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using ALM_Common.DataContracts;
-using GingerCore.Variables;
-using System.Reflection;
-using GingerCore.Actions;
-using ALMRestClient;
-using Amdocs.Ginger.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Reflection;
 
 namespace GingerCore.ALM.QCRestAPI
 {

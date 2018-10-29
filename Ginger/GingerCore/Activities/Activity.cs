@@ -16,18 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
+using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using GingerCore.Actions;
 using System.Windows;
-using GingerCore.Variables;
-using GingerCore.Properties;
-using Amdocs.Ginger.Common.Enums;
 
 //TODO: chang add core
 namespace GingerCore

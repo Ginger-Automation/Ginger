@@ -17,18 +17,17 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore.Activities;
+using GingerCore.Variables;
+using QCRestClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using TDAPIOLELib;
-using GingerCore.Activities;
 using System.Text.RegularExpressions;
 using System.Web;
-using GingerCore.Variables;
-using Amdocs.Ginger.Repository;
-using QCRestClient;
-using QCRestClient.Data_Contracts;
+using TDAPIOLELib;
 
 namespace GingerCore.ALM.QC
 {

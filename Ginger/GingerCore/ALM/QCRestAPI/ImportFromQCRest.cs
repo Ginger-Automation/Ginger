@@ -3,7 +3,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Variables;
 using QCRestClient;
-using QCRestClient.Data_Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
