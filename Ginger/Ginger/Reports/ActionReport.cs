@@ -331,7 +331,7 @@ namespace Ginger.Reports
         }
 
         [FieldParams]
-        [FieldParamsNameCaption("ScreenShot")]
+        [FieldParamsNameCaption("Screenshot")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]

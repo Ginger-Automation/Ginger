@@ -23,6 +23,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -206,7 +207,12 @@ namespace GingerWPFUnitTest.POMs
         }
 
        
-
+        /// <summary>
+        ///  Check if item exist in the tree, include retry mechanism of 10 sec
+        ///  Use it when you expect the item to be fiund
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
         internal bool IsItemExist(string title)
         {            
             TreeViewItem tvi = FindItem(title);            
@@ -218,6 +224,38 @@ namespace GingerWPFUnitTest.POMs
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Check if item not in the tree include retry mechanism if item exist to wait if it will be removed
+        /// Use it when you expect the item not to be found
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        internal bool IsItemNotExist(string title)
+        {
+            bool bFound = true;
+            TreeViewItem tvi = null;
+            Execute(() =>
+            {
+                // retry up to 10 seconds
+                int i = 0;
+                while (bFound == true && i < 100) 
+                {
+                    tvi = FindItemInList(GetRootItems(), title);
+                    if (tvi == null)
+                    {
+                        bFound = false;
+                    }
+                    else
+                    {
+                        Thread.Sleep(100);
+                        i++;
+                    }
+                    
+                } 
+            });
+            return bFound;
         }
 
 

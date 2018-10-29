@@ -30,6 +30,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static GingerCore.General;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -45,17 +46,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             InitializeComponent();
             mAction = act;
+
             ePlatformType ActivityPlatform = GetActionPlatform();
             mPlatform = PlatformInfoBase.GetPlatformImpl(ActivityPlatform);
 
-            ElementTypeComboBox.BindControl(mAction, ActUIElement.Fields.ElementType, mPlatform.GetPlatformUIElementsType());
-            if ((act.ElementType == eElementType.Unknown) && (act.ElementAction == ActUIElement.eElementAction.Unknown))
-            {
-                ElementLocateByComboBox.SelectedValue = Enum.GetName(typeof(eLocateBy), eLocateBy.POMElement);
-            }
+            List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
+            ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, LocateByList);
 
-            ElementLocateByComboBox.BindControl(mAction, ActUIElement.Fields.ElementLocateBy, mPlatform.GetPlatformUIElementLocatorsList());
             SetLocateValueFrame();
+
+            ElementTypeComboBox.BindControl(mAction, ActUIElement.Fields.ElementType, mPlatform.GetPlatformUIElementsType());
 
             ShowPlatformSpecificPage();
             ShowControlSpecificPage();          
@@ -258,7 +258,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         public Page GetConfigPage(List<ElementConfigControl> configControlsList)
         {
-            StackPanel dynamicPanel = new StackPanel { Orientation = Orientation.Horizontal };
+            StackPanel dynamicPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment= HorizontalAlignment.Left, VerticalAlignment= VerticalAlignment.Center };
 
             UserControlsLib.UCComboBox comboBox;
             Label elementLabel;
@@ -270,15 +270,20 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 {
                     elementLabel = new Label()
                     {
-                        Content = element.Title,
+                        Style = this.FindResource("$LabelStyle") as Style,
+                        Content = element.Title + ":",
                         HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Center,
                         FontSize = 14
                     };
                     comboBox = new UserControlsLib.UCComboBox()
                     {
+                        Style = this.FindResource("$FlatInputComboBoxStyle") as Style,
                         Name = element.Title,
-                        Width = 590,
-                        Margin = new Thickness(99, 20, 20, 10)
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Width = 600,
+                        Margin = new Thickness(10, 0, 0, 0)
                     };
 
                     comboBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
@@ -291,15 +296,19 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 {
                     elementLabel = new Label()
                     {
-                        Content = element.Title,
+                        Style = this.FindResource("$LabelStyle") as Style,
+                        Content = element.Title + ":",
                         HorizontalAlignment = HorizontalAlignment.Left,
-                        FontSize=14
+                        VerticalAlignment = VerticalAlignment.Center,
+                        FontSize =14
                     };
                     Ginger.Actions.UCValueExpression txtBox = new Ginger.Actions.UCValueExpression()
-                    {
+                    {                       
                         Name = element.Title.ToString().Replace(" ", ""),
-                        Width = 590,
-                        Margin = new Thickness(99, 20, 20, 10)
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Width = 600,
+                        Margin = new Thickness(10, 0, 0, 0)
                     };
 
                     txtBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
@@ -461,49 +470,46 @@ namespace Ginger.Actions._Common.ActUIElementLib
             
             ActionInfoLabel.Visibility = Visibility.Visible;
             if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType != eElementType.Unknown)
-            {
-                text.AddBoldText("Select " + mAction.ElementType.ToString() + " ");
+            {                
+                text.AddBoldText(string.Format("Configured '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
                 if (mAction.ElementLocateBy.ToString() != null && mAction.ElementLocateBy.ToString() != "" && mAction.ElementLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
-                    text.AddBoldText(mAction.ElementLocateBy.ToString().ToLower());
+                    text.AddBoldText(string.Format(" to be located by '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.ElementLocateBy)));
                 }
                
                 if (SelectedAction.ToString() != null && SelectedAction.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
-                    text.AddUnderLineText(" to perform " + SelectedAction.ToString() + " operation");
+                    text.AddBoldText(string.Format(" to perform '{0}' operation.", GetEnumValueDescription(typeof(ActUIElement.eElementAction), SelectedAction)));
                 }
             }
             else
             {
                 if (mAction.ElementLocateBy.ToString() != null && mAction.ElementLocateBy.ToString() != "" && mAction.ElementLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-                {
-                    text.AddBoldText("  " + mAction.ElementLocateBy.ToString());
+                {                    
+                    text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.ElementLocateBy)));
                 }
                 if (mAction.TargetLocateBy.ToString() != null && mAction.TargetLocateBy.ToString() != "" && mAction.TargetLocateBy.ToString() != ActUIElement.eElementAction.Unknown.ToString())
-                {
-                    text.AddBoldText("  " + mAction.TargetLocateBy.ToString());
+                {                   
+                    text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eLocateBy), mAction.TargetLocateBy)));
                 }
                 if (mAction.TargetElementType.ToString() != null && mAction.TargetElementType.ToString() != "" && mAction.TargetElementType.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
                     if (!string.IsNullOrEmpty(text.GetText()))
                     {
-                        text.AddBoldText("  " + mAction.TargetElementType.ToString());
+                        text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.TargetElementType)));
                     }
                     else
-                        text.AddBoldText("  " + mAction.ElementType.ToString());
+                    {                       
+                        text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
+                    }
                 }
                 if (mAction.ElementType.ToString() != null && mAction.ElementType.ToString() != "" && mAction.ElementType.ToString() != ActUIElement.eElementAction.Unknown.ToString())
                 {
-                    if (!string.IsNullOrEmpty(text.GetText()))
-                    {
-                        text.AddBoldText("  " + mAction.ElementType.ToString());
-                    }
-                    else
-                        text.AddBoldText("  " + mAction.ElementType.ToString());
+                    text.AddBoldText(string.Format(" '{0}'", GetEnumValueDescription(typeof(eElementType), mAction.ElementType)));
                 }
                 if (SelectedAction.ToString() != null && SelectedAction.ToString() != "" && SelectedAction != ActUIElement.eElementAction.Unknown)
-                {
-                    text.AddUnderLineText("  " + SelectedAction.ToString() + " operation");
+                {                    
+                    text.AddBoldText(string.Format(" '{0}' operation", GetEnumValueDescription(typeof(ActUIElement.eElementAction), SelectedAction)));
                 }
             }
         }        
