@@ -30,44 +30,41 @@
                     <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Passed">
                         <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Green"/>
                     </DataTrigger>
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Unknown">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Gray"/>
+                    </DataTrigger>
                     <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Failed">
                         <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Red"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Pending">
                         <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Orange"/>
                     </DataTrigger>
-                </DataTemplate.Triggers>    
+                </DataTemplate.Triggers>
             </DataTemplate>
-
-
         </Grid.Resources>
 
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="Row1" Height="76*" MinHeight="35"/>
-            <RowDefinition  x:Name="Row2" Height="8*" MinHeight="20"/>
+            <RowDefinition x:Name="Row1" Height="70*" MinHeight="35"/>
+            <RowDefinition  x:Name="Row2" Height="35" MinHeight="35"/>
         </Grid.RowDefinitions>
+               
+        <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed"/>
+        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows"  Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
 
-
-        <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" RowChangedEvent="MappedElementsGrid_RowChangedEvent" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" Unloaded="xMainElementsGrid_Unloaded" />
-
-        <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
-
-        <Expander x:Name="xDetailsExpander" Grid.Row="1" ExpandDirection="Down" Expanded="DetailsGrid_Expanded" IsExpanded="False" Collapsed="DetailsGrid_Collapsed" IsEnabled="False" Style="{StaticResource @ExpanderLightStyle}">
+        <Expander x:Name="xDetailsExpander" Grid.Row="1" ExpandDirection="Down" Expanded="DetailsGrid_Expanded" IsExpanded="False" IsEnabled="False" Collapsed="DetailsGrid_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
             <Expander.Header>
-                <Label x:Name="xDetailsExpanderLabel" Content="Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}"/>
+                <Label x:Name="xDetailsExpanderLabel" Content="Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" />
             </Expander.Header>
             <Expander.Content>
                 <Grid>
-
                     <TabControl x:Name="POMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch" >
-
                         <TabItem Margin="0,0,0,0" >
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock x:Name="xPropertiesTextBlock" Text="Control Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
                                 </StackPanel>
                             </TabItem.Header>
-                            <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" Unloaded="xPropertiesGrid_Unloaded" />
+                            <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
                         </TabItem>
                         <TabItem>
                             <TabItem.Header>
@@ -75,13 +72,12 @@
                                     <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
                                 </StackPanel>
                             </TabItem.Header>
-                            <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" Unloaded="xLocatorsGrid_Unloaded"/>
+                            <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>
                         </TabItem>
-
                     </TabControl>
-
                 </Grid>
             </Expander.Content>
         </Expander>
+        
     </Grid>
 </Page>

@@ -102,7 +102,7 @@ namespace GingerCore
         ReportTemplateNotFound, DriverNotSupportingWindowExplorer, AgentNotRunningAfterWaiting,
         FoundDuplicateAgentsInRunSet, StaticErrorMessage, StaticWarnMessage, StaticInfoMessage, ApplicationAgentNotMapped,
         ActivitiesGroupAlreadyMappedToTC, ExportItemToALMFailed, AskIfToSaveBFAfterExport,
-        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, WindowClosed, TargetWindowNotSelected,
+        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, WindowClosed, TargetWindowNotSelected,AskIfToCloseAgent,
         ChangingEnvironmentParameterValue,IFSaveChangesOfBF, AskIfToDownloadPossibleValues, AskIfToDownloadPossibleValuesShortProcesss, SelectAndSaveCategoriesValues, WhetherToOpenSolution,
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderNotExistOrNotAvailible, FolderNameTextBoxIsEmpty, UserHaveNoWritePermission, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
         BusinessFlowNeedTargetApplication,HTMLReportAttachment, ImageSize,
@@ -116,12 +116,12 @@ namespace GingerCore
         InitializeBrowser,LoseChangesWarn, AskBeforeDefectProfileDeleting, MissedMandatotryFields, NoDefaultDefectProfileSelected, ALMDefectsWereOpened, AskALMDefectsOpening, WrongValueSelectedFromTheList, WrongNonNumberValueInserted, WrongDateValueInserted, NoDefectProfileCreated, IssuesInSelectedDefectProfile,
         VisualTestingFailedToDeleteOldBaselineImage,ApplitoolsLastExecutionResultsNotExists,ApplitoolsMissingChromeOrFirefoxBrowser, ParameterOptionalValues,
         FindAndRepalceFieldIsEmpty, FindAndReplaceListIsEmpty, FindAndReplaceNoItemsToRepalce, OracleDllIsMissing, ReportsTemplatesSaveWarn,
-        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported,
+        POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, WizardCantMoveNextWhileInProcess, WizardCantFinishWhileInProcess, WizardCantMovePrevWhileInProcess, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported,
         POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus, SolutionSaveWarning,
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty, 
-        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn,
+        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement
     }
 
     public static class UserMessagesPool
@@ -516,7 +516,11 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMDriverIsBusy, new UserMessage(eAppReporterMessageType.WARN, "Driver Is Busy", "Operation cannot be complete because the Driver is busy with learning operation" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.OK, MessageBoxResult.OK));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMAgentIsNotRunning, new UserMessage(eAppReporterMessageType.WARN, "Agent is Down", "In order to perform this operation the Agent needs to be up and running." + Environment.NewLine + "Please start the agent and re-try", MessageBoxButton.OK, MessageBoxResult.OK));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.POMNotOnThePageWarn, new UserMessage(eAppReporterMessageType.WARN, "Not On the Same Page", "'{0}' Elements out of '{1}' Elements failed to be found on the page" + Environment.NewLine + "Looks like you are not on the right page" + Environment.NewLine + "Do you want to continue?", MessageBoxButton.YesNo, MessageBoxResult.Yes));
-
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.POMCannotDeleteAutoLearnedElement, new UserMessage(eAppReporterMessageType.WARN, "Cannot Delete Auto Leared Element", "The Element you are trying to delete has been leared automatically from page and cannot be deleted", MessageBoxButton.OK,MessageBoxResult.OK));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.WizardCantMoveNextWhileInProcess, new UserMessage(eAppReporterMessageType.WARN, "Process is still running", "Ginger cannot move next until the process will be finished or stopped" + Environment.NewLine + "please wait the process to be finished or stop it and then click next.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.WizardCantMovePrevWhileInProcess, new UserMessage(eAppReporterMessageType.WARN, "Process is still running", "Ginger cannot move previous until the process will be finished or stopped" + Environment.NewLine + "please wait the process to be finished or stop it and then click previous.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.WizardCantFinishWhileInProcess, new UserMessage(eAppReporterMessageType.WARN, "Process is still running", "Ginger cannot move finish wizard until the process will be finished or stopped" + Environment.NewLine + "please wait the process to be finished or stop it and then click finish.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfToCloseAgent, new UserMessage(eAppReporterMessageType.QUESTION, "Close Agent?", "To close the Agent '{0}'?", MessageBoxButton.YesNo, MessageBoxResult.No));
             #endregion POM
 
 

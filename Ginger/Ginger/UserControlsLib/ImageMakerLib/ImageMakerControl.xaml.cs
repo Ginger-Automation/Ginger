@@ -264,6 +264,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Passed:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
                     break;
+                case eImageType.Unknown:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Question,null, 0, "Unknown");
+                    break;
                 case eImageType.Failed:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
                     break;
@@ -623,6 +626,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Coffee:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee);
+                    break;
+                case eImageType.MapSigns:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
                     break;
                 #endregion
 
