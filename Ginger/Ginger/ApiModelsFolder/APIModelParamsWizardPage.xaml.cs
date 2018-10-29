@@ -171,7 +171,7 @@ namespace Ginger.ApiModelsFolder
         {
             xAPIModelParamsValueUCGrid.Title = "API Parameters Consolidation";
             xAPIModelParamsValueUCGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
-            xAPIModelParamsValueUCGrid.AddToolbarTool(eImageType.DataSource, "Map Output Parameters to DataSource", new RoutedEventHandler(MapOutputToDataSource));
+            xAPIModelParamsValueUCGrid.AddToolbarTool(eImageType.DataSource, "Map API Parameters to DataSource", new RoutedEventHandler(MapOutputToDataSource));
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
@@ -195,6 +195,9 @@ namespace Ginger.ApiModelsFolder
         {
             try
             {
+                if (Reporter.ToUser(eUserMsgKeys.ParamExportMessage) == MessageBoxResult.No)
+                    return;
+
                 DataSourceTablesListPage dataSourceTablesListPage = new DataSourceTablesListPage();
                 dataSourceTablesListPage.ShowAsWindow();
 
@@ -202,8 +205,8 @@ namespace Ginger.ApiModelsFolder
                 {
                     Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
                     return;
-                }
-                                               
+                }                
+
                 foreach (EnhancedActInputValue inputVal in mAddApiModelActionWizardPage.EnhancedInputValueList)
                 {
                     string sColName = inputVal.Param.Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "");

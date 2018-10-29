@@ -236,7 +236,7 @@ namespace Amdocs.Ginger.UserControls
                 #endregion
 
 
-                #region Variables
+                #region Variable Item Images
                 //############################## Variables Images:
                 case eImageType.Variable:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Code);
@@ -251,7 +251,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Random);
                     break;
                 case eImageType.Sequence:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.StackOverflow);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AlignJustify);
                     break;
                 case eImageType.Timer:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline);
@@ -263,6 +263,9 @@ namespace Amdocs.Ginger.UserControls
                 //############################## Execution Status Images:
                 case eImageType.Passed:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
+                    break;
+                case eImageType.Unknown:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Question,null, 0, "Unknown");
                     break;
                 case eImageType.Failed:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
@@ -624,8 +627,19 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Coffee:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee);
                     break;
+                case eImageType.MapSigns:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
+                    break;
                 #endregion
 
+                #region Other Images
+                case eImageType.Database:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
+                    break;
+                case eImageType.TextBox:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.TextWidth);
+                    break;
+                #endregion
 
                 default:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Question, Brushes.Red);

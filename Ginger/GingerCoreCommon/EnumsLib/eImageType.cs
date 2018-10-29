@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Amdocs.Ginger.Common.Enums
+﻿namespace Amdocs.Ginger.Common.Enums
 {
 
     public enum eImageType
@@ -58,7 +54,17 @@ namespace Amdocs.Ginger.Common.Enums
         Timer,
         #endregion
 
+        #region Variable Items Images
+        Variable,
+        VariableList,
+        Password,
+        Random,
+        Sequence,
+        Timer,
+        #endregion
+
         #region Execution Status Images
+        Unknown,
         //############################## Execution Status Images:
         /// <summary>
         /// Show spinner 
@@ -191,6 +197,12 @@ namespace Amdocs.Ginger.Common.Enums
         Beta,
         Error,
         Coffee,
+        MapSigns,
+        #endregion
+
+        #region Other Images
+        Database,
+        TextBox,
         #endregion
 
 

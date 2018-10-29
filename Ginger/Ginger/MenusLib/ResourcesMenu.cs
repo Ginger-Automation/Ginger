@@ -3,6 +3,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.GeneralWindows;
 using Ginger.GingerGridLib;
+using Ginger.PluginsLibNew;
 using Ginger.PlugInsWindows;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
@@ -68,12 +69,7 @@ namespace Ginger.MenusLib
 
             TopMenuItem ApplicationModelsMenu = new TopMenuItem(eImageType.ApplicationModel, "Applications Models", ConsoleKey.A, "Application Models AID", "Applications Layers Templates" );
             ApplicationModelsMenu.Add(eImageType.APIModel, "API Models", APIModels, ConsoleKey.A, "API Templates Repository","AID");
-            //TODO: bind visible to Beta feature or use WorkSpace.Instance.BetaFeatures.PropertyChanged
-            // meanwhile show/hide per current status
-            if (WorkSpace.Instance.BetaFeatures.ShowPOMInResourcesTab)
-            {
-                ApplicationModelsMenu.Add(eImageType.ApplicationPOMModel, "Page Objects Models", POMModels, ConsoleKey.P, "Page UI elemetns Modeling", "AID");
-            }
+            ApplicationModelsMenu.Add(eImageType.ApplicationPOMModel, "Page Objects Models", POMModels, ConsoleKey.P, "Page UI Elemetns Repository", "AID");         
             ApplicationModelsMenu.Add(eImageType.Parameter, "Models Global Parameters", ModelsGlobalParameters, ConsoleKey.P, "Add or Edit Models Global Parameters", "AID");
             twoLevelMenu.Add(ApplicationModelsMenu);
 
@@ -94,11 +90,17 @@ namespace Ginger.MenusLib
             twoLevelMenu.Add(DocumentsMenu);
 
             TopMenuItem PluginsMenu = new TopMenuItem(eImageType.PluginPackage, "Plugins", ConsoleKey.P, "Plugins AID", "Ginger extention Add-ons");
-            PluginsMenu.Add(eImageType.PluginPackage, "", PluginsList, ConsoleKey.P, "", "AID");
-            PluginsMenu.Add(eImageType.PluginPackage, "Online", OnlinePlugins, ConsoleKey.O, "Online", "Online Plugins");
+            PluginsMenu.Add(eImageType.PluginPackage, "Installed", PluginsList, ConsoleKey.P, "Plugin which are installed in the solution", "AID");
+            PluginsMenu.Add(eImageType.PluginPackage, "Online", OnlinePlugins, ConsoleKey.O, "Online plugins which can be downloaded", "Online Plugins");
+            PluginsMenu.Add(eImageType.PluginPackage, "Local", LocalPlugins, ConsoleKey.L, "Local plugins which are already downloaded on the user machine", "Online Plugins");
             twoLevelMenu.Add(PluginsMenu);
 
             return twoLevelMenu;
+        }
+
+        private static Page LocalPlugins()
+        {
+            return new LocalPluginsPage();
         }
 
         private static Page OnlinePlugins()

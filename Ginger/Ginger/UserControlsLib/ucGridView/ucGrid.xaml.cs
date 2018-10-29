@@ -73,6 +73,17 @@ namespace Ginger
         public event MarkUnMarkAll MarkUnMarkAllActive;
         public delegate void MarkUnMarkAll(bool Status);
 
+        public delegate void SelectedItemChangedHandler(object selectedItem);
+        public event SelectedItemChangedHandler SelectedItemChanged;
+        public void OnSelectedItemChangedEvent(object selectedItem)
+        {
+            SelectedItemChangedHandler handler = SelectedItemChanged;
+            if (handler != null)
+            {
+                handler(selectedItem);
+            }
+        }
+
         private bool ActiveStatus = false;
         private bool UsingDataTableAsSource = false;
 
@@ -828,6 +839,8 @@ namespace Ginger
             {
                 RowChangedEvent.Invoke(sender, new EventArgs());
             }
+
+            OnSelectedItemChangedEvent(grdMain.SelectedItem);
         }
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)

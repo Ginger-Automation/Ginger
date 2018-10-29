@@ -34,6 +34,18 @@ namespace Ginger.Agents
             }
         }
 
+        public delegate void AgentStartedUCEventHandler();
+
+        public event AgentStartedUCEventHandler AgentStartedUCEvent;
+
+        public void AgentStartedEvent()
+        {
+            if (AgentStartedUCEvent != null)
+            {
+                AgentStartedUCEvent();
+            }
+        }
+
         ObservableList<Agent> mOptionalAgentsList = null;
 
         public ucAgentControl()
@@ -199,6 +211,7 @@ namespace Ginger.Agents
                         Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgentFailed, null, errorMessage);
                     }
                     SelectedAgent.Tag = "Started with Agent Control";
+                    AgentStartedEvent();
                     break;
 
                 case Agent.eStatus.Starting:
