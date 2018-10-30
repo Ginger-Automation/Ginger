@@ -8,20 +8,7 @@ namespace GingerCoreCommonTest.VariableTests
     [Level1]
     public class StringVariableTests
     {
-        [TestMethod]
-        public void PasswordStringVar_TestPasswordVal()
-        {
-            //Arrange
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
-            string passwordVal = "sampleTest";
 
-            //Act
-            variablePasswordString.Name = "v1";
-            variablePasswordString.Value = passwordVal;
-
-            //Assert            
-            Assert.AreEqual(variablePasswordString.Value, passwordVal, "Mismatch with VariablePasswordString.Value");
-        }
 
         [TestMethod]
         public void StringVar_TestFormulaVal()
@@ -80,6 +67,79 @@ namespace GingerCoreCommonTest.VariableTests
 
             //Assert
             Assert.AreEqual(varType, "Variable String", "String Type mismatch");
+        }
+
+
+        [TestMethod]
+        public void PasswordStringVar_TestVal()
+        {
+            //Arrange
+            VariablePasswordString variablePasswordString = new VariablePasswordString();
+            string passwordVal = "sampleTest";
+
+            //Act
+            variablePasswordString.Name = "v1";
+            variablePasswordString.Value = passwordVal;
+
+            //Assert            
+            Assert.AreEqual(variablePasswordString.Value, passwordVal, "Mismatch with VariablePasswordString.Value");
+        }
+
+        [TestMethod]
+        public void PasswordStringVar_TestResetValue()
+        {
+            //Arrange
+            VariablePasswordString variablePasswordString = new VariablePasswordString();
+            variablePasswordString.Name = "p1";
+            variablePasswordString.Password = "testPass";
+
+            //Act
+            variablePasswordString.ResetValue();
+
+            //Assert
+            Assert.IsNull(variablePasswordString.Value, "Reset Value not null");
+        }
+
+        [TestMethod]
+        public void PasswordStringVar_TestVariableUIType()
+        {
+            //Arrange
+            VariablePasswordString variablePasswordString = new VariablePasswordString();
+
+            //Act
+            string varType = variablePasswordString.VariableUIType;
+
+            //Assert            
+            Assert.AreEqual(varType, "Variable Password String", "Password String Type mismatch");
+        }
+
+        [TestMethod]
+        public void PasswordStringVar_TestVariableType()
+        {
+            //Arrange
+            VariablePasswordString variablePasswordString = new VariablePasswordString();
+
+            //Act
+            string varType = variablePasswordString.VariableType();
+
+            //Assert            
+            Assert.AreEqual(varType, "PasswordString", "Password String Type mismatch");
+        }
+
+        [TestMethod]
+        public void PasswordStringVar_TestFormula()
+        {
+            //Arrange
+            VariablePasswordString variablePasswordString = new VariablePasswordString();
+            string passwordVal = "testPass";
+
+            //Act
+            variablePasswordString.Name = "v2";
+            variablePasswordString.Password = passwordVal;
+            string formulaVal = variablePasswordString.GetFormula();
+
+            //Assert            
+            Assert.AreEqual(formulaVal, passwordVal, "Password Formula mismatch");
         }
 
 
