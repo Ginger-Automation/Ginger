@@ -71,6 +71,10 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                         List<string> SheetsList = impParams.GetSheets(false);
                         SheetsList.Insert(0, "-- All --");
                         GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
+                        if(SheetsList.Contains(mWizard.SheetName))
+                        {
+                            xSheetNameComboBox.SelectedIndex = SheetsList.IndexOf(mWizard.SheetName);
+                        }
                     }                    
                     break;
                 default:
