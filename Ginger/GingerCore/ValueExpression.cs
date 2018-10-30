@@ -412,6 +412,7 @@ namespace GingerCore
                     {
                         Query = "Select ";
                         iColVal = p.Substring(p.IndexOf("ICOLVAL=") + 8, p.IndexOf("IROW=") - 9);
+                        iColVal = "[" + iColVal + "]";
                         p = p.Substring(p.TrimStart().IndexOf("IROW="));
                         Query = Query + iColVal + ",GINGER_ID from " + DSTable;
 
@@ -440,6 +441,7 @@ namespace GingerCore
                             {
                                 p = p.Substring(p.TrimStart().IndexOf("WCOLVAL="));
                                 string wColVal = p.Substring(p.IndexOf("WCOLVAL=") + 8, p.IndexOf("WOPR=") - 9);
+                                wColVal = "[" + wColVal + "]";
                                 Query = Query + " Where ";
                                 p = p.Substring(p.TrimStart().IndexOf("WOPR="));
                                 string wOpr = "";
@@ -455,17 +457,25 @@ namespace GingerCore
                                 }
                                 if (wOpr == "Equals")
                                 {
-                                    if (wColVal == "GINGER_ID")
+                                    if (wColVal == "[GINGER_ID]")
+                                    { 
                                         Query = Query + wColVal + " = " + wRowVal + "";
+                                    }
                                     else
+                                    { 
                                         Query = Query + wColVal + " = '" + wRowVal + "'";
+                                    }
                                 }
                                 else if (wOpr == "NotEquals")
                                 {
-                                    if (wColVal == "GINGER_ID")
+                                    if (wColVal == "[GINGER_ID]")
+                                    { 
                                         Query = Query + wColVal + " <> " + wRowVal + "";
+                                    }
                                     else
+                                    { 
                                         Query = Query + wColVal + " <> '" + wRowVal + "'";
+                                    }
                                 }
                                 else if (wOpr == "Contains")
                                     Query = Query + wColVal + " LIKE " + "'%" + wRowVal + "%'";
@@ -539,7 +549,7 @@ namespace GingerCore
                         foreach (DataColumn sCol in dt.Columns)
                         {
                             if (!new List<string> { "GINGER_ID", "GINGER_LAST_UPDATED_BY", "GINGER_LAST_UPDATE_DATETIME", "GINGER_KEY_NAME" }.Contains(sCol.ColumnName))
-                                updateQuery += sCol.ColumnName + "='" + updateValue.Replace("'", "''") + "' ,";
+                                updateQuery += "[" + sCol.ColumnName + "]='" + updateValue.Replace("'", "''") + "' ,";
                         }
                         updateQuery = updateQuery.Substring(0, updateQuery.Length - 1);
                         if (mColList.Contains("GINGER_LAST_UPDATED_BY"))
