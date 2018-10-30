@@ -1,0 +1,144 @@
+﻿using GingerCore.Variables;
+using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+
+namespace GingerCoreCommonTest.VariableTests
+{
+    [TestClass]
+    [Level1]
+    public class SequenceVariableTests
+    {
+        [TestMethod]
+        public void SequenceVar_TestVariableType()
+        {
+            //Arrange
+            VariableSequence variableSequence = new VariableSequence();
+
+            //Act
+            string varType = variableSequence.VariableType();
+
+            //Assert            
+            Assert.AreEqual(varType, "Sequence", "Sequence Variable Type mismatch");
+        }
+
+        [TestMethod]
+        public void SequenceVar_TestVariableUIType()
+        {
+            //Arrange
+            VariableSequence variableSequence = new VariableSequence();
+
+            //Act
+            string varType = variableSequence.VariableUIType;
+
+            //Assert            
+            Assert.AreEqual(varType, "Variable Sequence", "Sequence Variable UI Type mismatch");
+        }
+
+        [TestMethod]
+        public void SequenceVar_TestDefaultAutoValue()
+        {
+            //Arrange
+            VariableSequence variableSequence = new VariableSequence();
+
+            //Act
+            variableSequence.GenerateAutoValue();
+            int curSeqVal = Convert.ToInt32(variableSequence.Value);
+
+            //Assert            
+            Assert.IsTrue(curSeqVal >= 1 && curSeqVal <= 999, "num1 >= 0 && num1 <= 999");
+        }
+
+        [TestMethod]
+        public void SequenceVar_Min5_Max10_Interval_2()
+        {
+            //Arrange
+            VariableSequence variableSequence = new VariableSequence();
+            variableSequence.Min = 5;
+            variableSequence.Max = 10;
+            variableSequence.Interval = 2;
+
+            //Act
+            variableSequence.GenerateAutoValue();
+            decimal num1 = decimal.Parse(variableSequence.Value);
+            variableSequence.GenerateAutoValue();
+            decimal num2 = decimal.Parse(variableSequence.Value);
+
+            //Assert
+            Assert.IsTrue(num1 >= 5, "vs.Value>=5");
+            Assert.IsTrue(num2 <= 10, "vs.Value<=10");
+        }
+
+        [TestMethod]
+        public void SequenceVar_Digit_13()
+        {
+            //Arrange
+            VariableSequence variableSequence = new VariableSequence();
+            variableSequence.Min = 13;
+            variableSequence.Max = 13;
+
+            for (int i = 0; i < 10; i++)
+            {
+                //Act
+                variableSequence.GenerateAutoValue();
+                decimal num1 = decimal.Parse(variableSequence.Value);
+
+                //Assert            
+                Assert.AreEqual(num1, 13, "variableRandomString.Value=13");
+                Assert.IsTrue(num1 >= 13 && num1 <= 13, "num1 >= 13 && num1 <= 13");
+            }
+        }
+
+        [TestMethod]
+        public void SequenceVar_Range_99_999_interval_9()
+        {
+            //Arrange
+            VariableSequence variableSequence = new VariableSequence();
+            int minNum = 99;
+            int maxNum = 999;
+            variableSequence.Min = minNum;
+            variableSequence.Max = maxNum;
+            variableSequence.Interval = 9;
+
+            for (int i = 0; i < 100; i++)
+            {
+                //Act
+                variableSequence.GenerateAutoValue();
+                decimal num1 = decimal.Parse(variableSequence.Value);
+
+                //Assert            
+                Assert.IsTrue(num1 >= minNum && num1 <= maxNum, "num1 >= " + minNum  + " && num1 <= " + maxNum);
+            }
+        }
+
+        [TestMethod]
+        public void SequenceVar_TestSequence()
+        {
+            //Arrange
+            int[] numArr = new int[10];
+            int minNum = 0;
+            int maxNum = 10;
+            int itrCount = 10;
+
+            VariableSequence variableSequence = new VariableSequence();
+            variableSequence.Min = minNum;
+            variableSequence.Max = maxNum;
+            variableSequence.Interval = 1;
+
+            //Act
+            for (int i = 0; i < itrCount; i++)
+            {
+                variableSequence.GenerateAutoValue();
+                numArr[i] = Convert.ToInt32(variableSequence.Value);
+            }
+
+            //Assert
+            for (int i = 0; i < itrCount; i++)
+            {
+                Assert.AreEqual(numArr[i], i+1, "Sequence Issue");
+                Assert.IsTrue(numArr[i] >= minNum && numArr[i] <= maxNum, "num1 >= " + minNum + " && num1 <= " + maxNum);
+            }
+        }
+
+    }
+}

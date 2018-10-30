@@ -97,7 +97,7 @@ namespace GingerCoreCommonTest.VariableTests
             variablePasswordString.ResetValue();
 
             //Assert
-            Assert.IsNull(variablePasswordString.Value, "Reset Value not null");
+            Assert.IsNull(variablePasswordString.Password, "Reset Value not null");
         }
 
         [TestMethod]
