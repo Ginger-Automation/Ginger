@@ -1355,8 +1355,7 @@ namespace Ginger.Run
             foreach (VariableBase v in vars)
             {
                 VariableDynamic vd = (VariableDynamic)v;
-                vd.Init(ProjEnvironment, CurrentBusinessFlow);
-
+                //vd.Init(ProjEnvironment, CurrentBusinessFlow);
             }
         }
 

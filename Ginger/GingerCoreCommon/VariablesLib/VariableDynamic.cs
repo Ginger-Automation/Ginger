@@ -16,13 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using System;
-using GingerCore.Environments;
-using GingerCore.Properties;
-using GingerCore.Actions;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
@@ -34,8 +31,8 @@ namespace GingerCore.Variables
         }
 
         // Do not serialize being set at runtime by Ginger Runner
-        ProjEnvironment mProjEnvironment;
-        BusinessFlow mBusinessFlow;
+        //ProjEnvironment mProjEnvironment;
+        //BusinessFlow mBusinessFlow;
         
         private string mValueExpression;
         [IsSerializedForLocalRepository]
@@ -54,11 +51,11 @@ namespace GingerCore.Variables
             get { return GingerDicser.GetTermResValue(eTermResKey.Variable) + " Dynamic"; }
         }
 
-        public void Init(ProjEnvironment ProjEnvironment, BusinessFlow BusinessFlow)
-        {
-            mProjEnvironment = ProjEnvironment;
-            mBusinessFlow = BusinessFlow;
-        }
+        //public void Init(ProjEnvironment ProjEnvironment, BusinessFlow BusinessFlow)
+        //{
+        //    mProjEnvironment = ProjEnvironment;
+        //    mBusinessFlow = BusinessFlow;
+        //}
 
         public override string VariableEditPage { get { return "VariableDynamicPage"; } }
 
@@ -92,24 +89,26 @@ namespace GingerCore.Variables
 
         private string GenerateVEValue()
         {
-            try
-            {
-                if (mProjEnvironment == null && mBusinessFlow == null)
-                    return "Value will be calulated during execution.";
+            //try
+            //{
+            //    if (mProjEnvironment == null && mBusinessFlow == null)
+            //        return "Value will be calulated during execution.";
 
-                ValueExpression Ve = new ValueExpression(mProjEnvironment, mBusinessFlow);
-                Ve.Value = ValueExpression;
+            //    ValueExpression Ve = new ValueExpression(mProjEnvironment, mBusinessFlow);
+            //    Ve.Value = ValueExpression;
 
-                if (Ve.Value != null && Ve.Value.Contains("{Var Name="+Name+"}"))
-                    return "ERROR: " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value cannot point to itself. "; 
-                    
-                return Ve.ValueCalculated;
-            }
-            catch (Exception ex)//Env and BF objects were not set by Ginger Runner
-            {
+            //    if (Ve.Value != null && Ve.Value.Contains("{Var Name=" + Name + "}"))
+            //        return "ERROR: " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value cannot point to itself. ";
 
-                return ex.Message;
-            }
+            //    return Ve.ValueCalculated;
+            //}
+            //catch (Exception ex)//Env and BF objects were not set by Ginger Runner
+            //{
+
+            //    return ex.Message;
+            //}
+
+            return null;
         }
 
         public override eImageType Image { get { return eImageType.Random; } }
