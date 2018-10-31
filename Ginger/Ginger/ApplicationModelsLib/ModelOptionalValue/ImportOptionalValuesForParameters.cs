@@ -969,7 +969,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
         private DataTable ExportParametertoDataTable(List<AppParameters> parameters,string tableName)
         {            
-            int colCount = 0;
+            int colCount = 100;
             foreach (var paramVal in parameters)
             {
                 if (paramVal.OptionalValuesString.Contains(CURRENT_VAL_PARAMETER))
@@ -1008,7 +1008,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         }
                         if (!item.Value.StartsWith(CURRENT_VAL_PARAMETER))
                         {                            
-                            dr[index] = Convert.ToString(item.Value);
+                            dr[index] = Convert.ToString(item.Value) + (item.IsDefault ? "*" : "");
                             index++;
                         }                        
                     }
