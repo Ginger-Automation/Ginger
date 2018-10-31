@@ -155,7 +155,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                         return false;
                     }                      
                     
-                        //get all childerans objects of direct and sub folders
+                        //get all children's objects of direct and sub folders
                     foreach (ITreeViewItem subItvItem in xTreeView.Tree.GetTreeNodeChildsIncludingSubChilds(itvItem))
                         if (subItvItem.NodeObject() != null && subItvItem.NodeObject().GetType().BaseType != typeof(RepositoryFolderBase))
                             mSelectedItems.Add(subItvItem.NodeObject());                                        

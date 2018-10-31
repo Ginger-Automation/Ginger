@@ -151,7 +151,7 @@ namespace GingerCore.GeneralLib
                         builder.Append(value);
                         builder.Append(" ");
                     }                    
-                    Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot contain charaters like: {0}", builder.ToString());
+                    Reporter.ToUser(eUserMsgKeys.ValueIssue, "Value cannot contain characters like: {0}", builder.ToString());
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
             }

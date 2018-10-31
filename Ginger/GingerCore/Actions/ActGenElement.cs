@@ -28,7 +28,7 @@ using System.Collections.Generic;
 
 namespace GingerCore.Actions
 {
-    // This class is for UI link elemnet
+    // This class is for UI link element
     public class ActGenElement : Act, IObsoleteAction
     {
         // --------------------------------------------------------------------------------------------------------------
@@ -348,7 +348,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Start Browser")]
             StartBrowser=28,
             [EnumValueDescription("Async Click")]
-            AsyncClick = 27, //used for clicking on elemnts which opening Dialog window- because if using regular click then the driver get stuck till the dialog been closed
+            AsyncClick = 27, //used for clicking on elements which opening Dialog window- because if using regular click then the driver get stuck till the dialog been closed
             [EnumValueDescription("Scroll to Element")]
             ScrollToElement= 29,
             [EnumValueDescription("Simple Click")]

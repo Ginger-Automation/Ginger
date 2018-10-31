@@ -168,7 +168,7 @@ namespace GingerCore.XMLConverters
                             inputXML = updatedXML;
                             break;
                         default:
-                            Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to upgrade the XML of the file '{0}' due to unkonwn version", xmlFilePath));
+                            Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to upgrade the XML of the file '{0}' due to unknown version", xmlFilePath));
                             return null;
                     }
 

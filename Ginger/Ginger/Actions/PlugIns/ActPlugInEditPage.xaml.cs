@@ -48,7 +48,7 @@ namespace Ginger.Actions.PlugIns
             AutoCreateEditPage();
         }
 
-        //TODO: destructor is not working , need to fix geneal ActionEditPage
+        //TODO: destructor is not working , need to fix general ActionEditPage
         ~ActPlugInEditPage()
         {
         }

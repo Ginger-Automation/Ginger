@@ -67,7 +67,7 @@ namespace Ginger.Repository
         {
             try
             {
-                //TODO: check that retreive also sub folder business flows
+                //TODO: check that retrieve also sub folder business flows
                 ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
                 foreach (BusinessFlow BF in BizFlows)
@@ -167,7 +167,7 @@ namespace Ginger.Repository
                                 RepoItemUsages.Add(itemUsage);
                             }
                         }
-                        //search on Activties level
+                        //search on Activities level
                         foreach (Activity activity in BF.Activities)
                         {
                             foreach (VariableBase a in activity.Variables)

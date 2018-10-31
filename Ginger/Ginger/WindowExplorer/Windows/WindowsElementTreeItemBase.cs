@@ -48,7 +48,7 @@ namespace Ginger.Drivers.Windows
 
         StackPanel ITreeViewItem.Header()
         {
-            //TODO: ut better icon for generic control
+            //TODO: Put better icon for generic control
             string ImageFileName = "@Agent_16x16.png";
             string Title = UIAElementInfo.ElementTitle;
                 return TreeViewUtils.CreateItemHeader(Title, ImageFileName);

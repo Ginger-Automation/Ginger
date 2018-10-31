@@ -1213,7 +1213,7 @@
         </Setter>
     </Style>
 
-    <!--TODO: find why this is not working - put images in sepearte dictionary-->
+    <!--TODO: find why this is not working - put images in separate dictionary-->
     <!--<ResourceDictionary x:Key="dicImages" Source="Images/_Images.xaml" />-->
 
     <!--16x16 Images-->

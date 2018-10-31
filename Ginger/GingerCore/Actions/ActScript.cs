@@ -44,7 +44,7 @@ namespace GingerCore.Actions
             TBH.AddText("Use this action in case you want to perform any script actions on web page.");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            TBH.AddText("To perform a script action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property" +
+            TBH.AddText("To perform a script action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property " +
             "that you set in Locate By type then select script interpreter and script name to be execute on page and the enter the page url in value textbox and run the action.");
             TBH.AddLineBreak();
            TBH.AddText("For using CMD.exe as the interpreter, select interpreter type as Other, put the full path of CMD.exe in the Interpreter drop down list; select either free command or script "+ 

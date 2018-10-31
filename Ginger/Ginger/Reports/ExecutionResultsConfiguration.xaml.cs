@@ -122,7 +122,7 @@ namespace Ginger.Reports
 
             App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportsSettings);
 
-            // validate the pathes of inserted folders
+            // validate the paths of inserted folders
             Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder);
 

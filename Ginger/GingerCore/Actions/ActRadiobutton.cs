@@ -24,7 +24,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Actions
 {
-    //This class is for UI Radio Button elemnet
+    //This class is for UI Radio Button element
     public class ActRadioButton : Act
     {
         public override string ActionDescription { get { return "Radio Button Action"; } }

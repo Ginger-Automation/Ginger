@@ -64,7 +64,7 @@ namespace Ginger.DataSource
 
         private void DSTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //Implament DS Type Change
+            //Implement DS Type Change
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)

@@ -26,7 +26,7 @@ using Amdocs.Ginger.Common.Enums;
 namespace Amdocs.Ginger.Common.UIElement
 {
     /// <summary>
-    /// Base class for differnet Control type for each driver, enable to show unified list in Window Explorer Grid
+    /// Base class for different Control type for each driver, enable to show unified list in Window Explorer Grid
     /// </summary>
     /// 
     // We can persist ElementInfo - for example when saving DOR Page UIElements, but when used in Window Explorer there is no save
@@ -135,7 +135,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetElementTitle()
         {
             // we return Name unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mElementTitle;
         }
 
@@ -148,7 +148,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
         private string mElementName = null;
         [IsSerializedForLocalRepository]
-        public string ElementName // elemnt name is given by the user when he maps UI elements and give them name to use in DOR
+        public string ElementName // element name is given by the user when he maps UI elements and give them name to use in DOR
         {
             get
             {
@@ -217,7 +217,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetElementType()
         {
             // we return ElementType unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mElementType;
         }
 
@@ -236,7 +236,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetValue()
         {
             // we return XPath unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mValue;
         }
 
@@ -269,7 +269,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetAbsoluteXpath()
         {
             // we return XPath unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return null;
         }
 

@@ -436,7 +436,7 @@ namespace GingerCore.Actions
 
 
         // Page will be better (compile check) but since the pages are in Ginger we cannot ref them in Act
-        // So, meanhwile we can create by page string name
+        // So, meanwhile we can create by page string name
 
         [DoNotBackup]
         public abstract string ActionEditPage { get; }
@@ -450,7 +450,7 @@ namespace GingerCore.Actions
         [DoNotBackup]
         public abstract void ActionUserRecommendedUseCase(TextBlockHelper TBH);
 
-        // No need to serialze
+        // No need to serialize
         public int RetryMechanismCount { get; set; }
 
         public long ElapsedTicks { get; set; }
@@ -486,7 +486,7 @@ namespace GingerCore.Actions
         public string ActClass { get { return this.GetType().ToString(); } }
 
 
-        //Keeping screen shot in mem will eat up the memory - so we save to files and keep file name
+        //Keeping screen shot in memory will eat up the memory - so we save to files and keep file name
 
         public List<String> ScreenShots = new List<String>();
         public List<String> ScreenShotsNames = new List<String>();
@@ -737,10 +737,10 @@ namespace GingerCore.Actions
 
 
         /// <summary>
-        /// Pulling the params corresponding calculated value from the ReturnParams list and parsing the Caluculatedvalue into the spesified type. 
+        /// Pulling the params corresponding calculated value from the ReturnParams list and parsing the Caluculatedvalue into the specified type. 
         /// </summary>
         /// <param name="Param">The name of the Parameter from the Return Values List</param>
-        /// <param name="T">Is the requiered type of return parameter value (int Enum string etc.)</param>
+        /// <param name="T">Is the required type of return parameter value (int Enum string etc.)</param>
         /// <returns>Object which contains object of the requested type</returns>
         public object GetInputParamCalculatedValue<T>(string Param)
         {
@@ -803,7 +803,7 @@ namespace GingerCore.Actions
         }
 
 
-        //TODO: make Name a mandatory and enforce providing where used, meanhwile making it optional
+        //TODO: make Name a mandatory and enforce providing where used, meanwhile making it optional
         public void AddScreenShot(Bitmap bmp, string Name = "")
         {
             try
@@ -852,7 +852,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public void ParseJSONToOutputValues(string ResponseMessage, int i)// added i especially for cassandra, for retreiving path , other cases give i=1
+        public void ParseJSONToOutputValues(string ResponseMessage, int i)// added i especially for cassandra, for retrieving path , other cases give i=1
         {
             Dictionary<string, object> outputValues = GingerCore.General.DeserializeJson(ResponseMessage);
             foreach (KeyValuePair<string, object> entry in outputValues)
@@ -1199,7 +1199,7 @@ namespace GingerCore.Actions
                 //check objects are valid
                 if (parentActivity != null)
                 {
-                    //check if the Action-variables dependencies mechanisem is enabled
+                    //check if the Action-variables dependencies mechanism is enabled
                     if (parentActivity.EnableActionsVariablesDependenciesControl)
                     {
                         //check if the action configured to run with all activity selection list variables selected value
@@ -1231,10 +1231,10 @@ namespace GingerCore.Actions
                                 checkStatus = true;//All Selection List variable selected values were configured on the action
                         }
                         else
-                            checkStatus = true;//the Activity dont has Selection List variables
+                            checkStatus = true;//the Activity don't has Selection List variables
                     }
                     else
-                        checkStatus = true;//the mechanisem is disabled                    
+                        checkStatus = true;//the mechanism is disabled                    
                 }
                 else
                     checkStatus = false; //Activity object is null
@@ -1272,7 +1272,7 @@ namespace GingerCore.Actions
         {
             //Ginger Runner call this func in prep time, each action can impl if needed
 
-            // will be override in derived class if needed othwerwise return null
+            // will be override in derived class if needed otherwise return null
             // use in Tuxedo to process the UD file params vals
             return null;
         }
@@ -1502,7 +1502,7 @@ namespace GingerCore.Actions
             this.Wait = act.Wait;
 
             //zz
-            //TODO: copy all oher in/out
+            //TODO: copy all other in/out
 
             // this.FlowControls =  // TODO: create copy 
             // this.InputValues

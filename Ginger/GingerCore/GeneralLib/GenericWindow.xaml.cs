@@ -130,7 +130,7 @@ namespace Ginger
                             windowPage.Tag = "PageSizeWasModified";
                     }
 
-                    //set min hieght and width
+                    //set min height and width
                     if (windowPage.MinWidth > 0)
                     {
                         if (windowPage.Width < windowPage.MinWidth)

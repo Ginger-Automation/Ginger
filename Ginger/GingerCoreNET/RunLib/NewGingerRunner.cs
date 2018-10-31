@@ -1618,7 +1618,7 @@
 
 //            if (!Continue)
 //            {
-//                // We reset the activitiy unless we are in continue mode where user can start from middle of Activity
+//                // We reset the activity unless we are in continue mode where user can start from middle of Activity
 //                ResetActivity(mCurrentBusinessFlow.CurrentActivity);
 //            }
 //            else
@@ -1933,7 +1933,7 @@
 
 //        public void CalculateBusinessFlowFinalStatus(BusinessFlow BF)
 //        {
-//            // A flow is blocked if some activitiy failed and all the activities after it failed
+//            // A flow is blocked if some activity failed and all the activities after it failed
 //            // A Flow is failed if one or more activities failed
 
 //            // Add Blocked
@@ -2265,7 +2265,7 @@
 
 //        private bool CheckIfActivityTagsMatch()
 //        {
-//            //check if Activity or The parent Acitivites Group has at least 1 tag from filter tags
+//            //check if Activity or The parent Activites Group has at least 1 tag from filter tags
 //            //first check Activity
 //            foreach (Guid tagGuid in mCurrentBusinessFlow.CurrentActivity.Tags)
 //                if (this.FilterExecutionTags.Where(x => Guid.Equals(x, tagGuid) == true).FirstOrDefault() != Guid.Empty)

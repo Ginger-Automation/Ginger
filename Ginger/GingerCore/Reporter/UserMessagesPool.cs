@@ -640,7 +640,7 @@ namespace GingerCore
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AllItemsSaved, new UserMessage(eAppReporterMessageType.INFO, "All Changes Saved", "All Changes Saved", MessageBoxButton.OK, MessageBoxResult.None));
 
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfShareVaribalesInRunner, new UserMessage(eAppReporterMessageType.QUESTION, "Share Variables", "Are you sure you want to share selected Variable Values to all the similar Business Flows and Activities accross all Runners?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfShareVaribalesInRunner, new UserMessage(eAppReporterMessageType.QUESTION, "Share Variables", "Are you sure you want to share selected Variable Values to all the similar Business Flows and Activities across all Runners?", MessageBoxButton.YesNo, MessageBoxResult.No));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.RenameItemError, new UserMessage(eAppReporterMessageType.ERROR, "Rename", "Failed to rename the Item. Error: '{0}'?", MessageBoxButton.OK, MessageBoxResult.OK));
             #region ActionConversion

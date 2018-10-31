@@ -173,12 +173,12 @@ namespace GingerCore
             mValueCalculated = Value;
 
             //Do the operation based on order!!!
-            //First replace Vars - since they can apear in other func like VBS v1+v2 or VBS mid(v1,1,4);
+            //First replace Vars - since they can appear in other func like VBS v1+v2 or VBS mid(v1,1,4);
             ReplaceVars();
 
             ReplaceGlobalParameters();
 
-            //replace environment parameters which embeded into functions like VBS
+            //replace environment parameters which embedded into functions like VBS
             ReplaceEnvVars();
             ReplaceDataSources();
 
@@ -262,7 +262,7 @@ namespace GingerCore
                     bool bChange = false;
                     if (bUpdate == true)
                     {
-                        // Addign this to update value only for the main DS Expression .. not VE in Parameter
+                        // Adding this to update value only for the main DS Expression .. not VE in Parameter
                         Regex rxDS = new Regex("{DS Name=");
                         MatchCollection dsMatch = rxDS.Matches(mValueCalculated);
                         if (dsMatch.Count > 1)

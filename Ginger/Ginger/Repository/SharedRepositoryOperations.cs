@@ -89,7 +89,7 @@ namespace Ginger.Repository
                 {
                     
                     MovePrevVersion(itemToUpload.ExistingItem, itemToUpload.ExistingItem.FileName);
-                    //To be removed from here. And and need to handle from solution repository
+                    //To be removed from here and need to handle from solution repository
                     itemCopy.ContainingFolder = itemToUpload.ExistingItem.ContainingFolder;
                     itemCopy.ContainingFolderFullPath = itemToUpload.ExistingItem.ContainingFolderFullPath;
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(itemCopy);
@@ -279,7 +279,7 @@ namespace Ginger.Repository
                 {
                     Directory.CreateDirectory(PrevFolder);
                 }
-                //TODO: change to usae locale or yyyymmdd...
+                //TODO: change to use locale or yyyymmdd...
                 string dts = DateTime.Now.ToString("MM_dd_yyyy_H_mm_ss");
                 string repoName = string.Empty;
                 if (obj.FileName != null && File.Exists(obj.FileName))

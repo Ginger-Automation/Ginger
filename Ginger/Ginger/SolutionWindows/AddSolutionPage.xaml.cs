@@ -54,7 +54,7 @@ namespace Ginger.SolutionWindows
         {
             try
             {
-                //TODO: replcae with robot message
+                //TODO: replace with robot message
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 //check name and folder inputs exists
                 if (SolutionNameTextBox.Text.Trim() == string.Empty || SolutionFolderTextBox.Text.Trim() == string.Empty

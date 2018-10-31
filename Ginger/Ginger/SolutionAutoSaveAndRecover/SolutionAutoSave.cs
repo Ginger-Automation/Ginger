@@ -86,7 +86,7 @@ namespace Ginger.Functionalties
                 }
 
                 //get all dirty items for AutoSave
-                //Busines Flows           
+                //BusinesFlows           
                 foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
                 {
                     if (bf.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
@@ -132,7 +132,7 @@ namespace Ginger.Functionalties
             {
             RepositoryItemBase itemCopy = itemToSave.CreateCopy(false);
             
-                //create smiliar folders structure
+                //create similar folders structure
                 string ItemOriginalpath = itemToSave.ContainingFolderFullPath;
                 string ItemContainingfolder = itemToSave.ContainingFolder;
                 string itemAutoSavePath = ItemOriginalpath.Replace(ItemOriginalpath, mAutoSaveFolderPath);

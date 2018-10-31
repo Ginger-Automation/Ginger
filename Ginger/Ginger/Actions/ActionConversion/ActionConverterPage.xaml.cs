@@ -200,7 +200,7 @@ namespace Ginger.Actions.ActionConversion
 
             if (!DoExistingPlatformCheck(lstActionToBeConverted))
             {
-                //missing target application so stop the convertion
+                //missing target application so stop the conversion
                 return;
             }
             else
@@ -316,7 +316,7 @@ namespace Ginger.Actions.ActionConversion
             lblConversionStatus.Visibility = Visibility.Hidden;
             Reporter.CloseGingerHelper();
 
-            // ask the user if he wants to convert nore actions once the conversion is done successfully                       
+            // ask the user if he wants to convert more actions once the conversion is done successfully                       
             if (Reporter.ToUser(eUserMsgKeys.SuccessfulConversionDone) == MessageBoxResult.No)
             {
                 _pageGenericWin.Close();

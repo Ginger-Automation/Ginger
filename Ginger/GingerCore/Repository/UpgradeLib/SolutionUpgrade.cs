@@ -74,7 +74,7 @@ namespace GingerCore.Repository.UpgradeLib
                 return eGingerVersionComparisonResult.ComparisonFailed;//failed to identify and compare the version
             }
 
-            if (fileGingerVersion == "3.0.0.0Beta")//Workaround needed due to move to new repository serilizer in middle of release 
+            if (fileGingerVersion == "3.0.0.0Beta")//Workaround needed due to move to new repository serializer in middle of release 
             {
                 return eGingerVersionComparisonResult.LowerVersion;
             }
@@ -96,7 +96,7 @@ namespace GingerCore.Repository.UpgradeLib
             else
             {
                 Reporter.ToLog(eAppReporterLogLevel.WARN, string.Format("Failed to read and compare the Ginger version for the file: '{0}'", filePath));
-                return eGingerVersionComparisonResult.ComparisonFailed;//failed to identify and compart the version
+                return eGingerVersionComparisonResult.ComparisonFailed;//failed to identify and compare the version
             }
         }
 
