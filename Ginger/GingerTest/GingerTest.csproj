@@ -112,6 +112,7 @@
     <Compile Include="TestAssemblyInit.cs" />
     <Compile Include="UserControlsLib\ImageMakerLib\ImageMakerControlTest.cs" />
     <Compile Include="VariablesLib\VariablesTest.cs" />
+    <Compile Include="VideosLib\Speach.cs" />
     <Compile Include="WizardLib\WizardTest.cs" />
   </ItemGroup>
   <ItemGroup>

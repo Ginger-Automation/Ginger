@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ginger.AdornerLib;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace GingerTest.POMs.AdornerLib
+namespace GingerTest
 {
     public class HighlightAdorner : Adorner
     {
@@ -17,52 +12,28 @@ namespace GingerTest.POMs.AdornerLib
         VisualCollection visualChildren;
 
         // Custom UIElement to add to the target UIElement
-        Button button = new Button();
+        HighlightAdornerControl highlighterAdorner = new HighlightAdornerControl();
 
         public HighlightAdorner(UIElement adornedElement) :
         base(adornedElement)
-        {
-            
-            //// ... other init
+        {            
             visualChildren = new VisualCollection(this);
-            button.Height = 50.0;
-            button.Width = 50.0;
-            button.Content = "<--------------------";
-            button.Background = Brushes.Red;
-
-            visualChildren.Add(button);
-
-
+            highlighterAdorner.Opacity = 0.20;         
+            visualChildren.Add(highlighterAdorner);            
             var layer = AdornerLayer.GetAdornerLayer(adornedElement);
             layer.Add(this);
-
-            adornedElement.InvalidateVisual();
-            // InvalidateVisual();
-            //mAdornedElement = adornedElement;
+            adornedElement.InvalidateVisual();          
         }
-
-        //protected override void OnRender(DrawingContext drawingContext)
-        //{
-        //    base.OnRender(drawingContext);
-
-        //    Pen pen = new Pen(Brushes.Transparent, 3);
-
-        //    drawingContext.DrawRoundedRectangle(Brushes.Yellow, pen, new Rect(0, 0, AdornedElement.DesiredSize.Width + 5, AdornedElement.DesiredSize.Height + 5), 3, 3);
-
-
-
-        //    //// ... add custom rendering code here ...
-        //}
 
 
         // Arrange the Adorner
         protected override Size ArrangeOverride(Size finalSize)
         {
-            double desiredWidth = AdornedElement.DesiredSize.Width;
-            double desiredHeight = AdornedElement.DesiredSize.Height;
+            double desiredWidth = AdornedElement.DesiredSize.Width + 10;
+            double desiredHeight = AdornedElement.DesiredSize.Height + 10;
 
-            button.Arrange(new Rect((button.Width + desiredWidth) / 2, -desiredHeight,
-                                 desiredWidth, desiredHeight));
+            highlighterAdorner.Arrange(new Rect(-10, -10, desiredWidth, desiredHeight));
+            
             return finalSize;
         }
 

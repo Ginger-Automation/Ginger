@@ -17,14 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.UserControls;
-using GingerTest.POMs.AdornerLib;
-using System;
-using System.Reflection;
-using System.Speech.Synthesis;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Documents;
 
 namespace GingerWPFUnitTest.POMs
 {
