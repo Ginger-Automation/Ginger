@@ -107,7 +107,7 @@ namespace Ginger
                 {
                     GingerCore.General.ComboGroupedEnumItem item = new GingerCore.General.ComboGroupedEnumItem();
                     item.text = GingerCore.General.GetEnumValueDescription(v.GetType(), v);
-                    item.Category = GingerCore.General.GetEnumDescription(v.GetType(), v); ;
+                    item.Category = GingerCore.General.GetEnumDescription(v.GetType(), v); 
                     item.Value = v;
 
                     l.Add(item);
