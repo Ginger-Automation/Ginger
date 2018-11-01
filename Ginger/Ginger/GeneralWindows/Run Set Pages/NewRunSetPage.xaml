@@ -233,7 +233,7 @@
                         </DockPanel>
                         <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" >
                         <StackPanel x:Name="xRunnerItemsPnl"  Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                        <!--<GridSplitter HorizontalAlignment="Stretch" Background="{StaticResource @Skin1_ColorC}" Margin="0" Height="2" ResizeDirection="Rows" />-->
+                        <!--<GridSplitter HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0" Height="2" ResizeDirection="Rows" />-->
 
 
                         <Grid Name="xRunnerItemsGrid" Margin="0,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >

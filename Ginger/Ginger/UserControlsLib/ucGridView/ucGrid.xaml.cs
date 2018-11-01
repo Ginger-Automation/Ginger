@@ -2114,7 +2114,7 @@ public void RemoveCustomView(string viewName)
             if (validationRes == true)
                 Grid.BorderBrush = System.Windows.Media.Brushes.Red;
             else
-                Grid.BorderBrush = FindResource("@Skin1_ColorA") as Brush;
+                Grid.BorderBrush = FindResource("$Color_DarkBlue") as Brush;
 
             return validationRes;
         }

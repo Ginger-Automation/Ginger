@@ -26,7 +26,7 @@
                 <DataTemplate.Triggers>
                     <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
                         <Setter Property="DataGridCell.Foreground" TargetName="grdActivities_FieldName" Value="White"/>
-                        <Setter Property="DataGridCell.BorderBrush" TargetName="grdActivities_FieldName" Value="{DynamicResource @Skin1_ColorA}"/>
+                        <Setter Property="DataGridCell.BorderBrush" TargetName="grdActivities_FieldName" Value="{DynamicResource $Color_DarkBlue}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding IsNotGherkinOptimizedActivity , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"  Value="false">
                         <Setter Property="DataGridCell.Foreground" TargetName="grdActivities_FieldName" Value="Black"/>

@@ -8,7 +8,7 @@
       d:DesignHeight="400" d:DesignWidth="600"
 	Title="ControlInfoPage">
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>            
             <RowDefinition Height="100*" MinHeight="30"/>                       
