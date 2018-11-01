@@ -68,6 +68,10 @@ namespace Ginger.Repository
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
+
+            xActivitiesGroupsTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups);
+            xActivitiesTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.Activities);
+            xVariablesTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.Variables);
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -848,11 +848,17 @@ namespace Ginger.Actions
         private void UndoChangesAndClose()
         {
             IsPageClosing = true;
-            _pageGenericWin.Close();
-
-            Mouse.OverrideCursor = Cursors.Wait;
-            mAction.RestoreFromBackup(true);
-            Mouse.OverrideCursor = null;
+            
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                mAction.RestoreFromBackup(true);
+                _pageGenericWin.Close();
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         private void CloseWinClicked(object sender, EventArgs e)

@@ -47,6 +47,7 @@ using System.Windows.Media;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
+using Ginger.Help;
 
 namespace Ginger
 {
@@ -430,6 +431,8 @@ namespace Ginger
 
         public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName= "",  RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null)
         {
+            GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
+
             xSimpleHeaderTitle.Visibility = Visibility.Collapsed;
             xEnhancedHeader.Visibility = Visibility.Visible;
 
