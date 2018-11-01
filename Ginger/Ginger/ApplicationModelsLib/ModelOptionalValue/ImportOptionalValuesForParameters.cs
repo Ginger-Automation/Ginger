@@ -991,7 +991,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 dtTemplate.Columns.Add(string.Format("Value {0}", index), typeof(string));
             }
 
-            foreach (AppParameters prm in parameters)
+            foreach (AppParameters prm in parameters.OrderBy(o => o.ItemName).ToList())
             {
                 DataRow dr = dtTemplate.NewRow();
                 dr[0] = Convert.ToString(prm.ItemName);
