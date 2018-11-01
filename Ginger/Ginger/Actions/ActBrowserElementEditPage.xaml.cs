@@ -23,6 +23,8 @@ using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions._Common.ActUIElementLib;
+using GingerCore.Platforms.PlatformsInfo;
+using System.Collections.Generic;
 
 namespace Ginger.Actions
 {
@@ -32,15 +34,30 @@ namespace Ginger.Actions
     public partial class ActBrowserElementEditPage : Page
     {
         private ActBrowserElement mAct;
-
+        PlatformInfoBase mPlatform;
         public ActBrowserElementEditPage(ActBrowserElement act)
         {
             InitializeComponent();
             mAct = act;
+
+            ePlatformType ActivityPlatform = GetActionPlatform();
+            if(ActivityPlatform != ePlatformType.Android)
+            {
+                mPlatform = PlatformInfoBase.GetPlatformImpl(ActivityPlatform);
+
+                List<ActBrowserElement.eControlAction> LocateByList = new List<ActBrowserElement.eControlAction>();
+                LocateByList = mPlatform.GetPlatformActBrowserElementList();
+
+                //bind controls
+                App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction, LocateByList.Cast<object>().ToList());
+            }
+            else
+            {
+                App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction);
+            }
            
-            //bind controls
-            App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction);
             App.ObjFieldBinding(xControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActBrowserElement.Fields.ControlAction);
+
             ValueUC.Init(mAct.GetOrCreateInputParam("Value"));
             xLocateValueVE.BindControl(mAct, Act.Fields.LocateValue);
             xGotoURLTypeRadioButton.Init(typeof(ActBrowserElement.eGotoURLType), xGotoURLTypeRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString()));

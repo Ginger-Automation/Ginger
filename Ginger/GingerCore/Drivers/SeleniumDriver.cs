@@ -5302,6 +5302,9 @@ namespace GingerCore.Drivers
                 case ActBrowserElement.eControlAction.Close:
                     Driver.Close();
                     break;
+                case ActBrowserElement.eControlAction.CloseBrowser:
+                    Driver.Close();
+                    break;
 
                 case ActBrowserElement.eControlAction.InitializeBrowser:
                     this.StartDriver();

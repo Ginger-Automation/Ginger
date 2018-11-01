@@ -58,6 +58,38 @@ namespace GingerCore.Platforms.PlatformsInfo
             return list;
         }
 
+        public override List<ActBrowserElement.eControlAction> GetPlatformActBrowserElementList()
+        {
+            List<ActBrowserElement.eControlAction> browserActElementList = new List<ActBrowserElement.eControlAction>();
+
+            browserActElementList.Add(ActBrowserElement.eControlAction.GotoURL);
+            browserActElementList.Add(ActBrowserElement.eControlAction.AcceptMessageBox);
+            browserActElementList.Add(ActBrowserElement.eControlAction.OpenURLNewTab);
+            browserActElementList.Add(ActBrowserElement.eControlAction.Refresh);
+            browserActElementList.Add(ActBrowserElement.eControlAction.RunJavaScript);
+            browserActElementList.Add(ActBrowserElement.eControlAction.Maximize);
+            browserActElementList.Add(ActBrowserElement.eControlAction.Close);
+            browserActElementList.Add(ActBrowserElement.eControlAction.CloseBrowser);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchFrame);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToParentFrame);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchWindow);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetWindowTitle);
+            browserActElementList.Add(ActBrowserElement.eControlAction.DeleteAllCookies);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageSource);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageURL);
+            browserActElementList.Add(ActBrowserElement.eControlAction.InjectJS);
+            browserActElementList.Add(ActBrowserElement.eControlAction.CheckPageLoaded);
+            browserActElementList.Add(ActBrowserElement.eControlAction.CloseTabExcept);
+            browserActElementList.Add(ActBrowserElement.eControlAction.CloseAll);
+            browserActElementList.Add(ActBrowserElement.eControlAction.NavigateBack);
+            browserActElementList.Add(ActBrowserElement.eControlAction.DismissMessageBox);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetMessageBoxText);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SetAlertBoxText);
+
+            return browserActElementList;
+        }
+
         public override List<ActUIElement.eElementDragDropType> GetPlatformDragDropTypeList()
         {
             List<ActUIElement.eElementDragDropType> list = new List<ActUIElement.eElementDragDropType>();

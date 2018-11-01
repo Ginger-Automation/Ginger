@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
@@ -35,7 +36,17 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             throw new NotImplementedException();
         }
+        public override List<ActBrowserElement.eControlAction> GetPlatformActBrowserElementList()
+        {
+            List<ActBrowserElement.eControlAction> browserActElementList = new List<ActBrowserElement.eControlAction>();
 
+            browserActElementList.Add(ActBrowserElement.eControlAction.InitializeBrowser);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageSource);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageURL);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
+           
+            return browserActElementList;
+        }
         public override List<eLocateBy> GetPlatformUIElementLocatorsList()
         {
             if (mElementLocatorsTypeList == null)

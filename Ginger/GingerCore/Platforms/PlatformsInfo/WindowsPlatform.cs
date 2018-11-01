@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
@@ -42,6 +43,18 @@ namespace GingerCore.Platforms.PlatformsInfo
             return mElementLocatorsTypeList;
         }
 
+        public override List<ActBrowserElement.eControlAction> GetPlatformActBrowserElementList()
+        {
+            List<ActBrowserElement.eControlAction> browserActElementList = new List<ActBrowserElement.eControlAction>();
+
+            browserActElementList.Add(ActBrowserElement.eControlAction.InitializeBrowser);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageSource);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageURL);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchFrame);
+
+            return browserActElementList;
+        }
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
             List<ActUIElement.eElementAction> pbTableControlActionlist = base.GetPlatformUIElementActionsList(ElementType);
