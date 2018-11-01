@@ -9,6 +9,7 @@
       xmlns:state="clr-namespace:Ginger.MoveToGingerWPF.Run_Set_Pages"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Run Set"
       d:DesignHeight="1000" d:DesignWidth="2000"
       Title="Runset"  Loaded="Page_loaded">
 
