@@ -94,9 +94,8 @@ namespace GingerCore.Variables
             }
             else
             {
-                CurrentValueIndex++;
+                Value = listValues[CurrentValueIndex++];
                 if (CurrentValueIndex >= listValues.Length) CurrentValueIndex = 0;
-                Value = listValues[CurrentValueIndex];
             }
         }
 

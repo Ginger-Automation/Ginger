@@ -73,19 +73,20 @@ namespace GingerCoreCommonTest.VariableTests
         public void SequenceVar_Digit_13()
         {
             //Arrange
+            int sameNum = 13;
             VariableSequence variableSequence = new VariableSequence();
-            variableSequence.Min = 13;
-            variableSequence.Max = 13;
+            variableSequence.Min = sameNum;
+            variableSequence.Max = sameNum;
 
             for (int i = 0; i < 10; i++)
             {
                 //Act
                 variableSequence.GenerateAutoValue();
-                decimal num1 = decimal.Parse(variableSequence.Value);
+                decimal decNum = decimal.Parse(variableSequence.Value);
 
                 //Assert            
-                Assert.AreEqual(num1, 13, "variableRandomString.Value=13");
-                Assert.IsTrue(num1 >= 13 && num1 <= 13, "num1 >= 13 && num1 <= 13");
+                Assert.AreEqual(decNum, sameNum, "variableRandomString.Value=" + sameNum);
+                Assert.IsTrue(decNum >= sameNum && decNum <= sameNum, "num1 >= " + sameNum + " && num1 <= " + sameNum);
             }
         }
 
@@ -93,9 +94,9 @@ namespace GingerCoreCommonTest.VariableTests
         public void SequenceVar_Range_99_999_interval_9()
         {
             //Arrange
-            VariableSequence variableSequence = new VariableSequence();
             int minNum = 99;
             int maxNum = 999;
+            VariableSequence variableSequence = new VariableSequence();
             variableSequence.Min = minNum;
             variableSequence.Max = maxNum;
             variableSequence.Interval = 9;
@@ -138,6 +139,27 @@ namespace GingerCoreCommonTest.VariableTests
                 Assert.AreEqual(numArr[i], i+1, "Sequence Issue");
                 Assert.IsTrue(numArr[i] >= minNum && numArr[i] <= maxNum, "num1 >= " + minNum + " && num1 <= " + maxNum);
             }
+        }
+
+        [TestMethod]
+        public void SequenceVar_TestFormula()
+        {
+            //Arrange
+            int minNum = 0;
+            int maxNum = 10;
+            int interval = 1;
+            string formulaStr = minNum + "-" + maxNum + " Interval " + interval;
+
+            VariableSequence variableSequence = new VariableSequence();
+            variableSequence.Min = minNum;
+            variableSequence.Max = maxNum;
+            variableSequence.Interval = interval;            
+
+            //Act
+            string formulaVal = variableSequence.GetFormula();
+
+            //Assert
+            Assert.AreEqual(formulaVal, formulaStr, "Sequence Formula mismatch");
         }
 
     }
