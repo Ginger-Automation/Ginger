@@ -3493,7 +3493,7 @@ namespace GingerCore.Drivers
                     AppWindow AW = new AppWindow();
                     AW.Title = Driver.Title;
                     AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
-                    list.Add(AW);
+                    list.Add(AW);                    
                 }
                 return list;
             }
@@ -5873,7 +5873,10 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                Driver.SwitchTo().DefaultContent();
+                if (act.ElementLocateBy == eLocateBy.POMElement)
+                {
+                    Driver.SwitchTo().DefaultContent();
+                }
             }
         }
 

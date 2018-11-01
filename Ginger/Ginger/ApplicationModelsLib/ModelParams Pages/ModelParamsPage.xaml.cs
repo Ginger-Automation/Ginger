@@ -329,11 +329,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     someParamContainPath = true;
 
             APIModelBodyNodeSyncPage bodyNodeSyncPage;
-            if (someParamContainPath)
-            {
+            //Removing below as it block from deleting any new param with no path which been created menually by the user
+            //if (someParamContainPath)
+            //{
                 bodyNodeSyncPage = new APIModelBodyNodeSyncPage((ApplicationAPIModel)mApplicationModel, paramList);
                 bodyNodeSyncPage.ShowAsWindow();
-            }
+            //}
         }
 
         private void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)

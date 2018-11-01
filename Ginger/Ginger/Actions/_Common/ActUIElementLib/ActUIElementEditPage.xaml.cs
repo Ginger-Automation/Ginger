@@ -278,7 +278,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     };
                     comboBox = new UserControlsLib.UCComboBox()
                     {
-                        Style = this.FindResource("$FlatInputComboBoxStyle") as Style,
+                        //Style = this.FindResource("$FlatInputComboBoxStyle") as Style,
                         Name = element.Title,
                         HorizontalAlignment = HorizontalAlignment.Left,
                         VerticalAlignment = VerticalAlignment.Center,
