@@ -333,13 +333,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 ActUIElement.eElementAction.SetSelectedValueByIndex,
                 ActUIElement.eElementAction.Select,
                 ActUIElement.eElementAction.SelectByText,
-                ActUIElement.eElementAction.RunJavaScript,
-                ActUIElement.eElementAction.GetAttrValue,
-                ActUIElement.eElementAction.GetCustomAttribute,
-                ActUIElement.eElementAction.GetValueByIndex,
-                ActUIElement.eElementAction.SelectFromDijitList,
-                ActUIElement.eElementAction.Wait,
-                ActUIElement.eElementAction.AsyncSelect }.Contains(mAction.ElementAction))
+                ActUIElement.eElementAction.RunJavaScript}.Contains(mAction.ElementAction))
             {
                     elementList.Add(new ElementConfigControl()
                     {
@@ -415,25 +409,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate).Split(',').ToList()
                     });
                 }
-            }
-            else if ((mAction.ElementAction == ActUIElement.eElementAction.ClickXY))
-            {
-                    elementList.Add(new ElementConfigControl()
-                    {
-                        Title = "XCoordinate",
-                        BindedString = ActUIElement.Fields.XCoordinate,
-                        ControlType = eElementType.TextBox,
-                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.XCoordinate)) ? new List<string>() { "0" } :
-                        mAction.GetInputParamValue(ActUIElement.Fields.XCoordinate).Split(',').ToList()
-                    });
-                    elementList.Add(new ElementConfigControl()
-                    {
-                        Title = "YCoordinate",
-                        BindedString = ActUIElement.Fields.YCoordinate,
-                        ControlType = eElementType.TextBox,
-                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate)) ? new List<string>() { "0" } :
-                        mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate).Split(',').ToList()
-                    });
             }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.GetControlProperty))
             {
