@@ -1012,11 +1012,6 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                             index++;
                         }                        
                     }
-                    while (index < colCount + 2)
-                    {
-                        dr[index] = Convert.ToString(prm.OptionalValuesList.Where(x => x.IsDefault == true).Select(x => x.Value).FirstOrDefault());
-                        index++;
-                    }
                 }
                 dtTemplate.Rows.Add(dr);
             }
@@ -1300,7 +1295,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     {
                         emptyRow = false;
                     }                        
-                    row[indx] = Convert.ToString(dt.Rows[indx][cols]);                       
+                    row[indx] = Convert.ToString(dt.Rows[indx][cols]).Replace("*", "");                       
                 }
                 if(emptyRow == false)
                 {
