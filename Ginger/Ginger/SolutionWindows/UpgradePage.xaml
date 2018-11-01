@@ -8,7 +8,7 @@
       Height="500" Width="800" MinHeight="500" MinWidth="500"
 	Title="SolutionUpgradePage">
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="ExplainRow" Height="200"/>
             <RowDefinition Height="200*"/>

@@ -131,7 +131,7 @@ namespace Ginger.AnalyzerLib
 
             mIssues.Clear();
             CriticalAndHighIssuesLabelCounter.Content = "0";
-            CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#20334f");   //"#20334f";
+            CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
             await Analyze();
         }
