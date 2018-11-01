@@ -248,7 +248,7 @@ namespace Ginger.Run
             xBusinessflowsRunnerItemsListView.SelectionChanged += xActivitiesListView_SelectionChanged;
             xActivitiesRunnerItemsListView.SelectionChanged += xActionsListView_SelectionChanged;
             ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items).CollectionChanged += xActivitiesRunnerItemsListView_CollectionChanged;
-            RunnerItemPage.RunnerItemEvent += RunnerItem_RunnerItemEvent;
+            RunnerItemPage.SetRunnerItemEvent(RunnerItem_RunnerItemEvent);            
         }
 
         private void AgentsCache_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
