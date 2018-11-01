@@ -28,9 +28,8 @@ namespace Amdocs.Ginger.Common.APIModelLib
 {
     public class JSONTemplateParser : APIConfigurationsDocumentParserBase
     {
-        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, bool avoidDuplicatesNodes = false)
+        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
-            ObservableList<ApplicationAPIModel> AAMSList = new ObservableList<ApplicationAPIModel>();
 
             ApplicationAPIModel AAM = new ApplicationAPIModel();
             AAM.Name = Path.GetFileNameWithoutExtension(FileName);

@@ -33,6 +33,23 @@ namespace Amdocs.Ginger.Repository
         }
 
 
+
+        private string mPageURL = string.Empty;
+
+        [IsSerializedForLocalRepository]
+        public string PageURL //OperationName 
+        {
+            get
+            {
+                return mPageURL;
+            }
+            set
+            {
+                mPageURL = value;
+                OnPropertyChanged(nameof(this.PageURL));
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements = new ObservableList<ElementInfo>();
 

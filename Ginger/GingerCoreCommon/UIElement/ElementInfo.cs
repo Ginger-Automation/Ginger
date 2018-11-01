@@ -78,6 +78,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public enum eElementStatus
         {
+            Unknown,
             Pending,
             Passed,
             Failed
@@ -109,8 +110,9 @@ namespace Amdocs.Ginger.Common.UIElement
                     case eElementStatus.Failed:
                         return eImageType.Failed;
                     case eElementStatus.Pending:
-                    default:
                         return eImageType.Pending;
+                    default:
+                        return eImageType.Unknown;
                 }
             }
         }
@@ -301,6 +303,8 @@ namespace Amdocs.Ginger.Common.UIElement
         NA,
         [EnumValueDescription("")]
         Unknown,
+        [EnumValueDescription("Page Objects Model Element")]
+        POMElement,
         [EnumValueDescription("By ID")]
         ByID,
         [EnumValueDescription("By Name")]
@@ -363,8 +367,6 @@ namespace Amdocs.Ginger.Common.UIElement
         ByModelName,
         [EnumValueDescription("By CSS Selector")]
         ByCSSSelector,
-        [EnumValueDescription("Page Objects Model Element")]
-        POMElement,
     }
 
     public enum eElementType

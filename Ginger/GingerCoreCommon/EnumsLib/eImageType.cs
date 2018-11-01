@@ -56,6 +56,7 @@
         #endregion
 
         #region Execution Status Images
+        Unknown,
         //############################## Execution Status Images:
         /// <summary>
         /// Show spinner 
@@ -188,6 +189,7 @@
         Beta,
         Error,
         Coffee,
+        MapSigns,
         #endregion
 
         #region Other Images
