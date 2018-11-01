@@ -46,7 +46,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             }
             SR = new SolutionRepository();
 
-            SR.AddItemInfo<ApplicationAPIModel>("*.Ginger.ApplicationAPIModel.xml", @"~\Applications Models\API Models", true, "API Models", addToRootFolders: true, PropertyNameForFileName: nameof(ApplicationAPIModel.Name));
+            SR.AddItemInfo<ApplicationAPIModel>("*.Ginger.ApplicationAPIModel.xml", @"~\Applications Models\API Models", true, "API Models", PropertyNameForFileName: nameof(ApplicationAPIModel.Name));
             // SR.AddItemInfo<GlobalAppModelParameter>("*.Ginger.GlobalAppModelParameter.xml", @"~\Applications Models\Global Models Parameters", true, "Global Model Parameters", addToRootFolders: true, PropertyNameForFileName: nameof(GlobalAppModelParameter.PlaceHolder));
 
             SR.CreateRepository(TempSolutionFolder);
