@@ -120,8 +120,6 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
                 xModelsGlobalParamsGrid.Grid.BeginningEdit += grdMain_BeginningEdit;
                 xModelsGlobalParamsGrid.Grid.CellEditEnding += grdMain_CellEditEndingAsync;
-
-                xModelsGlobalParamsGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForGlobalParameters));
             }
 
             
