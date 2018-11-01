@@ -5271,30 +5271,26 @@ namespace GingerCore.Drivers
             switch (act.ControlAction)
             {
                 case ActBrowserElement.eControlAction.Maximize:
-
                     Driver.Manage().Window.Maximize();
-
                     break;
 
                 case ActBrowserElement.eControlAction.OpenURLNewTab:
-
-                    IJavaScriptExecutor js = (IJavaScriptExecutor)Driver;
-                    js.ExecuteScript("window.open();");
-                    Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
-
+                    OpenUrlNewTab();
                     GotoURL(act, act.GetInputParamCalculatedValue("Value"));
                     break;
+
                 case ActBrowserElement.eControlAction.GotoURL:
 
                     if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewTab.ToString()))
                     {
-                        IJavaScriptExecutor js1 = (IJavaScriptExecutor)Driver;
-                        js1.ExecuteScript("window.open();");
-                        Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
+                        OpenUrlNewTab();
                     }
                     else if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewWindow.ToString()))
                     {
-                        this.StartDriver();
+                        IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
+                        javaScriptExecutor.ExecuteScript("newwindow=window.open('about:blank','newWindow','height=250,width=350');if (window.focus) { newwindow.focus()}return false; ");
+                        Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
+                        Driver.Manage().Window.Maximize();
                     }
                     GotoURL(act, act.GetInputParamCalculatedValue("Value"));
 
@@ -5441,6 +5437,13 @@ namespace GingerCore.Drivers
                 default:
                     throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
             }
+        }
+
+        private void OpenUrlNewTab()
+        {
+            IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
+            javaScriptExecutor.ExecuteScript("window.open();");
+            Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
         }
 
         public string GetSearchedWinTitle(Act act)
