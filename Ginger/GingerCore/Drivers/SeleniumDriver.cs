@@ -5776,10 +5776,10 @@ namespace GingerCore.Drivers
                     case ActUIElement.eElementAction.ClickXY:
                         int x = 0;
                         int y = 0;
-                        if (!Int32.TryParse(act.GetOrCreateInputParam(ActGenElement.Fields.Xoffset).ValueForDriver, out x) || !Int32.TryParse(act.GetOrCreateInputParam(ActGenElement.Fields.Yoffset).ValueForDriver, out y))
+                        if (!Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver, out x) || !Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver, out y))
                         {
                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            act.ExInfo = "Cannot Click by XY with String Value, X Value: " + act.GetOrCreateInputParam(ActGenElement.Fields.Xoffset).ValueForDriver + ", Y Value: " + act.GetOrCreateInputParam(ActGenElement.Fields.Yoffset).ValueForDriver + "  ";
+                            act.ExInfo = "Cannot Click by XY with String Value, X Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver + ", Y Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver + "  ";
                         }
                         OpenQA.Selenium.Interactions.Actions actionClick = new OpenQA.Selenium.Interactions.Actions(Driver);
                         actionClick.MoveToElement(e, x, y).Click().Build().Perform();
