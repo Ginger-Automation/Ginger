@@ -8,8 +8,9 @@
     xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
     xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
     x:Class="Ginger.AutomatePage" 
-      mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="800"
+    h:GingerHelpProvider.HelpString="Automate"
+    mc:Ignorable="d" 
+    d:DesignHeight="600" d:DesignWidth="800"
 	Title="AutomatePage">
 
 

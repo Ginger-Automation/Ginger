@@ -116,6 +116,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 xModelsGlobalParamsGrid.ShowAdd = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowDelete = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowClearAll = Visibility.Visible;
+                xModelsGlobalParamsGrid.ShowUpDown = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.Grid.CanUserDeleteRows = false;
 
                 xModelsGlobalParamsGrid.Grid.BeginningEdit += grdMain_BeginningEdit;
