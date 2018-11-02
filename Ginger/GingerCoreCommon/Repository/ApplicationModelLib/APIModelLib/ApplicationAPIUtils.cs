@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -106,7 +106,9 @@ namespace Amdocs.Ginger.Repository
             [EnumValueDescription("application/x-www-form-urlencoded")]
             XwwwFormUrlEncoded,
             [EnumValueDescription("multipart/form-data")]
-            FormData
+            FormData,
+            [EnumValueDescription("application/pdf")]
+            PDF
         }
 
         public enum eCookieMode

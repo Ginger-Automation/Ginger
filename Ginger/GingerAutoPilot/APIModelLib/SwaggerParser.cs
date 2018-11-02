@@ -38,12 +38,11 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
         string ResolvedJson = "";
         SwaggerDocument Swaggerdoc = null;
 
-        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, bool avoidDuplicatesNodes = false)
+        public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> SwaggerModels, bool avoidDuplicatesNodes = false)
         {
             string FinalFileName = "";
             Uri url = new Uri(FileName);
             
-            ObservableList<ApplicationAPIModel> SwaggerModels = new ObservableList<ApplicationAPIModel>();
             string orignaljson = "";
             if (url.IsFile)
             {
@@ -350,7 +349,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             string temppath = System.IO.Path.GetTempFileName();
             File.WriteAllText(temppath, xmlbody);
             XMLTemplateParser XTp = new XMLTemplateParser();
-            ApplicationAPIModel aam = XTp.ParseDocument(temppath).ElementAt(0);
+            ApplicationAPIModel aam = XTp.ParseDocument(temppath,new ObservableList<ApplicationAPIModel>()).ElementAt(0);
             object[] BodyandModelParameters = JSONTemplateParser.GenerateBodyANdModelParameters(SampleBody);
             aAM.RequestBody = aam.RequestBody;
             aAM.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.FreeText;
