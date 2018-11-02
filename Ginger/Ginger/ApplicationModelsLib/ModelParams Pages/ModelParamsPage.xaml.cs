@@ -230,7 +230,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     AccessDataSource mDSDetails = (AccessDataSource)(((DataSourceTable)selectedRunSet[0]).DSC);
                     string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
                     List<AppParameters> parameters = GetParameterList();
-                    im.ExportSelectedParametersToDataSouce(parameters, mDSDetails, tableName); 
+                    im.ExportSelectedParametersToDataSouce(parameters, mDSDetails, tableName, false); 
                 }
             }
             catch (System.Exception ex)

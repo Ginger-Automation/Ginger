@@ -184,7 +184,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     AccessDataSource mDSDetails = (AccessDataSource)(((DataSourceTable)selectedRunSet[0]).DSC);
                     string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
                     List<AppParameters> parameters = GetParameterList();
-                    im.ExportSelectedParametersToDataSouce(parameters, mDSDetails, tableName);
+                    im.ExportSelectedParametersToDataSouce(parameters, mDSDetails, tableName, true);
                 }
             }
             catch (System.Exception ex)

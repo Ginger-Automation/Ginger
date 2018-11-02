@@ -941,8 +941,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             try
             {
                 string tableName = ParameterType == eParameterType.Global ? "GlobalModelParameters" : "ModelParameters";
+                bool isGlobalParam = ParameterType == eParameterType.Global ? true : false;
 
-                DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName);
+                DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName, isGlobalParam);
 
                 if (!string.IsNullOrEmpty(fPath))
                 {
@@ -967,7 +968,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             return filePath;
         }
 
-        private DataTable ExportParametertoDataTable(List<AppParameters> parameters,string tableName)
+        private DataTable ExportParametertoDataTable(List<AppParameters> parameters,string tableName, bool isGlobalParams)
         {            
             int colCount = 0;
             foreach (var paramVal in parameters)
@@ -991,7 +992,18 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 dtTemplate.Columns.Add(string.Format("Value {0}", index), typeof(string));
             }
 
-            foreach (AppParameters prm in parameters.OrderBy(o => o.ItemName).ToList())
+            List<AppParameters> apps = new List<AppParameters>();
+            if(isGlobalParams)
+            {
+                apps = parameters.OrderBy(o => o.ItemName).ToList();
+            }
+            else
+            {
+                apps = parameters;
+            }
+
+            
+            foreach (AppParameters prm in apps)
             {
                 DataRow dr = dtTemplate.NewRow();
                 dr[0] = Convert.ToString(prm.ItemName);
@@ -1422,7 +1434,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// This method will export the parameters to DataSource
         /// </summary>
         /// <param name="parameters"></param>
-        public void ExportSelectedParametersToDataSouce(List<AppParameters> parameters, AccessDataSource mDSDetails, string tableName)
+        public void ExportSelectedParametersToDataSouce(List<AppParameters> parameters, AccessDataSource mDSDetails, string tableName, bool isGlobalParam)
         {
             try
             {
@@ -1443,7 +1455,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         mDSDetails.AddColumn(tableName, "GINGER_USED", "Text");
                     }
 
-                    DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName);                    
+                    DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName, isGlobalParam);                    
                     dtTemplate = PivotTable(dtTemplate);
                     //Removing Paramter Name Column                    
                     if (dtTemplate.Columns.Contains(PARAMETER_NAME))
