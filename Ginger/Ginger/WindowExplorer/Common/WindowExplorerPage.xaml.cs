@@ -338,14 +338,14 @@ namespace Ginger.WindowExplorer
 
             ControlsViewsExpander.IsEnabled = ControlsViewsExpanderFlag;
             if (ControlsViewsExpanderFlag)
-                ControlsViewsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString());
+                ControlsViewsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString());
             else
                 ControlsViewsExpanderLable.Foreground = Brushes.Gray;
 
 
             SelectedControlDetailsExpander.IsEnabled = SelectedControlDetailsExpanderFlag;
             if (SelectedControlDetailsExpanderFlag)
-                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString());
+                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString());
             else
                 SelectedControlDetailsExpanderLable.Foreground = Brushes.Gray;
 
@@ -1087,7 +1087,7 @@ namespace Ginger.WindowExplorer
             else
             {
                 SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementTitle + "' Element Details & Actions";
-                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString()); ;
+                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString()); ;
                 SelectedControlDetailsExpander.IsEnabled = true;
                 if (mFirstElementSelectionDone == false)
                 {

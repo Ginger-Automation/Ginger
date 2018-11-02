@@ -211,16 +211,16 @@ namespace Ginger
             Window parentWindow = Window.GetWindow((Button)sender);
             parentWindow.IsEnabled = false;
             if (mCloseEventHandler != null)
+            {
                 mCloseEventHandler.Invoke(this, new RoutedEventArgs());
+                if (this.Owner != null)
+                {
+                    this.Owner.Focus();
+                }
+            }
             else
-                CloseWindow();
-            parentWindow.IsEnabled = true;
-        }
-
-        private void CloseWindow()
-        {
-            CurrentWindow = null;
-            this.Close();
+                this.Close();
+            parentWindow.IsEnabled = true;            
         }
 
         private void PinBtn_Click(object sender, RoutedEventArgs e)
