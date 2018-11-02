@@ -1575,7 +1575,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Cancelling;
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Canceling;
                     act.Error += "Timeout Occurred, Elapsed > " + act.Timeout;
                     if (GiveUserFeedback) OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.DoEventsRequired, null);
                 }

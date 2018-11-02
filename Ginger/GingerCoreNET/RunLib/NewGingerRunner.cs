@@ -955,7 +955,7 @@
 //                }
 //                else
 //                {
-//                    act.Status = eRunStatus.Cancelling;
+//                    act.Status = eRunStatus.Canceling;
 //                    act.Error += "Timeout Occurred, Elapsed > " + act.Timeout;
 //                }
 //            }
