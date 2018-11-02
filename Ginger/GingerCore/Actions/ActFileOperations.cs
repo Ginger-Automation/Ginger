@@ -59,7 +59,7 @@ namespace GingerCore.Actions
             ForceCopy,
             RunCommand,
             UnZip,
-            ClearDirectoryContent
+            DeleteDirectoryFiles
         }
 
         private eFileoperations mFileOperation = eFileoperations.CheckFileExists;
@@ -178,7 +178,7 @@ namespace GingerCore.Actions
                     }
 
                     break;
-                case eFileoperations.ClearDirectoryContent:
+                case eFileoperations.DeleteDirectoryFiles:
                     if (!System.IO.Directory.Exists(calculatedSourceFilePath))
                     {
                         base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
