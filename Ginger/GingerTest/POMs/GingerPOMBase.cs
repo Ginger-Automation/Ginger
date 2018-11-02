@@ -79,7 +79,7 @@ namespace GingerWPFUnitTest.POMs
             Execute(() => {                
                 // try up to 10 seconds
                 Stopwatch st = Stopwatch.StartNew();
-                while (d == null & st.ElapsedMilliseconds < 10000)
+                while (d == null && st.ElapsedMilliseconds < 10000)
                 {
                     d = (DependencyObject)LogicalTreeHelper.FindLogicalNode(context, name);
                     if (d != null) break;                    
