@@ -41,20 +41,12 @@ namespace Ginger.Actions
             mAct = act;
 
             ePlatformType ActivityPlatform = GetActionPlatform();
-            if(ActivityPlatform != ePlatformType.Android)
-            {
-                mPlatform = PlatformInfoBase.GetPlatformImpl(ActivityPlatform);
+            mPlatform = PlatformInfoBase.GetPlatformImpl(ActivityPlatform);
 
-                List<ActBrowserElement.eControlAction> LocateByList = mPlatform.GetPlatformActBrowserElementList();
+            List<ActBrowserElement.eControlAction> locateControlAction = mPlatform.GetPlatformActBrowserElementList();
 
-                //bind controls
-                App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction, LocateByList.Cast<object>().ToList());
-            }
-            else
-            {
-                App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction);
-            }
-           
+            //bind controls
+            App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction, locateControlAction.Cast<object>().ToList());
             App.ObjFieldBinding(xControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActBrowserElement.Fields.ControlAction);
 
             ValueUC.Init(mAct.GetOrCreateInputParam("Value"));
@@ -104,7 +96,7 @@ namespace Ginger.Actions
                     if (mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL)
                     {
                         xOpenURLInPnl.Visibility = System.Windows.Visibility.Visible;
-                    }                    
+                    }
                     xValueGrid.Visibility = System.Windows.Visibility.Visible;
                     xValueLabel.Content = "URL:";
                 }

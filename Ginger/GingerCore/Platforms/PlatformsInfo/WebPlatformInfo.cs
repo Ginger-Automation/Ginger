@@ -69,7 +69,6 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.RunJavaScript);
             browserActElementList.Add(ActBrowserElement.eControlAction.Maximize);
             browserActElementList.Add(ActBrowserElement.eControlAction.Close);
-            browserActElementList.Add(ActBrowserElement.eControlAction.CloseBrowser);
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchFrame);
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToParentFrame);
