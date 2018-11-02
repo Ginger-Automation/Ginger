@@ -131,7 +131,7 @@
         <Label x:Name="StatusLabel" Grid.Row="5">Status</Label>
         <ProgressBar x:Name="ProgressBar" Grid.Row="5" Grid.Column="1" Background="Gray" Margin="5" Width="100"></ProgressBar>
 
-        <GridSplitter ResizeDirection="Columns" Grid.Row="1" Grid.Column="1" Width="5" Grid.RowSpan="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource @Skin1_ColorA}" IsEnabled="True"/>
+        <GridSplitter ResizeDirection="Columns" Grid.Row="1" Grid.Column="1" Width="5" Grid.RowSpan="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True"/>
 
     </Grid>
 </Page>
