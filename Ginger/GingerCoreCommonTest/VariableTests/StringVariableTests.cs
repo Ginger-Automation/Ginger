@@ -156,15 +156,17 @@ namespace GingerCoreCommonTest.VariableTests
         public void PasswordStringVar_TestResetValue()
         {
             //Arrange
+            string password = "testPass"; 
             VariablePasswordString variablePasswordString = new VariablePasswordString();
             variablePasswordString.Name = "p1";
-            variablePasswordString.Password = "testPass";
+            variablePasswordString.Password = password;
 
             //Act
+            variablePasswordString.Value = password + "change";
             variablePasswordString.ResetValue();
 
             //Assert
-            Assert.IsNull(variablePasswordString.Password, "Reset Value not null");
+            Assert.AreEqual(password, variablePasswordString.Value, "");
         }
 
         [TestMethod]
