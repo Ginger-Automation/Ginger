@@ -112,6 +112,11 @@ namespace GingerCore.Drivers
         public string UserProfileFolderPath { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Only for Chrome | Define Download Folder path")]
+        public string DownloadFolderPath { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("30")]
         [UserConfiguredDescription("Implicit Wait for Web Action Completion")]
         public int ImplicitWait { get; set; }
@@ -362,7 +367,7 @@ namespace GingerCore.Drivers
                      
 
                         }
-
+                       
                         if (Convert.ToInt32(HttpServerTimeOut) > 60)
                         {
                             FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
@@ -383,6 +388,17 @@ namespace GingerCore.Drivers
                         else if (!string.IsNullOrEmpty(ExtensionPath))
                             options.AddExtension(Path.GetFullPath(ExtensionPath));
                         options.Proxy = mProxy == null ? null : mProxy;
+
+                        //DownloadFolderPath
+                        if (!string.IsNullOrEmpty(DownloadFolderPath))
+                        {
+                            if (!System.IO.Directory.Exists(DownloadFolderPath))
+                            {
+                                System.IO.Directory.CreateDirectory(DownloadFolderPath);
+                            }
+                            options.AddUserProfilePreference("download.default_directory", DownloadFolderPath);
+                        }
+                        
                         if (BrowserPrivateMode == true)
                         {
                             options.AddArgument("--incognito");
@@ -3493,7 +3509,7 @@ namespace GingerCore.Drivers
                     AppWindow AW = new AppWindow();
                     AW.Title = Driver.Title;
                     AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
-                    list.Add(AW);
+                    list.Add(AW);                    
                 }
                 return list;
             }
@@ -5779,10 +5795,10 @@ namespace GingerCore.Drivers
                     case ActUIElement.eElementAction.ClickXY:
                         int x = 0;
                         int y = 0;
-                        if (!Int32.TryParse(act.GetOrCreateInputParam(ActGenElement.Fields.Xoffset).ValueForDriver, out x) || !Int32.TryParse(act.GetOrCreateInputParam(ActGenElement.Fields.Yoffset).ValueForDriver, out y))
+                        if (!Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver, out x) || !Int32.TryParse(act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver, out y))
                         {
                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            act.ExInfo = "Cannot Click by XY with String Value, X Value: " + act.GetOrCreateInputParam(ActGenElement.Fields.Xoffset).ValueForDriver + ", Y Value: " + act.GetOrCreateInputParam(ActGenElement.Fields.Yoffset).ValueForDriver + "  ";
+                            act.ExInfo = "Cannot Click by XY with String Value, X Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver + ", Y Value: " + act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver + "  ";
                         }
                         OpenQA.Selenium.Interactions.Actions actionClick = new OpenQA.Selenium.Interactions.Actions(Driver);
                         actionClick.MoveToElement(e, x, y).Click().Build().Perform();
@@ -5876,7 +5892,10 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                Driver.SwitchTo().DefaultContent();
+                if (act.ElementLocateBy == eLocateBy.POMElement)
+                {
+                    Driver.SwitchTo().DefaultContent();
+                }
             }
         }
 

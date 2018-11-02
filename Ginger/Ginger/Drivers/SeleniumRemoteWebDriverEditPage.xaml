@@ -10,7 +10,7 @@
     <TabControl x:Name="ActionTab" HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged">
         <TabItem Header="Configuration" >
 
-        <Grid x:Name="pageGrid" Background="{StaticResource @Skin1_ColorC}" >
+        <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="140"/>
             <ColumnDefinition Width="300"/>
@@ -45,7 +45,7 @@
                             <RowDefinition Height="50"/>
                             <RowDefinition Height="50"/>
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="1" HorizontalAlignment="Left"  Margin="10,10,0,0"  Foreground="#20334f">
+                        <Label Grid.Row="1" HorizontalAlignment="Left"  Margin="10,10,0,0"  Foreground="#152B37">
                             <Label.Content>
                                 <AccessText TextWrapping="NoWrap" Text="IE options – enable protected mode for all zones"/>
                             </Label.Content>
@@ -74,7 +74,7 @@
 
         
         <TabItem x:Name="ConsoleTab" Header="Console" >
-            <Grid Background="{StaticResource @Skin1_ColorC}">
+            <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="500"/>

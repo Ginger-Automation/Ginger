@@ -5,6 +5,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:UserControlsLib="clr-namespace:GingerWPF.UserControlsLib"
       xmlns:ginger="clr-namespace:Ginger"
+      xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Model Parameters"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="ModelsGlobalParamsPage">

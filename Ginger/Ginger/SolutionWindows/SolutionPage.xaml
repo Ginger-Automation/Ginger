@@ -12,7 +12,7 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Label x:Name="xLoadSolutionlbl" Style="{StaticResource $LabelStyle}" FontSize="20" Content="Please Load Solution" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <StackPanel x:Name="xSolutionDetailsStack" Background="{StaticResource @Skin1_ColorC}" Grid.Row="0" Margin="5,0,5,0" >
+        <StackPanel x:Name="xSolutionDetailsStack" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="0" Margin="5,0,5,0" >
             <!--<usercontrols:ucButton x:Name="xSaveButton" ToolTip="Save Changes" VerticalAlignment="Top" HorizontalAlignment="Right" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Visibility="Visible" Margin="0,0,5,0" Click="xSaveButton_Click"></usercontrols:ucButton>-->
             <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Solution Name:"  />
             <TextBox x:Name="SolutionNameTextBox" Style="{StaticResource @TextBoxStyle}" FontWeight="Bold" FontSize="14" IsReadOnly="False"/>

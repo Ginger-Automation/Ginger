@@ -12,7 +12,7 @@
       MinHeight="100" MinWidth="450"
 	Title="Ginger Window Explorer">
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="WindowComboboxRow" Height="30" />
             <RowDefinition Height="30"/>
@@ -32,7 +32,7 @@
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Window:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-           <ComboBox Grid.Column="1" x:Name="WindowsComboBox" SelectionChanged="WindowsComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource @Skin1_ColorB}"/>
+           <ComboBox Grid.Column="1" x:Name="WindowsComboBox" SelectionChanged="WindowsComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
             <Button Grid.Column="2" x:Name="RefreshWindowsButton" Click="RefreshWindowsButton_Click" usercontrols:ImageMaker.Content="Refresh" Width="18" ToolTip="Refresh Windows List" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">                
             </Button>
             <Button Grid.Column="3" x:Name="AddSwitchWindowActionButton" Click="AddSwitchWindowActionButton_Click" ToolTip="Add Switch Window Action to Business Flow" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -57,12 +57,12 @@
         </StackPanel>
 
         <!--Controls Views Area-->
-        <Expander x:Name="ControlsViewsExpander" Grid.Row="2" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource @Skin1_ColorA}" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed" >
+        <Expander x:Name="ControlsViewsExpander" Grid.Row="2" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed" >
             <Expander.Header>
-                <Label x:Name="ControlsViewsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource @Skin1_ColorC}" Content="Window Elements"/>                
+                <Label x:Name="ControlsViewsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $BackgroundColor_LightGray}" Content="Window Elements"/>                
             </Expander.Header>
             <Expander.Content>
-                    <Grid Background="{StaticResource @Skin1_ColorC}">                      
+                    <Grid Background="{StaticResource $BackgroundColor_LightGray}">                      
                         <UCTreeView:TreeView2 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                         <Ginger:ucGrid x:Name="WindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
                     </Grid>
@@ -80,12 +80,12 @@
         </StackPanel>
 
         <!--Selected Control Details Area-->
-        <Expander x:Name="SelectedControlDetailsExpander" Grid.Row="3" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="False" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource @Skin1_ColorA}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
+        <Expander x:Name="SelectedControlDetailsExpander" Grid.Row="3" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="False" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
             <Expander.Header>
-                <Label x:Name="SelectedControlDetailsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource @Skin1_ColorC}" Content="Selected Element Details &amp; Actions"/>
+                <Label x:Name="SelectedControlDetailsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $BackgroundColor_LightGray}" Content="Selected Element Details &amp; Actions"/>
             </Expander.Header>
             <Expander.Content>
-                    <TabControl x:Name="ControlTabs"  SelectionChanged="ControlTabs_SelectionChanged" Background="{StaticResource @Skin1_ColorC}">
+                    <TabControl x:Name="ControlTabs"  SelectionChanged="ControlTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">
                         <TabItem x:Name="GeneralTab" Header="General">
                                 <Frame x:Name="ControlFrame"/>    
                         </TabItem>
@@ -101,7 +101,7 @@
         
         <!--Status Row-->
         <ScrollViewer Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <Border BorderThickness="1" BorderBrush="{StaticResource @Skin1_ColorA}">
+            <Border BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}">
                 <TextBlock x:Name="StatusTextBlock" Text="Ready"
                            TextWrapping="Wrap" Style="{StaticResource @DetailsTextBlockStyle}"/>
             </Border>
@@ -123,6 +123,6 @@
         <Frame x:Name="POMFrame" Grid.Row="6">
         </Frame>
 
-        <GridSplitter x:Name="Row2Splitter" ResizeDirection="Rows" Grid.Row="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}"/>
+        <GridSplitter x:Name="Row2Splitter" ResizeDirection="Rows" Grid.Row="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}"/>
     </Grid>
 </Page>

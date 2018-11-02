@@ -13,7 +13,7 @@
       d:DesignHeight="800"
       SizeChanged="Page_SizeChanged">
 
-    <Grid Name="pageGrid" Background="{StaticResource @Skin1_ColorC}">
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.Resources>
             <DataTemplate x:Key="ValueExpressionButton">
                 <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
@@ -97,17 +97,17 @@
         <!--</Grid>-->
 
         <!--Tabs Area-->
-        <TabControl x:Name="ActionTab" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" Background="{StaticResource @Skin1_ColorC}">
+        <TabControl x:Name="ActionTab" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
+                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
                     <Setter Property="Height" Value="33"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="False" >
-                            <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True" >
-                            <Setter Property="Background" Value="{StaticResource @Skin1_ColorC}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>
@@ -116,7 +116,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource  @Config_20x20.png }" Height="20" Width="20" />
-                        <TextBlock Text="Configurations" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <TextBlock Text="Configurations" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
 
@@ -126,7 +126,7 @@
                         <StackPanel               
                             VerticalAlignment="Stretch" 
                              >
-                            <Grid x:Name="ActionLocatorPanel" Background="{StaticResource @Skin1_ColorC}">
+                            <Grid x:Name="ActionLocatorPanel" Background="{StaticResource $BackgroundColor_LightGray}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="30"/>
                                 </Grid.RowDefinitions>
@@ -140,12 +140,12 @@
                                     <ColumnDefinition Width="30" />
                                 </Grid.ColumnDefinitions>
 
-                                <Label Grid.Column="0" Content="Locate By:" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}"/>
+                                <Label Grid.Column="0" Content="Locate By:" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}"/>
                                 <ComboBox Grid.Column="1" x:Name="cboLocateBy" SelectionChanged="cboLocateBy_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" 
                                                   ToolTip="How to Locate the Element on the screen" 
                                                    />
 
-                                <Label Grid.Column="2" Content="Locate Value:" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource @Skin1_ColorC}" />
+                                <Label Grid.Column="2" Content="Locate Value:" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}" />
                                 <Actions:UCValueExpression Grid.Column="3" HorizontalAlignment="Stretch" x:Name="txtLocateValue" />
                                 <Button Grid.Column="4" x:Name="btnEditLocator" Click="btnEditLocator_Click" Style="{StaticResource @InputButtonStyle}" >Edit</Button>
                                 
@@ -170,7 +170,7 @@
                                     <Ginger:ucGrid x:Name="InputValuesGrid" Title="Input Value(s)" Height="156"/>
                                 </StackPanel>
                                 <StackPanel Name="ValueBoxPanel" Orientation="Horizontal" Margin="0,10,0,0">
-                                    <Label Name="ValueLabel" Style="{StaticResource @SubInputFieldLabelStyle}" Content="Value" Background="{StaticResource @Skin1_ColorC}"/>
+                                    <Label Name="ValueLabel" Style="{StaticResource @SubInputFieldLabelStyle}" Content="Value" Background="{StaticResource $BackgroundColor_LightGray}"/>
                                     <Actions:UCValueExpression x:Name="ValueUC" Margin="37,0,0,0" Width="640" ToolTip="Value to Set"/>
                                 </StackPanel>
                             </StackPanel>
@@ -185,7 +185,7 @@
                         <Image Source="{StaticResource  @Reset_24x24.png }" Height="20" Width="20" />
                         <Image Tag="OffSignImage" Source="{StaticResource  @OffSign_24x24.png }" Height="20" Width="20" Margin="-7,0,0,0"  />
                         <Image Tag="OnSignImage" Source="{StaticResource  @OnSign_24x24.png }" Height="20" Width="20" Margin="-7,0,0,0" Visibility="Collapsed"/>
-                        <TextBlock x:Name="RetryMechanismTabTextBlock" Text="Retry Mechanism" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <TextBlock x:Name="RetryMechanismTabTextBlock" Text="Retry Mechanism" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
 
@@ -213,7 +213,7 @@
                         <Image Source="{StaticResource  @Flow_24x24.png }" Height="20" Width="20" />
                         <Image Tag="OffSignImage" Source="{StaticResource  @OffSign_24x24.png }" Height="20" Width="20" Margin="-7,0,0,0"  />
                         <Image Tag="OnSignImage" Source="{StaticResource  @OnSign_24x24.png }" Height="20" Width="20" Margin="-7,0,0,0" Visibility="Collapsed"/>
-                        <TextBlock x:Name="FlowControlTabTextBlock" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold">
+                        <TextBlock x:Name="FlowControlTabTextBlock" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">
                             <Run>Flow Control</Run>
                             <Run x:Name="FlowControlCountLabel">(0)</Run>
                         </TextBlock>
@@ -229,14 +229,14 @@
                         <Image Source="{StaticResource  @Outputs_32x32.png }" Height="20" Width="20" />
                         <Image Tag="OffSignImage" Source="{StaticResource  @OffSign_24x24.png }" Height="20" Width="20" Margin="-4,0,0,0"  />
                         <Image Tag="OnSignImage" Source="{StaticResource  @OnSign_24x24.png }" Height="20" Width="20" Margin="-4,0,0,0" Visibility="Collapsed"/>
-                        <TextBlock x:Name="OutputTabTextBlock" VerticalAlignment="Center" Margin="-1,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold">
+                        <TextBlock x:Name="OutputTabTextBlock" VerticalAlignment="Center" Margin="-1,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">
                             <Run>Output Values</Run>
                             <Run x:Name="OutputCount">(0)</Run>
                         </TextBlock>
                     </StackPanel>
                 </TabItem.Header>
 
-                <Grid   x:Name="xActionOutputGrid" Background="{StaticResource @Skin1_ColorC}">
+                <Grid   x:Name="xActionOutputGrid" Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30" Name="DataSourceRow"/>
                         <RowDefinition Height="33" Name="ActionLogRow"/>
@@ -251,7 +251,7 @@
                             </Label>
                         </Expander.Header>
                         <Expander.Content>
-                            <Grid x:Name="DataSourceGrid" Background="{StaticResource @Skin1_ColorC}">
+                            <Grid x:Name="DataSourceGrid" Background="{StaticResource $BackgroundColor_LightGray}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="69*"/>
                                     <ColumnDefinition Width="1019*"/>
@@ -289,7 +289,7 @@
                             </Label>
                         </Expander.Header>
                         <Expander.Content>
-                            <Grid x:Name="ActionLogGrid" Background="{StaticResource @Skin1_ColorC}">
+                            <Grid x:Name="ActionLogGrid" Background="{StaticResource $BackgroundColor_LightGray}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="170" Name="ActionLogConfigRow"/>
@@ -317,14 +317,14 @@
                         <Image Source="{StaticResource @Camera_32x32.png}" Height="20" Width="20"/>
                         <Image Tag="OffSignImage" Source="{StaticResource  @OffSign_24x24.png }" Height="20" Width="20" Margin="-6,0,0,0"  />
                         <Image Tag="OnSignImage" Source="{StaticResource  @OnSign_24x24.png }" Height="20" Width="20" Margin="-6,0,0,0" Visibility="Collapsed"/>
-                        <TextBlock x:Name="ScreenShotTabTextBlock" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold">
+                        <TextBlock x:Name="ScreenShotTabTextBlock" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">
                             <Run>Screenshots</Run>
                             <Run x:Name="ScreenShotCount">(0)</Run>
                         </TextBlock>
                     </StackPanel>
                 </TabItem.Header>
 
-                <Grid  x:Name="xActionScreenshots" Background="{StaticResource @Skin1_ColorC}">
+                <Grid  x:Name="xActionScreenshots" Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60" />
                         <RowDefinition Height="30*"/>
@@ -338,7 +338,7 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <Grid x:Name="ScreenShotsGrid" Grid.Row="1" Margin="5,10,0,0" Background="{StaticResource @Skin1_ColorC}" />
+                    <Grid x:Name="ScreenShotsGrid" Grid.Row="1" Margin="5,10,0,0" Background="{StaticResource $BackgroundColor_LightGray}" />
                 </Grid>
             </TabItem>
 
@@ -346,7 +346,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <Image Source="{StaticResource  @Report_32x32 }" Height="20" Width="20" />
-                        <TextBlock Text="Run Details" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <TextBlock Text="Run Details" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
 
@@ -364,16 +364,16 @@
                     </Grid.RowDefinitions>
 
                     <Label Content="Run Status:" Grid.Row="0" HorizontalAlignment="Stretch" Style="{StaticResource @InputFieldLabelStyle}"/>
-                    <Label x:Name="RTStatusLabel" Grid.Row="0" Grid.Column="1" FontSize="14" Foreground="{DynamicResource @Skin1_ColorA}" FontWeight="Bold" Style="{StaticResource @InputFieldLabelStyle}"/>
+                    <Label x:Name="RTStatusLabel" Grid.Row="0" Grid.Column="1" FontSize="14" Foreground="{DynamicResource $Color_DarkBlue}" FontWeight="Bold" Style="{StaticResource @InputFieldLabelStyle}"/>
 
                     <Label Content="Elapsed Time:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource @InputFieldLabelStyle}"/>
-                    <Label x:Name="RTElapsedLabel" Grid.Row="1" Grid.Column="1" FontSize="14" Foreground="{DynamicResource @Skin1_ColorA}" FontWeight="Bold" Style="{StaticResource @InputFieldLabelStyle}"/>
+                    <Label x:Name="RTElapsedLabel" Grid.Row="1" Grid.Column="1" FontSize="14" Foreground="{DynamicResource $Color_DarkBlue}" FontWeight="Bold" Style="{StaticResource @InputFieldLabelStyle}"/>
 
                     <Label Content="Extra Information:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource @InputFieldLabelStyle}"/>
-                    <TextBox x:Name="RTExInfoLabel" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="12" Style="{StaticResource @MultiRowsTextBoxStyle}" Background="{StaticResource @Skin1_ColorC}" />
+                    <TextBox x:Name="RTExInfoLabel" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="12" Style="{StaticResource @MultiRowsTextBoxStyle}" Background="{StaticResource $BackgroundColor_LightGray}" />
 
                     <Label Content="Error Details:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource @InputFieldLabelStyle}"/>
-                    <TextBox x:Name="RTErrorLabel" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="14" Foreground="Red" FontWeight="Bold" Style="{StaticResource @MultiRowsTextBoxStyle}" Background="{StaticResource @Skin1_ColorC}"></TextBox>
+                    <TextBox x:Name="RTErrorLabel" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="14" Foreground="Red" FontWeight="Bold" Style="{StaticResource @MultiRowsTextBoxStyle}" Background="{StaticResource $BackgroundColor_LightGray}"></TextBox>
                 </Grid>
             </TabItem>
 
@@ -383,7 +383,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <Image Source="{StaticResource  @Help_32x32 }" Height="20" Width="20"/>
-                        <TextBlock Text="Help" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <TextBlock Text="Help" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
 
@@ -400,7 +400,7 @@
                 <Label Content="Run Status" Style="{StaticResource @HorizontalExpanderLightLabelStyle}"/>
             </Expander.Header>
             <Expander.Content>
-                <Grid  Background="{StaticResource @Skin1_ColorC}">
+                <Grid  Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="35"/>
                         <RowDefinition Height="40*"/>

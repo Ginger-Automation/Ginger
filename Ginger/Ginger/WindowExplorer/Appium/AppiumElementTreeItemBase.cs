@@ -32,7 +32,11 @@ namespace Ginger.WindowExplorer.Appium
 {
     public class AppiumElementTreeItemBase :  ITreeViewItem, IWindowExplorerTreeItem
     {
-        //TreeView2 mTV;
+        public ITreeView TreeView
+        {
+            get;
+            set;
+        }
 
         public AppiumElementInfo AppiumElementInfo { get; set; }
 
