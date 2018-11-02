@@ -112,6 +112,11 @@ namespace GingerCore.Drivers
         public string UserProfileFolderPath { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Only for Chrome | Define Download Folder path")]
+        public string DownloadFolderPath { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("30")]
         [UserConfiguredDescription("Implicit Wait for Web Action Completion")]
         public int ImplicitWait { get; set; }
@@ -362,7 +367,7 @@ namespace GingerCore.Drivers
                      
 
                         }
-
+                       
                         if (Convert.ToInt32(HttpServerTimeOut) > 60)
                         {
                             FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
@@ -383,6 +388,17 @@ namespace GingerCore.Drivers
                         else if (!string.IsNullOrEmpty(ExtensionPath))
                             options.AddExtension(Path.GetFullPath(ExtensionPath));
                         options.Proxy = mProxy == null ? null : mProxy;
+
+                        //DownloadFolderPath
+                        if (!string.IsNullOrEmpty(DownloadFolderPath))
+                        {
+                            if (!System.IO.Directory.Exists(DownloadFolderPath))
+                            {
+                                System.IO.Directory.CreateDirectory(DownloadFolderPath);
+                            }
+                            options.AddUserProfilePreference("download.default_directory", DownloadFolderPath);
+                        }
+                        
                         if (BrowserPrivateMode == true)
                         {
                             options.AddArgument("--incognito");
