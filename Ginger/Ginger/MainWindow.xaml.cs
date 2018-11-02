@@ -131,7 +131,7 @@ namespace Ginger
         {
             try
             {
-                UpdateErrorNotification();
+                UpdateErrorNotificationAsync();
             }
             catch(Exception ex)
             {
@@ -139,18 +139,26 @@ namespace Ginger
             }
         }
 
-        private void UpdateErrorNotification()
+        private async void UpdateErrorNotificationAsync()
         {
-            Task.Factory.StartNew(() =>
+           await Task.Factory.StartNew(() =>
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    if (xLogErrorsPnl != null)
+                    try
                     {
-                        xLogErrorsPnl.Visibility = Visibility.Visible;
-                        xLogErrorsLbl.Content = "[" + ++mErrorsNum + "]";
-                        xLogErrorsPnl.ToolTip = mErrorsNum + " Errors were logged to Ginger log, click to view log file";
+                        if (xLogErrorsPnl != null)
+                        {
+                            xLogErrorsPnl.Visibility = Visibility.Visible;
+                            xLogErrorsLbl.Content = "[" + ++mErrorsNum + "]";
+                            xLogErrorsPnl.ToolTip = mErrorsNum + " Errors were logged to Ginger log, click to view log file";
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        //something went wrong
+                    }
+
                 });
             });
         }
@@ -738,6 +746,13 @@ namespace Ginger
         {
             base.OnClosed(e);
 
+            // unsubscribe Reporter.ErrorReportedEvent
+            Dispatcher.Invoke(() =>
+            {
+                Reporter.ErrorReportedEvent -= Reporter_ErrorReportedEvent;
+                Application.Current.Dispatcher.InvokeShutdown();
+            }, System.Windows.Threading.DispatcherPriority.Send);
+            
             Application.Current.Shutdown();
         }
 
