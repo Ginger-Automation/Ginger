@@ -97,16 +97,18 @@ namespace GingerCoreCommonTest.VariableTests
         public void DynamicVar_TestFormula()
         {
             //Arrange
+            string valExpr = "{VBS Eval=2+2}";
+            string expectedResult = "4";
+
             VariableDynamic variableDynamic = new VariableDynamic();
-            string varVal = "123";
+            variableDynamic.Name = "d1";
+            variableDynamic.Value = valExpr;
 
             //Act
-            variableDynamic.Name = "d1";
-            variableDynamic.Value = varVal;
             string formulaVal = variableDynamic.GetFormula();
 
             //Assert            
-            Assert.AreEqual(formulaVal, varVal, "Dynamic Variable Formula mismatch");
+            Assert.AreEqual(formulaVal, expectedResult, "Dynamic Variable Formula mismatch");
         }
 
 
