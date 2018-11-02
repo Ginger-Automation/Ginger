@@ -7,7 +7,7 @@
       d:DesignHeight="600" d:DesignWidth="800"
       Title="ActionConfigPage">
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="32*"/>
             <ColumnDefinition Width="43*"/>

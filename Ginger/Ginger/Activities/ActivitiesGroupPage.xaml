@@ -10,7 +10,7 @@
       d:DesignHeight="800" d:DesignWidth="800"
 	Title="Edit Activities Group">
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="220"/>
             <RowDefinition Height="200*" />

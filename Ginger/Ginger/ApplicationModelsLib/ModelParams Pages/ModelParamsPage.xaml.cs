@@ -323,17 +323,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void SyncParamsPendingDeleteWithBodyNodes(List<AppModelParameter> paramList)
         {
-            bool someParamContainPath = false;
-            foreach (AppModelParameter param in paramList)
-                if (!string.IsNullOrEmpty(param.Path))
-                    someParamContainPath = true;
-
             APIModelBodyNodeSyncPage bodyNodeSyncPage;
-            if (someParamContainPath)
-            {
-                bodyNodeSyncPage = new APIModelBodyNodeSyncPage((ApplicationAPIModel)mApplicationModel, paramList);
-                bodyNodeSyncPage.ShowAsWindow();
-            }
+            bodyNodeSyncPage = new APIModelBodyNodeSyncPage((ApplicationAPIModel)mApplicationModel, paramList);
+            bodyNodeSyncPage.ShowAsWindow();
         }
 
         private void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)

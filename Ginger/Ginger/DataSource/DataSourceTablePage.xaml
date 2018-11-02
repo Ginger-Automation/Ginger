@@ -9,7 +9,7 @@
       d:DesignHeight="600" d:DesignWidth="800"
 	Title="DataSourceTablePage">
 
-    <Grid x:Name="pageGrid" Background="{StaticResource @Skin1_ColorC}">
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="141"/>
             <ColumnDefinition/>

@@ -8,7 +8,7 @@
       mc:Ignorable="d" 
       Height="375" Width="600">
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="350*"/>
             <RowDefinition Height="25"/>

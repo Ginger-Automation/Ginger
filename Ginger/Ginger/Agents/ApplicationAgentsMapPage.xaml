@@ -54,7 +54,7 @@
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
                                     <Setter Property="FontFamily" Value="Open Sans" />
                                     <!--<Setter Property="Height" Value="25" />-->
                                     <Setter Property="FontSize" Value="12" />
@@ -73,7 +73,7 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="true">
                                                         <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource @Skin1_ColorB2}" />
+                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -110,7 +110,7 @@
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
                                     <Setter Property="FontFamily" Value="Open Sans" />
                                     
                                     <Setter Property="FontSize" Value="12" />
@@ -129,7 +129,7 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="true">
                                                         <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource @Skin1_ColorB2}" />
+                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -166,7 +166,7 @@
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
                                     <Setter Property="FontFamily" Value="Open Sans" />
                                     <!--<Setter Property="Height" Value="25" />-->
                                     <Setter Property="FontSize" Value="12" />
@@ -185,7 +185,7 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="true">
                                                         <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource @Skin1_ColorB2}" />
+                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -224,7 +224,7 @@
                                 <Style TargetType="Button">
                                     <Setter Property="Visibility" Value="Visible" />
                                     <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
                                     <Setter Property="FontFamily" Value="Open Sans" />
                                     <Setter Property="Height" Value="25" />
                                     <Setter Property="FontSize" Value="12" />
@@ -243,7 +243,7 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="true">
                                                         <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource @Skin1_ColorB2}" />
+                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>

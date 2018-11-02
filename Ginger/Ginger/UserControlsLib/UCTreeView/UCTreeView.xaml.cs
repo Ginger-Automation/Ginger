@@ -27,7 +27,7 @@ using Amdocs.Ginger.Repository;
 using GingerWPF.DragDropLib;
 using System.Reflection;
 using System.Linq;
-using Amdocs.Ginger.Repository;
+
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -39,6 +39,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public event EventHandler ItemSelected;
         public event EventHandler ItemDoubleClick;
         public event EventHandler ItemDropped;
+        public event EventHandler ItemAdded;
         public delegate void ItemDroppedEventHandler(DragInfo DI);
         public bool TreeItemDoubleClicked = false;
         public bool TreeChildFolderOnly { get; set; }
@@ -178,7 +179,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 TreeViewItem TVDummy = new TreeViewItem() { Header = "DUMMY" };
                     TVI.Items.Add(TVDummy);
                 }
-                            
+
+
+            ItemAdded?.Invoke(item, null);
+
             return TVI;
         }
 
@@ -235,7 +239,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 if (Childs != null)
                 {
                     foreach (ITreeViewItem item in Childs)
-                    {
+                    {                        
                         if (TreeChildFolderOnly == true && item.IsExpandable() == false)
                         {
                             continue;
