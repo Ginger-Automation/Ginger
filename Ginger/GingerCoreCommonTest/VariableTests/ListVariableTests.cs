@@ -31,6 +31,32 @@ namespace GingerCoreCommonTest.VariableTests
     {
         List<string> lstTemp = new List<string>();
 
+        #region Default Class/Test Initialize Methods
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext TestContext)
+        {
+            //
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            //
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            // before every test
+        }
+
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+            //after every test
+        }
+        #endregion
+
         public ListVariableTests()
         {
             lstTemp.Add("Apple");

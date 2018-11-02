@@ -27,6 +27,32 @@ namespace GingerCoreCommonTest.VariableTests
     [Level1]
     public class StringVariableTests
     {
+        #region Default Class/Test Initialize Methods
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext TestContext)
+        {
+            //
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            //
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            // before every test
+        }
+
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+            //after every test
+        }
+        #endregion
+
         [TestMethod]
         public void StringVar_TestVariableType()
         {
