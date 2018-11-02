@@ -10,7 +10,7 @@
       Height="700" Width="700"
 	    Title="Check-In Changes to Source Control">
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition/>

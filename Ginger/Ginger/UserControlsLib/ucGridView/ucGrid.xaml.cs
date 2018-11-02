@@ -47,6 +47,7 @@ using System.Windows.Media;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
+using Ginger.Help;
 
 namespace Ginger
 {
@@ -430,6 +431,8 @@ namespace Ginger
 
         public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName= "",  RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null)
         {
+            GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
+
             xSimpleHeaderTitle.Visibility = Visibility.Collapsed;
             xEnhancedHeader.Visibility = Visibility.Visible;
 
@@ -2114,7 +2117,7 @@ public void RemoveCustomView(string viewName)
             if (validationRes == true)
                 Grid.BorderBrush = System.Windows.Media.Brushes.Red;
             else
-                Grid.BorderBrush = FindResource("@Skin1_ColorA") as Brush;
+                Grid.BorderBrush = FindResource("$Color_DarkBlue") as Brush;
 
             return validationRes;
         }
