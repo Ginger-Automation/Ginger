@@ -33,6 +33,7 @@ namespace Ginger.Actions.UserControls
     public partial class ScreenShotViewPage : Page
     {
         BitmapImage mBitmapImage;
+        BitmapSource mBitmapSource;
         string mName;
 
         public Action<object, MouseclickonScrenshot> MouseClickOnScreenshot { get; set; }
@@ -56,6 +57,8 @@ namespace Ginger.Actions.UserControls
         public ScreenShotViewPage(string Name, BitmapSource bitmapSource)
         {
             InitializeComponent();
+
+            mBitmapSource = bitmapSource;
 
             if (bitmapSource != null)
             {
@@ -190,7 +193,12 @@ namespace Ginger.Actions.UserControls
         private void EnlargeButton_Click(object sender, RoutedEventArgs e)
         {
             // create a new page to show as full window
-            ScreenShotViewPage p = new ScreenShotViewPage(mName, mBitmapImage);
+
+            ScreenShotViewPage p = null;
+            if (mBitmapImage != null)
+                p = new ScreenShotViewPage(mName, mBitmapImage);
+            else if (mBitmapSource != null)
+                p = new ScreenShotViewPage(mName, mBitmapSource);
             p.ShowAsWindow(mName, false);
         }
        

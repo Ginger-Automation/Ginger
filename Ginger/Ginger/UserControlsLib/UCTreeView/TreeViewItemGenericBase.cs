@@ -43,7 +43,19 @@ namespace GingerWPF.TreeViewItemsLib
             return null;
         }
 
-        public ITreeView mTreeView;
+        protected ITreeView mTreeView;
+        public ITreeView TreeView
+        {
+            get
+            {
+                return mTreeView;
+            }
+            set
+            {
+                mTreeView = value;
+            }
+        }
+
         public ContextMenu mContextMenu;
         public static ITreeViewItem mNodeManipulationsSource = null;
         public bool IsGingerDefualtFolder = false;
