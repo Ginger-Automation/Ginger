@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using GingerCore.Variables;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,6 +33,32 @@ namespace GingerCoreCommonTest.VariableTests
         public void TestInitialize()
         {
        
+        }
+
+        [TestMethod]
+        public void RandomNumberVar_TestImageType()
+        {
+            //Arrange
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
+
+            //Act
+            eImageType eImageType = variableRandomNumber.Image;
+
+            //Assert
+            Assert.AreEqual(eImageType.Random, eImageType, "RandomNumber Variable Image Type Mismatch");
+        }
+
+        [TestMethod]
+        public void RandomStringVar_TestImageType()
+        {
+            //Arrange
+            VariableRandomString variableRandomString = new VariableRandomString();
+
+            //Act
+            eImageType eImageType = variableRandomString.Image;
+
+            //Assert
+            Assert.AreEqual(eImageType.Random, eImageType, "RandomString Variable Image Type Mismatch");
         }
 
         [TestMethod]
