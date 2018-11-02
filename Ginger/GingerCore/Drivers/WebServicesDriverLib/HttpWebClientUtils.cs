@@ -895,7 +895,7 @@ namespace GingerCore.Actions.WebAPI
             //Set default parameters for SOAP Actions
             RequestMessage = new HttpRequestMessage(HttpMethod.Post, Client.BaseAddress);
             string SoapAction = mAct.GetInputParamCalculatedValue(ActWebAPISoap.Fields.SOAPAction);
-            if (string.IsNullOrEmpty(SoapAction))
+            if (!string.IsNullOrEmpty(SoapAction))
                 RequestMessage.Headers.Add("SOAPAction", SoapAction);
 
             //WorkArownd for configuring SOAP content type deferent then text/xml

@@ -9,10 +9,10 @@
 	Title="VariableSelectionListPage">
 
     <Grid>
-        <StackPanel Background="{StaticResource @Skin1_ColorC}">
+        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Selected Value:</Label>
             <ComboBox x:Name="comboSelectedValue" Style="{StaticResource @InputComboBoxStyle}" Margin="0,0,0,2"/>
-            <DockPanel Background="{StaticResource @Skin1_ColorC}">
+            <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
                 <Label Style="{StaticResource @InputFieldLabelStyle}" DockPanel.Dock="Top">Optional Values:</Label>
                 <Ginger:ucGrid x:Name="grdOptionalValues" DockPanel.Dock="Top" Title="Optional Values" ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" Height="220"/>
             </DockPanel>                       

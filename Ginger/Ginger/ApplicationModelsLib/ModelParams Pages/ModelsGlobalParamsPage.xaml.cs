@@ -116,6 +116,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 xModelsGlobalParamsGrid.ShowAdd = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowDelete = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowClearAll = Visibility.Visible;
+                xModelsGlobalParamsGrid.ShowUpDown = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.Grid.CanUserDeleteRows = false;
 
                 xModelsGlobalParamsGrid.Grid.BeginningEdit += grdMain_BeginningEdit;
@@ -315,7 +316,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     if (mi.Name == "mBackupDic" || mi.Name == nameof(RepositoryItemBase.FileName) || mi.Name == nameof(RepositoryItemBase.FilePath) ||
                         mi.Name == nameof(RepositoryItemBase.ObjFolderName) || mi.Name == nameof(RepositoryItemBase.ObjFileExt) ||
                         mi.Name == nameof(RepositoryItemBase.ContainingFolder) || mi.Name == nameof(RepositoryItemBase.ContainingFolderFullPath) ||
-                        mi.Name == nameof(Act.ActInputValues) || mi.Name == nameof(Act.ActReturnValues) || mi.Name == nameof(Act.ActFlowControls)) //needed?                   
+                        mi.Name == nameof(Act.ActInputValues) || mi.Name == nameof(Act.ActReturnValues) || mi.Name == nameof(Act.ActFlowControls) || mi.Name == nameof(Act.ItemNameField)) //needed?                   
                         continue;
 
                     //Get the attr value

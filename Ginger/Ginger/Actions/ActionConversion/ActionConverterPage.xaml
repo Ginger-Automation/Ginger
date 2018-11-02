@@ -11,7 +11,7 @@
       Title="ActionConverterPage">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Background="{StaticResource @Skin1_ColorC}">
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="250"/>
             <RowDefinition Height="10"/>
@@ -36,7 +36,7 @@
 
         <DockPanel x:Name="conversionConfigLblPanel" Height="30" HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch" Grid.Row="4">
             <Border DockPanel.Dock="Top" Visibility="{Binding  ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" 
-                    BorderThickness="1" BorderBrush="{StaticResource @Skin1_ColorA}"  >
+                    BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}"  >
                 <StackPanel>
                     <Label Style="{DynamicResource @ucTitleStyle_Light}"  HorizontalContentAlignment="Center">
                         <Label.Content >
@@ -47,7 +47,7 @@
             </Border>
         </DockPanel>
         <DockPanel x:Name="conversionConfigRadBtnPanel" Height="140" Grid.Row="5" HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0"  >
-            <Border DockPanel.Dock="Top" Visibility="{Binding  ElementName=ToolsTray, Path=Visibility}" BorderThickness="1" BorderBrush="{StaticResource @Skin1_ColorA}"  >
+            <Border DockPanel.Dock="Top" Visibility="{Binding  ElementName=ToolsTray, Path=Visibility}" BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}"  >
                 <StackPanel x:Name="RowSelectorPanel">
                     <Label x:Name="lbl" Content="Add new action to :" FontSize="12" Margin="35,10,0,0" Style="{StaticResource @InputFieldLabelStyle}"/>
                     <RadioButton Name="radNewActivity" Content="New Activity" Tag="radDifferentActivity" Margin="40,10,0,0"/>
@@ -67,7 +67,7 @@
             </Border>
         </DockPanel>
         <DockPanel x:Name="conversionBtnPanel" Grid.Row="6" Height="200" HorizontalAlignment="Stretch" LastChildFill="true">
-            <Grid Background="{StaticResource @Skin1_ColorC}">
+            <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
