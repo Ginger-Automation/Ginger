@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.Help;
 using GingerCore;
 using System;
 using System.Collections.Generic;
@@ -87,6 +88,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public SingleItemTreeViewSelectionPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, eItemSelectionType itemSelectionType = eItemSelectionType.Single, bool allowTreeTools = false, Tuple<string, string> propertyValueFilter = null)
         {
             InitializeComponent();
+
+            GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
 
             xTreeView.Tree.TreeNodesFilterByField = propertyValueFilter;
             xTreeView.AllowTreeTools = allowTreeTools;

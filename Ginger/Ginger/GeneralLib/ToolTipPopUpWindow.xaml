@@ -4,13 +4,13 @@
         Title="Tip" Height="80" Width="200" BorderThickness="0" MouseEnter="Window_MouseEnter" AllowsTransparency="True" WindowStyle="None" SizeToContent="WidthAndHeight" ShowInTaskbar="False">
     
     <Grid>
-        <Border BorderBrush="#20334f" BorderThickness="1" CornerRadius="4">
+        <Border BorderBrush="#152B37" BorderThickness="1" CornerRadius="4">
             <DockPanel Background="White">
                 <DockPanel.Effect>
                     <DropShadowEffect/>
                 </DockPanel.Effect>
-               
-                <TextBlock x:Name="ToolTipPopupTextBlock" TextWrapping="Wrap" Background="White" Margin="10,10" DockPanel.Dock="Top" Foreground="#20334f" >                    
+
+                <TextBlock x:Name="ToolTipPopupTextBlock" TextWrapping="Wrap" Background="White" Margin="10,10" DockPanel.Dock="Top" Foreground="#152B37" >                    
                             Tip text goes here
                  </TextBlock>                    
                  
@@ -18,7 +18,7 @@
                     <Button.Style>
                         <Style TargetType="Button">
                             <Setter Property="Background" Value="#ecf1f6" />
-                            <Setter Property="Foreground" Value="#20334f" />
+                            <Setter Property="Foreground" Value="#152B37" />
                             <Setter Property="FontFamily" Value="Open Sans" />
                             <Setter Property="Height" Value="25" />
                             <Setter Property="FontSize" Value="12" />
@@ -28,7 +28,7 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type Button}">
                                         <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="#20334f" BorderThickness="1">
+                                BorderBrush="#152B37" BorderThickness="1">
                                             <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"
@@ -39,7 +39,7 @@
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="true">
                                                 <Setter Property="Foreground" Value="White" />
-                                                <Setter Property="Background" Value="#20334f" />
+                                                <Setter Property="Background" Value="#152B37" />
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>

@@ -35,7 +35,13 @@ using Amdocs.Ginger.Common.UIElement;
 namespace Ginger.Drivers.Windows
 {
     public abstract class WindowsElementTreeItemBase : AutomationElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
-    {        
+    {
+        public ITreeView TreeView
+        {
+            get;
+            set;
+        }
+
         Object ITreeViewItem.NodeObject()
         {
             return base.UIAElementInfo;

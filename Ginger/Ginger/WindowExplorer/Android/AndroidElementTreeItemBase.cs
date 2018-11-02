@@ -32,6 +32,12 @@ namespace Ginger.WindowExplorer.Android
 {
     public class AndroidElementTreeItemBase :  ITreeViewItem, IWindowExplorerTreeItem
     {
+        public ITreeView TreeView
+        {
+            get;
+            set;
+        }
+
         public AndroidElementInfo AndroidElementInfo { get; set; }
 
         public string Name { get { return AndroidElementInfo.ElementTitle; } }

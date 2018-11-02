@@ -57,7 +57,9 @@ namespace GingerCore.Actions
             Copy,
             Move,
             ForceCopy,
-            RunCommand
+            RunCommand,
+            UnZip,
+            DeleteDirectoryFiles
         }
 
         private eFileoperations mFileOperation = eFileoperations.CheckFileExists;
@@ -176,6 +178,18 @@ namespace GingerCore.Actions
                     }
 
                     break;
+                case eFileoperations.DeleteDirectoryFiles:
+                    if (!System.IO.Directory.Exists(calculatedSourceFilePath))
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                        base.ExInfo = "Folder doesn't exists";
+                        return;
+                    }
+                    foreach (string file in System.IO.Directory.GetFiles(calculatedSourceFilePath))
+                    {
+                        System.IO.File.Delete(file);
+                    }
+                    break;
                 case eFileoperations.Copy:
                     SetupDestinationfolders();
                     if (System.IO.File.Exists(calculatedSourceFilePath))
@@ -269,6 +283,31 @@ namespace GingerCore.Actions
                                 ProcessStart(calculatedSourceFilePath.Substring(0, spaceIndex + 1), calculatedSourceFilePath.Substring(spaceIndex));
                         else
                             ProcessStart(calculatedSourceFilePath);
+                    }
+                    break;
+                case eFileoperations.UnZip:
+                    SetupDestinationfolders();
+                    if(!calculatedSourceFilePath.ToLower().EndsWith(".zip"))
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "Not a valid Zip File";
+                        base.Error = "Not a valid Zip File";
+                        return;
+                    }
+                    if (System.IO.File.Exists(calculatedSourceFilePath))
+                    {
+                        if (!System.IO.Directory.Exists(DestinationFolder))
+                        {
+                            System.IO.Directory.CreateDirectory(DestinationFolder);
+                        }
+                        System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath,DestinationFolder);                        
+                    }
+                    else
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "File doesn't exists";
+                        base.Error = "File doesn't exists";
+                        return;
                     }
                     break;
 

@@ -7,7 +7,7 @@
       d:DesignHeight="300" d:DesignWidth="500"
 	Title="ActConsoleCommandEditPage">
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">                        
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">                        
         <StackPanel>            
             <Label Style="{StaticResource @InputFieldLabelStyle}">Console Action Type:</Label>
             <ComboBox x:Name="ConsoleActionComboBox" SelectionChanged="ConsoleActionComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>

@@ -285,6 +285,11 @@ namespace GingerWPF.WizardLib
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            CancelWizard();
+        }
+
+        private void CancelWizard()
+        {
             mWizard.Cancel();
             CloseWizard();
         }
@@ -383,6 +388,11 @@ namespace GingerWPF.WizardLib
         void IWizardWindow.NextButton(bool isEnabled)
         {
             xNextButton.IsEnabled = isEnabled;
+        }
+
+        private void CloseWindowClicked(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            mWizard.Cancel();
         }
     }
 }

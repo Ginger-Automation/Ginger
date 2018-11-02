@@ -118,9 +118,9 @@
                 </Expander.Content>
             </Expander>
 
-            <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
-            <GridSplitter x:Name="RowSplitter2" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
-            <GridSplitter x:Name="RowSplitter3" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
+            <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
+            <GridSplitter x:Name="RowSplitter2" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
+            <GridSplitter x:Name="RowSplitter3" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
         </Grid>
     <!--</ScrollViewer>-->
 </Page>

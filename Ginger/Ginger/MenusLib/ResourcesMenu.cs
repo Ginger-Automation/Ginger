@@ -176,7 +176,7 @@ namespace Ginger.MenusLib
         private static Page POMModels()
         {
             ApplicationPOMsTreeItem POMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
-            SingleItemTreeViewExplorerPage pomModelPage = new SingleItemTreeViewExplorerPage("POM", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM);
+            SingleItemTreeViewExplorerPage pomModelPage = new SingleItemTreeViewExplorerPage("Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM);
             return pomModelPage;
         }
 

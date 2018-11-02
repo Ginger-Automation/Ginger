@@ -8,8 +8,9 @@
     xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
     xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
     x:Class="Ginger.AutomatePage" 
-      mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="800"
+    h:GingerHelpProvider.HelpString="Automate"
+    mc:Ignorable="d" 
+    d:DesignHeight="600" d:DesignWidth="800"
 	Title="AutomatePage">
 
 
@@ -143,7 +144,7 @@
             </RibbonTab>
         </Ribbon>
 
-        <Expander x:Name="CurrentBusExpander" Grid.Row="2" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="True" Expanded="CurrentBusExpander_Expanded" Collapsed="CurrentBusExpander_Collapsed" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource @Skin1_ColorA}">
+        <Expander x:Name="CurrentBusExpander" Grid.Row="2" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="True" Expanded="CurrentBusExpander_Expanded" Collapsed="CurrentBusExpander_Collapsed" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}">
             <Expander.Header>
                 <Label x:Name="CurrentBusExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $SelectionColor_Pink}">
                     <Label.Content>
@@ -158,7 +159,7 @@
             </Expander.Content>
         </Expander>
         
-        <StackPanel Grid.Row="3" Grid.Column="0" Background="{StaticResource @Skin1_ColorA}" VerticalAlignment="Center" Margin="0,0,0,0">           
+        <StackPanel Grid.Row="3" Grid.Column="0" Background="{StaticResource $Color_DarkBlue}" VerticalAlignment="Center" Margin="0,0,0,0">           
             <WrapPanel x:Name="ExpandersMenuPanel">
                 <Expander x:Name="BFVariablesExpander2" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}">
                     <Expander.Header>
@@ -217,7 +218,7 @@
                 </Label>
             </Expander.Header>
             <Expander.Content>
-                <Frame x:Name="BFVariablesFrame" Background="{StaticResource @Skin1_ColorC}" />
+                <Frame x:Name="BFVariablesFrame" Background="{StaticResource $BackgroundColor_LightGray}" />
             </Expander.Content>
         </Expander>
 
@@ -230,7 +231,7 @@
                 </Label>
             </Expander.Header>
             <Expander.Content>
-                <Frame x:Name="BFActivitiesGroupsFrame" Background="{StaticResource @Skin1_ColorC}" />
+                <Frame x:Name="BFActivitiesGroupsFrame" Background="{StaticResource $BackgroundColor_LightGray}" />
             </Expander.Content>
         </Expander>
         
@@ -243,7 +244,7 @@
                 </Label>
             </Expander.Header>
             <Expander.Content>
-                <Frame x:Name="BFActivitiesFrame" Background="{StaticResource @Skin1_ColorC}"  SizeChanged="BFActivitiesFrame_SizeChanged" />
+                <Frame x:Name="BFActivitiesFrame" Background="{StaticResource $BackgroundColor_LightGray}"  SizeChanged="BFActivitiesFrame_SizeChanged" />
             </Expander.Content>
         </Expander>
 
@@ -256,7 +257,7 @@
                 </Label>
             </Expander.Header>
             <Expander.Content>
-                <Frame x:Name="ActivityVariablesFrame" Background="{StaticResource @Skin1_ColorC}" />
+                <Frame x:Name="ActivityVariablesFrame" Background="{StaticResource $BackgroundColor_LightGray}" />
             </Expander.Content>
         </Expander>
 
@@ -269,7 +270,7 @@
                 </Label>
             </Expander.Header>
             <Expander.Content>
-                <Frame x:Name="ActivityActionsFrame" Background="{StaticResource @Skin1_ColorC}" />
+                <Frame x:Name="ActivityActionsFrame" Background="{StaticResource $BackgroundColor_LightGray}" />
             </Expander.Content>
         </Expander>
 
@@ -291,13 +292,13 @@
             </Expander.Content>
         </Expander>       
 
-        <GridSplitter x:Name="Row1Splitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="4" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}"/>
-        <GridSplitter x:Name="Row2Splitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="5" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
-        <GridSplitter x:Name="Row3Splitter" ResizeDirection="Rows" Grid.Column="0" Grid.Row="6" Height="5" Width="Auto"  HorizontalAlignment="Stretch" VerticalAlignment="Bottom"  Background="{StaticResource @Skin1_ColorA}" />
-        <GridSplitter x:Name="Row4Splitter" ResizeDirection="Rows" Grid.Column="0" Grid.Row="7" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"  Background="{StaticResource @Skin1_ColorA}" />
-        <GridSplitter x:Name="Row5Splitter" ResizeDirection="Rows" Grid.Column="0" Grid.Row="8" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"  Background="{StaticResource @Skin1_ColorA}" />
+        <GridSplitter x:Name="Row1Splitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="4" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}"/>
+        <GridSplitter x:Name="Row2Splitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="5" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
+        <GridSplitter x:Name="Row3Splitter" ResizeDirection="Rows" Grid.Column="0" Grid.Row="6" Height="5" Width="Auto"  HorizontalAlignment="Stretch" VerticalAlignment="Bottom"  Background="{StaticResource $Color_DarkBlue}" />
+        <GridSplitter x:Name="Row4Splitter" ResizeDirection="Rows" Grid.Column="0" Grid.Row="7" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"  Background="{StaticResource $Color_DarkBlue}" />
+        <GridSplitter x:Name="Row5Splitter" ResizeDirection="Rows" Grid.Column="0" Grid.Row="8" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"  Background="{StaticResource $Color_DarkBlue}" />
         
-        <!--<GridSplitter x:Name="BFsSplitter" ResizeDirection="Columns" Grid.Column="0" Width="5" HorizontalAlignment="Right" Grid.Row="0"  Grid.RowSpan="6" VerticalAlignment="Stretch" Background="{StaticResource @Skin1_ColorA}" IsEnabled="True" Margin="0,1,0,0"/>-->
-        <GridSplitter x:Name="RepoSplitter" ResizeDirection="Columns" Grid.Column="1" Width="5" HorizontalAlignment="Left" Grid.Row="2"  Grid.RowSpan="7" VerticalAlignment="Stretch" Background="{StaticResource @Skin1_ColorA}" IsEnabled="True" Margin="0,1,0,0"/>
+        <!--<GridSplitter x:Name="BFsSplitter" ResizeDirection="Columns" Grid.Column="0" Width="5" HorizontalAlignment="Right" Grid.Row="0"  Grid.RowSpan="6" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,1,0,0"/>-->
+        <GridSplitter x:Name="RepoSplitter" ResizeDirection="Columns" Grid.Column="1" Width="5" HorizontalAlignment="Left" Grid.Row="2"  Grid.RowSpan="7" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,1,0,0"/>
     </Grid>
 </Page>

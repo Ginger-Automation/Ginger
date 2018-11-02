@@ -29,7 +29,7 @@
             <TabItem Margin="0,0,0,0" x:Name="xMappedElementsTab" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock x:Name="xMappedElementsTextBlock"  VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <TextBlock x:Name="xMappedElementsTextBlock"  VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="xMappedElementsFrame" HorizontalAlignment="Stretch" />
@@ -38,7 +38,7 @@
             <TabItem  x:Name="xUnmappedElementsTab" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-                        <TextBlock x:Name="xUnMappedElementsTextBlock"  Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
+                        <TextBlock x:Name="xUnMappedElementsTextBlock"  Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="xUnMappedElementsFrame" HorizontalAlignment="Stretch"/>

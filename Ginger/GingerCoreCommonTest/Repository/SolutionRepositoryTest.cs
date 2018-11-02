@@ -65,7 +65,6 @@ namespace GingerCoreCommonTest.Repository
                                                                rootFolder: SolutionRepository.cSolutionRootFolderSign + "MyRepositoryItems", 
                                                                containRepositoryItems: true, 
                                                                displayName: "My Repository Item", 
-                                                               addToRootFolders: true,
                                                                PropertyNameForFileName: nameof(MyRepositoryItem.Name)
                                                                );
 
@@ -89,7 +88,6 @@ namespace GingerCoreCommonTest.Repository
                                                                rootFolder: SolutionRepository.cSolutionRootFolderSign + "MyRepositoryItems",
                                                                containRepositoryItems: true,
                                                                displayName: "My Repository Item",
-                                                               addToRootFolders: true,
                                                                PropertyNameForFileName: nameof(MyRepositoryItem.Name)
                                                                );
 

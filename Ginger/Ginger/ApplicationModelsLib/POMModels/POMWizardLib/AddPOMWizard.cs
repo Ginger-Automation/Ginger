@@ -113,6 +113,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override void Cancel()
         {
+            if (mAgent != null && mAgent.Driver != null && mAgent.Driver.IsDriverBusy)
+            {
+                mAgent.Driver.mStopProcess = true;
+            }
+
             base.Cancel();
 
             //close all Agents raised in Wizard
@@ -124,7 +129,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (OptionalAgentsList != null)
             {
                 foreach (Agent agent in OptionalAgentsList)
-                    if (agent != null && agent.Status == Agent.eStatus.Running && agent.Tag != null && agent.Tag.ToString() == "Started with Agent Control")
+                    if (agent != null && agent.Status == Agent.eStatus.Running && agent.Tag != null && agent.Tag.ToString() == "Started with Agent Control" && !mAgent.Driver.IsDriverBusy)
                     {
                         if (Reporter.ToUser(eUserMsgKeys.AskIfToCloseAgent, agent.Name) == System.Windows.MessageBoxResult.Yes)
                         {
