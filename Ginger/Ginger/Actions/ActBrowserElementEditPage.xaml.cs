@@ -45,8 +45,7 @@ namespace Ginger.Actions
             {
                 mPlatform = PlatformInfoBase.GetPlatformImpl(ActivityPlatform);
 
-                List<ActBrowserElement.eControlAction> LocateByList = new List<ActBrowserElement.eControlAction>();
-                LocateByList = mPlatform.GetPlatformActBrowserElementList();
+                List<ActBrowserElement.eControlAction> LocateByList = mPlatform.GetPlatformActBrowserElementList();
 
                 //bind controls
                 App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction, LocateByList.Cast<object>().ToList());
