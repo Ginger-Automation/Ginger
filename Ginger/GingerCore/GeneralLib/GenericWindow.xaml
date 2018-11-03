@@ -40,7 +40,7 @@
         </DockPanel>
 
         <ScrollViewer x:Name="WindowScrollViewer" Grid.Row="1" VerticalScrollBarVisibility="Hidden"  HorizontalScrollBarVisibility="Hidden">
-            <Frame x:Name="PageFrame"  Background="white" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" ></Frame>
+            <Frame x:Name="PageFrame" AutomationProperties.AutomationId="PageFrame AID"  Background="white" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" ></Frame>
         </ScrollViewer>
 
         <DockPanel x:Name="BottomPanel" Grid.Row="2" Background="{DynamicResource $BackgroundColor_LightGray}">            

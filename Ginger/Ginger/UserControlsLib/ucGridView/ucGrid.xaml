@@ -50,7 +50,7 @@
                     <Button x:Name="btnEdit" ToolTip="Edit Selected" Click="btnEdit_Click">
                         <Image Source="{DynamicResource @Edit_16x16}" />
                     </Button>
-                    <Button x:Name="btnAdd" ToolTip="Add New" Click="btnAdd_Click">
+                    <Button x:Name="btnAdd" AutomationProperties.AutomationId="Add Button AID" ToolTip="Add New" Click="btnAdd_Click">
                         <Image Source="{DynamicResource @Add_16x16}" />
                     </Button>
                     <Button x:Name="btnDelete" ToolTip="Delete Selected" Click="btnDelete_Click">

@@ -233,16 +233,23 @@ namespace GingerCore.Variables
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
                 dynamic value = null;
-                if (mi.MemberType == MemberTypes.Property)
+                try
                 {
-                    if (PI.CanWrite)
+                    if (mi.MemberType == MemberTypes.Property)
                     {
-                        value = PI.GetValue(item);
+                        if (PI.CanWrite)
+                        {
+                            value = PI.GetValue(item);
+                        }
+                    }
+                    else if (mi.MemberType == MemberTypes.Field)
+                    {
+                        value = item.GetType().GetField(mi.Name).GetValue(item);
                     }
                 }
-                else if (mi.MemberType == MemberTypes.Field)
+                catch (Exception ex)
                 {
-                    value = item.GetType().GetField(mi.Name).GetValue(item);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true, true);
                 }
 
                 if (value is IObservableList)
