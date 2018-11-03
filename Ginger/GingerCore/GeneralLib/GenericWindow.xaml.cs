@@ -25,7 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Ginger
-{
+{    
     public enum eWindowShowStyle
     {
         Free,
@@ -38,6 +38,10 @@ namespace Ginger
     /// </summary>
     public partial class GenericWindow : Window
     {
+
+        // Used for Ginger Automator
+        public static GenericWindow CurrentWindow;
+
         private RoutedEventHandler mCloseEventHandler;
 
         public eWindowShowStyle CurrentWinStyle { get; set; }
@@ -52,6 +56,8 @@ namespace Ginger
         {
             InitializeComponent();   
             this.Owner = Owner;
+
+            CurrentWindow = this;
 
             //set style
             CurrentWinStyle = windowStyle;
