@@ -278,7 +278,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     };
                     comboBox = new UserControlsLib.UCComboBox()
                     {
-                        Style = this.FindResource("$FlatInputComboBoxStyle") as Style,
                         Name = element.Title,
                         HorizontalAlignment = HorizontalAlignment.Left,
                         VerticalAlignment = VerticalAlignment.Center,
@@ -325,14 +324,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             List<ElementConfigControl> elementList = new List<ElementConfigControl>();
 
-            if (new ActUIElement.eElementAction[] {     ActUIElement.eElementAction.SetValue, ActUIElement.eElementAction.SendKeys, ActUIElement.eElementAction.SetDate,
-                                                        ActUIElement.eElementAction.SendKeyPressRelease, ActUIElement.eElementAction.SetText,
-                                                        ActUIElement.eElementAction.SetSelectedValueByIndex, ActUIElement.eElementAction.Select, ActUIElement.eElementAction.SelectByText,
-                                                        ActUIElement.eElementAction.RunJavaScript}.Contains(mAction.ElementAction))
+            if (new ActUIElement.eElementAction[] {
+                ActUIElement.eElementAction.SetValue,
+                ActUIElement.eElementAction.SendKeys,
+                ActUIElement.eElementAction.SetDate,
+                ActUIElement.eElementAction.SendKeyPressRelease,
+                ActUIElement.eElementAction.SetText,
+                ActUIElement.eElementAction.SetSelectedValueByIndex,
+                ActUIElement.eElementAction.Select,
+                ActUIElement.eElementAction.SelectByText,
+                ActUIElement.eElementAction.RunJavaScript}.Contains(mAction.ElementAction))
             {
-                //if (mAction.ElementType == eElementType.TextBox || mAction.ElementType == eElementType.ComboBox || mAction.ElementType == eElementType.CheckBox ||
-                //    mAction.ElementType == eElementType.Unknown)
-                //{
                     elementList.Add(new ElementConfigControl()
                     {
                         Title = "Value", 
@@ -341,7 +343,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
                         mAction.GetInputParamValue(ActUIElement.Fields.Value).Split(',').ToList()
                     });
-                //}
             }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.Select))
             {

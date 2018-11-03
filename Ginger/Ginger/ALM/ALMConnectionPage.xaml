@@ -9,10 +9,10 @@
 	Title="ALM Connection Settings">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Background="{StaticResource @Skin1_ColorC}">
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
             <StackPanel>
                 <StackPanel x:Name="ALMSelectPanel"  Visibility="Collapsed">
-                    <DockPanel Background="{StaticResource @Skin1_ColorA}">
+                    <DockPanel Background="{StaticResource $Color_DarkBlue}">
                         <Label Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch">Step 1: Select ALM</Label>
                     </DockPanel>
 
@@ -30,7 +30,7 @@
 
                 <StackPanel x:Name="ALMSettingsPannel">
                     <StackPanel x:Name="ALMServerDetailsPanel" Visibility="Collapsed">
-                        <DockPanel Background="{StaticResource @Skin1_ColorA}">
+                        <DockPanel Background="{StaticResource $Color_DarkBlue}">
                             <Label Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch">Step 2: Server Details</Label>
                         </DockPanel>
                         <StackPanel>
@@ -65,7 +65,7 @@
                     </StackPanel>
 
                     <StackPanel x:Name="ALMProjectDetailsPanel"  Visibility="Collapsed">
-                        <DockPanel Background="{StaticResource @Skin1_ColorA}">
+                        <DockPanel Background="{StaticResource $Color_DarkBlue}">
                             <Label x:Name="loginToProjectlbl" Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch" >Step 3: Project Details</Label>
                         </DockPanel>
 
