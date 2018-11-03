@@ -3030,9 +3030,6 @@
     <Content Include="Reports\GingerExecutionReport\assets\js\babel.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\GingerExecutionReport\assets\js\browser.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Reports\GingerExecutionReport\assets\js\prop-types.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
