@@ -230,7 +230,7 @@ namespace Ginger
                 ReShowStyle = eWindowShowStyle.Free;
             else
                 ReShowStyle = eWindowShowStyle.Dialog;
-            CloseWindow();
+            this.Close();
         }
 
         private void MaximizeBtn_Click(object sender, RoutedEventArgs e)
