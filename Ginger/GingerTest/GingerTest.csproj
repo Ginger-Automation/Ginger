@@ -67,6 +67,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Speech" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Controls.Ribbon" />
     <Reference Include="System.Windows.Forms" />
@@ -83,15 +84,21 @@
     <Compile Include="GeneralLib\VisualCompare.cs" />
     <Compile Include="GingerAutomator.cs" />
     <Compile Include="HTMLReportsLib\HTMLReportTest.cs" />
+    <Compile Include="POMs\AdornerLib\HighlightAdorner.cs" />
     <Compile Include="POMs\AgentsPOM.cs" />
+    <Compile Include="POMs\Common\ButtonPOM.cs" />
     <Compile Include="POMs\Common\ContextMenuItemPOM.cs" />
     <Compile Include="POMs\Common\ContextMenuPOM.cs" />
+    <Compile Include="POMs\Common\GenericWindowPOM.cs" />
     <Compile Include="POMs\Common\InputBoxWindowPOM.cs" />
     <Compile Include="POMs\Common\PagePOM.cs" />
+    <Compile Include="POMs\Common\POMButtons.cs" />
     <Compile Include="POMs\Common\TreeViewItemPOM.cs" />
+    <Compile Include="POMs\Common\ucGridPOM.cs" />
     <Compile Include="POMs\Common\WindowPOM.cs" />
     <Compile Include="POMs\EnvironmentsPOM.cs" />
     <Compile Include="POMs\GingerPOMBase.cs" />
+    <Compile Include="POMs\GlobalVariablesPOM.cs" />
     <!--<Compile Include="GeneralLib\GingerTests.cs" />-->
     <Compile Include="POMs\MainWindowPOM.cs" />
     <Compile Include="GingerBasicsTest.cs" />
@@ -104,6 +111,8 @@
     <Compile Include="Scenarios.cs" />
     <Compile Include="TestAssemblyInit.cs" />
     <Compile Include="UserControlsLib\ImageMakerLib\ImageMakerControlTest.cs" />
+    <Compile Include="VariablesLib\VariablesTest.cs" />
+    <Compile Include="VideosLib\Speach.cs" />
     <Compile Include="WizardLib\WizardTest.cs" />
   </ItemGroup>
   <ItemGroup>
