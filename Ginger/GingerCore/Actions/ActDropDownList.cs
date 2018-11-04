@@ -163,8 +163,9 @@ namespace GingerCore.Actions
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
             newAct.ElementLocateValue = String.Copy(this.LocateValue);
-            newAct.ElementType = eElementType.ComboBox;           
+            newAct.ElementType = eElementType.ComboBox;          
             newAct.Active = true;
+            newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, this.GetInputParamValue("Value"));
 
             return newAct;
         }

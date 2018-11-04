@@ -151,7 +151,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             ModelParametersGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteParams_Clicked));
             ModelParametersGrid.SetbtnClearAllHandler(new RoutedEventHandler(ClearAllParams_Clicked));
-            ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parametrs to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
+            ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parameters to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
             ModelParametersGrid.AddToolbarTool(eImageType.DataSource, "Export Parameters to DataSource", new RoutedEventHandler(ExportParametersToDataSource));
         }
 
@@ -323,17 +323,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void SyncParamsPendingDeleteWithBodyNodes(List<AppModelParameter> paramList)
         {
-            bool someParamContainPath = false;
-            foreach (AppModelParameter param in paramList)
-                if (!string.IsNullOrEmpty(param.Path))
-                    someParamContainPath = true;
-
             APIModelBodyNodeSyncPage bodyNodeSyncPage;
-            if (someParamContainPath)
-            {
-                bodyNodeSyncPage = new APIModelBodyNodeSyncPage((ApplicationAPIModel)mApplicationModel, paramList);
-                bodyNodeSyncPage.ShowAsWindow();
-            }
+            bodyNodeSyncPage = new APIModelBodyNodeSyncPage((ApplicationAPIModel)mApplicationModel, paramList);
+            bodyNodeSyncPage.ShowAsWindow();
         }
 
         private void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)

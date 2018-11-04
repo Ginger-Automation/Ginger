@@ -52,7 +52,7 @@ namespace GingerCore.Actions
         }        
 
         public override string ActionEditPage { get { return "ActScriptEditPage"; } }
-        public override bool ObjectLocatorConfigsNeeded { get { return true; } }
+        public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
         // return the list of platforms this action is supported on

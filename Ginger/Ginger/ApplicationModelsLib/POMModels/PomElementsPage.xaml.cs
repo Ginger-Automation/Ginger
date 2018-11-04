@@ -346,7 +346,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddLocatorButtonClicked(object sender, RoutedEventArgs e)
         {
-            mSelectedElement.Locators.Add(new ElementLocator());
+            mSelectedElement.Locators.Add(new ElementLocator() { Active = true});
         }
 
         bool disabeledLocatorsMsgShown;

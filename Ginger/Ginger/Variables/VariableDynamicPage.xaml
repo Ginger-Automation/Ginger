@@ -8,7 +8,7 @@
 	Title="VariableDynamicPage">
 
     <Grid>
-        <StackPanel Background="{StaticResource @Skin1_ColorC}">
+        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Value Expression</Label>
             <Actions:UCValueExpression x:Name="ValueExpressionTextBox"/>
         </StackPanel>
