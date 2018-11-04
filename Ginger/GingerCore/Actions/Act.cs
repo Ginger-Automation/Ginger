@@ -282,14 +282,11 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public bool ConfigOutputDS { get { return mConfigOutputDS; } set { mConfigOutputDS = value; } }
 
-
-
-        //TODO: OLD to be removed, check impact need conversion
+        
         private ePlatformType mPlatform;
         [IsSerializedForLocalRepository]
         public ePlatformType Platform { get { return mPlatform; } set { mPlatform = value; OnPropertyChanged(Fields.Platform); } }
         // -------------------------------
-
 
         private bool mTakeScreenShot { get; set; }
         [IsSerializedForLocalRepository]

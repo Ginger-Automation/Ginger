@@ -36,12 +36,12 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
 
         public override List<eElementType> GetPlatformUIElementsType()
-        {            
+        {
             // We cache the results
             if (mElementsTypeList == null)
             {
                 mElementsTypeList = GetPlatformElementTypesData().Where(y => y.ActionType == typeof(ActUIElement)).Select(z => z.ElementType).ToList();
-            }   
+            }
             return mElementsTypeList;
         }
 
@@ -72,8 +72,8 @@ namespace GingerCore.Platforms.PlatformsInfo
             List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();
 
             list.Add(ActUIElement.eElementAction.IsEnabled);
-            list.Add(ActUIElement.eElementAction.Exist);
-            list.Add(ActUIElement.eElementAction.NotExist);
+            //list.Add(ActUIElement.eElementAction.Exist);
+            //list.Add(ActUIElement.eElementAction.NotExist);
             list.Add(ActUIElement.eElementAction.IsVisible);
 
             return list;
@@ -140,26 +140,20 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
-                    ElementType = eElementType.Unknown,
-                    ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>(Enum.GetValues(typeof(ActUIElement.eElementAction)).Cast<Enum>())
-                });
-
-                mPlatformElementTypeOperations.Add(new ElementTypeData()
-                {
                     ElementType = eElementType.Button,
                     IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>(){   ActUIElement.eElementAction.Click,
+                                                                ActUIElement.eElementAction.DoubleClick,
                                                                 ActUIElement.eElementAction.JavaScriptClick,
                                                                 ActUIElement.eElementAction.MouseClick,
                                                                 ActUIElement.eElementAction.MousePressRelease,
                                                                 ActUIElement.eElementAction.ClickAndValidate,
+                                                                ActUIElement.eElementAction.MultiClicks,
                                                                 ActUIElement.eElementAction.Submit,
-                                                                ActUIElement.eElementAction.GetValue,
-                                                                ActUIElement.eElementAction.IsDisabled,
-                                                                ActUIElement.eElementAction.GetFont },
-                    
+                                                                ActUIElement.eElementAction.GetValue,                                                                
+                                                                },
+
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
@@ -167,14 +161,15 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.CheckBox,
                     IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SetValue,
-                                                                ActUIElement.eElementAction.Click,
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
+                                                                ActUIElement.eElementAction.DoubleClick,
                                                                 ActUIElement.eElementAction.JavaScriptClick,
                                                                 ActUIElement.eElementAction.MouseClick,
                                                                 ActUIElement.eElementAction.MousePressRelease,
                                                                 ActUIElement.eElementAction.ClickAndValidate,
-                                                                ActUIElement.eElementAction.GetValue,
-                                                                ActUIElement.eElementAction.IsDisabled },
+                                                                ActUIElement.eElementAction.MultiClicks,
+                                                                ActUIElement.eElementAction.GetValue
+                                                                 },
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
@@ -184,14 +179,15 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SetText,
                                                                 ActUIElement.eElementAction.SendKeys,
+                                                                ActUIElement.eElementAction.SetValue,
+                                                                ActUIElement.eElementAction.MultiSetValue,
                                                                 ActUIElement.eElementAction.ClearValue,
                                                                 ActUIElement.eElementAction.IsValuePopulated,
+                                                                ActUIElement.eElementAction.GetText,
                                                                 ActUIElement.eElementAction.GetTextLength,
                                                                 ActUIElement.eElementAction.GetValue,
-                                                                ActUIElement.eElementAction.IsDisabled,
-                                                                ActUIElement.eElementAction.IsEnabled,
                                                                 ActUIElement.eElementAction.GetFont,
-                                                                ActUIElement.eElementAction.GetSize },
+                                                                },
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
@@ -199,34 +195,27 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.ComboBox,
                     IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SelectByIndex,
-                                                                ActUIElement.eElementAction.Select,
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Select,
+                                                                ActUIElement.eElementAction.SelectByIndex,                                                               
                                                                 ActUIElement.eElementAction.SelectByText,
+                                                                ActUIElement.eElementAction.SetValue,
+                                                                ActUIElement.eElementAction.ClearValue,                                                                                                                                
                                                                 ActUIElement.eElementAction.GetValidValues,
                                                                 ActUIElement.eElementAction.GetSelectedValue,
                                                                 ActUIElement.eElementAction.IsValuePopulated,
-                                                                ActUIElement.eElementAction.GetFont,
-                                                                ActUIElement.eElementAction.GetValue,
-                                                                ActUIElement.eElementAction.GetAllValues }
-                    });
-
-                //mWebPlatformElementTypeOperations.Add(new ElementTypeOperations()
-                //{
-                //    ElementType = eElementType.Table,
-                //    ActionType = typeof(ActUIElement),
-                //    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.TableAction,
-                //                                                ActUIElement.eElementAction.TableCellAction,
-                //                                                ActUIElement.eElementAction.TableRowAction }
-                //});
+                                                                ActUIElement.eElementAction.GetText,                                                                                                                               
+                                                                }
+                });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.ScrollBar,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.ScrollUp,
-                                                                ActUIElement.eElementAction.ScrollDown,
-                                                                ActUIElement.eElementAction.ScrollLeft,
-                                                                ActUIElement.eElementAction.ScrollRight }
+                    ElementOperationsList = new List<Enum>() {  //ActUIElement.eElementAction.ScrollUp, //not yet supported by SelenuimDriver
+                                                                //ActUIElement.eElementAction.ScrollDown,
+                                                                //ActUIElement.eElementAction.ScrollLeft,
+                                                                //ActUIElement.eElementAction.ScrollRight
+                    }
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
@@ -234,25 +223,36 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.HyperLink,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
+                                                                ActUIElement.eElementAction.DoubleClick,
                                                                 ActUIElement.eElementAction.JavaScriptClick,
                                                                 ActUIElement.eElementAction.MouseClick,
                                                                 ActUIElement.eElementAction.MousePressRelease,
                                                                 ActUIElement.eElementAction.ClickAndValidate,
-                                                                ActUIElement.eElementAction.GetValue }
+                                                                ActUIElement.eElementAction.MultiClicks,
+                                                                ActUIElement.eElementAction.GetValue}
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.Label,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetValue }
+                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetValue,
+                                                               ActUIElement.eElementAction.GetText,
+                                                               ActUIElement.eElementAction.GetFont}
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.List,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetAllValues,
+                    ElementOperationsList = new List<Enum>() {
+                                                               ActUIElement.eElementAction.Select,
+                                                               ActUIElement.eElementAction.SelectByIndex,
+                                                               ActUIElement.eElementAction.SelectByText,
+                                                               ActUIElement.eElementAction.ClearValue,
+                                                               ActUIElement.eElementAction.GetValidValues,
+                                                               ActUIElement.eElementAction.GetSelectedValue,
+                                                               ActUIElement.eElementAction.IsValuePopulated,
                                                                ActUIElement.eElementAction.GetValue}
                 });
 
@@ -262,7 +262,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
                                                                 ActUIElement.eElementAction.GetValue,
-                                                                ActUIElement.eElementAction.IsEnabled }
+                                                                ActUIElement.eElementAction.SetValue
+                                                                 }
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
@@ -283,8 +284,15 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.RadioButton,
+                    IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
+                                                                ActUIElement.eElementAction.DoubleClick,
+                                                                ActUIElement.eElementAction.JavaScriptClick,
+                                                                ActUIElement.eElementAction.MouseClick,
+                                                                ActUIElement.eElementAction.MousePressRelease,
+                                                                ActUIElement.eElementAction.ClickAndValidate,
+                                                                ActUIElement.eElementAction.MultiClicks,
                                                                 ActUIElement.eElementAction.GetValue }
                 });
 
@@ -308,22 +316,51 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     ElementType = eElementType.Canvas,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.ClickXY}
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.ClickXY,
+                                                                ActUIElement.eElementAction.DrawObject,
+                                                               }
                 });
 
                 // adding generic/common actions per each ElementType
-                List<Enum> ElementCommonActionsList = new List<Enum>() {    ActUIElement.eElementAction.Hover,
-                                                                            ActUIElement.eElementAction.IsVisible,
+                List<Enum> ElementCommonActionsList = new List<Enum>() {    ActUIElement.eElementAction.IsVisible,
+                                                                            ActUIElement.eElementAction.IsDisabled,
+                                                                            ActUIElement.eElementAction.IsEnabled,
+                                                                            ActUIElement.eElementAction.Hover,                                                                            
                                                                             ActUIElement.eElementAction.GetHeight,
                                                                             ActUIElement.eElementAction.GetStyle,
-                                                                            ActUIElement.eElementAction.GetWidth,
-                                                                            // ActUIElement.eElementAction.NotExist,   //
-                                                                            // ActUIElement.eElementAction.IsExist,    // currently not implemented in Web
+                                                                            ActUIElement.eElementAction.GetWidth,                                                                           
                                                                             ActUIElement.eElementAction.SetFocus,
-                                                                            ActUIElement.eElementAction.RunJavaScript};
+                                                                            ActUIElement.eElementAction.RunJavaScript,
+                                                                            ActUIElement.eElementAction.GetSize,
+                                                                            ActUIElement.eElementAction.GetAttrValue,                                                                           
+                                                                            ActUIElement.eElementAction.GetItemCount,
+                                                                            ActUIElement.eElementAction.DragDrop,
+                                                                            ActUIElement.eElementAction.MouseRightClick,
+                                                                            ActUIElement.eElementAction.ScrollToElement,
+                };
 
-                mPlatformElementTypeOperations.Where( y => y.ActionType == typeof(ActUIElement)).ToList()
+                mPlatformElementTypeOperations.Where(y => y.ActionType == typeof(ActUIElement)).ToList()
                                                  .ForEach(z => z.ElementOperationsList = z.ElementOperationsList.Union(ElementCommonActionsList).ToList());
+
+
+                //------Must be last one for calculating all supported Element operations
+                List<Enum> allSupportedOperations = new List<Enum>();
+                foreach (ElementTypeData elemData in mPlatformElementTypeOperations)
+                {
+                    foreach (ActUIElement.eElementAction operation in elemData.ElementOperationsList)
+                    {
+                        if (!allSupportedOperations.Contains(operation))
+                        {
+                            allSupportedOperations.Add(operation);
+                        }
+                    }
+                }
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Unknown,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = allSupportedOperations
+                });
             }
 
             return mPlatformElementTypeOperations;

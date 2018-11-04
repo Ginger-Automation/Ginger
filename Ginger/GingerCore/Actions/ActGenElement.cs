@@ -124,7 +124,7 @@ namespace GingerCore.Actions
                     case eGenElementAction.SelectFromListScr:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByIndex;
                         NewActUIElement.ElementType = eElementType.List;
-                        uIElementTypeAssigned = true;
+                        uIElementTypeAssigned = true;                        
                         break;
                     case eGenElementAction.KeyboardInput:
                     case eGenElementAction.KeyType:
@@ -189,6 +189,7 @@ namespace GingerCore.Actions
                     NewActUIElement.Platform = ePlatformType.Web; // ??? to check
                 }
 
+                NewActUIElement.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, this.GetInputParamValue("Value"));
                 return NewActUIElement;
             }
 
