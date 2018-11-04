@@ -1205,7 +1205,7 @@ namespace Amdocs.Ginger.Repository
                 /* expecting  XML to look like this: 
                 * <Header ... GingerVersion="2.6.0.0" Version="0" .../>*/
                 //int indx = xml.IndexOf("GingerVersion=");
-                int indx = xml.IndexOf(cHeaderGingerVersion);
+                int indx = xml.Trim().IndexOf(cHeaderGingerVersion);
                 string version = xml.Trim().Substring(indx + 14, 9);
 
                 Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
