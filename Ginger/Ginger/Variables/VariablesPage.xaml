@@ -11,7 +11,7 @@
 	Title="VariablesPage">
 
     <Grid>
-        <Ginger:ucGrid x:Name="grdVariables" ShowRefresh="Visible" ShowUndo="Visible" >
+        <Ginger:ucGrid x:Name="grdVariables" AutomationProperties.AutomationId="Variables Grid AID" ShowRefresh="Visible" ShowUndo="Visible" >
             <Ginger:ucGrid.Title>
                 <GingerCore:ucTextDicResource Text="[Variables]"/>
             </Ginger:ucGrid.Title>
