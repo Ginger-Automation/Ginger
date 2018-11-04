@@ -6,7 +6,7 @@
           xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
           xmlns:wizardlib="clr-namespace:GingerWPF.WizardLib"
           mc:Ignorable="d"
-        Title="WizardWindow" Name="WizardWindowPage" Height="600" Width="900" WindowStartupLocation="CenterScreen" Icon="{StaticResource @Flash_16x16}">
+        Title="WizardWindow" Name="WizardWindowPage" Height="600" Width="900" WindowStartupLocation="CenterScreen" Closing="CloseWindowClicked" Icon="{StaticResource @Flash_16x16}">
     
     <Window.Resources>
         <wizardlib:BoolToVisibilityConverter x:Key="visibilityConverter" ValueIfTrue="Visible" ValueIfFalse="Collapsed" />
@@ -91,7 +91,7 @@
                         <!-- for icon/image -->
                         <Image Source="{Binding Path=WizConfig.BannerImage}" />
                     </StackPanel>
-                    <StackPanel Height="30"  VerticalAlignment="Center" Background="{DynamicResource @Skin1_ColorA}"  HorizontalAlignment="{Binding Path=WizConfig.BannerTextAlignment, Mode=OneWay}" >
+                    <StackPanel Height="30"  VerticalAlignment="Center" Background="{DynamicResource $Color_DarkBlue}"  HorizontalAlignment="{Binding Path=WizConfig.BannerTextAlignment, Mode=OneWay}" >
                         
                         <TextBlock x:Name="tbSubTitle" AutomationProperties.AutomationId="Title AID" Foreground="White"
 					

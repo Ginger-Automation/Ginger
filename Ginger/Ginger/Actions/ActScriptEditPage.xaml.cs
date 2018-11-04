@@ -42,10 +42,13 @@ namespace Ginger.Actions
             this.f = Act;
             App.FillComboFromEnumVal(ScriptActComboBox, Act.ScriptCommand);
             App.FillComboFromEnumVal(ScriptInterpreterComboBox, Act.ScriptInterpreterType);
-            App.ObjFieldBinding(ScriptActComboBox, ComboBox.TextProperty, Act, ActScript.Fields.ScriptCommand);
-            App.ObjFieldBinding(ScriptInterpreterComboBox, ComboBox.TextProperty, Act, ActScript.Fields.ScriptInterpreterType);
-            App.ObjFieldBinding(ScriptNameComboBox, ComboBox.TextProperty, Act, ActScript.Fields.ScriptName);
-
+         
+            App.ObjFieldBinding(ScriptInterpreterComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptInterpreterType);
+            App.ObjFieldBinding(ScriptActComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptCommand);
+            App.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptName);
+           
+            ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;
+           
             ScriptInterPreter.FileExtensions.Add(".exe");
             ScriptInterPreter.Init(Act, ActScript.Fields.ScriptInterpreter,true);
             f.ScriptPath = SHFilesPath;
@@ -59,50 +62,40 @@ namespace Ginger.Actions
             {
                 case ActScript.eScriptAct.FreeCommand:
                     ScriptStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                    ScriptDescriptionPanel.Visibility = Visibility.Collapsed;
                     f.RemoveAllButOneInputParam("Free Command");
                     f.AddInputValueParam("Free Command");
+                    ScriptNameComboBox.SelectedItem = null;
                     break;
 
                 case ActScript.eScriptAct.Script:
                     ScriptStackPanel.Visibility = System.Windows.Visibility.Visible;
-                    f.RemoveAllButOneInputParam("Value");
-                    f.AddInputValueParam("Value");
-                    FillScriptNameCombo();
+                    f.RemoveInputParam("Free Command");
                     break;
             }
-        }
-
-        private void FillScriptNameCombo()
-        {
-                ScriptNameComboBox.ItemsSource = null;
-                if (!Directory.Exists(SHFilesPath))
-                    Directory.CreateDirectory(SHFilesPath);
-                string[] fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-                .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
-
-                foreach (string file in fileEntries)
-                {
-                    string s = file.Replace(SHFilesPath, "");
-                    ScriptNameComboBox.Items.Add(s);
-                }
-            }
+        } 
           
         private void ScriptNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string ScriptFile = SHFilesPath + ScriptNameComboBox.SelectedValue;
-            if (!Directory.Exists(SHFilesPath))
-                Directory.CreateDirectory(SHFilesPath);
-            if (ScriptNameComboBox.SelectedValue == null) return;
-            if (f.ScriptName != ScriptNameComboBox.SelectedValue.ToString())
+
+            if (ScriptNameComboBox.SelectedItem != null)
             {
+                string ScriptFile = SHFilesPath + ScriptNameComboBox.SelectedItem;
+                if (!Directory.Exists(SHFilesPath))
+                    Directory.CreateDirectory(SHFilesPath);
                 f.ReturnValues.Clear();
                 f.InputValues.Clear();
 
                 string[] script = File.ReadAllLines(ScriptFile);
-                ScriptDescriptionLabel.Content = "";
+                ScriptDescriptionContent.Content = "";
                 parseScriptHeader(script);
             }
-        }
+
+            if (f.InputValues.Count == 0)
+            {
+                f.AddInputValueParam("Value");
+            }
+        }      
 
         private void parseScriptHeader(string[] script)
         {
@@ -110,96 +103,70 @@ namespace Ginger.Actions
             {
                 if (line.StartsWith("'GINGER_Description") || line.StartsWith("//GINGER_Description") || line.StartsWith("#GINGER_Description") || line.StartsWith("REM GINGER_Description"))
                 {
-                    ScriptDescriptionLabel.Content = line.Replace("'GINGER_Description", "").Replace("#GINGER_Description", "").Replace("//GINGER_Description", "").Replace("REM GINGER_Description", "");
+                    ScriptDescriptionContent.Content = line.Replace("'GINGER_Description", "").Replace("#GINGER_Description", "").Replace("//GINGER_Description", "").Replace("REM GINGER_Description", "");
                 }
                 if (line.StartsWith("'GINGER_$") || line.StartsWith("//GINGER_$") || line.StartsWith("#GINGER_$") || line.StartsWith("REM GINGER_$"))
                 {
                     f.AddOrUpdateInputParamValue(line.Replace("'GINGER_$", "").Replace("#GINGER_$", "").Replace("//GINGER_$", "").Replace("REM GINGER_$", ""), "");
                 }
             }
-            if(String.IsNullOrEmpty(ScriptDescriptionLabel.Content.ToString()))
+            if(String.IsNullOrEmpty(ScriptDescriptionContent.Content.ToString()))
             {
-                ScriptDescriptionLabel.Visibility = Visibility.Collapsed;
+                ScriptDescriptionPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
-                ScriptDescriptionLabel.Visibility = Visibility.Visible;
+                ScriptDescriptionPanel.Visibility = Visibility.Visible;
             }
         }
 
         private void ScriptInterpreterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            ActScript.eScriptInterpreterType interpreterType;
+            Enum.TryParse(ScriptInterpreterComboBox.SelectedValue.ToString(), out interpreterType);
+
             string[] fileEntries = null;
+
+            if (!Directory.Exists(SHFilesPath))
+            {
+                Directory.CreateDirectory(SHFilesPath);
+            }
             
-            
-            if (ScriptInterpreterComboBox.SelectedValue.ToString() == "Other")
+            if (interpreterType == ActScript.eScriptInterpreterType.Other)
             {
-                InterpreterPanel.Visibility = Visibility.Visible;
-                InterpreterPanelLabel.Visibility = Visibility.Visible;
-                if (  string.IsNullOrEmpty(f.ScriptName) || f.ScriptName.EndsWith(".vbs") || f.ScriptName.EndsWith(".js"))
-                {
-                    ScriptNameComboBox.ItemsSource = null;
-                    if (!Directory.Exists(SHFilesPath))
-                        Directory.CreateDirectory(SHFilesPath);
-                    fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-                   .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
-                    
-                }
+                InterpreterPathPanel.Visibility = Visibility.Visible;
+                fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
+               .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
             }
-            else if (ScriptInterpreterComboBox.SelectedValue.ToString() == "BAT")
+            else if (interpreterType == ActScript.eScriptInterpreterType.BAT)
             {
-                if (string.IsNullOrEmpty(f.ScriptName) || !f.ScriptName.EndsWith(".bat"))
-                {
-                    InterpreterPanel.Visibility = Visibility.Visible;
-                    InterpreterPanelLabel.Visibility = Visibility.Collapsed;
-                    ScriptNameComboBox.ItemsSource = null;
-                    if (!Directory.Exists(SHFilesPath))
-                        Directory.CreateDirectory(SHFilesPath);
-                    fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".bat");
-                    
-                }
-
+                InterpreterPathPanel.Visibility = Visibility.Collapsed;              
+                fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".bat");
             }
-            else if (ScriptInterpreterComboBox.SelectedValue.ToString() == "VBS")
+            else if (interpreterType == ActScript.eScriptInterpreterType.VBS)
             {
-                InterpreterPanel.Visibility = Visibility.Collapsed;
-                if (string.IsNullOrEmpty(f.ScriptName) || !f.ScriptName.EndsWith(".vbs") )
-                {
-                    InterpreterPanel.Visibility = Visibility.Visible;
-                    InterpreterPanelLabel.Visibility = Visibility.Collapsed;
-                    ScriptNameComboBox.ItemsSource = null;
-                    if (!Directory.Exists(SHFilesPath))
-                        Directory.CreateDirectory(SHFilesPath);
-                    fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".vbs");
-                   
-                }
-
+                InterpreterPathPanel.Visibility = Visibility.Collapsed;
+                fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".vbs");
             }
-            else if (ScriptInterpreterComboBox.SelectedValue.ToString() == "JS")
+            else if (interpreterType == ActScript.eScriptInterpreterType.JS)
             {
-                if (string.IsNullOrEmpty(f.ScriptName) || !f.ScriptName.EndsWith(".js"))
-                {
-                    InterpreterPanel.Visibility = Visibility.Visible;
-                    InterpreterPanelLabel.Visibility = Visibility.Collapsed;
-                    ScriptNameComboBox.ItemsSource = null;
-                    if (!Directory.Exists(SHFilesPath))
-                        Directory.CreateDirectory(SHFilesPath);
-
-                    fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".js");
-                    
-                }
-
+                InterpreterPathPanel.Visibility = Visibility.Collapsed;
+                fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".js");
             }
-          
+
             if (fileEntries != null)
             {
                 fileEntries = fileEntries.Select(q => q.Replace(SHFilesPath, "")).ToArray();
-                ScriptNameComboBox.Items.Clear();
                 ScriptNameComboBox.ItemsSource = fileEntries;
-                ScriptNameComboBox.SelectedValue = f.ScriptName;
+
+                if (f.ScriptName == null)
+                {
+                    ScriptNameComboBox.SelectedValue = fileEntries.FirstOrDefault();
+                }
             }
-            
         }
+
+      
     }
 
 

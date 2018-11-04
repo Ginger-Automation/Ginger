@@ -7,7 +7,7 @@
       d:DesignHeight="250" d:DesignWidth="700"
 	Title="ActFileOperationEditPage" >
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="500*"/>
             <ColumnDefinition Width="100"/>
