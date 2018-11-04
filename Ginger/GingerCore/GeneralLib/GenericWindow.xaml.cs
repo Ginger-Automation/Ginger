@@ -206,11 +206,7 @@ namespace Ginger
             parentWindow.IsEnabled = false;
             if (mCloseEventHandler != null)
             {
-                mCloseEventHandler.Invoke(this, new RoutedEventArgs());
-                if (this.Owner != null)
-                {
-                    this.Owner.Focus();
-                }
+                mCloseEventHandler.Invoke(this, new RoutedEventArgs());                
             }
             else
                 this.Close();
@@ -336,5 +332,12 @@ namespace Ginger
             while (genWindow.NeedToReShow);
         }
 
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            if (this.Owner != null)
+            {
+                this.Owner.Focus();
+            }
+        }
     }
 }
