@@ -11,6 +11,7 @@
         SizeChanged="Window_SizeChanged"
         AutomationProperties.AutomationId="GenericWindow"
         AutomationProperties.Name="GenericWindow"
+        Closed="Window_Closed"
         >
     
     <Grid>
