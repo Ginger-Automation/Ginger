@@ -361,21 +361,21 @@ namespace Ginger.BusinessFlowFolder
         {
             this.Dispatcher.Invoke(() =>
             {
-                VariablesExpanderLabel.Content = string.Format("{0} (1)", GingerDicser.GetTermResValue(eTermResKey.Variables), mBusinessFlow.Variables.Count);
+                VariablesExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mBusinessFlow.Variables.Count);
             });
         }
         private void UpdateActivitiesGroupsExpanderLabel()
         {
             this.Dispatcher.Invoke(() =>
             {
-                ActivitiesGroupsExpanderLabel.Content = string.Format("{0} (1)", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups), mBusinessFlow.ActivitiesGroups.Count);
+                ActivitiesGroupsExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups), mBusinessFlow.ActivitiesGroups.Count);
             });
         }
         private void UpdateActivitiesExpanderLabel()
         {
             this.Dispatcher.Invoke(() =>
             {
-                ActivitiesExpanderLabel.Content = string.Format("{0} (1)", GingerDicser.GetTermResValue(eTermResKey.Activities), mBusinessFlow.Activities.Count);
+                ActivitiesExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Activities), mBusinessFlow.Activities.Count);
             });
         }
     }
