@@ -163,7 +163,7 @@
             <WrapPanel x:Name="ExpandersMenuPanel">
                 <Expander x:Name="BFVariablesExpander2" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}">
                     <Expander.Header>
-                        <Label Style="{StaticResource @MenuHorizontalExpanderLabelStyle}">
+                        <Label x:Name="BusinessFlowVariablesExpander2Label" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}">
                             <Label.Content>
                                 <GingerCore:ucTextDicResource Text="[BusinessFlow] [Variables]"/>
                             </Label.Content>
@@ -172,7 +172,7 @@
                 </Expander>
                 <Expander x:Name="BFActivitiesGroupsExpander2" ExpandDirection="Down" IsExpanded="True"  Style="{StaticResource @MenuExpanderDarkStyle}">
                     <Expander.Header>
-                        <Label Style="{StaticResource @MenuHorizontalExpanderLabelStyle}">
+                        <Label x:Name="BBFActivitiesGroupsExpander2Label" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}">
                             <Label.Content>
                                 <GingerCore:ucTextDicResource Text="[ActivitiesGroups]"/>
                             </Label.Content>
@@ -181,7 +181,7 @@
                 </Expander>
                 <Expander x:Name="BFActivitiesExpander2" ExpandDirection="Down" IsExpanded="True"  Style="{StaticResource @MenuExpanderDarkStyle}">
                     <Expander.Header>
-                        <Label Style="{StaticResource @MenuHorizontalExpanderLabelStyle}">
+                        <Label x:Name="BBFActivitiesExpander2Label" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}">
                             <Label.Content>
                                 <GingerCore:ucTextDicResource Text="[Activities]"/>
                             </Label.Content>
@@ -190,7 +190,7 @@
                 </Expander>
                 <Expander x:Name="ActivityVariablesExpander2" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}">
                     <Expander.Header>
-                        <Label Style="{StaticResource @MenuHorizontalExpanderLabelStyle}">
+                        <Label x:Name="ActivityVariablesExpander2Label" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}">
                             <Label.Content>
                                 <GingerCore:ucTextDicResource Text="[Activity]-[Variables]"/>
                             </Label.Content>
@@ -199,7 +199,7 @@
                 </Expander>
                 <Expander x:Name="ActivityActionsExpander2" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}">
                     <Expander.Header>
-                        <Label Style="{StaticResource @MenuHorizontalExpanderLabelStyle}">
+                        <Label x:Name="ActivityActionsExpander2Label" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}">
                             <Label.Content>
                                 <GingerCore:ucTextDicResource Text="[Activity]-Actions"/>
                             </Label.Content>

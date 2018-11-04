@@ -122,6 +122,8 @@ namespace Ginger.BusinessFlowFolder
             {
                 xAutomateBtn.Visibility = Visibility.Collapsed;
             }
+
+            SetExpandersLabels();
         }
         
         private void TrackBusinessFlowAutomationPrecentage()
@@ -328,6 +330,53 @@ namespace Ginger.BusinessFlowFolder
         private void xAutomateBtn_Click(object sender, RoutedEventArgs e)
         {
            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, mBusinessFlow);
+        }
+
+        private void SetExpandersLabels()
+        {
+            UpdateVariabelsExpanderLabel();
+            mBusinessFlow.Variables.CollectionChanged += Variables_CollectionChanged;
+            UpdateActivitiesGroupsExpanderLabel();
+            mBusinessFlow.ActivitiesGroups.CollectionChanged += ActivitiesGroups_CollectionChanged;
+            UpdateActivitiesExpanderLabel();
+            mBusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
+        }
+
+        private void Activities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateActivitiesExpanderLabel();
+        }
+
+        private void ActivitiesGroups_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateActivitiesGroupsExpanderLabel();
+        }
+
+        private void Variables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateVariabelsExpanderLabel();
+        }
+
+        private void UpdateVariabelsExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                VariablesExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mBusinessFlow.Variables.Count);
+            });
+        }
+        private void UpdateActivitiesGroupsExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ActivitiesGroupsExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups), mBusinessFlow.ActivitiesGroups.Count);
+            });
+        }
+        private void UpdateActivitiesExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ActivitiesExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Activities), mBusinessFlow.Activities.Count);
+            });
         }
     }
 }
