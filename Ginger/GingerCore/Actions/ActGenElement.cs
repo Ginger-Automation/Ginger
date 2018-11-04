@@ -127,8 +127,10 @@ namespace GingerCore.Actions
                         uIElementTypeAssigned = true;                        
                         break;
                     case eGenElementAction.KeyboardInput:
-                    case eGenElementAction.KeyType:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        break;
+                    case eGenElementAction.KeyType:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.SetText;
                         break;
                     case eGenElementAction.SelectFromDropDown:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByText;
