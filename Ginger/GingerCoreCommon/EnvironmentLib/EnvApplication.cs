@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -70,8 +70,9 @@ namespace GingerCore.Environments
         [IsSerializedForLocalRepository]
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
+        //TODO: Fix me
         [IsSerializedForLocalRepository]
-        public ObservableList<Database> Dbs = new ObservableList<Database>();
+        public ObservableList<IDatabase> Dbs; // = new ObservableList<Database>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<UnixServer> UnixServers = new ObservableList<UnixServer>();

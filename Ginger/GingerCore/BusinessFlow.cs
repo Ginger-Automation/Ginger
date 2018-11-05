@@ -32,7 +32,7 @@ using System.Linq;
 
 namespace GingerCore
 {
-    public class BusinessFlow : RepositoryItemBase
+    public class BusinessFlow : RepositoryItemBase, IBusinessFlow
     {        
 
         public BusinessFlow()
@@ -317,7 +317,7 @@ namespace GingerCore
             return v;
         }
 
-        public VariableBase GetHierarchyVariableByName(string varName, bool considreLinkedVar = true)
+        public VariableBase GetHierarchyVariableByName(string varName, bool considerLinkedVar = true)
         {
             VariableBase var = null;
             if (SolutionVariables != null)
@@ -330,7 +330,7 @@ namespace GingerCore
             }
 
             //check if linked variable was used and return it instead of original one if yes
-            if (considreLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
+            if (considerLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
             {
                 var = GetHierarchyVariableByName(var.LinkedVariableName, false);
             }
@@ -338,7 +338,7 @@ namespace GingerCore
             return var;
         }
 
-        public VariableBase GetHierarchyVariableByNameAndType(string varName, string varType, bool considreLinkedVar = true)
+        public VariableBase GetHierarchyVariableByNameAndType(string varName, string varType, bool considerLinkedVar = true)
         {
             VariableBase var = null;
             if (SolutionVariables != null)
@@ -351,7 +351,7 @@ namespace GingerCore
             }
 
             //check if linked variable was used and return it instead of original one if yes
-            if (considreLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
+            if (considerLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
             {
                 var = GetHierarchyVariableByNameAndType(var.LinkedVariableName, varType, false);
             }
@@ -1084,6 +1084,7 @@ namespace GingerCore
             }
             return false;
         }
+
 
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> BFFlowControls = new ObservableList<FlowControl>();

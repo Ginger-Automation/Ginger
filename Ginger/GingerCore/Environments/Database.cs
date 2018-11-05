@@ -35,7 +35,7 @@ using MySql.Data.MySqlClient;
 
 namespace GingerCore.Environments
 {
-    public class Database : RepositoryItemBase
+    public class Database : RepositoryItemBase, IDatabase
     {        
 
         public enum eDBTypes
@@ -55,10 +55,10 @@ namespace GingerCore.Environments
             ConnectionString =1,            
         }
 
-        public ProjEnvironment ProjEnvironment { get; set; }
+        public IProjEnvironment ProjEnvironment { get; set; }
        
-        private BusinessFlow mBusinessFlow;
-        public BusinessFlow BusinessFlow
+        private IBusinessFlow mBusinessFlow;
+        public IBusinessFlow BusinessFlow
         {
             get { return mBusinessFlow; }
             set
@@ -132,10 +132,17 @@ namespace GingerCore.Environments
             {
                 if (mVE == null)
                 {
+                    //TODO: Fixme & create TC's
                     if (ProjEnvironment == null)
+                    {
                         ProjEnvironment = new Environments.ProjEnvironment();
+                    }
+
                     if (BusinessFlow == null)
+                    {
                         BusinessFlow = new GingerCore.BusinessFlow();
+                    }
+
                     mVE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
                 }
                 return mVE;

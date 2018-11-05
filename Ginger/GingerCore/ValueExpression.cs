@@ -32,9 +32,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
+
 namespace GingerCore
 {
-    public class ValueExpression
+    public class ValueExpression : IValueExpression
     {
         // regEx Cheat sheet
         //  ^  Depending on whether the MultiLine option is set, matches the position before the first character in a line, or the first character in the string. 
@@ -110,8 +111,8 @@ namespace GingerCore
 
         ObservableList<DataSourceBase> DSList;
 
-        BusinessFlow BF;
-        ProjEnvironment Env;
+        IBusinessFlow BF;
+        IProjEnvironment Env;
         bool bUpdate;
         string updateValue;
         bool bDone;
@@ -137,7 +138,7 @@ namespace GingerCore
             return Value;
         }
 
-        public ValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
+        public ValueExpression(IProjEnvironment Env, IBusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
         {
             this.Env = Env;
             this.BF = BF;
@@ -1007,7 +1008,7 @@ namespace GingerCore
         /// <param name="BusinessFlow">Business Flow containing the Variables</param>
         /// <param name="Value">the Expression string</param>
         /// <returns></returns>
-        public static string Calculate(ProjEnvironment ProjEnvironment, BusinessFlow BusinessFlow, string Value,ObservableList <DataSourceBase> DSList,bool bUpdate = false, string UpdateValue = "")
+        public static string Calculate(IProjEnvironment ProjEnvironment, IBusinessFlow BusinessFlow, string Value,ObservableList <DataSourceBase> DSList,bool bUpdate = false, string UpdateValue = "")
         {
             //TODO: this is static func, we can later on do cache and other stuff for performence if needed
             ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList, bUpdate,UpdateValue);

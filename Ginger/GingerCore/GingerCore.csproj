@@ -729,10 +729,7 @@
     </Compile>
     <Compile Include="Drivers\WebServicesDriverLib\WebServiceXML.cs" />
     <Compile Include="Drivers\WindowsLib\WindowsDriver.cs" />
-    <Compile Include="Environments\EnvApplication.cs" />
-    <Compile Include="Environments\LoginUser.cs" />
     <Compile Include="Environments\ProjEnvironment.cs" />
-    <Compile Include="Environments\UnixServer.cs" />
     <Compile Include="FlowControlLib\FlowControl.cs" />
     <Compile Include="Environments\Database.cs" />
     <Compile Include="GeneralLib\General.cs" />
