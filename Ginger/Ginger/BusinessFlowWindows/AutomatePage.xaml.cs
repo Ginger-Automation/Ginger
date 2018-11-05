@@ -355,18 +355,22 @@ namespace Ginger
 
         public static void CreateDefaultEnvironment()
         {
-            ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
-
-            // Add all solution target app
-            foreach (ApplicationPlatform AP in App.UserProfile.Solution.ApplicationPlatforms)
+            ObservableList<ProjEnvironment> environments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+            if (environments.Count == 0)
             {
-                EnvApplication EA = new EnvApplication();
-                EA.Name = AP.AppName;
-                EA.CoreProductName = AP.Core;
-                EA.CoreVersion = AP.CoreVersion;
-                EA.Active = true;
-                newEnv.Applications.Add(EA);
+                ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
+
+                // Add all solution target app
+                foreach (ApplicationPlatform AP in App.UserProfile.Solution.ApplicationPlatforms)
+                {
+                    EnvApplication EA = new EnvApplication();
+                    EA.Name = AP.AppName;
+                    EA.CoreProductName = AP.Core;
+                    EA.CoreVersion = AP.CoreVersion;
+                    EA.Active = true;
+                    newEnv.Applications.Add(EA);
+                }
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv); 
             }
         }
 
