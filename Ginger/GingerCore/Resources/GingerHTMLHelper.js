@@ -25,7 +25,7 @@ function define_GingerLib() {
     GingerLib = {};
 
     //----------------------------------------------------------------------------------------------------------------------
-    // To Highlight element we keep the current elelemnt and add/remove the GingerHighlight style to the element
+    // To Highlight element we keep the current element and add/remove the GingerHighlight style to the element
     //----------------------------------------------------------------------------------------------------------------------
     var CurrentHighlightElement;
     var CurrentX;
@@ -405,7 +405,7 @@ function define_GingerLib() {
         {
             var el = document.elementFromPoint(CurrentX, CurrentY);            
         }
-        else if (document.attachEvent)// Add to support erlier Version on IE .
+        else if (document.attachEvent)// Add to support earlier Version on IE .
         {         
             el = document.elementFromPoint(CurrentX, CurrentY);            
         }
@@ -524,7 +524,7 @@ function define_GingerLib() {
         pl.AddListPayLoad(Elems);
         pl.ClosePackage();
 
-        //call to function which will start mouse events lisener to be used for Live Spy
+        //call to function which will start mouse events listener to be used for Live Spy
         return pl;
     }
 
@@ -532,7 +532,7 @@ function define_GingerLib() {
       
 		if($(el).is(":visible")==false || $(el).css('display')=== 'none' || $(el).css('opacity')===0)
 		{
-			//if visible , display or opacity check is false return false straigh a way
+			//if visible , display or opacity check is false return false straight a way
 			return false;
 		}
 		else
@@ -747,7 +747,7 @@ function define_GingerLib() {
         catch (error) {
             return "";
         }
-        // if we didn't get better naem just return the element ""
+        // if we didn't get better name just return the element ""
         return "";
     }
 
@@ -1350,7 +1350,7 @@ function define_GingerLib() {
             var eventfired = false;
             var overridePopUp = false;
             if (Value != undefined && Value.length!=0) {               
-                var res = Value.split(',');//Hanlde popup message from browser
+                var res = Value.split(',');//Handel popup message from browser
                 var popUpType="";
                 var popUpOperation = "";
 
@@ -1518,7 +1518,7 @@ function define_GingerLib() {
             return pl;
         }
         var Response = new GingerPayLoad("OK");
-        Response.AddValueString("Scrorll down ended successfully")
+        Response.AddValueString("Scroll down ended successfully")
         Response.ClosePackage();
         return Response;
     }
@@ -1538,7 +1538,7 @@ function define_GingerLib() {
             return pl;
         }
         var Response = new GingerPayLoad("OK");
-        Response.AddValueString("Scrorll Up ended successfully")
+        Response.AddValueString("Scroll Up ended successfully")
         Response.ClosePackage();
         return Response;
     }

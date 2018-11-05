@@ -44,7 +44,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
             }
         }
 
-        // Core is the generic name of the application like: Notepad, we will search packaaged based on core app                
+        // Core is the generic name of the application like: Notepad, we will search packaged based on core app                
         public string Core { get; set; }
 
         string mCoreVersion;

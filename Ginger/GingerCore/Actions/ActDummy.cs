@@ -23,7 +23,7 @@ using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 // This class is for dummy act - good for agile, and to be replace later on when real
-//  act is availble, so tester can write the step to be.
+//  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
 {
     public class ActDummy : ActWithoutDriver

@@ -226,7 +226,7 @@ namespace GingerWPF.WizardLib
                             }
                         }
 
-                        //Custome controls Validations
+                        //Custom controls Validations
                         if (errorsFound == false)
                         {
                             if (child is ucGrid)
@@ -334,6 +334,7 @@ namespace GingerWPF.WizardLib
                 }
 
                 // TODO: verify all pages pass validation
+
                 NavigationList.SelectionChanged -= NavigationList_SelectionChanged;
 
                 mWizard.ProcessFinish();

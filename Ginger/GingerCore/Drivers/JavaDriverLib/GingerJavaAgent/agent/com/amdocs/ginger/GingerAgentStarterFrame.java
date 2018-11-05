@@ -303,7 +303,7 @@ private void ShowProcsList()
 	System.out.println("Getting VirtualMachine.list()");
 	try
 	{
-		// if attach.dll is not in the path the following error will apear
+		// if attach.dll is not in the path the following error will appear
 		// java.util.ServiceConfigurationError: com.sun.tools.attach.spi.AttachProvider: Provider sun.tools.attach.WindowsAttachProvider could not be instantiated
 		
 		java.util.List<VirtualMachineDescriptor> VMs =  VirtualMachine.list();

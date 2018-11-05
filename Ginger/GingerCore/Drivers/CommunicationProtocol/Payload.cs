@@ -23,7 +23,7 @@ using System.Text;
 
 namespace GingerCore.Drivers.CommunicationProtocol
 {
-    // Prep for better and faster communication Protocol between platfomss: C#, JS, Java   
+    // Prep for better and faster communication Protocol between platforms: C#, JS, Java   
     // We will have the same pack/unpack - C#, JS, Java
     // Payload is the data we want to pass between 2 end points
     // Can be from Ginger to GTB
@@ -40,9 +40,9 @@ namespace GingerCore.Drivers.CommunicationProtocol
     // field must be packed and unpacked in the same order
     // This class must be super fast as will be used a lot!! - so not generating objects or doing XMLs processing
 
-    // Payload Tempalte structure
-    // Sample - | are not part of the packaet
-    // Packaet contains 1 int value=5 and String="ABC"
+    // Payload Template structure
+    // Sample - | are not part of the packet
+    // Packet contains 1 int value=5 and String="ABC"
     // |  0123      4 5678 9 10 - 16|17   
     // |  0013d    |2|0005|1|0003ABC|&
 
@@ -51,7 +51,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
     public class PayLoad
     {
-        //UTF8 for ergualr string which are not created by the user and not language or special chars needed
+        //UTF8 for regular string which are not created by the user and not language or special chars needed
         public static System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
 
         //UTF16 for String which are created by the user and might have language or special chars
@@ -67,7 +67,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
         const byte BytesType = 7;    // Byte[]
         const byte KeyValuePair = 8;
         
-        // Last char is 255 - looks like space but is not and marking end of packaet
+        // Last char is 255 - looks like space but is not and marking end of packet
         const byte LastByteMarker = 255;
 
         const int cNULLStringLen = -1;    // if the string we write is null we write len = -1 - save space and parsing time
@@ -253,7 +253,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
         }
 
         /// <summary>
-        /// Check that we have enought space to add Len bytes of data, if not space will be addded, so it make sure data will be added with no err
+        /// Check that we have enough space to add Len bytes of data, if not space will be added, so it make sure data will be added with no err
         /// </summary>
         /// <param name="Len">Length of data to be added</param>
         private void CheckBuffer(int Len)
@@ -263,7 +263,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
                 int SpaceToAdd = 1024;
                 if (Len > SpaceToAdd) 
                 {
-                    SpaceToAdd = Len + 1024;  // Make sure that we add enought space to hold the new data
+                    SpaceToAdd = Len + 1024;  // Make sure that we add enough space to hold the new data
                 }
                 
                 Array.Resize(ref mBuffer, mBuffer.Length + SpaceToAdd); // Add more space in chuncks of 1024
@@ -340,7 +340,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
         public void AddValue(List<String> list) 
 	    {
 		    // List is #5
-		    // First we write the zise of the List and then String one after another 
+		    // First we write the size of the List and then String one after another 
             if (list != null)
             {
                 int len = 0;

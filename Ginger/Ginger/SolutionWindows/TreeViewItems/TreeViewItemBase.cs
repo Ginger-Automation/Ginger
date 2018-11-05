@@ -234,7 +234,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             else
             {
                 //implement for other item types
-                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Duplicae operation for this item type was not implemented yet.");
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Duplicate operation for this item type was not implemented yet.");
             }
         }
 
@@ -505,7 +505,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 this.GetType().GetProperty("Folder").SetValue(this, newFolderName);
                 this.GetType().GetProperty("Path").SetValue(this, newPath);
 
-                //refresh header and childerns (to get new File name)
+                //refresh header and children's (to get new File name)
                 RefreshTreeFolder(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));
             }
             catch (Exception ex)

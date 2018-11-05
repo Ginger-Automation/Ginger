@@ -144,7 +144,7 @@ namespace Ginger.AnalyzerLib
 
         private async Task Analyze()
         {         
-                // Each anlyzer will set to true once completed, this is prep for multi run in threads for speed
+                // Each analyzer will set to true once completed, this is prep for multi run in threads for speed
                 BusyInProcess = true;
                 mAnalyzerCompleted = false;
                 mAnalyzeDoneOnce = true;
@@ -240,7 +240,7 @@ namespace Ginger.AnalyzerLib
                     issues = AnalyzeGingerRunner.Analyze(GR, App.UserProfile.Solution.ApplicationPlatforms);
                     AddIssues(issues);
 
-                    //Code to analyze Runner Unique Busines flow with Source BF
+                    //Code to analyze Runner Unique Businessflow with Source BF
                     List<Guid> checkedGuidList = new List<Guid>();
                     foreach (BusinessFlow BF in GR.BusinessFlows)
                     {

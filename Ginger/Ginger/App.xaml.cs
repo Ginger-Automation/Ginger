@@ -101,7 +101,7 @@ namespace Ginger
                         mAppVersion = string.Format("{0}.{1}.{2}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart);
                         mAppVersion += "(Beta, Build Date: " + App.AppBuildTime.ToString("dd-MMM-yyyy") + ")";
                     }
-                    else//Oficial Release
+                    else//Official Release
                     {
                         mAppVersion = string.Format("{0}.{1}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart);
                     }
@@ -126,7 +126,7 @@ namespace Ginger
                     {
                         mAppShortVersion = string.Format("{0}.{1}.{2}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart);                        
                     }
-                    else//Oficial Release
+                    else//Official Release
                     {
                         mAppShortVersion = string.Format("{0}.{1}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart);
                     }
@@ -289,7 +289,7 @@ namespace Ginger
         internal static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
         {
             //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
-            //TODO: check perf impact + reuse exisitng binding on same obj.prop
+            //TODO: check perf impact + reuse existing binding on same obj.prop
 
             GingerCore.General.ObjFieldBinding(control, dependencyProperty, obj, property, BindingMode);
         }
@@ -332,7 +332,7 @@ namespace Ginger
 
             if (Environment.GetCommandLineArgs().Count() > 1)
             {
-                // When running from unit test there are args, so we set a flag in GingerAutomator to make sure Ginger will Launh
+                // When running from unit test there are args, so we set a flag in GingerAutomator to make sure Ginger will Launch
                 // and will not try to process the args for RunSet auto run
                 if (RunningFromUnitTest)
                 {
@@ -343,7 +343,7 @@ namespace Ginger
                     // This Ginger is running with run set config will do the run and close Ginger
                     RunningFromConfigFile = true;
                     Reporter.CurrentAppLogLevel = eAppReporterLoggingLevel.Debug;
-                    Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewd by Jenkins console and others)               
+                    Reporter.AddAllReportingToConsole = true;//running from command line so show logs and messages also on Console (to be reviewed by Jenkins console and others)               
                 }
             }
 
@@ -367,7 +367,7 @@ namespace Ginger
            
             AppSplashWindow.LoadingInfo("Init Application");
 
-            // We init the classed dictionary for the Repository Serialzier only once
+            // We init the classed dictionary for the Repository Serialize only once
             InitClassTypesDictionary();
 
             // TODO: need to add a switch what we get from old ginger based on magic key
@@ -446,7 +446,7 @@ namespace Ginger
                     return;
                 }
             }
-            Reporter.ToLog(eAppReporterLogLevel.FATAL, ">>>>>>>>>>>>>> Error occured on stand alone thread(non UI) - " + e.ExceptionObject.ToString());            
+            Reporter.ToLog(eAppReporterLogLevel.FATAL, ">>>>>>>>>>>>>> Error occurred on stand alone thread(non UI) - " + e.ExceptionObject);            
             Reporter.ToUser(eUserMsgKeys.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
             App.AppSolutionAutoSave.DoAutoSave();
 
@@ -468,7 +468,7 @@ namespace Ginger
             if (bDone) return;
             bDone = true;
 
-            // TODO: remove after we don't need old serialzier to load old repo items
+            // TODO: remove after we don't need old serializer to load old repo items
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
 
             // Add all RI classes from GingerCoreCommon
@@ -485,7 +485,7 @@ namespace Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
 
             // Each class which moved from GingerCore to GingerCoreCommon needed to be added here, so it will auto translate
-            // For backword compatibility of loading old object name in xml
+            // For backward compatibility of loading old object name in xml
             Dictionary<string, Type> list = new Dictionary<string, Type>();
             list.Add("GingerCore.Actions.ActInputValue", typeof(ActInputValue));
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
@@ -500,7 +500,7 @@ namespace Ginger
             //list.Add("GingerCore.Actions.RepositoryItemTag", typeof(RepositoryItemTag));
             //list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
 
-            // TODO: chage to SR2  if we want the files to be loaded convert and save with the new SR2
+            // TODO: change to SR2  if we want the files to be loaded convert and save with the new SR2
 
             //if (WorkSpace.Instance.BetaFeatures.UseNewRepositorySerializer)
             //{
@@ -545,7 +545,7 @@ namespace Ginger
             }
             else
             {
-                Reporter.ToLog(eAppReporterLogLevel.INFO, ">> No indication found for successfull execution, exit code: 1");
+                Reporter.ToLog(eAppReporterLogLevel.INFO, ">> No indication found for successful execution, exit code: 1");
                 Environment.ExitCode = 1;//failure
             }
 
@@ -684,7 +684,7 @@ namespace Ginger
                     }
                     catch(Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while checking if Solution requires Ginger Upgrade", ex);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while checking if Solution requires Ginger Upgrade", ex);
                     }
 
                     Solution sol = Solution.LoadSolution(SolFile);
@@ -727,7 +727,7 @@ namespace Ginger
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while checking if Solution files should be Upgraded", ex);
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while checking if Solution files should be Upgraded", ex);
                         }
 
                         App.UserProfile.AddSolutionToRecent(sol);
@@ -881,7 +881,7 @@ namespace Ginger
             //log it
             Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.ToString(), ex);
 
-            //add to dictenery to make sure same excption won't show more than 3 times
+            //add to dictionary to make sure same exception won't show more than 3 times
             if (_exceptionsDic.ContainsKey(ex.Message))
                 _exceptionsDic[ex.Message]++;
             else
@@ -971,7 +971,7 @@ namespace Ginger
                 {
                     if (string.IsNullOrEmpty(App.UserProfile.Solution.MainApplication))
                     {
-                        Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "You must have at least one Targent Application configured, please set it up.");
+                        Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "You must have at least one Target Application configured, please set it up.");
                         return;
                     }
                     else

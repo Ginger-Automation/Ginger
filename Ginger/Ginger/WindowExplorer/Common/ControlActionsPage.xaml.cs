@@ -41,14 +41,14 @@ namespace Ginger.WindowExplorer
     public partial class ControlActionsPage : Page
     {
         public Act mAction; // If we come here from EditAction page to update the locator
-        public ObservableList<Act> mActions; // List of availble actions to choos from
+        public ObservableList<Act> mActions; // List of available actions to choose from
         public ObservableList<ElementLocator> mLocators;
         private IWindowExplorer mWindowExplorerDriver;
         ElementInfo mElementInfo = null;
         Page mDataPage = null;
         double mLastDataGridRowHeight = 50;
 
-        // when launching from Window explore we get also availble actions to choose so user can add
+        // when launching from Window explore we get also available actions to choose so user can add
         public ControlActionsPage(IWindowExplorer driver, ElementInfo ElementInfo, ObservableList<Act> Actions, Page DataPage)
         {
             InitializeComponent();
@@ -86,7 +86,7 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        // when launching from Action Edit Page we show only Locators to choose, and later on replcae LovBy/LocValue
+        // when launching from Action Edit Page we show only Locator's to choose, and later on replace LovBy/LocValue
         public ControlActionsPage(Act Act, ElementInfo EI)
         {
             InitializeComponent();

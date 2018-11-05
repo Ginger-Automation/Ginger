@@ -84,7 +84,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 case EventType.Validate:                    
                     if (mTargetFolder == null)
                     {
-                        //TODO  : Select target Fodler error
+                        //TODO  : Select target Folder error
                     }
                     break;                                    
             }

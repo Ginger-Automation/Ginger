@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                // We can override if we want differnet extension for example un sub class 
+                // We can override if we want different extension for example un sub class 
                 // like APIModel - SOAP/REST we want both file name to be with same extension - ApplicationAPIModel
                 return RepositorySerializer.FileExt(this.GetType());
             }

@@ -103,7 +103,7 @@ namespace Ginger
         static RedBrush redBrush = new RedBrush();
         static LighGrayBackgroundBrush lighGrayBackgroundBrush = new LighGrayBackgroundBrush();
 
-        // Some of the highlighing rules added in code and not xshd since we want to use the same compile regex we use to find the expressions in text
+        // Some of the highlighting rules added in code and not xshd since we want to use the same compile regex we use to find the expressions in text
         void GetHighlightingRules()
         {
             if (mHighlightingRules == null)

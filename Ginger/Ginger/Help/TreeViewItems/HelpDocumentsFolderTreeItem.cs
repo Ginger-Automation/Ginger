@@ -60,7 +60,7 @@ namespace Ginger.Help.TreeViewItems
                 filesAndFolders.Add(folder);
             foreach (string file in files)
                 filesAndFolders.Add(file);
-            filesAndFolders.Sort();//sort alpebeticlly
+            filesAndFolders.Sort();//sort alphabetically
 
             foreach (string itemPath in filesAndFolders)
             {
@@ -119,7 +119,7 @@ namespace Ginger.Help.TreeViewItems
         
         bool ITreeViewItem.IsExpandable()
         {
-            // Folder is expnandle if it has sub folders or files.
+            // Folder is expandable if it has sub folders or files.
             if (System.IO.Directory.GetDirectories(Path).Length >0 || System.IO.Directory.GetFiles(Path).Length > 0 )
             {
                 return true;

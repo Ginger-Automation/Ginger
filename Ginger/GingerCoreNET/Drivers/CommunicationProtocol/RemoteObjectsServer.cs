@@ -27,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
     {
         GingerSocketServer2 mGingerSocketServer;
 
-        // Object created and refeered from remote client
+        // Object created and referred from remote client
         Dictionary<Guid, RemoteObjectHandle> mObjects = new Dictionary<Guid, RemoteObjectHandle>();
 
         // one input string which is the object id and return object - callback to the using class - must be set
@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                     {
                         object DispObj = obj;
                         dynamic d = DispObj;
-                        // It means it is UI control - so invoke on the UI control Dispatcher, this way we avoid code on the page to change the UI on the Dispacther every time
+                        // It means it is UI control - so invoke on the UI control Dispatcher, this way we avoid code on the page to change the UI on the Dispatcher every time
                         remoteObjectHandle.Dispatcher = d.Dispatcher;
                     }
 
@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                     else
                     {
                         // It means the obj is UI control like driver Page- so invoke on the UI control Dispatcher, 
-                        // this way we avoid code on the page to change the UI on the Dispacther every time we do UI changes and avoid getting exception
+                        // this way we avoid code on the page to change the UI on the Dispatcher every time we do UI changes and avoid getting exception
                         ROH.Dispatcher.BeginInvoke(
                                         (Action)(() => {
                                             rc = mi.Invoke(obj1, param);
