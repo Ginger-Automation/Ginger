@@ -241,14 +241,25 @@ namespace Ginger.Run
 
         private void SetNonSpecificRunSetEventsTracking()
         {
+            App.UserProfile.PropertyChanged -= UserProfilePropertyChanged;
             App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
+
+            App.RunsetExecutor.PropertyChanged -= RunsetExecutor_PropertyChanged;
             App.RunsetExecutor.PropertyChanged += RunsetExecutor_PropertyChanged;
+
+            WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged -= AgentsCache_CollectionChanged;
             WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged += AgentsCache_CollectionChanged;
 
+            xBusinessflowsRunnerItemsListView.SelectionChanged -= xActivitiesListView_SelectionChanged;
             xBusinessflowsRunnerItemsListView.SelectionChanged += xActivitiesListView_SelectionChanged;
+
+            xActivitiesRunnerItemsListView.SelectionChanged -= xActionsListView_SelectionChanged;
             xActivitiesRunnerItemsListView.SelectionChanged += xActionsListView_SelectionChanged;
+
+            ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items).CollectionChanged -= xActivitiesRunnerItemsListView_CollectionChanged;
             ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items).CollectionChanged += xActivitiesRunnerItemsListView_CollectionChanged;
-            RunnerItemPage.RunnerItemEvent += RunnerItem_RunnerItemEvent;
+
+            RunnerItemPage.SetRunnerItemEvent(RunnerItem_RunnerItemEvent);            
         }
 
         private void AgentsCache_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -910,7 +921,10 @@ namespace Ginger.Run
                 mBusinessFlowsXmlsChangeWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
                 mBusinessFlowsXmlsChangeWatcher.IncludeSubdirectories = true;
 
+                mBusinessFlowsXmlsChangeWatcher.Changed -= new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
                 mBusinessFlowsXmlsChangeWatcher.Changed += new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
+
+                mBusinessFlowsXmlsChangeWatcher.Deleted -= new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
                 mBusinessFlowsXmlsChangeWatcher.Deleted += new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
 
                 mBusinessFlowsXmlsChangeWatcher.EnableRaisingEvents = true;

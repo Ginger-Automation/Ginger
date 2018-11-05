@@ -42,7 +42,12 @@ namespace Ginger.Drivers.PowerBuilder
 {
     public class PBControlTreeItemBase : AutomationElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
-     
+        public ITreeView TreeView
+        {
+            get;
+            set;
+        }
+
         Object ITreeViewItem.NodeObject()
         {
             return base.UIAElementInfo;

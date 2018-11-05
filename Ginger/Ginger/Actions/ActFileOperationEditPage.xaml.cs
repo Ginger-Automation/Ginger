@@ -64,7 +64,8 @@ namespace Ginger.Actions
             {
                 if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Copy
                     ||(ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.ForceCopy
-                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Move )
+                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Move 
+                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.UnZip )
                 {
                     PanelToWrite.Visibility = Visibility.Visible;
                 }
