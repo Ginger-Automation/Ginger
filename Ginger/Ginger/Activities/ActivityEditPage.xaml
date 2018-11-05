@@ -117,7 +117,7 @@
             <Expander.Header>
                 <Label x:Name="ActionsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
                     <Label.Content>
-                        <GingerCore:ucTextDicResource Text="[Actions]"/>
+                        <GingerCore:ucTextDicResource Text="Actions"/>
                     </Label.Content>
                 </Label>
             </Expander.Header>

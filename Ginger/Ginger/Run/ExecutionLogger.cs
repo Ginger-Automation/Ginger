@@ -216,8 +216,7 @@ namespace Ginger.Run
                 }
             }
             catch(Exception ex)
-            {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error-{ex.Message}");
+            {                
                 return false;
             }
             
