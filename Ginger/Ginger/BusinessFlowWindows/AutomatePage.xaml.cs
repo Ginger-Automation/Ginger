@@ -123,9 +123,11 @@ namespace Ginger
             cboSpeed.Text = "0";
             App.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, App.AutomateTabGingerRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
             AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(App.AutomateTabGingerRunner);
+
             BindEnvsCombo();
 
             SetExpanders();
+
             //Bind between Menu expanders and actual grid expanders
             App.ObjFieldBinding(BFVariablesExpander, Expander.IsExpandedProperty, BFVariablesExpander2, "IsExpanded");
             App.ObjFieldBinding(BFActivitiesGroupsExpander, Expander.IsExpandedProperty, BFActivitiesGroupsExpander2, "IsExpanded");
@@ -229,11 +231,11 @@ namespace Ginger
                     {
                         //set daynamic expanders titles
                         if (App.BusinessFlow != null)
-                        {
-                            CurrentBusExpanderLable.Content = "'" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                        {                            
                             mCurrentBusPage = new BusinessFlowPage(App.BusinessFlow, true);
                             CurrentBusFrame.Content = mCurrentBusPage;
 
+                            UpdateMainBFLabel();
                             App.BusinessFlow.PropertyChanged -= BusinessFlow_PropertyChanged;
                             App.BusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
                             UpdateBusinessFlowVariabelsExpanders();
@@ -257,6 +259,13 @@ namespace Ginger
                     });
         }
 
+        private void UpdateMainBFLabel()
+        {
+            App.MainWindow.Dispatcher.Invoke(() =>
+            {
+                xMainBusinessFlowlabel.Content = String.Format("'{0}' {1}", App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+            });
+        }
         private void UpdateBusinessFlowVariabelsExpanders()
         {
             if (Dispatcher.CheckAccess())
@@ -264,13 +273,13 @@ namespace Ginger
                 string label;
                 if (App.BusinessFlow != null)
                 {
-                    label= string.Format("{0} {1} ({2})", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Variables), App.BusinessFlow.Variables.Count);
+                    label= string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), App.BusinessFlow.Variables.Count);
                     BusinessFlowVariablesExpanderLabel.Content = label;
                     BusinessFlowVariablesExpander2Label.Content = label;
                 }
                 else
                 {
-                    label= string.Format("{0} {1}", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Variables));
+                    label= string.Format("{0}", GingerDicser.GetTermResValue(eTermResKey.Variables));
                     BusinessFlowVariablesExpanderLabel.Content = label;
                     BusinessFlowVariablesExpander2Label.Content = label;
                 }
@@ -738,6 +747,7 @@ namespace Ginger
                         //removing previous Activity events registration
                         mCurrentActivity.Variables.CollectionChanged -= CurrentActivityVariables_CollectionChanged;
                         mCurrentActivity.Acts.CollectionChanged -= CurrentActivityActions_CollectionChanged;
+                        mCurrentActivity.PropertyChanged -= MCurrentActivity_PropertyChanged;
                     }
                     mCurrentActivity = App.BusinessFlow.CurrentActivity;
                     if (mCurrentActivity != null)
@@ -745,13 +755,23 @@ namespace Ginger
                         //Add current Activity events registration
                         mCurrentActivity.Variables.CollectionChanged += CurrentActivityVariables_CollectionChanged;
                         mCurrentActivity.Acts.CollectionChanged += CurrentActivityActions_CollectionChanged;
+                        mCurrentActivity.PropertyChanged += MCurrentActivity_PropertyChanged;
                     }                                  
                 }
                 else if(e.PropertyName == BusinessFlow.Fields.Name)
                 {
-                    CurrentBusExpanderLable.Content = "'" + App.BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                    UpdateMainBFLabel();
                 }
             });
+        }
+
+        private void MCurrentActivity_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Activity.ActivityName))
+            {
+                UpdateCurrentActivityVariabelsExpanders();
+                UpdateCurrentActivityActionsExpanders();                
+            }
         }
 
         private void CurrentActivityVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
