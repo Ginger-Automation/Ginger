@@ -90,6 +90,12 @@ namespace Ginger.SolutionWindows
                     FilesListBox.ItemsSource = mFilesToShow;
                     break;
             }
+
+            //sorting
+            if (FilesListBox.Items != null && FilesListBox.Items.Count > 0)
+            {
+                FilesListBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("", System.ComponentModel.ListSortDirection.Ascending));
+            }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)

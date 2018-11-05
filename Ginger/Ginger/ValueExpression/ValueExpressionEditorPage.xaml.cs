@@ -177,8 +177,8 @@ namespace Ginger
             AddVBSIfEval(tviVars, "Action Status = Passed", "\"{ActionStatus}\" = \"Passed\"");
             AddVBSIfEval(tviVars, "Action Status = Failed", "\"{ActionStatus}\" = \"Failed\"");
 
-            AddVBSIfEval(tviVars, "Last Activity Status = Passed", "\"{LastActivityStatus}\" = \"Passed\"");
-            AddVBSIfEval(tviVars, "Last Activity Status = Failed", "\"{LastActivityStatus}\" = \"Failed\"");
+            AddVBSIfEval(tviVars, "Last " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Status = Passed", "\"{LastActivityStatus}\" = \"Passed\"");
+            AddVBSIfEval(tviVars, "Last " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Status = Failed", "\"{LastActivityStatus}\" = \"Failed\"");
         }
 
         //Added for Business Flow Control in RunSet
@@ -188,8 +188,8 @@ namespace Ginger
             SetItemView(tviVars, "Flow Control Conditions", "", "VBS16x16.png");
             xObjectsTreeView.Items.Add(tviVars);
 
-            AddVBSIfEval(tviVars, "Business Flow Status = Passed", "\"{BusinessFlowStatus}\" = \"Passed\"");
-            AddVBSIfEval(tviVars, "Business Flow Status = Failed", "\"{BusinessFlowStatus}\" = \"Failed\"");
+            AddVBSIfEval(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Status = Passed", "\"{BusinessFlowStatus}\" = \"Passed\"");
+            AddVBSIfEval(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Status = Failed", "\"{BusinessFlowStatus}\" = \"Failed\"");
         }
 
         private void AddVBSIfFunctions()
@@ -422,7 +422,7 @@ namespace Ginger
         private void InsertAddNewVarTreeItem(TreeViewItem parentTvi, eVariablesLevel varLevel)
         {
             TreeViewItem newVarTvi = new TreeViewItem();
-            SetItemView(newVarTvi, "Add New String Variable", varLevel, "@Add_16x16.png");
+            SetItemView(newVarTvi, "Add New String " + GingerDicser.GetTermResValue(eTermResKey.Variable) , varLevel, "@Add_16x16.png");
             parentTvi.Items.Add(newVarTvi);
             newVarTvi.MouseDoubleClick += tviAddNewVarTreeItem_MouseDoubleClick;
         }

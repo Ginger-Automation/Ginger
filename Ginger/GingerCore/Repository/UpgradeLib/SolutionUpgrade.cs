@@ -118,6 +118,10 @@ namespace GingerCore.Repository.UpgradeLib
                     //get XML 
                     reader.ReadLine();//no need first line
                     xml = reader.ReadLine();
+                    if (xml.ToLower().Contains("version") == false)//to handle new line gap in some old xml's
+                    {
+                        xml = reader.ReadLine();
+                    }
                 }
             }
 

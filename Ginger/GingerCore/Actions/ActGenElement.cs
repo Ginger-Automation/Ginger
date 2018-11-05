@@ -124,11 +124,13 @@ namespace GingerCore.Actions
                     case eGenElementAction.SelectFromListScr:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByIndex;
                         NewActUIElement.ElementType = eElementType.List;
-                        uIElementTypeAssigned = true;
+                        uIElementTypeAssigned = true;                        
                         break;
                     case eGenElementAction.KeyboardInput:
-                    case eGenElementAction.KeyType:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        break;
+                    case eGenElementAction.KeyType:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.SetText;
                         break;
                     case eGenElementAction.SelectFromDropDown:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByText;
@@ -189,6 +191,7 @@ namespace GingerCore.Actions
                     NewActUIElement.Platform = ePlatformType.Web; // ??? to check
                 }
 
+                NewActUIElement.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, this.GetInputParamValue("Value"));
                 return NewActUIElement;
             }
 

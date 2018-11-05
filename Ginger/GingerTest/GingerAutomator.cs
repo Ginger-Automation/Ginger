@@ -40,6 +40,10 @@ namespace GingerWPFUnitTest
         static GingerAutomator gingerAutomatorInstance;  // currently we have only one Ginger running for all tests
         static int SessionCount = 0; // count how many sessions are waiting in queue
 
+
+        // Set to true if you want highlights when automation run and speak
+        public static bool Highlight { get { return false; }  }
+
         public static GingerAutomator StartSession()
         {
             SessionCount++;
