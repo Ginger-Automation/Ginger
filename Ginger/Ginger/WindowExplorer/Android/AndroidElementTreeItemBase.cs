@@ -68,7 +68,7 @@ namespace Ginger.WindowExplorer.Android
 
         StackPanel ITreeViewItem.Header()
         {
-            //TODO: ut better icon for generic control
+            //TODO: Pput better icon for generic control
             string ImageFileName = "@Agent_16x16.png";
             string Title = AndroidElementInfo.ElementTitle;
             return TreeViewUtils.CreateItemHeader(Title, ImageFileName);

@@ -85,7 +85,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         {
             List<ICompletionData> list = new List<ICompletionData>();
             
-                //TODO: fix me - only when in the begining of line - allow lower case too
+                //TODO: fix me - only when in the beginning of line - allow lower case too
             string CurrentLine = SelectedContentArgs.CaretLineText();
             while (CurrentLine.StartsWith(" ") || CurrentLine.StartsWith("\t"))
                 CurrentLine = CurrentLine.Substring(1);

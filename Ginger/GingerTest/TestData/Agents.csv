@@ -2,7 +2,7 @@ Name,PlatfromType,DriverType
 IB,Web,InternalBrowser
 Selenium IE,Web,SeleniumIE
 Selenium FF,Web,SeleniumFireFox
-Selenium Chrom,Web,SeleniumChrome
+Selenium Chrome,Web,SeleniumChrome
 Selenium Remote Web driver,Web,SeleniumRemoteWebDriver
 Selenium Edge,Web,SeleniumEdge
 Phantom JS,Web,SeleniumPhantomJS

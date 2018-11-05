@@ -16,7 +16,7 @@
             <RowDefinition Height="320*"/>
         </Grid.RowDefinitions>
 
-        <Label>Import CDL - Change Defintion Language</Label>
+        <Label>Import CDL - Change Definition Language</Label>
         <Label Grid.Row="1">File Name</Label>
         <TextBox x:Name="FileNameTextBox" Grid.Row="2" Margin="10"></TextBox>
         <TextBox x:Name="ContentTextBox" Grid.Row="3" TextWrapping="Wrap" Text="TextBox" Margin="10"/>

@@ -29,7 +29,7 @@ namespace Ginger.Imports.UFT
 
         public List<BusFunction> ProcessBusScript(string sBUSfilePath)
         {
-            //Creating ASAP funbctions list
+            //Creating ASAP functions list
             ASAPBuiltInFunctionList.Add("fGuiClickButton");
             ASAPBuiltInFunctionList.Add("fGuiDBCheck");
             ASAPBuiltInFunctionList.Add("fDBActivities");
@@ -63,7 +63,7 @@ namespace Ginger.Imports.UFT
                     BF.BusFunctionName = BusFuncName;
                     BF.ListOfGuiFunctions = fGuiListPerBus; ;
                    
-                    //Make sure there are no Duplicate functins
+                    //Make sure there are no Duplicate functions
                     if (!BusList.Contains(BF))
                     {
                         BusList.Add(BF);
@@ -111,7 +111,7 @@ namespace Ginger.Imports.UFT
                 if (GuiNameUpper.Contains("MICFAIL")) GuiName = GuiName.Replace("micFail", "");
 
 
-                //Makes sure that Gui List conatins Unique List and also its not a part of ASAP Built in function
+                //Makes sure that Gui List contains Unique List and also its not a part of ASAP Built in function
                 if (!GuiFunctionList.Contains(GuiName) && !ASAPBuiltInFunctionList.Contains(GuiName) && GuiName.Contains("fGui")) 
                 {
                     GuiFunctionList.Add(GuiName.Trim());

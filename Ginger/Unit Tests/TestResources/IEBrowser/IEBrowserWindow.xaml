@@ -27,7 +27,7 @@
                     </StackPanel>
                     <TextBox x:Name="ScriptTextBlock" Width="350" Height="70" AcceptsReturn="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Text=""/>
                     <StackPanel Orientation="Horizontal">
-                        <Label>Script Snippest</Label>
+                        <Label>Script Snippets</Label>
                         <ComboBox x:Name="ScriptSnippestComboBox" SelectionChanged="ScriptSnippestComboBox_SelectionChanged" Width="250"></ComboBox>
                     </StackPanel>
                     

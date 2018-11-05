@@ -65,7 +65,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         }
 
         /// <summary>
-        /// This is used to initialise the wizard
+        /// This is used to initialize the wizard
         /// </summary>
         public ImportDataSourceFromExcelWizard(DataSourceBase DSDetails)
         {

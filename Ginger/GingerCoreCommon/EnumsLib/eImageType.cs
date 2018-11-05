@@ -63,11 +63,11 @@
         /// </summary>
         Processing,
         /// <summary>
-        ///  Show green flag, use when action, activity, businees flows execution pass
+        ///  Show green flag, use when action, activity, businessflows execution pass
         /// </summary>
         Passed,
         /// <summary>
-        ///  Show red flag, use when action, activity, businees flows execution fail
+        ///  Show red flag, use when action, activity, businessflows execution fail
         /// </summary>
         Failed,
         Pending,

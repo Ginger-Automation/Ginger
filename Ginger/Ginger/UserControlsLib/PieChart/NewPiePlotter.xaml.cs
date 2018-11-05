@@ -58,7 +58,7 @@ namespace Ginger.UserControlsLib.PieChart
 
 
         /// <summary>
-        /// The size of the hole in the centre of circle (as a percentage)
+        /// The size of the hole in the center of circle (as a percentage)
         /// </summary>
         public double HoleSize
         {
@@ -97,7 +97,7 @@ namespace Ginger.UserControlsLib.PieChart
 
         /// <summary>
         /// Handle changes in the datacontext. When a change occurs handlers are registered for events which
-        /// occur when the collection changes or any items within teh collection change.
+        /// occur when the collection changes or any items within the collection change.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -203,7 +203,7 @@ namespace Ginger.UserControlsLib.PieChart
         }
 
         /// <summary>
-        /// Iterates over the items inthe bound collection, adding handlers for PropertyChanged events
+        /// Iterates over the items in the bound collection, adding handlers for PropertyChanged events
         /// </summary>
         private void ObserveBoundCollectionChanges()
         {
@@ -240,7 +240,7 @@ namespace Ginger.UserControlsLib.PieChart
             PropertyDescriptorCollection filterPropDesc = TypeDescriptor.GetProperties(item);
             object itemValue = filterPropDesc[PlottedProperty].GetValue(item);
 
-            //TODO possibel type conversion?
+            //TODO possible type conversion?
 
             return (double)itemValue;
         }

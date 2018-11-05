@@ -51,7 +51,7 @@ namespace Ginger {
       readonly T[] _buffer;
       /// <summary>
       /// The all-over position within the ring buffer. The position 
-      /// increases continously by adding new items to the buffer. This 
+      /// increases continuously by adding new items to the buffer. This 
       /// value is needed to calculate the current relative position within the 
       /// buffer.
       /// </summary>
@@ -136,7 +136,7 @@ namespace Ginger {
       /// </summary>
       /// <param name="array">The target array to copy the items of 
       /// the buffer to.</param>
-      /// <param name="arrayIndex">The start position witihn the target
+      /// <param name="arrayIndex">The start position within the target
       /// array to start copying.</param>
       public void CopyTo(T[] array, int arrayIndex) {
          for (int i = 0; i < Count; i++) {
@@ -159,7 +159,7 @@ namespace Ginger {
       }
 
       /// <summary>
-      /// Gets the position of a specied item within the ring buffer.
+      /// Gets the position of a specified item within the ring buffer.
       /// </summary>
       /// <param name="item">The item to get the current position for.</param>
       /// <returns>The zero based index of the found item within the 
@@ -195,7 +195,7 @@ namespace Ginger {
       /// <b>Warning</b>
       /// Frequent usage of this method might become a bad idea if you are 
       /// working with a large buffer capacity. The insertion of an item
-      /// at a specified position within the buffer causes causes all present 
+      /// at a specified position within the buffer causes all present 
       /// items below the specified position to be moved one position.
       /// </remarks>
       public void Insert(int index, T item) {
@@ -245,7 +245,7 @@ namespace Ginger {
       /// working with a large buffer capacity. The removing of an item 
       /// requires a scan of the buffer to get the position of the specified
       /// item. If the item was found, the deletion requires a move of all 
-      /// items stored abouve the found position.
+      /// items stored above the found position.
       /// </remarks>
       public bool Remove(T item) {
          // find the position of the specified item
@@ -268,7 +268,7 @@ namespace Ginger {
       /// <b>Warning</b>
       /// Frequent usage of this method might become a bad idea if you are 
       /// working with a large buffer capacity. The deletion requires a move 
-      /// of all items stored abouve the found position.
+      /// of all items stored above the found position.
       /// </remarks>
       public void RemoveAt(int index) {
          // validate the index

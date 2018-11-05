@@ -41,7 +41,7 @@ namespace GingerCoreNET.RunLib
         public Object Object;
 
 
-        //TODO: create event per type!????????????? so can listent to specific events
+        //TODO: create event per type!????????????? so can listen to specific events
         public GingerRunnerEventArgs(eEventType EventType, object Object)
         {
             this.EventType = EventType;

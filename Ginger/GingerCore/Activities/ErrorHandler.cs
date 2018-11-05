@@ -20,7 +20,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using GingerCore.Properties;
 
-//TODO: chang add core
+//TODO: change add core
 namespace GingerCore
 {
     //Activity can have several steps - Acts

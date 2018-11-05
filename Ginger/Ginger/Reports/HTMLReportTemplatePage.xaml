@@ -37,7 +37,7 @@
                                 <StackPanel x:Name="TemplateName" Margin="10,10,0,0" HorizontalAlignment="Left">
                                     <DockPanel >
                                         <Label Content="Template Name:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12" DockPanel.Dock="Left"></Label>
-                                        <usercontrols:ImageMakerControl x:Name="xDefualtImage" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Defualt Template" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="0,0,10,0" />
+                                        <usercontrols:ImageMakerControl x:Name="xDefualtImage" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default Template" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="0,0,10,0" />
                                     </DockPanel>
                                 
                                 <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >

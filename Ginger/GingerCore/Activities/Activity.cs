@@ -29,7 +29,7 @@ using GingerCore.Variables;
 using GingerCore.Properties;
 using Amdocs.Ginger.Common.Enums;
 
-//TODO: chang add core
+//TODO: change add core
 namespace GingerCore
 {
     // Activity can have several steps - Acts

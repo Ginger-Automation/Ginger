@@ -491,7 +491,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 // Find the label in the header, this is label child of the Header Stack Panel
                 StackPanel SP = (StackPanel)tvi.Header;                     
 
-                //Ccombine text of all label childs of the header Stack panel
+                //Combine text of all label child's of the header Stack panel
                 string HeaderTXT = "";
                 foreach (var v in SP.Children)
                 {

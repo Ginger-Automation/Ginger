@@ -42,11 +42,11 @@ namespace Ginger.ConfigurationsLib
         {
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
 
-            TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, "Target Applications", ConsoleKey.T, "Target Applications AID", "Name & Platformes of the Applications which been tested in current Solution");
+            TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, "Target Applications", ConsoleKey.T, "Target Applications AID", "Name & Platforms of the Applications which been tested in current Solution");
             targetApplicationsMenu.Add(eImageType.Application, "", GetTargetApplicationsPage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(targetApplicationsMenu);
 
-            TopMenuItem agentsMenu = new TopMenuItem(eImageType.Agent, "Agents", ConsoleKey.A, "Agents AID", "Agents are the drivers which comunicates with the tested application");
+            TopMenuItem agentsMenu = new TopMenuItem(eImageType.Agent, "Agents", ConsoleKey.A, "Agents AID", "Agents are the drivers which communicates with the tested application");
             agentsMenu.Add(eImageType.Agent, "", AgentsList, ConsoleKey.A, "", "AID");
             twoLevelMenu.Add(agentsMenu);
            

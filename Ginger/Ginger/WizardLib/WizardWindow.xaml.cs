@@ -226,7 +226,7 @@ namespace GingerWPF.WizardLib
                             }
                         }
 
-                        //Custome controls Validations
+                        //Custom controls Validations
                         if (errorsFound == false)
                         {
                             if (child is ucGrid)
@@ -321,7 +321,7 @@ namespace GingerWPF.WizardLib
                     }
                 }
 
-                // TODO: verify all apges pass validation
+                // TODO: verify all pages pass validation
 
                 NavigationList.SelectionChanged -= NavigationList_SelectionChanged;
 
@@ -331,7 +331,7 @@ namespace GingerWPF.WizardLib
 
                 //if (mWizard.mWizardWindow == null)
                 //{
-                //    // If no page cancelled the Finish then all OK and we can close
+                //    // If no page canceled the Finish then all OK and we can close
                 //    CurrentWizardWindow = null;                
                 //    mWizard = null;
 

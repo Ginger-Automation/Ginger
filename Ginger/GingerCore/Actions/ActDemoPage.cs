@@ -38,7 +38,7 @@ namespace GingerCore.Actions
 
         public override string ActionEditPage { get { return "ActDemoPageEditPage"; } }
 
-        //Developer to cahnge it to true if he wants to use this action.
+        //Developer to change it to true if he wants to use this action.
         public override bool IsSelectableAction { get { return false; } }
 
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }

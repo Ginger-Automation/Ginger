@@ -226,10 +226,10 @@ namespace Ginger
 
         private void SetExpanders()
         {
-            // We do UI changes using the dispatcher since it might trgigger from STA like IB
+            // We do UI changes using the dispatcher since it might trigger from STA like IB
             App.MainWindow.Dispatcher.Invoke(() =>
                     {
-                        //set daynamic expanders titles
+                        //set dynamic expanders titles
                         if (App.BusinessFlow != null)
                         {                            
                             mCurrentBusPage = new BusinessFlowPage(App.BusinessFlow, true);
@@ -457,7 +457,7 @@ namespace Ginger
                         }
                     }
 
-                    //defualt selection
+                    //default selection
                     lstEnvs.SelectedIndex = 0;
                 }
             }
@@ -717,7 +717,7 @@ namespace Ginger
                 }
             }
 
-            //arange expanders menu look 
+            //arrange expanders menu look 
             if (rowIndex == 8)
             {
                 PageMainGrid.RowDefinitions[3].Height = new GridLength(0);
@@ -795,7 +795,7 @@ namespace Ginger
 
         private void SaveBizFlowButton_Click(object sender, RoutedEventArgs e)
         {
-            //warn in case dynamic shared reposiotry Activities are included and going to be deleted
+            //warn in case dynamic shared repository Activities are included and going to be deleted
             if (App.BusinessFlow.Activities.Where(x => x.AddDynamicly == true).FirstOrDefault() != null)
             {
                 if (Reporter.ToUser(eUserMsgKeys.WarnOnDynamicActivities) == MessageBoxResult.No)
@@ -882,7 +882,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured on Reset Status Run from Automate Tab", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred on Reset Status Run from Automate Tab", ex);
                 throw ex;                
             }
         }
@@ -1097,7 +1097,7 @@ namespace Ginger
             //disable grids  
             EnableDisableAutomateTabGrids(false);
 
-            //execute preperations
+            //execute preparations
             SetAutomateTabRunnerForExecution();
             App.AutomateTabGingerRunner.ResetRunnerExecutionDetails(true);
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;

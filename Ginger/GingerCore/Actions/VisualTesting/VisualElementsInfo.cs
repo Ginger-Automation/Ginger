@@ -25,7 +25,7 @@ using System.Linq;
 
 namespace GingerCore.Actions.VisualTesting
 {
-    // We save the info as Json so can be used as baselibne to load
+    // We save the info as Json so can be used as baseline to load
     [JsonObject(MemberSerialization.OptIn)]
     public class VisualElementsInfo
     {
