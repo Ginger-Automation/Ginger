@@ -41,7 +41,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public abstract ePlatformType PlatformType();
         public abstract List<eLocateBy> GetPlatformUIElementLocatorsList();
-        public abstract List<ActBrowserElement.eControlAction> GetPlatformActBrowserElementList();
+        public abstract List<ActBrowserElement.eControlAction> GetPlatformBrowserControlOperations();
         public abstract List<string> GetPlatformUIElementPropertiesList(eElementType ElementType);
 
         public abstract List<ActUIElement.eElementAction> GetPlatformUIValidationTypesList();

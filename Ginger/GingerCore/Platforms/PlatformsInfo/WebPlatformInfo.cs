@@ -58,7 +58,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             return list;
         }
 
-        public override List<ActBrowserElement.eControlAction> GetPlatformActBrowserElementList()
+        public override List<ActBrowserElement.eControlAction> GetPlatformBrowserControlOperations()
         {
             List<ActBrowserElement.eControlAction> browserActElementList = new List<ActBrowserElement.eControlAction>();
 

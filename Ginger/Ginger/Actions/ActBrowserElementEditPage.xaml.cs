@@ -40,13 +40,13 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
 
-            ePlatformType ActivityPlatform = GetActionPlatform();
-            mPlatform = PlatformInfoBase.GetPlatformImpl(ActivityPlatform);
+            ePlatformType activityPlatform = GetActivityPlatform();
+            mPlatform = PlatformInfoBase.GetPlatformImpl(activityPlatform);
 
-            List<ActBrowserElement.eControlAction> locateControlAction = mPlatform.GetPlatformActBrowserElementList();
+            List<ActBrowserElement.eControlAction> supportedControlActions = mPlatform.GetPlatformBrowserControlOperations();
 
             //bind controls
-            App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction, locateControlAction.Cast<object>().ToList());
+            App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction, supportedControlActions.Cast<object>().ToList());
             App.ObjFieldBinding(xControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActBrowserElement.Fields.ControlAction);
 
             ValueUC.Init(mAct.GetOrCreateInputParam("Value"));
@@ -71,7 +71,7 @@ namespace Ginger.Actions
             SetVisibleControlsForAction();
         }
 
-        private ePlatformType GetActionPlatform()
+        private ePlatformType GetActivityPlatform()
         {
             string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
             ePlatformType platform = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
@@ -81,7 +81,7 @@ namespace Ginger.Actions
         private void SetVisibleControlsForAction()
         {
             ResetView();
-            ePlatformType ActivityPlatform = GetActionPlatform();
+            ePlatformType ActivityPlatform = GetActivityPlatform();
 
             if (mAct.ControlAction == ActBrowserElement.eControlAction.SwitchFrame || mAct.ControlAction == ActBrowserElement.eControlAction.SwitchWindow || mAct.ControlAction == ActBrowserElement.eControlAction.CloseTabExcept)
             {

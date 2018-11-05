@@ -36,7 +36,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             throw new NotImplementedException();
         }
-        public override List<ActBrowserElement.eControlAction> GetPlatformActBrowserElementList()
+        public override List<ActBrowserElement.eControlAction> GetPlatformBrowserControlOperations()
         {
             List<ActBrowserElement.eControlAction> browserActElementList = new List<ActBrowserElement.eControlAction>();
 
