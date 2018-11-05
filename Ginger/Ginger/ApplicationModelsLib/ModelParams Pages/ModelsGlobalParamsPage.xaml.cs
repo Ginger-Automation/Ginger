@@ -129,7 +129,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             xModelsGlobalParamsGrid.InitViewItems();
 
 
-            mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+            mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();          
             if (!mSelectionModePage)
             {
                 foreach (GlobalAppModelParameter param in mModelsGlobalParamsList)
@@ -382,6 +382,10 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     newModelGlobalParam.OptionalValuesList.Add(new OptionalValue() { Value = GlobalAppModelParameter.CURRENT_VALUE, IsDefault = true });
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newModelGlobalParam);
                     newModelGlobalParam.StartDirtyTracking();
+
+                    //making sure rows numbers are ok
+                    xModelsGlobalParamsGrid.Grid.UpdateLayout();
+                    xModelsGlobalParamsGrid.Renum();
                     break;
                 }
             }
