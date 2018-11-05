@@ -116,8 +116,10 @@ namespace Amdocs.Ginger.Repository
                 throw new Exception("Plugin folder not found: " + folder);
             }            
 
-            PluginPackage p = new PluginPackage(folder);            
-            mPluginPackages.Add(p);
+            PluginPackage pluginPackage = new PluginPackage(folder);            
+            mPluginPackages.Add(pluginPackage);            
+
+            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(pluginPackage);
         }
 
         private void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
@@ -384,9 +386,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         public ObservableList<OnlinePluginPackage> GetPluginsIndex()
-        {
-            //TODO: conver json to objects and return list to show in grid
-
+        {            
             // edit at: "https://github.com/Ginger-Automation/Ginger-Plugins-Index/blob/master/PluginsList.json";
 
             // raw url to get the file content
@@ -397,16 +397,36 @@ namespace Amdocs.Ginger.Repository
             return list;
         }
 
+
+        /// <summary>
+        /// Get list of releases for plguin from Git        
+        /// </summary>
+        /// <param name="pluginRepositoryName"></param>
+        /// Repositry name in Fit for example: Ginger-PACT-Plugin
+        /// <returns></returns>
+        public List<dynamic> GetPluginReleases(string pluginRepositoryName)
+        {                                 
+            // string url = "https://api.github.com/repos/Ginger-Automation/" + pluginRepositoryName +  "/releases";
+            string url = "https://api.github.com/repos/Ginger-Automation/Ginger-PACT-Plugin/releases";
+            // url = "http://www.cnn.com";
+            string releases = GetResponseString(url).Result;
+
+            List<dynamic> lst = JsonConvert.DeserializeObject<List<dynamic>>(releases);
+            return lst;
+        }
+
         async Task<string> GetResponseString(string url)
         {
             using (var client = new HttpClient())
             {
+                // Simulate a browser
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+
                 var result = client.GetAsync(url).Result;
 
                 if (result.IsSuccessStatusCode)
                 {
-                    var json = await result.Content.ReadAsStringAsync();
-                    //TODO: convert json to list of objects
+                    var json = await result.Content.ReadAsStringAsync();                    
                     return json;
                 }
                 else
@@ -416,25 +436,16 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public void InstallPluginPackage(OnlinePluginPackage onlinePluginPackage)
-        {
-            //TODO: get package info and install
-            // Temp hard coded for test
-
-            if (onlinePluginPackage.Name == "PACT")
-            {
-                string url = "https://github.com/Ginger-Automation/Ginger-PACT-Plugin/releases/download/v1.0/Ginger.PACT.PluginPackage.zip";
-                string folder = DownLoadPackage(url).Result;
-                AddPluginPackage(folder + @"\Ginger.PACT.PluginPackage");     // temp FIXME!!! get the url from Git of latest version
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-            
+        public void InstallPluginPackage(OnlinePluginPackage onlinePluginPackage, string version, string zipFileURL)
+        {                 
+                string f = Path.Combine(onlinePluginPackage.Name, version);
+                string folder = DownloadPackage(zipFileURL, f).Result;
+                AddPluginPackage(folder);
+                // PluginPackage p = new PluginPackage(folder);
+         
         }
 
-        async Task<string> DownLoadPackage(string url)
+        async Task<string> DownloadPackage(string url, string subfolder)
         {
             //TODO: show user some progress... update a shared string status
             using (var client = new HttpClient())
@@ -447,7 +458,7 @@ namespace Amdocs.Ginger.Repository
                     string fileName = Path.GetTempFileName();  // temp file for the zip
                     File.WriteAllBytes(fileName, zipContent);  // save content to file                    
                     string localPluginPackageFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); // target folder to extract the plugin to on user folder
-                    localPluginPackageFolder = Path.Combine(localPluginPackageFolder, "Ginger", "PluginPackages"); // Extract it to: \users\[user]\Ginger\PluginPackages/[PluginFolder]
+                    localPluginPackageFolder = Path.Combine(localPluginPackageFolder, "Ginger", "PluginPackages", subfolder); // Extract it to: \users\[user]\Ginger\PluginPackages/[PluginFolder]
                     ZipFile.ExtractToDirectory(fileName, localPluginPackageFolder); // Extract 
                     return localPluginPackageFolder;
                 }
