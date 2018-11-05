@@ -84,7 +84,7 @@ namespace Ginger.Actions
         private void SetVisibleControlsForAction()
         {
             ResetView();
-            ePlatformType ActivityPlatform = GetActivityPlatform();
+            ePlatformType ActivityPlatform = mAct.Platform;
 
             if (mAct.ControlAction == ActBrowserElement.eControlAction.SwitchFrame || mAct.ControlAction == ActBrowserElement.eControlAction.SwitchWindow || mAct.ControlAction == ActBrowserElement.eControlAction.CloseTabExcept)
             {
