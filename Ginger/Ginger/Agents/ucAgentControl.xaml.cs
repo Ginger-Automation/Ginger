@@ -118,7 +118,10 @@ namespace Ginger.Agents
             SelectedAgent.PropertyChanged -= SelectedAgent_PropertyChanged;
             SelectedAgent.PropertyChanged += SelectedAgent_PropertyChanged;
             SetAgentStatusView();
-            UpdateAgentWindows();
+            if (SelectedAgent.Status != Agent.eStatus.FailedToStart && SelectedAgent.Status != Agent.eStatus.NotStarted)
+            {
+                UpdateAgentWindows();
+            }
             OnPropertyChanged(nameof(SelectedAgent));
             OnPropertyChanged(nameof(AgentIsRunning));
         }
@@ -254,9 +257,13 @@ namespace Ginger.Agents
                 //xAgentWindowsRefreshBtn.ButtonImageForground = Brushes.Gray;
                 return;
             }
+            List<AppWindow> winsList = null;
 
-            List<AppWindow> winsList = ((IWindowExplorer)(SelectedAgent.Driver)).GetAppWindows();
-            xAgentWindowsComboBox.ItemsSource = winsList;
+            if (SelectedAgent.Status == Agent.eStatus.Completed || SelectedAgent.Status == Agent.eStatus.Ready || SelectedAgent.Status == Agent.eStatus.Running)
+            {
+                winsList = ((IWindowExplorer)(SelectedAgent.Driver)).GetAppWindows();
+                xAgentWindowsComboBox.ItemsSource = winsList;
+            }
             xAgentWindowsComboBox.DisplayMemberPath = nameof(AppWindow.WinInfo);
 
             //defualt selection            

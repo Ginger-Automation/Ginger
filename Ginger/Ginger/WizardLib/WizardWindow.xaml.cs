@@ -285,12 +285,6 @@ namespace GingerWPF.WizardLib
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            CancelWizard();
-        }
-
-        private void CancelWizard()
-        {
-            mWizard.Cancel();
             CloseWizard();
         }
 
@@ -356,7 +350,6 @@ namespace GingerWPF.WizardLib
 
         private void CloseWizard()
         {
-            mWizard.mWizardWindow = null;
             this.Close();
             CurrentWizardWindow = null;
         }

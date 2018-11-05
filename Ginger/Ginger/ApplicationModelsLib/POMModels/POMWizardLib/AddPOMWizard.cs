@@ -106,7 +106,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
 
             //close all Agents raised in Wizard
-            CloseStartedAgents();
 
         }
 
@@ -129,7 +128,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (OptionalAgentsList != null)
             {
                 foreach (Agent agent in OptionalAgentsList)
-                    if (agent != null && agent.Status == Agent.eStatus.Running && agent.Tag != null && agent.Tag.ToString() == "Started with Agent Control" && !mAgent.Driver.IsDriverBusy)
+                    if (mAgent != null && agent != null && agent.Status == Agent.eStatus.Running && agent.Tag != null && agent.Tag.ToString() == "Started with Agent Control" && !mAgent.Driver.IsDriverBusy)
                     {
                         if (Reporter.ToUser(eUserMsgKeys.AskIfToCloseAgent, agent.Name) == System.Windows.MessageBoxResult.Yes)
                         {
