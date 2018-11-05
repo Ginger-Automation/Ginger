@@ -612,5 +612,54 @@ namespace Amdocs.Ginger.Repository
                 AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Move repository item because source or target folders failed to be identified for item '{0}' and target folder '{1}'.", repositoryItem.FilePath, targetFolder));
             }
         }
+
+
+        /// <summary>
+        /// Move existing shared repository item to PrevVersion folder. And remove it from cache
+        /// </summary>
+        /// <param name="repositoryItem"></param>
+        public void MoveSharedRepositoryItemToPrevVersion(RepositoryItemBase repositoryItem)
+        {
+            if (repositoryItem.FileName != null && File.Exists(repositoryItem.FileName))
+            {
+                RepositoryFolderBase repostitoryFolder = GetItemRepositoryFolder(repositoryItem);
+                
+                string targetPath=Path.Combine(repostitoryFolder.FolderFullPath, "PrevVerions");
+                if (!Directory.Exists(targetPath))
+                {      
+                    //We do not want to file watcher track PrevVersions Folder. So creating it explicity using Create directory
+                    Directory.CreateDirectory(targetPath);
+                }
+                            
+                string dts = DateTime.Now.ToString("yyyyMMddHHmm");
+              
+                string targetFileName = Path.GetFileName(repositoryItem.FileName)+"." + dts + "." + repositoryItem.ObjFileExt;
+
+                targetFileName = Path.Combine(targetPath, targetFileName);
+
+                if (targetFileName.Length > 255)
+                {
+                    targetFileName = targetFileName.Substring(0, 250) + new Random().Next(1000).ToString();
+                }
+                
+                try
+                {
+                    if (File.Exists(targetFileName))
+                    {
+                        File.Delete(targetFileName);
+                    }
+                    //We want to delete the item and remove it from cache. So first we copy it to destination and then delete using Repository Folder.
+                    File.Copy(repositoryItem.FileName, targetFileName);                   
+                    repostitoryFolder.DeleteRepositoryItem(repositoryItem);
+
+                }
+                catch (IOException ex)
+                {                    
+                   AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Shared Repository moving item to PrevVersion", ex);
+                }
+                
+            }
+        }
+
     }
 }

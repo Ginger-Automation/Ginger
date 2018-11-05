@@ -2950,7 +2950,7 @@ namespace GingerCore.Drivers
                 locateValue = ValidationElementLocateValue;
             }
 
-            if (act is ActUIElement)
+            if (act is ActUIElement && (ValidationElementLocateBy == null || ValidationElementLocateValue == null))
             {
                 ActUIElement aev = (ActUIElement)act;
                 Enum.TryParse<eLocateBy>(aev.ElementLocateBy.ToString(), true, out locateBy);
@@ -3312,7 +3312,15 @@ namespace GingerCore.Drivers
                 elem = Driver.FindElements(By.CssSelector(LocValue));
             }
 
-            return elem.ToList();
+            if (elem != null)
+            {
+                return elem.ToList();
+            }
+            else
+            {
+                return null;
+            }
+            
         }
 
         public override List<ActButton> GetAllButtons()
@@ -5287,30 +5295,26 @@ namespace GingerCore.Drivers
             switch (act.ControlAction)
             {
                 case ActBrowserElement.eControlAction.Maximize:
-
                     Driver.Manage().Window.Maximize();
-
                     break;
 
                 case ActBrowserElement.eControlAction.OpenURLNewTab:
-
-                    IJavaScriptExecutor js = (IJavaScriptExecutor)Driver;
-                    js.ExecuteScript("window.open();");
-                    Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
-
+                    OpenUrlNewTab();
                     GotoURL(act, act.GetInputParamCalculatedValue("Value"));
                     break;
+
                 case ActBrowserElement.eControlAction.GotoURL:
 
                     if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewTab.ToString()))
                     {
-                        IJavaScriptExecutor js1 = (IJavaScriptExecutor)Driver;
-                        js1.ExecuteScript("window.open();");
-                        Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
+                        OpenUrlNewTab();
                     }
                     else if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewWindow.ToString()))
                     {
-                        this.StartDriver();
+                        IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
+                        javaScriptExecutor.ExecuteScript("newwindow=window.open('about:blank','newWindow','height=250,width=350');if (window.focus) { newwindow.focus()}return false; ");
+                        Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
+                        Driver.Manage().Window.Maximize();
                     }
                     GotoURL(act, act.GetInputParamCalculatedValue("Value"));
 
@@ -5459,6 +5463,13 @@ namespace GingerCore.Drivers
             }
         }
 
+        private void OpenUrlNewTab()
+        {
+            IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
+            javaScriptExecutor.ExecuteScript("window.open();");
+            Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
+        }
+
         public string GetSearchedWinTitle(Act act)
         {
             string searchedWinTitle = string.Empty;
@@ -5567,7 +5578,7 @@ namespace GingerCore.Drivers
                         break;
 
                     case ActUIElement.eElementAction.IsVisible:
-                        act.AddOrUpdateReturnParamActual("Actual", "False");
+                        act.AddOrUpdateReturnParamActual("Actual", e.Displayed.ToString());
                         break;
 
                     case ActUIElement.eElementAction.SetValue:
@@ -5616,32 +5627,39 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("size").ToString());
                         break;
 
-                    case ActUIElement.eElementAction.SelectByIndex:
-                        List<IWebElement> els = LocateElements(act.LocateBy, act.LocateValueCalculated);
-                        if (els != null)
-                        {
-                            try
-                            {
-                                els[Convert.ToInt32(act.GetInputParamCalculatedValue("Value"))].Click();
-                            }
-                            catch (Exception)
-                            {
-                                act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
-                            }
-                        }
-                        else
-                        {
-                            act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
-                            return;
-                        }
-                        break;
+                    //case ActUIElement.eElementAction.SelectByIndex:
+                    //    List<IWebElement> els = LocateElements(act.LocateBy, act.LocateValueCalculated);
+                    //    if (els != null)
+                    //    {
+                    //        try
+                    //        {
+                    //            els[Convert.ToInt32(act.GetInputParamCalculatedValue("Value"))].Click();
+                    //        }
+                    //        catch (Exception)
+                    //        {
+                    //            act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
+                    //        return;
+                    //    }
+                    //    break;
 
                     case ActUIElement.eElementAction.GetText:
                         OpenQA.Selenium.Interactions.Actions actionGetText = new OpenQA.Selenium.Interactions.Actions(Driver);
                         actionGetText.MoveToElement(e).Build().Perform();
-                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("textContent"));
-                        if (act.GetReturnParam("Actual") == null)
-                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("innerText"));
+                        string text = e.GetAttribute("textContent");
+                        if (String.IsNullOrEmpty(text))
+                        {
+                            text = e.GetAttribute("innerText");
+                        }
+                        if (String.IsNullOrEmpty(text))
+                        {
+                            text = e.GetAttribute("value");
+                        } 
+                        act.AddOrUpdateReturnParamActual("Actual", text);                        
                         break;
 
                     case ActUIElement.eElementAction.GetAttrValue:
@@ -5708,7 +5726,7 @@ namespace GingerCore.Drivers
                         break;
 
                     case ActUIElement.eElementAction.MultiClicks:
-                        List<IWebElement> eles = LocateElements(act.LocateBy, act.LocateValueCalculated);
+                        List<IWebElement> eles = LocateElements(act.ElementLocateBy, act.ElementLocateValueForDriver);
                         if (eles != null)
                         {
                             try
@@ -5815,8 +5833,14 @@ namespace GingerCore.Drivers
                         ClickAndValidteHandler(act);
                         break;
                     case ActUIElement.eElementAction.SetText:
-                        e.Clear();
-                        e.SendKeys(act.ValueForDriver);
+                        try
+                        {
+                            e.Clear();
+                        }
+                        finally
+                        {
+                            e.SendKeys(act.ValueForDriver);
+                        }
                         break;
                     case ActUIElement.eElementAction.AsyncClick:
                         DoUIElementClick(act.ElementAction, e);
@@ -5830,17 +5854,17 @@ namespace GingerCore.Drivers
 
                     case ActUIElement.eElementAction.Select:
                         SelectElement seSetSelectedValueByValu = new SelectElement(e);
-                        SelectDropDownListOptionByValue(act, act.GetInputParamCalculatedValue("Value"), seSetSelectedValueByValu);
+                        SelectDropDownListOptionByValue(act, act.GetInputParamCalculatedValue(ActUIElement.Fields.ValueToSelect), seSetSelectedValueByValu);
                         break;
                     case ActUIElement.eElementAction.GetValidValues:
                         GetDropDownListOptions(act, e);
                         break;
                     case ActUIElement.eElementAction.SelectByText:
-                        SelectDropDownListOptionByText(act, act.GetInputParamCalculatedValue("Value"), e);
+                        SelectDropDownListOptionByText(act, act.GetInputParamCalculatedValue(ActUIElement.Fields.Value), e);
                         break;
-                    case ActUIElement.eElementAction.SetSelectedValueByIndex:
+                    case ActUIElement.eElementAction.SelectByIndex:
                         SelectElement seSetSelectedValueByIndex = new SelectElement(e);
-                        SelectDropDownListOptionByIndex(act, Int32.Parse(act.GetInputParamCalculatedValue("Value")), seSetSelectedValueByIndex);
+                        SelectDropDownListOptionByIndex(act, Int32.Parse(act.GetInputParamCalculatedValue(ActUIElement.Fields.ValueToSelect)), seSetSelectedValueByIndex);
                         break;
                     case ActUIElement.eElementAction.GetSelectedValue:
                         SelectElement seGetSelectedValue = new SelectElement(e);
