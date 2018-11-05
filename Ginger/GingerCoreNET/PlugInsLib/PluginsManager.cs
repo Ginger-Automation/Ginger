@@ -116,9 +116,7 @@ namespace Amdocs.Ginger.Repository
                 throw new Exception("Plugin folder not found: " + folder);
             }            
 
-            PluginPackage pluginPackage = new PluginPackage(folder);            
-            mPluginPackages.Add(pluginPackage);            
-
+            PluginPackage pluginPackage = new PluginPackage(folder);                                 
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(pluginPackage);
         }
 
@@ -209,82 +207,7 @@ namespace Amdocs.Ginger.Repository
             return mInstalledPluginPackages;
         }
 
-        
 
-
-
-
-        //public void Execute(string PluginId, string ServiceId, NewPayLoad payLoad)
-        //{            
-        //    GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
-
-        //    // string PID = GA.InputParams["PluginID"].GetValueAsString();
-        //    PluginPackage p = (from x in mPluginPackages where x.PluginID == PluginId select x).SingleOrDefault();
-        //    if (p == null)
-        //    {
-        //        throw new Exception("Plugin id not found: " + PluginId);
-        //        // GA.AddError("Execute", "Plugin id not found: " + PID);
-        //        // return;
-        //    }
-
-        //    //TODO: use nameof after ActPlugin move to common
-        //    // string serviceID = GA.InputParams["PluginActionID"].GetValueAsString();
-
-
-        //    GingerNodeInfo GNI = (from x in gingerGrid.NodeList where x.Name == p.PluginID select x).FirstOrDefault();
-        //    //run script only if service is not up            
-        //    if (GNI == null)
-        //    {
-        //        string script = CommandProcessor.CreateLoadPluginScript(p.Folder);
-
-        //        // hard coded!!!!!!!!!!  - use ServiceId
-        //        script += CommandProcessor.CreateStartServiceScript("PACTService", p.PluginID, SocketHelper.GetLocalHostIP(), gingerGrid.Port);
-        //        // script += CommandProcessor.CreateStartServiceScript("ExcelService", p.PluginID, SocketHelper.GetLocalHostIP(), gingerGrid.Port);
-
-
-        //        Task t = new Task(() =>
-        //        {
-        //            // GingerConsoleHelper.Execute(script);  // keep it for regular service dll load
-        //            string StarterDLL = Path.Combine(p.Folder, "GingerPACTPluginConsole.dll");  //??
-        //            StartService(StarterDLL);
-        //        });
-        //        t.Start();
-        //    }                
-
-        //    int counter = 0;
-        //    while (GNI == null && counter < 30)
-        //    {
-        //        Thread.Sleep(1000);
-        //        GNI = (from x in gingerGrid.NodeList where x.Name == "PACT" select x).FirstOrDefault();                
-        //        counter++;
-        //    }
-        //    if (GNI == null)
-        //    {
-        //       // GA.AddError("Execute", "Cannot execute action beacuse Service was not found or was not abale to start: " + p.PluginID);
-        //    }
-
-        //    GingerNodeProxy GNA = new GingerNodeProxy(GNI);
-        //    GNA.Reserve();
-        //    GNA.GingerGrid = gingerGrid;
-
-        //    //GNA.RunAction(GA);
-        //}
-
-
-        //public void StartService(string DLLFile)
-        //{            
-        //    string cmd = "dotnet " + DLLFile ;            
-        //    System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
-
-        //    // The following commands are needed to redirect the standard output.
-        //    // This means that it will be redirected to the Process.StandardOutput StreamReader.
-        //    procStartInfo.UseShellExecute = true; // false
-        //    // Do not create the black window.
-        //    // Now we create a process, assign its ProcessStartInfo and start it
-        //    System.Diagnostics.Process proc = new System.Diagnostics.Process();
-        //    proc.StartInfo = procStartInfo;
-        //    proc.Start();            
-        //}
 
         public string CreatePluginPackageInfo(string id, string version)
         {
@@ -404,11 +327,16 @@ namespace Amdocs.Ginger.Repository
         /// <param name="pluginRepositoryName"></param>
         /// Repositry name in Fit for example: Ginger-PACT-Plugin
         /// <returns></returns>
-        public List<dynamic> GetPluginReleases(string pluginRepositoryName)
-        {                                 
-            // string url = "https://api.github.com/repos/Ginger-Automation/" + pluginRepositoryName +  "/releases";
-            string url = "https://api.github.com/repos/Ginger-Automation/Ginger-PACT-Plugin/releases";
-            // url = "http://www.cnn.com";
+        public List<dynamic> GetPluginReleases(string URL)
+        {
+            if (string.IsNullOrEmpty(URL))
+            {
+                return null;
+            }
+            // string url = "https://api.github.com/repos/Ginger-Automation" + pluginRepositoryName +  "/releases";
+                            
+            string url = URL.Replace("https://github.com/Ginger-Automation", "https://api.github.com/repos/Ginger-Automation");
+            url += "/releases";            
             string releases = GetResponseString(url).Result;
 
             List<dynamic> lst = JsonConvert.DeserializeObject<List<dynamic>>(releases);

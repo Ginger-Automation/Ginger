@@ -16,17 +16,29 @@ namespace Ginger.PlugInsWindows
             InitializeComponent();
             SetGridView();
             GetPluginsList();
-
             xVersionComboBox.SelectionChanged += XVersionComboBox_SelectionChanged;
         }
 
         private void XVersionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            xPublishedTextBlock.Text = null;
+            xReleaseNameTextBlock.Text = null;
+            xSizeTextBlock.Text = null;
+            xDownloads.Text = null;
+            xInstallButonn.Visibility = Visibility.Collapsed;
+
             dynamic release = (dynamic)xVersionComboBox.SelectedItem;
-            xPublishedTextBlock.Text = release.published_at;
-            xReleaseNameTextBlock.Text = release.name;
-            xSizeTextBlock.Text = release.assets[0].size / 1000 + " KB";
-            xDownloads.Text = release.assets[0].download_count;            
+            if (release != null)
+            {
+                xPublishedTextBlock.Text = release.published_at;
+                xReleaseNameTextBlock.Text = release.name;
+                if (release.assets.Count > 0)
+                {
+                    xSizeTextBlock.Text = release.assets[0].size / 1000 + " KB";
+                    xDownloads.Text = release.assets[0].download_count;
+                    xInstallButonn.Visibility = Visibility.Visible;
+                }            
+            }            
         }
 
         private void SetGridView()
@@ -76,15 +88,11 @@ namespace Ginger.PlugInsWindows
         private void ShowPluginInfo()
         {            
             PluginsManager p = new PluginsManager();
-            OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
-
-            
-            xNameTextBlock.Text = pluginPackageInfo.Name;
-            
-
+            OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;            
+            xNameTextBlock.Text = pluginPackageInfo.Name;            
             xVersionComboBox.ItemsSource = p.GetPluginReleases(pluginPackageInfo.URL);
             xVersionComboBox.DisplayMemberPath = "tag_name";
-            // select the first item
+            // select the first item/latest release
             xVersionComboBox.SelectedIndex = 0;
         }
 
