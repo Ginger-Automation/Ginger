@@ -195,7 +195,8 @@ namespace Ginger.ALM
             foreach (ExternalItemFieldBase aLMDefectProfileField in mALMDefectProfileFields)
             {
                 ExternalItemFieldBase aLMDefectProfileFieldExisted = (ExternalItemFieldBase)aLMDefectProfileField.CreateCopy();
-                aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
+                if (!string.IsNullOrEmpty(aLMDefectProfileField.ExternalID))
+                    aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
                 aLMDefectProfileFieldExisted.PossibleValues = aLMDefectProfileField.PossibleValues;
                 mALMDefectProfileFieldsExisted.Add(aLMDefectProfileFieldExisted);
             }
