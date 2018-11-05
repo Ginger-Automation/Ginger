@@ -25,16 +25,16 @@
                 <Button x:Name="InputGridVEButton" Content="..." Click="InputGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>
             <DataTemplate x:Key="AddActualToExpectButton">
-                <Button x:Name="GridAddActualToExpectButton" Content=">>" Click="GridAddActualToExpectButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                <Button x:Name="GridAddActualToExpectButton" Content=">>" Click="GridAddActualToExpectButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}" ToolTip="Copy Actual Value to Expected Value"/>
             </DataTemplate>
             <DataTemplate x:Key="AddActualToSimulButton">
-                <Button x:Name="GridAddActualToSimulButton" Content="&lt;&lt;" Click="GridAddActualToSimulButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                <Button x:Name="GridAddActualToSimulButton" Content="&lt;&lt;" Click="GridAddActualToSimulButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}" ToolTip="Copy Actual Value to Simulated Value"/>
             </DataTemplate>
             <DataTemplate x:Key="PathValueExpressionButton">
                 <Button x:Name="GridPathVEButton" Content="..." Click="GridPathVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>
             <DataTemplate x:Key="SimulatedlValueExpressionButton">
-                <Button x:Name="GridPathVEButton" Content="...." Click="SimulatedOutputGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                <Button x:Name="GridPathVEButton" Content="..." Click="SimulatedOutputGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>
             <DataTemplate x:Key="DataSourceValueExpressionButton">
                 <Button x:Name="GridDSVEButton" Content="..." Click="GridDSVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
@@ -43,7 +43,7 @@
                 <UCControl:UCStoreTo x:Name="StoreToObj"/>
             </DataTemplate>
             <DataTemplate x:Key="ClearExpectedValueBtnTemplate">
-                <Button x:Name="ClearExpectedValueBtn" Content="X" Click="GridClearExpectedValueBtn_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                <Button x:Name="ClearExpectedValueBtn" Content="X" Click="GridClearExpectedValueBtn_Click"  Style="{DynamicResource DataGridCellButtonStyle}" ToolTip="Clear Expected Value"/>
             </DataTemplate>
         </Grid.Resources>
 
