@@ -436,9 +436,15 @@ namespace Ginger.DataSource
 
         private void Rename_Click(object sender, RoutedEventArgs e)
         {
+            if (Reporter.ToUser(eUserMsgKeys.SaveLocalChanges) == MessageBoxResult.No)
+            {
+                return;
+            }
             string oldName = mDSTableDetails.Name;
             InputBoxWindow.OpenDialog("Rename", "Table Name:", mDSTableDetails, DataSourceBase.Fields.Name);
-            mDSTableDetails.DSC.RenameTable(oldName, mDSTableDetails.Name);           
+            mDSTableDetails.DSC.RenameTable(oldName, mDSTableDetails.Name);
+            RefreshGrid();
+            mDSTableDetails.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
         }
     }
 }

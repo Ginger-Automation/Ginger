@@ -27,7 +27,7 @@
         </ListView>
 
         <!--Sub Navigation Panel-->
-        <ListView x:Name="xSubNavigationListView" DockPanel.Dock="Top" Height="35" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xSubNavigationListView_SelectionChanged" Loaded="xSubNavigationListView_Loaded">
+        <ListView x:Name="xSubNavigationListView" DockPanel.Dock="Top" Height="35" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xSubNavigationListView_SelectionChanged" Loaded="xSubNavigationListView_Loaded" Visibility="Collapsed">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"></StackPanel>

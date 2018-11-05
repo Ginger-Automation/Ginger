@@ -16,12 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Ginger;
 using GingerCore.GeneralLib;
 using GingerTest;
 using GingerTest.POMs.Common;
 using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -63,7 +65,7 @@ namespace GingerWPFUnitTest.POMs
                     DependencyObject childDependencyObject = FindElementByAutomationID<T>(dependencyObject, automationID);
                     if (childDependencyObject != null)
                     {
-                        return dependencyObject;
+                        return childDependencyObject;
                     }
                 }
             }
@@ -74,17 +76,15 @@ namespace GingerWPFUnitTest.POMs
         internal DependencyObject FindElementByName(DependencyObject context, string name)
         {            
             DependencyObject d = null;
-            Execute(() => { 
-                d = (DependencyObject)LogicalTreeHelper.FindLogicalNode(context, name);
-
+            Execute(() => {                
                 // try up to 10 seconds
-                for (int i = 0; i < 100; i++)
+                Stopwatch st = Stopwatch.StartNew();
+                while (d == null && st.ElapsedMilliseconds < 10000)
                 {
                     d = (DependencyObject)LogicalTreeHelper.FindLogicalNode(context, name);
                     if (d != null) break;                    
                     SleepWithDoEvents(100);                        
-                }
-                
+                }                
             });
             if (d != null)
             {
@@ -94,7 +94,35 @@ namespace GingerWPFUnitTest.POMs
             {
                 throw new Exception("Element not found: " + name);
             }
+        }
 
+
+        public DependencyObject FindElementByText<T>(DependencyObject context, string text)
+        {
+            foreach (object o in LogicalTreeHelper.GetChildren(context))
+            {
+                if (o is DependencyObject)
+                {
+                    DependencyObject dependencyObject = (DependencyObject)o;
+
+                    if (dependencyObject is T)  // the type we are searching
+                    {                        
+                        ContentControl cc = (ContentControl)dependencyObject;
+                        if (cc.Content.ToString() == text)
+                        {
+                            return dependencyObject;
+                        }                        
+                    }
+
+                    //Drill down the tree
+                    DependencyObject childDependencyObject = FindElementByText<T>(dependencyObject, text);
+                    if (childDependencyObject != null)
+                    {
+                        return childDependencyObject;
+                    }
+                }
+            }
+            return null;
         }
 
 
@@ -164,6 +192,46 @@ namespace GingerWPFUnitTest.POMs
                 {
                     throw new Exception("Input box not found");
                 }
+            }
+        }
+
+        //TODO: add Check by title - so know what to expect
+        public GenericWindowPOM CurrentGenericWindow
+        {            
+            get
+            {
+                if (GenericWindow.CurrentWindow != null)  return new GenericWindowPOM(GenericWindow.CurrentWindow);
+
+                GenericWindowPOM w = null;
+                Task.Factory.StartNew(()=> { 
+                
+                 Execute(() => { 
+                    int i = 0;
+                    while (GenericWindow.CurrentWindow == null && i < 100)
+                    {
+                        SleepWithDoEvents(100);
+                        Thread.Sleep(100);
+                        i++;
+                    }
+                    if (GenericWindow.CurrentWindow != null)
+                    {
+                        w = new GenericWindowPOM(GenericWindow.CurrentWindow);                        
+                    }
+                    else
+                    {
+                        throw new Exception("Generic window box not found");
+                    }
+                 });
+                
+                });
+                
+                Stopwatch st = Stopwatch.StartNew();
+                while (w == null && st.ElapsedMilliseconds < 10000)
+                {
+                    Thread.Sleep(100);
+                }                
+
+                return w;
             }
         }
 
