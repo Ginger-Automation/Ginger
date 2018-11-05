@@ -40,8 +40,11 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
 
-            ePlatformType ActivityPlatform = GetActionPlatform();
-            mPlatform = PlatformInfoBase.GetPlatformImpl(ActivityPlatform);
+            if (act.Platform == ePlatformType.NA)
+            {
+                act.Platform = GetActionPlatform();
+            }
+            mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
 
             List<ActBrowserElement.eControlAction> locateControlAction = mPlatform.GetPlatformActBrowserElementList();
 
