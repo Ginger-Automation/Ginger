@@ -521,6 +521,11 @@ namespace Ginger
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
         {
+            if(!ALMIntegration.Instance.AlmConfigurations.UseRest)
+            {
+                Reporter.ToUser(eUserMsgKeys.ALMDefectsUserInOtaAPI, "");
+                return;
+            }
             ALMIntegration.Instance.ALMDefectsProfilesPage();
         }
 
