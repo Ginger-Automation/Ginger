@@ -340,8 +340,20 @@ namespace Ginger
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            //to make sure the parent window will be showen
             if (this.Owner != null)
             {
+                if (!this.Owner.IsVisible)
+                {
+                    this.Owner.Show();
+                }
+                if (this.Owner.WindowState == WindowState.Minimized)
+                {
+                    this.Owner.WindowState = WindowState.Normal;
+                }
+                this.Owner.Activate();
+                this.Owner.Topmost = true;  
+                this.Owner.Topmost = false; 
                 this.Owner.Focus();
             }
         }
