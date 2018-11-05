@@ -110,7 +110,8 @@ namespace Ginger.SolutionWindows
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
                 App.UpdateApplicationsAgentsMapping();
                 AddDefaultDataSource();
-                AddDeafultReportTemplate();                
+                AddDeafultReportTemplate();
+                AutomatePage.CreateDefaultEnvironment();
 
                 //show success message to user
                 Mouse.OverrideCursor = null;

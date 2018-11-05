@@ -324,7 +324,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.StackTrace);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true, true);
                     value = null;
                 } 
                 
