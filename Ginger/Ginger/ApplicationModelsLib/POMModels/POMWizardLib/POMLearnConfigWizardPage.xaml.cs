@@ -87,6 +87,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     if (mWizard.POM.TargetApplicationKey != null)
                         mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(mWizard.POM.TargetApplicationKey);
                     mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
+                    foreach (Agent agent in mWizard.OptionalAgentsList)
+                    {
+                        agent.Tag = string.Empty;
+                    }
                     xAgentControlUC.Init(mWizard.OptionalAgentsList);
                     App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard, nameof(mWizard.Agent));
                     xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
