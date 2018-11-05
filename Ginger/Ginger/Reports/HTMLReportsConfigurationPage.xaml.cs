@@ -43,6 +43,7 @@ namespace Ginger.Reports
         private void Init()
         {
             mHTMLReportConfiguration = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            mHTMLReportConfiguration.StartDirtyTracking();
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(LimitReportFolder, CheckBox.IsCheckedProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.LimitReportFolderSize));
           
             if (LimitReportFolder.IsChecked == true)
@@ -88,8 +89,7 @@ namespace Ginger.Reports
         {
             if (htmlAutoProdReportSwitchPnl != null)
             {
-                mHTMLReportConfiguration.HTMLReportsAutomaticProdIsEnabled = true;
-                mHTMLReportConfiguration.OnPropertyChanged(ExecutionLoggerConfiguration.Fields.ExecutionLoggerHTMLReportsAutomaticProdIsEnabled);
+                mHTMLReportConfiguration.HTMLReportsAutomaticProdIsEnabled = true;                
             }
         }
 
@@ -97,8 +97,7 @@ namespace Ginger.Reports
         {
             if (htmlAutoProdReportSwitchPnl != null)
             {
-                mHTMLReportConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
-                mHTMLReportConfiguration.OnPropertyChanged(ExecutionLoggerConfiguration.Fields.ExecutionLoggerHTMLReportsAutomaticProdIsEnabled);
+                mHTMLReportConfiguration.HTMLReportsAutomaticProdIsEnabled = false;                
             }
         }
 
@@ -113,8 +112,7 @@ namespace Ginger.Reports
             catch
             {
                 mHTMLReportConfiguration.HTMLReportConfigurationMaximalFolderSize = 0;
-            }
-            mHTMLReportConfiguration.OnPropertyChanged(HTMLReportConfiguration.Fields.HTMLReportConfigurationMaximalFolderSize);
+            }         
         }
 
 
@@ -178,7 +176,7 @@ namespace Ginger.Reports
             }
 
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportsSettings);
+            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
         }
 
         private void DefaultTemplatePickerCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
