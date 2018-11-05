@@ -62,7 +62,7 @@ namespace Ginger.ALM
             mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
             mALMDefectProfileFields.Where(z => z.Mandatory != true).ToList().ForEach(x => x.SelectedValue = string.Empty);
 
-            // pouplated values list (the not saved), validate selected values/fields current existing in QC
+            // populated values list (the not saved), validate selected values/fields current existing in QC
             foreach (ALMDefectProfile aLMDefectProfile in mALMDefectProfiles)
             {
                 mALMDefectProfileFieldsExisted = new ObservableList<ExternalItemFieldBase>();
@@ -273,7 +273,7 @@ namespace Ginger.ALM
                     return;
                 }
 
-                // Date selection validation (QC reciving date in format yyyy-mm-dd)
+                // Date selection validation (QC receiving date in format yyyy-mm-dd)
                 DateTime dt;
                 ExternalItemFieldBase wrongDateValueField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => (string.Equals(x.Type, "Date", StringComparison.OrdinalIgnoreCase)) &&
                                                                                                                       x.SelectedValue != null && x.SelectedValue != string.Empty &&

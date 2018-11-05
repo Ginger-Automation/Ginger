@@ -100,7 +100,7 @@ namespace Ginger.Actions
         /// <param name="isBrowseNeeded">Determine whether the Browse Button will be appeared or not</param>
         /// <param name="browserType">Can be eBrowserType.File or eBrowserType.Folder</param>
         /// <param name="fileType">Type of the files for filter the Browser Dialog</param>
-        /// <param name="extraBrowserSelectionHandler">To be used whenever extra functionality is needed after clicking OK or cancell at the Dialog window</param>
+        /// <param name="extraBrowserSelectionHandler">To be used whenever extra functionality is needed after clicking OK or cancel at the Dialog window</param>
         public void Init(ActInputValue AIV, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler= null)
         {
             // If the VE is on stand alone form:

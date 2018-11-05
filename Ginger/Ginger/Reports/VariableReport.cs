@@ -28,8 +28,8 @@ namespace Ginger.Reports
         {
             mVariable = Variable;
         }
-               
-        // Put here averything we want to make public for users customizing the reports, never give direct access to the Activitiy iteself.
+
+        // Put here everything we want to make public for users customizing the reports, never give direct access to the activity iteself.
         // serve as facade to expose only what we want
         // must not change as it will break existing reports, no compile check on XAML
         public int Seq { get; set; }

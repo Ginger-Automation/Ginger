@@ -96,7 +96,7 @@ public class GingerAgentFrame extends JFrame {
 			c.gridx = 0;						
 			jContentPane.add(getStatusLabel(), c );
 			
-			// Add Dump Forms Button Button
+			// Add Dump Forms Button
 			c.gridwidth = 1;
 			c.weightx = 0.8;
 			c.fill = GridBagConstraints.NONE;

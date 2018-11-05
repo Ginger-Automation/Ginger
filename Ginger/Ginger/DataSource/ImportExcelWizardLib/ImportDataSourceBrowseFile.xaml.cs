@@ -65,7 +65,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         }
 
         /// <summary>
-        /// Constrtuctor for ImportDataSourceBrowseFile class
+        /// Constructor for ImportDataSourceBrowseFile class
         /// </summary>
         public ImportDataSourceBrowseFile()
         {           

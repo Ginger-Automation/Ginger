@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.Help;
 using GingerCore;
 using System;
 using System.Collections.Generic;
@@ -88,6 +89,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             InitializeComponent();
 
+            GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
+
             xTreeView.Tree.TreeNodesFilterByField = propertyValueFilter;
             xTreeView.AllowTreeTools = allowTreeTools;
             if(itemSelectionType == eItemSelectionType.Folder)
@@ -155,7 +158,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                         return false;
                     }                      
                     
-                        //get all childerans objects of direct and sub folders
+                        //get all children's objects of direct and sub folders
                     foreach (ITreeViewItem subItvItem in xTreeView.Tree.GetTreeNodeChildsIncludingSubChilds(itvItem))
                         if (subItvItem.NodeObject() != null && subItvItem.NodeObject().GetType().BaseType != typeof(RepositoryFolderBase))
                             mSelectedItems.Add(subItvItem.NodeObject());                                        

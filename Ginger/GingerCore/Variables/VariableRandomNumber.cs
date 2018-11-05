@@ -97,7 +97,7 @@ namespace GingerCore.Variables
             
             if (Interval != 0)
             {
-                // make sure we remove the modolu, so we get nice round numbers per interval request 
+                // make sure we remove the modulo, so we get nice round numbers per interval request 
                 if ((d - d % Interval) < mMin)
                     d = d + (Interval - d%Interval);
                 else if ((d - d % Interval) > mMax)

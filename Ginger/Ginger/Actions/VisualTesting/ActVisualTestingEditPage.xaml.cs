@@ -150,7 +150,7 @@ namespace Ginger.Actions.VisualTesting
 
                     ShowCompareResult();
 
-                    //TODO: this need to be done when the target is change, add prop change dedictaed to it
+                    //TODO: this need to be done when the target is change, add prop change dedicated to it
                     UpdateTargetImage();
                 });
             }

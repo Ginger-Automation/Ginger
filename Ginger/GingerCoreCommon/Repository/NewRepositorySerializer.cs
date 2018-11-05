@@ -32,16 +32,16 @@ namespace Amdocs.Ginger.Repository
 {
 
     // This class is for storing RepositoryItem on disk, it needs to be serialized to XML
-    // reason for not using some of the exisiting options:
-    // Binary - makes it diffcult to compare version/history in CC + some say it is slower!?
-    // XML formatter - the default have some chllenges and with some NG objects    
-    // Pros - With our own seriliaztion we can solve the problem of copy vs link of Action, during load/save we can take the items from repo
+    // reason for not using some of the existing options:
+    // Binary - makes it difficult to compare version/history in CC + some say it is slower!?
+    // XML formatter - the default have some challenges and with some NG objects    
+    // Pros - With our own serialization we can solve the problem of copy vs link of Action, during load/save we can take the items from repo
     // We can have several style of serialization - 1 store to repo - not all attrs are save, 2 store local save most attrs
     // It should work faster - to be tested and optimized
-    // + We can keep backword compatibiity much easier
-    // + It solve the copy/link to other repo item during serailzation/de-serailzation
+    // + We can keep backward compatibility much easier
+    // + It solve the copy/link to other repo item during serialization/de-serialization
     // It will also solve problems with older agents - no need to update all agents, since sending xml and parsing with defaults
-    // we can also decide on ad hoc serialzation based on the target: if we send it to agent, save to disk or other
+    // we can also decide on ad hoc serialization based on the target: if we send it to agent, save to disk or other
     // We can also decide on ignore error and get partial object - to be fixed- but maybe better than nothing
     // We cam also read partial files - i.e: if we just need the Business flow name for list, no need to read all file
     // We can add custom attr at the top
@@ -177,7 +177,7 @@ namespace Amdocs.Ginger.Repository
 
         private void WriteRepoItemAttrs(XmlTextWriter xml, RepositoryItemBase ri)
         {
-            //TODO: cache class how to serialzie so will work faster and use reflection sort etc... only for first time
+            //TODO: cache class how to serialize so will work faster and use reflection sort etc... only for first time
 
             // Get all serialized attrs (properties and fields)            
             var attrs = ri.GetType().GetMembers().OrderBy(x => x.Name);         // Order by name so XML compare will be easier  
@@ -567,7 +567,7 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
-                //Item saved by old Serialzier so calling it to load the XML 
+                //Item saved by old Serialize so calling it to load the XML 
                 return (RepositoryItemBase)OnNewRepositorySerializerEvent(NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired, filePath, xml, targetObj);
             }
 
@@ -587,14 +587,14 @@ namespace Amdocs.Ginger.Repository
             if (name == nameof(RepositoryItemHeader.LastUpdate)) { RIH.LastUpdate = DateTime.ParseExact(value, cDateTimeXMLFormat, CultureInfo.InvariantCulture); return; }
             if (name == nameof(RepositoryItemHeader.ItemGuid)) { RIH.ItemGuid = Guid.Parse(value); return; }
 
-            throw new Exception("Unknown attribue in repository header: " + name);
+            throw new Exception("Unknown attribute in repository header: " + name);
         }
 
         private static void xmlReadListOfObjects(object ParentObj, XmlReader xdr, IObservableList observableList)
         {
             // read list of object into the list, add one by one, like activities, actions etc.
 
-            //TODO: Think/check if we want to make all observ as lazy load
+            //TODO: Think/check if we want to make all observe as lazy load
             if (LazyLoadAttr.Contains(xdr.Name))
             // if (FastLoad) // && xdr.Name == nameof(BusinessFlow.Activities) || xdr.Name != nameof(Activity.Acts))
             {
@@ -690,13 +690,13 @@ namespace Amdocs.Ginger.Repository
 
                     if (mi==null)
                     {                        
-                        throw new MissingFieldException("Error: Cannot find attrbiute. Class: " + className + ", Attribute: " + xdr.Name);
+                        throw new MissingFieldException("Error: Cannot find attribute. Class: " + className + ", Attribute: " + xdr.Name);
                     }
 
                     
 
                     // We check if it is list by arg count - List<string> will have string etc...
-                    // another option is check the name to start with List, Observ...
+                    // another option is check the name to start with List, Observe...
                     //or find a better way
                     // meanwhile it is working
 
@@ -790,7 +790,7 @@ namespace Amdocs.Ginger.Repository
         {
             if (mClassDictionary.Count == 0)
             {
-                throw new Exception("NewRepositorySerializer: Unable to create class object - " + name + " + bacause mClassDictionary was not initilized" );
+                throw new Exception("NewRepositorySerializer: Unable to create class object - " + name + " + because mClassDictionary was not initialized" );
             }
 
             object obj;
@@ -877,7 +877,7 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         private static string GetFullClassName(string className)
         {
-            // TODO: use dictinary or something smarter - check perf 
+            // TODO: use dictionary or something smarter - check perf 
             int i = className.LastIndexOf(".");
             if (i > 0)
             {
@@ -936,7 +936,7 @@ namespace Amdocs.Ginger.Repository
                     }
                     else
                     {
-                        //TODO: handle other types of list, meanwhile Assume observb list
+                        //TODO: handle other types of list, meanwhile Assume observable list
                         IObservableList lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(elementType)));
                         //assign it to the relevant obj
 
@@ -1016,7 +1016,7 @@ namespace Amdocs.Ginger.Repository
                             }
                             else
                             {
-                                // this is for case like Activity.PercentAutomation - we had it serialzed but set was removed, we can ignore
+                                // this is for case like Activity.PercentAutomation - we had it serialized but set was removed, we can ignore
                                 // Ignore 
                             }
                         }
@@ -1171,7 +1171,7 @@ namespace Amdocs.Ginger.Repository
                         break;
 
                     default:
-                        throw new Exception("Serializer - Err set value, Unknow type - " + propertyInfo.PropertyType.ToString() + " Value: " + sValue);
+                        throw new Exception("Serializer - Err set value, Unknown type - " + propertyInfo.PropertyType.ToString() + " Value: " + sValue);
 
                 }
 
@@ -1205,7 +1205,7 @@ namespace Amdocs.Ginger.Repository
                 /* expecting  XML to look like this: 
                 * <Header ... GingerVersion="2.6.0.0" Version="0" .../>*/
                 //int indx = xml.IndexOf("GingerVersion=");
-                int indx = xml.IndexOf(cHeaderGingerVersion);
+                int indx = xml.Trim().IndexOf(cHeaderGingerVersion);
                 string version = xml.Trim().Substring(indx + 14, 9);
 
                 Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
@@ -1213,7 +1213,7 @@ namespace Amdocs.Ginger.Repository
                 if (match.Success)
                 {
                     //return match.Value;
-                    //avoiding Beta + Alpha numbers because for now it is not supposed to be writen to XML's, only oficial release numbers
+                    //avoiding Beta + Alpha numbers because for now it is not supposed to be written to XML's, only official release numbers
                     int counter = 0;
                     string ver = string.Empty;
                     for (int index = 0; index < match.Value.Length; index++)
@@ -1347,7 +1347,7 @@ namespace Amdocs.Ginger.Repository
     }
 
 
-    //TODO: move to seperate file
+    //TODO: move to separate file
     public class NewRepositorySerilizerEventArgs
     {
         public enum eEventType

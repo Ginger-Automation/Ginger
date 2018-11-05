@@ -237,7 +237,7 @@ namespace Ginger.ALM.Repository
 
             if (matchingTC == null && String.IsNullOrEmpty(uploadPath))
             {
-                //get the QC Test Plan path to upload the activties group to
+                //get the QC Test Plan path to upload the activities group to
                 uploadPath = SelectALMTestPlanPath();
                 if (String.IsNullOrEmpty(uploadPath))
                 {
@@ -331,7 +331,7 @@ namespace Ginger.ALM.Repository
                 if (userSelec == MessageBoxResult.No)
                     Reporter.ToUser(eUserMsgKeys.ExportQCNewTestSetSelectDiffFolder);
 
-                //get the QC Test Plan path to upload the activties group to
+                //get the QC Test Plan path to upload the activities group to
                 testLabUploadPath = SelectALMTestLabPath();
                 if (String.IsNullOrEmpty(testLabUploadPath))
                 {

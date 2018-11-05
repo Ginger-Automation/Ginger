@@ -88,9 +88,9 @@ namespace Ginger.WindowExplorer
         }
 
         private eWindowExplorerPageContext mContext;
-        
+
         // We can open it from agents grid, or from Action Edit page with Action 
-        // If we open from ActionEdit Page then we update the act with locator
+        // If we open from ActionEdit Page then we update the act with Locator
         public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
         {           
             InitializeComponent();
@@ -147,7 +147,7 @@ namespace Ginger.WindowExplorer
 
         private void RefreshControlProperties(object sender, RoutedEventArgs e)
         {
-            //TODO: fix me for cached properties like ASCFBrowserElements, it will nto work
+            //TODO: fix me for cached properties like ASCFBrowserElements, it will not work
             if (mCurrentControlTreeViewItem != null)
             ControlPropertiesGrid.DataSourceList = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();            
         }
@@ -338,14 +338,14 @@ namespace Ginger.WindowExplorer
 
             ControlsViewsExpander.IsEnabled = ControlsViewsExpanderFlag;
             if (ControlsViewsExpanderFlag)
-                ControlsViewsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString());
+                ControlsViewsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString());
             else
                 ControlsViewsExpanderLable.Foreground = Brushes.Gray;
 
 
             SelectedControlDetailsExpander.IsEnabled = SelectedControlDetailsExpanderFlag;
             if (SelectedControlDetailsExpanderFlag)
-                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString());
+                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString());
             else
                 SelectedControlDetailsExpanderLable.Foreground = Brushes.Gray;
 
@@ -512,7 +512,7 @@ namespace Ginger.WindowExplorer
                         }
                         else if(mSpyElement is JavaElementInfo)
                         {
-                            //TODO: Fix me to add if spy elment is not present on tree.
+                            //TODO: Fix me to add if spy element is not present on tree.
                             Reporter.ToUser(eUserMsgKeys.FailedToAddTreeItem, "", "Adding spy element dynamically is not yet supported for this driver");
                         }
                         else
@@ -576,7 +576,7 @@ namespace Ginger.WindowExplorer
                     EI.WindowExplorer = mWindowExplorerDriver;
                     mWindowExplorerDriver.HighLightElement(EI);
                     
-                    //General tab will show the generic elemnt inof page, customized page will be in Data tab
+                    //General tab will show the generic element info page, customized page will be in Data tab
                     mControlFrameContentPage = new ElementInfoPage(EI);
                     ControlFrame.Content = mControlFrameContentPage;
                     SetDetailsExpanderDesign(true, EI);
@@ -626,11 +626,11 @@ namespace Ginger.WindowExplorer
                         }
                         else
                         {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
-                            list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platformes will be overrided
+                            list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platforms will be overrided
                         }                                                               //
 
-                        //If no element actions returned then no need to get locators. 
-                        if (list == null || list.Count == 0)
+                    //If no element actions returned then no need to get locator's. 
+                    if (list == null || list.Count == 0)
                         {
                             SetActionsTabDesign(false);                          
                             return;
@@ -1087,7 +1087,7 @@ namespace Ginger.WindowExplorer
             else
             {
                 SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementTitle + "' Element Details & Actions";
-                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString()); ;
+                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString()); ;
                 SelectedControlDetailsExpander.IsEnabled = true;
                 if (mFirstElementSelectionDone == false)
                 {

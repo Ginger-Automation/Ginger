@@ -69,7 +69,7 @@ namespace GingerCore
         DOSConsolemissingCMDFileName,
         ExecutionReportSent,
         CannontFindBusinessFlow, ResetBusinessFlowRunVariablesFailed,
-        AgentNotFound, MissingNewAgentDetails, MissingNewTableDetails, MissingExcelDetails, InvalidExcelDetails, InvalidDataSourceDetails, ExportFailed, ExportDetails, ParamExportMessage, MappedtoDataSourceError, InvalidTableDetails,MissingNewColumn, InvalidColumnName, ChangingAgentDriverAlert, MissingNewDSDetails,DuplicateDSDetails, DeleteDSFileError, InvalidDSPath, GingerKeyNameError, GingerKeyNameDuplicate,        
+        AgentNotFound, MissingNewAgentDetails, MissingNewTableDetails, MissingExcelDetails, InvalidExcelDetails, InvalidDataSourceDetails, ExportFailed, ExportDetails, ParamExportMessage, MappedtoDataSourceError, InvalidTableDetails, CreateTableError,MissingNewColumn, InvalidColumnName, ChangingAgentDriverAlert, MissingNewDSDetails,DuplicateDSDetails, DeleteDSFileError, InvalidDSPath, GingerKeyNameError, GingerKeyNameDuplicate,        
         ConfirmToAddTreeItem,
         FailedToAddTreeItem,
         SureWantToDeleteAll, NoItemToDelete, SelectItemToDelete, FailedToloadTheGrid,
@@ -350,7 +350,8 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportFailed, new UserMessage(eAppReporterMessageType.ERROR, "Export Failed", "Error Occurred while exporting the {0}: {1}", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ExportDetails, new UserMessage(eAppReporterMessageType.INFO, "Export Details", "Export execution ended successfully", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ParamExportMessage, new UserMessage(eAppReporterMessageType.QUESTION, "Param Export to Data Source", "Special Characters will be removed from Parameter Names while exporting to Data Source. Do you wish to Continue?", MessageBoxButton.YesNo, MessageBoxResult.No));            
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidTableDetails, new UserMessage(eAppReporterMessageType.ERROR, "InValid Table Details", "The Table Name provided is Invalid. It cannot contain spaces", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidTableDetails, new UserMessage(eAppReporterMessageType.ERROR, "InValid Table Details", "The Table Name provided is Invalid. It cannot contain spaces", MessageBoxButton.OK, MessageBoxResult.None));            
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.CreateTableError, new UserMessage(eAppReporterMessageType.ERROR, "Create Table Error", "Failed to Create the Table. Error: {0}", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.MappedtoDataSourceError, new UserMessage(eAppReporterMessageType.ERROR, "Output Param Mapping Error ", "Failed to map the Output Params to Data Source", MessageBoxButton.OK, MessageBoxResult.None));            
             Reporter.UserMessagesPool.Add(eUserMsgKeys.InvalidDataSourceDetails, new UserMessage(eAppReporterMessageType.ERROR, "Invalid Data Source Details", "The Data Source Details provided are Invalid.", MessageBoxButton.OK, MessageBoxResult.None));            
             Reporter.UserMessagesPool.Add(eUserMsgKeys.MissingNewDSDetails, new UserMessage(eAppReporterMessageType.WARN, "Missing Data Source Details", "The new Data Source {0} is missing.", MessageBoxButton.OK, MessageBoxResult.None));
@@ -641,7 +642,7 @@ namespace GingerCore
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AllItemsSaved, new UserMessage(eAppReporterMessageType.INFO, "All Changes Saved", "All Changes Saved", MessageBoxButton.OK, MessageBoxResult.None));
 
-            Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfShareVaribalesInRunner, new UserMessage(eAppReporterMessageType.QUESTION, "Share Variables", "Are you sure you want to share selected Variable Values to all the similar Business Flows and Activities accross all Runners?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.AskIfShareVaribalesInRunner, new UserMessage(eAppReporterMessageType.QUESTION, "Share Variables", "Are you sure you want to share selected Variable Values to all the similar Business Flows and Activities across all Runners?", MessageBoxButton.YesNo, MessageBoxResult.No));
 
             Reporter.UserMessagesPool.Add(eUserMsgKeys.RenameItemError, new UserMessage(eAppReporterMessageType.ERROR, "Rename", "Failed to rename the Item. Error: '{0}'?", MessageBoxButton.OK, MessageBoxResult.OK));
             #region ActionConversion

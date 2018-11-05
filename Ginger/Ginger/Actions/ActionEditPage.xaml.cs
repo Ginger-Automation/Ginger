@@ -176,7 +176,7 @@ namespace Ginger.Actions
             OutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
             OutputValuesGrid.AddSeparator();
 
-            //allowing return values automaticlly in Edit Action window
+            //allowing return values automatically in Edit Action window
             if (mAction.AddNewReturnParams == null && mAction.ReturnValues.Count() == 0)
                 mAction.AddNewReturnParams = true;
             App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, Act.Fields.AddNewReturnParams);
@@ -277,7 +277,7 @@ namespace Ginger.Actions
         private void SwitchingInputValueBoxAndGrid(Act a)
         {
             if (IsPageClosing) return; // no need to update the UI since we are closing, when done in Undo changes/Cancel 
-            // we do restore and don't want to raise events which will cause excpetion  (a.Value = ""  - is the messer)
+            // we do restore and don't want to raise events which will cause exception  (a.Value = ""  - is the messer)
 
             if (mAction.ValueConfigsNeeded == false)
             {
@@ -848,11 +848,17 @@ namespace Ginger.Actions
         private void UndoChangesAndClose()
         {
             IsPageClosing = true;
-            _pageGenericWin.Close();
-
-            Mouse.OverrideCursor = Cursors.Wait;
-            mAction.RestoreFromBackup(true);
-            Mouse.OverrideCursor = null;
+            
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                mAction.RestoreFromBackup(true);
+                _pageGenericWin.Close();
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         private void CloseWinClicked(object sender, EventArgs e)
@@ -981,9 +987,9 @@ namespace Ginger.Actions
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (ActionTab.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
@@ -1057,7 +1063,7 @@ namespace Ginger.Actions
                     ScreenShotsGrid.ColumnDefinitions.Add(cf);
                 }
 
-                // loop thru the screen shot and create new frame per each to show and place in the grid
+                // loop through the screen shot and create new frame per each to show and place in the grid
 
                 int r = 0;
                 int c = 0;
@@ -1092,7 +1098,7 @@ namespace Ginger.Actions
 
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: fixme - Currenlty working with first agent
+            //TODO: fixme - Currently working with first agent
             ApplicationAgent aa = App.AutomateTabGingerRunner.ApplicationAgents[0];
             if (aa != null)
             {

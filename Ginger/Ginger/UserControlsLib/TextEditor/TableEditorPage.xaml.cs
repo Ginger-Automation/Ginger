@@ -174,7 +174,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
         private string formatTable(string s)
         {
-            //probalalbly not the most fast and efficient algorithm but will work for now ;)
+            //probably not the most fast and efficient algorithm but will work for now ;)
             bool bFound = false;
             string txt = s;
             StringBuilder ft;

@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.UserControls
     public partial class ImageMakerControl : UserControl
     {
         // Icon Property
-        // We list all avaible icons for Ginger, this icons can be resized and will automatically match
+        // We list all available icons for Ginger, this icons can be resized and will automatically match
         public static readonly DependencyProperty ImageTypeProperty = DependencyProperty.Register("ImageType", typeof(eImageType), typeof(ImageMakerControl),
                         new FrameworkPropertyMetadata(eImageType.Ginger, OnIconPropertyChanged));
                
@@ -721,7 +721,7 @@ namespace Amdocs.Ginger.UserControls
             ImageMakerControl IM = new ImageMakerControl();
             IM.ImageType = imageType;
             IM.SetBorder = SetBorder;
-            if (foreground != null || spinDuration > 0 || toolTip != null)//defualt design change is required
+            if (foreground != null || spinDuration > 0 || toolTip != null)//default design change is required
             {
                 IM.SetAsFontAwesomeIcon(IM.xFAImage.Icon, foreground, spinDuration, toolTip);
             }

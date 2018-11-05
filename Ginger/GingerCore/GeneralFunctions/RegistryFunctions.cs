@@ -118,7 +118,7 @@ namespace GingerCore.GeneralFunctions
                 RegistryKey regKey = GetRegistryKey(rootType, keyPath);
                 if (regKey != null)
                 {
-                    //check if requied parameter exist
+                    //check if required parameter exist
                     if ((regKey.GetValueNames()).Contains(paramterName))
                     {
                         //return parameter value
@@ -126,7 +126,7 @@ namespace GingerCore.GeneralFunctions
                     }
                     else
                     {
-                        //requied parameter was not found
+                        //required parameter was not found
                         Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to get the registry key value for the RootType: '" + rootType +
                                       "', KeyPath: '" + keyPath + "' and ParameterName: '" + paramterName + "'- Parameter was not found");
                         return null;
