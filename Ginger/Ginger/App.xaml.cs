@@ -446,7 +446,7 @@ namespace Ginger
                     return;
                 }
             }
-            Reporter.ToLog(eAppReporterLogLevel.FATAL, ">>>>>>>>>>>>>> Error occurred on stand alone thread(non UI) - " + e.ExceptionObject.ToString());            
+            Reporter.ToLog(eAppReporterLogLevel.FATAL, ">>>>>>>>>>>>>> Error occurred on stand alone thread(non UI) - " + e.ExceptionObject);            
             Reporter.ToUser(eUserMsgKeys.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
             App.AppSolutionAutoSave.DoAutoSave();
 
