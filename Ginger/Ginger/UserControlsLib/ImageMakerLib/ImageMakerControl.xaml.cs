@@ -630,6 +630,18 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.MapSigns:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
                     break;
+                case eImageType.Image:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Image);
+                    break;
+                case eImageType.Elements:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Th);
+                    break;
+                case eImageType.LocationPointer:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.LocationArrow);
+                    break;
+                case eImageType.GitHub:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Github);
+                    break;
                 #endregion
 
                 #region Other Images
