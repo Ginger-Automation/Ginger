@@ -62,7 +62,7 @@ namespace Ginger.SolutionGeneral
             return solution;
         }
 
-        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, ReportsSettings}
+        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, LoggerConfiguration, ReportConfiguration}
         public void SaveSolution(bool showWarning = true, eSolutionItemToSave solutionItemToSave = eSolutionItemToSave.GeneralDetails)
         {
             bool doSave = false;
@@ -98,39 +98,36 @@ namespace Ginger.SolutionGeneral
                         bldExtraChangedItems.Append("Source Control Details, ");
                     }                        
                 }
-                if (solutionItemToSave != eSolutionItemToSave.ReportsSettings)
+                if (solutionItemToSave != eSolutionItemToSave.LoggerConfiguration)
                 {
-                    if (ExecutionLoggerConfigurationSetList != null && (ExecutionLoggerConfigurationSetList.Count != lastSavedSolution.ExecutionLoggerConfigurationSetList.Count || HTMLReportsConfigurationSetList.Count != lastSavedSolution.HTMLReportsConfigurationSetList.Count))
+                    if (ExecutionLoggerConfigurationSetList != null && lastSavedSolution.ExecutionLoggerConfigurationSetList.Count!=0)
                     {
-                        bldExtraChangedItems.Append("Reports Settings, ");
-                    }
-                    else
-                    {
-                        if (ExecutionLoggerConfigurationSetList != null)
+                        foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
                         {
-                            foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
+                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                                {
-                                    bldExtraChangedItems.Append("Reports Settings, ");
-                                    break;
-                                }
+                                bldExtraChangedItems.Append("Execution Logger configuration, ");
+                                break;
                             }
                         }
-                        if (!bldExtraChangedItems.ToString().Contains("Reports Settings"))
+                    }
+                }
+                if(solutionItemToSave != eSolutionItemToSave.ReportConfiguration )
+                {
+                    if (HTMLReportsConfigurationSetList!=null && lastSavedSolution.HTMLReportsConfigurationSetList.Count != 0)
+                    {
+                        foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
                         {
-                            foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
+                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                                {
 
-                                    bldExtraChangedItems.Append("Reports Settings, ");
-                                    break;
-                                }
+                                bldExtraChangedItems.Append("Report configuration");
+                                break;
                             }
                         }
                     }
-                }                
+                }     
+
                 if (solutionItemToSave != eSolutionItemToSave.GlobalVariabels)
                 {
                     if (Variables.Count != lastSavedSolution.Variables.Count)
