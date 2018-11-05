@@ -56,6 +56,7 @@ namespace Ginger.Reports
         private void Init()
         {
             _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            _selectedExecutionLoggerConfiguration.StartDirtyTracking();
             SetControls();
         }
 
@@ -120,7 +121,7 @@ namespace Ginger.Reports
                 return;
             }
 
-            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportsSettings);
+            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
 
             // validate the paths of inserted folders
             Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
@@ -142,13 +143,13 @@ namespace Ginger.Reports
         private void FolderTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder = FolderTextBox.Text.ToString();
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(ExecutionLoggerConfiguration.Fields.ExecutionLoggerConfigurationExecResultsFolder);
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder));
         }
 
         private void executionResultOnRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
         {
             _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = true;
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(ExecutionLoggerConfiguration.Fields.ExecutionLoggerConfigurationIsEnabled);
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled));
             if (ExecutionResultFolderPnl != null)
             {
                 ExecutionResultFolderPnl.IsEnabled = true;
@@ -158,7 +159,7 @@ namespace Ginger.Reports
         private void executionResultOffRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
         {
             _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = false;
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(ExecutionLoggerConfiguration.Fields.ExecutionLoggerConfigurationIsEnabled);
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled));
             if (ExecutionResultFolderPnl != null)
             {
                 ExecutionResultFolderPnl.IsEnabled = false;
@@ -175,7 +176,7 @@ namespace Ginger.Reports
             {
                 _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize = 0;
             }
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(ExecutionLoggerConfiguration.Fields.ExecutionLoggerConfigurationMaximalFolderSize);
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize));
         }
     }
 }
