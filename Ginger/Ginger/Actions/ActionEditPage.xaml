@@ -42,6 +42,9 @@
             <DataTemplate x:Key="StoreToObject">
                 <UCControl:UCStoreTo x:Name="StoreToObj"/>
             </DataTemplate>
+            <DataTemplate x:Key="ClearExpectedValueBtnTemplate">
+                <Button x:Name="ClearExpectedValueBtn" Content="X" Click="GridClearExpectedValueBtn_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
         </Grid.Resources>
 
         <Grid.RowDefinitions>
