@@ -135,6 +135,7 @@ namespace GingerCore
                     catch(Exception ex)
                     {
                         //probabaly not encrypted value
+                        result = false;
                         return strToDecrypt;
                     }
                     // Set encryption mode to Cipher Block Chaining(CBC)
