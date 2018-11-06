@@ -190,6 +190,10 @@
         Error,
         Coffee,
         MapSigns,
+        Image,
+        Elements,
+        LocationPointer,
+        GitHub,
         #endregion
 
         #region Other Images
