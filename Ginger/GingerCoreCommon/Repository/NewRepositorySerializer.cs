@@ -1001,7 +1001,7 @@ namespace Amdocs.Ginger.Repository
                             }
                             else
                             {
-                                AppReporter.ToLog(eAppReporterLogLevel.WARN, "Property not Found: " + xdr.Name);
+                                AppReporter.ToLog(eAppReporterLogLevel.WARN, "Property not Found: " + xdr.Name, logOnlyOnDebugMode:true);
                             }
                             xdr.MoveToNextAttribute();
                             continue;
