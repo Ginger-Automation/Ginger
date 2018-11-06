@@ -58,8 +58,16 @@
                     </RibbonButton>
                     <RibbonButton x:Name="btnActionConversion" Label="Actions Conversion" ContextMenu="{x:Null}"  Click="btnActionConversion_Click"  LargeImageSource="{StaticResource @Connection_32x32}" SmallImageSource="{StaticResource @Connection_32x32}"/>
                     <RibbonMenuButton x:Name="btnResetStatus" Label="Reset Status" ContextMenu="{x:Null}">
-                        <RibbonMenuItem  x:Name="btnResetFlow" Header="Reset Status of Business Flow" Click="btnResetFlow_Click"/>
-                        <RibbonMenuItem  x:Name="btnResetFromCurrentActivity" Header="Reset Status from Current Activity"  Click="btnResetFromCurrentActivity_Click"/>
+                        <RibbonMenuItem  x:Name="btnResetFlow" Click="btnResetFlow_Click">
+                            <RibbonMenuItem.Header>
+                                <GingerCore:ucTextDicResource Text="Reset Status of [BusinessFlow]"/>
+                            </RibbonMenuItem.Header>
+                        </RibbonMenuItem>
+                        <RibbonMenuItem  x:Name="btnResetFromCurrentActivity" Click="btnResetFromCurrentActivity_Click">
+                            <RibbonMenuItem.Header>
+                                <GingerCore:ucTextDicResource Text="Reset Status from Current [Activity]"/>
+                            </RibbonMenuItem.Header>
+                        </RibbonMenuItem>
                         <RibbonMenuItem x:Name="btnResetFromCurrentAction"  Header="Reset Status from Current Action" Click="btnResetFromCurrentAction_Click"/>
                         <RibbonMenuButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Reset Status"/>
@@ -136,7 +144,11 @@
 
                     <RibbonMenuButton Label="Generate Report"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @Report2_32x32.png}" ToolTip="Generate execution report" SmallImageSource="{StaticResource @Report2_16x16}">
                         <RibbonMenuItem x:Name="btnLastExecutionHTMLReport"  Click="btnLastExecutionHTMLReport_click"  Header="Generate Last Executed Item Report" />
-                        <RibbonMenuItem x:Name="btnOfflineExecutionHTMLReport"  Click="btnOfflineExecutionHTMLReport_click" Header="Generate Full Business Flow Report"/>
+                        <RibbonMenuItem x:Name="btnOfflineExecutionHTMLReport"  Click="btnOfflineExecutionHTMLReport_click" >
+                            <RibbonMenuItem.Header>
+                                <GingerCore:ucTextDicResource Text="Generate Full [BusinessFlow] Report"/>
+                            </RibbonMenuItem.Header>
+                        </RibbonMenuItem>
                     </RibbonMenuButton>
                 </RibbonGroup>
                 <RibbonGroup x:Name="ALMGroup" Header="{DynamicResource ALM}" ContextMenu="{x:Null}" LargeImageSource="{StaticResource @ALM_32x32.png}" SmallImageSource="{StaticResource @ALM_16x16.png}">

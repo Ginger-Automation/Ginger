@@ -130,18 +130,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void LiveSpyHandler(object sender, RoutedEventArgs e)
         {
-            if (mAgent.Driver.IsDriverBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-
             if (mWinExplorer == null)
             {
                 Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
                 return;
             }
 
+            if (mAgent.Driver.IsDriverBusy)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                return;
+            }
 
             if (LiveSpyButton.IsChecked == true)
             {
@@ -245,7 +244,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
         {
-            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && firstEI.Path == secondEI.Path;
+            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path)) ;
 
             bool HasSimilarLocators = true;
             foreach (ElementLocator EL in firstEI.Locators)
