@@ -65,7 +65,7 @@ namespace Ginger.Run
         FlowDiagramPage mFlowDiagram;
         int mFlowX = 0;
         int mFlowY = 0;
-        bool IsSelectedItemSyncWithExecution = true;//execution and selected items are synced as defualt   
+        bool IsSelectedItemSyncWithExecution = true;//execution and selected items are synced as default   
         SingleItemTreeViewSelectionPage mRunSetsSelectionPage = null;
         SingleItemTreeViewSelectionPage mBusFlowsSelectionPage = null;
         RunsetOperationsPage mRunsetOperations = null;
@@ -700,7 +700,7 @@ namespace Ginger.Run
                             BusinessFlow changedBusinessflow = (BusinessFlow)EventArgs.Object;
                             if (mCurrentBusinessFlowRunnerItem.ItemObject == changedBusinessflow)
                             {
-                                mCurrentBusinessFlowRunnerItem.LoadChildRunnerItems();//reloading activites to make sure include dynamically added/removed activities.
+                                mCurrentBusinessFlowRunnerItem.LoadChildRunnerItems();//reloading activities to make sure include dynamically added/removed activities.
                                 xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ItemChilds;
                             }
                         }

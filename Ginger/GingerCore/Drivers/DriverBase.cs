@@ -116,7 +116,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        // Input to this method is call back funtion to handle the events
+        // Input to this method is call back function to handle the events
 
         //TODO: Later on make this abstract
         public virtual void StartRecording()

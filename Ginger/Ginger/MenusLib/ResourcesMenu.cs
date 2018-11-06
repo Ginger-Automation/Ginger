@@ -69,7 +69,7 @@ namespace Ginger.MenusLib
 
             TopMenuItem ApplicationModelsMenu = new TopMenuItem(eImageType.ApplicationModel, "Applications Models", ConsoleKey.A, "Application Models AID", "Applications Layers Templates" );
             ApplicationModelsMenu.Add(eImageType.APIModel, "API Models", APIModels, ConsoleKey.A, "API Templates Repository","AID");
-            ApplicationModelsMenu.Add(eImageType.ApplicationPOMModel, "Page Objects Models", POMModels, ConsoleKey.P, "Page UI Elemetns Repository", "AID");         
+            ApplicationModelsMenu.Add(eImageType.ApplicationPOMModel, "Page Objects Models", POMModels, ConsoleKey.P, "Page UI Elements Repository", "AID");         
             ApplicationModelsMenu.Add(eImageType.Parameter, "Models Global Parameters", ModelsGlobalParameters, ConsoleKey.P, "Add or Edit Models Global Parameters", "AID");
             twoLevelMenu.Add(ApplicationModelsMenu);
 
@@ -89,7 +89,7 @@ namespace Ginger.MenusLib
             DocumentsMenu.Add(eImageType.File, "", Documents, ConsoleKey.D, "", "AID");
             twoLevelMenu.Add(DocumentsMenu);
 
-            TopMenuItem PluginsMenu = new TopMenuItem(eImageType.PluginPackage, "Plugins", ConsoleKey.P, "Plugins AID", "Ginger extention Add-ons");
+            TopMenuItem PluginsMenu = new TopMenuItem(eImageType.PluginPackage, "Plugins", ConsoleKey.P, "Plugins AID", "Ginger extension Add-ons");
             PluginsMenu.Add(eImageType.PluginPackage, "Installed", PluginsList, ConsoleKey.P, "Plugin which are installed in the solution", "AID");
             PluginsMenu.Add(eImageType.PluginPackage, "Online", OnlinePlugins, ConsoleKey.O, "Online plugins which can be downloaded", "Online Plugins");
             PluginsMenu.Add(eImageType.PluginPackage, "Local", LocalPlugins, ConsoleKey.L, "Local plugins which are already downloaded on the user machine", "Online Plugins");

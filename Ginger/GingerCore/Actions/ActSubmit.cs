@@ -37,7 +37,7 @@ namespace GingerCore.Actions
             TBH.AddText("Use this action in case you want to perform any Submit actions.");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            TBH.AddText("To perform a Submit action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property" +
+            TBH.AddText("To perform a Submit action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property " +
             "that you set in Locate By type.Then select Action Type and then enter the page url in value textbox and run the action.");
         }        
 

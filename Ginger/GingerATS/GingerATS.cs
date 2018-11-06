@@ -122,7 +122,7 @@ namespace GingerATS
                     return ResultStatus.SVNConnectionError;
                 }
 
-                //Create or Update the Solution Rspository Indexer
+                //Create or Update the Solution Repository Indexer
                 Logger.AddLineToLog(eLogLineType.INFO, "#####>>>>> Create/Update the Solution Repository Indexer:");
                 GingerATSRepositoryIndexer RepositoryIndexer = null;
                 try

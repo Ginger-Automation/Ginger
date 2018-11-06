@@ -33,18 +33,8 @@ namespace Ginger.Reports
             ContinueRun,
             Reset
         }
-
-        public new static class Fields
-        {
-            public static string Name = "Name";
-            public static string IsSelected = "IsSelected";
-            public static string ExecutionLoggerConfigurationIsEnabled = "ExecutionLoggerConfigurationIsEnabled";
-            public static string ExecutionLoggerConfigurationExecResultsFolder = "ExecutionLoggerConfigurationExecResultsFolder";
-            public static string ExecutionLoggerConfigurationMaximalFolderSize = "ExecutionLoggerConfigurationMaximalFolderSize";
-            public static string ExecutionLoggerConfigurationHTMLReportsFolder = "ExecutionLoggerConfigurationHTMLReportsFolder";
-            public static string ExecutionLoggerHTMLReportsAutomaticProdIsEnabled = "ExecutionLoggerHTMLReportsAutomaticProdIsEnabled";
-        } 
-
+            
+        
         [IsSerializedForLocalRepository]
         public long Seq { get; set; }
 
@@ -86,11 +76,6 @@ namespace Ginger.Reports
         }
 
         #region General
-
-        public static void ExecutionResultsConfigurationPage()
-        {
-            ExecutionResultsConfiguration.Instance.ShowAsWindow();
-        }
 
         #endregion
     }

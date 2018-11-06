@@ -126,7 +126,7 @@ namespace Ginger.SolutionWindows
                 NewRepositorySerializer newSerilizer = new NewRepositorySerializer();
                 mFailedFiles = new List<string>();
                 string backupFolderPath = BackupFolderTextBox.Text;
-                //make sure back direcroty exist if not create
+                //make sure back directory exist if not create
                 if (!Directory.Exists(backupFolderPath))
                 {
                     MakeSurePathExistforBakFile(backupFolderPath + @"\");
@@ -136,7 +136,7 @@ namespace Ginger.SolutionWindows
                 foreach (string filePathToConvert in mFilesToShow)
                 {
                     string filePath = filePathToConvert;
-                    //remove info extention
+                    //remove info extension
                     if (filePath.Contains("-->"))
                     {
                         filePath = filePath.Remove(filePath.IndexOf("-->"));
@@ -153,12 +153,12 @@ namespace Ginger.SolutionWindows
                         //make sure backup was created
                         if (File.Exists(BakFile) == true)
                         {
-                            //Do Upgrade by unserilize and serlize the item using new serilizer
-                            //unserilize
+                            //Do Upgrade by unserialize and serialize the item using new serializer
+                            //unserialize
                             string itemXML = File.ReadAllText(filePath);
                             RepositoryItemBase itemObject = (RepositoryItemBase)NewRepositorySerializer.DeserializeFromText(itemXML);
                             itemObject.FilePath = filePath;
-                            //serlize
+                            //serialize
                             newSerilizer.SaveToFile(itemObject, filePath);
                         }
                         else

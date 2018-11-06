@@ -65,7 +65,7 @@
 //                    //mPlatforms.Add(GingerCore.Platforms.Platform.eType.PowerBuilder);
 //                    //mPlatforms.Add(GingerCore.Platforms.Platform.eType.Windows);
 
-//                    ////TODO: to see the Web impl uncommnet
+//                    ////TODO: to see the Web impl uncomment
 //                    //// DO NOT remove comment before we have Selenium support this action and converter for old action
 //                    //mPlatforms.Add(GingerCore.Platforms.Platform.eType.Web);
 //                }

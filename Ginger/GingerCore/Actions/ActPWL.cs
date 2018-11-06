@@ -26,7 +26,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Actions
 {
-    //This class is for UI link elemnet
+    //This class is for UI link element
     public class ActPWL : Act
     {
         public override string ActionDescription { get { return "Two web elements distances"; } }

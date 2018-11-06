@@ -486,7 +486,7 @@ namespace Ginger.UserControlsLib.VisualFlow
             return list;
         }
 
-        // this function is more usefull for search if we don't need the full list
+        // this function is more useful for search if we don't need the full list
         internal IEnumerable<FlowElement> GetAllFlowElem()
         {
             foreach (UIElement e in this.MainCanvas.Children)

@@ -404,14 +404,14 @@ namespace GingerCore.Drivers.Appium
                     RecordBtn.Visibility = System.Windows.Visibility.Collapsed;
                 }
 
-                //show device btns according to type
+                //show device buttons according to type
                 switch (AppiumDriver.DriverPlatformType)
                 {
                     case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
                         //all buttons as default
                         break;
                     case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-                        //only middle btn althogh not supported yet (apple limitation)
+                        //only middle button although not supported yet (apple limitation)
                         backBtn.Visibility = System.Windows.Visibility.Collapsed;
                         menuBtn.Visibility = System.Windows.Visibility.Collapsed;
                         break;
@@ -756,7 +756,7 @@ namespace GingerCore.Drivers.Appium
                         }
                     }
 
-                    //getting the smalles node size found
+                    //getting the small node size found
                     XmlNode foundNode = null;
                     long foundNodeSize = 0;
                     if (foundElements.Count > 0)
@@ -1043,7 +1043,7 @@ namespace GingerCore.Drivers.Appium
         {
             try
             {
-                //calculate cliked point on mobile
+                //calculate clicked point on mobile
                 System.Windows.Point pointOnMobile = GetPointOnMobile(clickedPoint);
                 long pointOnMobile_X = (long)pointOnMobile.X;
                 long pointOnMobile_Y = (long)pointOnMobile.Y;
@@ -1054,7 +1054,7 @@ namespace GingerCore.Drivers.Appium
                 XmlNode inspectElementNode = FindElementXmlNodeByXY(pointOnMobile_X, pointOnMobile_Y);
                 if (inspectElementNode != null && inspectElementNode != prevInspectElementNode)
                 {
-                    //show panl
+                    //show panel
                     SetAttributesActionsView(true);
 
                     //update the attributes details

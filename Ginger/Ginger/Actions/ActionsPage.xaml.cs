@@ -60,7 +60,7 @@ namespace Ginger.Actions
             else
             {
                 EditMode = General.RepositoryItemPageViewMode.Automation;               
-                //App.BusinessFlow daynamic Activity
+                //App.BusinessFlow dynamic Activity
                 UpdateActionGrid();
 
                 // Hook to Business flow properties changes
@@ -223,7 +223,7 @@ namespace Ginger.Actions
                 activity.Acts.Add(a1);                
             }
 
-            // remove the actions to from current activity - need to happen in 2 steps so the array count will not change while looping backwords
+            // remove the actions to from current activity - need to happen in 2 steps so the array count will not change while looping backwards
             for (int j = mCurrentActivity.Acts.Count - 1; j >= i; j--)
             {
                 Act a1 = mCurrentActivity.Acts[j];
@@ -330,7 +330,7 @@ namespace Ginger.Actions
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.ExInfo, Header="Extra Info", WidthWeight = 10, BindingMode = BindingMode.OneWay });            
             grdActions.SetAllColumnsDefaultView(view);
 
-            //# Custome Views
+            //# Custom Views
             GridViewDef desView = new GridViewDef(eAutomatePageViewStyles.Design.ToString());
             desView.GridColsView = new ObservableList<GridColView>();
             desView.GridColsView.Add(new GridColView() { Field = Act.Fields.Status, Visible = false });

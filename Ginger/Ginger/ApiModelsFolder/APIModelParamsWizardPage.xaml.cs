@@ -216,7 +216,7 @@ namespace Ginger.ApiModelsFolder
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR,"Error occured while mapping the API Model params to Data Source", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while mapping the API Model params to Data Source", ex);
                 Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
             }
         }

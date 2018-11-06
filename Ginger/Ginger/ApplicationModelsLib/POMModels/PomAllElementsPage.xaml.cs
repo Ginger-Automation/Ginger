@@ -373,6 +373,34 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 xTestAllElements.ButtonText = "Test All Unmapped Elements";
             }
+
+            //set the selected tab text style
+            try
+            {
+                if (xPOMModelTabs.SelectedItem != null)
+                {
+                    foreach (TabItem tab in xPOMModelTabs.Items)
+                    {
+                        foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
+
+                            if (ctrl.GetType() == typeof(TextBlock))
+                            {
+                                if (xPOMModelTabs.SelectedItem == tab)
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                else
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+
+                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in POM All Elements Page tabs style", ex);
+            }
         }
+
+
     }
 }

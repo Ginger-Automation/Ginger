@@ -25,8 +25,8 @@ using System.Threading;
 
 namespace GingerCore.Drivers.CommunicationProtocol
 {
-    // Ginger server can handle many clients in paralell 
-    // each client is running on seperate thread
+    // Ginger server can handle many clients in parallel 
+    // each client is running on separate thread
     public class GingerSocketServer
     {
         private TcpListener tcpListener;
@@ -128,7 +128,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
                     else
                     {
                         PayLoad PLRC = ProcessMessage(PL);
-                        if (PLRC != null)  // if async then it will be null? or we must return something, for async we should return startporcessing - or key id of req to pair later
+                        if (PLRC != null)  // if async then it will be null? or we must return something, for async we should return start processing - or key id of req to pair later
                         {
                             SendMessage(tcpClient, PLRC);
                         }
@@ -138,7 +138,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
                 {
                     //TODO: handle
                     // Client cut the connection or some err
-                    //a socket error has occured
+                    //a socket error has occurred
                     // or any other server err
                     PayLoad PLErr = PayLoad.Error("Error - " + ex.Message);
                     SendMessage(tcpClient, PLErr);

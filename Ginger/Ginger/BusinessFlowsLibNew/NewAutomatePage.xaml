@@ -107,7 +107,7 @@
                         <!--Status-->
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding Status}" Foreground="Black"/>
                         <!--Elapsed-->
-                        <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="{Binding Elapsed}" ToolTip="Elapsed milliseonds" HorizontalAlignment="Right" Foreground="Black"/>
+                        <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="{Binding Elapsed}" ToolTip="Elapsed milliseconds" HorizontalAlignment="Right" Foreground="Black"/>
                         <!--Status Icon-->
                         <UserControls:ImageMakerControl Grid.Column="4" ImageType="{Binding StatusIcon}" Width="16" Height="16"/>
 

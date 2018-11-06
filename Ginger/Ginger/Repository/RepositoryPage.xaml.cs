@@ -101,7 +101,7 @@ namespace Ginger.Repository
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
-            // We do looad on demand
+            // We do load on demand
             if (tabRepository.SelectedItem == tbiActivitiesGroups)
             {
                 if (((string)tbiActivitiesGroups.Tag) != "Done")

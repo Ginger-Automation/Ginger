@@ -64,11 +64,11 @@ namespace GingerCore.ALM.QC
                             || publishToALMConfig.FilterStatus == FilterByStatus.All)
                             {
                                 TSTest tsTest = null;
-                                //go by TC ID = TC Instancs ID
+                                //go by TC ID = TC Instance ID
                                 tsTest = qcTSTests.Where(x => x.TestId == activGroup.ExternalID && x.ID == activGroup.ExternalID2).FirstOrDefault();
                                 if (tsTest == null)
                                 {
-                                    //go by Linked TC ID + TC Instancs ID
+                                    //go by Linked TC ID + TC Instance ID
                                     tsTest = qcTSTests.Where(x => ImportFromQC.GetTSTestLinkedID(x) == activGroup.ExternalID && x.ID == activGroup.ExternalID2).FirstOrDefault();
                                 }
                                 if (tsTest == null)
@@ -236,7 +236,7 @@ namespace GingerCore.ALM.QC
         }
 
         /// <summary>
-        /// Export Activities Group details to QC, can be used for creating new matching QC Test Case or updating an exisitng one
+        /// Export Activities Group details to QC, can be used for creating new matching QC Test Case or updating an existing one
         /// </summary>
         /// <param name="activitiesGroup">Activities Group to Export</param>
         /// <param name="mappedTest">The QC Test Case which mapped to the Activities Group (in case exist) and needs to be updated</param>
@@ -361,7 +361,7 @@ namespace GingerCore.ALM.QC
                 foreach (VariableBase var in activity.Variables)
                 {
                     paramsSigns += "&lt;&lt;&lt;" + var.Name.ToLower() + "&gt;&gt;&gt;<br />";
-                    //try to add the paramter to the test case parameters list
+                    //try to add the parameter to the test case parameters list
                     try
                     {
                         testParams.AddParam(var.Name.ToLower(), "String");

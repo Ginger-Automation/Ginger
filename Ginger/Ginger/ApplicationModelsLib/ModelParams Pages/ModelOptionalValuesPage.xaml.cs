@@ -76,7 +76,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 else
                 {
                     ov.IsDefault = true;
-                    //binding is disabeled so setting the radio button as check manually
+                    //binding is disabled so setting the radio button as check manually
                     RadioButton rb = (RadioButton)OptionalValuesGrid.GetDataTemplateCellControl<RadioButton>(ov, 1);
                     rb.IsChecked = true;
                 }
