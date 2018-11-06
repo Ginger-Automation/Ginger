@@ -79,6 +79,13 @@ namespace Amdocs.Ginger.Repository
         {
             //TODO: compare saved plugin id and version with the info file on folder
 
+            if (!Directory.Exists(mFolder))
+            {
+                // TODO: auto download and restore , or show user a message to restore
+                throw new Exception("Plugin folder not found: " + mFolder);
+            }
+
+
             string pluginInfoFile = Path.Combine(mFolder, PluginPackageInfo.cInfoFile);
 
             if (!System.IO.File.Exists(pluginInfoFile))
