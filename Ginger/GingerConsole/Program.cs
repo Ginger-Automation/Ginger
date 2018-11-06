@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.GingerConsole
 
             //Enable cancel with CTRL-C
             Console.CancelKeyPress += (sender, eArgs) => {
-                Console.WriteLine("CTRL+C pressed Cancelling...");
+                Console.WriteLine("CTRL+C pressed Canceling...");
                 mCloseGingerConsoleEvent.Set();
                 eArgs.Cancel = true;
                 Keepalive = false;                      

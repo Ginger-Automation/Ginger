@@ -58,7 +58,7 @@ namespace GingerCore.ALM.Rally
             {
                 if (testPlan == null) return null;
 
-                //Creat Business Flow
+                //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
                 busFlow.Name = testPlan.Name;
                 busFlow.ExternalID = "RallyID=" + testPlan.RallyID;

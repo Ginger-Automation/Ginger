@@ -4,12 +4,14 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-      Height="220" Width="585"
+      MinHeight="250" MinWidth="585"
 	Title="Execution Logger Configuration">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <StackPanel Margin="0,0,0,0">
+            <usercontrols:ucButton x:Name="xSaveButton"  ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Center" Margin="0,0,0,0"/>
             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                 <Label Content="Execution Logger Result Producing:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"></Label>
                 <StackPanel x:Name="executionResultSwitchRadioBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -29,7 +31,6 @@
                 <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >
                     <TextBox x:Name="SizeTextBox" Width="500" Style="{StaticResource @TextBoxStyle}" TextChanged="SizeTextBox_TextChanged" ></TextBox>
                 </StackPanel>
-               
             </StackPanel>
         </StackPanel>
     </Grid>

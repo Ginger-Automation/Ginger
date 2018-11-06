@@ -592,7 +592,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                             }
                                         }
 
-                                        // Bussines Flow Level
+                                        // Businessflow Level
                                         foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.BusinessFlowFieldsToSelect.Where(x => (x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
                                         {
                                             if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Seq)
@@ -2566,8 +2566,8 @@ namespace Ginger.Reports.GingerExecutionReport
             StringBuilder mStyleBundle = new StringBuilder();
             if (!currentTemplate.UseLocalStoredStyling)
             {
-                //1. copy the assest folder from installtion folder to the root report folder
-                //2. convert logos back to images and place them in the assest or logos/images
+                //1. copy the assets folder from installation folder to the root report folder
+                //2. convert logos back to images and place them in the assets or logos/images
                 //3. update links and style to be relative to the above       
                 if (!Directory.Exists(HTMLReportMainFolder + "/assets"))
                 {

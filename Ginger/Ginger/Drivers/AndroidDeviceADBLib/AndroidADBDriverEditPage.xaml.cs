@@ -206,7 +206,7 @@ namespace Ginger.Drivers
             // push the apk
 
             //TODO: removed hard coded path, use ginger folder
-            //  getting permsission denided - fix me
+            //  getting permission denied - fix me
 
             string GingerAPKPath = GingerCore.General.GetGingerEXEPath() + @"Drivers\AndroidADB\Java\GingerService\app\build\outputs\apk\";
 

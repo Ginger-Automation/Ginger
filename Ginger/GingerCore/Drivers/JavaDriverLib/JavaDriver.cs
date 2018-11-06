@@ -511,7 +511,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     PLClose.ClosePackage();
                     Response = Send(PLClose);
 
-                    //TODO: Add a separate aciton to close the driver if closing the applicaiton window
+                    //TODO: Add a separate action to close the driver if closing the applicaiton window
                     //if (!(Response.IsErrorPayLoad()))
                     //{
                     //    CloseDriver();                      

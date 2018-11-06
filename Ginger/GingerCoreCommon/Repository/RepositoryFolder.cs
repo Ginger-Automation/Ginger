@@ -228,7 +228,7 @@ namespace Amdocs.Ginger.Repository
 
 
         // Generic handling for any RI type
-        // This is recursive function which run in parallel for extreme speed, be carefull! 
+        // This is recursive function which run in parallel for extreme speed, be careful! 
         private ObservableList<T> LoadFolderFiles<T>(string Folder = null)
         {
             // for each file we check if in cache return from cache else load from file system and cache the item             
@@ -383,7 +383,7 @@ namespace Amdocs.Ginger.Repository
                 item.FileName = e.FullPath;
                 item.FilePath = e.FullPath;
 
-                // set Folder item cache as it depends ont he file name, so remove the old name and add with new name
+                // set Folder item cache as it depends on the file name, so remove the old name and add with new name
                 mFolderItemsCache.DeleteItem(e.OldFullPath);
                 mFolderItemsCache[e.FullPath] = item;
 

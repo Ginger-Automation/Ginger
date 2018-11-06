@@ -29,7 +29,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
         public ProjEnvironment NewEnvironment = new ProjEnvironment();
         public ObservableList<EnvApplication> apps = new ObservableList<EnvApplication>();
 
-        public override string Title { get { return "Add New Enviroment Wizard"; } }
+        public override string Title { get { return "Add New Environment Wizard"; } }
 
         public AddEnvironmentWizard(RepositoryFolder<ProjEnvironment> EnvsFolder)
         {
@@ -55,7 +55,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
                 }
             }
 
-            //Save the Environemnt 
+            //Save the Environment 
             EnvsFolder.AddRepositoryItem(NewEnvironment);
             
         }

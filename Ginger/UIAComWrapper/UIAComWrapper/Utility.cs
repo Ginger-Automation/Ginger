@@ -219,7 +219,7 @@ namespace UIAComWrapperInternal
             return obj;
         }
 
-        // Unwrap an object from API representationt to what the native client will expect
+        // Unwrap an object from API representation to what the native client will expect
         internal static object UnwrapObject(object val)
         {
             if (val != null)

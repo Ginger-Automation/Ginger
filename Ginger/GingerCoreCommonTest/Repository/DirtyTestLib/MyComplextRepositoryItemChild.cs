@@ -51,7 +51,7 @@ namespace GingerCoreCommonTest.Repository
         public string Description { get; set; }
 
 
-        // Not serialzied/not saved
+        // Not serialized/not saved
         string mStatus;
         public string Status
         {

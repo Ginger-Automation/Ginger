@@ -130,7 +130,7 @@ namespace GingerCore.Actions
             Type currentType = GetActionTypeByElementActionName(this.ButtonAction);
             if (currentType == typeof(ActUIElement))
             {
-                // check special cases, where neame should be changed. Than at default case - all names that have no change
+                // check special cases, where name should be changed. Than at default case - all names that have no change
                 switch (this.ButtonAction)
                 {
                     case eButtonAction.IsDisplayed:

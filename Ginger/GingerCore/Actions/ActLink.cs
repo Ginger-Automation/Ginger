@@ -27,7 +27,7 @@ using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions
 {
-    //This class is for UI link elemnet
+    //This class is for UI link element
     public class ActLink : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Link Action"; } }
@@ -134,7 +134,7 @@ namespace GingerCore.Actions
             Type currentType = GetActionTypeByElementActionName(this.LinkAction);
             if (currentType == typeof(ActUIElement))
             {
-                // check special cases, where neame should be changed. Than at default case - all names that have no change
+                // check special cases, where name should be changed. Than at default case - all names that have no change
                 switch (this.LinkAction)
                 {
                     case eLinkAction.Click:

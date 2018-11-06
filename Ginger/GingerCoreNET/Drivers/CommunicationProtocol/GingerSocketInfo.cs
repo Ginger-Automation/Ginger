@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         
         public const int InitialBufferSize = 1024; // Size of initial receive buffer.  
 
-        // Uniqe session id
+        // Unique session id
         public Guid SessionID { get; set; }
 
         // Receive buffer.  
@@ -55,13 +55,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             }
         }
 
-        // We strore the response here, TODO: why not to use only DataAsPayload or only this one - combine to best which is not creating new byte array        
+        // We store the response here, TODO: why not to use only DataAsPayload or only this one - combine to best which is not creating new byte array        
         public NewPayLoad Response { get; set; }
         private int BufferPOS { get; set; }
 
 
         // Processing status 
-        // in no communcation it is Ready
+        // in no communication it is Ready
         // When sending request it is:
         // 1. SendingRequest
         // 2. WaitingForResponse
@@ -149,7 +149,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
                     if (PayloadLen > gingerSocketInfo.buffer.Length)
                     {
-                        Array.Resize(ref gingerSocketInfo.buffer, PayloadLen + 4);   // Make sure we will have enought space  // Add 1024 !!!
+                        Array.Resize(ref gingerSocketInfo.buffer, PayloadLen + 4);   // Make sure we will have enough space  // Add 1024 !!!
                         // TODO: check if buffer is more than x size release it back....                        
                     }
                 }
@@ -169,14 +169,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                             
                             mProcessingStatus = eProcessingStatus.ResponseCompleted;
                             // we are done with pair of Req/Resp - good job - mission completed
-                            // signal recevie is complete so ready for processing
+                            // signal receive is complete so ready for processing
                             mRequestProcessingDone.Set(); // !!!
                         }
                         else  // this is new request, we need to process and respond
                         {
                             IncomingRequetsesCounter++;
                             mProcessingStatus = eProcessingStatus.ProcessingRequest;
-                            // This is a requst  need to respond 
+                            // This is a request  need to respond 
                             
                             switch (Resp.PaylodType)
                             {
@@ -200,7 +200,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
                         gingerSocketInfo.BufferPOS = 0;
 
-                        // be ready to accept more new requeust or incoming data
+                        // be ready to accept more new request or incoming data
                         socket.BeginReceive(gingerSocketInfo.buffer, 0, gingerSocketInfo.buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveCallback), gingerSocketInfo);
 
                         mProcessingStatus = eProcessingStatus.Ready;
@@ -237,7 +237,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             }
         }
 
-        // Internal socket communcation is handled here
+        // Internal socket communication is handled here
         private void SocketRequestHandler(GingerSocketInfo gingerSocketInfo)
         {
             NewPayLoad Req = gingerSocketInfo.DataAsPayload;
@@ -248,7 +248,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 return;
             }
 
-            throw new Exception("SocketRequestHandler - Unknow Request: " + Req.Name);
+            throw new Exception("SocketRequestHandler - Unknown Request: " + Req.Name);
         }
 
         private void SendCallback(IAsyncResult ar)

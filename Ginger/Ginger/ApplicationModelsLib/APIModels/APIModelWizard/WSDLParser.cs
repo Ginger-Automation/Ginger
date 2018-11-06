@@ -1036,7 +1036,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private string GetNameWithoutDots(string headNameSpace, List<string> AllNameSpacesShortCuts = null)
         {
-            //TODO:Get A List to make it uniq
+            //TODO:Get A List to make it unique
             if (string.IsNullOrEmpty(headNameSpace))
                 return string.Empty;
             string s = string.Empty;

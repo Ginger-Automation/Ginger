@@ -22,7 +22,7 @@ namespace Ginger.GherkinLib
 {
     public class GherkinGeneral
     {
-        //TODO: make %p constant to use where needed, might decide on better namin for params, so user can change
+        //TODO: make %p constant to use where needed, might decide on better naming for params, so user can change
 
         public static string GetActivityGherkinName(string Name)
         {
