@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GingerCore.Variables;
+﻿using GingerCore.Variables;
 
 namespace Amdocs.Ginger.Common
 {
