@@ -249,7 +249,7 @@
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
-                                    <Style.Triggers>
+                                    <Style.Triggers>                                       
                                         <DataTrigger Binding="{Binding Path=Agent}" Value="{x:Null}">
                                             <Setter Property="Image.Visibility" Value="Collapsed"/>
                                         </DataTrigger>
@@ -259,6 +259,25 @@
                                         <DataTrigger Binding="{Binding Path=Agent.IsWindowExplorerSupportReady}" Value="False">
                                             <Setter Property="Image.Visibility" Value="Collapsed"/>
                                         </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="NotStarted">
+                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="FailedToStart">
+                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Starting">
+                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Ready">
+                                            <Setter Property="Image.Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Running">
+                                            <Setter Property="Image.Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Completed">
+                                            <Setter Property="Image.Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                      
                                     </Style.Triggers>
                                 </Style>
                             </Button.Style>

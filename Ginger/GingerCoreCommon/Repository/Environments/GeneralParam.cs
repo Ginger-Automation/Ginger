@@ -111,7 +111,7 @@ namespace Amdocs.Ginger.Repository
             {
                 if (mi.Name == "BackupDic" || mi.Name == "FileName" || mi.Name == "ItemNameField" || mi.Name == "ItemName" ||
                     mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" ||
-                    mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" ||
+                    mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ListStringValue" ||mi.Name == "ItemImageType" ||
                     mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath") continue;
 
                 
