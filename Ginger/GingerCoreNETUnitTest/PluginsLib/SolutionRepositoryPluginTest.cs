@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.RunLib;
@@ -170,6 +171,51 @@ namespace GingerCoreNETUnitTest.PluginsLib
             ////Assert                
             //Assert.AreEqual(1, WorkSpace.Instance.LocalGingerGrid.NodeList.Count, "GingerGrid nodes 1 - only one service is up - reuse");
             
+        }
+
+
+        [TestMethod]
+        public void GetOnlinePlugins()
+        {
+            //Arrange       
+            PluginsManager pluginsManager = new PluginsManager();
+
+            // Act            
+            ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
+
+            //Assert
+            Assert.IsTrue(list.Count > 0, "list.Count > 0");
+        }
+
+        [TestMethod]
+        public void GetOnlinePluginReleases()
+        {
+            //Arrange       
+            PluginsManager pluginsManager = new PluginsManager();
+            ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
+            OnlinePluginPackage PACT = (from x in list where x.Name == "PACT" select x).SingleOrDefault();
+
+            // Act            
+            ObservableList<OnlinePluginPackageRelease> releases = PACT.Releases;
+
+            //Assert
+            Assert.IsTrue(releases.Count > 0, "list.Count > 0");
+        }
+
+        [TestMethod]
+        public void InstallPACTRelease_1_6()
+        {
+            //Arrange       
+            PluginsManager pluginsManager = new PluginsManager();
+            ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
+            OnlinePluginPackage shellPlugin = (from x in list where x.Name == "Shell" select x).SingleOrDefault();
+            OnlinePluginPackageRelease release1_1 = (from x in shellPlugin.Releases where x.Version == "v1.1" select x).SingleOrDefault();
+
+            // Act            
+            string folder = pluginsManager.InstallPluginPackage(shellPlugin, release1_1);
+
+            //Assert
+            Assert.IsTrue(Directory.Exists(folder));
         }
 
     }       

@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace Ginger.PlugInsWindows
             xDownloads.Text = null;
             xInstallButonn.Visibility = Visibility.Collapsed;
 
-            dynamic release = (dynamic)xVersionComboBox.SelectedItem;
+            OnlinePluginPackageRelease release = (OnlinePluginPackageRelease)xVersionComboBox.SelectedItem;
             if (release != null)
             {
                 xPublishedTextBlock.Text = release.published_at;
@@ -54,6 +55,7 @@ namespace Ginger.PlugInsWindows
             view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Name), WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Description), WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.URL), WidthWeight = 30 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Status), WidthWeight = 30 });
 
             xPluginsGrid.SetAllColumnsDefaultView(view);
             xPluginsGrid.InitViewItems();
@@ -76,30 +78,26 @@ namespace Ginger.PlugInsWindows
         {            
             PluginsManager p = new PluginsManager();
             xProcessingImage.Visibility = Visibility.Visible;
-            xPluginsGrid.DataSourceList = p.GetPluginsIndex();
+            xPluginsGrid.DataSourceList = p.GetOnlinePluginsIndex();
             xProcessingImage.Visibility = Visibility.Collapsed;         
         }
 
 
         private void ShowPluginInfo()
-        {
-            
-            xProcessingImage.Visibility = Visibility.Visible;
-            
-            PluginsManager p = new PluginsManager();
+        {            
+            xProcessingImage.Visibility = Visibility.Visible;                        
             OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;            
             xNameTextBlock.Text = pluginPackageInfo.Name;
-
-            List<dynamic> list = null;
+            ObservableList<OnlinePluginPackageRelease> list = null;
             Task.Factory.StartNew(() =>
-            {                                
-                    list = p.GetPluginReleases(pluginPackageInfo.URL);                    
+            {
+                list = pluginPackageInfo.Releases;
                 
             }).ContinueWith((a) => {
                     Dispatcher.Invoke(() =>
                     {
                         xVersionComboBox.ItemsSource = list;
-                        xVersionComboBox.DisplayMemberPath = "tag_name";
+                        xVersionComboBox.DisplayMemberPath = nameof(OnlinePluginPackageRelease.name);
                         // select the first item/latest release
                         xVersionComboBox.SelectedIndex = 0;
                         xProcessingImage.Visibility = Visibility.Collapsed;
@@ -110,13 +108,13 @@ namespace Ginger.PlugInsWindows
         private void xInstallButonn_Click(object sender, RoutedEventArgs e)
         {
             xProcessingImage.Visibility = Visibility.Visible;
-            dynamic release = (dynamic)xVersionComboBox.SelectedItem;
+            OnlinePluginPackageRelease release = (OnlinePluginPackageRelease)xVersionComboBox.SelectedItem;
             Task.Factory.StartNew(() =>
             {                                
-                string zipFileURL = release.assets[0].browser_download_url;
-                string version = release.tag_name;
                 PluginsManager p = new PluginsManager();
-                p.InstallPluginPackage((OnlinePluginPackage)xPluginsGrid.CurrentItem, version, zipFileURL);
+                OnlinePluginPackage onlinePluginPackage = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
+                p.InstallPluginPackage(onlinePluginPackage, release);
+                onlinePluginPackage.Status = "Installed";
             }).ContinueWith((a) =>
             {                
                 Dispatcher.Invoke(() =>
