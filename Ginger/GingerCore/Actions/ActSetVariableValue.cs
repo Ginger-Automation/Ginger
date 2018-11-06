@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Variables;
@@ -72,28 +72,9 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string VariableName { set; get; }
 
-        public enum eSetValueOptions
-        {
-            [EnumValueDescription("Set Value")]
-            SetValue,
-            [EnumValueDescription("Reset Value")]
-            ResetValue,
-            [EnumValueDescription("Auto Generate Value")]
-            AutoGenerateValue,
-            [EnumValueDescription("Start Timer")]
-            StartTimer,
-            [EnumValueDescription("Stop Timer")]
-            StopTimer,
-            [EnumValueDescription("Continue Timer")]
-            ContinueTimer,
-            [EnumValueDescription("Clear Special Characters")]
-            ClearSpecialChar
-        }
-
 
         [IsSerializedForLocalRepository]
-        public eSetValueOptions SetVariableValueOption 
-        { set; get; }
+        public eSetValueOptions SetVariableValueOption { get; set; }
                
         public override void Execute()
         {
@@ -113,12 +94,14 @@ namespace GingerCore.Actions
                 if (Var.GetType() == typeof(VariableString))
                 {
                     ((VariableString)Var).Value = VE.ValueCalculated;
-                }                
+                }
                 else if (Var.GetType() == typeof(VariableSelectionList))
                 {
                     string calculatedValue = VE.ValueCalculated;
-                    if (((VariableSelectionList)Var).OptionalValuesList.Where(pv => pv.Value == calculatedValue).FirstOrDefault() != null)
+                    if (((VariableSelectionList)Var).OptionalValuesList.Where(pv => pv.Value == calculatedValue).SingleOrDefault() != null)
+                    {
                         ((VariableSelectionList)Var).Value = calculatedValue;
+                    }
                     else
                     {
                         Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -131,7 +114,9 @@ namespace GingerCore.Actions
                     string calculatedValue = VE.ValueCalculated;
                     string[] possibleVals = ((VariableList)Var).Formula.Split(',');
                     if (possibleVals != null && possibleVals.Contains(calculatedValue))
+                    {
                         ((VariableList)Var).Value = calculatedValue;
+                    }
                     else
                     {
                         Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -154,10 +139,16 @@ namespace GingerCore.Actions
                 VE.Value = this.Value;
                 string specChar = VE.ValueCalculated;
                 if(string.IsNullOrEmpty(specChar))
-                    specChar=@"{}(),\""";
+                {
+                    specChar = @"{}(),\""";
+                }
                 if(!string.IsNullOrEmpty(((VariableString)Var).Value))
+                {
                     foreach (char c in specChar)
+                    {
                         ((VariableString)Var).Value = ((VariableString)Var).Value.Replace(c.ToString(), "");
+                    }
+                }
             }
             else if (SetVariableValueOption == eSetValueOptions.AutoGenerateValue)
             {

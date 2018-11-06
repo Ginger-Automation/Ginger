@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,11 +99,15 @@ namespace Ginger.Variables
             SetLinkedVarCombo();
 
             if (mVariable.Tags == null)
+            {
                 mVariable.Tags = new ObservableList<Guid>();
+            }
             TagsViewer.Init(mVariable.Tags);
 
             if (editMode == eEditMode.BusinessFlow || editMode == eEditMode.Activity)
+            {
                 SharedRepoInstanceUC.Init(mVariable, App.BusinessFlow);
+            }
             else
             {
                 SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
@@ -292,7 +297,9 @@ namespace Ginger.Variables
                     if (variable.GetType() == mVariable.GetType() && variable.Name != mVariable.Name)
                     {
                         if (varsList.Contains(variable.Name) == false)
+                        {
                             varsList.Add(variable.Name);
+                        }
                     }
                 }
                 varsList.Sort();
@@ -302,7 +309,9 @@ namespace Ginger.Variables
             if (string.IsNullOrEmpty(mVariable.LinkedVariableName)== false)
             {
                 if (varsList.Contains(mVariable.LinkedVariableName) == false)
-                    varsList.Add(mVariable.LinkedVariableName);                                
+                {
+                    varsList.Add(mVariable.LinkedVariableName);
+                }
                 linkedvariableCombo.SelectedValue = mVariable.LinkedVariableName;
                 linkedvariableCombo.Text = mVariable.LinkedVariableName;
             }
@@ -316,7 +325,7 @@ namespace Ginger.Variables
                 {
                     ActSetVariableValue setValueAct = new ActSetVariableValue();
                     setValueAct.VariableName = mVariable.LinkedVariableName;
-                    setValueAct.SetVariableValueOption = ActSetVariableValue.eSetValueOptions.SetValue;
+                    setValueAct.SetVariableValueOption = eSetValueOptions.SetValue;
                     setValueAct.Value = mVariable.Value;
                     setValueAct.RunOnBusinessFlow = App.BusinessFlow;
                     setValueAct.Execute();
