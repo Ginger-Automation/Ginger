@@ -46,9 +46,8 @@ namespace GingerWPF.WizardLib
 
             if (DoNotShowAsDialog)
             {
-                wizardWindow.Show();
-                //bring window to front
-                wizardWindow.Topmost = true;
+                wizardWindow.Owner = App.MainWindow;//adding owner so it will come on top
+                wizardWindow.Show();                
             }
             else
             {
