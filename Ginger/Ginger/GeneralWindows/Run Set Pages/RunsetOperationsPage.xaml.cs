@@ -212,6 +212,11 @@ namespace Ginger.Run
 
         private void AddAutomatedALMDefectsOperation(object sender, RoutedEventArgs e)
         {
+            if (!App.UserProfile.Solution.UseRest)
+            {
+                Reporter.ToUser(eUserMsgKeys.ALMDefectsUserInOtaAPI);
+                return;
+            }
             ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
             if ((ALMDefectProfiles == null) || (ALMDefectProfiles.Count < 1))
             {

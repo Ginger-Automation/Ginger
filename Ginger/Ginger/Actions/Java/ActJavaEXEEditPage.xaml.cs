@@ -30,7 +30,7 @@ namespace Ginger.Actions.Java
     {
         private ActJavaEXE mAct;
 
-        string JarFilesPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"\Documents\Java\");
+        string JarFilesPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Java\");
 
         public ActJavaEXEEditPage(ActJavaEXE act)
         {
@@ -90,7 +90,7 @@ namespace Ginger.Actions.Java
 
             foreach (string file in fileEntries)
             {
-                string s = file.Replace(JarFilesPath, "");
+                string s = Path.GetFileName(file);
                 ScriptNameComboBox.Items.Add(s);
             }
         }

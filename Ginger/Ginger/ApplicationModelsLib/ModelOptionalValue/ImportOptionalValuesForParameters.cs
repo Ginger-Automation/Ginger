@@ -640,7 +640,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             try
             {
                 SharedStringTablePart stringTablePart = document.WorkbookPart.SharedStringTablePart;
-                value = cell.CellValue.InnerXml;
+                value = cell.CellValue.InnerText;
 
                 if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
                 {
@@ -1023,7 +1023,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     {
                         while (index < colCount + 2)
                         {
-                            dr[index] = Convert.ToString(prm.OptionalValuesList.Where(x => x.IsDefault == true).Select(x => x.Value).FirstOrDefault());
+                            dr[index] = Convert.ToString(prm.OptionalValuesList.Where(x => x.IsDefault == true && x.Value != CURRENT_VAL_PARAMETER).Select(x => x.Value).FirstOrDefault());
                             index++;
                         } 
                     }
@@ -1501,7 +1501,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     }
 
                     DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName, false);                    
-                    dtTemplate = PivotTable(dtTemplate, false);
+                    dtTemplate = PivotTable(dtTemplate, true);
                     //Removing Paramter Name Column                    
                     if (dtTemplate.Columns.Contains(PARAMETER_NAME))
                     {                                                
