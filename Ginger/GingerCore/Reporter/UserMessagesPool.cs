@@ -121,7 +121,7 @@ namespace GingerCore
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty, 
-        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement
+        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI
     }
 
     public static class UserMessagesPool
@@ -500,6 +500,7 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.WrongDateValueInserted, new UserMessage(eAppReporterMessageType.INFO, "Profiles Saving", "Please, insert Date in format 'yyyy-mm-dd'\n(Field '{0}', Defect Profile '{1}')", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.ALMDefectsWereOpened, new UserMessage(eAppReporterMessageType.INFO, "ALM Defects Opening", "{0} ALM Defects were opened", MessageBoxButton.OK, MessageBoxResult.None));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.AskALMDefectsOpening, new UserMessage(eAppReporterMessageType.QUESTION, "ALM Defects Opening", "Are you sure that you want to open {0} ALM Defects?", MessageBoxButton.YesNo, MessageBoxResult.No));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.ALMDefectsUserInOtaAPI, new UserMessage(eAppReporterMessageType.INFO, "ALM Defects Valid for Rest API only", "You are in ALM Ota API mode, Please change to Rest API", MessageBoxButton.OK, MessageBoxResult.None));
             #endregion ALM
 
             #region ALM External Items Fields Messages
