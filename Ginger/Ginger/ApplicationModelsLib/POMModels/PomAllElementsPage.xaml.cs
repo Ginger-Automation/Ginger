@@ -244,9 +244,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
         {
-
-
-
             bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path)) ;
 
             bool HasSimilarLocators = true;
