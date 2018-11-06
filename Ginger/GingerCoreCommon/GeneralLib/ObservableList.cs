@@ -345,7 +345,14 @@ namespace Amdocs.Ginger.Common
                 // string s = StringCompressor.DecompressStringFromBytes(mMemoryStream, mDataLen);
 
                 ObservableList<T> l = new ObservableList<T>();
-                NewRepositorySerializer.DeserializeObservableListFromText(this, s);
+                try
+                {
+                    NewRepositorySerializer.DeserializeObservableListFromText(this, s);
+                }
+                catch (Exception ex)
+                {
+                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Deserialize the lazy load section: '{0}'", s), ex);
+                }
 
                 mStringData = null;
                 //mMemoryStream.Dispose();

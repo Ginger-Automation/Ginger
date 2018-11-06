@@ -57,6 +57,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
+using System.Windows.Input;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -637,6 +638,16 @@ namespace Ginger
             }
         }
 
+        private static void SolutionCleanup()
+        {
+            App.UserProfile.Solution = null;
+            App.AutomateTabGingerRunner.ClearAgents();
+            App.BusinessFlow = null;
+            AutoLogProxy.SetAccount("");
+            WorkSpace.Instance.SolutionRepository = null;
+            WorkSpace.Instance.SourceControl = null;
+        }
+
         public static bool SetSolution(string SolutionFolder)
         {
             //clear existing solution data
@@ -651,13 +662,7 @@ namespace Ginger
                 AppSolutionAutoSave.SolutionAutoSaveEnd();
 
                 //Cleanup
-                App.UserProfile.Solution = null;
-                App.AutomateTabGingerRunner.ClearAgents();
-                App.BusinessFlow = null;
-                AutoLogProxy.SetAccount("");
-
-                WorkSpace.Instance.SolutionRepository = null;
-                WorkSpace.Instance.SourceControl = null;
+                SolutionCleanup();
 
                 if (!SolutionFolder.EndsWith(@"\")) SolutionFolder += @"\";
                 string SolFile = System.IO.Path.Combine(SolutionFolder, @"Ginger.Solution.xml");
@@ -750,6 +755,7 @@ namespace Ginger
             catch (Exception ex)
             {
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while loading the solution", ex);
+                SolutionCleanup();
                 throw ex;
             }
             finally
@@ -757,6 +763,7 @@ namespace Ginger
                 mLoadingSolution = false;
                 OnPropertyChanged(nameof(LoadingSolution));
                 Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", SolutionFolder));
+                Mouse.OverrideCursor = null;
             }
         }
 
