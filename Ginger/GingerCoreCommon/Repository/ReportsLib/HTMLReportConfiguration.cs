@@ -40,8 +40,7 @@ namespace Ginger.Reports
             public static string BusinessFlowFieldsToSelect = "BusinessFlowFieldsToSelect";
             public static string GingerRunnerFieldsToSelect = "GingerRunnerFieldsToSelect";
             public static string RunSetFieldsToSelect = "RunSetFieldsToSelect";
-            public static string ReportLowerLevelToShow = "ReportLowerLevelToShow";
-            public static string HTMLReportConfigurationMaximalFolderSize = "HTMLReportConfigurationMaximalFolderSize";
+            public static string ReportLowerLevelToShow = "ReportLowerLevelToShow";            
         }
 
         bool mIsSelected;

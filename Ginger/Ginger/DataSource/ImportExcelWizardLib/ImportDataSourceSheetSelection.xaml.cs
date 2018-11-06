@@ -83,7 +83,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         }
 
         /// <summary>
-        /// Constrtuctor for ImportDataSourceSheetSelection class
+        /// Constructor for ImportDataSourceSheetSelection class
         /// </summary>
         public ImportDataSourceSheetSelection()
         {           

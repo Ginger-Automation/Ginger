@@ -62,7 +62,7 @@
         </StackPanel>
 
         <StackPanel Margin="5,0,0,0" Orientation="Vertical" Grid.Row="4">
-            <CheckBox x:Name="xMatchCaseCheckBox" VerticalAlignment="Center" Style="{StaticResource @InputCheckBoxStyle}" ToolTip="Find/Replace items with key sensitive considuration" >Match Case</CheckBox>
+            <CheckBox x:Name="xMatchCaseCheckBox" VerticalAlignment="Center" Style="{StaticResource @InputCheckBoxStyle}" ToolTip="Find/Replace items with key sensitive consideration" >Match Case</CheckBox>
             <CheckBox x:Name="xMatchWholeWordCheckBox" VerticalAlignment="Center" Style="{StaticResource @InputCheckBoxStyle}" ToolTip="Find/Replace items which equals the whole field value" >Match whole word</CheckBox>
         </StackPanel>
         

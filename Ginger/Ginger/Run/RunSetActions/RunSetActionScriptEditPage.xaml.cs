@@ -46,7 +46,7 @@ namespace Ginger.Run.RunSetActions
             
             if(dlg.ShowDialog()==System.Windows.Forms.DialogResult.OK)
             {
-                // replace Absolulute file name with relative to solution
+                // replace Absolute file name with relative to solution
                 string FileName = dlg.FileName.ToUpper();
                 if (FileName.Contains(SolutionFolder))
                 {

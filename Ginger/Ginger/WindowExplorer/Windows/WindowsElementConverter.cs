@@ -112,7 +112,7 @@ namespace Ginger.WindowExplorer.Windows
                 DPTI.UIAElementInfo = (UIAElementInfo)EI;
                 return DPTI;
             }
-            //// TODO: Remove Dependancy on class name. Find a generic way
+            //// TODO: Remove Dependency on class name. Find a generic way
             else if (elementControlType == "pane" && elmentClass == "PBTabControl32_100")
             {
                 WindowsTabItemTreeItem TTI = new WindowsTabItemTreeItem();

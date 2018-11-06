@@ -195,7 +195,7 @@ namespace Ginger.Exports.ExportToJava
                     break;
 
                 default:
-                    //temp to show soemthing
+                    //temp to show something
                     s += "." + Missing + act.LinkAction + " " + act.Value;
                     break;
             }
@@ -214,7 +214,7 @@ namespace Ginger.Exports.ExportToJava
                     break;
 
                 default:
-                    //temp to show soemthing
+                    //temp to show something
                     s += "." + Missing + act.ButtonAction + " " + act.Value;
                     break;
             }
@@ -240,7 +240,7 @@ namespace Ginger.Exports.ExportToJava
                     break;
 
                 default:
-                    //temp to show soemthing
+                    //temp to show something
                     s += "." + act.GenElementAction.ToString() + " " + act.Value;
                     break;
 
@@ -264,7 +264,7 @@ namespace Ginger.Exports.ExportToJava
                     break;
 
                 default:
-                    //temp to show soemthing
+                    //temp to show something
                     s += "." + Missing + act.TextBoxAction.ToString() + " " + act.Value;
                     break;
 
@@ -315,7 +315,7 @@ namespace Ginger.Exports.ExportToJava
         private string VE(string value)
         {
             string s = "";
-            //TODO: check for { if exist return var equvielent or TODOS if VBS etc... ahndle special VE vals
+            //TODO: check for { if exist return var equivalent or TODOS if VBS etc... handle special VE vals
            
             //temp return it as string
             s = "\"" + value + "\"";
@@ -324,7 +324,7 @@ namespace Ginger.Exports.ExportToJava
 
         private string MakeName(string activityName)
         {
-            // Create valid fucntion name in java from name
+            // Create valid function name in java from name
             //TODO: replace all special chars
             return activityName.Replace(" ", "_");
         }

@@ -246,7 +246,7 @@ namespace Ginger.BusinessFlowFolder
             defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ElapsedSecs, WidthWeight = 6, Header="Elapsed", BindingMode = BindingMode.OneWay, HorizontalAlignment = System.Windows.HorizontalAlignment.Right });                        
             grdActivities.SetAllColumnsDefaultView(defView);
 
-            //# Custome Views
+            //# Custom Views
             GridViewDef desView = new GridViewDef(eAutomatePageViewStyles.Design.ToString());
             desView.GridColsView = new ObservableList<GridColView>();
             desView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Status, Visible = false });
@@ -287,7 +287,7 @@ namespace Ginger.BusinessFlowFolder
             mBusinessFlow.CurrentActivity.Reset();
         }
 
-        //TODO: put in seperate class
+        //TODO: put in separate class
         public class ActivityStatusConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter,

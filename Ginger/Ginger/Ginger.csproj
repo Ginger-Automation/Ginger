@@ -433,6 +433,9 @@
     <Compile Include="Activities\UCValueExpression.xaml.cs">
       <DependentUpon>UCValueExpression.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AdornerLib\HighlightAdornerControl.xaml.cs">
+      <DependentUpon>HighlightAdornerControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AgentsNew\NewAgentEditPage.xaml.cs">
       <DependentUpon>NewAgentEditPage.xaml</DependentUpon>
     </Compile>
@@ -2566,6 +2569,10 @@
     <Page Include="Actions\_Common\ActUIElementLib\UIElementSelectAndValidate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="AdornerLib\HighlightAdornerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AgentsNew\NewAgentEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>

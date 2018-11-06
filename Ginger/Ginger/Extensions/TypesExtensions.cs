@@ -26,7 +26,7 @@ namespace Ginger.Extensions
     public static class TypesExtensions
     {
         // This class is for extension for types like: String, int etc...
-        // just an exmaple that we can extend also a regulat string to have our own extension method
+        // just an example that we can extend also a regular string to have our own extension method
         // Instead of writing:  if (string.IsnullOrEmpty(str)) ..
         // we can do            if (str.IsnullOrEmpty()) ...
         // a little bit shorter :)

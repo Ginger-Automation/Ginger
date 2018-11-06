@@ -75,7 +75,7 @@ namespace GingerCore.Actions
             return l;
         }
         
-        //Availble window actions
+        //Available window actions
         public enum eWindowActionType
         {
             Switch,

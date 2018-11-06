@@ -43,12 +43,12 @@ namespace GingerWPF.WizardLib
         {
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Width = width;
-            
-            if(DoNotShowAsDialog)
-            {                
+
+            if (DoNotShowAsDialog)
+            {
                 wizardWindow.Show();
                 //bring window to front
-                wizardWindow.Topmost = true;  
+                wizardWindow.Topmost = true;
             }
             else
             {
@@ -68,13 +68,13 @@ namespace GingerWPF.WizardLib
             //xFinishButton.IsEnabled = false;
 
             SetterBaseCollection SBC = NavigationList.ItemContainerStyle.Setters;
-            ((System.Windows.Setter)SBC[0]).Value = true;                        
+            ((System.Windows.Setter)SBC[0]).Value = true;
 
-            WizardEventArgs WizardEventArgs = new WizardEventArgs(mWizard, EventType.Init);                        
+            WizardEventArgs WizardEventArgs = new WizardEventArgs(mWizard, EventType.Init);
             foreach (WizardPage page in mWizard.Pages)
-            {                
+            {
                 // send init event
-                ((IWizardPage)page.Page).WizardEvent(WizardEventArgs);               
+                ((IWizardPage)page.Page).WizardEvent(WizardEventArgs);
 
                 // TODO: attach validation error handler
                 ((Page)page.Page).AddHandler(Validation.ErrorEvent, new RoutedEventHandler(ValidationErrorHandler));
@@ -83,7 +83,7 @@ namespace GingerWPF.WizardLib
             RefreshCurrentPage();
             NavigationList.ItemsSource = mWizard.Pages;
 
-            CurrentWizardWindow = this;            
+            CurrentWizardWindow = this;
         }
 
         private void UpdateFinishButton()
@@ -108,7 +108,7 @@ namespace GingerWPF.WizardLib
 
         void RefreshCurrentPage()
         {
-            WizardPage page = mWizard.GetCurrentPage();            
+            WizardPage page = mWizard.GetCurrentPage();
             PageFrame.Content = page.Page;
             tbSubTitle.Text = page.SubTitle;
             // sync the list too
@@ -117,16 +117,16 @@ namespace GingerWPF.WizardLib
 
         private void ValidationErrorHandler(object sender, EventArgs e)
         {
-            ValidationErrorEventArgs validationErrorEventArgs = (ValidationErrorEventArgs)e;            
+            ValidationErrorEventArgs validationErrorEventArgs = (ValidationErrorEventArgs)e;
             WizardPage wizardPage = (WizardPage)mWizard.Pages.CurrentItem;
-                        
+
             if (validationErrorEventArgs.Action == ValidationErrorEventAction.Added)
             {
-                mValidationErrors.Add(validationErrorEventArgs.Error);                                
+                mValidationErrors.Add(validationErrorEventArgs.Error);
             }
             else
             {
-                mValidationErrors.Remove(validationErrorEventArgs.Error);                
+                mValidationErrors.Remove(validationErrorEventArgs.Error);
             }
 
             if (mValidationErrors.Count == 0)
@@ -150,7 +150,7 @@ namespace GingerWPF.WizardLib
         {
             bool bErrors = HasValidationsIssues();
             if (bErrors)
-            {                
+            {
                 return;
             }
 
@@ -169,17 +169,17 @@ namespace GingerWPF.WizardLib
 
 
         // Need to be in base
-        private bool HasValidationsIssues(Page pageToScan=null)
+        private bool HasValidationsIssues(Page pageToScan = null)
         {
             //Scan all controls with validations
-            errorsFound = false;     
+            errorsFound = false;
             if (pageToScan == null)
             {
                 pageToScan = (Page)PageFrame.Content;
             }
             SearchValidationsRecursive(pageToScan);
 
-            return errorsFound; 
+            return errorsFound;
         }
 
 
@@ -205,7 +205,7 @@ namespace GingerWPF.WizardLib
                         {
                             ComboBox comboBox = (ComboBox)child;
                             bindingExpression = comboBox.GetBindingExpression(ComboBox.SelectedValueProperty);
-                            if(bindingExpression == null)
+                            if (bindingExpression == null)
                             {
                                 bindingExpression = comboBox.GetBindingExpression(ComboBox.TextProperty);
                             }
@@ -226,7 +226,7 @@ namespace GingerWPF.WizardLib
                             }
                         }
 
-                        //Custome controls Validations
+                        //Custom controls Validations
                         if (errorsFound == false)
                         {
                             if (child is ucGrid)
@@ -245,17 +245,17 @@ namespace GingerWPF.WizardLib
 
         private void UpdatePrevNextButton()
         {
-            
+
             if (mWizard.IsLastPage())
             {
-                xNextButton.IsEnabled = false;                
+                xNextButton.IsEnabled = false;
                 xFinishButton.IsEnabled = true;
             }
             else
             {
                 xNextButton.IsEnabled = true;
             }
-            
+
             if (mWizard.IsFirstPage())
             {
                 xPrevButton.IsEnabled = false;
@@ -266,7 +266,7 @@ namespace GingerWPF.WizardLib
             }
 
         }
-        
+
 
         private void PrevButton_Click(object sender, RoutedEventArgs e)
         {
@@ -285,18 +285,30 @@ namespace GingerWPF.WizardLib
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            CancelWizard();
-        }
+            WindowCloseWasHandled = true;
 
-        private void CancelWizard()
-        {
-            mWizard.Cancel();
-            CloseWizard();
+            if (xProcessingImage.Visibility == Visibility.Visible)
+            {
+                Reporter.ToUser(eUserMsgKeys.WizardCantFinishWhileInProcess);
+            }
+            else
+            {
+                mWizard.Cancel();
+                if (sender != null && sender is bool && (bool)sender == false)
+                {
+                    return;//close already been done
+                }
+                else
+                {
+                    CloseWizard();
+                }
+            }
         }
 
         private void FinishButton_Click(object sender, RoutedEventArgs e)
         {
             //First we validate all pages are OK
+            WindowCloseWasHandled = true;
 
             if (xProcessingImage.Visibility == Visibility.Visible)
             {
@@ -321,27 +333,13 @@ namespace GingerWPF.WizardLib
                     }
                 }
 
-                // TODO: verify all apges pass validation
+                // TODO: verify all pages pass validation
 
                 NavigationList.SelectionChanged -= NavigationList_SelectionChanged;
 
                 mWizard.ProcessFinish();
 
                 CloseWizard();
-
-                //if (mWizard.mWizardWindow == null)
-                //{
-                //    // If no page cancelled the Finish then all OK and we can close
-                //    CurrentWizardWindow = null;                
-                //    mWizard = null;
-
-                //}
-                //else
-                //{
-                //    UpdatePrevNextButton();
-                //    RefreshCurrentPage();
-                //    NavigationList.SelectionChanged += NavigationList_SelectionChanged;
-                //}
             }
         }
 
@@ -361,7 +359,7 @@ namespace GingerWPF.WizardLib
             CurrentWizardWindow = null;
         }
 
-       
+
 
         private void NavigationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -370,7 +368,7 @@ namespace GingerWPF.WizardLib
             {
                 tbSubTitle.Text = ((WizardPage)mWizard.Pages.CurrentItem).SubTitle;
                 UpdatePrevNextButton();
-                RefreshCurrentPage(); 
+                RefreshCurrentPage();
             }
         }
 
@@ -383,16 +381,25 @@ namespace GingerWPF.WizardLib
         {
             xProcessingImage.Visibility = Visibility.Collapsed;
         }
-        
+
 
         void IWizardWindow.NextButton(bool isEnabled)
         {
             xNextButton.IsEnabled = isEnabled;
         }
 
+        bool WindowCloseWasHandled = false;
+
         private void CloseWindowClicked(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            mWizard.Cancel();
+            if (!WindowCloseWasHandled)
+            {
+                //mWizard.Cancel();
+                CancelButton_Click(false, null);//false means that window already been closed
+            }
+
         }
+
+
     }
 }

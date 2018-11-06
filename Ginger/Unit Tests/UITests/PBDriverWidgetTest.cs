@@ -123,7 +123,7 @@ namespace UnitTests.UITests.PBDriverTest
 
             c = new ActSwitchWindow();
             c.LocateBy = eLocateBy.ByTitle;
-            c.LocateValueCalculated = "CSM Widgets Test Applicaiton";            
+            c.LocateValueCalculated = "CSM Widgets Test Application";            
             c.WaitTime = 10;
             mDriver.RunAction(c);
 
@@ -163,7 +163,7 @@ namespace UnitTests.UITests.PBDriverTest
             //proceed for switch window and initialize browser
             c = new ActSwitchWindow();
             c.LocateBy = eLocateBy.ByTitle;
-            c.LocateValueCalculated = "CSM Widgets Test Applicaiton";
+            c.LocateValueCalculated = "CSM Widgets Test Application";
             c.WaitTime = 2;
             mDriver.RunAction(c);
 

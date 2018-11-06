@@ -65,7 +65,7 @@ namespace Ginger.Run
         FlowDiagramPage mFlowDiagram;
         int mFlowX = 0;
         int mFlowY = 0;
-        bool IsSelectedItemSyncWithExecution = true;//execution and selected items are synced as defualt   
+        bool IsSelectedItemSyncWithExecution = true;//execution and selected items are synced as default   
         SingleItemTreeViewSelectionPage mRunSetsSelectionPage = null;
         SingleItemTreeViewSelectionPage mBusFlowsSelectionPage = null;
         RunsetOperationsPage mRunsetOperations = null;
@@ -241,13 +241,24 @@ namespace Ginger.Run
 
         private void SetNonSpecificRunSetEventsTracking()
         {
+            App.UserProfile.PropertyChanged -= UserProfilePropertyChanged;
             App.UserProfile.PropertyChanged += UserProfilePropertyChanged;
+
+            App.RunsetExecutor.PropertyChanged -= RunsetExecutor_PropertyChanged;
             App.RunsetExecutor.PropertyChanged += RunsetExecutor_PropertyChanged;
+
+            WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged -= AgentsCache_CollectionChanged;
             WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged += AgentsCache_CollectionChanged;
 
+            xBusinessflowsRunnerItemsListView.SelectionChanged -= xActivitiesListView_SelectionChanged;
             xBusinessflowsRunnerItemsListView.SelectionChanged += xActivitiesListView_SelectionChanged;
+
+            xActivitiesRunnerItemsListView.SelectionChanged -= xActionsListView_SelectionChanged;
             xActivitiesRunnerItemsListView.SelectionChanged += xActionsListView_SelectionChanged;
+
+            ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items).CollectionChanged -= xActivitiesRunnerItemsListView_CollectionChanged;
             ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items).CollectionChanged += xActivitiesRunnerItemsListView_CollectionChanged;
+
             RunnerItemPage.SetRunnerItemEvent(RunnerItem_RunnerItemEvent);            
         }
 
@@ -689,7 +700,7 @@ namespace Ginger.Run
                             BusinessFlow changedBusinessflow = (BusinessFlow)EventArgs.Object;
                             if (mCurrentBusinessFlowRunnerItem.ItemObject == changedBusinessflow)
                             {
-                                mCurrentBusinessFlowRunnerItem.LoadChildRunnerItems();//reloading activites to make sure include dynamically added/removed activities.
+                                mCurrentBusinessFlowRunnerItem.LoadChildRunnerItems();//reloading activities to make sure include dynamically added/removed activities.
                                 xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ItemChilds;
                             }
                         }
@@ -910,7 +921,10 @@ namespace Ginger.Run
                 mBusinessFlowsXmlsChangeWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
                 mBusinessFlowsXmlsChangeWatcher.IncludeSubdirectories = true;
 
+                mBusinessFlowsXmlsChangeWatcher.Changed -= new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
                 mBusinessFlowsXmlsChangeWatcher.Changed += new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
+
+                mBusinessFlowsXmlsChangeWatcher.Deleted -= new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
                 mBusinessFlowsXmlsChangeWatcher.Deleted += new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
 
                 mBusinessFlowsXmlsChangeWatcher.EnableRaisingEvents = true;

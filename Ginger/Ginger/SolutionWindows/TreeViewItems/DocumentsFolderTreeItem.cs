@@ -355,7 +355,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             
                 Folder = newFolderName;
 
-                //refresh header and childerns (to get new File name)
+                //refresh header and children's (to get new File name)
                 mTreeView.Tree.RefreshSelectedTreeNodeParent();
                // RefreshTreeFolder(typeof(DocumentsFolderTreeItem), Path);
             }

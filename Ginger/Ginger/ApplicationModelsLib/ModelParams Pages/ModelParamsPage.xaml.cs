@@ -151,7 +151,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             ModelParametersGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteParams_Clicked));
             ModelParametersGrid.SetbtnClearAllHandler(new RoutedEventHandler(ClearAllParams_Clicked));
-            ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parametrs to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
+            ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parameters to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
             ModelParametersGrid.AddToolbarTool(eImageType.DataSource, "Export Parameters to DataSource", new RoutedEventHandler(ExportParametersToDataSource));
         }
 
@@ -358,7 +358,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             string newParamName = ((AppModelParameter)ModelParametersGrid.Grid.SelectedItems[0]).PlaceHolder;
 
-            if (InputBoxWindow.GetInputWithValidation("Merge Parameters", "Set Palceholder for Merged Parameters", ref newParamName, new char[0]))
+            if (InputBoxWindow.GetInputWithValidation("Merge Parameters", "Set Placeholder for Merged Parameters", ref newParamName, new char[0]))
             {
                 //Create new Merged param
                 AppModelParameter mergedParam = new AppModelParameter();

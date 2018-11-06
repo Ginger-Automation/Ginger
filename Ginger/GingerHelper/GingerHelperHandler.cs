@@ -28,7 +28,7 @@ namespace GingerHelper
         {
             try
             {
-                //delete curent
+                //delete current
                 if (deleteExitingContentBeforeStart == true && Directory.Exists(targetPath))
                 {
                     Directory.Delete(targetPath, true);                    
