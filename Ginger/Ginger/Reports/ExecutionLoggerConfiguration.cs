@@ -77,11 +77,6 @@ namespace Ginger.Reports
 
         #region General
 
-        public static void ExecutionResultsConfigurationPage()
-        {
-            ExecutionResultsConfiguration.Instance.ShowAsWindow();
-        }
-
         #endregion
     }
 }

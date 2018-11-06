@@ -70,18 +70,6 @@ namespace Ginger.Reports
             {
                 ExecutionResultFolderPnl.IsEnabled = false;
             }
-        }
-
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
-        {
-            Init();
-
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-
-            Button SaveAllButton = new Button();
-            SaveAllButton.Content = "Save";
-            SaveAllButton.Click += new RoutedEventHandler(SaveButton_Click);
-            winButtons.Add(SaveAllButton);
 
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
@@ -96,39 +84,6 @@ namespace Ginger.Reports
 
             FolderTextBox.Text = _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder == null ? string.Empty : _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder;
             SizeTextBox.Text = _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize.ToString();
-
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons);
-        }
-
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (FolderTextBox.Text.Length > 100)
-            {
-                Reporter.ToUser(eUserMsgKeys.FolderNamesAreTooLong);
-                return;
-            }
-
-            try
-            {
-                if (Convert.ToInt16(SizeTextBox.Text.ToString()) < 50)
-                {
-                    Reporter.ToUser(eUserMsgKeys.FolderSizeTooSmall);
-                    return;
-                }
-            }
-            catch
-            {
-                return;
-            }
-
-            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
-
-            // validate the paths of inserted folders
-            Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
-            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder);
-
-            App.AutomateTabGingerRunner.ExecutionLogger.Configuration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            _pageGenericWin.Hide();
         }
 
         private void SelectFolderButton_Click(object sender, RoutedEventArgs e)
@@ -177,6 +132,36 @@ namespace Ginger.Reports
                 _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize = 0;
             }
             _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize));
+        }
+
+        private void xSaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FolderTextBox.Text.Length > 100)
+            {
+                Reporter.ToUser(eUserMsgKeys.FolderNamesAreTooLong);
+                return;
+            }
+
+            try
+            {
+                if (Convert.ToInt16(SizeTextBox.Text.ToString()) < 50)
+                {
+                    Reporter.ToUser(eUserMsgKeys.FolderSizeTooSmall);
+                    return;
+                }
+            }
+            catch
+            {
+                return;
+            }
+
+            App.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
+
+            // validate the paths of inserted folders
+            Ginger.Run.ExecutionLogger.GetLoggerDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
+            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder);
+
+            App.AutomateTabGingerRunner.ExecutionLogger.Configuration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
     }
 }
