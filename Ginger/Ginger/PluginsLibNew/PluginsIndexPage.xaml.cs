@@ -1,6 +1,9 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -70,39 +73,57 @@ namespace Ginger.PlugInsWindows
         }
 
         private void GetPluginsList()
-        {
-            SetStatus("Loading...");
+        {            
             PluginsManager p = new PluginsManager();
+            xProcessingImage.Visibility = Visibility.Visible;
             xPluginsGrid.DataSourceList = p.GetPluginsIndex();
-            SetStatus("Found " + xPluginsGrid.DataSourceList.Count + " Plugin Packages");
-        }
-
-
-        private void SetStatus(string text)
-        {
-            xStatusTextBlock.Text = text;
-            xStatusTextBlock.Refresh();
+            xProcessingImage.Visibility = Visibility.Collapsed;         
         }
 
 
         private void ShowPluginInfo()
-        {            
+        {
+            
+            xProcessingImage.Visibility = Visibility.Visible;
+            
             PluginsManager p = new PluginsManager();
             OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;            
-            xNameTextBlock.Text = pluginPackageInfo.Name;            
-            xVersionComboBox.ItemsSource = p.GetPluginReleases(pluginPackageInfo.URL);
-            xVersionComboBox.DisplayMemberPath = "tag_name";
-            // select the first item/latest release
-            xVersionComboBox.SelectedIndex = 0;
+            xNameTextBlock.Text = pluginPackageInfo.Name;
+
+            List<dynamic> list = null;
+            Task.Factory.StartNew(() =>
+            {                                
+                    list = p.GetPluginReleases(pluginPackageInfo.URL);                    
+                
+            }).ContinueWith((a) => {
+                    Dispatcher.Invoke(() =>
+                    {
+                        xVersionComboBox.ItemsSource = list;
+                        xVersionComboBox.DisplayMemberPath = "tag_name";
+                        // select the first item/latest release
+                        xVersionComboBox.SelectedIndex = 0;
+                        xProcessingImage.Visibility = Visibility.Collapsed;
+                    });
+            });
         }
 
         private void xInstallButonn_Click(object sender, RoutedEventArgs e)
         {
+            xProcessingImage.Visibility = Visibility.Visible;
             dynamic release = (dynamic)xVersionComboBox.SelectedItem;
-            string zipFileURL = release.assets[0].browser_download_url;
-            string version = release.tag_name;            
-            PluginsManager p = new PluginsManager();
-            p.InstallPluginPackage((OnlinePluginPackage)xPluginsGrid.CurrentItem, version , zipFileURL);
+            Task.Factory.StartNew(() =>
+            {                                
+                string zipFileURL = release.assets[0].browser_download_url;
+                string version = release.tag_name;
+                PluginsManager p = new PluginsManager();
+                p.InstallPluginPackage((OnlinePluginPackage)xPluginsGrid.CurrentItem, version, zipFileURL);
+            }).ContinueWith((a) =>
+            {                
+                Dispatcher.Invoke(() =>
+                {
+                    xProcessingImage.Visibility = Visibility.Collapsed;
+                });
+            });
         }
     }
 }
