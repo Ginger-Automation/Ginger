@@ -4,6 +4,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d"
       h:GingerHelpProvider.HelpString="Report"
       MinHeight="300" MinWidth="785"
@@ -12,6 +13,7 @@
     <Grid Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <StackPanel>
             <StackPanel x:Name="htmlReportFolderPnl" Margin="10,10,0,0" HorizontalAlignment="Left">
+                <usercontrols:ucButton x:Name="xSaveButton"  ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Right" Margin="0,0,0,0"/>
                 <Label Content="HTML Report Folder" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
                 <Label  Style="{StaticResource @LabelStyle}" Content="Folder Path:"/>
                 <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >
@@ -42,7 +44,6 @@
                     <RadioButton x:Name="htmlReportAutoProdOffRadioBtn" Content="Off" Padding="5,0,0,0" IsChecked="True" Checked="htmlReportAutoProdOffRadioBtn_Checked"/>
                 </StackPanel>
             </StackPanel>
-            <Button x:Name="xSaveButton" Click="xSaveButton_Click">Save</Button>
         </StackPanel>
     </Grid>
 </Page>

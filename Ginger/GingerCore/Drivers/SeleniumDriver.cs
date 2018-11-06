@@ -167,6 +167,11 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Applitool View Key number")]
         public String ApplitoolsViewKey { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("true")]
+        [UserConfiguredDescription("Change to Iframe automatically in case of POM Element execution ")]
+        public bool HandelIFramShiftAutomaticallyForPomElement { get; set; }
+
         protected IWebDriver Driver;
         protected eBrowserType mBrowserTpe;
         protected NgWebDriver ngDriver;
@@ -2978,7 +2983,8 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        SwitchFrame(selectedPOMElement);
+                        if (HandelIFramShiftAutomaticallyForPomElement)
+                            SwitchFrame(selectedPOMElement);
                         elem = LocateElementByLocators(selectedPOMElement.Locators);
                         selectedPOMElement.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
                     }
@@ -5913,7 +5919,7 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                if (act.ElementLocateBy == eLocateBy.POMElement)
+                if (act.ElementLocateBy == eLocateBy.POMElement && HandelIFramShiftAutomaticallyForPomElement)
                 {
                     Driver.SwitchTo().DefaultContent();
                 }
