@@ -154,32 +154,40 @@ namespace Ginger.WindowExplorer
 
         private void UpdateWindowsList()
         {
-            List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();            
-            WindowsComboBox.ItemsSource = list;
-            WindowsComboBox.DisplayMemberPath = "WinInfo";
-
-            AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
-
-            if (ActiveWindow != null)
+            try
             {
-                foreach (AppWindow w in list)
+                List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
+                WindowsComboBox.ItemsSource = list;
+                WindowsComboBox.DisplayMemberPath = "WinInfo";
+
+                AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
+
+                if (ActiveWindow != null)
                 {
-                    if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                    foreach (AppWindow w in list)
                     {
-                        WindowsComboBox.SelectedValue = w;
-                        return;
+                        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                        {
+                            WindowsComboBox.SelectedValue = w;
+                            return;
+                        }
+                    }
+                }
+
+                //TODO: If no selection then select the first if only one window exist in list
+                if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+                {
+                    if (WindowsComboBox.Items.Count == 1)
+                    {
+                        WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
                     }
                 }
             }
-
-            //TODO: If no selection then select the first if only one window exist in list
-            if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+            catch (Exception ex)
             {
-                if (WindowsComboBox.Items.Count == 1)
-                {
-                    WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
-                }
+                Reporter.ToLog(eAppReporterLogLevel.ERROR,ex.ToString(), writeOnlyInDebugMode: true);
             }
+            
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)

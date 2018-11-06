@@ -948,6 +948,7 @@ namespace GingerCore.ALM.QCRestAPI
                     if (itemfield.Mandatory)
                         itemfield.ToUpdate = true;
                     itemfield.ItemType = testSetfieldInRestSyntax.ToString();
+                    itemfield.Type = field.Type;
 
                     if ((field.ListId != null) && (field.ListId != string.Empty) && (field.FieldValues != null) && (field.FieldValues.Count > 0))
                     {
