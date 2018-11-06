@@ -368,19 +368,6 @@ namespace GingerCore.ALM.QCRestAPI
             }
         }
 
-        //public static QCTestInstance GetTestInstanceWithTestCaseId(string testCaseId)
-        //{
-        //    try
-        //    {
-        //        return QcRestClient.GetTestInstanceWithTestCase(testCaseId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test instances with REST API", ex);
-        //        return null;
-        //    }
-        //}
-
         public static QCTestInstanceColl GetTestInstancesOfTestSet(string testSetID)
         {
             try
