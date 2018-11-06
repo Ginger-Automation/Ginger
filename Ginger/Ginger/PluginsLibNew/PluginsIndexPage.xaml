@@ -9,6 +9,10 @@
       Title="PluginsIndexPage">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="593*"/>
+            <ColumnDefinition Width="207*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="11*"/>
@@ -24,6 +28,23 @@
         
 
         <TextBlock x:Name="xStatusTextBlock" Grid.Row="2" Text="Loading..."/>
-        
+
+        <StackPanel Grid.Column="1" Grid.Row="1">
+            <TextBlock x:Name="xNameTextBlock" FontSize="14" FontWeight="Bold">{Plugin Name}</TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <Label>Version</Label>
+                <ComboBox x:Name="xVersionComboBox" Width="100"></ComboBox>
+            </StackPanel>
+            <Label HorizontalAlignment="Left">Release Name</Label>
+            <TextBlock x:Name="xReleaseNameTextBlock" FontSize="14" FontWeight="Bold">{Release Name}</TextBlock>
+            <Label  HorizontalAlignment="Left">Published</Label>
+            <TextBlock x:Name="xPublishedTextBlock" FontSize="14" FontWeight="Bold">{Published}</TextBlock>
+            <Label HorizontalAlignment="Left">Size</Label>
+            <TextBlock x:Name="xSizeTextBlock" FontSize="14" FontWeight="Bold">{Size}</TextBlock>
+            <Label HorizontalAlignment="Left">Downloads</Label>
+            <TextBlock x:Name="xDownloads" FontSize="14" FontWeight="Bold">{Downloads}</TextBlock>
+            <Button x:Name="xInstallButonn" Click="xInstallButonn_Click" Width="150" Height="35">Install</Button>
+        </StackPanel>
+
     </Grid>
 </Page>
