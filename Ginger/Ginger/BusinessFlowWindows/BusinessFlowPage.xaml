@@ -47,7 +47,7 @@
 
                 <DockPanel x:Name="xBusinessflowinfo" Margin="0,10,0,0" >
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" >
-                        <Label Style="{StaticResource $LabelStyle}" Content="Status:" Margin="-5,0,0,2" VerticalAlignment="Bottom"/>
+                        <Label Style="{StaticResource $LabelStyle}" Content="Status:" Margin="0,0,0,2" VerticalAlignment="Bottom"/>
                         <ComboBox x:Name="StatusComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="125" Margin="5,0,0,5" VerticalAlignment="Bottom"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="10,0,10,5" DockPanel.Dock="Right"  HorizontalAlignment="Right" VerticalAlignment="Bottom">
