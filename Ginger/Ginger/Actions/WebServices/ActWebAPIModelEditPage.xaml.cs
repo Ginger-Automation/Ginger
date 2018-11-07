@@ -194,8 +194,8 @@ namespace Ginger.Actions.WebServices
 
         private bool ChangeAPIMapping(bool showNewMappingMessage = false)
         {
-            RepositoryFolder<ApplicationAPIModel> APIModels = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
-            if (APIModels.GetFolderItems().Count == 0)
+            ObservableList<ApplicationAPIModel> APIModelsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>();
+            if (APIModelsList.Count == 0)
             {
                 Reporter.ToUser(eUserMsgKeys.NoAPIExistToMappedTo);
                 return false;
@@ -206,7 +206,8 @@ namespace Ginger.Actions.WebServices
 
             if (apiModelPage == null)
             {
-                AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModels);
+                RepositoryFolder<ApplicationAPIModel> APIModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
+                AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModelsFolder);
                 apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single);
             }
             List<object> selectedList = apiModelPage.ShowAsWindow();
