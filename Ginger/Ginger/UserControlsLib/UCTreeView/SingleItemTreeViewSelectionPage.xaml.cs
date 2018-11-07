@@ -207,6 +207,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     mPageGenericWin.Close();
                 }
             }
+            bOpenasWindow = true;
         }
         private void Tree_ItemSelected(object sender, EventArgs e)
         {
