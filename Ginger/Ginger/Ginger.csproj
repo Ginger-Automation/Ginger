@@ -506,6 +506,9 @@
     <Compile Include="GeneralLib\LoadingPage.xaml.cs">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GeneralLib\LogDetailsPage.xaml.cs">
+      <DependentUpon>LogDetailsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PluginsLibNew\LocalPluginsPage.xaml.cs">
       <DependentUpon>LocalPluginsPage.xaml</DependentUpon>
     </Compile>
@@ -2811,6 +2814,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="GeneralLib\LoadingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GeneralLib\LogDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
