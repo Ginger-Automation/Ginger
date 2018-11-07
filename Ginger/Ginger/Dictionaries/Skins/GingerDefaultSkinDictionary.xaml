@@ -105,6 +105,16 @@
         <Setter Property="Foreground" Value="{DynamicResource @DarkBlue}"/>
     </Style>
 
+    <Style TargetType="TextBlock"  x:Key="$DetailsTextBlockStyle" >
+        <Setter Property="FontFamily" Value="Open Sans"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+    </Style>
+
     <Style TargetType="TextBox" x:Key="$MultiRowsTextBoxStyle" >
         <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="FontSize" Value="12"/>

@@ -707,7 +707,9 @@ namespace Ginger
 
         private void xLogErrors_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ShowGingerLog();
+            //ShowGingerLog();
+            LogDetailsPage logDetailsPage = new LogDetailsPage();
+            logDetailsPage.ShowAsWindow();
 
             xLogErrorsPnl.Visibility = Visibility.Collapsed;
             mErrorsNum = 0;
