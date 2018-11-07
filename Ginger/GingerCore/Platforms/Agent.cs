@@ -661,13 +661,12 @@ namespace GingerCore
                 if (Driver == null) return;
 
                 Driver.IsDriverRunning = false;
-                Thread.Sleep(1000);
                 if (Driver.Dispatcher != null)
                 {
-
-                    Driver.Dispatcher.Invoke(() =>
+                   Driver.Dispatcher.Invoke(() =>
                    {
                        Driver.CloseDriver();
+                       Thread.Sleep(1000);
                    });
                 }
                 else
