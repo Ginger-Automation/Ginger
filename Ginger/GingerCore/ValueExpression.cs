@@ -405,16 +405,16 @@ namespace GingerCore
                         Query = p.Substring(p.IndexOf("QUERY=") + 6, p.Length - 7);                        
                         if (Query.ToUpper().IndexOf("SELECT *") == -1)
                         {
-                            Query = Regex.Replace(Query, " FROM ", ",GINGER_ID FROM ", RegexOptions.IgnoreCase);
+                            Query = Regex.Replace(Query, " FROM ", ",[GINGER_ID] FROM ", RegexOptions.IgnoreCase);
                         }
                     }
                     else
                     {
                         Query = "Select ";
                         iColVal = p.Substring(p.IndexOf("ICOLVAL=") + 8, p.IndexOf("IROW=") - 9);
-                        iColVal = "[" + iColVal + "]";
+                        iColVal = "[" + iColVal + "]";                        
                         p = p.Substring(p.TrimStart().IndexOf("IROW="));
-                        Query = Query + iColVal + ",GINGER_ID from " + DSTable;
+                        Query = Query + iColVal + ",[GINGER_ID] from " + DSTable;
 
                         if (p.IndexOf(" ") > 0)
                             IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf(" ") - 5);
