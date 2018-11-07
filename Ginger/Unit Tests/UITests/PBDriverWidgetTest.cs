@@ -20,8 +20,8 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace UnitTests.UITests.PBDriverTest
 {
-
-    [TestClass]
+       
+    [Ignore]
     public class PBDriverWidgetTest
     {
         public static BusinessFlow mBF;
