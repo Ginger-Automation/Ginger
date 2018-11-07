@@ -51,30 +51,11 @@ namespace Ginger.PlugInsWindows
             PlugInNamelbl.BindControl(mPluginPackage, nameof(PluginPackage.PluginId));
             xPlugInPackageVersionLabel.BindControl(mPluginPackage, nameof(PluginPackage.PluginPackageVersion));
             xPlugInFolderLabel.BindControl(mPluginPackage, nameof(PluginPackage.Folder));            
-
-            SetServicesGrid();
+            
             SetActionsGrid();
             // SetTextEditorGrid();
         }
 
-
-        private void SetServicesGrid()
-        {
-            ServicesGrid.ShowEdit = Visibility.Collapsed;
-            ServicesGrid.ShowUpDown = Visibility.Collapsed;
-         
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = "Id", Header = "Id", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "ServiceId", Header = "Service Id", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            ServicesGrid.SetAllColumnsDefaultView(view);
-            ServicesGrid.InitViewItems();
-
-            var services = mPluginPackage.LoadServicesInfoFromFile(); 
-            PlugInsActionsGrid.Grid.ItemsSource = services;
-
-        }
 
         private void SetActionsGrid()
         {
@@ -92,8 +73,10 @@ namespace Ginger.PlugInsWindows
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Action Type", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "UserDescription", Header = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(StandAloneAction.ServiceId), Header = "Service Id", AllowSorting = true, WidthWeight = 200, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(StandAloneAction.ActionId), Header = "Action Id", AllowSorting = true, WidthWeight = 200, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(StandAloneAction.Description), Header = "Description", AllowSorting = true, WidthWeight = 400, BindingMode = BindingMode.OneWay });            
+
             PlugInsActionsGrid.SetAllColumnsDefaultView(view);
             PlugInsActionsGrid.InitViewItems();
 

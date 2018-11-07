@@ -13,8 +13,7 @@
             <ColumnDefinition Width="541*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="230"/>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="180"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
@@ -53,9 +52,7 @@
             </DockPanel>
 
         </StackPanel>
-
-        <Ginger:ucGrid x:Name="ServicesGrid" Title="Services" Grid.Row="1"></Ginger:ucGrid>
-        
+                
         <TabControl x:Name="PlugInTab" Grid.Row="2" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
@@ -78,7 +75,7 @@
                         <TextBlock Text="Service Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="PlugInsActionsGrid" Title="PlugIn Actions" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
+                <Ginger:ucGrid x:Name="PlugInsActionsGrid" Title="PlugIn Actions" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
             </TabItem>
             <TabItem x:Name="TextEditorTab" Margin="2,0,-6,0">
                 <TabItem.Header>
