@@ -270,7 +270,7 @@ namespace Ginger.Actions.ActionConversion
 
                                 foreach (Act act in activity.Acts.ToList())
                                 {
-                                    if (act is IObsoleteAction && lstActionToBeConverted.Where(a => a.SourceActionType == act.GetType() && a.Selected && a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
+                                    if (act.Active && act is IObsoleteAction && lstActionToBeConverted.Where(a => a.SourceActionType == act.GetType() && a.Selected && a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
                                     {
                                         // get the index of the action that is being converted 
                                         int selectedActIndex = activity.Acts.IndexOf(act);
@@ -285,10 +285,6 @@ namespace Ginger.Actions.ActionConversion
 
                                         // set obsolete action in the activity as inactive
                                         act.Active = false;
-                                    }
-                                    else
-                                    {
-                                        act.Active = true;
                                     }
                                 }
 

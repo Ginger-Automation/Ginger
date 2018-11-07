@@ -1595,7 +1595,15 @@ namespace GingerCore.Drivers
                     break;
 
                 case ActGenElement.eGenElementAction.StartBrowser: //TODO: FIXME: This action should not be part of GenElement
-                    this.StartDriver();
+                    if (this.IsRunning() == false)
+                    {
+                        this.StartDriver();
+                        act.ExInfo = "Browser was started";
+                    }
+                    else
+                    {
+                        act.ExInfo = "Browser already running";
+                    }                    
                     break;
 
                 case ActGenElement.eGenElementAction.MsgBox: //TODO: FIXME: This action should not be part of GenElement

@@ -582,6 +582,7 @@ namespace Amdocs.Ginger.Repository
             //add to file system
             try
             {
+                GetSubFolders();//calling it so it will find exisitng folders before adding new one
                 Directory.CreateDirectory(PathHelper.GetLongPath(FullPath));
                 GetSubFolders().Add(subfolder);
                 subfolder.StartFileWatcher();

@@ -163,6 +163,7 @@ namespace Ginger
                     RunCurrentAutomatePageAction(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
+                    btnGridViewExecution_Click(null, null);
                     RunActivity();
                     break;
                 case AutomateEventArgs.eEventType.ContinueActionRun:
@@ -250,10 +251,6 @@ namespace Ginger
                             mCurrentActivity = App.BusinessFlow.CurrentActivity;            
                             UpdateCurrentActivityVariabelsExpanders();
                             UpdateCurrentActivityActionsExpanders();
-                        }
-                        else
-                        {
-                            CurrentBusExpanderLable.Content = "No " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                         }
 
                     });
