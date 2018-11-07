@@ -194,6 +194,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private void Tree_ItemDoubleClick(object sender, EventArgs e)
         {
+            bOpenasWindow = false;
             if (SelectCurrentItem())
             {
                 if (mItemSelectionType == eItemSelectionType.MultiStayOpenOnDoubleClick)
@@ -206,6 +207,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     mPageGenericWin.Close();
                 }
             }
+            bOpenasWindow = true;
         }
         private void Tree_ItemSelected(object sender, EventArgs e)
         {
