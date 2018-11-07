@@ -21,7 +21,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 namespace UnitTests.UITests.PBDriverTest
 {
        
-    [Ignore]
+    [TestClass]
     public class PBDriverWidgetTest
     {
         public static BusinessFlow mBF;
@@ -123,7 +123,7 @@ namespace UnitTests.UITests.PBDriverTest
 
             c = new ActSwitchWindow();
             c.LocateBy = eLocateBy.ByTitle;
-            c.LocateValueCalculated = "CSM Widgets Test Application";            
+            c.LocateValueCalculated = "CSM Widgets Test Applicaiton";            
             c.WaitTime = 10;
             mDriver.RunAction(c);
 
@@ -163,7 +163,7 @@ namespace UnitTests.UITests.PBDriverTest
             //proceed for switch window and initialize browser
             c = new ActSwitchWindow();
             c.LocateBy = eLocateBy.ByTitle;
-            c.LocateValueCalculated = "CSM Widgets Test Application";
+            c.LocateValueCalculated = "CSM Widgets Test Applicaiton";
             c.WaitTime = 2;
             mDriver.RunAction(c);
 
