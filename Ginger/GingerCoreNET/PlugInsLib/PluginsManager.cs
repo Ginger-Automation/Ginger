@@ -324,7 +324,17 @@ namespace Amdocs.Ginger.Repository
 
             // raw url to get the file content            
             string url = "https://raw.githubusercontent.com/Ginger-Automation/Ginger-Plugins-Index/master/PluginsList.json";
-            return GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);            
+            ObservableList < OnlinePluginPackage > list = GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);
+            ObservableList<PluginPackage> installedPlugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            foreach (OnlinePluginPackage onlinePluginPackage in list)
+            {                
+                PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Name select x).SingleOrDefault();
+                if (pluginPackage != null)
+                {                
+                    onlinePluginPackage.Status = "Installed - " + pluginPackage.PluginPackageVersion;
+                }
+            }
+            return list;
         }
 
     }

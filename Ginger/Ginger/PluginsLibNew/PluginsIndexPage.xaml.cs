@@ -97,7 +97,7 @@ namespace Ginger.PlugInsWindows
                     Dispatcher.Invoke(() =>
                     {
                         xVersionComboBox.ItemsSource = list;
-                        xVersionComboBox.DisplayMemberPath = nameof(OnlinePluginPackageRelease.name);
+                        xVersionComboBox.DisplayMemberPath = nameof(OnlinePluginPackageRelease.Version);
                         // select the first item/latest release
                         xVersionComboBox.SelectedIndex = 0;
                         xProcessingImage.Visibility = Visibility.Collapsed;

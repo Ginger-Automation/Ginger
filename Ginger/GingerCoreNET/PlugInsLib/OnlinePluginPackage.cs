@@ -17,8 +17,22 @@ namespace Amdocs.Ginger.Repository
         public string URL { get; set; }
 
         /// Calculated - if exist on machine: "Installed", if seelcted for solution and exits, if not exist on file system then...
-        private string mStatus = "?";
-        public string Status { get { return mStatus;  } set { if (value != mStatus) { mStatus = value; OnPropertyChanged(nameof(Status)); } } }
+        private string mStatus;
+        public string Status
+        {
+            get
+            {                
+                return mStatus;
+            }
+            set
+            {
+                if (value != mStatus)
+                {
+                    mStatus = value;
+                    OnPropertyChanged(nameof(Status));
+                }
+            }
+        }
         
 
         private ObservableList<OnlinePluginPackageRelease> mReleases;
@@ -84,26 +98,34 @@ namespace Amdocs.Ginger.Repository
 
         async Task<string> DownloadPackage(string url, string subfolder)
         {
-            //TODO: show user some progress... update a shared string status
-            using (var client = new HttpClient())
+            string localPluginPackageFolder = Path.Combine(PluginPackage.LocalPluginsFolder, subfolder); // Extract it to: \users\[user]\Ginger\PluginPackages/[PluginFolder]
+            if (Directory.Exists(localPluginPackageFolder))
             {
-                var result = client.GetAsync(url).Result;
+                // Plugin already exist in file system no need to download
+            }
+            else
+            {
+                //TODO: show user some progress... update a shared string status
+                using (var client = new HttpClient())
+                {
+                    var result = client.GetAsync(url).Result;
 
-                if (result.IsSuccessStatusCode)
-                {
-                    byte[] zipContent = await result.Content.ReadAsByteArrayAsync();  // Get the Plugin package zip content
-                    string tempFileName = Path.GetTempFileName();  // temp file for the zip
-                    File.WriteAllBytes(tempFileName, zipContent);  // save content to file                                                            
-                    string localPluginPackageFolder = Path.Combine(PluginPackage.LocalPluginsFolder, subfolder); // Extract it to: \users\[user]\Ginger\PluginPackages/[PluginFolder]
-                    ZipFile.ExtractToDirectory(tempFileName, localPluginPackageFolder); // Extract 
-                    System.IO.File.Delete(tempFileName);
-                    return localPluginPackageFolder;
-                }
-                else
-                {
-                    throw new Exception("Error downloading/installing Plugin Package: " + result.ReasonPhrase + Environment.NewLine + url);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        byte[] zipContent = await result.Content.ReadAsByteArrayAsync();  // Get the Plugin package zip content
+                        string tempFileName = Path.GetTempFileName();  // temp file for the zip
+                        File.WriteAllBytes(tempFileName, zipContent);  // save content to file                                                                                
+                        ZipFile.ExtractToDirectory(tempFileName, localPluginPackageFolder); // Extract 
+                        System.IO.File.Delete(tempFileName);
+
+                    }
+                    else
+                    {
+                        throw new Exception("Error downloading/installing Plugin Package: " + result.ReasonPhrase + Environment.NewLine + url);
+                    }
                 }
             }
+            return localPluginPackageFolder;
         }
 
 
