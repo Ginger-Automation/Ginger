@@ -266,32 +266,11 @@ namespace GingerWPF.TreeViewItemsLib
         public override ITreeViewItem AddSubFolder(Type typeOfFolder, string newFolderName, string newFolderPath)
         {
             try
-            {
-                object folderItem;
+            {               
                 RepositoryFolderBase repoFolder = (RepositoryFolderBase)(((ITreeViewItem)this).NodeObject());
-                object newFolder = repoFolder.AddSubFolder(newFolderName);
+                repoFolder.AddSubFolder(newFolderName);
 
-
-                //FIXME not good approach
-                try
-                {
-                    folderItem = Activator.CreateInstance(this.GetType(), newFolder);
-                }
-                catch (Exception ex)
-                {
-                    folderItem = Activator.CreateInstance(this.GetType(),
-                                                                    BindingFlags.CreateInstance |
-                                                                    BindingFlags.Public |
-                                                                    BindingFlags.Instance |
-                                                                    BindingFlags.OptionalParamBinding, null, new object[] { repoFolder }, CultureInfo.CurrentCulture);
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                }
-                if (folderItem == null)
-                {
-                    return null;
-                }
-
-                return (ITreeViewItem)folderItem;
+                return null;
             }
             catch (Exception ex)
             {
