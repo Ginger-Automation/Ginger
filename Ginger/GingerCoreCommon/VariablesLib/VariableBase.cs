@@ -33,9 +33,29 @@ namespace GingerCore.Variables
         Activity = 1,
         Solution = 2
     }
-    
+
+
     public abstract class VariableBase : RepositoryItemBase
     {
+
+        public enum eSetValueOptions
+        {
+            [EnumValueDescription("Set Value")]
+            SetValue,
+            [EnumValueDescription("Reset Value")]
+            ResetValue,
+            [EnumValueDescription("Auto Generate Value")]
+            AutoGenerateValue,
+            [EnumValueDescription("Start Timer")]
+            StartTimer,
+            [EnumValueDescription("Stop Timer")]
+            StopTimer,
+            [EnumValueDescription("Continue Timer")]
+            ContinueTimer,
+            [EnumValueDescription("Clear Special Characters")]
+            ClearSpecialChar
+        }
+
         public enum eItemParts
         {
             All

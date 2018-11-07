@@ -63,7 +63,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableString.VariableType();
 
             //Assert            
-            Assert.AreEqual(varType, "String", "String Variable Type mismatch");
+            Assert.AreEqual("String", varType, "String Variable Type");
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableString.VariableUIType;
 
             //Assert
-            Assert.AreEqual(varType, "Variable String", "String Variable UI Type mismatch");
+            Assert.AreEqual("Variable String", varType, "String Variable UI Type");
         }
 
         [TestMethod]
@@ -89,7 +89,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eImageType = variableString.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.Variable, eImageType, "Image Type Mismatch");
+            Assert.AreEqual(eImageType.Variable, eImageType, "Image Type");
         }
 
         [TestMethod]
@@ -104,7 +104,7 @@ namespace GingerCoreCommonTest.VariableTests
             string formulaStr = variableString.GetFormula();
 
             //Assert
-            Assert.AreEqual(formulaStr, "Initial String Value=", "Mismatch with Default Formula String");
+            Assert.AreEqual("Initial String Value=", formulaStr, "Mismatch with Default Formula String");
         }
 
         [TestMethod]
@@ -133,9 +133,8 @@ namespace GingerCoreCommonTest.VariableTests
             //Act
 
             //Assert
-            Assert.AreEqual(variableString.Value, "testVal", "String Value mismatch");
+            Assert.AreEqual("testVal", variableString.Value, "String Value");
         }
-
 
         [TestMethod]
         public void PasswordStringVar_TestVal()
@@ -149,7 +148,7 @@ namespace GingerCoreCommonTest.VariableTests
             variablePasswordString.Value = passwordVal;
 
             //Assert            
-            Assert.AreEqual(variablePasswordString.Value, passwordVal, "Mismatch with VariablePasswordString.Value");
+            Assert.AreEqual(passwordVal, variablePasswordString.Value, "Mismatch with VariablePasswordString.Value");
         }
 
         [TestMethod]
@@ -166,7 +165,7 @@ namespace GingerCoreCommonTest.VariableTests
             variablePasswordString.ResetValue();
 
             //Assert
-            Assert.AreEqual(password, variablePasswordString.Value, "");
+            Assert.AreEqual(password, variablePasswordString.Value, "Password Reset Fail");
         }
 
         [TestMethod]
@@ -179,7 +178,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variablePasswordString.VariableUIType;
 
             //Assert            
-            Assert.AreEqual(varType, "Variable Password String", "Password String Type mismatch");
+            Assert.AreEqual("Variable Password String", varType, "Password String Type");
         }
 
         [TestMethod]
@@ -192,7 +191,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variablePasswordString.VariableType();
 
             //Assert            
-            Assert.AreEqual(varType, "PasswordString", "Password String Type mismatch");
+            Assert.AreEqual("PasswordString", varType, "Password String Type");
         }
 
         [TestMethod]
@@ -208,7 +207,7 @@ namespace GingerCoreCommonTest.VariableTests
             string formulaVal = variablePasswordString.GetFormula();
 
             //Assert            
-            Assert.AreEqual(formulaVal, passwordVal, "Password Formula mismatch");
+            Assert.AreEqual(passwordVal, formulaVal, "Password Formula");
         }
 
 

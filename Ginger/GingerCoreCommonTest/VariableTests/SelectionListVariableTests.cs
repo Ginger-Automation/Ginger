@@ -64,7 +64,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableSelectionList.VariableType();
 
             //Assert
-            Assert.AreEqual(varType, "Selection List", "Selection List Variable Type mismatch");
+            Assert.AreEqual("Selection List", varType, "Selection List Variable Type");
         }
 
         [TestMethod]
@@ -77,7 +77,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableSelectionList.VariableUIType;
 
             //Assert
-            Assert.AreEqual(varType, "Variable Selection List", "Selection List Variable UI Type mismatch");
+            Assert.AreEqual("Variable Selection List", varType, "Selection List Variable UI Type");
         }
 
         [TestMethod]
@@ -90,7 +90,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eImageType = variableSelectionList.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.VariableList, eImageType, "Image Type Mismatch");
+            Assert.AreEqual(eImageType.VariableList, eImageType, "Image Type");
         }
 
     }

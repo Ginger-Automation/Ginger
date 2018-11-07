@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Variables;
@@ -74,7 +74,7 @@ namespace GingerCore.Actions
 
 
         [IsSerializedForLocalRepository]
-        public eSetValueOptions SetVariableValueOption { get; set; }
+        public VariableBase.eSetValueOptions SetVariableValueOption { get; set; }
                
         public override void Execute()
         {
@@ -86,7 +86,7 @@ namespace GingerCore.Actions
                 return;
             }
 
-            if (SetVariableValueOption == eSetValueOptions.SetValue)
+            if (SetVariableValueOption == VariableBase.eSetValueOptions.SetValue)
             {               
                 ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow,DSList);
                 VE.Value = this.Value;
@@ -129,11 +129,11 @@ namespace GingerCore.Actions
                     ((VariableDynamic)Var).ValueExpression = VE.Value;
                 }
             }
-            else if (SetVariableValueOption == eSetValueOptions.ResetValue)
+            else if (SetVariableValueOption == VariableBase.eSetValueOptions.ResetValue)
             {                  
                     ((VariableBase)Var).ResetValue();
             }
-            else if (SetVariableValueOption == eSetValueOptions.ClearSpecialChar)
+            else if (SetVariableValueOption == VariableBase.eSetValueOptions.ClearSpecialChar)
             {
                 ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
                 VE.Value = this.Value;
@@ -150,11 +150,11 @@ namespace GingerCore.Actions
                     }
                 }
             }
-            else if (SetVariableValueOption == eSetValueOptions.AutoGenerateValue)
+            else if (SetVariableValueOption == VariableBase.eSetValueOptions.AutoGenerateValue)
             {
                 ((VariableBase)Var).GenerateAutoValue();
             }
-            else if (SetVariableValueOption == eSetValueOptions.StartTimer)
+            else if (SetVariableValueOption == VariableBase.eSetValueOptions.StartTimer)
             {
                 if (Var.GetType() == typeof(VariableTimer))
                 {
@@ -168,7 +168,7 @@ namespace GingerCore.Actions
                 }
             }
 
-            else if (SetVariableValueOption == eSetValueOptions.StopTimer)
+            else if (SetVariableValueOption == VariableBase.eSetValueOptions.StopTimer)
             {
                 if (Var.GetType() == typeof(VariableTimer))
                 {
@@ -182,7 +182,7 @@ namespace GingerCore.Actions
                     return;
                 }
             }
-            else if (SetVariableValueOption == eSetValueOptions.ContinueTimer)
+            else if (SetVariableValueOption == VariableBase.eSetValueOptions.ContinueTimer)
             {
                 if (Var.GetType() == typeof(VariableTimer))
                 {

@@ -325,7 +325,7 @@ namespace Ginger.Variables
                 {
                     ActSetVariableValue setValueAct = new ActSetVariableValue();
                     setValueAct.VariableName = mVariable.LinkedVariableName;
-                    setValueAct.SetVariableValueOption = eSetValueOptions.SetValue;
+                    setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                     setValueAct.Value = mVariable.Value;
                     setValueAct.RunOnBusinessFlow = App.BusinessFlow;
                     setValueAct.Execute();

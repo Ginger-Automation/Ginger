@@ -67,7 +67,7 @@ namespace GingerCore.Variables
         public override string VariableType() { return "PasswordString"; }
         public override bool SupportSetValue { get { return false; } }
 
-        public override List<eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
             throw new System.NotImplementedException();
         }

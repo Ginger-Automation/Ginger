@@ -201,10 +201,10 @@ namespace GingerCore.Variables
         public override string VariableType() { return "RandomString"; }
         public override bool SupportSetValue { get { return false; } }
 
-        public override List<eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<eSetValueOptions> supportedOperations = new List<eSetValueOptions>();
-            supportedOperations.Add(eSetValueOptions.AutoGenerateValue);
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
+            supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
           
             return supportedOperations;
         }

@@ -131,13 +131,13 @@ namespace GingerCore.Variables
         public override bool SupportSetValue { get { return false; } }
         public override string VariableType() { return "Timer"; }
 
-        public override List<eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<eSetValueOptions> supportedOperations = new List<eSetValueOptions>();
-            supportedOperations.Add(eSetValueOptions.StartTimer);
-            supportedOperations.Add(eSetValueOptions.StopTimer);
-            supportedOperations.Add(eSetValueOptions.ContinueTimer);
-            supportedOperations.Add(eSetValueOptions.ResetValue);
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
+            supportedOperations.Add(VariableBase.eSetValueOptions.StartTimer);
+            supportedOperations.Add(VariableBase.eSetValueOptions.StopTimer);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ContinueTimer);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
 

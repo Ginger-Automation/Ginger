@@ -132,7 +132,6 @@ namespace GingerCore.Environments
             {
                 if (mVE == null)
                 {
-                    //TODO: Fixme & create TC's
                     if (ProjEnvironment == null)
                     {
                         ProjEnvironment = new Environments.ProjEnvironment();

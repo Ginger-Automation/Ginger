@@ -21,6 +21,7 @@ using GingerCore.Variables;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 
 namespace GingerCoreCommonTest.VariableTests
 {
@@ -65,7 +66,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eImageType = variableRandomNumber.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.Random, eImageType, "RandomNumber Variable Image Type Mismatch");
+            Assert.AreEqual(eImageType.Random, eImageType, "RandomNumber Variable Image Type");
         }
 
         [TestMethod]
@@ -78,7 +79,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eImageType = variableRandomString.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.Random, eImageType, "RandomString Variable Image Type Mismatch");
+            Assert.AreEqual(eImageType.Random, eImageType, "RandomString Variable Image Type");
         }
 
         [TestMethod]
@@ -103,13 +104,15 @@ namespace GingerCoreCommonTest.VariableTests
         {
             //We want to verify that the numbers be get are in interval of 5, can be 10,15,20 etc... but number like 17 is not valid
 
+            int min = 10;
+            int max = 100;
+            int interval = 5;
+
             //Arrange
             VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-            variableRandomNumber.Min = 10;
-            variableRandomNumber.Max = 100;            
-            variableRandomNumber.Interval = 5;
-
-            //vn.ResetValue();
+            variableRandomNumber.Min = min;
+            variableRandomNumber.Max = max;            
+            variableRandomNumber.Interval = interval;
 
             //Act
             variableRandomNumber.GenerateAutoValue();
@@ -120,9 +123,9 @@ namespace GingerCoreCommonTest.VariableTests
             decimal num3 = decimal.Parse(variableRandomNumber.Value);
 
             //first verify all 3 numbers are in range
-            Assert.IsTrue(num1 >= 10 && num1 <= 100, "num1 >= 10 && num1 <= 100");
-            Assert.IsTrue(num2 >= 10 && num2 <= 100, "num2 >= 10 && num2 <= 100");
-            Assert.IsTrue(num3 >= 10 && num3 <= 100, "num3 >= 10 && num3 <= 100");
+            Assert.IsTrue(num1 >= min && num1 <= max, "num1 >= " + min + " && num1 <= " + max);
+            Assert.IsTrue(num2 >= min && num2 <= max, "num2 >= " + min + " && num2 <= " + max);
+            Assert.IsTrue(num3 >= min && num3 <= max, "num3 >= " + min + " && num3 <= " + max);
 
             // Now check tha validy 5,10,15 etc..
             //Verify that the num modolu 5 is give remainder of 0 or 5
@@ -235,7 +238,7 @@ namespace GingerCoreCommonTest.VariableTests
         }
 
         [TestMethod]
-        public void RandomStringVar_0_3_chars()
+        public void RandomStringVar_0_10_chars()
         {
             //Arrange
             VariableRandomString variableRandomString = new VariableRandomString();
@@ -249,7 +252,7 @@ namespace GingerCoreCommonTest.VariableTests
             for (int i = 0; i < 100;i++ )
             {
                 variableRandomString.GenerateAutoValue();
-                Assert.IsTrue(variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 3");                
+                Assert.IsTrue(variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10");                
                 if (variableRandomString.Value.Length == 0) Hit0 = true;
                 if (variableRandomString.Value.Length == 5) Hit5 = true;
                 if (variableRandomString.Value.Length == 10) Hit10 = true;                
@@ -259,7 +262,6 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(Hit0, "Hit0");
             Assert.IsTrue(Hit5, "Hit5");
             Assert.IsTrue(Hit10, "Hit10");
-
         }
 
         [TestMethod]
@@ -274,7 +276,9 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomString.GenerateAutoValue();
 
             //Assert
-           Assert.AreEqual(variableRandomString.Value, variableRandomString.Value.ToLower());
+            string curValue = variableRandomString.Value;
+            bool isDigits = curValue.All(c => char.IsDigit(c));
+            Assert.IsTrue(isDigits, "String does not contain digits");
         }
 
         [TestMethod]
@@ -318,7 +322,7 @@ namespace GingerCoreCommonTest.VariableTests
             //Arrange
             VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
             variableRandomNumber.Min = decimal.Parse("1.5");   // not using M to mark it decimal, using parse since this is ehat happen from UI
-            variableRandomNumber.Max = decimal.Parse("1.7"); ;
+            variableRandomNumber.Max = decimal.Parse("1.7");
 
             //Act
             variableRandomNumber.GenerateAutoValue();

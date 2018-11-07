@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.Common
 {
-    public class ObjectFactory
+    public class RepositoryItemHelper
     {
         public static IRepositoryItemFactory RepositoryItemFactory { get; set; }
     }

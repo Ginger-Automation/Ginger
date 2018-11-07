@@ -63,7 +63,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableSequence.VariableType();
 
             //Assert            
-            Assert.AreEqual(varType, "Sequence", "Sequence Variable Type mismatch");
+            Assert.AreEqual("Sequence", varType, "Sequence Variable Type");
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableSequence.VariableUIType;
 
             //Assert            
-            Assert.AreEqual(varType, "Variable Sequence", "Sequence Variable UI Type mismatch");
+            Assert.AreEqual("Variable Sequence", varType, "Sequence Variable UI Type");
         }
 
         [TestMethod]
@@ -116,6 +116,7 @@ namespace GingerCoreCommonTest.VariableTests
         [TestMethod]
         public void SequenceVar_Digit_13()
         {
+            // same number as minimum and maximum and it should return the same number when we autogenerate
             //Arrange
             int sameNum = 13;
             VariableSequence variableSequence = new VariableSequence();
@@ -180,7 +181,7 @@ namespace GingerCoreCommonTest.VariableTests
             //Assert
             for (int i = 0; i < itrCount; i++)
             {
-                Assert.AreEqual(numArr[i], i+1, "Sequence Issue");
+                Assert.AreEqual(i + 1, numArr[i], "Sequence Issue");
                 Assert.IsTrue(numArr[i] >= minNum && numArr[i] <= maxNum, "num1 >= " + minNum + " && num1 <= " + maxNum);
             }
         }
@@ -192,7 +193,7 @@ namespace GingerCoreCommonTest.VariableTests
             int minNum = 0;
             int maxNum = 10;
             int interval = 1;
-            string formulaStr = minNum + "-" + maxNum + " Interval " + interval;
+            string expectedFormulaStr = minNum + "-" + maxNum + " Interval " + interval;
 
             VariableSequence variableSequence = new VariableSequence();
             variableSequence.Min = minNum;
@@ -203,7 +204,7 @@ namespace GingerCoreCommonTest.VariableTests
             string formulaVal = variableSequence.GetFormula();
 
             //Assert
-            Assert.AreEqual(formulaVal, formulaStr, "Sequence Formula mismatch");
+            Assert.AreEqual(expectedFormulaStr, formulaVal, "Sequence Formula");
         }
 
     }

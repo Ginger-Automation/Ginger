@@ -70,9 +70,8 @@ namespace GingerCore.Environments
         [IsSerializedForLocalRepository]
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
-        //TODO: Fix me
         [IsSerializedForLocalRepository]
-        public ObservableList<IDatabase> Dbs; // = new ObservableList<Database>();
+        public ObservableList<IDatabase> Dbs;
 
         [IsSerializedForLocalRepository]
         public ObservableList<UnixServer> UnixServers = new ObservableList<UnixServer>();
@@ -88,7 +87,7 @@ namespace GingerCore.Environments
 
         public GeneralParam GetParam(string ParamName)
         {
-            GeneralParam GP = (from p in GeneralParams where p.Name == ParamName select p).FirstOrDefault();
+            GeneralParam GP = (from p in GeneralParams where p.Name == ParamName select p).SingleOrDefault();
             return GP;
         }
 

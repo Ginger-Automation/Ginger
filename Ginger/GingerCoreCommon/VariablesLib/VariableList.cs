@@ -103,12 +103,12 @@ namespace GingerCore.Variables
         public override string VariableType() { return "List"; }
         public override bool SupportSetValue { get { return true; } }
 
-        public override List<eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<eSetValueOptions> supportedOperations = new List<eSetValueOptions>();
-            supportedOperations.Add(eSetValueOptions.SetValue);
-            supportedOperations.Add(eSetValueOptions.AutoGenerateValue);
-            supportedOperations.Add(eSetValueOptions.ResetValue);
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
+            supportedOperations.Add(VariableBase.eSetValueOptions.SetValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
     }

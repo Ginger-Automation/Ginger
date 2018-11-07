@@ -349,7 +349,7 @@ namespace Ginger
 
             string phase = string.Empty;
 
-            ObjectFactory.RepositoryItemFactory = new RepositoryItemFactory();
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
 
 
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();

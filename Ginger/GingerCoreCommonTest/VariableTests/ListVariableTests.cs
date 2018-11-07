@@ -29,8 +29,6 @@ namespace GingerCoreCommonTest.VariableTests
     [Level1]
     public class ListVariableTests
     {
-        List<string> lstTemp = new List<string>();
-
         #region Default Class/Test Initialize Methods
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
@@ -57,14 +55,6 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        public ListVariableTests()
-        {
-            lstTemp.Add("Apple");
-            lstTemp.Add("Blue");
-            lstTemp.Add("Green");
-            lstTemp.Add("Yellow");
-        }
-
         [TestMethod]
         public void ListVar_TestVariableType()
         {
@@ -75,7 +65,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableList.VariableType();
 
             //Assert
-            Assert.AreEqual(varType, "List", "List Variable Type mismatch");
+            Assert.AreEqual("List", varType, "List Variable Type");
         }
 
         [TestMethod]
@@ -88,26 +78,33 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableList.VariableUIType;
 
             //Assert
-            Assert.AreEqual(varType, "Variable List", "List Variable UI Type mismatch");
+            Assert.AreEqual("Variable List", varType, "List Variable UI Type");
         }
 
         [TestMethod]
         public void ListVar_TestImageType()
         {
             //Arrange
+            List<string> lstTemp = new List<string>();
+            lstTemp.Add("Jupiter");
             VariableList variableList = new VariableList("TestList", lstTemp);
 
             //Act
             eImageType eImageType = variableList.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.VariableList, eImageType, "Image Type Mismatch");
+            Assert.AreEqual(eImageType.VariableList, eImageType, "Image Type");
         }
 
         [TestMethod]
         public void ListVar_TestGenerateAutoValue()
         {
             //Arrange
+            List<string> lstTemp = new List<string>();
+            lstTemp.Add("Apple");
+            lstTemp.Add("Blue");
+            lstTemp.Add("Green");
+            lstTemp.Add("Yellow");
             VariableList variableList = new VariableList("TestList", lstTemp);
 
             //Act
@@ -116,13 +113,18 @@ namespace GingerCoreCommonTest.VariableTests
             string strValue = variableList.Value;
 
             //Assert
-            Assert.AreEqual(strValue, "Apple", "GenerateAutoValue mismatch");
+            Assert.AreEqual("Apple", strValue, "GenerateAutoValue");
         }
 
         [TestMethod]
         public void ListVar_TestGenerateAutoValuesSequence()
         {
             //Arrange
+            List<string> lstTemp = new List<string>();
+            lstTemp.Add("Apple");
+            lstTemp.Add("Blue");
+            lstTemp.Add("Green");
+            lstTemp.Add("Yellow");
             VariableList variableList = new VariableList("TestList", lstTemp);
             variableList.RandomOrder = false;
 
@@ -133,7 +135,7 @@ namespace GingerCoreCommonTest.VariableTests
                 string strValue = variableList.Value;
 
                 //Assert
-                Assert.AreEqual(strValue, lstTemp[iVar], "GenerateAutoValue mismatch");
+                Assert.AreEqual(lstTemp[iVar], strValue, "GenerateAutoValue");
             }
         }
 
@@ -141,6 +143,9 @@ namespace GingerCoreCommonTest.VariableTests
         public void ListVar_TestRandomGenerateAutoValue()
         {
             //Arrange
+            List<string> lstTemp = new List<string>();
+            lstTemp.Add("Jupiter");
+            lstTemp.Add("Saturn");
             VariableList variableList = new VariableList("TestList", lstTemp);
             variableList.RandomOrder = true;
 
@@ -149,13 +154,14 @@ namespace GingerCoreCommonTest.VariableTests
             string strValue = variableList.Value;
 
             //Assert
-            Assert.IsTrue(lstTemp.Contains(strValue), "Random GenerateAutoValue mismatch");
+            Assert.IsTrue(lstTemp.Contains(strValue), "Random GenerateAutoValue");
         }
 
         [TestMethod]
         public void ListVar_TestRandomGenerateAutoValueNotExists()
         {
             //Arrange
+            List<string> lstTemp = new List<string>();
             VariableList variableList = new VariableList("TestList", lstTemp);
             variableList.RandomOrder = true;
 
@@ -163,13 +169,16 @@ namespace GingerCoreCommonTest.VariableTests
             variableList.GenerateAutoValue();
 
             //Assert
-            Assert.IsFalse(lstTemp.Contains("Dummy"), "Random GenerateAutoValue mismatch");
+            Assert.IsFalse(lstTemp.Contains("Dummy"), "Random GenerateAutoValue");
         }
 
         [TestMethod]
         public void ListVar_TestFormula()
         {
             //Arrange
+            List<string> lstTemp = new List<string>();
+            lstTemp.Add("One");
+            lstTemp.Add("Two");
             VariableList variableList = new VariableList("TestList", lstTemp);
             string formulaExpectedResult = String.Join(",", lstTemp.ToArray());
 
@@ -177,21 +186,66 @@ namespace GingerCoreCommonTest.VariableTests
             string formulaResult = variableList.GetFormula();
 
             //Assert
-            Assert.AreEqual(formulaResult, formulaExpectedResult, "List Formula mismatch");
+            Assert.AreEqual(formulaExpectedResult, formulaResult, "List Formula");
+        }
+
+        [TestMethod]
+        public void ListVar_TestFormulaForEmptyList()
+        {
+            //Arrange
+            List<string> lstTemp = new List<string>();
+            VariableList variableList = new VariableList("TestList", lstTemp);
+            string formulaExpectedResult = String.Join(",", lstTemp.ToArray());
+
+            //Act
+            string formulaResult = variableList.GetFormula();
+
+            //Assert
+            Assert.AreEqual(formulaExpectedResult, formulaResult, "List Formula");
+        }
+
+        [TestMethod]
+        public void ListVar_TestFormulaNoList()
+        {
+            //Arrange
+            VariableList variableList = new VariableList();
+
+            //Act
+            string formulaResult = variableList.GetFormula();
+
+            //Assert
+            Assert.AreEqual(string.Empty, formulaResult, "List Formula");
         }
 
         [TestMethod]
         public void ListVar_TestResetIndexValue()
         {
             //Arrange
+            List<string> lstTemp = new List<string>();
+            lstTemp.Add("Friend");
+            lstTemp.Add("Love");
             VariableList variableList = new VariableList("TestList", lstTemp);
 
             //Act
             variableList.ResetValue();
 
             //Assert
-            Assert.AreEqual(variableList.CurrentValueIndex, 0, "On Reset Index Value not equal to 0");
-            Assert.AreEqual(variableList.Value, lstTemp[0], "Reset Index Value Mismatch");
+            Assert.AreEqual(0, variableList.CurrentValueIndex, "On Reset Index Value repositioned to 0");
+            Assert.AreEqual(lstTemp[0], variableList.Value, "Reset Index Value");
+        }
+
+        [TestMethod]
+        public void ListVar_TestResetIndexValueForEmptyList()
+        {
+            //Arrange
+            List<string> lstTemp = new List<string>();
+            VariableList variableList = new VariableList("TestList", lstTemp);
+
+            //Act
+            variableList.ResetValue();
+
+            //Assert
+            Assert.AreEqual(0, variableList.CurrentValueIndex, "On Reset Index Value repositioned to 0");
         }
 
 

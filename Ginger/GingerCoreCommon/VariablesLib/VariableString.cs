@@ -76,12 +76,12 @@ namespace GingerCore.Variables
         public override eImageType Image { get { return eImageType.Variable; } }
         public override string VariableType() { return "String"; }
 
-        public override List<eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<eSetValueOptions> supportedOperations = new List<eSetValueOptions>();
-            supportedOperations.Add(eSetValueOptions.SetValue);
-            supportedOperations.Add(eSetValueOptions.ResetValue);
-            supportedOperations.Add(eSetValueOptions.ClearSpecialChar);
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
+            supportedOperations.Add(VariableBase.eSetValueOptions.SetValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ClearSpecialChar);
             return supportedOperations;
         }
 

@@ -97,7 +97,7 @@ namespace GingerCore.Variables
                     return "Value will be calulated during execution.";
                 }   
 
-                IValueExpression Ve = ObjectFactory.RepositoryItemFactory.CreateValueExpression(mProjEnvironment, mBusinessFlow);
+                IValueExpression Ve = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(mProjEnvironment, mBusinessFlow);
                 Ve.Value = ValueExpression;
 
                 if (Ve.Value != null && Ve.Value.Contains("{Var Name=" + Name + "}"))
@@ -118,7 +118,7 @@ namespace GingerCore.Variables
 
         public override bool SupportSetValue { get { return true; } }
 
-        public override List<eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
             throw new NotImplementedException();
         }        

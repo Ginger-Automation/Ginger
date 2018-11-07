@@ -39,8 +39,6 @@ namespace amdocs.ginger.GingerCoreNET
 
         public SolutionRepository SolutionRepository;
 
-        public IRepositoryItemFactory RepositoryItemFactory;
-
         // Will be back when we moved GR to GingerCoreNET
         // public GingerRunner GingerRunner;
 

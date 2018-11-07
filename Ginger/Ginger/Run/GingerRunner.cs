@@ -2084,7 +2084,7 @@ namespace Ginger.Run
                                     {
                                         ActSetVariableValue setValueAct = new ActSetVariableValue();
                                         setValueAct.VariableName = vals[0];
-                                        setValueAct.SetVariableValueOption = eSetValueOptions.SetValue;
+                                        setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                                         setValueAct.Value = vals[1];
                                         setValueAct.RunOnBusinessFlow = this.CurrentBusinessFlow;
                                         setValueAct.DSList = this.DSList;
@@ -3765,7 +3765,9 @@ namespace Ginger.Run
                                 IsStopLoop = true;
                             }
                             else
+                            {
                                 FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                            }
                             break;
 
                         case FlowControl.eBusinessFlowControlAction.RerunBusinessFlow:
@@ -3786,7 +3788,7 @@ namespace Ginger.Run
                                 {
                                     ActSetVariableValue setValueAct = new ActSetVariableValue();
                                     setValueAct.VariableName = vals[0];
-                                    setValueAct.SetVariableValueOption = eSetValueOptions.SetValue;
+                                    setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                                     setValueAct.Value = vals[1];
                                     setValueAct.RunOnBusinessFlow = this.CurrentBusinessFlow;
                                     setValueAct.DSList = this.DSList;
@@ -3846,19 +3848,29 @@ namespace Ginger.Run
 
             List<BusinessFlow> lstBusinessFlow = null;
             if (guidToLookBy != Guid.Empty)
+            {
                 lstBusinessFlow = BusinessFlows.Where(x => x.InstanceGuid == guidToLookBy).ToList();
+            }
             
             if (lstBusinessFlow == null || lstBusinessFlow.Count == 0)
+            {
                 bf = null;
+            }
             else if (lstBusinessFlow.Count == 1)
+            {
                 bf = lstBusinessFlow[0];
+            }
             else//we have more than 1
             {
                 BusinessFlow firstActive = lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
                 if (firstActive != null)
+                {
                     bf = firstActive;
+                }
                 else
-                    bf = lstBusinessFlow[0];//no one is Active so returning the first one
+                {
+                    bf = lstBusinessFlow[0]; //no one is Active so returning the first one
+                }
             }
 
             if (bf != null)

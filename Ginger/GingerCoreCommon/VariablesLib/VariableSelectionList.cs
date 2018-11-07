@@ -22,6 +22,7 @@ using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 
 namespace GingerCore.Variables
 {
@@ -172,11 +173,11 @@ namespace GingerCore.Variables
 
         public override bool SupportSetValue { get { return true; } }
 
-        public override List<eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<eSetValueOptions> supportedOperations = new List<eSetValueOptions>();
-            supportedOperations.Add(eSetValueOptions.SetValue);
-            supportedOperations.Add(eSetValueOptions.ResetValue);
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
+            supportedOperations.Add(VariableBase.eSetValueOptions.SetValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
     }

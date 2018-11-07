@@ -57,7 +57,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void DynamicVar_TestAutoValue()
         {
             //Arrange
+            string valExpr = "{VBS Eval=1+1}";
+            string expectedResult = "2";
             VariableDynamic variableDynamic = new VariableDynamic();
+            variableDynamic.Name = "d1";
+            variableDynamic.Value = valExpr;
 
             //Act
             variableDynamic.GenerateAutoValue();
@@ -77,7 +81,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableDynamic.VariableType();
 
             //Assert            
-            Assert.AreEqual(varType, "Dynamic", "Dynamic Variable Type mismatch");
+            Assert.AreEqual("Dynamic", varType, "Dynamic Variable Type");
         }
 
         [TestMethod]
@@ -90,7 +94,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableDynamic.VariableUIType;
 
             //Assert            
-            Assert.AreEqual(varType, "Variable Dynamic", "Dynamic Variable UI Type mismatch");
+            Assert.AreEqual("Variable Dynamic", varType, "Dynamic Variable UI Type");
         }
 
         [TestMethod]
@@ -108,7 +112,7 @@ namespace GingerCoreCommonTest.VariableTests
             string formulaVal = variableDynamic.GetFormula();
 
             //Assert            
-            Assert.AreEqual(formulaVal, expectedResult, "Dynamic Variable Formula mismatch");
+            Assert.AreEqual(expectedResult, formulaVal, "Dynamic Variable Formula");
         }
 
 
