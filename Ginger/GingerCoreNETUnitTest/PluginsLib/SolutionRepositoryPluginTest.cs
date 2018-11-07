@@ -52,7 +52,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             }
 
             SR = new SolutionRepository();
-            SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", addToRootFolders: true, PropertyNameForFileName: nameof(PluginPackage.PluginID));
+            SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", addToRootFolders: true, PropertyNameForFileName: nameof(PluginPackage.PluginId));
             SR.CreateRepository(folder);
             SR.Open(folder);
             WorkSpace.Instance.SolutionRepository = SR;
@@ -101,7 +101,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
 
             //Assert            
-            Assert.AreEqual("GingerOfficePlugin", Plugins[0].PluginID, "PluginID=GingerOfficePlugin");
+            Assert.AreEqual("GingerOfficePlugin", Plugins[0].PluginId, "PluginID=GingerOfficePlugin");
             Assert.AreEqual("1.0.0", Plugins[0].PluginPackageVersion, "Version=1.0");
 
         }

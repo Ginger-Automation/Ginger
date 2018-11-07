@@ -2,12 +2,10 @@
 using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
@@ -37,13 +35,17 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public ObservableList<OnlinePluginPackageRelease> Releases { get {
+        public ObservableList<OnlinePluginPackageRelease> Releases
+        {
+            get
+            {
                 if (mReleases == null)
                 {
                     GetPluginReleases();
                 }
                 return mReleases;
-            } }
+            }
+        }
 
         
 
@@ -72,7 +74,13 @@ namespace Amdocs.Ginger.Repository
             
         }
 
-        
+
+        public string InstallPluginPackage(OnlinePluginPackageRelease release)
+        {
+            string pluginSubFolder = Path.Combine(Name, release.Version);
+            string folder = DownloadPackage(release.assets[0].browser_download_url, pluginSubFolder).Result;
+            return folder;
+        }
 
         async Task<string> DownloadPackage(string url, string subfolder)
         {
@@ -85,27 +93,21 @@ namespace Amdocs.Ginger.Repository
                 {
                     byte[] zipContent = await result.Content.ReadAsByteArrayAsync();  // Get the Plugin package zip content
                     string tempFileName = Path.GetTempFileName();  // temp file for the zip
-                    File.WriteAllBytes(tempFileName, zipContent);  // save content to file                    
-                    string localPluginPackageFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); // target folder to extract the plugin to on user folder
-                    localPluginPackageFolder = Path.Combine(localPluginPackageFolder, "Ginger", "PluginPackages", subfolder); // Extract it to: \users\[user]\Ginger\PluginPackages/[PluginFolder]
+                    File.WriteAllBytes(tempFileName, zipContent);  // save content to file                                                            
+                    string localPluginPackageFolder = Path.Combine(PluginPackage.LocalPluginsFolder, subfolder); // Extract it to: \users\[user]\Ginger\PluginPackages/[PluginFolder]
                     ZipFile.ExtractToDirectory(tempFileName, localPluginPackageFolder); // Extract 
                     System.IO.File.Delete(tempFileName);
                     return localPluginPackageFolder;
                 }
                 else
                 {
-                    throw new Exception("Error downloading Plugin Package: " + result.ReasonPhrase + Environment.NewLine + url);
+                    throw new Exception("Error downloading/installing Plugin Package: " + result.ReasonPhrase + Environment.NewLine + url);
                 }
             }
         }
 
 
-        public string InstallPluginPackage(OnlinePluginPackageRelease release)
-        {
-            string pluginSubFolder = Path.Combine(Name, release.Version);
-            string folder = DownloadPackage(release.assets[0].browser_download_url , pluginSubFolder).Result;
-            return folder;
-        }
+        
 
         
 

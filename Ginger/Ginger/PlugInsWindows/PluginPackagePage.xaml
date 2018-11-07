@@ -32,25 +32,21 @@
                 <Label Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="Description:" />
                 <Border BorderThickness="1" BorderBrush="{StaticResource @Skin1_ColorA}" Grid.Row="1" Margin="5,0,0,0" >
                     <ScrollViewer  >
-                        <TextBlock x:Name="txtBlkDescritpion" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" ></TextBlock>
+                        <TextBlock x:Name="xSummaryTextBlock" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" ></TextBlock>
                     </ScrollViewer>
                 </Border>
             </Grid>
 
             <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                 <Label Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="PlugIn Version:" />
-                <Label x:Name="PlugInVersionlbl" Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" />
+                <Label x:Name="xPlugInPackageVersionLabel" Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                 <Label Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="PlugIn Folder:" />
-                <Label x:Name="PlugInFolderlbl" Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" />
+                <Label x:Name="xPlugInFolderLabel" Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" />
             </StackPanel>
-
-            <StackPanel Orientation="Horizontal">
-                <Label Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="PlugIn Type:" />
-                <Label x:Name="PlugInTypelbl" Style="{StaticResource @InputFieldLabelStyle}"/>
-            </StackPanel>
+           
 
             <DockPanel>
                 <Label x:Name="LoadErrorLbl" HorizontalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Foreground="Red" Content="Failed To Load The PlugIn"  Visibility="Collapsed"/>

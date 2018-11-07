@@ -44,16 +44,13 @@ namespace Ginger.PlugInsWindows
 
         private void Init()
         {
-            txtBlkDescritpion.Text = string.Empty;
-            TextBlockHelper TBH = new TextBlockHelper(txtBlkDescritpion);
+            // xSummaryTextBlock.Text = string.Empty;
+            // TextBlockHelper TBH = new TextBlockHelper(txtBlkDescritpion);
+            // xSummaryTextBlock.Text = mPluginPackage.des
 
-            PlugInNamelbl.BindControl(mPluginPackage, nameof(PluginPackage.PluginID));
-            //GingerCore.General.ObjFieldBinding(PlugInNamelbl, Label.ContentProperty, mPlugInWrapper, nameof(PluginPackage.Name), BindingMode.OneWay);
-            //GingerCore.General.ObjFieldBinding(txtBlkDescritpion, TextBlock.TextProperty, mPlugInWrapper, nameof(PlugInWrapper.Description), BindingMode.OneWay);
-            //GingerCore.General.ObjFieldBinding(PlugInTypelbl, Label.ContentProperty, mPlugInWrapper, nameof(PlugInWrapper.PlugInType), BindingMode.OneWay);
-            //GingerCore.General.ObjFieldBinding(PlugInVersionlbl, Label.ContentProperty, mPlugInWrapper, nameof(PlugInWrapper.PlugInVersion), BindingMode.OneWay);
-            //PlugInFolderlbl.Content = mPlugInWrapper.FullPlugInRootPath.ToLower().Replace(App.UserProfile.Solution.Folder.ToLower(), "~");
-
+            PlugInNamelbl.BindControl(mPluginPackage, nameof(PluginPackage.PluginId));
+            xPlugInPackageVersionLabel.BindControl(mPluginPackage, nameof(PluginPackage.PluginPackageVersion));
+            xPlugInFolderLabel.BindControl(mPluginPackage, nameof(PluginPackage.Folder));            
 
             SetServicesGrid();
             SetActionsGrid();

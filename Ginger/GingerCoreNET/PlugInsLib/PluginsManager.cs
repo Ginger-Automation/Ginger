@@ -177,7 +177,9 @@ namespace Amdocs.Ginger.Repository
         //    throw new Exception("Action handler not found for Action ID: " + ID);
         //}
 
-        static List<PluginPackage> mInstalledPluginPackages = null;
+        // static List<PluginPackage> mInstalledPluginPackages = null;
+
+       
 
         // Get list of installed plugins in Ginger folder 'PluginPackages'
         //public List<PluginPackage> GetInstalledPluginPackages()
@@ -284,7 +286,7 @@ namespace Amdocs.Ginger.Repository
             {
                 throw new ArgumentNullException(nameof(PluginId));
             }
-            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == PluginId select x).SingleOrDefault();
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == PluginId select x).SingleOrDefault();
 
             if (pluginPackage == null)
             {                
@@ -311,7 +313,7 @@ namespace Amdocs.Ginger.Repository
 
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
         {
-            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             StandAloneAction standAloneAction = (from x in pluginPackage.LoadServicesInfoFromFile() where x.ServiceId == serviceId && x.ActionId == actionId select x).SingleOrDefault();
             return standAloneAction.InputValues;
         }
