@@ -24,14 +24,6 @@ namespace GingerCore.Variables
 {
     public class VariableSequence : VariableBase
     {
-        public new static  partial class Fields
-        {
-            public static string Min = "Min";
-            public static string Max = "Max";
-            public static string Interval = "Interval";
-            public static string IsInteger = "IsInteger";
-        }
-
         public VariableSequence()
         {
             Min = 0;

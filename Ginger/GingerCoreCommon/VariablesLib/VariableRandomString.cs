@@ -27,17 +27,6 @@ namespace GingerCore.Variables
 {
     public class VariableRandomString : VariableBase
     {        
-        public new static  partial class Fields
-        {
-            public static string Min = "Min";
-            public static string Max = "Max";
-            public static string IsDigit = "IsDigit";
-            public static string IsLowerCase = "IsLowerCase";
-            public static string IsUpperCase = "IsUpperCase";
-            public static string IsLowerCaseAndDigits = "IsLowerCaseAndDigits";
-            public static string IsUpperCaseAndDigits = "IsUpperCaseAndDigits";
-        }
-
         public VariableRandomString()
         {
         }

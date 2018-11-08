@@ -24,11 +24,6 @@ namespace GingerCore.Variables
 {
     public class VariablePasswordString : VariableBase 
     {
-        public new static partial class Fields
-        {
-            public static string Password = "Password";
-        }
-
         public VariablePasswordString()
         {
         }

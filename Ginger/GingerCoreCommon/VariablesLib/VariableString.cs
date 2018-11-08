@@ -24,11 +24,6 @@ namespace GingerCore.Variables
 {
     public class VariableString : VariableBase 
     {
-        public new static partial class Fields
-        {
-            public static string InitialStringValue = "InitialStringValue";
-        }
-
         public VariableString()
         {
         }

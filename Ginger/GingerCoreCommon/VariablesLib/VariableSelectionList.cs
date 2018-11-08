@@ -28,12 +28,6 @@ namespace GingerCore.Variables
 {
     public class VariableSelectionList : VariableBase
     {
-        public new static partial class Fields
-        {
-            public static string OptionalValues = "OptionalValues";
-            public static string SelectedValue = "SelectedValue";
-        }
-        
         public VariableSelectionList()
         {
             mOptionalValues = string.Empty;

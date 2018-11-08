@@ -26,11 +26,6 @@ namespace GingerCore.Variables
 {
     public class VariableDynamic : VariableBase
     {
-        public new static partial class Fields
-        {
-            public static string ValueExpression = "ValueExpression";
-        }
-
         // Do not serialize being set at runtime by Ginger Runner
         IProjEnvironment mProjEnvironment;
         IBusinessFlow mBusinessFlow;

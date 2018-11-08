@@ -102,7 +102,7 @@ namespace GingerCoreCommonTest.VariableTests
         [TestMethod]
         public void RandomNumberVar_Min10_Max100_Interval_5()
         {
-            //We want to verify that the numbers be get are in interval of 5, can be 10,15,20 etc... but number like 17 is not valid
+            //We want to verify that the numbers we get are in interval of 5, can be 10,15,20 etc... but number like 17 is not valid
 
             int min = 10;
             int max = 100;

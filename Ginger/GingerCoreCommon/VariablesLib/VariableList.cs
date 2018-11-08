@@ -25,12 +25,6 @@ namespace GingerCore.Variables
 {
     public class VariableList:VariableBase
     {
-        public new static partial class Fields
-        {
-            public static string ValueList = "ValueList";
-            public static string RandomOrder = "RandomOrder";                   
-        }
-
         public VariableList()
         {
             ValueList = "";
