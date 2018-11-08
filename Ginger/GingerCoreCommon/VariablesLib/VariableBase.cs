@@ -266,7 +266,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true, true);
+                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true);
                 }
 
                 if (value is IObservableList)
@@ -341,7 +341,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true, true);
+                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true);
                     value = null;
                 } 
                 
