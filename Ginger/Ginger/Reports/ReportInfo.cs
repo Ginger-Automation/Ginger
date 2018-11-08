@@ -141,7 +141,7 @@ namespace Ginger.Reports
         // Use it when we have data from disk which ws saved by ExecutionLogger
         public ReportInfo(string folder)    // this is only that should stayed after discussion !!!
         {
-            // in recived folder looking for json file with specific name (file should be single txt file in folder - if no - not proceed with desirialization)
+            // in received folder looking for json file with specific name (file should be single txt file in folder - if no - not proceed with deserialization)
             int txtFilesInDirectoryCount = 0;
             string txtFileName = string.Empty;
             string fileName = string.Empty;
@@ -378,7 +378,7 @@ namespace Ginger.Reports
             }
         }
 
-        //Activites Info
+        //Activities Info
         public int TotalActivitiesCount 
         { 
             get 
@@ -390,7 +390,7 @@ namespace Ginger.Reports
 
         public int TotalActivitiesByRunStatus(Amdocs.Ginger.CoreNET.Execution.eRunStatus RunStatus)
         {
-            //TODO: fix me to use the same enum on activitym add GetActivity on ActivityReport
+            //TODO: fix me to use the same enum on activity add GetActivity on ActivityReport
             string sStatus = RunStatus.ToString();
             int count = AllActivitiesForReport.Where(activity => activity.Status == sStatus).Count();            
             return count;          

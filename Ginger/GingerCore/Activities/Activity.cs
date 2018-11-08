@@ -28,7 +28,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 
-//TODO: chang add core
+//TODO: change add core
 namespace GingerCore
 {
     // Activity can have several steps - Acts

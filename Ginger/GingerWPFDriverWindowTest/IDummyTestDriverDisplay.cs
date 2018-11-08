@@ -41,7 +41,7 @@ namespace GingerWPFDriverWindowTest
         void SetResponse(string req);
 
 
-        // We enable to attach the driver interface which the dispaly can use - bi directional communcation, for example button click to trigger
+        // We enable to attach the driver interface which the display can use - bi directional communication, for example button click to trigger
         // void AttachEventHandler(IWebServicesDriver webServicesDriver);
         void AddLog(string txt);
     }

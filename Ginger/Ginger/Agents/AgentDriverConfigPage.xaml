@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AgentDriverConfigPage">
 
-    <Grid x:Name="pageGrid" Background="{StaticResource @Skin1_ColorC}">
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         
         <TabControl  Grid.Row="2" Grid.ColumnSpan="3">
             <TabItem Header="Standard">

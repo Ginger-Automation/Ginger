@@ -56,7 +56,7 @@ namespace GingerCore.ALM.RQM
             {
                 if (testPlan == null) return null;
 
-                //Creat Business Flow
+                //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
                 busFlow.Name = testPlan.Name;
                 busFlow.ExternalID = "RQMID=" + testPlan.RQMID;
@@ -67,7 +67,7 @@ namespace GingerCore.ALM.RQM
                 //Create Activities Group + Activities for each TC
                 foreach (RQMTestCase tc in testPlan.TestCases)
                 {
-                    //Add the TC steps as Activities if not already on the Activties group
+                    //Add the TC steps as Activities if not already on the Activities group
                     RQMTestScript selectedScript = tc.TestScripts.Where(y => y.Name == tc.SelectedTestScriptName).ToList().FirstOrDefault();
                     if (selectedScript == null)
                     {
@@ -311,7 +311,7 @@ namespace GingerCore.ALM.RQM
                     {
                         if (ExportToRQM.GetExportedIDString(tcToBeUpdatedID, "RQMID") == tc.RQMID)
                         {
-                            //Add the TC steps as Activities if not already on the Activties group
+                            //Add the TC steps as Activities if not already on the Activities group
                             RQMTestScript selectedScript = tc.TestScripts.Where(y => y.Name == tc.SelectedTestScriptName).ToList().FirstOrDefault();
                             if (selectedScript == null)
                             {
@@ -525,7 +525,7 @@ namespace GingerCore.ALM.RQM
                 foreach (RQMTestCase tc in testPlan.TestCases)
                 {
 
-                    //Add the TC steps as Activities if not already on the Activties group
+                    //Add the TC steps as Activities if not already on the Activities group
                     RQMTestScript selectedScript = tc.TestScripts.Where(y => y.Name == tc.SelectedTestScriptName).ToList().FirstOrDefault();
                     if (selectedScript == null)
                     {

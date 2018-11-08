@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.Repository
     {
 
         //[IsSerializedForLocalRepository]
-        /* public string GroupName { get; set; } *///Need for Reflecting the Name, Name field is not eanogh it needs to come with GroupName
+        /* public string GroupName { get; set; } *///Need for Reflecting the Name, Name field is not enough it needs to come with GroupName
 
         ApplicationAPIUtils.eWebApiType mAPIType = ApplicationAPIUtils.eWebApiType.REST;
         [IsSerializedForLocalRepository]
@@ -118,7 +118,7 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public string AuthPassword { get { return mAuthPassword; } set { if (mAuthPassword != value) { mAuthPassword = value; OnPropertyChanged(nameof(AuthPassword)); } } }
 
-        // We overide the file extension so all subclass of ApplicationAPIModelBase will have the same extension
+        // We override the file extension so all subclass of ApplicationAPIModelBase will have the same extension
         public override string ObjFileExt
         {
             get

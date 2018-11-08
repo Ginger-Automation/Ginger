@@ -95,16 +95,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Execution Logger Configurations", ExecutionResultsConfigWindow, null, "@Config3_16x16.png");
-            TV.AddToolbarTool("@Config3_16x16.png", "Execution Logger Configurations", ExecutionResultsConfigWindow);
-
             TreeViewUtils.AddMenuItem(mContextMenu, "Open Execution Results Default Folder", OpenExecutionResultsFolder, null, "@Folder_16x16.png");
             TV.AddToolbarTool("@Folder_16x16.png", "Open Execution Results Default Folder", OpenExecutionResultsFolder);                 
-        }
-
-        private void ExecutionResultsConfigWindow(object sender, System.Windows.RoutedEventArgs e)
-        {
-            Ginger.Reports.ExecutionLoggerConfiguration.ExecutionResultsConfigurationPage();
         }
 
         private void OpenExecutionResultsFolder(object sender, System.Windows.RoutedEventArgs e)

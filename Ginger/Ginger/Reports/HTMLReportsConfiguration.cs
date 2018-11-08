@@ -21,48 +21,101 @@ using GingerCore;
 
 namespace Ginger.Reports
 {
+
+    /// <summary>
+    /// HTML Report General Configrations
+    /// </summary>
+    
     public class HTMLReportsConfiguration : RepositoryItemBase
     {        
 
-        public enum AutomationTabContext
-        {
-            None,
-            ActionRun,
-            ActivityRun,
-            BussinessFlowRun
-        }
-
-        public  static class Fields
-        {
-            public static string Name = "Name";
-            public static string IsSelected = "IsSelected";
-            public static string HTMLReportsFolder = "HTMLReportsFolder";
-            public static string HTMLReportsAutomaticProdIsEnabled = "HTMLReportsAutomaticProdIsEnabled";
-        } 
-
+     
+        
         [IsSerializedForLocalRepository]
         public long Seq { get; set; }
 
         [IsSerializedForLocalRepository]
         public string Name { get; set; }
 
+
+        private bool mLimitReportFolderSize;
         [IsSerializedForLocalRepository]
-        public bool LimitReportFolderSize { get; set; }
+        public bool LimitReportFolderSize {
+            get
+            {
+                return mLimitReportFolderSize;
+            }
+            set
+            {
+                mLimitReportFolderSize = value;
+                OnPropertyChanged(nameof(LimitReportFolderSize));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public bool IsSelected { get; set; }
-        
+
+
+        private string mHTMLReportsFolder;
         [IsSerializedForLocalRepository]
-        public string HTMLReportsFolder { get; set; }
+        public string HTMLReportsFolder
+        {
+            get
+            {
+                return mHTMLReportsFolder;
+            }
+            set
+            {
+                mHTMLReportsFolder = value;
+                OnPropertyChanged(nameof(HTMLReportsFolder));
+            }
+        }
+
+        private bool mHTMLReportsAutomaticProdIsEnabled;
+        [IsSerializedForLocalRepository]
+        public bool HTMLReportsAutomaticProdIsEnabled
+        {
+            get
+            {
+                return mHTMLReportsAutomaticProdIsEnabled;
+            }
+            set
+            {
+                mHTMLReportsAutomaticProdIsEnabled = value;
+                OnPropertyChanged(nameof(HTMLReportsAutomaticProdIsEnabled));
+            }
+        }
+
+        private long mHTMLReportConfigurationMaximalFolderSize;
+        [IsSerializedForLocalRepository]
+        public long HTMLReportConfigurationMaximalFolderSize
+        {
+            get
+            {
+                return mHTMLReportConfigurationMaximalFolderSize;
+            }
+            set
+            {
+                mHTMLReportConfigurationMaximalFolderSize = value;
+                OnPropertyChanged(nameof(HTMLReportConfigurationMaximalFolderSize));
+            }
+        }
+
+        private int mHTMLReportTemplatesSeq;
 
         [IsSerializedForLocalRepository]
-        public bool HTMLReportsAutomaticProdIsEnabled { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public long HTMLReportConfigurationMaximalFolderSize { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public int HTMLReportTemplatesSeq { get; set; }
+        public int HTMLReportTemplatesSeq
+        {
+            get
+            {
+                return mHTMLReportTemplatesSeq;
+            }
+            set
+            {
+                mHTMLReportTemplatesSeq = value;
+                OnPropertyChanged(nameof(HTMLReportTemplatesSeq));
+            }
+        }
 
         private string _HTMLReportsConfigurationSetName = string.Empty;
 
@@ -75,16 +128,8 @@ namespace Ginger.Reports
             set
             {
                 _HTMLReportsConfigurationSetName = value;
+                OnPropertyChanged(nameof(_HTMLReportsConfigurationSetName));
             }
         }
-
-        #region General
-
-        public static void ExecutionResultsConfigurationPage()
-        {
-            ExecutionResultsConfiguration.Instance.ShowAsWindow();
-        }
-
-        #endregion
     }
 }

@@ -89,7 +89,7 @@ namespace GingerWPF
         {
             MainTabControl.SelectedItem = BusinessFlowsTab;
             BusinessFlowsFrame.Content = mBusinessFlowsPage;
-            // TODO: rfresh BFs?
+            // TODO: refresh BFs?
         }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)

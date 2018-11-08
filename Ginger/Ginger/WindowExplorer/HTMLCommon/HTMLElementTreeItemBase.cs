@@ -53,7 +53,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
             List<ElementInfo> ChildrenList = ElementInfo.WindowExplorer.GetElementChildren(this.ElementInfo);
             foreach (ElementInfo EI in ChildrenList)
             {
-                //TODO: move convrter to here
+                //TODO: move converter to here
                 ITreeViewItem TVI = HTMLElementInfoConverter.GetHTMLElementTreeItem(EI);                
                 list.Add(TVI);
             }

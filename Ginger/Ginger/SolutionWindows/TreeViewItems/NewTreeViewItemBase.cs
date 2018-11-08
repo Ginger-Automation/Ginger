@@ -266,32 +266,11 @@ namespace GingerWPF.TreeViewItemsLib
         public override ITreeViewItem AddSubFolder(Type typeOfFolder, string newFolderName, string newFolderPath)
         {
             try
-            {
-                object folderItem;
+            {               
                 RepositoryFolderBase repoFolder = (RepositoryFolderBase)(((ITreeViewItem)this).NodeObject());
-                object newFolder = repoFolder.AddSubFolder(newFolderName);
+                repoFolder.AddSubFolder(newFolderName);
 
-
-                //FIXME not good approuch
-                try
-                {
-                    folderItem = Activator.CreateInstance(this.GetType(), newFolder);
-                }
-                catch (Exception ex)
-                {
-                    folderItem = Activator.CreateInstance(this.GetType(),
-                                                                    BindingFlags.CreateInstance |
-                                                                    BindingFlags.Public |
-                                                                    BindingFlags.Instance |
-                                                                    BindingFlags.OptionalParamBinding, null, new object[] { repoFolder }, CultureInfo.CurrentCulture);
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                }
-                if (folderItem == null)
-                {
-                    return null;
-                }
-
-                return (ITreeViewItem)folderItem;
+                return null;
             }
             catch (Exception ex)
             {
@@ -353,7 +332,7 @@ namespace GingerWPF.TreeViewItemsLib
 
                 if (mBulkOperationIsInProcess) return;
 
-                // Since refresh of tree items can be triggered from FileWatcher runnning on seperate thread, all TV handling is done on the TV.Dispatcher
+                // Since refresh of tree items can be triggered from FileWatcher running on separate thread, all TV handling is done on the TV.Dispatcher
                 switch (e.Action)
                 {
                     case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
@@ -516,7 +495,7 @@ namespace GingerWPF.TreeViewItemsLib
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
             
-            //Add direct childrens        
+            //Add direct children's        
             ObservableList<T> folderItems = RF.GetFolderItems();
             // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once
             folderItems.CollectionChanged -= TreeFolderItems_CollectionChanged;
@@ -538,7 +517,7 @@ namespace GingerWPF.TreeViewItemsLib
         /// The function creates the tree node item header
         /// </summary>
         /// <param name="repoItem">The repository item which the tree nodes represents</param>
-        /// <param name="imageType">The image type which assosicated with the repository item- should be pulled from the repoItem</param>
+        /// <param name="imageType">The image type which associated with the repository item- should be pulled from the repoItem</param>
         /// <param name="NameProperty">The field of the item which holds the item name or static name in case the repository item is null</param>
         /// <returns></returns>
         protected StackPanel NewTVItemHeaderStyle(RepositoryItemBase repoItem, eImageType imageType = eImageType.Null, string NameProperty = "")
@@ -609,7 +588,7 @@ namespace GingerWPF.TreeViewItemsLib
         /// The function creates the folder tree node header
         /// </summary>
         /// <param name="repoItemFolder">the Repository Folder Base</param>      
-        /// <param name="imageType">Only if need diffrent icon than defualt one then require to provide it</param> 
+        /// <param name="imageType">Only if need different icon than default one then require to provide it</param> 
         /// <returns></returns>
         protected StackPanel NewTVItemFolderHeaderStyle(RepositoryFolderBase repoItemFolder, eImageType imageType= eImageType.Null)
         {

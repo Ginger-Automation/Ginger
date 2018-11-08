@@ -105,7 +105,7 @@ namespace Amdocs.Ginger.Common.Functionalities
 
         public static string SolutionFolder { get; set; }
 
-        public string ParentItemPath // ? needs to be relativy
+        public string ParentItemPath // ? needs to be relative
         {
             get
             {

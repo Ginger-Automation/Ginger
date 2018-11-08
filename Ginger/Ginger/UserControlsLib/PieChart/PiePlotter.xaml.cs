@@ -57,7 +57,7 @@ namespace Ginger.UserControlsLib.PieChart
 
 
         /// <summary>
-        /// The size of the hole in the centre of circle (as a percentage)
+        /// The size of the hole in the center of circle (as a percentage)
         /// </summary>
         public double HoleSize
         {

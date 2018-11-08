@@ -130,18 +130,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void LiveSpyHandler(object sender, RoutedEventArgs e)
         {
-            if (mAgent.Driver.IsDriverBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-
             if (mWinExplorer == null)
             {
                 Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
                 return;
             }
 
+            if (mAgent.Driver.IsDriverBusy)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                return;
+            }
 
             if (LiveSpyButton.IsChecked == true)
             {
@@ -245,7 +244,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
         {
-            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && firstEI.Path == secondEI.Path;
+            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path)) ;
 
             bool HasSimilarLocators = true;
             foreach (ElementLocator EL in firstEI.Locators)
@@ -373,6 +372,34 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 xTestAllElements.ButtonText = "Test All Unmapped Elements";
             }
+
+            //set the selected tab text style
+            try
+            {
+                if (xPOMModelTabs.SelectedItem != null)
+                {
+                    foreach (TabItem tab in xPOMModelTabs.Items)
+                    {
+                        foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
+
+                            if (ctrl.GetType() == typeof(TextBlock))
+                            {
+                                if (xPOMModelTabs.SelectedItem == tab)
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                else
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+
+                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in POM All Elements Page tabs style", ex);
+            }
         }
+
+
     }
 }

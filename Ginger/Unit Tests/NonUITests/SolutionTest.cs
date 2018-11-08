@@ -37,7 +37,7 @@ namespace UnitTests.NonUITests
         {
 
         }
-        //test trigger unitest
+        //test trigger unit test
         /// <summary>
         /// Test the new solution been created successfully
         /// </summary>

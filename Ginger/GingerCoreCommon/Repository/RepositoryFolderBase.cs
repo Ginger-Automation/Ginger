@@ -88,7 +88,7 @@ namespace Amdocs.Ginger.Repository
         /// <summary>
         /// if this folders potentially contains Repository Items then will be marked with true
         /// Repo items which need to be upgraded - the XML contains version and we compare with current running version
-        /// if Current Ginger is in higher versin we notify the user for upgrade his solution files
+        /// if Current Ginger is in higher version we notify the user for upgrade his solution files
         /// This flag is used to drill down fast only in folder which have these type of files
         /// Like for the following: BFs, Agents etc...
         /// Folders to mark with false are: folders

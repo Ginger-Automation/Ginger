@@ -766,7 +766,7 @@ namespace Ginger.Run
                 if (mStopRun)
                 {
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
-                    //To Handle Scenario which the Driver is still searching the element untill Implicity wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                    //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
                     SetDriverPreviousRunStoppedFlag(true);
                 }
                 else
@@ -795,13 +795,13 @@ namespace Ginger.Run
                     if (mStopRun)
                     {
                         act.ExInfo += "Stopped";
-                        //To Handle Scenario which the Driver is still searching the element untill Implicity wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                        //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
                         SetDriverPreviousRunStoppedFlag(true);
                         return;
                     }
                     else
                     {
-                        //To Handle Scenario which the Driver is still searching the element untill Implicity wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                        //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
                         SetDriverPreviousRunStoppedFlag(false);
                     }
                     UpdateActionStatus(act, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Wait, st);
@@ -812,7 +812,7 @@ namespace Ginger.Run
 
         private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true)
         {
-            //Keep DebugStopWatch when testing performence
+            //Keep DebugStopWatch when testing performance
             //Stopwatch DebugStopWatch = new Stopwatch();
             //DebugStopWatch.Reset();
             //DebugStopWatch.Start();
@@ -919,7 +919,7 @@ namespace Ginger.Run
                 //check if we have retry mechanism if yes go till max
                 if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.EnableRetryMechanism && act.RetryMechanismCount < act.MaxNumberOfRetries)
                 {
-                    //since we retrun and don't do flow control the action is going to run again
+                    //since we return and don't do flow control the action is going to run again
                     ExecutionLogger.ActionEnd(CurrentBusinessFlow.CurrentActivity, act);
                     return;
                 }
@@ -1176,7 +1176,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occured in UpdateDSReturnValues : ", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occurred in UpdateDSReturnValues : ", ex);
             }
         }
         public void ProcessReturnValueForDriver(Act act)
@@ -1212,7 +1212,7 @@ namespace Ginger.Run
                 }
             }
 
-            //Handle actions which needs VE processing like Tuxedo, we need to calcualte the UD file values before execute, which is in differnt list not in ACT.Input list
+            //Handle actions which needs VE processing like Tuxedo, we need to calculate the UD file values before execute, which is in different list not in ACT.Input list
             List<ObservableList<ActInputValue>> list = act.GetInputValueListForVEProcessing();
             if (list != null) // Will happen only if derived action implemented this function, since it needs processing for VEs
             {
@@ -1327,13 +1327,13 @@ namespace Ginger.Run
             if (mStopRun)
             {
                 UpdateActionStatus(act, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped, st);
-                //To Handle Scenario which the Driver is still searching the element untill Implicity wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
                 SetDriverPreviousRunStoppedFlag(true);
                 return;
             }
             else
             {
-                //To Handle Scenario which the Driver is still searching the element untill Implicity wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
                 SetDriverPreviousRunStoppedFlag(false);
             }
             UpdateActionStatus(act, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Started, st);
@@ -1465,7 +1465,7 @@ namespace Ginger.Run
                 screenShotsPaths = GingerCore.General.TakeDesktopScreenShot(true);
                 if (screenShotsPaths == null)
                 {
-                    if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)//log the error only if user asked for desktop screen shot to avoid confution 
+                    if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)//log the error only if user asked for desktop screen shot to avoid confusion 
                     {
                         msg = "Failed to take desktop screen shot for the action: '" + act.Description + "'";
                         act.ExInfo += Environment.NewLine + msg;
@@ -1483,7 +1483,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)//log the error only if user asked for desktop screen shot to avoid confution 
+                if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)//log the error only if user asked for desktop screen shot to avoid confusion 
                 {
                     msg = "Failed to take desktop screen shot for the action: '" + act.Description + "', it might be because the screen is locked.";
                     act.ExInfo += Environment.NewLine + msg;
@@ -1604,7 +1604,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Cancelling;
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Canceling;
                     act.Error += "Timeout Occurred, Elapsed > " + act.Timeout;
                     if (GiveUserFeedback) OnGingerRunnerEvent(GingerRunnerEventArgs.eEventType.DoEventsRequired, null);
                 }
@@ -1644,7 +1644,7 @@ namespace Ginger.Run
             try
             {            
                 Task task = Task.Factory.StartNew(() => codeBlock());
-                // Adaptive sleep, first one second second sleep 10ms, then 50ms, more than one sec do 1000ms
+                // Adaptive sleep, first one second sleep 10ms, then 50ms, more than one sec do 1000ms
                 int Sleep = 10;
                 while (!task.IsCompleted)
                 {
@@ -1681,14 +1681,14 @@ namespace Ginger.Run
                     {
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                         act.ExInfo += "Stopped";
-                        //To Handle Scenario which the Driver is still searching the element untill Implicity wait will be done, lates being used on SeleniumDriver.Isrunning method 
-                        //TODO: J.G: Enhance the mechanism to notify the Driver that action is stopped. Today driver still running the action unitl timeout even after stopping it.
+                        //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                        //TODO: J.G: Enhance the mechanism to notify the Driver that action is stopped. Today driver still running the action until timeout even after stopping it.
                         SetDriverPreviousRunStoppedFlag(true);                   
                         break;
                     }
                     else
                     {
-                        //To Handle Scenario which the Driver is still searching the element untill Implicity wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                        //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
                         SetDriverPreviousRunStoppedFlag(false);
                     }
                 }
@@ -1722,7 +1722,7 @@ namespace Ginger.Run
         {
             // We take it based on the Activity target App
             string AppName = CurrentBusinessFlow.CurrentActivity.TargetApplication;
-            //For unit test cases, solution applicaitons will be always null
+            //For unit test cases, solution applications will be always null
             if (SolutionApplications != null)
             {
                 if (SolutionApplications.Where(x => x.AppName == AppName && x.Platform == ePlatformType.NA).FirstOrDefault() != null)
@@ -1947,7 +1947,7 @@ namespace Ginger.Run
                 // Why we need GA?
                 if (AP.Param == "GA") continue;
                 // TODO: use const
-                NewPayLoad p = new NewPayLoad("P");   // To save network trafic we send just one letter
+                NewPayLoad p = new NewPayLoad("P");   // To save network traffic we send just one letter
                 p.AddValue(AP.Param);
                 p.AddValue(AP.ValueForDriver.ToString());
                 p.ClosePackage();
@@ -1982,7 +1982,7 @@ namespace Ginger.Run
 
                     FC.CalculateCondition(CurrentBusinessFlow, ProjEnvironment, act, this.DSList);
 
-                    //TODO: Move below condition inside calucate condition once move execution logger to Ginger core
+                    //TODO: Move below condition inside calculate condition once move execution logger to Ginger core
 
                     if (FC.ConditionCalculated.Contains("{LastActivityStatus}"))
                     {
@@ -2143,7 +2143,7 @@ namespace Ginger.Run
                     {
                         if (act.IsSingleAction == null || act.IsSingleAction == false)
                         {
-                            // if exceution has been stopped externally, stop at current action
+                            // if execution has been stopped externally, stop at current action
                             if (!mStopRun)
                             {
                                 GotoNextAction();
@@ -2155,7 +2155,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occured in DoFlowControl", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occurred in DoFlowControl", ex);
             }
         }
         
@@ -2347,7 +2347,7 @@ namespace Ginger.Run
                     //get Expected Calculated
                     ValueExpression ve = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
                     ve.Value = ARC.Expected;
-                    //replace {Actual} placce holder with real Actual value
+                    //replace {Actual} place holder with real Actual value
                     if (ve.Value.Contains("{Actual}"))
                     {
                         //Replace to 
@@ -2366,7 +2366,7 @@ namespace Ginger.Run
                     //calculate Model Parameter expected value
                     CalculateModelParameterExpectedValue(act, ARC);
 
-                    //compare Actual vs Expected (calcualted)
+                    //compare Actual vs Expected (calculated)
                     CalculateARCStatus(ARC);
 
                     if (ARC.Status == ActReturnValue.eStatus.Failed)
@@ -2456,7 +2456,7 @@ namespace Ginger.Run
                 return;
             }
             
-            //TODO: docuemnt in help, maybe remove this compare takes time and not sure if needed/use case!?
+            //TODO: document in help, maybe remove this compare takes time and not sure if needed/use case!?
             if (ARC.ExpectedCalculated.StartsWith("{Regex="))
             {
                 string ExpectedRegex = ARC.ExpectedCalculated.Replace("{Regex=", "");
@@ -2589,7 +2589,7 @@ namespace Ginger.Run
 
             if (!doContinueRun)
             {
-                // We reset the activitiy unless we are in continue mode where user can start from middle of Activity
+                // We reset the activity unless we are in continue mode where user can start from middle of Activity
                 ResetActivity(CurrentBusinessFlow.CurrentActivity);
             }
             else
@@ -2603,7 +2603,7 @@ namespace Ginger.Run
 
             
 
-            //Do not disable the following two lines. thse helping the FC run proper activities
+            //Do not disable the following two lines. these helping the FC run proper activities
             CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
             CurrentBusinessFlow.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
 
@@ -2732,7 +2732,7 @@ namespace Ginger.Run
                 ExecutionLogger.ActivityEnd(CurrentBusinessFlow, Activity);
 
 
-                //TODO: Throw execption don't cover in log, so user will see it in report
+                //TODO: Throw exception don't cover in log, so user will see it in report
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Run Activity got error ", ex);
                 throw ex;
             }
@@ -3012,7 +3012,7 @@ namespace Ginger.Run
                     return;//no Activities to run
                 }
 
-                //Do run prepaerations
+                //Do run preparations
                 SetBusinessFlowInputVarsWithOutputValues(CurrentBusinessFlow);
                 UpdateLastExecutingAgent();
                 CurrentBusinessFlow.Environment = ProjEnvironment == null ? "" : ProjEnvironment.Name;
@@ -3090,7 +3090,7 @@ namespace Ginger.Run
 
                         if ((Activity)CurrentBusinessFlow.Activities.CurrentItem != ExecutingActivity)
                         {
-                            //If not equal means flow control updatet current item to target activity, no need to do next activity
+                            //If not equal means flow control update current item to target activity, no need to do next activity
                             ExecutingActivity = (Activity)CurrentBusinessFlow.Activities.CurrentItem;
                         }
                         else
@@ -3155,7 +3155,7 @@ namespace Ginger.Run
 
         public void CalculateBusinessFlowFinalStatus(BusinessFlow BF, bool considrePendingAsSkipped= false)
         {
-            // A flow is blocked if some activitiy failed and all the activities after it failed
+            // A flow is blocked if some activity failed and all the activities after it failed
             // A Flow is failed if one or more activities failed
 
             // Add Blocked
@@ -3217,7 +3217,7 @@ namespace Ginger.Run
 
         public void CalculateActivitiesGroupFinalStatus(ActivitiesGroup AG, BusinessFlow BF)
         {
-            // A flow is blocked if some activitiy failed and all the activities after it failed
+            // A flow is blocked if some activity failed and all the activities after it failed
             // A Flow is failed if one or more activities failed
 
             // Add Blocked
@@ -3531,7 +3531,7 @@ namespace Ginger.Run
         internal void UpdateApplicationAgents()
         {
             // Make sure Ginger Runner have all Application/Platforms mapped to agent - create the list based on selected BFs to run
-            // Make it based on currnt if we run from automate tab
+            // Make it based on current if we run from automate tab
 
             //Get the TargetApplication list
             ObservableList<TargetApplication> bfsTargetApplications = new ObservableList<TargetApplication>();
@@ -3690,7 +3690,7 @@ namespace Ginger.Run
 
         private bool CheckIfActivityTagsMatch()
         {
-            //check if Activity or The parent Acitivites Group has at least 1 tag from filter tags
+            //check if Activity or The parent Activities Group has at least 1 tag from filter tags
             //first check Activity
             foreach(Guid tagGuid in CurrentBusinessFlow.CurrentActivity.Tags)
                 if (this.FilterExecutionTags.Where(x => Guid.Equals(x, tagGuid)==true).FirstOrDefault() != Guid.Empty)
@@ -3715,7 +3715,7 @@ namespace Ginger.Run
                 CurrentBusinessFlow.CurrentActivity.CurrentAgent.Driver.PreviousRunStopped = flagValue;
         }
 
-        //Function to Fo Flow Control on Business Flow in RunSet
+        //Function to Do Flow Control on Business Flow in RunSet
         private int? DoBusinessFlowControl(BusinessFlow bf)
         {
             int? fcReturnIndex = null;

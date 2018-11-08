@@ -33,7 +33,7 @@ namespace GingerCore.Actions
 
         public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
         {
-            TBH.AddText("1- Select the the " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " to modify it value");
+            TBH.AddText("1- Select the " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " to modify it value");
             TBH.AddLineBreak();
             TBH.AddText("2- Select the type of operation which required, the options are Reset Value\\Generate Auto Value\\Set Value");
             TBH.AddLineBreak();

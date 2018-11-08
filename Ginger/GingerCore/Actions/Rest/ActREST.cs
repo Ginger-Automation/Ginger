@@ -150,7 +150,7 @@ namespace GingerCore.Actions.REST
         {
             [EnumValueDescription("Use Session Cookies")]
             Session,
-            [EnumValueDescription("Dont use Cookies")]
+            [EnumValueDescription("Don't use Cookies")]
             None,
             [EnumValueDescription("Use fresh Cookies")]
             New

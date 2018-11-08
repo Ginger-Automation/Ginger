@@ -85,11 +85,6 @@ namespace Ginger.ALM.RQM
             SetGridData();
         }
 
-        private void ExecutionResultsConfigWindow(object sender, System.Windows.RoutedEventArgs e)
-        {
-            Ginger.Reports.ExecutionLoggerConfiguration.ExecutionResultsConfigurationPage();
-        }
-
         private void ImportTestPlan(object sender, RoutedEventArgs e)
         {
             ImportTestPlan();
