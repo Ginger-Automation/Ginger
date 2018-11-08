@@ -127,7 +127,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(num2 >= min && num2 <= max, "num2 >= " + min + " && num2 <= " + max);
             Assert.IsTrue(num3 >= min && num3 <= max, "num3 >= " + min + " && num3 <= " + max);
 
-            // Now check tha validy 5,10,15 etc..
+            // Now check the validy 5,10,15 etc..
             //Verify that the num modolu 5 is give remainder of 0 or 5
             Assert.IsTrue(num1 % 5 == 0 || num1 % 5 == 5, "num1 % 5 == 0 || num1 % 5 == 5");
             Assert.IsTrue(num2 % 5 == 0 || num2 % 5 == 5, "num1 % 5 == 0 || num1 % 5 == 5");
