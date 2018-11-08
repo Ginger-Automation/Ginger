@@ -286,7 +286,7 @@ namespace GingerCore.Drivers.AndroidADB
             //            //all buttons as default
             //            break;
             //        case SeleniumAppiumDriver.ePlatformType.iOS:
-            //            //only middle btn althogh not supported yet (apple limitation)
+            //            //only middle btn although not supported yet (apple limitation)
             //            backBtn.Visibility = System.Windows.Visibility.Collapsed;
             //            menuBtn.Visibility = System.Windows.Visibility.Collapsed;
             //            break;

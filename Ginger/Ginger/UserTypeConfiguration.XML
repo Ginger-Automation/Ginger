@@ -5,7 +5,7 @@
 		</Functionality>
 		<Functionality Name="Execution" Enable="true"> <!-- Run Tab Execution result  -->
 		</Functionality>
-		<Functionality Name="Reports" Enable="true"> <!-- Report tamplate  -->
+		<Functionality Name="Reports" Enable="true"> <!-- Report template  -->
 		</Functionality>
 		<Functionality Name="SourceControl" Enable="true">  <!-- Source Control Buttons -->
 		</Functionality>
@@ -21,7 +21,7 @@
 		</Functionality>
 		<Functionality Name="Execution" Enable="false"> <!-- Run Tab Execution result  -->
 		</Functionality>
-		<Functionality Name="Reports" Enable="true"> <!-- Repost tamplate  -->
+		<Functionality Name="Reports" Enable="true"> <!-- Repost template  -->
 		</Functionality>
 		<Functionality Name="SourceControl" Enable="true">
 		</Functionality>

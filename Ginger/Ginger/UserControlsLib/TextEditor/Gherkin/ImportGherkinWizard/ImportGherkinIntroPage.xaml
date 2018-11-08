@@ -15,7 +15,7 @@
             <Label x:Name="FolderLabel" FontSize="14" >folder</Label>
             <Label>This Wizard will help you import '.feature' text file</Label>
             <Label>the text file should be written using Gherkin keywords like: Scenario:, Given, When and Then.</Label>
-            <Label>Gherkin langauge is helping developing in BDD approach - Behavior Driven Development</Label>
+            <Label>Gherkin language is helping developing in BDD approach - Behavior Driven Development</Label>
             <Label>Where the Business is writing the requirement in Gherkin, Development are developing based on it and automated testing are being generated in parallel</Label>
             <Label>For more information go to: ...</Label>
         </StackPanel>

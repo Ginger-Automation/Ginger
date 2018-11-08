@@ -94,7 +94,7 @@ namespace GingerTest
             }
             else
             {
-                throw new Exception("No baseline file for comapre, missing: " + BaselineFileName);
+                throw new Exception("No baseline file for compare, missing: " + BaselineFileName);
             }
         }
 

@@ -28,7 +28,7 @@ namespace Ginger.Imports.CDL
     {
         public string CDLText { get; set; }
 
-        //TODO: return list of errrors
+        //TODO: return list of errors
         public void CheckSyntax()
         {
             

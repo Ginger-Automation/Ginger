@@ -80,7 +80,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
 
             //Add source control icon
-            if (itemSourceControlStateIcon != eImageType.Null)
+            if (itemSourceControlStateIcon != eImageType.Null && itemObj != null)
             {
                 try
                 {

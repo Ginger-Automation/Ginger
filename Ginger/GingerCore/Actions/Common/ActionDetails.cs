@@ -29,7 +29,7 @@ namespace GingerCore.Actions.Common
 
         public ObservableList<ActionParamInfo> Params { get; set; }
 
-        // Can be display page - view only in action page when row is highlighed
+        // Can be display page - view only in action page when row is highlighted
         // Can be all the AIVs - for report
 
         public ObservableList<ActionParamInfo> GetParamsInfo()

@@ -49,7 +49,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 ITextEditorPage p = TE.EditorPage;
                 if (p != null)
                 {
-                    // text editor can return customzied editor
+                    // text editor can return customized editor
                     EditorFrame.Content = p;
                     p.Load(FileName);
                 }
@@ -101,8 +101,8 @@ namespace Ginger.UserControlsLib.TextEditor
             // Method #1
             if (IsTextFileByExtension(Path.GetExtension(fileName).ToLower())) return true;
 
-            // Mehtod #2
-            //Not full proof but good enought
+            // Method #2
+            //Not full proof but good enough
             // Check for consecutive nulls in the first 10K..
             byte[] content = File.ReadAllBytes(fileName);
                 for (int i = 1; i < 10000 && i < content.Length; i++)

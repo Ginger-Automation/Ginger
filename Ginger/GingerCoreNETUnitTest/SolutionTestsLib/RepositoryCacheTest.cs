@@ -109,7 +109,7 @@
 //        //    BusinessFlow BF2 = (BusinessFlow)RC[key];
 
 //        //    //Assert            
-//        //    Assert.IsTrue(BF2==null, "BF2 == null"); // make sure obj not found in cahce and is released
+//        //    Assert.IsTrue(BF2==null, "BF2 == null"); // make sure obj not found in cache is released
 //        //}
 //    }
 //}

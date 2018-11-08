@@ -95,7 +95,7 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 
         VisualBrush getVB()
         {
-            //TODO: imporve it to look like zigzag wabbely line
+            //TODO: improve it to look like zigzag wabbely line
             Path p = new Path();
             p.Data = Geometry.Parse("M 0,2 L 2,0 4,2 6,0 8,2 10,0 12,2");                
             p.Stroke = Brushes.Red;

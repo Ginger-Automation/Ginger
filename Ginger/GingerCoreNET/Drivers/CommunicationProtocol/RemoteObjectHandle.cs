@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         public Guid GUID { get; set; }
         public object Object { get; set; }
 
-        // we use dynamic beacuse we do not ref WPF classes which contains the Dispatcher
+        // we use dynamic because we do not ref WPF classes which contains the Dispatcher
         public dynamic Dispatcher { get; set; }
     }
 }

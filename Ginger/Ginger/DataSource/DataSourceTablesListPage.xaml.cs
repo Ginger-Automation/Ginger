@@ -64,7 +64,7 @@ namespace Ginger.DataSource
 
         private void DSTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //Implament DS Type Change
+            //Implement DS Type Change
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -134,14 +134,16 @@ namespace Ginger.DataSource
                     mDSTableList = ds.GetTablesList();
                     if (mDSTableList != null)
                     {
+                        ObservableList<DataSourceTable> custTableList = new ObservableList<DataSourceTable>();
                         foreach (DataSourceTable dst in mDSTableList)
                         {
                             if (dst.DSTableType == mDSTableType)
                             { 
                                 dsTableNames.Add(dst.Name);
+                                custTableList.Add(dst);
                             }
                         }
-                            
+                        mDSTableList = custTableList;
                     }
                     GingerCore.General.FillComboFromList(cmbDataSourceTableName, dsTableNames);
                     cmbDataSourceTableName.SelectedIndex = 0;
@@ -150,7 +152,7 @@ namespace Ginger.DataSource
                         mDataSourceTableName = mDSTableList[0].Name;
                     }
                     else
-                    { 
+                    {
                         mDataSourceTableName = null;
                     }
                     break;

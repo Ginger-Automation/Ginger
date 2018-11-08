@@ -68,6 +68,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             xTreeViewTree.Tree.BorderThickness = new Thickness(0);            
 
             xTreeViewTree.ItemSelected += xTreeViewTree_ItemSelected;
+            xTreeViewTree.ItemAdded += XTreeViewTree_ItemAdded;
+        }
+
+        private void XTreeViewTree_ItemAdded(object sender, EventArgs e)
+        {
+            if (sender is ITreeViewItem)
+            {
+                ((ITreeViewItem)sender).TreeView = this;
+            }
         }
 
         public void SetTopToolBarTools(RoutedEventHandler saveAllHandler=null, RoutedEventHandler addHandler = null)
@@ -98,13 +107,6 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (xTreeViewTree.CurrentSelectedTreeViewItem != null & AllowTreeTools == true)
             {
                 xTreeViewTree.CurrentSelectedTreeViewItem.SetTools(this);
-
-                //mark as dirty                
-                if (xTreeViewTree.CurrentSelectedTreeViewItem is TreeViewItemGenericBase)
-                {
-                    TreeViewItemGenericBase itemAsBase = (TreeViewItemGenericBase)xTreeViewTree.CurrentSelectedTreeViewItem;
-                    itemAsBase.SaveBackup(xTreeViewTree.CurrentSelectedTreeViewItem.NodeObject());
-                }
             }
         }
 
