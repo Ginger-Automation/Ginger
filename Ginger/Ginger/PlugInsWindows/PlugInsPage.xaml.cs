@@ -52,7 +52,7 @@ namespace Ginger.PlugInsWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.PluginID) ,Header = "Plugin ID", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.PluginId) ,Header = "Plugin ID", WidthWeight = 300, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.Folder ), Header = "Folder", WidthWeight = 300, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.PluginPackageVersion ), Header = "Version", WidthWeight = 300, BindingMode = BindingMode.OneWay });
             //view.GridColsView.Add(new GridColView() { Field = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
