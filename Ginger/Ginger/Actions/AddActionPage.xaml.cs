@@ -74,7 +74,7 @@ namespace Ginger.Actions
                     {
                         ActPlugIn act = new ActPlugIn();                        
                         act.Description = standAloneAction.Description;
-                        act.PluginId = pluginPackage.PluginID;
+                        act.PluginId = pluginPackage.PluginId;
                         act.ServiceId = standAloneAction.ServiceId;
                         act.ActionId = standAloneAction.ActionId;
                         foreach (var v in standAloneAction.InputValues)
@@ -88,7 +88,7 @@ namespace Ginger.Actions
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginID + "'", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginId + "'", ex);
                 }
             }
           
