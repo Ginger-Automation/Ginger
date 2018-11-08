@@ -222,6 +222,7 @@ namespace GingerCore.Variables
 
         public static void UpdateVariableNameChangeInItem(object item, string prevVarName, string newVarName, ref bool namechange)
         {
+            ///zzzz fix me too
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
@@ -249,7 +250,9 @@ namespace GingerCore.Variables
                 {
                     List<dynamic> list = new List<dynamic>();
                     foreach (object o in value)
+                    {
                         UpdateVariableNameChangeInItem(o, prevVarName, newVarName, ref namechange);
+                    }
                 }
                 else
                 {
@@ -301,11 +304,13 @@ namespace GingerCore.Variables
                 if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
                     mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
                     mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ScreenShots" ||
-                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType") continue;
+                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType" || 
+                    mi.Name == nameof(ActInputValue.ListDynamicValue) || 
+                    mi.Name == "GetNameForFileName" || mi.Name == "FilePath") continue;
                
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
-                dynamic value = null;
+                object value = null;
                 try
                 {
                     if (mi.MemberType == MemberTypes.Property)
@@ -323,8 +328,10 @@ namespace GingerCore.Variables
                 
                 if (value is IObservableList)
                 {
-                    foreach (object o in value)
+                    foreach (object o in (IObservableList)value)
+                    {
                         GetListOfUsedVariables(o, ref usedVariables);
+                    }
                 }
                 else
                 {
@@ -348,7 +355,7 @@ namespace GingerCore.Variables
                                 }
                                 else if(mi.Name == "ValueCalculated" && mi.DeclaringType.Name == "FlowControl") // get used varibale in flow control with set variable action type.
                                 {
-                                    string[] vals = value.Split(new[] { '=' });
+                                    string[] vals = ((string)value).Split(new[] { '=' });
                                     const int count = 2;
                                     if (vals.Count() == count && !usedVariables.Contains(vals[0]))
                                     {                                       
@@ -359,7 +366,7 @@ namespace GingerCore.Variables
                                 {
                                     if(!usedVariables.Contains(value))
                                     {
-                                        usedVariables.Add(value);
+                                        usedVariables.Add((string)value);
                                     }
                                 }
                                 else

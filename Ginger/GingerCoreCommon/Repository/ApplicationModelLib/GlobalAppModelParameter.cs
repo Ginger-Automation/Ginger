@@ -89,11 +89,12 @@ namespace Amdocs.Ginger.Repository
                 if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
                     mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
                     mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ScreenShots" ||
-                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType") continue;
+                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType" || 
+                    mi.Name == nameof(ActInputValue.ListDynamicValue)) continue;
 
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
-                dynamic value = null;   // dynamic is bad!!!
+                object value = null;   
                 try
                 {
                     if (mi.MemberType == MemberTypes.Property)
@@ -113,8 +114,10 @@ namespace Amdocs.Ginger.Repository
                 if (value is IObservableList)
                 {
                     List<dynamic> list = new List<dynamic>();
-                    foreach (object o in value)
+                    foreach (object o in (IObservableList)value)
+                    {
                         GetListOfUsedGlobalParameters(o, ref usedGlobalParam);
+                    }
                 }
                 else
                 {
