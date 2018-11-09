@@ -178,7 +178,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variablePasswordString.VariableUIType;
 
             //Assert            
-            Assert.AreEqual("Variable Password String", varType, "Password String Type");
+            Assert.IsTrue(varType.Contains("Password"), "Password String Variable UI Type");
         }
 
         [TestMethod]

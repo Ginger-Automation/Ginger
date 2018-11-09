@@ -76,7 +76,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableSequence.VariableUIType;
 
             //Assert            
-            Assert.AreEqual("Variable Sequence", varType, "Sequence Variable UI Type");
+            Assert.IsTrue(varType.Contains("Sequence"), "Sequence Variable UI Type");
         }
 
         [TestMethod]

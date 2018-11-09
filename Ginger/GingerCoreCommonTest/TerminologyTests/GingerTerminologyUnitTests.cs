@@ -27,13 +27,12 @@ namespace GingerCoreCommonTest.TerminologyTests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            //
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            //
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Default;
         }
 
         [TestInitialize]

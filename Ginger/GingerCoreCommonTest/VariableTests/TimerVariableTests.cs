@@ -79,7 +79,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableTimer.VariableUIType;
 
             //Assert
-            Assert.AreEqual("Variable Timer", varType, "Timer Variable UI Type");
+            Assert.IsTrue(varType.Contains("Timer"), "Timer Variable UI Type");
         }
 
         [TestMethod]

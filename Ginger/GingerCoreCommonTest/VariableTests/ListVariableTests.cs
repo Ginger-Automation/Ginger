@@ -78,7 +78,7 @@ namespace GingerCoreCommonTest.VariableTests
             string varType = variableList.VariableUIType;
 
             //Assert
-            Assert.AreEqual("Variable List", varType, "List Variable UI Type");
+            Assert.IsTrue(varType.Contains("List"), "List Variable UI Type");
         }
 
         [TestMethod]
