@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using GingerCore.Variables;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -77,6 +78,19 @@ namespace GingerCoreCommonTest.VariableTests
 
             //Assert            
             Assert.IsTrue(varType.Contains("Sequence"), "Sequence Variable UI Type");
+        }
+
+        [TestMethod]
+        public void SequenceVar_TestImageType()
+        {
+            //Arrange
+            VariableSequence variableSequence = new VariableSequence();
+
+            //Act
+            eImageType eImageType = variableSequence.Image;
+
+            //Assert
+            Assert.AreEqual(eImageType.Sequence, eImageType, "Image Type");
         }
 
         [TestMethod]

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using GingerCore;
 using GingerCore.Variables;
 using GingerTestHelper;
@@ -78,6 +79,19 @@ namespace GingerCoreCommonTest.VariableTests
 
             //Assert
             Assert.IsTrue(varType.Contains("Dynamic"), "Dynamic Variable UI Type");
+        }
+
+        [TestMethod]
+        public void DynamicVar_TestImageType()
+        {
+            //Arrange
+            VariableDynamic variableDynamic = new VariableDynamic();
+
+            //Act
+            eImageType eImageType = variableDynamic.Image;
+
+            //Assert
+            Assert.AreEqual(eImageType.Random, eImageType, "Image Type");
         }
 
         [Ignore]

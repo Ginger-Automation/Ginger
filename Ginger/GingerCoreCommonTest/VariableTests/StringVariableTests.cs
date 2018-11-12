@@ -210,6 +210,18 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(passwordVal, formulaVal, "Password Formula");
         }
 
+        [TestMethod]
+        public void PasswordStringVar_TestImageType()
+        {
+            //Arrange
+            VariablePasswordString variablePasswordString = new VariablePasswordString();
+
+            //Act
+            eImageType eImageType = variablePasswordString.Image;
+
+            //Assert
+            Assert.AreEqual(eImageType.Password, eImageType, "Image Type");
+        }
 
     }
 }

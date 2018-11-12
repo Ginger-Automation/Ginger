@@ -89,7 +89,7 @@ namespace GingerCore.Variables
             {
                 if (mProjEnvironment == null && mBusinessFlow == null)
                 {
-                    return "Value will be calulated during execution.";
+                    return "Value will be calculated during execution.";
                 }   
 
                 IValueExpression Ve = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(mProjEnvironment, mBusinessFlow);
