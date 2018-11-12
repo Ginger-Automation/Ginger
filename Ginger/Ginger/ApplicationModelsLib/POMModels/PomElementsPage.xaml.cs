@@ -178,7 +178,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView = new ObservableList<GridColView>();
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 40, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 35, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), WidthWeight = 35, AllowSorting = true });
 
             List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 15, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
@@ -231,14 +231,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
         bool disabeledElementMsgShown;
         private void MainElementsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
+            if (e.Column.Header == "Name" || e.Column.Header == nameof(ElementInfo.Description)) return;
+
             ElementInfo ei = (ElementInfo)xMainElementsGrid.CurrentItem;
             if (ei.IsAutoLearned)
             {
-                if (!disabeledElementMsgShown)
-                {
-                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "You can not edit Element which was auto learned, please duplicate it and create customized Element.");
-                    disabeledElementMsgShown = true;
-                }
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "You can not edit this field of an Element which was auto learned, please duplicate it and create customized Element.");
                 e.EditingElement.IsEnabled = false;
             }
         }
@@ -266,18 +264,23 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddMappedElementRow(object sender, RoutedEventArgs e)
         {
+            xMainElementsGrid.Grid.CommitEdit();
+
             ElementInfo EI = new ElementInfo();
-            EI.IsAutoLearned = false;
             mPOM.MappedUIElements.Add(EI);
-            mPOM.MappedUIElements.CurrentItem = EI;
+            
+            xMainElementsGrid.Grid.SelectedItem = EI;
             xMainElementsGrid.ScrollToViewCurrentItem();
         }
 
         private void AddUnMappedElementRow(object sender, RoutedEventArgs e)
         {
+            xMainElementsGrid.Grid.CommitEdit();
+
             ElementInfo EI = new ElementInfo();
             mPOM.UnMappedUIElements.Add(EI);
-            mPOM.UnMappedUIElements.CurrentItem = EI;
+
+            xMainElementsGrid.Grid.SelectedItem = EI;
             xMainElementsGrid.ScrollToViewCurrentItem();
         }
 
@@ -328,7 +331,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddLocatorButtonClicked(object sender, RoutedEventArgs e)
         {
-            mSelectedElement.Locators.Add(new ElementLocator() { Active = true});
+            xLocatorsGrid.Grid.CommitEdit();
+
+            ElementLocator locator = new ElementLocator() { Active = true };
+            mSelectedElement.Locators.Add(locator);
+
+            xLocatorsGrid.Grid.SelectedItem = locator;
+            xLocatorsGrid.ScrollToViewCurrentItem();
         }
 
         bool disabeledLocatorsMsgShown;
