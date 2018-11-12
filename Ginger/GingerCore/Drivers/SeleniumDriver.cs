@@ -44,7 +44,6 @@ using System.Threading.Tasks;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
 using System.Windows.Media.Imaging;
-using OpenQA.Selenium.PhantomJS;
 using System.Reflection;
 using Protractor;
 using Amdocs.Ginger.Common.UIElement;
@@ -435,8 +434,8 @@ namespace GingerCore.Drivers
                         break;
 
                     case eBrowserType.PhantomJS:
-                        string PhantomJSServerPath = Path.Combine(General.GetGingerEXEPath(), @"Drivers\PhantomJS");
-                        Driver = new PhantomJSDriver(PhantomJSServerPath);
+
+                        throw new NotSupportedException("Support for PhantomJS is ended");
                         break;
 
                     //TODO: add Safari
@@ -477,7 +476,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            DesiredCapabilities capability = DesiredCapabilities.Chrome();
+                            DesiredCapabilities capability = new DesiredCapabilities();
                             capability.SetCapability(CapabilityType.BrowserName, RemoteBrowserName);
                             if (!string.IsNullOrEmpty(RemotePlatform))
                             {
