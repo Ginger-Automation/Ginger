@@ -21,7 +21,7 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using GingerCoreNET.Drivers;
 using GingerCoreNET.Drivers.CommunicationProtocol;
-using Newtonsoft.Json;
+// using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -366,7 +366,7 @@ namespace GingerCoreNET.DriversLib
                                 Type itemType = PI.ParameterType.GetGenericArguments()[0];  // List item type                               
                                 Type listType = typeof(List<>).MakeGenericType(itemType); // List with the item type
                                 // val = Activator.CreateInstance(listType);
-                                val = JsonConvert.DeserializeObject(p[PI.Name].Value.ToString(), listType);
+                                val = JSONHelper.DeserializeObject(p[PI.Name].Value.ToString(), listType);
                             }                            
                             else
                             {
@@ -442,22 +442,21 @@ namespace GingerCoreNET.DriversLib
 
         private NewPayLoad CloseDriver()
         {
-            //Console.WriteLine("Payload - Close Driver");
-            //mDriver.CloseDriver();
-            //NewPayLoad PLRC = new NewPayLoad("OK");
-            //PLRC.ClosePackage();
-            //return PLRC;
-            return null;
+            Console.WriteLine("Payload - Close Driver");
+            ((IGingerDriver)mService).Stop();
+            NewPayLoad PLRC = new NewPayLoad("OK");
+            PLRC.ClosePackage();
+            return PLRC;            
         }
 
         private NewPayLoad StartDriver()
         {
-            //Console.WriteLine("Payload - Start Driver");
-            //mDriver.StartDriver();
-            //NewPayLoad PLRC = new NewPayLoad("OK");
-            //PLRC.ClosePackage();
-            //return PLRC;
-            return null;
+            Console.WriteLine("Payload - Start Driver");
+            ((IGingerDriver)mService).Start();
+            NewPayLoad PLRC = new NewPayLoad("OK");
+            PLRC.ClosePackage();
+            return PLRC;
+            
         }
 
         internal List<NewPayLoad> GetOutpuValuesPayLoad(List<NodeActionOutputValue> AOVs)
