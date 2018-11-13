@@ -11,7 +11,7 @@
       Title="ActJSONValidateTagsEditPage">
 
     
-        <Grid Background="{StaticResource @Skin1_ColorC}">
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100*"/>
                 <ColumnDefinition Width="400*"/>

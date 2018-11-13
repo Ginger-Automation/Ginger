@@ -6,10 +6,10 @@
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
 	Title="RunSetActionSendSMSEditPage">
-    <Grid Background="{StaticResource @Skin1_ColorC}">      
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">      
         <TabControl>
             <TabItem Header="Message">
-                <Grid Background="{StaticResource @Skin1_ColorC}">
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                     
                     <StackPanel>
                         <Label Style="{StaticResource @LabelStyle}" x:Name="LabelFrom" Content="From (enter your email address):" />
@@ -39,7 +39,7 @@
             </TabItem>
            
             <TabItem Header="Delivery Method">
-                <Grid Background="{StaticResource @Skin1_ColorC}">
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="0,10,0,10" >E-mail Method:</Label>

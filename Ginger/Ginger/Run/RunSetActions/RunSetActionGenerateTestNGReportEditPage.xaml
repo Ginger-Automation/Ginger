@@ -3,11 +3,12 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"      
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="800"
 	Title="RunSetActionGenerateTestNGReportEditPage">
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         
         <StackPanel>
             <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Target TestNG Report Folder:</Label>
@@ -18,8 +19,16 @@
             <StackPanel x:Name="sourceRepActTypeRadioBtnsPnl" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Show Status by:</Label>
                 <StackPanel Orientation="Horizontal" >
-                    <RadioButton x:Name="sourceActivityRadioBtn" Margin="5,0,0,0" Content="Activities"  IsChecked="True"></RadioButton>
-                    <RadioButton x:Name="sourceActivitiesRadioBtn" Margin="10,0,0,0" Content="Activities Groups"/>
+                    <RadioButton x:Name="sourceActivityRadioBtn" Margin="5,0,0,0" IsChecked="True">
+                        <RadioButton.Content>
+                            <GingerCore:ucTextDicResource Text="[Activities]"/>
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <RadioButton x:Name="sourceActivitiesRadioBtn" Margin="10,0,0,0" >
+                        <RadioButton.Content>
+                            <GingerCore:ucTextDicResource Text="[ActivitiesGroups]"/>
+                        </RadioButton.Content>
+                    </RadioButton>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

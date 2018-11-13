@@ -35,7 +35,13 @@ using Amdocs.Ginger.Common.UIElement;
 namespace Ginger.Drivers.Windows
 {
     public abstract class WindowsElementTreeItemBase : AutomationElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
-    {        
+    {
+        public ITreeView TreeView
+        {
+            get;
+            set;
+        }
+
         Object ITreeViewItem.NodeObject()
         {
             return base.UIAElementInfo;
@@ -48,7 +54,7 @@ namespace Ginger.Drivers.Windows
 
         StackPanel ITreeViewItem.Header()
         {
-            //TODO: ut better icon for generic control
+            //TODO: Put better icon for generic control
             string ImageFileName = "@Agent_16x16.png";
             string Title = UIAElementInfo.ElementTitle;
                 return TreeViewUtils.CreateItemHeader(Title, ImageFileName);

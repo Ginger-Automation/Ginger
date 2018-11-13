@@ -10,7 +10,7 @@ namespace Amdocs.Ginger.ValidationRules
 {
     public class EmptyValidationRule : ValidationRule
     {
-        string mMessage = "Value cannot be empty";  //deafult message
+        string mMessage = "Value cannot be empty";  //default message
         public EmptyValidationRule()
         {
 

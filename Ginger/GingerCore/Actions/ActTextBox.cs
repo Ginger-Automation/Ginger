@@ -171,10 +171,10 @@ namespace GingerCore.Actions
                 switch (this.TextBoxAction)
                 {
                     case eTextBoxAction.SetValueFast:
-                        newAct.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        newAct.ElementAction = ActUIElement.eElementAction.SetValue;
                         break;
                     case eTextBoxAction.SetValue:
-                        newAct.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        newAct.ElementAction = ActUIElement.eElementAction.SetText;
                         break;
                     case eTextBoxAction.Clear:
                         newAct.ElementAction = ActUIElement.eElementAction.ClearValue;

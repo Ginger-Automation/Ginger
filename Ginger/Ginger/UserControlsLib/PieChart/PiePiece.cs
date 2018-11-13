@@ -48,7 +48,7 @@ namespace Ginger.UserControlsLib.PieChart
             new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         /// <summary>
-        /// The distance to 'push' this pie piece out from the centre.
+        /// The distance to 'push' this pie piece out from the center.
         /// </summary>
         public double PushOut
         {
@@ -103,7 +103,7 @@ namespace Ginger.UserControlsLib.PieChart
             new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         /// <summary>
-        /// The X coordinate of centre of the circle from which this pie piece is cut.
+        /// The X coordinate of center of the circle from which this pie piece is cut.
         /// </summary>
         public double CentreX
         {
@@ -116,7 +116,7 @@ namespace Ginger.UserControlsLib.PieChart
             new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         /// <summary>
-        /// The Y coordinate of centre of the circle from which this pie piece is cut.
+        /// The Y coordinate of center of the circle from which this pie piece is cut.
         /// </summary>
         public double CentreY
         {

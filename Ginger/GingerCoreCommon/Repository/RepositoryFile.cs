@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                // we cahce the result for speed
+                // we catch the result for speed
                 if (mFileType == null)
                 {
                     mFileType = GetFileType();                    

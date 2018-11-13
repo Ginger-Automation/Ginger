@@ -31,7 +31,7 @@ namespace GingerCore.Actions.Android
 
         public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
         {
-            TBH.AddText("Use this action in case you need to run Sehll action like: ps, ls etc.");                                        
+            TBH.AddText("Use this action in case you need to run Shell action like: ps, ls etc.");                                        
         }       
 
         public override string ActionEditPage { get { return null; } }

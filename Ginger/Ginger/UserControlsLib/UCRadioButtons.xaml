@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Ginger.UserControlsLib"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid  Name="controlRadio" Background="{StaticResource @Skin1_ColorC}">
+    <Grid  Name="controlRadio" Background="{StaticResource $BackgroundColor_LightGray}">
         <StackPanel x:Name="Panel"  Margin="10">
         </StackPanel>
     </Grid>

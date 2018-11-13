@@ -45,7 +45,7 @@
 //            public static string ActivitiesIdentifiers = "ActivitiesIdentifiers";
 //            public static string AutomationPrecentage = "AutomationPrecentage";
 //        }
-        
+
 //        public ActivitiesGroup()
 //        {
 //            Tags = new ObservableList<Guid>();

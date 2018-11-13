@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.Common
     public class JsonSchemaTools
     {
         /// <summary>
-        /// Genrate sample json From NJsonSchema.Jsonschema4
+        /// Generate sample json From NJsonSchema.Jsonschema4
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>

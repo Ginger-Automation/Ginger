@@ -16,7 +16,7 @@
 
         <UCTreeView:TreeView2 x:Name="MainTreeView" Grid.Column="0" TreeTitle="Help Library Content" Margin="0,0,5,0" />
 
-        <GridSplitter x:Name="HelpSplitter" ResizeDirection="Columns" Grid.Column="0" Width="5" HorizontalAlignment="Right" Grid.Row="0"  Grid.RowSpan="6" VerticalAlignment="Stretch" Background="{StaticResource @Skin1_ColorA}" IsEnabled="True" Margin="0,0,0,0"/>
+        <GridSplitter x:Name="HelpSplitter" ResizeDirection="Columns" Grid.Column="0" Width="5" HorizontalAlignment="Right" Grid.Row="0"  Grid.RowSpan="6" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,0,0,0"/>
 
 
         <Grid x:Name="BrowserGrid" Grid.Column="1" Visibility="Visible">
@@ -25,7 +25,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource @Skin1_ColorC}">
+            <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}">
                 <Button x:Name="BackButton" Click="BackButton_Click" ToolTip="Back" Style="{StaticResource @InputImageButtonStyle_NoBorder}" >
                     <Image Source="{StaticResource @LeftArrow_32x32.png}" Height="24" Width="24"/>
                 </Button>
@@ -44,7 +44,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource @Skin1_ColorC}">
+            <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}">
                 <Button x:Name="PlayButton" Click="PlayButton_Click" ToolTip="Play" Style="{StaticResource @InputImageButtonStyle_NoBorder}" >
                     <Image Source="{StaticResource @Play_32x32}" Height="23" Width="23"/>
                 </Button>

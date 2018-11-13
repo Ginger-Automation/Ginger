@@ -42,7 +42,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                 VA.IssueDescription = "Business Flow Variable/s: " + GetListNameString(missingVariables) + "  is/are missing";
                 VA.mIssueType = eIssueType.MissingVariables;
                 VA.missingVariablesList = missingVariables;
-                VA.IssueResolution = "Missing Varaible/s will be auto added to " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                VA.IssueResolution = "Missing Variable/s will be auto added to " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                 VA.Selected = true;
                 mIssuesList.Add(VA);
             }            
