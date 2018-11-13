@@ -2342,8 +2342,7 @@ namespace GingerCore.Drivers
             {
                 MaxTimeout = mLoadTimeOut;
             }
-            mLoadTimeOut = -1;
-            act.Timeout = MaxTimeout;
+            mLoadTimeOut = -1;           
             switch (act.SmartSyncAction)
             {
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
