@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.CoreNET.RunLib;
@@ -35,10 +34,12 @@ namespace Amdocs.Ginger.Repository
     public class PluginsManager
     {
         private ObservableList<PluginPackage> mPluginPackages;
+        SolutionRepository mSolutionRepository;
 
-        public PluginsManager()
+        public PluginsManager(SolutionRepository solutionRepository)
         {
-            mPluginPackages = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            mSolutionRepository = solutionRepository;
+            mPluginPackages = solutionRepository.GetAllRepositoryItems<PluginPackage>();
         }
 
         public class DriverInfo
@@ -117,7 +118,7 @@ namespace Amdocs.Ginger.Repository
             }            
 
             PluginPackage pluginPackage = new PluginPackage(folder);                                 
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(pluginPackage);
+            mSolutionRepository.AddRepositoryItem(pluginPackage);
         }
 
         private void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
@@ -397,5 +398,11 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public bool IsRunOnPluginDriver(string pluginId, string serviceId)
+        {
+            // PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
+            // PluginService pluginService = pluginPackage.GetService(serviceId);
+            return true; // temp!!!!!!!!!!!!!!!
+        }
     }
 }
