@@ -213,7 +213,7 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomString.GenerateAutoValue();
 
             //Assert
-           Assert.AreEqual(variableRandomString.Value, variableRandomString.Value.ToUpper(), "variableRandomString.Value, variableRandomString.Value.ToUpper()");
+           Assert.AreEqual(variableRandomString.Value.ToUpper(), variableRandomString.Value, "variableRandomString.Value, variableRandomString.Value.ToUpper()");
         }
 
         [TestMethod]
@@ -222,16 +222,16 @@ namespace GingerCoreCommonTest.VariableTests
             //Arrange
             VariableRandomString variableRandomString = new VariableRandomString();
             variableRandomString.Max = 15;
-            variableRandomString.IsUpperCase = true;            
-            
+            variableRandomString.IsUpperCase = true;
+
             //Act
-            //When the user change to to lower case make sure the Isupper case get turned off
+            //When the user change to lower case make sure the Isupper case get turned off
             variableRandomString.IsLowerCase = true;
             variableRandomString.GenerateAutoValue();
 
             //Assert
-            Assert.AreEqual(variableRandomString.IsUpperCase, false, "variableRandomString.IsUpperCase=false");
-            Assert.AreEqual(variableRandomString.Value, variableRandomString.Value.ToLower());
+            Assert.AreEqual(false, variableRandomString.IsUpperCase, "variableRandomString.IsUpperCase=false");
+            Assert.AreEqual(variableRandomString.Value.ToLower(), variableRandomString.Value);
 
             //TODO: verify the formula
             //Assert.AreEqual(variableRandomString.Formula, "Error", "variableRandomString.Formula=Error");

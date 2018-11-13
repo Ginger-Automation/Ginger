@@ -191,5 +191,32 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsTrue(num1 >= min && num1 <= max, "num1 >= " + min + " && num1 <= " + max);
         }
 
+
+        [TestMethod]
+        public void TestVariable_RandomStringSetValue()
+        {
+            //Arrange
+            int maxChars = 5;
+            string variableName = "V1";
+            ResetBusinessFlow();
+
+            Activity activity1 = new Activity() { Active = true };
+            mBF.Activities.Add(activity1);
+
+
+            VariableRandomString v1 = new VariableRandomString() { Name = variableName, Max = maxChars, IsUpperCase = true};
+            activity1.AddVariable(v1);
+
+            ActSetVariableValue actSetVariableValue = new ActSetVariableValue() { VariableName = variableName, SetVariableValueOption = VariableBase.eSetValueOptions.AutoGenerateValue, Active = true };
+            activity1.Acts.Add(actSetVariableValue);
+
+            //Act            
+            mGR.RunRunner();
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status);
+            Assert.AreEqual(v1.Value.ToUpper(), v1.Value);
+        }
     }
 }
