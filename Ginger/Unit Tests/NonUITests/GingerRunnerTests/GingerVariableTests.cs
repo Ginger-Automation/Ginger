@@ -32,6 +32,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
 using GingerTestHelper;
 using System.Collections.Generic;
+using Amdocs.Ginger.Repository;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
@@ -218,5 +219,36 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(eRunStatus.Passed, activity1.Status);
             Assert.AreEqual(v1.Value.ToUpper(), v1.Value);
         }
+
+
+        [TestMethod]
+        public void TestVariable_SelectionListSetValue()
+        {
+            //Arrange
+            string variableName = "V1";
+            ResetBusinessFlow();
+            //string OptionalValues = string.Join("\r\n", new string[] { "abc", "bcd" });
+
+            Activity activity1 = new Activity() { Active = true };
+            mBF.Activities.Add(activity1);
+
+            VariableSelectionList v1 = new VariableSelectionList() { Name = variableName};
+            v1.OptionalValuesList.Add(new OptionalValue("Jupiter"));
+            v1.OptionalValuesList.Add(new OptionalValue("Saturn"));
+            activity1.AddVariable(v1);
+
+            ActSetVariableValue actSetVariableValue = new ActSetVariableValue() { VariableName = variableName, SetVariableValueOption = VariableBase.eSetValueOptions.SetValue, Active = true, Value="Jupiter" };
+            activity1.Acts.Add(actSetVariableValue);
+
+            //Act            
+            mGR.RunRunner();
+
+            //Assert
+            Assert.IsTrue(string.IsNullOrEmpty(actSetVariableValue.Error));
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status);
+            Assert.AreEqual("Jupiter", v1.Value);
+        }
+
     }
 }

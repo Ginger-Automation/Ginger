@@ -18,22 +18,14 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using GingerCore;
 
 namespace GingerCore.Variables
 {
     public class VariableSelectionList : VariableBase
     {
-        public VariableSelectionList()
-        {
-            mOptionalValues = string.Empty;
-            mOptionalValuesList = new ObservableList<OptionalValue>();
-        }
-
         public override string VariableUIType
         {
             get { return GingerDicser.GetTermResValue(eTermResKey.Variable) + " Selection List"; }
@@ -45,59 +37,32 @@ namespace GingerCore.Variables
 
         public override string VariableType() { return "Selection List"; }
 
-        private string mOptionalValues;
-        [IsSerializedForLocalRepository]
+        //DO NOT REMOVE! Used for conversion of old OptionalValues which were kept in one string with delimiter
         public string OptionalValues
         {
-            get
-            {
-                return mOptionalValues;
-            }
-
             set
             {
-                if (value != mOptionalValues)
-                {
-                    mOptionalValues = value;
-                    if (value != ConvertOptionalValuesListToString(OptionalValuesList))//sync with List
-                    {
-                        OptionalValuesList = ConvertOptionalValuesStringToList(value);
-                        OptionalValuesChanged();
-                    }
-                }
+                OptionalValuesList = ConvertOptionalValuesStringToList(value);
             }
         }
 
-        ObservableList<OptionalValue> mOptionalValuesList;
-        public ObservableList<OptionalValue> OptionalValuesList
-        {
-            get
-            {
-                return mOptionalValuesList;
-            }
-            set
-            {
-                mOptionalValuesList = value;
-                if (ConvertOptionalValuesListToString(value) != OptionalValues) //sync with string
-                {                    
-                    mOptionalValues = ConvertOptionalValuesListToString(value);
-                    OptionalValuesChanged();
-                }
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
 
-        public string SelectedValue { set { Value = value; OnPropertyChanged("SelectedValue"); } get { return Value; } }
-
+        public string SelectedValue { set { Value = value; OnPropertyChanged(nameof(SelectedValue)); } get { return Value; } }
 
         public override string GetFormula()
         {
-            string form = "Options: ";
+            string formula = "Options: ";
             foreach (OptionalValue val in OptionalValuesList)
-                form += val.Value + ",";
-            form = form.TrimEnd(',');
-            return form;
+            {
+                formula += val.Value + ",";
+            }
+            formula = formula.TrimEnd(',');
+            return formula;
         }
- 
+
+        // Support backward compatibility - function when we had the list with delimiter
         private ObservableList<OptionalValue> ConvertOptionalValuesStringToList(string valsString)
         {
             try
@@ -110,47 +75,8 @@ namespace GingerCore.Variables
             }
             catch
             {
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Cannot Convert Optional Values String To List - " + valsString);
                 return new ObservableList<OptionalValue>();
-            }
-        }
-
-        private string ConvertOptionalValuesListToString(ObservableList<OptionalValue> ValsList)
-        {
-            try
-            {
-                string valsString = string.Empty;
-                foreach (OptionalValue val in ValsList)
-                    valsString += val.Value + "\r\n";
-                valsString= valsString.TrimEnd(new char[] { '\r', '\n' });
-                return valsString;
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
-
-        private void OptionalValuesChanged()
-        {
-            OnPropertyChanged("Formula");
-
-            //make sure the selected value is valid
-            if (OptionalValuesList != null && OptionalValuesList.Count > 0)
-            {
-                if (SelectedValue == string.Empty
-                    || OptionalValuesList.Where(v => v.Value == SelectedValue).FirstOrDefault() == null)
-                    SelectedValue = OptionalValuesList[0].Value;
-            }
-            else
-                SelectedValue = string.Empty;
-        }
-
-        public void SyncOptionalValuesListAndString()
-        {
-            if (ConvertOptionalValuesListToString(mOptionalValuesList) != OptionalValues)
-            {
-                mOptionalValues = ConvertOptionalValuesListToString(mOptionalValuesList);
-                OptionalValuesChanged();
             }
         }
 
@@ -174,5 +100,6 @@ namespace GingerCore.Variables
             supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
+
     }
 }
