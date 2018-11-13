@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using System.Windows;
@@ -71,9 +72,8 @@ namespace Ginger.PlugInsWindows
 
         private void GetPluginsList()
         {
-            SetStatus("Loading...");
-            PluginsManager p = new PluginsManager();
-            xPluginsGrid.DataSourceList = p.GetPluginsIndex();
+            SetStatus("Loading...");            
+            xPluginsGrid.DataSourceList = WorkSpace.Instance.PlugInsManager.GetPluginsIndex();
             SetStatus("Found " + xPluginsGrid.DataSourceList.Count + " Plugin Packages");
         }
 
@@ -86,11 +86,10 @@ namespace Ginger.PlugInsWindows
 
 
         private void ShowPluginInfo()
-        {            
-            PluginsManager p = new PluginsManager();
+        {                        
             OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;            
             xNameTextBlock.Text = pluginPackageInfo.Name;            
-            xVersionComboBox.ItemsSource = p.GetPluginReleases(pluginPackageInfo.URL);
+            xVersionComboBox.ItemsSource = WorkSpace.Instance.PlugInsManager.GetPluginReleases(pluginPackageInfo.URL);
             xVersionComboBox.DisplayMemberPath = "tag_name";
             // select the first item/latest release
             xVersionComboBox.SelectedIndex = 0;
@@ -100,9 +99,8 @@ namespace Ginger.PlugInsWindows
         {
             dynamic release = (dynamic)xVersionComboBox.SelectedItem;
             string zipFileURL = release.assets[0].browser_download_url;
-            string version = release.tag_name;            
-            PluginsManager p = new PluginsManager();
-            p.InstallPluginPackage((OnlinePluginPackage)xPluginsGrid.CurrentItem, version , zipFileURL);
+            string version = release.tag_name;
+            WorkSpace.Instance.PlugInsManager.InstallPluginPackage((OnlinePluginPackage)xPluginsGrid.CurrentItem, version , zipFileURL);
         }
     }
 }
