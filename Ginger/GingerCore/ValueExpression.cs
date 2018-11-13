@@ -307,7 +307,7 @@ namespace GingerCore
                 if (DataSource.FileFullPath.StartsWith("~"))
                 {
                     DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
-                    DataSource.FileFullPath = Path.Combine(DataSource.ContainingFolderFullPath.Replace("DataSources", "") , DataSource.FileFullPath);
+                    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
                 }
                 DataSource.Init(DataSource.FileFullPath);
             }
