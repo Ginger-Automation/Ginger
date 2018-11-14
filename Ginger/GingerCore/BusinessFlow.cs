@@ -306,8 +306,10 @@ namespace GingerCore
             }
         }
 
+
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
+
 
         static public ObservableList<VariableBase> SolutionVariables;
 
@@ -1085,6 +1087,10 @@ namespace GingerCore
             return false;
         }
 
+        public ObservableList<VariableBase> GetVariables()
+        {
+            return Variables;
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> BFFlowControls = new ObservableList<FlowControl>();

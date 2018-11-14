@@ -4,5 +4,6 @@
     {
         IBusinessFlow CreateBusinessFlow();
         IValueExpression CreateValueExpression(IProjEnvironment mProjEnvironment, IBusinessFlow mBusinessFlow);
+        ObservableList<IDatabase> GetDatabaseList();
     }
 }

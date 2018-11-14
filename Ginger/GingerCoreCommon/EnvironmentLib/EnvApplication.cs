@@ -71,7 +71,7 @@ namespace GingerCore.Environments
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IDatabase> Dbs;
+        public ObservableList<IDatabase> Dbs = RepositoryItemHelper.RepositoryItemFactory.GetDatabaseList();
 
         [IsSerializedForLocalRepository]
         public ObservableList<UnixServer> UnixServers = new ObservableList<UnixServer>();

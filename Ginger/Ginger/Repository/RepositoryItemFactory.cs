@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using GingerCore;
+using GingerCore.Environments;
 
 namespace Ginger.Repository
 {
@@ -15,5 +16,9 @@ namespace Ginger.Repository
             return new ValueExpression(mProjEnvironment, mBusinessFlow);
         }
 
+        public ObservableList<IDatabase> GetDatabaseList()
+        {
+            return new ObservableList<IDatabase>();
+        }
     }
 }

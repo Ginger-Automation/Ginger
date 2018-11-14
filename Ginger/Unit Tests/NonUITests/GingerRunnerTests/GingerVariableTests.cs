@@ -16,23 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using System.Linq;
+using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
 using Ginger.Run;
-using Ginger;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Platforms;
 using GingerCore.Variables;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger;
 using GingerTestHelper;
-using System.Collections.Generic;
-using Amdocs.Ginger.Repository;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
@@ -227,7 +222,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //Arrange
             string variableName = "V1";
             ResetBusinessFlow();
-            //string OptionalValues = string.Join("\r\n", new string[] { "abc", "bcd" });
 
             Activity activity1 = new Activity() { Active = true };
             mBF.Activities.Add(activity1);
@@ -249,6 +243,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(eRunStatus.Passed, activity1.Status);
             Assert.AreEqual("Jupiter", v1.Value);
         }
+
 
     }
 }

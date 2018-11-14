@@ -479,13 +479,15 @@ namespace GingerCore.Variables
                         //{
                         //    originalIndex = ((Activity)hostItem).Variables.IndexOf(variableBaseInstance);
                         //    ((Activity)hostItem).Variables.Remove(variableBaseInstance);
-                        //    ((Activity)hostItem).Variables.Insert(originalIndex, newInstance);                            
+                        //    ((Activity)hostItem).Variables.Insert(originalIndex, newInstance);
                         //}
                         //else
                         //{
-                        //    originalIndex = ((BusinessFlow)hostItem).Variables.IndexOf(variableBaseInstance);
-                        //    ((BusinessFlow)hostItem).Variables.Remove(variableBaseInstance);
-                        //    ((BusinessFlow)hostItem).Variables.Insert(originalIndex, newInstance);                            
+
+                        originalIndex = ((IBusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                        ((IBusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
+                        ((IBusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
+
                         //}
                     }
                     break;
