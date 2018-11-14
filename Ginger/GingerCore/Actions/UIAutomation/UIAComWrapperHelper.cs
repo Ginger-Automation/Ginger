@@ -2322,7 +2322,7 @@ namespace GingerCore.Drivers
         {
             AutomationElement AE = null;
             Stopwatch st = new Stopwatch();
-            int MaxTimeout = 0;
+            int? MaxTimeout = 0;
             try
             {
                 if (act.WaitTime.HasValue == true)
@@ -2331,7 +2331,7 @@ namespace GingerCore.Drivers
                 }
                 else if (string.IsNullOrEmpty(act.GetInputParamValue("Value")))
                 {
-                    MaxTimeout = 5;
+                    MaxTimeout = mLoadTimeOut;
                 }
                 else
                 {
@@ -2340,9 +2340,9 @@ namespace GingerCore.Drivers
             }
             catch (Exception)
             {
-                MaxTimeout = 5;
+                MaxTimeout = mLoadTimeOut;
             }
-
+            mLoadTimeOut = -1;           
             switch (act.SmartSyncAction)
             {
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
