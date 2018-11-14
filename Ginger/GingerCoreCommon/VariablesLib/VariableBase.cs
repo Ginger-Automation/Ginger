@@ -474,21 +474,19 @@ namespace GingerCore.Variables
                         //replace old instance object with new
                         int originalIndex = 0;
 
-                        //TODO: Fix the issues 
-                        //if (hostItem is Activity)
-                        //{
-                        //    originalIndex = ((Activity)hostItem).Variables.IndexOf(variableBaseInstance);
-                        //    ((Activity)hostItem).Variables.Remove(variableBaseInstance);
-                        //    ((Activity)hostItem).Variables.Insert(originalIndex, newInstance);
-                        //}
-                        //else
-                        //{
-
-                        originalIndex = ((IBusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
-                        ((IBusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
-                        ((IBusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
-
-                        //}
+                        //TODO: Fix the issues
+                        if (hostItem is IActivity)
+                        {
+                            originalIndex = ((IActivity)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((IActivity)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((IActivity)hostItem).GetVariables().Insert(originalIndex, newInstance);
+                        }
+                        else
+                        {
+                            originalIndex = ((IBusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((IBusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((IBusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
+                        }
                     }
                     break;
             }           

@@ -28,12 +28,13 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 
+
 //TODO: change add core
 namespace GingerCore
 {
     // Activity can have several steps - Acts
     // The activities can come from external like: QC TC Step, vStorm    
-    public class Activity : RepositoryItemBase
+    public class Activity : RepositoryItemBase, IActivity
     {
         public enum eActivityAutomationStatus
         {
@@ -818,6 +819,11 @@ namespace GingerCore
         {
             base.UpdateItemFieldForReposiotryUse();
             ActivitiesGroupID = null;            
+        }
+
+        public ObservableList<VariableBase> GetVariables()
+        {
+            return Variables;
         }
 
         public override bool IsTempItem

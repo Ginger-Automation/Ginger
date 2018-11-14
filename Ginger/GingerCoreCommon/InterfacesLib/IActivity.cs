@@ -2,10 +2,9 @@
 
 namespace Amdocs.Ginger.Common
 {
-    public interface IBusinessFlow
+    public interface IActivity
     {
         ObservableList<VariableBase> GetVariables();
 
-        VariableBase GetHierarchyVariableByName(string varName, bool considerLinkedVar = true);
     }
 }
