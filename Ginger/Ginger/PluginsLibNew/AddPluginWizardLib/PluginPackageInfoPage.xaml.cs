@@ -48,7 +48,7 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                     break;
                 case EventType.Active:
                     mPluginPackage = wiz.PluginPackage;
-                    xIDTextBox.Text = mPluginPackage.PluginID;
+                    xIDTextBox.Text = mPluginPackage.PluginId;
                     xVersionTextBox.Text = mPluginPackage.PluginPackageVersion;
                     FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
 
