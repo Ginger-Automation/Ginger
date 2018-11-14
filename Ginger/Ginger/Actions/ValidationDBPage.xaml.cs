@@ -253,7 +253,7 @@ namespace Ginger.Actions
         {
             KeySpaceComboBox.Items.Clear();
             string DBName = DBNameComboBox.Text;
-            db = (Database) (from d in EA.Dbs where d.Name == DBName select d).SingleOrDefault();
+            db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
             if (db == null) return;
             if (db.DBType == Database.eDBTypes.Cassandra)
             {
@@ -272,7 +272,7 @@ namespace Ginger.Actions
         {
             TablesComboBox.Items.Clear();
             string DBName = DBNameComboBox.Text; 
-            db = (Database) (from d in EA.Dbs where d.Name == DBName select d).SingleOrDefault();
+            db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
             if (db == null) return;
             string KeySpace = KeySpaceComboBox.Text;
             List<string> Tables = db.GetTablesList(KeySpace);
@@ -286,7 +286,7 @@ namespace Ginger.Actions
         {
             ColumnComboBox.Items.Clear();
             string DBName = DBNameComboBox.Text;
-            db = (Database) (from d in EA.Dbs where d.Name == DBName select d).SingleOrDefault();
+            db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
             if (db == null) return;
             string table;
             if (db.DBType == Database.eDBTypes.Cassandra)
@@ -368,7 +368,7 @@ namespace Ginger.Actions
                     try
                     {
                         string DBName = DBNameComboBox.Text;
-                        db = (Database) (from d in EA.Dbs where d.Name == DBName select d).SingleOrDefault();
+                        db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
                         if (!(db == null))
                         {
                             if (db.DBType == Database.eDBTypes.Cassandra)
@@ -393,7 +393,7 @@ namespace Ginger.Actions
                     try
                     {
                         string DBName = DBNameComboBox.Text;
-                        db = (Database) (from d in EA.Dbs where d.Name == DBName select d).SingleOrDefault();
+                        db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
                         if (!(db == null))
                         {
                             if (db.DBType == Database.eDBTypes.Cassandra)

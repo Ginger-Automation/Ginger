@@ -291,7 +291,7 @@ namespace GingerCore.Actions
             }
             VE.Value = DBName;
             string DBNameCalculated = VE.ValueCalculated;
-            DB = (Database)(from d in App.Dbs where d.Name == DBNameCalculated select d).SingleOrDefault();
+            DB = (Database)(from d in App.Dbs where d.Name == DBNameCalculated select d).FirstOrDefault();
             if (DB ==null)
             {
                 Error = "The mapped DB '" + DBNameCalculated + "' was not found in the '" + AppNameCalculated + "' Environment Application.";

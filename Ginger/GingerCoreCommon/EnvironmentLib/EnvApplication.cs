@@ -26,17 +26,6 @@ namespace GingerCore.Environments
     public class EnvApplication : RepositoryItemBase
     {        
 
-        public  static class Fields
-        {
-            public static string Name = "Name";
-            public static string CoreProductName = "CoreProductName";
-            public static string Description = "Description";
-            public static string CoreVersion = "CoreVersion";
-            public static string AppVersion = "AppVersion";
-            public static string Url = "Url";
-            public static string Vendor = "Vendor";
-            public static string Active = "Active";
-        }
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -87,7 +76,7 @@ namespace GingerCore.Environments
 
         public GeneralParam GetParam(string ParamName)
         {
-            GeneralParam GP = (from p in GeneralParams where p.Name == ParamName select p).SingleOrDefault();
+            GeneralParam GP = (from p in GeneralParams where p.Name == ParamName select p).FirstOrDefault();
             return GP;
         }
 
