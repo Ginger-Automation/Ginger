@@ -139,11 +139,22 @@ namespace Amdocs.Ginger.Common.UIElement
             return mElementTitle;
         }
 
-
+        string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }
+        public string Description
+        {
+            get
+            {
+                return mDescription;
+            }
+            set
+            {
+                mDescription = value;
+                OnPropertyChanged(nameof(Description));
+            }
+        }
 
-        
+
         public override string ItemName { get { return this.ElementName; } set { this.ElementName = value; } }
 
         private string mElementName = null;
@@ -159,6 +170,7 @@ namespace Amdocs.Ginger.Common.UIElement
             set
             {
                 mElementName = value;
+                OnPropertyChanged(nameof(ElementName));
             }
         }
 
@@ -182,7 +194,11 @@ namespace Amdocs.Ginger.Common.UIElement
             {
                 return mElementTypeEnum;
             }
-            set { mElementTypeEnum = value; }
+            set
+            {
+                mElementTypeEnum = value;
+                OnPropertyChanged(nameof(ElementTypeEnum));
+            }
         }
 
         public string ElementTypeEnumDescription
