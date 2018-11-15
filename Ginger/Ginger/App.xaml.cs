@@ -580,6 +580,7 @@ namespace Ginger
                 mSourceControl.SourceControlConfigureProxy = App.UserProfile.SolutionSourceControlConfigureProxy;
                 mSourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
                 mSourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
+                mSourceControl.SourceControlTimeout = App.UserProfile.SolutionSourceControlTimeout;
                 mSourceControl.supressMessage = true;
             }
 
@@ -800,6 +801,7 @@ namespace Ginger
                 solution.SourceControl.SourceControlLocalFolder = App.UserProfile.SourceControlLocalFolder;
                 solution.SourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
                 solution.SourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
+                solution.SourceControl.SourceControlTimeout = App.UserProfile.SolutionSourceControlTimeout;
 
                 WorkSpace.Instance.SourceControl = solution.SourceControl;
                 RepositoryItemBase.SetSourceControl(solution.SourceControl);

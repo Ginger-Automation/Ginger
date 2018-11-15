@@ -23,10 +23,12 @@ using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Ginger.SourceControl
 {
@@ -39,6 +41,7 @@ namespace Ginger.SourceControl
        
         GenericWindow genWin = null;
         Button downloadProjBtn = null;
+        Image xprocessingimg = null;
         public static SourceControlBase mSourceControl;
 
         public SourceControlProjectsPage()
@@ -66,7 +69,7 @@ namespace Ginger.SourceControl
          
                 App.UserProfile.SourceControlURL = "";
             }
-
+            
             SourceControlClassComboBox.Init(App.UserProfile, nameof(UserProfile.SourceControlType), typeof(SourceControlBase.eSourceControlType), false, SourceControlClassComboBox_SelectionChanged);
             SourceControlClassComboBox.ComboBox.Items.RemoveAt(0);//removing the NONE option from user selection
             
@@ -87,8 +90,10 @@ namespace Ginger.SourceControl
             App.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlProxyPort);
             if (String.IsNullOrEmpty(App.UserProfile.SolutionSourceControlProxyPort))
                 mSourceControl.SourceControlProxyPort = @"8080";
-            
+            App.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlTimeout);
+            mSourceControl.SourceControlTimeout = 15;
             SolutionsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
+            xConnectButton.Visibility = Visibility.Visible;
         }
 
         private void Bind()
@@ -123,53 +128,65 @@ namespace Ginger.SourceControl
         {
             try
             {
-                downloadProjBtn.IsEnabled = false;
-                if (SolutionsGrid.DataSourceList != null)
+                Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Normal, (Action)delegate ()
                 {
-                    SolutionsGrid.DataSourceList.Clear();
-                }
-                xProcessingIcon.Visibility = Visibility.Visible;
-                if (SourceControlIntegration.BusyInProcessWhileDownloading)
-                {
-                    Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
-                    return;
-                }
-                SourceControlIntegration.BusyInProcessWhileDownloading = true;
-                
-                SourceControlIntegration.CreateConfigFile(mSourceControl);
-                if (SourceControlIntegration.TestConnection(mSourceControl, SourceControlConnDetailsPage.eSourceControlContext.DownloadProjectPage, true) == false)
-                {
-                    SourceControlIntegration.BusyInProcessWhileDownloading = false;
-                    Mouse.OverrideCursor = null;
-                    return;
-                }
-
+                    downloadProjBtn.IsEnabled = false;
+                    if (SolutionsGrid.DataSourceList != null)
+                    {
+                        SolutionsGrid.DataSourceList.Clear();
+                    }
+                    // xProcessingIcon.Visibility = Visibility.Visible;
+                    if (SourceControlIntegration.BusyInProcessWhileDownloading)
+                    {
+                        Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Please wait for current process to end.");
+                        return;
+                    }
+                    SourceControlIntegration.BusyInProcessWhileDownloading = true;
+                    
+                    SourceControlIntegration.CreateConfigFile(mSourceControl);
+                    if (SourceControlIntegration.TestConnection(mSourceControl, SourceControlConnDetailsPage.eSourceControlContext.DownloadProjectPage, true) == false)
+                    {
+                        SourceControlIntegration.BusyInProcessWhileDownloading = false;
+                        Mouse.OverrideCursor = null;
+                        return;
+                    }
+                });
+                await Task.Delay(10000);
                 await Task.Run(() => SourceControlSolutions = SourceControlIntegration.GetProjectsList(mSourceControl)
                 );
-                SolutionsGrid.DataSourceList = SourceControlSolutions;
-                SetGridView();
-                Mouse.OverrideCursor = null;
+                Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Normal, (Action)delegate ()
+                {
+                    SolutionsGrid.DataSourceList = SourceControlSolutions;
+                    SetGridView();
+                    Mouse.OverrideCursor = null;
 
-                ConnectionConfigurationsExpender.IsExpanded = false;
-                ConnectionDetailsExpender.IsExpanded = false;
+                    ConnectionConfigurationsExpender.IsExpanded = false;
+                    ConnectionDetailsExpender.IsExpanded = false;
+                });
             }
             catch (Exception e)
             {
-                Mouse.OverrideCursor = null;
-                Reporter.ToUser(eUserMsgKeys.FailedToGetProjectsListFromSVN, e.Message);
+                Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Normal, (Action)delegate ()
+                {
+                    Mouse.OverrideCursor = null;
+                    Reporter.ToUser(eUserMsgKeys.FailedToGetProjectsListFromSVN, e.Message);
+                });
             }
             finally
             {
-                xProcessingIcon.Visibility = Visibility.Collapsed;
-                SourceControlIntegration.BusyInProcessWhileDownloading = false;
-
-                if (SolutionsGrid.DataSourceList != null)
+                Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Normal, (Action)delegate ()
                 {
-                    if (SolutionsGrid.DataSourceList.Count > 0)
+                    xProcessingIcon.Visibility = Visibility.Collapsed;
+                    SourceControlIntegration.BusyInProcessWhileDownloading = false;
+
+                    if (SolutionsGrid.DataSourceList != null)
                     {
-                        downloadProjBtn.IsEnabled = true;
+                        if (SolutionsGrid.DataSourceList.Count > 0)
+                        {
+                            downloadProjBtn.IsEnabled = true;
+                        }
                     }
-                }
+                });
             }
         }
 
@@ -283,8 +300,10 @@ namespace Ginger.SourceControl
             downloadProjBtn = new Button();
             downloadProjBtn.Content = "Download Selected Solution";
             downloadProjBtn.Click += new RoutedEventHandler(GetProject_Click);
-                      
+            xprocessingimg = new Image();
+            
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Download Source Control Solution", this, new ObservableList<Button> { downloadProjBtn });
+            xConnectButton.Visibility = Visibility.Visible;
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -332,6 +351,7 @@ namespace Ginger.SourceControl
                 mSourceControl.SourceControlConfigureProxy = App.UserProfile.SolutionSourceControlConfigureProxy;
                 mSourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
                 mSourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
+                mSourceControl.SourceControlTimeout = App.UserProfile.SolutionSourceControlTimeout;
 
                 mSourceControl.PropertyChanged += SourceControl_PropertyChanged;
             }
@@ -348,21 +368,67 @@ namespace Ginger.SourceControl
             App.UserProfile.SolutionSourceControlConfigureProxy = mSourceControl.SourceControlConfigureProxy;
             App.UserProfile.SolutionSourceControlProxyAddress = mSourceControl.SourceControlProxyAddress;
             App.UserProfile.SolutionSourceControlProxyPort = mSourceControl.SourceControlProxyPort;
+            App.UserProfile.SolutionSourceControlTimeout = mSourceControl.SourceControlTimeout;
         }
 
+        private CancellationTokenSource cts;
         private void TestConnectionAndSearchRepositories_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
+            try
             {
-                Reporter.ToUser(eUserMsgKeys.SourceControlConnMissingConnInputs);
-                return;
+                cts = new CancellationTokenSource();
+                CancellationToken token = cts.Token;
+
+                if (xConnectButton.ButtonText != "Stop")
+                {
+                    if (cts != null)
+                    {
+                        cts.Cancel();
+                    }
+                    if (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
+                    {
+                        Reporter.ToUser(eUserMsgKeys.SourceControlConnMissingConnInputs);
+                        return;
+                    }
+                    xConnectButton.Visibility = Visibility.Hidden;
+
+                    xStopLoadButton.Visibility = Visibility.Visible;
+                    xStopLoadButton.ButtonText = "Stop";
+                    //xConnectButton.ButtonText = "Stop";
+                    xConnectButton.IsEnabled = true;
+                    xStopLoadButton.IsEnabled = true;
+
+                    System.Threading.Thread.Sleep(1000);
+                    SourceControlLocalFolderLable.Visibility = Visibility.Visible;
+                    SourceControlLocalFolderTextBox.Visibility = Visibility.Visible;
+                    BrowseButton.Visibility = Visibility.Visible;
+                    SolutionsGrid.Visibility = Visibility.Visible;
+                    SourceControlIntegration.BusyInProcessWhileDownloading = false;
+                    //Task.Factory.StartNew(() =>
+                    //{
+                        GetProjetList();
+                    //}, token);
+                   
+                }
+                else
+                {
+                    xConnectButton.ButtonText = "Connect And Search Repositories";
+                    xConnectButton.IsEnabled = true;
+                    cts.Cancel();
+                }
             }
-            SourceControlLocalFolderLable.Visibility = Visibility.Visible;
-            SourceControlLocalFolderTextBox.Visibility = Visibility.Visible;
-            BrowseButton.Visibility = Visibility.Visible;
-            SolutionsGrid.Visibility = Visibility.Visible;
-            SourceControlIntegration.BusyInProcessWhileDownloading = false;
-            GetProjetList(); 
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error Occured :", ex);
+            }
+            finally
+            {
+                //xStopLoadButton.Visibility = Visibility.Collapsed;
+
+                //xConnectButton.ButtonText = "Connect And Search Repositories";
+                //xConnectButton.IsEnabled = true;
+                //xConnectButton.Visibility = Visibility.Visible;
+            }
         }
 
         private void SourceControlURLTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -395,6 +461,13 @@ namespace Ginger.SourceControl
         {
             ProxyAddressTextBox.IsEnabled = false;
             ProxyPortTextBox.IsEnabled = false;
+        }
+
+        private void xStopLoadButton_Click(object sender, RoutedEventArgs e)
+        {
+            xStopLoadButton.ButtonText = "Stopping...";
+            xStopLoadButton.IsEnabled = false;
+            GetProjetList();
         }
     }
 }

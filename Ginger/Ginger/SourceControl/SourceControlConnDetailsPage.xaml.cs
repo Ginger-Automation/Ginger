@@ -65,7 +65,12 @@ namespace Ginger.SourceControl
 
                 App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlUser);
                 App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlPass);
-
+                App.ObjFieldBinding(txtSourceControlConnectionTimeout, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlTimeout);
+            if (App.UserProfile.SolutionSourceControlTimeout==15)
+            {
+                //App.UserProfile.Solution.SourceControl.SourceControlTimeout = 15;
+                txtSourceControlConnectionTimeout.Text = @"15";
+            }
             App.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorName);
             App.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorEmail);
 
@@ -143,6 +148,11 @@ namespace Ginger.SourceControl
         private void SourceControlUserDetails_TextChanged(object sender, TextChangedEventArgs e)
         {
             SourceControlIntegration.Init(App.UserProfile.Solution.SourceControl);
+        }
+
+        private void txtSourceControlConnectionTimeout_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }

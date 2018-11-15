@@ -41,7 +41,8 @@ namespace GingerCoreNET.SourceControl
             public static string SourceControlConfigureProxy = "SourceControlConfigureProxy";
             public static string SourceControlProxyAddress = "SourceControlProxyAddress";
             public static string SourceControlProxyPort = "SourceControlProxyPort";
-			 public static string SolutionSourceControlAuthorName = "SolutionSourceControlAuthorName";
+            public static string SourceControlTimeout = "SourceControlTimeout";
+            public static string SolutionSourceControlAuthorName = "SolutionSourceControlAuthorName";
             public static string SolutionSourceControlAuthorEmail = "SolutionSourceControlAuthorEmail";
         }
 
@@ -75,6 +76,10 @@ namespace GingerCoreNET.SourceControl
 
         string mSourceControlProxyPort;
         public string SourceControlProxyPort { get { return mSourceControlProxyPort; } set { mSourceControlProxyPort = value; OnPropertyChanged(Fields.SourceControlProxyPort); } }
+
+        
+        int mSourceControlTimeout;
+        public int SourceControlTimeout { get { return mSourceControlTimeout; } set { mSourceControlTimeout = value; OnPropertyChanged(Fields.SourceControlTimeout); } }
 
         bool mSourceControlConfigureProxy;
         public bool SourceControlConfigureProxy { get { return mSourceControlConfigureProxy; } set { mSourceControlConfigureProxy = value; OnPropertyChanged(Fields.SourceControlConfigureProxy); } }

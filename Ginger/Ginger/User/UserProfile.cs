@@ -279,6 +279,9 @@ namespace Ginger
         public string SolutionSourceControlProxyPort { get; set; }
 
         [IsSerializedForLocalRepository]
+        public int SolutionSourceControlTimeout { get; set; }
+
+        [IsSerializedForLocalRepository]
         public string EncryptedSourceControlPass { get; set; }
 
         [IsSerializedForLocalRepository]

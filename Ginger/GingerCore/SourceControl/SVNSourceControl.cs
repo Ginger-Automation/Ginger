@@ -666,7 +666,8 @@ namespace GingerCore.SourceControl
                         SourceControlURL = SourceControlURL + "/";
                     }
                     WebRequest request = WebRequest.Create(SourceControlURL);
-                    request.Timeout = 15000;
+                    //request.Timeout = 15000;
+                    request.Timeout = SourceControlTimeout *1000;
                     request.Credentials = new System.Net.NetworkCredential(SourceControlUser, SourceControlPass);
                     response = (WebResponse)request.GetResponse();
                 }
