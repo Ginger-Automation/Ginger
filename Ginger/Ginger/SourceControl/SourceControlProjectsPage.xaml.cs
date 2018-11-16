@@ -397,7 +397,7 @@ namespace Ginger.SourceControl
                     SolutionsGrid.Visibility = Visibility.Visible;
                     SourceControlIntegration.BusyInProcessWhileDownloading = false;
 
-                   await GetProjetList();
+                   await GetProjetList().ConfigureAwait(false);
                 
             }
             catch (Exception ex)
