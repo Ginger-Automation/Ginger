@@ -96,7 +96,7 @@ namespace Ginger.SourceControl
             }
             else
             {
-                App.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlTimeout);
+                App.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
                 mSourceControl.SourceControlTimeout = 80;
             }
             SolutionsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
@@ -377,28 +377,28 @@ namespace Ginger.SourceControl
             App.UserProfile.SolutionSourceControlTimeout = mSourceControl.SourceControlTimeout;
         }
 
-        
+
         private async void TestConnectionAndSearchRepositories_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                    if (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
-                    {
-                        Reporter.ToUser(eUserMsgKeys.SourceControlConnMissingConnInputs);
-                        return;
-                    }
-                    xConnectButton.Visibility = Visibility.Visible;
-                    xProcessingIcon.Visibility = Visibility.Visible;
-                   
-                    xConnectButton.IsEnabled = false;
-                    SourceControlLocalFolderLable.Visibility = Visibility.Visible;
-                    SourceControlLocalFolderTextBox.Visibility = Visibility.Visible;
-                    BrowseButton.Visibility = Visibility.Visible;
-                    SolutionsGrid.Visibility = Visibility.Visible;
-                    SourceControlIntegration.BusyInProcessWhileDownloading = false;
+                if (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
+                {
+                    Reporter.ToUser(eUserMsgKeys.SourceControlConnMissingConnInputs);
+                    return;
+                }
+                xConnectButton.Visibility = Visibility.Visible;
+                xProcessingIcon.Visibility = Visibility.Visible;
 
-                   await GetProjetList().ConfigureAwait(false);
-                
+                xConnectButton.IsEnabled = false;
+                SourceControlLocalFolderLable.Visibility = Visibility.Visible;
+                SourceControlLocalFolderTextBox.Visibility = Visibility.Visible;
+                BrowseButton.Visibility = Visibility.Visible;
+                SolutionsGrid.Visibility = Visibility.Visible;
+                SourceControlIntegration.BusyInProcessWhileDownloading = false;
+
+                await GetProjetList().ConfigureAwait(false);
+
             }
             catch (Exception ex)
             {
@@ -441,6 +441,6 @@ namespace Ginger.SourceControl
             ProxyAddressTextBox.IsEnabled = false;
             ProxyPortTextBox.IsEnabled = false;
         }
-        
+
     }
 }

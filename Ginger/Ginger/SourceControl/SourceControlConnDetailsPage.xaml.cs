@@ -72,7 +72,7 @@ namespace Ginger.SourceControl
             }
             else
             {
-                App.ObjFieldBinding(txtSourceControlConnectionTimeout, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlTimeout);
+                App.ObjFieldBinding(txtSourceControlConnectionTimeout, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
                 lblControlConnectionTimeout.Visibility = Visibility.Visible;
                 txtSourceControlConnectionTimeout.Visibility = Visibility.Visible;
                 if (App.UserProfile.SolutionSourceControlTimeout == 80)
