@@ -65,11 +65,20 @@ namespace Ginger.SourceControl
 
                 App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlUser);
                 App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlPass);
-                App.ObjFieldBinding(txtSourceControlConnectionTimeout, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlTimeout);
-            if (App.UserProfile.SolutionSourceControlTimeout==15)
+            if (SourceControlClassTextBox.Text=="GIT")
             {
-                //App.UserProfile.Solution.SourceControl.SourceControlTimeout = 15;
-                txtSourceControlConnectionTimeout.Text = @"15";
+                lblControlConnectionTimeout.Visibility = Visibility.Hidden;
+                txtSourceControlConnectionTimeout.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                App.ObjFieldBinding(txtSourceControlConnectionTimeout, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlTimeout);
+                lblControlConnectionTimeout.Visibility = Visibility.Visible;
+                txtSourceControlConnectionTimeout.Visibility = Visibility.Visible;
+                if (App.UserProfile.SolutionSourceControlTimeout == 15)
+                {
+                    txtSourceControlConnectionTimeout.Text = @"15";
+                }
             }
             App.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorName);
             App.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorEmail);

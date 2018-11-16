@@ -49,7 +49,6 @@
                         <ColumnDefinition Width="200*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!--<StackPanel  Margin="5" Grid.Column="0"  HorizontalAlignment="Stretch" >-->
 
                     <Label Content="Source Control Type:" Margin="0,5,0,0" Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}"  />
                     <UserControlsLib:UCComboBox x:Name="SourceControlClassComboBox" Grid.Column="1" Grid.Row="0"/>
@@ -63,8 +62,6 @@
                     <Label  Content="Password:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="3" Margin="0,5,0,0"/>
                     <PasswordBox x:Name="SourceControlPassTextBox" Style="{StaticResource @PasswordBoxStyle}" Margin="0,5,0,7" Grid.Column="1" Grid.Row="3"/>
 
-
-                    <!--</StackPanel>-->
 
 
                 </Grid>
@@ -92,7 +89,7 @@
                         <ColumnDefinition Width="180"/>
                         <ColumnDefinition Width="200*"/>
                     </Grid.ColumnDefinitions>
-                    <!--<StackPanel  Margin="5"  Orientation="Vertical" >-->
+                    
                     <CheckBox x:Name="ConfigureProxyCheckBox" Grid.Row="0" Content="Configure Proxy" ToolTip="Configure Network Proxy For The Repository Access" Checked="ConfigureProxyCheckBoxChecked" Unchecked="ConfigureProxyCheckBoxUnchecked" HorizontalAlignment="Left" Margin="5,10,0,0"/>
 
                     <Label Content="Proxy Address" Margin="20,5,0,0" Grid.Column="0" Grid.Row="1" Style="{StaticResource @InputFieldLabelStyle}" />
@@ -101,16 +98,14 @@
                     <Label Content="Proxy Port" Margin="20,5,0,0" Grid.Column="0" Grid.Row="2" Style="{StaticResource @InputFieldLabelStyle}" />
                     <TextBox x:Name="ProxyPortTextBox" Margin="0,5,0,7" Grid.Column="1" Grid.Row="2" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" IsEnabled="false" />
 
-                    <Label Content="Connection Timeout" Margin="0,5,0,0" Grid.Column="0" Grid.Row="3" Style="{StaticResource @InputFieldLabelStyle}" />
-                    <TextBox x:Name="txtConnectionTimeout" Margin="0,5,0,7" Grid.Column="1" Grid.Row="3" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" ToolTip="Connection Timeout in seconds">15</TextBox>
-                    <!--</StackPanel>-->
+                    <Label x:Name="lblConnectionTimeout" Content="Connection Timeout" Margin="0,5,0,0" Grid.Column="0" Grid.Row="3" Style="{StaticResource @InputFieldLabelStyle}" Visibility="Visible" />
+                    <TextBox x:Name="txtConnectionTimeout" Margin="0,5,0,7" Grid.Column="1" Grid.Row="3" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Visibility="Visible" ToolTip="Connection Timeout in seconds">15</TextBox>
+                   
                 </Grid>
             </Expander.Content>
         </Expander>
 
 
-        <!--<Button x:Name="TestConnectionAndSearchRepositories" Margin="5,0,0,0" Click="TestConnectionAndSearchRepositories_Click"  Grid.Row="2" Grid.Column="0" Content="Connect And Search Repositories" Width="490"  HorizontalAlignment="Center"  Style="{StaticResource @InputButtonStyle}" VerticalAlignment="Stretch"/>-->
-        <UserControls:ucButton x:Name="xStopLoadButton" Margin="224,0,218,0" Grid.Row="2" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Center" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="10"  Click="xStopLoadButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed" Width="0"/>
         <UserControls:ucButton x:Name="xConnectButton" Margin="224,0,218,0" Grid.Row="2" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Center" ButtonText="Connect And Search Repositories" ButtonImageType="Search" ButtonFontImageSize="15" ButtonImageWidth="25" ButtonImageHeight="1"  Click="TestConnectionAndSearchRepositories_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Visible" Width="308"/>
 
 
