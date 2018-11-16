@@ -75,9 +75,9 @@ namespace Ginger.SourceControl
                 App.ObjFieldBinding(txtSourceControlConnectionTimeout, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlTimeout);
                 lblControlConnectionTimeout.Visibility = Visibility.Visible;
                 txtSourceControlConnectionTimeout.Visibility = Visibility.Visible;
-                if (App.UserProfile.SolutionSourceControlTimeout == 15)
+                if (App.UserProfile.SolutionSourceControlTimeout == 80)
                 {
-                    txtSourceControlConnectionTimeout.Text = @"15";
+                    txtSourceControlConnectionTimeout.Text = @"80";
                 }
             }
             App.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorName);
@@ -159,9 +159,6 @@ namespace Ginger.SourceControl
             SourceControlIntegration.Init(App.UserProfile.Solution.SourceControl);
         }
 
-        private void txtSourceControlConnectionTimeout_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
+       
     }
 }

@@ -99,7 +99,7 @@
                     <TextBox x:Name="ProxyPortTextBox" Margin="0,5,0,7" Grid.Column="1" Grid.Row="2" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" IsEnabled="false" />
 
                     <Label x:Name="lblConnectionTimeout" Content="Connection Timeout" Margin="0,5,0,0" Grid.Column="0" Grid.Row="3" Style="{StaticResource @InputFieldLabelStyle}" Visibility="Visible" />
-                    <TextBox x:Name="txtConnectionTimeout" Margin="0,5,0,7" Grid.Column="1" Grid.Row="3" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Visibility="Visible" ToolTip="Connection Timeout in seconds">15</TextBox>
+                    <TextBox x:Name="txtConnectionTimeout" Margin="0,5,0,7" Grid.Column="1" Grid.Row="3" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Visibility="Visible" ToolTip="Connection Timeout in seconds">80</TextBox>
                    
                 </Grid>
             </Expander.Content>

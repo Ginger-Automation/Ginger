@@ -97,7 +97,7 @@ namespace Ginger.SourceControl
             else
             {
                 App.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlTimeout);
-                mSourceControl.SourceControlTimeout = 15;
+                mSourceControl.SourceControlTimeout = 80;
             }
             SolutionsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
         }
@@ -140,7 +140,7 @@ namespace Ginger.SourceControl
             GetProjetList();
         }
 
-        private async void GetProjetList()
+        private async Task GetProjetList()
         {
             try
             {
@@ -165,7 +165,6 @@ namespace Ginger.SourceControl
                         return;
                     }
                 
-                await Task.Delay(10000);
                 await Task.Run(() => SourceControlSolutions = SourceControlIntegration.GetProjectsList(mSourceControl)
                 );
                 
@@ -379,7 +378,7 @@ namespace Ginger.SourceControl
         }
 
         
-        private void TestConnectionAndSearchRepositories_Click(object sender, RoutedEventArgs e)
+        private async void TestConnectionAndSearchRepositories_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -398,7 +397,7 @@ namespace Ginger.SourceControl
                     SolutionsGrid.Visibility = Visibility.Visible;
                     SourceControlIntegration.BusyInProcessWhileDownloading = false;
 
-                    GetProjetList();
+                   await GetProjetList();
                 
             }
             catch (Exception ex)
