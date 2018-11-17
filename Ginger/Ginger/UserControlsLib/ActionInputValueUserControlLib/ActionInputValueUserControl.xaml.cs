@@ -74,7 +74,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 this.ValueDataGrid.Visibility = Visibility.Visible;
                 xUCcGrid.Visibility = Visibility.Visible;
                 xUCcGrid.Title = AIV.Param;                
-                ObservableList<dynamic> DynList = mActInputValue.ListStringValue; //  ll.GetList();
+                ObservableList<dynamic> DynList = mActInputValue.ListDynamicValue;
                 DynList.CollectionChanged += ListCollectionChanged;
                 xUCcGrid.DataSourceList = DynList;
                 xUCcGrid.btnAdd.Click += AddItem;
@@ -106,7 +106,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         private void ListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             ObservableList<dynamic> list = (ObservableList<dynamic>)xUCcGrid.DataSourceList;
-            mActInputValue.ListStringValue = list;
+            mActInputValue.ListDynamicValue = list;
         }
 
         void SetListGridView()
