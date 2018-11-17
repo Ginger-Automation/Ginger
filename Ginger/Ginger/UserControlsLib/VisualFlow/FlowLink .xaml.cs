@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -73,8 +74,8 @@ namespace Ginger.UserControlsLib.VisualFlow
         private void GraphEdge_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //TODO: move to Canvas to handle
-            SetHighlight(true);
-            MessageBox.Show("conn click");            
+            SetHighlight(true);                    
+            Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Conn click");
         }
 
         public void Draw()
@@ -135,7 +136,7 @@ namespace Ginger.UserControlsLib.VisualFlow
         private Shape DrawLinkArrow()
         {
             Point p1 = GetP1(); //Point(Source.Margin.Left, Source.Margin.Top);
-            Point p2 = GetP2(); //new Point(Destination.Margin.Left, Destinatio
+            Point p2 = GetP2(); //new Point(Destination.Margin.Left, Destination
 
             GeometryGroup lineGroup = new GeometryGroup();
             double theta = Math.Atan2((p2.Y - p1.Y), (p2.X - p1.X)) * 180 / Math.PI;

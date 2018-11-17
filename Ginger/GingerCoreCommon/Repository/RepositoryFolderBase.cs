@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -17,8 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using System;
 using System.ComponentModel;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -41,6 +45,38 @@ namespace Amdocs.Ginger.Repository
 
         public bool IsRootFolder { get; set; }
 
+        bool mIsFolderExpanded;
+        public bool IsFolderExpanded
+        {
+            get
+            {
+                return mIsFolderExpanded;
+            }
+            set
+            {
+                if(mIsFolderExpanded != value)
+                {
+                    mIsFolderExpanded = value;
+                    OnPropertyChanged(nameof(FolderImageType));
+                }
+            }
+        }
+
+        public eImageType FolderImageType
+        {
+            get
+            {
+                if (IsFolderExpanded)
+                { 
+                    return eImageType.OpenFolder;
+                }
+                else
+                { 
+                    return eImageType.Folder;
+                }
+            }
+        }
+
         public string FolderRelativePath { get; set; }
 
         public string FolderFullPath { get { return SolutionRepository.GetFolderFullPath(FolderRelativePath); } }
@@ -52,7 +88,7 @@ namespace Amdocs.Ginger.Repository
         /// <summary>
         /// if this folders potentially contains Repository Items then will be marked with true
         /// Repo items which need to be upgraded - the XML contains version and we compare with current running version
-        /// if Current Ginger is in higher versin we notify the user for upgrade his solution files
+        /// if Current Ginger is in higher version we notify the user for upgrade his solution files
         /// This flag is used to drill down fast only in folder which have these type of files
         /// Like for the following: BFs, Agents etc...
         /// Folders to mark with false are: folders
@@ -131,6 +167,8 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public abstract ObservableList<RepositoryItemBase> GetFolderRepositoryItems();
 
+        public abstract ObservableList<RepositoryFolderBase> GetSubFoldersAsFolderBase();
+
         public abstract RepositoryFolderBase GetSubFolderByName(string name, bool recursive = false);
 
         /// <summary>
@@ -138,5 +176,53 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         /// <param name="repositoryFolder"></param>
         public abstract void MoveItem(RepositoryItemBase repositoryItem, RepositoryFolderBase repositoryFolder);
+
+        private static ISourceControl SourceControl;
+
+        private eImageType? mSourceControlStatus = eImageType.Null;
+
+        public eImageType? SourceControlStatus
+        {
+            get
+            {
+                if (mSourceControlStatus == eImageType.Null)
+                {
+                    mSourceControlStatus = eImageType.Pending;
+                }
+                return mSourceControlStatus;
+            }
+        }
+
+        public async Task RefreshFolderSourceControlStatus()
+        {
+            if (mSourceControlStatus != eImageType.Null)
+            {
+                mSourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(FolderFullPath).ConfigureAwait(true);
+                OnPropertyChanged(nameof(SourceControlStatus));
+            }
+        }
+
+        /// <summary>
+        /// Refresh source control status of all subfolders and its repository items
+        /// </summary>
+        public void RefreshFolderAndChildElementsSourceControlStatus()
+        {
+            RefreshFolderSourceControlStatus();
+            //sub items
+            foreach (RepositoryItemBase ri in GetFolderRepositoryItems())
+            {
+                ri.RefreshSourceControlStatus();
+            }
+            //sub folders
+            foreach (RepositoryFolderBase subFolder in GetSubFoldersAsFolderBase())
+            {
+                subFolder.RefreshFolderAndChildElementsSourceControlStatus();
+            }
+        }
+
+        public static void SetSourceControl(ISourceControl sourceControl)
+        {
+            SourceControl = sourceControl;
+        }
     }
 }

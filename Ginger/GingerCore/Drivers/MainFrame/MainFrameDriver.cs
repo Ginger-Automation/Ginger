@@ -98,7 +98,7 @@ namespace GingerCore.Drivers.MainFrame
 
         public static partial class Fields
         {
-            public static string CaretIndex = "CaretIndex";
+            public static readonly string CaretIndex = "CaretIndex";
         }
 
         //private string screenText;
@@ -128,9 +128,9 @@ namespace GingerCore.Drivers.MainFrame
             return true;
         }
 
-        public Terminal MFE = null;
+        public Terminal MFE;
 
-        public BusinessFlow mBusinessFlow = null;
+        public BusinessFlow mBusinessFlow;
 
         public MainFrameDriver(BusinessFlow BF)
         {
@@ -145,7 +145,7 @@ namespace GingerCore.Drivers.MainFrame
         private void Launchdriver()
         {
             IsServerAvailable = GingerCore.Common.Utility.IsServerListening(this.HostName, HostPort);
-            if (IsServerAvailable == false)
+            if (!IsServerAvailable)
             {
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.MainframeIncorrectConfiguration);
                 return;
@@ -164,22 +164,20 @@ namespace GingerCore.Drivers.MainFrame
             }
             else
             {
-                if (mDriverWindow != null)
-                {
-                    //not creating window object  unless connection established
+               
                    mDriverWindow = null;
-                }
+                
             }
         }
 
         public new static partial class Fields
         {
-            public static string ScreenText = "ScreenText";
+            public static readonly string ScreenText = "ScreenText";
         }
 
         public override void CloseDriver()
         {
-            if (IsServerAvailable == false)
+            if (!IsServerAvailable)
             {
                 return;
             }
@@ -187,10 +185,12 @@ namespace GingerCore.Drivers.MainFrame
             if (mDriverWindow != null)
             {
                 if (!mDriverWindow.IsClosing)
+                {
                     mDriverWindow.Close();
+                }
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
             }
-            return;
+           
         }
 
         public override void RunAction(Act act)
@@ -207,154 +207,11 @@ namespace GingerCore.Drivers.MainFrame
                 {
                     case "GingerCore.Actions.MainFrame.ActMainframeGetDetails":
 
-                        ActMainframeGetDetails MFGD = (ActMainframeGetDetails)act;
-                        //todo Implement get Type and others
+                      
+                     
 
-                        int locx = -1;
-                        int locy = -1;
-                        switch (MFGD.DetailsToFetch)
-                        {
-                            case ActMainframeGetDetails.eDetailsToFetch.GetText:
-
-                                if (MFGD.LocateBy == eLocateBy.ByCaretPosition)
-                                {
-                                    if (String.IsNullOrEmpty(act.ValueForDriver))
-                                    {
-                                        string MFText = MFE.GetTextatPosition(Int32.Parse(MFGD.LocateValueCalculated), 50);
-                                        MFText = MFText.Split().ElementAt(0).ToString();
-                                        MFGD.AddOrUpdateReturnParamActual("Value", MFText);
-                                    }
-                                    else
-                                    {
-                                        act.AddOrUpdateReturnParamActual("Value", MFE.GetTextatPosition(Int32.Parse(act.LocateValueCalculated), Int32.Parse(act.ValueForDriver)));
-                                    }
-                                }
-                                else if (MFGD.LocateBy == eLocateBy.ByXY)
-                                {
-                                    string XY = MFGD.LocateValueCalculated;
-
-                                    String[] XYSeparated = XY.Split(',');
-
-                                    int x = Int32.Parse(XYSeparated.ElementAt(0));
-                                    int y = Int32.Parse(XYSeparated.ElementAt(1));
-                                    if (x >= Coloumn || y >= Rows)
-                                    {
-                                        throw new Exception("X,Y out of bounds please use X/Y less than Rows/Columns configured in agent");
-                                    }
-                                    if (String.IsNullOrEmpty(act.ValueForDriver))
-                                    {
-                                        string MFText = MFE.GetTextatPosition(x, y, 50);
-                                        MFText = MFText.Split().ElementAt(0).ToString();
-                                        MFGD.AddOrUpdateReturnParamActual("Value", MFText);
-                                    }
-                                    else
-                                    {
-                                        act.AddOrUpdateReturnParamActual("Value", MFE.GetTextatPosition(x, y, Int32.Parse(act.ValueForDriver)));
-                                    }
-                                }
-                                break;
-
-                            case ActMainframeGetDetails.eDetailsToFetch.GetDetailsFromText:
-
-                                String[] MainFrameLines = MFE.screenText.Split('\n');
-                                int instance = 1;
-                                for (int i = 0; i < MainFrameLines.Length; i++)
-                                {
-                                    locx = MainFrameLines[i].IndexOf(MFGD.ValueForDriver);
-                                    if (locx >= 0)
-                                    {
-                                        locy = i;
-                                        if (MFGD.TextInstanceType == ActMainframeGetDetails.eTextInstance.AllInstance)
-                                        {
-                                            if (locy != -1)
-                                            {
-                                                act.AddOrUpdateReturnParamActualWithPath("CaretPosition", (locy * (MFColumns + 1) + locx).ToString(), instance.ToString());
-                                                act.AddOrUpdateReturnParamActualWithPath("X", locx.ToString(), instance.ToString());
-                                                act.AddOrUpdateReturnParamActualWithPath("Y", locy.ToString(), instance.ToString());
-                                            }
-                                        }
-                                        else if (MFGD.TextInstanceType == ActMainframeGetDetails.eTextInstance.InstanceN)
-                                        {
-                                            int k = Int32.Parse(MFGD.TextInstanceNumber);
-                                            if (locy != -1 && instance == k)
-                                            {
-                                                act.AddOrUpdateReturnParamActual("CaretPosition", (locy * (MFColumns + 1) + locx).ToString());
-                                                act.AddOrUpdateReturnParamActual("X", locx.ToString());
-                                                act.AddOrUpdateReturnParamActual("Y", locy.ToString());
-                                                break;
-                                            }
-                                        }
-                                        else if (MFGD.TextInstanceType == ActMainframeGetDetails.eTextInstance.AfterCaretPosition)
-                                        {
-                                            if (Int32.Parse(MFGD.LocateValueCalculated.ToString()) < (locy * (MFColumns + 1) + locx))
-                                            {
-                                                act.AddOrUpdateReturnParamActual("CaretPosition", (locy * (MFColumns + 1) + locx).ToString());
-                                                act.AddOrUpdateReturnParamActual("X", locx.ToString());
-                                                act.AddOrUpdateReturnParamActual("Y", locy.ToString());
-                                                break;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (locy != -1)
-                                            {
-                                                act.AddOrUpdateReturnParamActual("CaretPosition", (locy * (MFColumns + 1) + locx).ToString());
-                                                act.AddOrUpdateReturnParamActual("X", locx.ToString());
-                                                act.AddOrUpdateReturnParamActual("Y", locy.ToString());
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (locy != -1)
-                                        instance++;
-                                }
-
-                                break;
-
-                            case ActMainframeGetDetails.eDetailsToFetch.GetAllEditableFeilds:
-
-                                XmlDocument XD = new XmlDocument();
-                                XmlDeclaration dec = XD.CreateXmlDeclaration("1.0", null, null);
-                                XD.AppendChild(dec);
-                                XmlElement root = XD.CreateElement("EditableFields");
-                                XD.AppendChild(root);
-
-                                string CaretValuePair = @"<?xml version='1.0' encoding='UTF-8'?><nodes>";
-
-                                XMLScreen XC = MFE.GetScreenAsXML();
-                                foreach (XMLScreenField XSF in XC.Fields)
-                                {
-                                    if (XSF.Attributes.Protected == true)
-                                        continue;
-                                    string node = "<node caret=\"" + XSF.Location.position.ToString() + "\" text=\"" + XSF.Text + "\"> </node>";
-                                   
-                                    CaretValuePair = CaretValuePair + node;
-
-                                    XmlElement EditableField = XD.CreateElement("EditableField");
-                                    EditableField.SetAttribute("Caret", XSF.Location.position.ToString());
-                                    EditableField.SetAttribute("Text", XSF.Text);
-                                    root.AppendChild(EditableField);
-                                }
-
-                                act.AddOrUpdateReturnParamActual("Fields", XD.OuterXml);
-
-                                break;
-
-                            case ActMainframeGetDetails.eDetailsToFetch.GetCurrentScreenAsXML:
-
-                                Open3270.TN3270.XMLScreen XMLS = MFE.GetScreenAsXML();
-                                System.Xml.Serialization.XmlSerializer xsSubmit = new System.Xml.Serialization.XmlSerializer(typeof(Open3270.TN3270.XMLScreen));
-                                System.IO.StringWriter sww = new System.IO.StringWriter();
-                                System.Xml.XmlWriter writer = System.Xml.XmlWriter.Create(sww);
-
-                                xsSubmit.Serialize(writer, XMLS);
-                                String ScreenXML = sww.ToString(); // Your XML
-
-                                act.AddOrUpdateReturnParamActual("ScreenXML", ScreenXML);
-
-                                break;
-                               
-                        }
+                        PerformActMainframeGetDetails(act);
+                        
                         break;
 
                     case "GingerCore.Actions.MainFrame.ActMainframeSendKey":
@@ -363,65 +220,14 @@ namespace GingerCore.Drivers.MainFrame
                         break;
 
                     case "GingerCore.Actions.MainFrame.ActMainframeSetText":
-                        ActMainframeSetText MFST = (ActMainframeSetText)act;
+               
 
-                        switch (MFST.SetTextMode)
-                        {
-                            case ActMainframeSetText.eSetTextMode.SetSingleField:
-                                if (MFST.LocateBy == eLocateBy.ByXY)
-                                {
-                                    string XY = MFST.LocateValueCalculated;
-
-                                    String[] XYSeparated = XY.Split(',');
-
-                                    int x = Int32.Parse(XYSeparated.ElementAt(0));
-                                    int y = Int32.Parse(XYSeparated.ElementAt(1));
-                                    if (x >= Coloumn || y >= Rows)
-                                    {
-                                        throw new Exception("X,Y out of bounds please use X/Y less than Rows/Columns configured in agent");
-                                    }
-                                    MFE.SetCaretIndex(x, y);
-                                }
-                                else
-                                {
-                                    MFE.SetCaretIndex(Int32.Parse(act.LocateValueCalculated));
-                                }
-
-                                MFE.SendText(act.ValueForDriver);
-
-                                break;
-
-                            case ActMainframeSetText.eSetTextMode.SetMultipleFields:
-
-                                if (MFST.ReloadValue)
-                                    MFST.LoadCaretValueList();
-                                foreach (ActInputValue AIV in MFST.CaretValueList)
-                                {
-                                    MFE.SetCaretIndex(Int32.Parse(AIV.Param));
-                                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
-                                    VE.Value = AIV.Value;
-                                    MFE.SendText(VE.ValueCalculated);
-                                }
-
-                                break;
-                        }
-                        if (MFST.SendAfterSettingText)
-                        {
-                            mDriverWindow.Refresh();
-                            try
-                            {
-                                Thread.Sleep(DelayBwSetTextandSend * 1000);
-                            }
-                            catch
-                            {
-                                Thread.Sleep(3000);
-                            }
-                            MFE.SendKey(TnKey.Enter);
-                        }
+                        PerformActMainframeSetText(act);
+                       
                         break;
 
                     default:
-                        throw new Exception("Action not Implemented");
+                        throw new NotSupportedException("Action not Implemented");
                 }
 
                 mDriverWindow.Refresh();
@@ -432,6 +238,250 @@ namespace GingerCore.Drivers.MainFrame
                 act.ExInfo = e.Message;
             }
         }
+
+        private void PerformActMainframeGetDetails(Act act)
+        {
+            ActMainframeGetDetails MFGD = (ActMainframeGetDetails)act;
+            //todo Implement get Type and others
+
+          
+            switch (MFGD.DetailsToFetch)
+            {
+                case ActMainframeGetDetails.eDetailsToFetch.GetText:
+
+                    ActMainFrameGetText(act);
+
+                    break;
+
+                case ActMainframeGetDetails.eDetailsToFetch.GetDetailsFromText:
+
+                    MainframeGetDetailsFromText(act);
+                    break;
+
+                case ActMainframeGetDetails.eDetailsToFetch.GetAllEditableFeilds:
+
+                    XmlDocument XD = new XmlDocument();
+                    XmlDeclaration dec = XD.CreateXmlDeclaration("1.0", null, null);
+                    XD.AppendChild(dec);
+                    XmlElement root = XD.CreateElement("EditableFields");
+                    XD.AppendChild(root);
+
+                    string CaretValuePair = @"<?xml version='1.0' encoding='UTF-8'?><nodes>";
+
+                    XMLScreen XC = MFE.GetScreenAsXML();
+                    foreach (XMLScreenField XSF in XC.Fields)
+                    {
+                        if (XSF.Attributes.Protected)
+                        {
+                            continue;
+                        }
+                        string node = "<node caret=\"" + XSF.Location.position.ToString() + "\" text=\"" + XSF.Text + "\"> </node>";
+
+                        CaretValuePair = CaretValuePair + node;
+
+                        XmlElement EditableField = XD.CreateElement("EditableField");
+                        EditableField.SetAttribute("Caret", XSF.Location.position.ToString());
+                        EditableField.SetAttribute("Text", XSF.Text);
+                        root.AppendChild(EditableField);
+                    }
+
+                    act.AddOrUpdateReturnParamActual("Fields", XD.OuterXml);
+
+                    break;
+
+                case ActMainframeGetDetails.eDetailsToFetch.GetCurrentScreenAsXML:
+
+                    Open3270.TN3270.XMLScreen XMLS = MFE.GetScreenAsXML();
+                    System.Xml.Serialization.XmlSerializer xsSubmit = new System.Xml.Serialization.XmlSerializer(typeof(Open3270.TN3270.XMLScreen));
+                    System.IO.StringWriter sww = new System.IO.StringWriter();
+                    System.Xml.XmlWriter writer = System.Xml.XmlWriter.Create(sww);
+
+                    xsSubmit.Serialize(writer, XMLS);
+                    String ScreenXML = sww.ToString(); // Your XML
+
+                    act.AddOrUpdateReturnParamActual("ScreenXML", ScreenXML);
+
+                    break;
+                default:
+                    throw new NotSupportedException("The action is not supporte yet");
+             
+
+            }
+
+
+        }
+
+        private void MainframeGetDetailsFromText(Act act)
+        {
+            ActMainframeGetDetails MFGD = (ActMainframeGetDetails)act;
+            int locx;
+            int locy = -1;
+            String[] MainFrameLines = MFE.screenText.Split('\n');
+            int instance = 1;
+            for (int i = 0; i < MainFrameLines.Length; i++)
+            {
+                locx = MainFrameLines[i].IndexOf(MFGD.ValueForDriver);
+                if (locx >= 0)
+                {
+                    locy = i;
+                    if (MFGD.TextInstanceType == ActMainframeGetDetails.eTextInstance.AllInstance)
+                    {
+                        if (locy != -1)
+                        {
+                            act.AddOrUpdateReturnParamActualWithPath("CaretPosition", (locy * (MFColumns + 1) + locx).ToString(), instance.ToString());
+                            act.AddOrUpdateReturnParamActualWithPath("X", locx.ToString(), instance.ToString());
+                            act.AddOrUpdateReturnParamActualWithPath("Y", locy.ToString(), instance.ToString());
+                        }
+                    }
+                    else if (MFGD.TextInstanceType == ActMainframeGetDetails.eTextInstance.InstanceN)
+                    {
+                        int k = Int32.Parse(MFGD.TextInstanceNumber);
+                        if (locy != -1 && instance == k)
+                        {
+                            act.AddOrUpdateReturnParamActual("CaretPosition", (locy * (MFColumns + 1) + locx).ToString());
+                            act.AddOrUpdateReturnParamActual("X", locx.ToString());
+                            act.AddOrUpdateReturnParamActual("Y", locy.ToString());
+                            break;
+                        }
+                    }
+                    else if (MFGD.TextInstanceType == ActMainframeGetDetails.eTextInstance.AfterCaretPosition)
+                    {
+                        if (Int32.Parse(MFGD.LocateValueCalculated.ToString()) < (locy * (MFColumns + 1) + locx))
+                        {
+                            act.AddOrUpdateReturnParamActual("CaretPosition", (locy * (MFColumns + 1) + locx).ToString());
+                            act.AddOrUpdateReturnParamActual("X", locx.ToString());
+                            act.AddOrUpdateReturnParamActual("Y", locy.ToString());
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (locy != -1)
+                        {
+                            act.AddOrUpdateReturnParamActual("CaretPosition", (locy * (MFColumns + 1) + locx).ToString());
+                            act.AddOrUpdateReturnParamActual("X", locx.ToString());
+                            act.AddOrUpdateReturnParamActual("Y", locy.ToString());
+                            break;
+                        }
+                    }
+                }
+                if (locy != -1)
+                {
+                    instance++;
+                }
+            }
+
+        }
+
+        private void PerformActMainframeSetText(Act act)
+        {
+            ActMainframeSetText MFST = (ActMainframeSetText)act;
+            switch (MFST.SetTextMode)
+            {
+                case ActMainframeSetText.eSetTextMode.SetSingleField:
+                    if (MFST.LocateBy == eLocateBy.ByXY)
+                    {
+                        string XY = MFST.LocateValueCalculated;
+
+                        String[] XYSeparated = XY.Split(',');
+
+                        int x = Int32.Parse(XYSeparated.ElementAt(0));
+                        int y = Int32.Parse(XYSeparated.ElementAt(1));
+                        if (x >= Coloumn || y >= Rows)
+                        {
+                            throw new ArgumentOutOfRangeException("X,Y out of bounds please use X/Y less than Rows/Columns configured in agent");
+                        }
+                        MFE.SetCaretIndex(x, y);
+                    }
+                    else
+                    {
+                        MFE.SetCaretIndex(Int32.Parse(act.LocateValueCalculated));
+                    }
+
+                    MFE.SendText(act.ValueForDriver);
+
+                    break;
+
+                case ActMainframeSetText.eSetTextMode.SetMultipleFields:
+
+                    if (MFST.ReloadValue)
+                    {
+                        MFST.LoadCaretValueList();
+                    }
+                    foreach (ActInputValue AIV in MFST.CaretValueList)
+                    {
+                        MFE.SetCaretIndex(Int32.Parse(AIV.Param));
+                        ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                        VE.Value = AIV.Value;
+                        MFE.SendText(VE.ValueCalculated);
+                    }
+
+                    break;
+                default:
+                    throw new NotSupportedException("This action is not implemented yet");
+            }
+            if (MFST.SendAfterSettingText)
+            {
+                mDriverWindow.Refresh();
+                try
+                {
+                    Thread.Sleep(DelayBwSetTextandSend * 1000);
+                }
+                catch
+                {
+                    Thread.Sleep(3000);
+                }
+                MFE.SendKey(TnKey.Enter);
+            }
+        }
+
+        private void ActMainFrameGetText(Act act)
+        {
+            ActMainframeGetDetails MFGD = (ActMainframeGetDetails)act;
+            if (MFGD.LocateBy == eLocateBy.ByCaretPosition)
+            {
+                if (String.IsNullOrEmpty(act.ValueForDriver))
+                {
+                    string MFText = MFE.GetTextatPosition(Int32.Parse(MFGD.LocateValueCalculated), 50);
+                    MFText = MFText.Split().ElementAt(0).ToString();
+                    MFGD.AddOrUpdateReturnParamActual("Value", MFText);
+                }
+                else
+                {
+                    act.AddOrUpdateReturnParamActual("Value", MFE.GetTextatPosition(Int32.Parse(act.LocateValueCalculated), Int32.Parse(act.ValueForDriver)));
+                }
+            }
+            else if (MFGD.LocateBy == eLocateBy.ByXY)
+            {
+                string XY = MFGD.LocateValueCalculated;
+
+                String[] XYSeparated = XY.Split(',');
+
+                int x = Int32.Parse(XYSeparated.ElementAt(0));
+                int y = Int32.Parse(XYSeparated.ElementAt(1));
+                if (x >= Coloumn || y >= Rows)
+                {
+                    throw new ArgumentOutOfRangeException("X,Y out of bounds please use X/Y less than Rows/Columns configured in agent");
+                }
+                if (String.IsNullOrEmpty(act.ValueForDriver))
+                {
+                    string MFText = MFE.GetTextatPosition(x, y, 50);
+                    MFText = MFText.Split().ElementAt(0).ToString();
+                    MFGD.AddOrUpdateReturnParamActual("Value", MFText);
+                }
+                else
+                {
+                    act.AddOrUpdateReturnParamActual("Value", MFE.GetTextatPosition(x, y, Int32.Parse(act.ValueForDriver)));
+                }
+            }
+            else
+            {
+                throw new NotSupportedException("Locater type is not supported for this action");
+            }
+
+        }
+
+    
 
         public override Actions.Act GetCurrentElement()
         {
@@ -507,7 +557,7 @@ namespace GingerCore.Drivers.MainFrame
             AppWinList.Add(AppWin);
             return AppWinList;
         }
-
+       
         public void SwitchWindow(string Title)
         {
             
@@ -557,8 +607,10 @@ namespace GingerCore.Drivers.MainFrame
             //already verified  that server is available
             bool status = MFE.Connect();
 
-            if (status != true)
-                return status;
+            if (!status)
+            {
+                return false;
+            }
             //window object will be created after successful connection
           
             int i = 0;
@@ -603,7 +655,9 @@ namespace GingerCore.Drivers.MainFrame
 
             MFE.SendText(CommandText);
             if (SendEnter)
+            {
                 MFE.SendKey(TnKey.Enter);
+            }
             return true;
         }
 
@@ -652,7 +706,6 @@ namespace GingerCore.Drivers.MainFrame
 
         public void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
-            return;
         }
 
         ElementInfo IWindowExplorer.GetControlFromMousePosition()
@@ -660,7 +713,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public System.Collections.Generic.List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        public System.Collections.Generic.List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
 
@@ -673,10 +726,12 @@ namespace GingerCore.Drivers.MainFrame
                 {
                     EI.ElementType = "Password";
                 }
-                if (xf.Attributes.Protected == true)
+                if (xf.Attributes.Protected)
                 {
                     if (xf.Attributes.FieldType == "High")
+                    {
                         EI.ElementType = "High";
+                    }
                 }
                 Eil.Add(EI);
             }
@@ -733,7 +788,7 @@ namespace GingerCore.Drivers.MainFrame
         }
 
 
-        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
         }

@@ -39,13 +39,14 @@ using System.Windows.Threading;
 using System.Xml;
 using GingerCore.DataSource;
 using System.Reflection;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore
 {
     public class General
     {
         public static void LoadGenericWindow(ref GenericWindow genWindow, System.Windows.Window owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage,
-                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", EventHandler closeEventHandler = null, bool startupLocationWithOffset=false)
+                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset=false)
         {
             genWindow = null;
             eWindowShowStyle winStyle;
@@ -593,7 +594,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
                 return false;
             }
 
@@ -618,7 +619,7 @@ namespace GingerCore
             }
             catch(IOException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
             }
             
         }
@@ -1065,7 +1066,7 @@ namespace GingerCore
                     if (!RegistryFunctions.CheckRegistryValueExist(eRegistryRoot.HKEY_CURRENT_USER, registryKeyPath,
                                     requiredValueName, requiredValue, Microsoft.Win32.RegistryValueKind.DWord, true, true))
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_BROWSER_EMULATION' value to both Local Machine and User level");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_BROWSER_EMULATION' value to both Local Machine and User level");
                     }
                 }
                 //End
@@ -1086,18 +1087,25 @@ namespace GingerCore
                     if (!RegistryFunctions.CheckRegistryValueExist(eRegistryRoot.HKEY_CURRENT_USER, registryKeyPath,
                                 requiredValueName, requiredValue, Microsoft.Win32.RegistryValueKind.DWord, true, true))
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_SCRIPTURL_MITIGATION' value to both Local Machine and User level");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to add the required registry key 'FEATURE_SCRIPTURL_MITIGATION' value to both Local Machine and User level");
                     }
                 }
                 //End
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to complete the registry values check", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to complete the registry values check", ex);
                 Reporter.ToUser(eUserMsgKeys.RegistryValuesCheckFailed);
             }
         }
 
+        public static string[] ReturnFilesWithDesiredExtension(string filepath, string extension)
+        {
+            string[] fileEntries = Directory.EnumerateFiles(filepath, "*.*", SearchOption.AllDirectories)
+                    .Where(s => s.ToLower().EndsWith(extension)).ToArray();
+            
+                return fileEntries;
+        }
         public static ObservableList<T> ConvertListToObservableList<T>(List<T> List)
         {
             ObservableList<T> ObservableList = new ObservableList<T>();
@@ -1154,8 +1162,8 @@ namespace GingerCore
             {
                 if (DataSource.FileFullPath.StartsWith("~"))
                 {
-                    DataSource.FileFullPath = DataSource.FileFullPath.Replace("~", "");
-                    DataSource.FileFullPath = DataSource.ContainingFolderFullPath.Replace("DataSources", "") + DataSource.FileFullPath;
+                    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
+                    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
                 }
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();

@@ -21,6 +21,6 @@ namespace GingerWPF.WizardLib
 {
     public interface IWizardPage
     {
-        void WizardEvent(WizardEventArgs WizardEventArgs);
+        void WizardEvent(WizardEventArgs WizardEventArgs);       
     }
 }

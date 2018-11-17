@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Plugin.Core;
 using Ginger.UserControlsLib.TextEditor.Common;
 using GingerCore;
+using GingerPlugIns.TextEditorLib;
 using GingerWPF.DragDropLib;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Folding;
@@ -168,6 +169,11 @@ namespace Ginger.UserControlsLib.TextEditor
         {
             mTextEditor = TextEditor;
 
+            if (mTextEditor is ITextEditor)
+            {
+                ((ITextEditor)mTextEditor).TextHandler = this;
+            }
+
             //TODO: put it in general func
             string SolutionPath = FileName.Replace(App.UserProfile.Solution.Folder, "~");
             lblTitle.Content = SolutionPath;
@@ -190,9 +196,15 @@ namespace Ginger.UserControlsLib.TextEditor
             }
 
             this.FileName = FileName;
-            if(!string.IsNullOrEmpty(this.FileName))
+            if (!string.IsNullOrEmpty(this.FileName) && File.Exists(this.FileName))
+            {
                 textEditor.Load(this.FileName);
-            
+            }
+            else
+            { 
+                textEditor.Clear();
+            }
+
             textEditor.ShowLineNumbers = true;
 
             //TODO: highlight current line;
@@ -239,12 +251,52 @@ namespace Ginger.UserControlsLib.TextEditor
             {
                 foreach (ITextEditorToolBarItem t in TE.Tools)
                 {
-                    AddToolbarTool(t);
+                    if (t is TextEditorToolBarItem)
+                    {
+                        TextEditorToolBarItem textEditorToolBarItem = (TextEditorToolBarItem)t;
+                        AddToolbarTool(textEditorToolBarItem.Image, textEditorToolBarItem.clickHandler, textEditorToolBarItem.toolTip, textEditorToolBarItem.toolVisibility);
+                    }
+                    else
+                    {
+                        // Plugin text editor
+                        AddPluginToolbarTool(t);
+                    }
+                    
                 }
             }
         }
 
-        //TODO: looks liek too many calls, even the the caret didn't move, can first check if pos cheanged otherwise return - keep last
+        public void AddPluginToolbarTool(ITextEditorToolBarItem t)
+        {
+            Button tool = new Button();            
+            tool.ToolTip = t.ToolTip;
+            tool.Content = t.ToolText;
+            tool.Tag = t;            
+            tool.Click += ToolBarItemClick;
+            
+
+            //To keep the tools before the search control we do remove and then add
+            //DO NOT Delete
+            // toolbar.Items.Remove(lblSearch);
+            //  toolbar.Items.Remove(txtSearch);
+            //  toolbar.Items.Remove(btnClearSearch);
+            toolbar.Items.Remove(lblView);
+            toolbar.Items.Remove(comboView);
+            toolbar.Items.Add(tool);
+            //   toolbar.Items.Add(lblSearch);
+            //   toolbar.Items.Add(txtSearch);
+            //   toolbar.Items.Add(btnClearSearch);
+            toolbar.Items.Add(lblView);
+            toolbar.Items.Add(comboView);
+        }
+
+        private void ToolBarItemClick(object sender, RoutedEventArgs e)
+        {
+            ITextEditorToolBarItem tool = (ITextEditorToolBarItem)((Button)sender).Tag;              
+            tool.Execute((ITextEditor)mTextEditor);
+        }
+
+        //TODO: looks liek too many calls, even the the caret didn't move, can first check if pos changed otherwise return - keep last
         private void Caret_PositionChanged(object sender, EventArgs e)
         {                                       
             SelectedContentArgs args = new SelectedContentArgs();
@@ -330,21 +382,14 @@ namespace Ginger.UserControlsLib.TextEditor
             return NewImage;
         }
 
-        public void AddToolbarTool(ITextEditorToolBarItem t)
+        public void AddToolbarTool(Image image, ToolClickRoutedEventHandler clickHandler, string toolTip = "", Visibility toolVisibility = Visibility.Visible)
         {
-            Button button = new Button();
-            button.Visibility = Visibility.Visible; // toolVisibility;
-            button.ToolTip = t.ToolTip;
-            //if (t.image != null)
-            //{ 
-            //    button.Content = CreateCopyImage(image);
-            //}
-            //else
-            //{
-            button.Content = t.ToolText;
-            //}
-            button.Click += ToolBarButtonClick;
-            button.Tag = t;
+            Button tool = new Button();
+            tool.Visibility = toolVisibility;
+            tool.ToolTip = toolTip;            
+            tool.Content = CreateCopyImage(image);
+            tool.Click += ToolBarButtonClick;
+            tool.Tag = clickHandler;
 
             //To keep the tools before the search control we do remove and then add
             //DO NOT Delete
@@ -353,7 +398,7 @@ namespace Ginger.UserControlsLib.TextEditor
           //  toolbar.Items.Remove(btnClearSearch);
             toolbar.Items.Remove(lblView);
             toolbar.Items.Remove(comboView);
-            toolbar.Items.Add(button);
+            toolbar.Items.Add(tool);
          //   toolbar.Items.Add(lblSearch);
          //   toolbar.Items.Add(txtSearch);
          //   toolbar.Items.Add(btnClearSearch);
@@ -361,42 +406,35 @@ namespace Ginger.UserControlsLib.TextEditor
             toolbar.Items.Add(comboView);
         }
 
-        public ITextEditor PluginTextEditor { get; set; }
-
         private void ToolBarButtonClick(object sender, RoutedEventArgs e)
         {
             // Call the text editor event which added this button, giving him all the data in args
             // since it can be implemented also as Plugin we need to avoid passing Avalon objects
 
-            ITextEditorToolBarItem t = (ITextEditorToolBarItem)((Button)sender).Tag;
+            ToolClickRoutedEventHandler clickHandler = (ToolClickRoutedEventHandler)((Button)sender).Tag;
+            TextEditorToolRoutedEventArgs args = new TextEditorToolRoutedEventArgs();
 
-            
-            t.Execute(PluginTextEditor);
-
-            // ToolClickRoutedEventHandler clickHandler = (ToolClickRoutedEventHandler)((Button)sender).Tag;
-            // TextEditorToolRoutedEventArgs args = new TextEditorToolRoutedEventArgs();
-
-            // args.CaretLocation = textEditor.CaretOffset;
-            //args.txt = textEditor.Text;
-           // clickHandler.Invoke(args);
-            // textEditor.Text = args.txt;
+            args.CaretLocation = textEditor.CaretOffset;
+            args.txt = textEditor.Text;
+            clickHandler.Invoke(args);
+            textEditor.Text = args.txt;
 
             BackgroundRenderer.Segments.Clear();
-           // if (!string.IsNullOrEmpty(args.ErrorMessage))
-           // {
-           //     Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, args.ErrorMessage);
+            if (!string.IsNullOrEmpty(args.ErrorMessage))
+            {
+                Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, args.ErrorMessage);
 
-           //     if (args.ErrorLines != null)
-           //         AddSegments(args.ErrorLines);               
-           // }
-           //else if (!string.IsNullOrEmpty(args.SuccessMessage))//succ
-           // {
-           //     Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, args.SuccessMessage);
-           // }
-           // else if (!string.IsNullOrEmpty(args.WarnMessage))//warn
-           // {
-           //     Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, args.WarnMessage);
-           // }
+                if (args.ErrorLines != null)
+                    AddSegments(args.ErrorLines);               
+            }
+           else if (!string.IsNullOrEmpty(args.SuccessMessage))//succ
+            {
+                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, args.SuccessMessage);
+            }
+            else if (!string.IsNullOrEmpty(args.WarnMessage))//warn
+            {
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, args.WarnMessage);
+            }
         }
 
         private void AddSegments(List<int> linesNumbers)
@@ -467,9 +505,7 @@ namespace Ginger.UserControlsLib.TextEditor
             get { return UpdateButton.Content.ToString(); }
             set { UpdateButton.Content = value; }
         }
-
         
-
         private void UpdateButton_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if(UpdateButton.Visibility == Visibility.Visible)
@@ -483,34 +519,34 @@ namespace Ginger.UserControlsLib.TextEditor
             Save();
         }
 
-        #region ITextHandler
-
         public string Text { get { return textEditor.Text; } set { textEditor.Text = value; } }
 
         public int CaretLocation { get { return textEditor.CaretOffset; } set { textEditor.CaretOffset = value; } }
 
-        
-        public void ShowMessage(MessageType messageType, string text)
-        {
-            MessageBox.Show(text);
-        }
-
         public void AppendText(string text)
-        {            
-            textEditor.AppendText(text);
-        }
-
-        public void InstertText(string text)
         {
-            throw new NotImplementedException();
+            textEditor.AppendText(text);            
         }
 
         public void InsertText(string text)
         {
-
-            textEditor.Text = textEditor.Text.Substring(0, textEditor.CaretOffset) + text + textEditor.Text.Substring(textEditor.CaretOffset);
+            throw new NotImplementedException();
         }
 
-        #endregion ITextHandler
+        public void ShowMessage(MessageType messageType, string text)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetContentEditorTitleLabel(string titleContent, Style titleStyle=null)
+        {
+            lblTitle.Visibility = Visibility.Collapsed;
+            ContentEditorTitleLabel.Visibility = Visibility.Visible;
+            ContentEditorTitleLabel.Content = titleContent;
+            if (titleStyle != null)
+            {
+                ContentEditorTitleLabel.Style = titleStyle;
+            }
+        }
     }
 }

@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using GingerCore;
 using GingerCoreNET.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
@@ -64,6 +65,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             if (WizardEventArgs.EventType == EventType.Init)
             {
                 xApisSelectionGrid.ValidationRules.Add(Ginger.ucGrid.eUcGridValidationRules.CantBeEmpty);
+                AddAPIModelWizard = ((AddAPIModelWizard)WizardEventArgs.Wizard);
+                WSDLP = AddAPIModelWizard.mWSDLParser;
             }
             else if (WizardEventArgs.EventType == EventType.Prev)
             {
@@ -72,36 +75,22 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     PrevURL = AddAPIModelWizard.URL;
                     WSDLP.mStopParsing = true;
                 }
-
-                // AddAPIModelWizard.ProcessEnded();
+                
             }
             else if (WizardEventArgs.EventType == EventType.Cancel)
             {
                 if (WSDLP != null && AddAPIModelWizard != null)
                 {
                     WSDLP.mStopParsing = true;
-                    // AddAPIModelWizard.ProcessStarted = Visibility.Collapsed;
                 }
             }
             else if (WizardEventArgs.EventType == EventType.Active)
             {
                 if (WizardEventArgs != null)
                 {
-                    AddAPIModelWizard = ((AddAPIModelWizard)WizardEventArgs.Wizard);
-                    //AddAPIModelWizard.FinishEnabled = false;
-                    //AddAPIModelWizard.NextEnabled = false;
-                    //WizardEventArgs.IgnoreDefaultNextButtonSettings = true;
                     Parse();
                 }
             }
-            //else if (WizardEventArgs.EventType == EventType.LeavingForNextPage)
-            //{
-            //    if (AddAPIModelWizard.AAMList != null)
-            //    {
-            //        ObservableList<ApplicationAPIModel> List = General.ConvertListToObservableList(AddAPIModelWizard.AAMList.Where(x => x.IsSelected == true).ToList());
-            //        AddAPIModelWizard.SelectedAAMList = List;
-            //    }
-            //}
         }
 
         private async void Parse()
@@ -139,13 +128,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 }
 
                 AddAPIModelWizard.IsParsingWasDone = parseSuccess;
-                //if (parseSuccess)
-                  //  AddAPIModelWizard.NextEnabled = true;
             }
-            //else
-            //{
-            //    // AddAPIModelWizard.NextEnabled = true;
-            //}
         }
 
         private async Task<bool> ShowSwaggerOperations()
@@ -153,27 +136,20 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             AddAPIModelWizard.ProcessStarted(); 
             bool parseSuccess = true;
             SwaggerParser SwaggerPar = new SwaggerParser();
-            ObservableList<ApplicationAPIModel> AAMTempList = new ObservableList<ApplicationAPIModel>();
-            ObservableList<ApplicationAPIModel> AAMCompletedList = new ObservableList<ApplicationAPIModel>();
+            AddAPIModelWizard.AAMList = new ObservableList<ApplicationAPIModel>();
+            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMList;
 
 
-           
-                try
+            try
                 {
-                    AAMTempList = await Task.Run(() => SwaggerPar.ParseDocument(AddAPIModelWizard.URL));
-                    AAMCompletedList=AAMTempList;
+                    await Task.Run(() => SwaggerPar.ParseDocument(AddAPIModelWizard.URL, AddAPIModelWizard.AAMList));
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "Failed to Parse the Swagger File" + AddAPIModelWizard.URL, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
+                {               
+                    Reporter.ToUser(eUserMsgKeys.ParsingError, "Failed to Parse the Swagger File" + AddAPIModelWizard.URL);
                     GingerCoreNET.ReporterLib.Reporter.ToLog(GingerCoreNET.ReporterLib.eLogLevel.ERROR, "Error Details: " + ex.Message + " Failed to Parse the Swagger file " + AddAPIModelWizard.URL);
                     parseSuccess = false;
                 }
-            
-
-            AddAPIModelWizard.AAMList = AAMCompletedList;
-            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMList;
-            // AddAPIModelWizard.FinishEnabled = false;
             AddAPIModelWizard.ProcessEnded();
 
             return parseSuccess;
@@ -187,18 +163,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             XMLTemplateParser WSDLP = new XMLTemplateParser();
             ObservableList<ApplicationAPIModel> AAMTempList = new ObservableList<ApplicationAPIModel>();
             ObservableList<ApplicationAPIModel> AAMCompletedList = new ObservableList<ApplicationAPIModel>();
+
+
             foreach (TemplateFile XTF in AddAPIModelWizard.XTFList)
             {
                 try
                 {
-                    AAMTempList = await Task.Run(() => WSDLP.ParseDocument(XTF.FilePath, AddAPIModelWizard.AvoidDuplicatesNodes));
+                    AAMTempList = await Task.Run(() => WSDLP.ParseDocument(XTF.FilePath, AAMCompletedList, AddAPIModelWizard.AvoidDuplicatesNodes));
                     if (!string.IsNullOrEmpty(XTF.MatchingResponseFilePath))
-                        AAMTempList[0].ReturnValues = await Task.Run(() => APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath)); 
-                    AAMCompletedList.Add(AAMTempList[0]);
+                        AAMTempList.Last().ReturnValues = await Task.Run(() => APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath)); 
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "Failed to Parse the XML" + XTF.FilePath, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
+                {                   
+                    Reporter.ToUser(eUserMsgKeys.ParsingError, "Failed to Parse the XML" + XTF.FilePath);
                     GingerCoreNET.ReporterLib.Reporter.ToLog(GingerCoreNET.ReporterLib.eLogLevel.ERROR, "Error Details: " + ex.Message + "Failed to Parse the XML" + XTF.FilePath);
                     parseSuccess = false;
                 }
@@ -206,7 +183,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             AddAPIModelWizard.AAMList = AAMCompletedList;
             xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMList;
-            // AddAPIModelWizard.FinishEnabled = false;
             AddAPIModelWizard.ProcessEnded();
 
             return parseSuccess;
@@ -223,14 +199,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 try
                 {
-                    AAMTempList = await Task.Run(() => JsonTemplate.ParseDocument(XTF.FilePath, AddAPIModelWizard.AvoidDuplicatesNodes));
+                    AAMTempList = await Task.Run(() => JsonTemplate.ParseDocument(XTF.FilePath, AAMCompletedList, AddAPIModelWizard.AvoidDuplicatesNodes));
                     if (!string.IsNullOrEmpty(XTF.MatchingResponseFilePath))
-                        AAMTempList[0].ReturnValues = await Task.Run(() => APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath));
-                    AAMCompletedList.Add(AAMTempList[0]);
+                        AAMTempList.Last().ReturnValues = await Task.Run(() => APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath));
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "Failed to Parse the JSon" + XTF.FilePath, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.ParsingError, "Failed to Parse the JSon" + XTF.FilePath);
                     GingerCoreNET.ReporterLib.Reporter.ToLog(GingerCoreNET.ReporterLib.eLogLevel.ERROR,"Error Details: " + ex.Message + " Failed to Parse the JSon " + XTF.FilePath);
                     parseSuccess = false;
                 }
@@ -238,7 +213,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             AddAPIModelWizard.AAMList = AAMCompletedList;
             xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMList;
-            // AddAPIModelWizard.FinishEnabled = false;
 
             return parseSuccess;
         }
@@ -246,21 +220,21 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         private async Task<bool> ShowWSDLOperations()
         {
             bool parseSuccess = true;
+
             AddAPIModelWizard.ProcessStarted();
-            ObservableList<ApplicationAPIModel> AAMSList = new ObservableList<ApplicationAPIModel>();
+            AddAPIModelWizard.AAMList = new ObservableList<ApplicationAPIModel>();
+            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMList;
             try
             {
-                AAMSList = await Task.Run(() => WSDLP.ParseDocument(AddAPIModelWizard.URL));
+               await Task.Run(() => WSDLP.ParseDocument(AddAPIModelWizard.URL, AddAPIModelWizard.AAMList, false));
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error Details:" + Environment.NewLine + ex.Message, "Failed to Parse the WSDL", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error, System.Windows.MessageBoxResult.None);
+                Reporter.ToUser(eUserMsgKeys.ParsingError, "Failed to Parse the WSDL");
                 parseSuccess = false;
             }
 
             AddAPIModelWizard.ProcessEnded();
-            AddAPIModelWizard.AAMList = AAMSList;
-            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMList;
 
             return parseSuccess;
         }
@@ -275,12 +249,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     AAMB.IsSelected = ActiveStatus;
                 }
-
-                //if(ActiveStatus == false)
-                //    AddAPIModelWizard.NextEnabled = false;
-                //else
-                //    AddAPIModelWizard.NextEnabled = true;
-
                 xApisSelectionGrid.DataSourceList = lstMarkUnMarkAPI;
             }
         }
@@ -316,11 +284,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void IsSelected_FieldSelection_Click(object sender, RoutedEventArgs e)
         {
-            ObservableList<ApplicationAPIModel> CheckedList = General.ConvertListToObservableList(AddAPIModelWizard.AAMList.Where(x => x.IsSelected == true).ToList());
-            //if(CheckedList.Count > 0)
-            //    AddAPIModelWizard.NextEnabled = true;
-            //else
-            //    AddAPIModelWizard.NextEnabled = false;
-        }
+            ObservableList<ApplicationAPIModel> CheckedList = GingerCore.General.ConvertListToObservableList(AddAPIModelWizard.AAMList.Where(x => x.IsSelected == true).ToList());
+        }        
     }
 }

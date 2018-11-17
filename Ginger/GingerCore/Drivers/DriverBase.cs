@@ -106,7 +106,17 @@ namespace GingerCore.Drivers
         public abstract ePlatformType Platform { get;  }
         public abstract bool IsRunning();
 
-        // Input to this method is call back funtion to handle the events
+        protected bool mIsDriverBusy;
+
+        public bool IsDriverBusy
+        {
+            get
+            {
+                return mIsDriverBusy;
+            }
+        }
+
+        // Input to this method is call back function to handle the events
 
         //TODO: Later on make this abstract
         public virtual void StartRecording()

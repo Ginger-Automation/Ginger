@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.UserControls;
+using GingerCore;
 using GingerWPF.UserControlsLib;
 using System;
 using System.Collections.Generic;
@@ -75,7 +76,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 else
                 {
                     ov.IsDefault = true;
-                    //binding is disabeled so setting the radio button as check manually
+                    //binding is disabled so setting the radio button as check manually
                     RadioButton rb = (RadioButton)OptionalValuesGrid.GetDataTemplateCellControl<RadioButton>(ov, 1);
                     rb.IsChecked = true;
                 }
@@ -151,8 +152,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     {
                         if (OP != CurrentOP && OP.Value == CurrentOP.Value)
                         {
-                            CurrentOP.Value = OldValue;
-                            System.Windows.MessageBox.Show("Please specify unique value", "Optional Value Already Exists", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                            CurrentOP.Value = OldValue;                            
+                            Reporter.ToUser(eUserMsgKeys.SpecifyUniqueValue);
                             break;
                         }
                     }

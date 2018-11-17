@@ -142,7 +142,7 @@ namespace GingerCore.ALM.QC
                 }
             }catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
                 newTSTest.Runs = new List<QCTSTestRun>();
             }
 
@@ -286,7 +286,7 @@ namespace GingerCore.ALM.QC
             {
                 if (testSet == null) return null;
 
-                //Creat Business Flow
+                //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
                 busFlow.Name = testSet.TestSetName;
                 busFlow.ExternalID = testSet.TestSetID;
@@ -310,7 +310,7 @@ namespace GingerCore.ALM.QC
                         List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
                                                                                        .Where(x => !tc.Steps.Select(y => y.StepID).ToList().Contains(x.ExternalID)).ToList();
 
-                        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
+                        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance(true);
 
                         var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID)); 
                         for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)
@@ -345,7 +345,7 @@ namespace GingerCore.ALM.QC
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                     }
 
-                    //Add the TC steps as Activities if not already on the Activties group
+                    //Add the TC steps as Activities if not already on the Activities group
                     foreach (QCTSTestStep step in tc.Steps)
                     {
                         Activity stepActivity;
@@ -497,8 +497,7 @@ namespace GingerCore.ALM.QC
                                 {
                                     //no such variable value option so add it
                                     stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
-                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                    ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                    
                                     if (isflowControlParam == true)
                                         stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                                 }
@@ -514,7 +513,7 @@ namespace GingerCore.ALM.QC
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
 
                             //add linked variable if needed
@@ -527,7 +526,7 @@ namespace GingerCore.ALM.QC
                         }
                     }
 
-                    //order the Activities Group activities accourding to the order of the matching steps in the TC
+                    //order the Activities Group activities according to the order of the matching steps in the TC
                     try
                     {
                         int startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
@@ -565,7 +564,7 @@ namespace GingerCore.ALM.QC
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                     }
                 }
@@ -587,7 +586,7 @@ namespace GingerCore.ALM.QC
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -642,7 +641,7 @@ namespace GingerCore.ALM.QC
                 }
                 busFlow.InsertActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
 
-                //Add the TC steps as Activities if not already on the Activties group
+                //Add the TC steps as Activities if not already on the Activities group
                 foreach (QCTSTestStep step in tc.Steps)
                 {
                     Activity stepActivity;
@@ -791,8 +790,7 @@ namespace GingerCore.ALM.QC
                             {
                                 //no such variable value option so add it
                                 stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
-                                ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                                ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                
                                 if (isflowControlParam == true)
                                     stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                             }
@@ -808,7 +806,7 @@ namespace GingerCore.ALM.QC
                                 if (stepActivityVar is VariableString)
                                     ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                             }
-                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                         }
 
                         //add linked variable if needed
@@ -821,7 +819,7 @@ namespace GingerCore.ALM.QC
                     }
                 }
 
-                //order the Activities Group activities accourding to the order of the matching steps in the TC
+                //order the Activities Group activities according to the order of the matching steps in the TC
                 try
                 {
                     foreach (QCTSTestStep step in tc.Steps)
@@ -858,7 +856,7 @@ namespace GingerCore.ALM.QC
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                 }
             }
@@ -894,7 +892,7 @@ namespace GingerCore.ALM.QC
                 }
                 busFlow.AddActivitiesGroup(tcActivsGroup);
 
-                //Add the TC steps as Activities if not already on the Activties group
+                //Add the TC steps as Activities if not already on the Activities group
                 foreach (QCTSTestStep step in tc.Steps)
                 {
                     Activity stepActivity;
@@ -1043,8 +1041,7 @@ namespace GingerCore.ALM.QC
                             {
                                 //no such variable value option so add it
                                 stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
-                                ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                                ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                
                                 if (isflowControlParam == true)
                                     stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                             }
@@ -1060,7 +1057,7 @@ namespace GingerCore.ALM.QC
                                 if (stepActivityVar is VariableString)
                                     ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                             }
-                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                            catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                         }
 
                         //add linked variable if needed
@@ -1073,7 +1070,7 @@ namespace GingerCore.ALM.QC
                     }
                 }
 
-                //order the Activities Group activities accourding to the order of the matching steps in the TC
+                //order the Activities Group activities according to the order of the matching steps in the TC
                 try
                 {
                     foreach (QCTSTestStep step in tc.Steps)
@@ -1110,7 +1107,7 @@ namespace GingerCore.ALM.QC
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
                 }
             }
@@ -1134,7 +1131,7 @@ namespace GingerCore.ALM.QC
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while stripping the HTML from QC TC Step Description/Expected", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while stripping the HTML from QC TC Step Description/Expected", ex);
                 return HTMLText;
             }
         }
@@ -1154,7 +1151,7 @@ namespace GingerCore.ALM.QC
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while pulling the parameters names from QC TC Step Description/Expected", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while pulling the parameters names from QC TC Step Description/Expected", ex);
             }
         }
 

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace Amdocs.Ginger.Repository
     {
 
         //[IsSerializedForLocalRepository]
-        /* public string GroupName { get; set; } *///Need for Reflecting the Name, Name field is not eanogh it needs to come with GroupName
+        /* public string GroupName { get; set; } *///Need for Reflecting the Name, Name field is not enough it needs to come with GroupName
 
         ApplicationAPIUtils.eWebApiType mAPIType = ApplicationAPIUtils.eWebApiType.REST;
         [IsSerializedForLocalRepository]
@@ -117,7 +118,7 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public string AuthPassword { get { return mAuthPassword; } set { if (mAuthPassword != value) { mAuthPassword = value; OnPropertyChanged(nameof(AuthPassword)); } } }
 
-        // We overide the file extension so all subclass of ApplicationAPIModelBase will have the same extension
+        // We override the file extension so all subclass of ApplicationAPIModelBase will have the same extension
         public override string ObjFileExt
         {
             get
@@ -156,8 +157,22 @@ namespace Amdocs.Ginger.Repository
         //public OutputTemplateModel mOutputTemplateModel { get; set; }
 
         public ObservableList<TemplateFile> OptionalValuesTemplates = new ObservableList<TemplateFile>();// XML & JSON
-       
+
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.APIModel;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
+
     }
-
-
 }

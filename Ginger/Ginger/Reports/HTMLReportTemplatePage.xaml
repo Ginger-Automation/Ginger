@@ -3,14 +3,14 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"      
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
        xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Report"
       
 	Title="New HTML Report Template">
 
-    <Grid Background="{StaticResource $BackgroundGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.Resources>
             <DataTemplate x:Key="FieldIsAddedToReportSummaryView">
                 <CheckBox x:Name="grdSummaryView_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
@@ -18,7 +18,7 @@
         </Grid.Resources>
 
         <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <TabControl x:Name="tabConfigurations" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="tabConfigurations_SelectionChanged" Background="{StaticResource $BackgroundGray}" >
+            <TabControl x:Name="tabConfigurations" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="tabConfigurations_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" >
             <TabItem x:Name="tbiConfigurations">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
@@ -30,14 +30,14 @@
                         <Expander x:Name="GeneralExpander" IsExpanded="True">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="General" FontWeight="Bold" Foreground="{DynamicResource @Skin1_ColorA}"/>
+                                    <TextBlock Text="General" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
                             </StackPanel>
                         </Expander.Header>
                         <StackPanel>
                                 <StackPanel x:Name="TemplateName" Margin="10,10,0,0" HorizontalAlignment="Left">
                                     <DockPanel >
                                         <Label Content="Template Name:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12" DockPanel.Dock="Left"></Label>
-                                        <usercontrols:ImageMakerControl x:Name="xDefualtImage" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Defualt Template" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="0,0,10,0" />
+                                        <usercontrols:ImageMakerControl x:Name="xDefualtImage" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default Template" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="0,0,10,0" />
                                     </DockPanel>
                                 
                                 <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >
@@ -62,7 +62,7 @@
                         <Expander x:Name="LayoutExpander" Margin="0,5,0,0" IsExpanded="True">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Layout" FontWeight="Bold" Foreground="{DynamicResource @Skin1_ColorA}"/>
+                                    <TextBlock Text="Layout" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
                             </StackPanel>
                         </Expander.Header>
                         <StackPanel>
@@ -100,7 +100,7 @@
                         <Expander x:Name="DataExpander" Margin="0,5,0,0" IsExpanded="True">
                             <Expander.Header>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Data" FontWeight="Bold" Foreground="{DynamicResource @Skin1_ColorA}"/>
+                                    <TextBlock Text="Data" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
                                 </StackPanel>
                             </Expander.Header>
                             <StackPanel>
@@ -133,7 +133,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdSummaryViewFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdSummaryViewFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[Summary View]"/>
                                                         </Ginger:ucGrid.Title>
@@ -145,7 +145,7 @@
                                                 <TabItem.Header>
                                                     <StackPanel Orientation="Horizontal">
                                                         <CheckBox x:Name="gingers_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
-                                                        <TextBlock Text="Gingers Runners"/>
+                                                        <TextBlock Text="Runners"/>
                                                     </StackPanel>
                                                 </TabItem.Header>
 
@@ -159,7 +159,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdGingersFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdGingersFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[Ginger Runners]"/>
                                                         </Ginger:ucGrid.Title>
@@ -171,7 +171,11 @@
                                                 <TabItem.Header>
                                                     <StackPanel Orientation="Horizontal">
                                                         <CheckBox x:Name="bf_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
-                                                        <TextBlock Text="Business Flows"/>
+                                                        <Label>
+                                                            <Label.Content>
+                                                                <GingerCore:ucTextDicResource Text="[BusinessFlows]"/>
+                                                            </Label.Content>
+                                                        </Label>
                                                     </StackPanel>
                                                 </TabItem.Header>
 
@@ -185,7 +189,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdBusinessFlowFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden"  ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdBusinessFlowFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden"  ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[Business Flows]"/>
                                                         </Ginger:ucGrid.Title>
@@ -197,7 +201,11 @@
                                                 <TabItem.Header>
                                                     <StackPanel Orientation="Horizontal">
                                                         <CheckBox x:Name="activityGroups_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
-                                                        <TextBlock Text="Activity Groups"/>
+                                                        <Label>
+                                                            <Label.Content>
+                                                                <GingerCore:ucTextDicResource Text="[ActivitiesGroups]"/>
+                                                            </Label.Content>
+                                                        </Label>
                                                     </StackPanel>
                                                 </TabItem.Header>
 
@@ -211,7 +219,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdActivityGroupsFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdActivityGroupsFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[ActivityGroups]"/>
                                                         </Ginger:ucGrid.Title>
@@ -223,7 +231,11 @@
                                                 <TabItem.Header>
                                                     <StackPanel Orientation="Horizontal">
                                                         <CheckBox x:Name="activities_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
-                                                        <TextBlock Text="Activities"/>
+                                                        <Label>
+                                                            <Label.Content>
+                                                                <GingerCore:ucTextDicResource Text="[Activities]"/>
+                                                            </Label.Content>
+                                                        </Label>
                                                     </StackPanel>
                                                 </TabItem.Header>
 
@@ -237,7 +249,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdActivitiesFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdActivitiesFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[Activities]"/>
                                                         </Ginger:ucGrid.Title>
@@ -263,7 +275,7 @@
                                                         </DataTemplate>
                                                     </Grid.Resources>
 
-                                                    <Ginger:ucGrid x:Name="grdActionsFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid x:Name="grdActionsFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                         <Ginger:ucGrid.Title>
                                                             <GingerCore:ucTextDicResource Text="[Actions]"/>
                                                         </Ginger:ucGrid.Title>
@@ -279,7 +291,7 @@
                         <Expander x:Name="EmailExpander" Margin="0,10,0,0" IsExpanded="True" >
                             <Expander.Header>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Email Report Configuration" FontWeight="Bold" Foreground="{DynamicResource @Skin1_ColorA}"/>
+                                    <TextBlock Text="Email Report Configuration" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
                                 </StackPanel>
                             </Expander.Header>
                             <StackPanel>
@@ -294,7 +306,7 @@
                                         </DataTemplate>
                                     </Grid.Resources>
 
-                                    <Ginger:ucGrid x:Name="grdEmailSummaryViewFields" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                    <Ginger:ucGrid x:Name="grdEmailSummaryViewFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                         <Ginger:ucGrid.Title>
                                             <GingerCore:ucTextDicResource Text="[Email Body Summary View]"/>
                                         </Ginger:ucGrid.Title>

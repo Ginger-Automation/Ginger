@@ -91,6 +91,7 @@ namespace GingerCore.Actions
                     outVal = VEMAD.ValueCalculated;
                     break;
                 case eControlAction.RowCount:
+                case eControlAction.AvailableRowCount:
                     ValueExpression VERC = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
                     VERC.Value = ValueExp;
                     // VE.ReplaceDataSource(ValueExp);
@@ -189,6 +190,8 @@ namespace GingerCore.Actions
             DeleteAll,
             [EnumValueDescription("Get Row Count")]
             RowCount,
+            [EnumValueDescription("Get Available Row Count")]
+            AvailableRowCount,
             [EnumValueDescription("Export to Excel")]
             ExportToExcel
         }

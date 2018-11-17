@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.Repository
 {
     public abstract class APIConfigurationsDocumentParserBase
     {
-        public abstract ObservableList<ApplicationAPIModel> ParseDocument(string FileName, bool avoidDuplicatesNodes = false);
+        public abstract ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false);
         public static bool ParameterValuesUpdated { get; set; }
 
         public static ObservableList<ActReturnValue> ParseResponseSampleIntoReturnValuesPerFileType(string FilePath)
@@ -77,7 +77,7 @@ namespace Amdocs.Ginger.Repository
             return string.Empty;
         }
 
-        private static bool IsValidJson(string strInput)
+        public static bool IsValidJson(string strInput)
         {
             strInput = strInput.Trim();
             if ((strInput.StartsWith("{") && strInput.EndsWith("}")) || //For object
@@ -99,7 +99,7 @@ namespace Amdocs.Ginger.Repository
             }
             return false;
         }
-        private static bool IsValidXML(string strInput)
+        public static bool IsValidXML(string strInput)
         {
             try
             {

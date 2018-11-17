@@ -31,6 +31,8 @@ using Amdocs.Ginger.UserControls;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Common.Enums;
+using amdocs.ginger.GingerCoreNET;
+using GingerCore.DataSource;
 
 namespace Ginger.Run
 {
@@ -47,7 +49,7 @@ namespace Ginger.Run
         }
 
         public delegate void RunnerItemEventHandler(RunnerItemEventArgs EventArgs);
-        public static event RunnerItemEventHandler RunnerItemEvent;
+        private static event RunnerItemEventHandler RunnerItemEvent;
         public void OnRunnerItemEvent(RunnerItemEventArgs.eEventType eventType, RunnerItemPage runnerItemPage, eRunnerItemType runnerItemType, Object runnerItemObject)
         {
             RunnerItemEventHandler handler = RunnerItemEvent;
@@ -113,6 +115,15 @@ namespace Ginger.Run
                 if (mItemChilds == null)
                     LoadChildRunnerItems();
                 return mItemChilds;
+            }
+        }
+
+        public static void SetRunnerItemEvent(RunnerItemEventHandler runnerItemEvent)
+        {
+            if(RunnerItemEvent == null)
+            {
+                RunnerItemEvent -= runnerItemEvent;
+                RunnerItemEvent += runnerItemEvent;
             }
         }
 
@@ -348,7 +359,7 @@ namespace Ginger.Run
                
                 if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
                 {
-                    ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, App.LocalRepository.GetSolutionDataSources(), false, "", false, App.UserProfile.Solution.Variables));
+                    ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables));
                     ExportResultsToALMConfigPage.Instance.ShowAsWindow();
                 }
                 else

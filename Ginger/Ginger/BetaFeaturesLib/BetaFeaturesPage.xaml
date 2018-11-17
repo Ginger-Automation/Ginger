@@ -18,12 +18,13 @@
         </Grid.ColumnDefinitions>
         <StackPanel>
             <CheckBox x:Name="ShowDebugConsoleCheckBox" Margin="5">Show Debug console</CheckBox>
-            <CheckBox x:Name="ShowTimingsCheckBox" Margin="5">Show Timinigs</CheckBox>
+            <CheckBox x:Name="ShowTimingsCheckBox" Margin="5">Show Timings</CheckBox>
             <Label FontSize="14" FontWeight="Bold" HorizontalAlignment="Left" Margin="10">Available Beta Features</Label>
         </StackPanel>
 
         <StackPanel Grid.Column="1">
             <Button x:Name="FunctionTesterButton" Click="FunctionTesterButton_Click"  Width="200">Functions Tester</Button>
+            <Button x:Name="xCompressSolutionButton" Click="xCompressSolutionButton_Click">Compress</Button>
         </StackPanel>
 
         <ListView x:Name="FeatureListView" Grid.Row="1" Grid.ColumnSpan="2">

@@ -20,47 +20,30 @@ using Amdocs.Ginger.Plugin.Core;
 using GingerPlugIns.TextEditorLib;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
 
 namespace Ginger.UserControlsLib.TextEditor.Common
 {
-    public class PlugInTextEditorWrapper : TextEditorBase
+    public class PlugInTextEditorWrapper : TextEditorBase, ITextEditor
     {
-        ITextEditor mPluginTextFileEditor;
+        ITextEditor mPlugInTextFileEditor;
 
-        public ITextEditor PluginTextFileEditor
+        public PlugInTextEditorWrapper(ITextEditor PugInTextFileEditor)
         {
-            get
-            {
-                return mPluginTextFileEditor;
-            }
+            mPlugInTextFileEditor = PugInTextFileEditor;
         }
-
-        public PlugInTextEditorWrapper(ITextEditor PluginTextFileEditor)
-        {
-            mPluginTextFileEditor = PluginTextFileEditor;
-            
-        }
-
-        public void SetTextHandler(ITextHandler textHandler)
-        {
-            mPluginTextFileEditor.TextHandler = textHandler;
-        }
-        
 
         public string GetEditorID()
         {
-            return mPluginTextFileEditor.Name;            
+            return "mPlugInTextFileEditor.EditorID";   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
         public override List<string> Extensions
         {
-            get { return mPluginTextFileEditor.Extensions; }
+            get { return mPlugInTextFileEditor.Extensions; }
         }
 
         public override string Descritpion { get { return null; } }
@@ -70,7 +53,7 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         public override IHighlightingDefinition HighlightingDefinition
         {
             get {
-                byte[] xml = mPluginTextFileEditor.HighlightingDefinition;
+                byte[] xml = mPlugInTextFileEditor.HighlightingDefinition;
                 MemoryStream ms = new MemoryStream(xml);
                 using (XmlReader reader = XmlReader.Create(ms))
                 {
@@ -80,40 +63,19 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             }
         }
 
+        byte[] ITextEditor.HighlightingDefinition => throw new System.NotImplementedException();
 
-        List<ITextEditorToolBarItem> mTools = null;
-        public override List<ITextEditorToolBarItem> Tools 
+        Amdocs.Ginger.Plugin.Core.IFoldingStrategy ITextEditor.FoldingStrategy => throw new System.NotImplementedException();
+
+
+        public override List<ITextEditorToolBarItem> Tools
         {
-            get {
-                if (mTools == null)
-                {
-                    // We cache the tools
-                    mTools = mPluginTextFileEditor.Tools;
-                    //    new List<TextEditorToolBarItem>();
-                        
-                    //foreach (ITextEditorToolBarItem tool in mPluginTextFileEditor.Tools)
-                    //{
-                    //    mTools.Add(new TextEditorToolBarItem() { Text = tool.ToolText, ToolTip = tool.ToolTip, ClickHandler = aaa });
-                    //}                    
-                }
-                return mTools;
+            get
+            {
+                return mPlugInTextFileEditor.Tools;
             }
         }
-
-      
-
-        private void aaa(TextEditorToolRoutedEventArgs Args)
-        {
-            // mPlugInTextFileEditor.TextHandler.Text = Args.txt;
-            //mPlugInTextFileEditor.CaretLocation = Args.CaretLocation;
-
-            // use cache !!!!!
-             // mTools[0].clickHandler.Invoke()
-
-            mPluginTextFileEditor.Tools[0].Execute(mPluginTextFileEditor); /// temp hard coded 0 !!!!!!!!!!!!!!!!
-            // Args.txt = mPlugInTextFileEditor.Text;
-
-        }
+            
 
         public override IFoldingStrategy FoldingStrategy
         {
@@ -124,7 +86,9 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             }
         }
 
-        
+        public string Name => throw new System.NotImplementedException();
+
+        public ITextHandler TextHandler { get { return mPlugInTextFileEditor.TextHandler; } set { mPlugInTextFileEditor.TextHandler = value; } }        
 
         //public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
         //{

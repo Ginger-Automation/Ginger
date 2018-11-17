@@ -76,35 +76,26 @@ namespace GingerCore.Actions.Tuxedo
         
         private SftpClient UnixFTPClient;
         private string workdir;
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue Host { get { return GetOrCreateInputParam(Fields.Host); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue Port { get { return GetOrCreateInputParam(Fields.Port); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue UserName { get { return GetOrCreateInputParam(Fields.UserName); } }
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue Password { get { return GetOrCreateInputParam(Fields.Password); } }
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue PrivateKey { get { return GetOrCreateInputParam(Fields.PrivateKey); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue PrivateKeyPassPhrase { get { return GetOrCreateInputParam(Fields.PrivateKeyPassPhrase); } }
-
-        [IsSerializedForLocalRepository]
+       
         public ActInputValue PCPath { get { return GetOrCreateInputParam(Fields.PCPath); } }
-
-        [IsSerializedForLocalRepository]
+        
         public ActInputValue UnixPath { get { return GetOrCreateInputParam(Fields.UnixPath); } }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicUDElements = new ObservableList<ActInputValue>();
-
-        [IsSerializedForLocalRepository]
+     
         public ActInputValue PreCommand { get { return GetOrCreateInputParam(Fields.PreCommand); } }
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
@@ -140,7 +131,7 @@ namespace GingerCore.Actions.Tuxedo
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Cannot Login to Unix" , ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Cannot Login to Unix" , ex);
                 throw (ex);
             }
             return false;
@@ -191,7 +182,7 @@ namespace GingerCore.Actions.Tuxedo
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
                 Error = e.Message;
             }
         }
@@ -220,7 +211,7 @@ namespace GingerCore.Actions.Tuxedo
             
             foreach(ActInputValue AIV in DynamicUDElements)
             {
-                txt += AIV.Param + "\t"+ AIV.Value+"\n";  // Add \t for tab and \r for new line
+                txt += AIV.Param + "\t"+ AIV.ValueForDriver+"\n";  // Add \t for tab and \r for new line
             
             }
             txt += "\n";
@@ -289,7 +280,7 @@ namespace GingerCore.Actions.Tuxedo
             shell.Write(Command + "\n");
             cmdResult = reader.ReadToEnd();
             int iCount = 1;
-            Regex regExp = new Regex(@"ENTER ...|continue ...|option :|\> |\$ |\% |\.");
+            Regex regExp = new Regex(@"ENTER ...|continue ...|option :|\> |\$ |\%");
             while (regExp.Matches(cmdResult.ToString()).Count == 0 && iCount<20)
             {
                 cmdResult += reader.ReadToEnd();

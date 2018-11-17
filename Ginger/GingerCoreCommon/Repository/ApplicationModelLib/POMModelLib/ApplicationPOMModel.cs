@@ -17,9 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -31,6 +34,23 @@ namespace Amdocs.Ginger.Repository
         {
         }
 
+        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web };
+
+        private string mPageURL = string.Empty;
+
+        [IsSerializedForLocalRepository]
+        public string PageURL //OperationName 
+        {
+            get
+            {
+                return mPageURL;
+            }
+            set
+            {
+                mPageURL = value;
+                OnPropertyChanged(nameof(this.PageURL));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements = new ObservableList<ElementInfo>();
@@ -42,6 +62,20 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public string ScreenShotImage { get { return mScreenShotImage; } set { if (mScreenShotImage != value) { mScreenShotImage = value; OnPropertyChanged(nameof(ScreenShotImage)); } } }
 
-        
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.ApplicationPOMModel;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <Grid Background="{StaticResource $BackgroundGray}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="25"/>
@@ -18,8 +18,8 @@
         <!--Title Section-->
         <DockPanel Grid.Row="0" VerticalAlignment="Center" >
             <StackPanel x:Name="xTreeItemHeaderPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="5,5,5,0">
-                <usercontrols:ImageMakerControl x:Name="xTreeIcon" ImageType="Empty" Width="32" VerticalAlignment="Top" HorizontalAlignment="Left" Foreground="{StaticResource $DarkBlue}" Margin="0,5,0,0"/>
-                <Label x:Name="xTreeTitle" Content="Item Name" FontSize="25"  Foreground="{StaticResource $DarkBlue}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,-3,0,0" />
+                <usercontrols:ImageMakerControl x:Name="xTreeIcon" ImageType="Empty" Width="32" VerticalAlignment="Top" HorizontalAlignment="Left" Foreground="{StaticResource $BackgroundColor_DarkBlue}" Margin="0,5,0,0" MaxHeight="32"/>
+                <Label x:Name="xTreeTitle" Content="Item Name" FontSize="25"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,-3,0,0" />
             </StackPanel>
             <DockPanel x:Name="xTreeActionsIconsPnl" DockPanel.Dock="Bottom" Margin="5,10,0,0">
                 <usercontrols:ucButton x:Name="xAddButton" AutomationProperties.AutomationId="AddButton" ToolTip="Add Item" VerticalAlignment="Bottom" HorizontalAlignment="Right" DockPanel.Dock="Right" ButtonType="CircleImageButton"  ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Add"  Visibility="Collapsed" Margin="0,0,0,2"/>
@@ -39,7 +39,7 @@
             <Button x:Name="xGroupBtn" Grid.Column="0" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Width="30" Click="xGroupBtn_Click" Margin="5,0,5,0" BorderBrush="Transparent" Background="Transparent" >
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
-                        <usercontrols:ImageMakerControl ImageType="ListGroup" Width="16" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{StaticResource $DarkBlue}"/>
+                        <usercontrols:ImageMakerControl ImageType="ListGroup" Width="16" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
                         <Path x:Name="sortBtnArrow" Margin="4" VerticalAlignment="Center" Width="5" Fill="#FF527DB5" Stretch="Uniform" HorizontalAlignment="Right" Data="F1 M 301.14,-189.041L 311.57,-189.041L 306.355,-182.942L 301.14,-189.041 Z "/>
                     </StackPanel>
                 </Button.Content>

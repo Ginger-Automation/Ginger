@@ -21,11 +21,12 @@ using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.Enums;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
     /// <summary>
-    /// Base class for differnet Control type for each driver, enable to show unified list in Window Explorer Grid
+    /// Base class for different Control type for each driver, enable to show unified list in Window Explorer Grid
     /// </summary>
     /// 
     // We can persist ElementInfo - for example when saving DOR Page UIElements, but when used in Window Explorer there is no save
@@ -55,6 +56,9 @@ namespace Amdocs.Ginger.Common.UIElement
         [IsSerializedForLocalRepository]
         public bool Mandatory { get; set; }
 
+        [IsSerializedForLocalRepository]
+        public bool IsAutoLearned { get; set; }
+
         public object ElementObject { get; set; }
         public Boolean IsExpandable { get; set; }
 
@@ -72,25 +76,90 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mElementTitle = value; }
         }
 
+        public enum eElementStatus
+        {
+            Unknown,
+            Pending,
+            Passed,
+            Failed
+        }
+
+        eElementStatus mElementStatus;
+        public eElementStatus ElementStatus
+        {
+            get
+            {
+                return mElementStatus;
+            }
+            set
+            {
+                mElementStatus = value;
+                OnPropertyChanged(nameof(StatusError));
+                OnPropertyChanged(nameof(StatusIcon));
+            }
+        }
+
+        public eImageType StatusIcon
+        {
+            get
+            {
+                switch (ElementStatus)
+                {
+                    case eElementStatus.Passed:
+                        return eImageType.Passed;
+                    case eElementStatus.Failed:
+                        return eImageType.Failed;
+                    case eElementStatus.Pending:
+                        return eImageType.Pending;
+                    default:
+                        return eImageType.Unknown;
+                }
+            }
+        }
+
+        private string mLocateStatusError;
+        public string StatusError
+        {
+            get
+            {
+                return mLocateStatusError;
+            }
+            set
+            {
+                mLocateStatusError = value;
+            }
+        }
+
 
         // Used for Lazy loading when possible
         public virtual string GetElementTitle()
         {
             // we return Name unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mElementTitle;
         }
 
-
+        string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }
+        public string Description
+        {
+            get
+            {
+                return mDescription;
+            }
+            set
+            {
+                mDescription = value;
+                OnPropertyChanged(nameof(Description));
+            }
+        }
 
-        
+
         public override string ItemName { get { return this.ElementName; } set { this.ElementName = value; } }
 
         private string mElementName = null;
         [IsSerializedForLocalRepository]
-        public string ElementName // elemnt name is given by the user when he maps UI elements and give them name to use in DOR
+        public string ElementName // element name is given by the user when he maps UI elements and give them name to use in DOR
         {
             get
             {
@@ -101,6 +170,7 @@ namespace Amdocs.Ginger.Common.UIElement
             set
             {
                 mElementName = value;
+                OnPropertyChanged(nameof(ElementName));
             }
         }
 
@@ -124,7 +194,25 @@ namespace Amdocs.Ginger.Common.UIElement
             {
                 return mElementTypeEnum;
             }
-            set { mElementTypeEnum = value; }
+            set
+            {
+                mElementTypeEnum = value;
+                OnPropertyChanged(nameof(ElementTypeEnum));
+            }
+        }
+
+        public string ElementTypeEnumDescription
+        {
+            get
+            {
+                string enumDescription = mElementTypeEnum.ToString();
+                try
+                {
+                    enumDescription = ((EnumValueDescriptionAttribute[])typeof(eElementType).GetField(mElementTypeEnum.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
+                }
+                catch { }
+                return enumDescription;
+            }
         }
 
         [IsSerializedForLocalRepository]
@@ -145,7 +233,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetElementType()
         {
             // we return ElementType unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mElementType;
         }
 
@@ -164,7 +252,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetValue()
         {
             // we return XPath unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mValue;
         }
 
@@ -184,7 +272,11 @@ namespace Amdocs.Ginger.Common.UIElement
                 if (mXPath == null) mXPath = GetAbsoluteXpath();
                 return mXPath;
             }
-            set { mXPath = value; }
+            set
+            {
+                mXPath = value;
+                OnPropertyChanged(nameof(this.XPath));  // fix for 6342
+            }
         }
 
         public bool Selected { get; set; }
@@ -193,7 +285,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetAbsoluteXpath()
         {
             // we return XPath unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return null;
         }
 
@@ -227,6 +319,8 @@ namespace Amdocs.Ginger.Common.UIElement
         NA,
         [EnumValueDescription("")]
         Unknown,
+        [EnumValueDescription("Page Objects Model Element")]
+        POMElement,
         [EnumValueDescription("By ID")]
         ByID,
         [EnumValueDescription("By Name")]
@@ -332,4 +426,7 @@ namespace Amdocs.Ginger.Common.UIElement
         Span,
         Form
     }
+
+
+   
 }

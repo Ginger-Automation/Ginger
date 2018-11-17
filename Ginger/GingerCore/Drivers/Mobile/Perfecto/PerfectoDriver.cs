@@ -30,6 +30,7 @@ using System.Xml;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Drivers.Mobile.Perfecto {
 
@@ -81,16 +82,16 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
             System.Diagnostics.Process.Start(devicesDashboard);
 
             //Get List of devices available in Perfecto
-            XmlDocument XmlListOfDevices = new XmlDocument();
-            String urlToGetDevicesList = "https://" + Perfecto_Host_URL + "/services/handsets?operation=list&user=" + Perfecto_User_Name + "&password=" + Perfecto_Password + "&status=connected";
+            //XmlDocument XmlListOfDevices = new XmlDocument();
+            //String urlToGetDevicesList = "https://" + Perfecto_Host_URL + "/services/handsets?operation=list&user=" + Perfecto_User_Name + "&password=" + Perfecto_Password + "&status=connected";
             //XmlListOfDevices.Load(urlToGetDevicesList);
             //ShowListOfDevices(XmlListOfDevices);
 
             DesiredCapabilities capabilities = new DesiredCapabilities(browserName, string.Empty, new Platform(PlatformType.Any));
 
             capabilities.SetCapability("user", Perfecto_User_Name);
-            //capabilities.SetCapability("password", Perfecto_Password);
-            capabilities.SetCapability("securityToken", Perfecto_Password);
+            capabilities.SetCapability("password", Perfecto_Password);
+            //capabilities.SetCapability("securityToken", Perfecto_Password);
             capabilities.SetCapability("deviceName", Perfecto_Device_ID);
             capabilities.SetPerfectoLabExecutionId(Perfecto_Host_URL);
           
@@ -101,7 +102,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error, Could not create Perfecto Mobile Automation Driver, " + e.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error, Could not create Perfecto Mobile Automation Driver, " + e.Message);
             }
             Driver.Manage().Timeouts().ImplicitWait=TimeSpan.FromSeconds(15);
 
@@ -632,7 +633,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
                 return null;
             }
             catch (Exception ex) {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
 
                 return null;
             }

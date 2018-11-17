@@ -88,9 +88,9 @@ namespace Ginger.WindowExplorer
         }
 
         private eWindowExplorerPageContext mContext;
-        
+
         // We can open it from agents grid, or from Action Edit page with Action 
-        // If we open from ActionEdit Page then we update the act with locator
+        // If we open from ActionEdit Page then we update the act with Locator
         public WindowExplorerPage(ApplicationAgent ApplicationAgent,  Act Act = null, eWindowExplorerPageContext Context = eWindowExplorerPageContext.WindowExplorerPage)
         {           
             InitializeComponent();
@@ -142,44 +142,52 @@ namespace Ginger.WindowExplorer
             SetDetailsExpanderDesign(false, null);
             SetActionsTabDesign(false);
 
-            ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$White");
+            ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");
         }
 
         private void RefreshControlProperties(object sender, RoutedEventArgs e)
         {
-            //TODO: fix me for cached properties like ASCFBrowserElements, it will nto work
+            //TODO: fix me for cached properties like ASCFBrowserElements, it will not work
             if (mCurrentControlTreeViewItem != null)
             ControlPropertiesGrid.DataSourceList = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();            
         }
 
         private void UpdateWindowsList()
         {
-            List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();            
-            WindowsComboBox.ItemsSource = list;
-            WindowsComboBox.DisplayMemberPath = "WinInfo";
-
-            AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
-
-            if (ActiveWindow != null)
+            try
             {
-                foreach (AppWindow w in list)
+                List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
+                WindowsComboBox.ItemsSource = list;
+                WindowsComboBox.DisplayMemberPath = "WinInfo";
+
+                AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
+
+                if (ActiveWindow != null)
                 {
-                    if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                    foreach (AppWindow w in list)
                     {
-                        WindowsComboBox.SelectedValue = w;
-                        return;
+                        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                        {
+                            WindowsComboBox.SelectedValue = w;
+                            return;
+                        }
+                    }
+                }
+
+                //TODO: If no selection then select the first if only one window exist in list
+                if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+                {
+                    if (WindowsComboBox.Items.Count == 1)
+                    {
+                        WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
                     }
                 }
             }
-
-            //TODO: If no selection then select the first if only one window exist in list
-            if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+            catch (Exception ex)
             {
-                if (WindowsComboBox.Items.Count == 1)
-                {
-                    WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
-                }
+                Reporter.ToLog(eAppReporterLogLevel.ERROR,ex.ToString(), writeOnlyInDebugMode: true);
             }
+            
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
@@ -300,16 +308,16 @@ namespace Ginger.WindowExplorer
             ControlsRefreshButton.IsEnabled = ControlsRefreshButtonFlag;
 
             if (ControlsRefreshButtonFlag)
-                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$White");            
+                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");            
             else
-                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$LightGray");
+                ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
 
             RefreshWindowsButton.IsEnabled = RefreshWindowsButtonFlag;
                         
             if (RefreshWindowsButtonFlag)
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$DarkBlue");                            
+                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");                            
             else
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$LightGray");
+                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
 
 
             AddSwitchWindowActionButton.IsEnabled = AddSwitchWindowActionButtonFlag;
@@ -338,14 +346,14 @@ namespace Ginger.WindowExplorer
 
             ControlsViewsExpander.IsEnabled = ControlsViewsExpanderFlag;
             if (ControlsViewsExpanderFlag)
-                ControlsViewsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString());
+                ControlsViewsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString());
             else
                 ControlsViewsExpanderLable.Foreground = Brushes.Gray;
 
 
             SelectedControlDetailsExpander.IsEnabled = SelectedControlDetailsExpanderFlag;
             if (SelectedControlDetailsExpanderFlag)
-                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString());
+                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString());
             else
                 SelectedControlDetailsExpanderLable.Foreground = Brushes.Gray;
 
@@ -512,7 +520,7 @@ namespace Ginger.WindowExplorer
                         }
                         else if(mSpyElement is JavaElementInfo)
                         {
-                            //TODO: Fix me to add if spy elment is not present on tree.
+                            //TODO: Fix me to add if spy element is not present on tree.
                             Reporter.ToUser(eUserMsgKeys.FailedToAddTreeItem, "", "Adding spy element dynamically is not yet supported for this driver");
                         }
                         else
@@ -576,7 +584,7 @@ namespace Ginger.WindowExplorer
                     EI.WindowExplorer = mWindowExplorerDriver;
                     mWindowExplorerDriver.HighLightElement(EI);
                     
-                    //General tab will show the generic elemnt inof page, customized page will be in Data tab
+                    //General tab will show the generic element info page, customized page will be in Data tab
                     mControlFrameContentPage = new ElementInfoPage(EI);
                     ControlFrame.Content = mControlFrameContentPage;
                     SetDetailsExpanderDesign(true, EI);
@@ -593,14 +601,14 @@ namespace Ginger.WindowExplorer
                     ShowControlActions(mCurrentControlTreeViewItem);
                 }
                 else
-                {
-                    MessageBox.Show("Selected Object is not available", "Object Un-available", MessageBoxButton.OK);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.ObjectUnavailable);
                 }
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);
-                MessageBox.Show("Not able to load the object details", "Object Load", MessageBoxButton.OK);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);                
+                Reporter.ToUser(eUserMsgKeys.ObjectLoad);
             }
         }        
 
@@ -626,11 +634,11 @@ namespace Ginger.WindowExplorer
                         }
                         else
                         {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
-                            list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platformes will be overrided
+                            list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platforms will be overrided
                         }                                                               //
 
-                        //If no element actions returned then no need to get locators. 
-                        if (list == null || list.Count == 0)
+                    //If no element actions returned then no need to get locator's. 
+                    if (list == null || list.Count == 0)
                         {
                             SetActionsTabDesign(false);                          
                             return;
@@ -743,8 +751,8 @@ namespace Ginger.WindowExplorer
                     MFTI.Path = AW.Path;
                     InitTree (MFTI);
                     break;
-                default:
-                    MessageBox.Show("Unknown Window type:" + AW.WindowType);
+                default:                    
+                    Reporter.ToUser(eUserMsgKeys.StaticErrorMessage, "Unknown Window type:" + AW.WindowType);
                     break;
             }            
       
@@ -1087,7 +1095,7 @@ namespace Ginger.WindowExplorer
             else
             {
                 SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementTitle + "' Element Details & Actions";
-                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorC")).ToString()); ;
+                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString()); ;
                 SelectedControlDetailsExpander.IsEnabled = true;
                 if (mFirstElementSelectionDone == false)
                 {
@@ -1148,10 +1156,12 @@ namespace Ginger.WindowExplorer
                     UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
                     break;
             }
-
-            foreach (eElementType eET in UIElementsTypeList)
+            if (UIElementsTypeList != null)
             {
-                FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
+                foreach (eElementType eET in UIElementsTypeList)
+                {
+                    FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
+                }
             }
         }
 

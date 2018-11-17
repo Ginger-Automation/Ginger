@@ -44,16 +44,16 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             ModelLocalParams,GlobalParams
         }
         public  ObservableList<TemplateFile> OVFList = new ObservableList<TemplateFile>();//optional values files list
-        public  Dictionary<string, List<string>> ParameterValuesByNameDic = new Dictionary<string, List<string>>();// EXCEL & DB
+        public  List<ParameterValues> ParameterValues = new List<ParameterValues>();// EXCEL & DB
         public  ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
         public  Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict;//XML&JSON
         public  ObservableList<GlobalAppModelParameter> mGlobalParamterList;
-        public  ApplicationAPIModel mAAMB;
+        public ApplicationModelBase mAAMB;
         public  ObservableList<AppModelParameter> ParamsList = new ObservableList<AppModelParameter>();//Grid presentation
         public  ObservableList<GlobalAppModelParameter> GlobalParamsList = new ObservableList<GlobalAppModelParameter>();//Grid presentation
 
         public eSourceType SourceType { get; set; }
-        public AddModelOptionalValuesWizard(ApplicationAPIModel AAMB)//Local Parameters
+        public AddModelOptionalValuesWizard(ApplicationModelBase AAMB)//Local Parameters
         {
             mAAMB = AAMB;
             ImportOptionalValues.ParameterType = ImportOptionalValuesForParameters.eParameterType.Local;
@@ -76,26 +76,26 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 if (ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
                 {
-                    ImportOptionalValues.PopulateExcelDBOptionalValuesForAPIParametersExcelDB(mAAMB, ParamsList.ToList<AppModelParameter>(), ParameterValuesByNameDic);
-                    ParameterValuesByNameDic.Clear();
+                    ImportOptionalValues.PopulateExcelDBOptionalValuesForAPIParametersExcelDB(mAAMB, ParamsList.ToList<AppModelParameter>(), ParameterValues);
+                    ParameterValues.Clear();
                 }
                 else if (ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
                 {
-                    ImportOptionalValues.PopulateExcelDBOptionalValuesForAPIParametersExcelDB(mGlobalParamterList, GlobalParamsList.ToList<GlobalAppModelParameter>(), ParameterValuesByNameDic);
-                    ParameterValuesByNameDic.Clear();
+                    ImportOptionalValues.PopulateExcelDBOptionalValuesForAPIParametersExcelDB(mGlobalParamterList, GlobalParamsList.ToList<GlobalAppModelParameter>(), ParameterValues);
+                    ParameterValues.Clear();
                 }
             }
             else if (SourceType == eSourceType.DB)
             {
                 if (ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
                 {
-                    ImportOptionalValues.PopulateExcelDBOptionalValuesForAPIParametersExcelDB(mAAMB, ParamsList.ToList<AppModelParameter>(), ParameterValuesByNameDic);
-                    ParameterValuesByNameDic.Clear();
+                    ImportOptionalValues.PopulateExcelDBOptionalValuesForAPIParametersExcelDB(mAAMB, ParamsList.ToList<AppModelParameter>(), ParameterValues);
+                    ParameterValues.Clear();
                 }
                 else if (ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
                 {
-                    ImportOptionalValues.PopulateExcelDBOptionalValuesForAPIParametersExcelDB(mGlobalParamterList, GlobalParamsList.ToList<GlobalAppModelParameter>(), ParameterValuesByNameDic);
-                    ParameterValuesByNameDic.Clear();
+                    ImportOptionalValues.PopulateExcelDBOptionalValuesForAPIParametersExcelDB(mGlobalParamterList, GlobalParamsList.ToList<GlobalAppModelParameter>(), ParameterValues);
+                    ParameterValues.Clear();
                 }
             }
             else
@@ -110,10 +110,33 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
 
                 }
-                mAAMB.OptionalValuesTemplates.Clear();
+                if(mAAMB is ApplicationAPIModel)
+                    ((ApplicationAPIModel)mAAMB).OptionalValuesTemplates.Clear();
             }
             ProcessEnded();
         }
     
+        public bool IsDefaultPresentInParameterValues(ParameterValues parm)
+        {
+            bool isPresent = false;
+            foreach (var item in parm.ParameterValuesByNameDic)
+            {
+                if(item.Contains("*"))
+                {
+                    isPresent = true;
+                }
+            }
+            return isPresent;
+        }
+
+        public bool SetFirstDefaultValueInParameterValues(ParameterValues parm)
+        {
+            bool isPresent = false;
+            if (parm.ParameterValuesByNameDic.Count > 0)
+            {
+                parm.ParameterValuesByNameDic[0] = string.Format("{0}*", parm.ParameterValuesByNameDic[0]);  
+            }
+            return isPresent;
+        }
     }
 }

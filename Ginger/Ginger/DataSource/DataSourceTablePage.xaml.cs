@@ -231,7 +231,11 @@ namespace Ginger.DataSource
             });
             grdTableData.UseGridWithDataTableAsSource(mDSTableDetails.DataTable,false);           
         }
-
+        public void RefreshGrid()
+        {
+            SetGridView(true);
+            SetGridData();
+        }
         private void MarkUnMarkAllUsed(bool usedStatus)
         {
             foreach (object oRow in grdTableData.Grid.SelectedItems)
@@ -317,8 +321,7 @@ namespace Ginger.DataSource
                 SaveTable();
                 mDSTableDetails.DSC.AddColumn(mDSTableDetails.Name, dsTableColumn.Name, "Text");
 
-                SetGridView(true);
-                SetGridData();
+                RefreshGrid();
                 mColumnNames.Add(dsTableColumn.Name);
                 if(dsTableColumn.Name == "GINGER_USED")
                 {
@@ -358,6 +361,7 @@ namespace Ginger.DataSource
                 return;
             }
             mDSTableDetails.DataTable.RejectChanges();
+            mDSTableDetails.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
         }
 
         private void RefreshTable(object sender, RoutedEventArgs e)
@@ -366,13 +370,14 @@ namespace Ginger.DataSource
             {
                 return;
             }
-            SetGridData();
+            RefreshGrid();
+            mDSTableDetails.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
         }
 
         private void SaveTable(object sender, RoutedEventArgs e)
         {
             grdTableData.Grid.SelectedItems.Clear();
-            SaveTable();
+            SaveTable();            
         }
 
         public void SaveTable()
@@ -386,6 +391,7 @@ namespace Ginger.DataSource
             mDSTableDetails.DSC.SaveTable(mDSTableDetails.DataTable);            
             Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem,null, mDSTableDetails.Name, "Data Source Table");
             SetGridData();
+            mDSTableDetails.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
             Reporter.CloseGingerHelper();
         }
 
@@ -430,9 +436,15 @@ namespace Ginger.DataSource
 
         private void Rename_Click(object sender, RoutedEventArgs e)
         {
+            if (Reporter.ToUser(eUserMsgKeys.SaveLocalChanges) == MessageBoxResult.No)
+            {
+                return;
+            }
             string oldName = mDSTableDetails.Name;
             InputBoxWindow.OpenDialog("Rename", "Table Name:", mDSTableDetails, DataSourceBase.Fields.Name);
-            mDSTableDetails.DSC.RenameTable(oldName, mDSTableDetails.Name);           
+            mDSTableDetails.DSC.RenameTable(oldName, mDSTableDetails.Name);
+            RefreshGrid();
+            mDSTableDetails.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
         }
     }
 }

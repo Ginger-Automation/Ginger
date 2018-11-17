@@ -129,8 +129,8 @@ namespace GingerCore.Drivers.WindowsLib
 
                     break;
 
-                default:
-                    MessageBox.Show("Action is not implemented yet for control type " + controlType);
+                default:                    
+                    Reporter.ToUser(eUserMsgKeys.ActionNotImplemented, controlType);
                     break;
 
             }
@@ -151,7 +151,7 @@ namespace GingerCore.Drivers.WindowsLib
                     ConditionBase CurCond2 = new PropertyCondition(AutomationObjectIds.NameProperty, LocateValue);
                     CurAE = this.CurrentWindow.FindFirst(TreeScope.Subtree, CurCond2);
 
-                    //For old compativity where Name was the text we fail over to search by Text, PB Only, it is slower as it scan the tree and call win api to get the text
+                    //For old compatibility where Name was the text we fail over to search by Text, PB Only, it is slower as it scan the tree and call win api to get the text
                     if (Object.ReferenceEquals(CurAE, null) && mPlatform == ePlatform.PowerBuilder)
                     {
                     }
@@ -837,6 +837,11 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
         public override string SendKeysAndValidateHandler(object element, ActUIElement action)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string SelectAndValidateHandler(object element, ActUIElement action)
         {
             throw new NotImplementedException();
         }

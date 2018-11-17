@@ -29,6 +29,8 @@ using GingerCore.Actions;
 using Ginger.Activities;
 using GingerCore.Activities;
 using GingerCore.Variables;
+using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Repository
 {
@@ -39,12 +41,12 @@ namespace Ginger.Repository
     {
         GenericWindow _pageGenericWin = null;
 
-        private RepositoryItem mRepoItem;
+        private readonly RepositoryItemBase mRepoItem;
         public ObservableList<RepositoryItemUsage> RepoItemUsages = new ObservableList<RepositoryItemUsage>();
         private bool mIncludeOriginal = false;
-        private RepositoryItem mOriginalItem;
+        private readonly RepositoryItemBase mOriginalItem;
 
-        public RepositoryItemUsagePage(RepositoryItem repoItem, bool includeOriginal=true, RepositoryItem originalItem=null)
+        public RepositoryItemUsagePage(RepositoryItemBase repoItem, bool includeOriginal=true, RepositoryItemBase originalItem =null)
         {
             InitializeComponent();
 
@@ -65,8 +67,8 @@ namespace Ginger.Repository
         {
             try
             {
-                //TODO: check that retreive also sub folder business flows
-                ObservableList<BusinessFlow> BizFlows = App.LocalRepository.GetSolutionBusinessFlows();
+                //TODO: check that retrieve also sub folder business flows
+                ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
                 foreach (BusinessFlow BF in BizFlows)
                 {
@@ -165,7 +167,7 @@ namespace Ginger.Repository
                                 RepoItemUsages.Add(itemUsage);
                             }
                         }
-                        //search on Activties level
+                        //search on Activities level
                         foreach (Activity activity in BF.Activities)
                         {
                             foreach (VariableBase a in activity.Variables)
@@ -301,7 +303,7 @@ namespace Ginger.Repository
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to update the repository item usage", ex);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to update the repository item usage", ex);
                         usage.Status = RepositoryItemUsage.eStatus.UpdateFailed;
                     }
                 }
@@ -322,7 +324,7 @@ namespace Ginger.Repository
                        try
                        {
                            Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, usage.HostBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                           usage.HostBusinessFlow.Save();
+                           WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
                            usage.Status = RepositoryItemUsage.eStatus.UpdatedAndSaved;
                            Reporter.CloseGingerHelper();
                        }
@@ -330,7 +332,7 @@ namespace Ginger.Repository
                        {
                            usage.Status = RepositoryItemUsage.eStatus.SaveFailed;
                            Reporter.CloseGingerHelper();
-                           Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                           Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                        }
                    }
                }

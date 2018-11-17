@@ -41,6 +41,8 @@ using System.Reflection;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using Ginger.SolutionGeneral;
+using System.IO;
 
 namespace Ginger
 {
@@ -49,7 +51,7 @@ namespace Ginger
     /// </summary>
     public partial class ValueExpressionEditorPage : Page
     {        
-        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,App.LocalRepository.GetSolutionDataSources(),false,"",false);
+        ValueExpression mVE = new ValueExpression(App.AutomateTabEnvironment, App.BusinessFlow,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(),false,"",false);
         GenericWindow mWin;
         object mObj;
         string mAttrName;
@@ -101,7 +103,7 @@ namespace Ginger
         static RedBrush redBrush = new RedBrush();
         static LighGrayBackgroundBrush lighGrayBackgroundBrush = new LighGrayBackgroundBrush();
 
-        // Some of the highlighing rules added in code and not xshd since we want to use the same compile regex we use to find the expressions in text
+        // Some of the highlighting rules added in code and not xshd since we want to use the same compile regex we use to find the expressions in text
         void GetHighlightingRules()
         {
             if (mHighlightingRules == null)
@@ -136,7 +138,7 @@ namespace Ginger
             if (mObj != null && mObj.GetType() == typeof(FlowControl))
             {   
                 //Added for Business Flow Control in RunSet
-                if (App.MainWindow.MainRibbonSelectedTab == eRibbonTab.Run.ToString())
+                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.Run)
                 {
                     AddBusinessFlowControlConditions();
                 }
@@ -175,8 +177,8 @@ namespace Ginger
             AddVBSIfEval(tviVars, "Action Status = Passed", "\"{ActionStatus}\" = \"Passed\"");
             AddVBSIfEval(tviVars, "Action Status = Failed", "\"{ActionStatus}\" = \"Failed\"");
 
-            AddVBSIfEval(tviVars, "Last Activity Status = Passed", "\"{LastActivityStatus}\" = \"Passed\"");
-            AddVBSIfEval(tviVars, "Last Activity Status = Failed", "\"{LastActivityStatus}\" = \"Failed\"");
+            AddVBSIfEval(tviVars, "Last " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Status = Passed", "\"{LastActivityStatus}\" = \"Passed\"");
+            AddVBSIfEval(tviVars, "Last " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Status = Failed", "\"{LastActivityStatus}\" = \"Failed\"");
         }
 
         //Added for Business Flow Control in RunSet
@@ -186,8 +188,8 @@ namespace Ginger
             SetItemView(tviVars, "Flow Control Conditions", "", "VBS16x16.png");
             xObjectsTreeView.Items.Add(tviVars);
 
-            AddVBSIfEval(tviVars, "Business Flow Status = Passed", "\"{BusinessFlowStatus}\" = \"Passed\"");
-            AddVBSIfEval(tviVars, "Business Flow Status = Failed", "\"{BusinessFlowStatus}\" = \"Failed\"");
+            AddVBSIfEval(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Status = Passed", "\"{BusinessFlowStatus}\" = \"Passed\"");
+            AddVBSIfEval(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Status = Failed", "\"{BusinessFlowStatus}\" = \"Failed\"");
         }
 
         private void AddVBSIfFunctions()
@@ -225,10 +227,10 @@ namespace Ginger
             AddVBSEval(tviVars, "Current Day (0# format)", "Right(\"0\" & Day(Now), 2)");
             AddVBSEval(tviVars, "Current Year (#### format)", "DatePart(\"yyyy\", Now)");
             AddVBSEval(tviVars, "Current Year (## format)", "Right(DatePart(\"yyyy\", Now),2)");
-            AddVBSEval(tviVars, "Current Date +7 days", "DateSerial(Year(Now), Month(Now),Day(Now)+7)");
-            AddVBSEval(tviVars, "Current Day of month +7 days (0# format) ", "Right(\"0\" & CInt(Right(\"0\" & Day(Now), 2))+7, 2)");
-            AddVBSEval(tviVars, "Current Date -1 month", "DateSerial(Year(Now), Month(Now)-1,Day(Now))");
-            AddVBSEval(tviVars, "Current Month -1 (0# format)", "Right(\"0\" & CInt(Right(\"0\" & Month(Now), 2))-1, 2)");
+            AddVBSEval(tviVars, "Current Date +7 days", "DateSerial(Year(Now), Month(Now),Day(DateAdd(\"d\",7,Now)))");
+            AddVBSEval(tviVars, "Current Day of month +7 days (0# format) ", "Right(\"0\" & Day(DateAdd(\"d\",7,Now)), 2)");
+            AddVBSEval(tviVars, "Current Date -1 month", "DateSerial(Year(Now), Month(DateAdd(\"m\",-1,Now)),Day(Now))");
+            AddVBSEval(tviVars, "Current Month -1 (0# format)", "Right(\"0\" & Month(DateAdd(\"m\",-1,Now)), 2)");
             AddVBSEval(tviVars, "Current Day of Week (Name)","WeekdayName(DatePart(\"w\",Now))");
             AddVBSEval(tviVars, "Get # of days between 2 dates", "DateDiff(\"d\",\"5-16-2016\",\"6-16-2016\")");
             AddVBSEval(tviVars, "Check if date is valid", "CStr(IsDate(\"5/18/2016\"))");
@@ -264,7 +266,7 @@ namespace Ginger
             catch (Exception ex)
             {
 
-                Reporter.ToLog(eLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Add Security Configuration Failed: ", ex);
             }
         }
 
@@ -420,7 +422,7 @@ namespace Ginger
         private void InsertAddNewVarTreeItem(TreeViewItem parentTvi, eVariablesLevel varLevel)
         {
             TreeViewItem newVarTvi = new TreeViewItem();
-            SetItemView(newVarTvi, "Add New String Variable", varLevel, "@Add_16x16.png");
+            SetItemView(newVarTvi, "Add New String " + GingerDicser.GetTermResValue(eTermResKey.Variable) , varLevel, "@Add_16x16.png");
             parentTvi.Items.Add(newVarTvi);
             newVarTvi.MouseDoubleClick += tviAddNewVarTreeItem_MouseDoubleClick;
         }
@@ -431,14 +433,14 @@ namespace Ginger
             SetItemView(tviDataSources, "Data Sources", "", "@DataSource_16x16.png");
             xObjectsTreeView.Items.Add(tviDataSources);
             
-            ObservableList<DataSourceBase> DataSources = App.LocalRepository.GetSolutionDataSources();
+            ObservableList<DataSourceBase> DataSources = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
 
             foreach (DataSourceBase ds in DataSources)
             {
                 if (ds.FilePath.StartsWith("~"))
                 {
-                    ds.FileFullPath = ds.FilePath.Replace("~", "");
-                    ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
+                    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
+                    ds.FileFullPath = Path.Combine(App.UserProfile.Solution.Folder , ds.FileFullPath);
                 }
                 ds.Init(ds.FileFullPath);
                 TreeViewItem tviDataSource = new TreeViewItem();

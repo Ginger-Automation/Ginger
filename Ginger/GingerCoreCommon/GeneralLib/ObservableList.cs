@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -70,9 +70,14 @@ namespace Amdocs.Ginger.Common
         }
 
 
-        
+        // Override the base in case of Lazy load
+        new public T this[int Index]
+        {
+            get { return Items[Index]; }
+            set { Items[Index] = value; }
+        }
 
-
+           
         public object CurrentItem
         {
             get { return mCurrentItem; }
@@ -101,7 +106,7 @@ namespace Amdocs.Ginger.Common
         /// Moving to next item in the list
         /// It is not possible to pass after the last item
         /// </summary>
-        /// <returns>True if move was successfull, False if no change or we are at the last item</returns>
+        /// <returns>True if move was successful, False if no change or we are at the last item</returns>
         public bool MoveNext()
         {
 
@@ -109,7 +114,7 @@ namespace Amdocs.Ginger.Common
             if (index > 0 && index <= Count)
             {
                 // Make sure last item remains active, do NOT put code to return null or alike, as all visible list need to have item mark in grid or it doesn't look good.
-                // Check if it is possobile to move next need to be in the calling function, can use the list check IsLastItem()
+                // Check if it is possible to move next need to be in the calling function, can use the list check IsLastItem()
                 CurrentItem = Items[index];
                 return true;                
             }
@@ -127,7 +132,7 @@ namespace Amdocs.Ginger.Common
             if (index > 0 && index <= Count)
             {
                 // Make sure last item remains active, do NOT put code to return null or alike, as all visible list need to have item mark in grid or it doesn't look good.
-                // Check if it is possobile to move next need to be in the calling function, can use the list check IsLastItem()
+                // Check if it is possible to move next need to be in the calling function, can use the list check IsLastItem()
                 CurrentItem = Items[index];
                 return true;                
             }
@@ -164,13 +169,14 @@ namespace Amdocs.Ginger.Common
 
         public new int Count
         {
-            get {
-                    if (mLazyLoad)
-                    {
-                        GetItemsInfo();
-                    }
+            get
+            {
+                if (mLazyLoad)
+                {
+                    GetItemsInfo();
+                }
 
-                    return base.Count;
+                return base.Count;
             }
         }
 
@@ -209,7 +215,7 @@ namespace Amdocs.Ginger.Common
         /// Return the list as IQueryable sorted based on orderByProperty
         /// </summary>
         /// <param name="orderByProperty">property name, example: nameof(BusinessFlow.Name)</param>
-        /// <param name="desc">default is ascending, set to true for descening order</param>
+        /// <param name="desc">default is ascending, set to true for descending order</param>
         /// <returns></returns>
         public IQueryable<T> OrderBy(string orderByProperty, bool desc = false)
         {
@@ -256,16 +262,17 @@ namespace Amdocs.Ginger.Common
         int mDataLen;
 
 
-        protected new IList<T> Items { get {                
+        protected new IList<T> Items
+        {
+            get
+            {
                 if (mLazyLoad)
                 {
                     GetItemsInfo();
                 }
-                
                 return base.Items;
-                
-                
-            } }
+            }
+        }
 
         bool IObservableList.LazyLoad { get { return mLazyLoad; } set { mLazyLoad = value; } }
 
@@ -276,13 +283,16 @@ namespace Amdocs.Ginger.Common
 
         public bool LazyLoad { get { return mLazyLoad; } }
 
-        new IEnumerator GetEnumerator()
+
+
+
+        public new IEnumerator<T> GetEnumerator()
         {
             if (mLazyLoad)
             {
                 GetItemsInfo();
             }
-            return this.GetEnumerator();
+            return base.GetEnumerator();
         }
 
         public void DoLazyLoadItem(string s)
@@ -303,7 +313,7 @@ namespace Amdocs.Ginger.Common
 
         bool loadingata = false;        
 
-        private void GetItemsInfo()
+        public void GetItemsInfo()
         {
             if (!mLazyLoad) return;
             if (loadingata) // //since several functions can call in parallel we might enter when status is already loadingdata, so we wait for it to complete, then return
@@ -335,7 +345,14 @@ namespace Amdocs.Ginger.Common
                 // string s = StringCompressor.DecompressStringFromBytes(mMemoryStream, mDataLen);
 
                 ObservableList<T> l = new ObservableList<T>();
-                NewRepositorySerializer.DeserializeObservableListFromText(this, s);
+                try
+                {
+                    NewRepositorySerializer.DeserializeObservableListFromText(this, s);
+                }
+                catch (Exception ex)
+                {
+                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to Deserialize the lazy load section: '{0}'", s), ex);
+                }
 
                 mStringData = null;
                 //mMemoryStream.Dispose();
@@ -363,7 +380,30 @@ namespace Amdocs.Ginger.Common
             base.Remove(obj);
         }
 
-        public List<object> ListItems { get { return Items.Cast<object>().ToList(); } }
+        public List<object> ListItems
+        {
+            get
+            {                
+                return Items.Cast<object>().ToList();
+            }
+        }
+
+        public ObservableList<NewType> ListItemsCast<NewType>()
+        {
+            ObservableList<NewType> list = new ObservableList<NewType>();
+            var v = Items.Cast<NewType>().ToList();            
+            foreach (NewType item in v)
+            {
+                list.Add(item);
+            }
+            return list;           
+        }
+
+        public void AddToFirstIndex(T obj)
+        {
+            Add(obj);
+            Move(Count - 1, 0);
+        }
 
     } 
 }

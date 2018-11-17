@@ -10,7 +10,7 @@
       Height="800" Width="800"
       Title="Find &amp; Replace">
 
-    <Grid x:Name="FindAndReplace" Background="{StaticResource @Skin1_ColorC}">
+    <Grid x:Name="FindAndReplace" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.Resources>
             <DataTemplate x:Key="ViewDetailsButton">
                 <Button x:Name="xViewDetailsButton" Click="ViewDetailsClicked" ToolTip="View Details" Style="{StaticResource @InputImageGridCellButtonStyle}">
@@ -62,7 +62,7 @@
         </StackPanel>
 
         <StackPanel Margin="5,0,0,0" Orientation="Vertical" Grid.Row="4">
-            <CheckBox x:Name="xMatchCaseCheckBox" VerticalAlignment="Center" Style="{StaticResource @InputCheckBoxStyle}" ToolTip="Find/Replace items with key sensitive considuration" >Match Case</CheckBox>
+            <CheckBox x:Name="xMatchCaseCheckBox" VerticalAlignment="Center" Style="{StaticResource @InputCheckBoxStyle}" ToolTip="Find/Replace items with key sensitive consideration" >Match Case</CheckBox>
             <CheckBox x:Name="xMatchWholeWordCheckBox" VerticalAlignment="Center" Style="{StaticResource @InputCheckBoxStyle}" ToolTip="Find/Replace items which equals the whole field value" >Match whole word</CheckBox>
         </StackPanel>
         

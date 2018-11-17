@@ -28,6 +28,8 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Repository
 {
@@ -36,14 +38,30 @@ namespace Ginger.Repository
     /// </summary>    
     public partial class VariablesRepositoryPage : Page
     {
-        public VariablesRepositoryPage(string Path)
+        readonly RepositoryFolder<VariableBase> mVariablesFolder;
+
+        public VariablesRepositoryPage(RepositoryFolder<VariableBase> variablesFolder)
         {
             InitializeComponent();
 
+            mVariablesFolder = variablesFolder;
             SetVariablesGridView();
-
-            App.LocalRepository.AttachHandlerToSolutionRepoVariablesChange(RefreshVariables);
+            SetGridAndTreeData();
         }
+
+        private void SetGridAndTreeData()
+        {
+            if (mVariablesFolder.IsRootFolder)
+            {
+                xVariablesGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+            }                
+            else
+            {
+                xVariablesGrid.DataSourceList = mVariablesFolder.GetFolderItems();
+            }
+            
+        }
+
 
         private void SetVariablesGridView()
         {                        
@@ -53,39 +71,26 @@ namespace Ginger.Repository
             viewCols.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 50, AllowSorting = true });
             viewCols.Add(new GridColView() { Field = VariableBase.Fields.Description, WidthWeight = 35, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = "Inst.", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ViewInstancesButton"] });           
-            grdVariables.SetAllColumnsDefaultView(view);
-            grdVariables.InitViewItems();
-
-            grdVariables.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshVariables));
-            grdVariables.AddToolbarTool("@LeftArrow_16x16.png", "Add to " + GingerDicser.GetTermResValue(eTermResKey.Variables), new RoutedEventHandler(AddFromRepository));
-            grdVariables.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditVar));
-            grdVariables.ShowTagsFilter = Visibility.Visible;
+            xVariablesGrid.SetAllColumnsDefaultView(view);
+            xVariablesGrid.InitViewItems();
             
-            grdVariables.RowDoubleClick += grdVariables_grdMain_MouseDoubleClick;
-            grdVariables.ItemDropped += grdVariables_ItemDropped;
-            grdVariables.PreviewDragItem += grdVariables_PreviewDragItem;
-
-            grdVariables.DataSourceList = App.LocalRepository.GetSolutionRepoVariables();
-        }
-
-
-        private void RefreshVariables(object sender, RoutedEventArgs e)
-        {
-            App.LocalRepository.RefreshSolutionRepoVariables();
-            grdVariables.DataSourceList = App.LocalRepository.GetSolutionRepoVariables();
-        }
-
-        private void RefreshVariables(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            grdVariables.DataSourceList = App.LocalRepository.GetSolutionRepoVariables();
+            xVariablesGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to " + GingerDicser.GetTermResValue(eTermResKey.Variables), new RoutedEventHandler(AddFromRepository));
+            xVariablesGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditVar));
+            xVariablesGrid.ShowTagsFilter = Visibility.Visible;
+            
+            xVariablesGrid.RowDoubleClick += grdVariables_grdMain_MouseDoubleClick;
+            xVariablesGrid.ItemDropped += grdVariables_ItemDropped;
+            xVariablesGrid.PreviewDragItem += grdVariables_PreviewDragItem;           
         }
 
         private void AddFromRepository(object sender, RoutedEventArgs e)
         {
-            if (grdVariables.Grid.SelectedItems != null && grdVariables.Grid.SelectedItems.Count > 0)
+            if (xVariablesGrid.Grid.SelectedItems != null && xVariablesGrid.Grid.SelectedItems.Count > 0)
             {
-                foreach (VariableBase selectedItem in grdVariables.Grid.SelectedItems)
+                foreach (VariableBase selectedItem in xVariablesGrid.Grid.SelectedItems)
+                {
                     App.BusinessFlow.AddVariable((VariableBase)selectedItem.CreateInstance(true));
+                }                    
                 
                 int selectedActIndex = -1;
                 ObservableList<VariableBase> varList = App.BusinessFlow.Variables;
@@ -104,9 +109,9 @@ namespace Ginger.Repository
 
         private void EditVar(object sender, RoutedEventArgs e)
         {
-            if (grdVariables.CurrentItem != null && grdVariables.CurrentItem.ToString() != "{NewItemPlaceholder}")
+            if (xVariablesGrid.CurrentItem != null && xVariablesGrid.CurrentItem.ToString() != "{NewItemPlaceholder}")
             {
-                VariableBase selectedVarb = (VariableBase)grdVariables.CurrentItem;
+                VariableBase selectedVarb = (VariableBase)xVariablesGrid.CurrentItem;
                 selectedVarb.NameBeforeEdit = selectedVarb.Name;
 
                 VariableEditPage w = new VariableEditPage(selectedVarb, false, VariableEditPage.eEditMode.SharedRepository);
@@ -121,9 +126,9 @@ namespace Ginger.Repository
 
         private void ViewRepositoryItemUsage(object sender, RoutedEventArgs e)
         {
-            if (grdVariables.Grid.SelectedItem != null)
+            if (xVariablesGrid.Grid.SelectedItem != null)
             {
-                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItem)grdVariables.Grid.SelectedItem);
+                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItemBase)xVariablesGrid.Grid.SelectedItem);
                 usagePage.ShowAsWindow();
             }
             else
@@ -151,11 +156,11 @@ namespace Ginger.Repository
                 //refresh and select the item
                 try
                 {
-                    VariableBase dragedItemInGrid = ((IEnumerable<VariableBase>)grdVariables.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
+                    VariableBase dragedItemInGrid = ((IEnumerable<VariableBase>)xVariablesGrid.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
                     if (dragedItemInGrid != null)
-                        grdVariables.Grid.SelectedItem = dragedItemInGrid;
+                        xVariablesGrid.Grid.SelectedItem = dragedItemInGrid;
                 }
-                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
         }
 

@@ -58,7 +58,7 @@ namespace GingerCore.ALM.Rally
             {
                 if (testPlan == null) return null;
 
-                //Creat Business Flow
+                //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
                 busFlow.Name = testPlan.Name;
                 busFlow.ExternalID = "RallyID=" + testPlan.RallyID;
@@ -85,9 +85,7 @@ namespace GingerCore.ALM.Rally
                     {
                         tcActivsGroup = new ActivitiesGroup();
                         tcActivsGroup.Name = tc.Name;
-                        tcActivsGroup.Description = tc.Description;
-                        tcActivsGroup.CreatedBy = tc.CreatedBy;
-                        tcActivsGroup.Created = tc.CreationDate;
+                        tcActivsGroup.Description = tc.Description;                        
                         tcActivsGroup.ExternalID = "RallyID=" + tc.RallyID + "|AtsID=" + tc.BTSID;
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                     }
@@ -208,8 +206,7 @@ namespace GingerCore.ALM.Rally
                                 {
                                     //no such variable value option so add it
                                     stepActivityVarOptionalVar = new OptionalValue(param.Value);
-                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                    ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                    
                                     if (isflowControlParam == true)
                                         stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                                 }
@@ -225,7 +222,7 @@ namespace GingerCore.ALM.Rally
                                     if (stepActivityVar is VariableString)
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
                                 }
-                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}"); }
+                                catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
                         }
                     }
@@ -236,7 +233,7 @@ namespace GingerCore.ALM.Rally
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import Rally test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to import Rally test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -256,7 +253,7 @@ namespace GingerCore.ALM.Rally
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the parameters names from Rally TC Step Description/Expected", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while pulling the parameters names from Rally TC Step Description/Expected", ex);
             }
         }
 
@@ -277,7 +274,7 @@ namespace GingerCore.ALM.Rally
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while stripping the HTML from Rally TC Step Description/Expected", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while stripping the HTML from Rally TC Step Description/Expected", ex);
                 return HTMLText;
             }
         }
@@ -712,9 +709,9 @@ namespace GingerCore.ALM.Rally
         {
             XmlNodeList xlist = null;
             XmlDocument doc = new XmlDocument();
-            if (System.IO.File.Exists(solutionFolder + @"Documents\ALM\RQM_Configs\FieldMapping.xml"))
+            if (System.IO.File.Exists(System.IO.Path.Combine(solutionFolder, @"Documents\ALM\RQM_Configs\FieldMapping.xml")))
             {
-                doc.Load(solutionFolder + @"Documents\ALM\RQM_Configs\FieldMapping.xml");
+                doc.Load(System.IO.Path.Combine(solutionFolder, @"Documents\ALM\RQM_Configs\FieldMapping.xml"));
 
                 if (fieldType == "TestPlan")
                 {

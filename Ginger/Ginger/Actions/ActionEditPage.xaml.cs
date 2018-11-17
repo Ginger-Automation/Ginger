@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
@@ -66,7 +68,7 @@ namespace Ginger.Actions
         private string mDataSourceName;
         List<String> mColNames = null;
         ObservableList<ActOutDataSourceConfig> aOutDSConfigParam = new ObservableList<ActOutDataSourceConfig>();
-        
+
         private BusinessFlow mActParentBusinessFlow = null;
         private Activity mActParentActivity = null;
 
@@ -81,12 +83,12 @@ namespace Ginger.Actions
         public ActionEditPage(Act act, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation, BusinessFlow actParentBusinessFlow = null, Activity actParentActivity = null)
         {
             InitializeComponent();
-            
+
             mAction = act;
             if (editMode != General.RepositoryItemPageViewMode.View)
             {
                 mAction.SaveBackup();
-            }            
+            }
 
             RunDescritpion.Init(act, Act.Fields.RunDescription);
 
@@ -101,12 +103,12 @@ namespace Ginger.Actions
 
             EditMode = editMode;
             mAction.PropertyChanged += ActionPropertyChanged;
-
+            
             GingerHelpProvider.SetHelpString(this, act.ActionDescription);
 
             if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
             {
-                DataSourceExpander.IsExpanded = true;
+                xDataSourceExpander.IsExpanded = true;
                 mAction.OutDataSourceName = mAction.DSOutputConfigParams[0].DSName;
                 mAction.OutDataSourceTableName = mAction.DSOutputConfigParams[0].DSTable;
                 if (mAction.DSOutputConfigParams[0].OutParamMap == null)
@@ -154,8 +156,9 @@ namespace Ginger.Actions
             dsOutputParamMapType = DataSourceConfigGrid.AddComboBox(typeof(Act.eOutputDSParamMapType), "Out Param Mapping", "", new RoutedEventHandler(OutDSParamType_SelectionChanged));
             App.ObjFieldBinding(AddOutDS, CheckBox.IsCheckedProperty, mAction, Act.Fields.ConfigOutputDS);
             App.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceName);
-            App.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);   
+            App.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);
             App.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
+            App.ObjFieldBinding(EnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
 
             txtLocateValue.BindControl(mAction, Act.Fields.LocateValue);
             txtLocateValue.ValueTextBox.Text = mAction.LocateValue;  // Why ?
@@ -166,14 +169,14 @@ namespace Ginger.Actions
             LoadActionFlowcontrols(mAction);
             TagsViewer.Init(mAction.Tags);
 
-            mDSList = App.LocalRepository.GetSolutionDataSources();
+            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
                 AddOutDS.IsEnabled = false;
 
             OutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
             OutputValuesGrid.AddSeparator();
 
-            //allowing return values automaticlly in Edit Action window
+            //allowing return values automatically in Edit Action window
             if (mAction.AddNewReturnParams == null && mAction.ReturnValues.Count() == 0)
                 mAction.AddNewReturnParams = true;
             App.ObjFieldBinding(OutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, Act.Fields.AddNewReturnParams);
@@ -192,7 +195,7 @@ namespace Ginger.Actions
             mAction.PropertyChanged += ActPropertyChanged;
             if (mAction.ObjectLocatorConfigsNeeded == false)
                 ActionLocatorPanel.Visibility = System.Windows.Visibility.Collapsed;
-            
+
             UpdateTabsVisual();
             UpdateHelpTab();
 
@@ -200,13 +203,16 @@ namespace Ginger.Actions
             mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             DataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
 
-            if (EditMode == General.RepositoryItemPageViewMode.Automation|| EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+            if (EditMode == General.RepositoryItemPageViewMode.Automation || EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+            {
                 SharedRepoInstanceUC.Init(mAction, null);
+            }
             else
             {
                 SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 SharedRepoInstanceUC_Col.Width = new GridLength(0);
             }
+
             if (editMode == General.RepositoryItemPageViewMode.View)
             {
                 SetViewMode();
@@ -214,16 +220,20 @@ namespace Ginger.Actions
 
             if (mAction.Status == null || mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.NA)
                 xRunStatusExpander.IsExpanded = false;
+
+            InitActionLog();
         }
 
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateOutputTabVisual();
+            mAction.OnPropertyChanged(nameof(Act.ReturnValuesInfo));
         }
 
         private void FlowControls_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateFlowControlTabVisual();
+            mAction.OnPropertyChanged(nameof(Act.FlowControlsInfo));
         }
 
         private void ClearUnusedParameter(object sender, RoutedEventArgs e)
@@ -267,7 +277,7 @@ namespace Ginger.Actions
         private void SwitchingInputValueBoxAndGrid(Act a)
         {
             if (IsPageClosing) return; // no need to update the UI since we are closing, when done in Undo changes/Cancel 
-            // we do restore and don't want to raise events which will cause excpetion  (a.Value = ""  - is the messer)
+            // we do restore and don't want to raise events which will cause exception  (a.Value = ""  - is the messer)
 
             if (mAction.ValueConfigsNeeded == false)
             {
@@ -275,7 +285,9 @@ namespace Ginger.Actions
                 return;
             }
 
-            if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) && a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) && a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand))
+            if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) && 
+                a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) && 
+                a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand))
             {
                 if (a.InputValues.Count > 1)
                 {
@@ -425,6 +437,7 @@ namespace Ginger.Actions
             DataSourceConfigGrid.InitViewItems();
             DataSourceConfigGrid.SetTitleLightStyle = true;
         }
+
         private void SetActReturnValuesGrid()
         {
             GridViewDef SimView = new GridViewDef(eGridView.All.ToString());
@@ -447,6 +460,7 @@ namespace Ginger.Actions
 
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Header = "Expected Value", WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = ".....", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });
+            viewCols.Add(new GridColView() { Field = "Clear Expected Value", Header = "X", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ClearExpectedValueBtnTemplate"] });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.ExpectedCalculated, Header = "Calculated Expected", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Status, WidthWeight = 70, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty)) });
             
@@ -594,7 +608,7 @@ namespace Ginger.Actions
             Mouse.OverrideCursor = null;
         }
 
-        private async void RunActioInSimulationnButton_Click(object sender, RoutedEventArgs e)
+        private async void RunActionInSimulationButton_Click(object sender, RoutedEventArgs e)
         {
             bool originalSimulationFlagValue = App.AutomateTabGingerRunner.RunInSimulationMode;
             App.AutomateTabGingerRunner.RunInSimulationMode = true;
@@ -616,7 +630,7 @@ namespace Ginger.Actions
 
         private void StopRunBtn_Click(object sender, RoutedEventArgs e)
         {
-            App.MainWindow.StopAutomateRun();
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.StopRun, null);
         }
 
         private void ShowHideRunStopButtons()
@@ -645,8 +659,8 @@ namespace Ginger.Actions
                 if (mAction.GetType() == typeof(ActLowLevelClicks))
                     App.MainWindow.WindowState = WindowState.Minimized;
                 mAction.IsSingleAction = true;
-                
-                App.MainWindow.SetAutomateTabRunnerForExecution();
+
+                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.SetupRunnerForExecution, null);
 
                 //No need for agent for some actions like DB and read for excel. For other need agent   
                 if (!(typeof(ActWithoutDriver).IsAssignableFrom(mAction.GetType())))
@@ -737,17 +751,22 @@ namespace Ginger.Actions
             // Need to find a solution if 2 windows show as Dialog...
             string title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
 
+            RoutedEventHandler closeHandler = CloseWinClicked;
+            string closeContent = "Undo & Close";
+
             ObservableList<Button> winButtons = new ObservableList<Button>();
+            Button okBtn = new Button();
+            okBtn.Content = "Ok";
+            okBtn.Click += new RoutedEventHandler(okBtn_Click);
+            Button undoBtn = new Button();
+            undoBtn.Content = "Undo & Close";
+            undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+            Button saveBtn = new Button();
+            saveBtn.Content = "Save";
             switch (EditMode)
             {
-                case General.RepositoryItemPageViewMode.Automation:
-                    Button okBtn = new Button();
-                    okBtn.Content = "Ok";
-                    okBtn.Click += new RoutedEventHandler(okBtn_Click);
-                    winButtons.Add(okBtn);
-                    Button undoBtn = new Button();
-                    undoBtn.Content = "Undo & Close";
-                    undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+                case General.RepositoryItemPageViewMode.Automation:                   
+                    winButtons.Add(okBtn);                    
                     winButtons.Add(undoBtn);
 
                     Button nextAction = new Button();
@@ -765,7 +784,7 @@ namespace Ginger.Actions
                     mRunActionBtn.Margin = new Thickness(0, 0, 60, 0);
                     winButtons.Add(mRunActionBtn);
                     mSimulateRunBtn.Content = "Simulate Run";
-                    mSimulateRunBtn.Click += new RoutedEventHandler(RunActioInSimulationnButton_Click);
+                    mSimulateRunBtn.Click += new RoutedEventHandler(RunActionInSimulationButton_Click);
                     ShowHideRunSimulation();
                     winButtons.Add(mSimulateRunBtn);
 
@@ -778,38 +797,36 @@ namespace Ginger.Actions
 
 
                 case General.RepositoryItemPageViewMode.SharedReposiotry:
-                    title = "Edit Shared Repository " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    Button saveBtn = new Button();
-                    saveBtn.Content = "Save";
-                    saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
-                    Button closeBtn = new Button();
-                    closeBtn.Content = "Undo & Close";
-                    closeBtn.Click += new RoutedEventHandler(undoBtn_Click);
-                    winButtons.Add(saveBtn);
-                    winButtons.Add(closeBtn);
+                    title = "Edit Shared Repository " + RemoveActionWord(mAction.ActionDescription) + " Action";                   
+                    saveBtn.Click += new RoutedEventHandler(SharedRepoSaveBtn_Click);
+                    winButtons.Add(saveBtn);                    
+                    winButtons.Add(undoBtn);
                     break;
 
                 case General.RepositoryItemPageViewMode.Child:
                     title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    Button saveButton = new Button();
-                    saveButton.Content = "Save";
-                    saveButton.Click += new RoutedEventHandler(saveButton_Click);
-                    Button closeButton = new Button();
-                    closeButton.Content = "Undo & Close";
-                    closeButton.Click += new RoutedEventHandler(undoBtn_Click);
-                    winButtons.Add(saveButton);
-                    winButtons.Add(closeButton);
+                    winButtons.Add(okBtn);
+                    winButtons.Add(undoBtn);
                     break;
+
+                case General.RepositoryItemPageViewMode.ChildWithSave:
+                    title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
+                    saveBtn.Click += new RoutedEventHandler(ParentSaveButton_Click);
+                    winButtons.Add(saveBtn);
+                    winButtons.Add(undoBtn);
+                    break;
+
                 case General.RepositoryItemPageViewMode.View:
                     title = "View " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    Button okBtnView = new Button();
-                    okBtnView.Content = "Ok";
-                    okBtnView.Click += new RoutedEventHandler(okBtn_Click);
-                    winButtons.Add(okBtnView);
+                    winButtons.Add(okBtn);
+                    closeHandler = new RoutedEventHandler(okBtn_Click);
+                    closeContent = okBtn.Content.ToString();
                     break;
             }
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            this.Height = 800;
+            this.Width = 1000;
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, closeContent, closeHandler, startupLocationWithOffset: startupLocationWithOffset);
             SwitchingInputValueBoxAndGrid(mAction);
             return saveWasDone;
         }
@@ -828,28 +845,28 @@ namespace Ginger.Actions
             xActionsDetails.IsEnabled = false;
             xActionConfiguration.IsEnabled = false;
         }
+
         private void UndoChangesAndClose()
         {
             IsPageClosing = true;
-            _pageGenericWin.Close();
-
-            Mouse.OverrideCursor = Cursors.Wait;
-            mAction.RestoreFromBackup(true);
-            Mouse.OverrideCursor = null;
+            
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                mAction.RestoreFromBackup(true);
+                _pageGenericWin.Close();
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.AskIfToUndoChanges) == MessageBoxResult.Yes)
             {
                 UndoChangesAndClose();
-            }
-            else
-            {
-                if (EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
-                    CheckIfUserWantToSave();
-                else
-                    _pageGenericWin.Close();
             }
         }
 
@@ -876,20 +893,21 @@ namespace Ginger.Actions
             }
         }
 
-        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        private void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
         {
             CheckIfUserWantToSave();
         }
 
-        private void saveButton_Click(object sender, RoutedEventArgs e)
+        private void ParentSaveButton_Click(object sender, RoutedEventArgs e)
         {
             if ((mActParentBusinessFlow != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow),mActParentBusinessFlow.Name) == MessageBoxResult.Yes) 
                 || (mActParentActivity != null && Reporter.ToUser(eUserMsgKeys.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == MessageBoxResult.Yes))
             {
-                if(mActParentBusinessFlow != null)
-                    mActParentBusinessFlow.Save();
+                if(mActParentBusinessFlow != null)                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActParentBusinessFlow);
                 else
-                    mActParentActivity.Save();
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActParentActivity);
+                
                 saveWasDone = true;
             }
 
@@ -898,9 +916,9 @@ namespace Ginger.Actions
         }
         private void CheckIfUserWantToSave()
         {
-            if (LocalRepository.CheckIfSureDoingChange(mAction, "change") == true)
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mAction, "change") == true)
             {
-                mAction.Save();
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mAction);
                 saveWasDone = true;
                 IsPageClosing = true;
                 _pageGenericWin.Close();
@@ -970,9 +988,9 @@ namespace Ginger.Actions
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (ActionTab.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
@@ -981,7 +999,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
             if (ActionTab.SelectedItem == ScreenShotTab)
@@ -1046,7 +1064,7 @@ namespace Ginger.Actions
                     ScreenShotsGrid.ColumnDefinitions.Add(cf);
                 }
 
-                // loop thru the screen shot and create new frame per each to show and place in the grid
+                // loop through the screen shot and create new frame per each to show and place in the grid
 
                 int r = 0;
                 int c = 0;
@@ -1081,7 +1099,7 @@ namespace Ginger.Actions
 
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: fixme - Currenlty working with first agent
+            //TODO: fixme - Currently working with first agent
             ApplicationAgent aa = App.AutomateTabGingerRunner.ApplicationAgents[0];
             if (aa != null)
             {
@@ -1227,6 +1245,7 @@ namespace Ginger.Actions
                 RetryMechConfigsPnl.IsEnabled = false;
         }
 
+
         private void UpdateFlowControlTabVisual()
         {
             this.Dispatcher.Invoke(() =>
@@ -1279,7 +1298,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 
@@ -1295,14 +1314,19 @@ namespace Ginger.Actions
             ADSP.ShowAsWindow();
         }
 
-        private void DataSourceExpander_Expanded(object sender, RoutedEventArgs e)
+        private void xDataSourceExpander_Expanded(object sender, RoutedEventArgs e)
         {
             SetDataSourceConfigTabView();
         }
 
+        private void xDataSourceExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            DataSourceRow.Height = new GridLength(35);
+        }
+
         private void AddOutDS_Checked(object sender, RoutedEventArgs e)
         {
-            mDSList = App.LocalRepository.GetSolutionDataSources();
+            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
                 return;
             mDSNames.Clear();
@@ -1340,7 +1364,7 @@ namespace Ginger.Actions
         }
         private void SetDataSourceConfigTabView()
         {
-            if(DataSourceExpander.IsExpanded)
+            if(xDataSourceExpander.IsExpanded)
             {
                 if(AddOutDS.IsChecked == true)
                 {
@@ -1365,6 +1389,7 @@ namespace Ginger.Actions
                 DataSourceConfigGrid.IsEnabled = false;
             }        
         }
+
         private void updateDSOutGrid()
         {
             if (cmbDataSourceTableName == null || cmbDataSourceTableName.Items.Count == 0 || cmbDataSourceTableName.SelectedValue == null)
@@ -1475,8 +1500,8 @@ namespace Ginger.Actions
                     mDataSourceName = cmbDataSourceName.SelectedValue.ToString();
                     if (ds.FilePath.StartsWith("~"))
                     {
-                        ds.FileFullPath = ds.FilePath.Replace("~", "");
-                        ds.FileFullPath = App.UserProfile.Solution.Folder + ds.FileFullPath;
+                        ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
+                        ds.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, ds.FileFullPath);
                     }
                     ds.Init(ds.FileFullPath);
                     List<string> dsTableNames = new List<string>();
@@ -1502,11 +1527,6 @@ namespace Ginger.Actions
             }
         }
 
-        private void DataSourceExpander_Collapsed(object sender, RoutedEventArgs e)
-        {
-            DataSourceRow.Height = new GridLength(35);
-        }
-
         private void ActPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == Act.Fields.Status)
@@ -1527,6 +1547,7 @@ namespace Ginger.Actions
             else
                 mSimulateRunBtn.Visibility = Visibility.Collapsed;
         }
+
         private void ActionPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {                       
             if (e.PropertyName == Act.Fields.SupportSimulation)
@@ -1543,6 +1564,98 @@ namespace Ginger.Actions
         private void xRunStatusExpander_Collapsed(object sender, RoutedEventArgs e)
         {
             xRunStatusRow.Height = new GridLength(30);
+        }
+
+        private void InitActionLog()
+        {
+            if (mAction.EnableActionLogConfig)
+            {
+                ShowActionLogConfig();
+            }            
+        }
+
+        private void ShowActionLogConfig()
+        {
+            if (mAction.ActionLogConfig == null)
+            {
+                mAction.ActionLogConfig = new ActionLogConfig();
+            }                        
+            ActionLogConfigFrame.Content = new ActionLogConfigPage(mAction.ActionLogConfig);
+            ActionLogConfigExpander.IsExpanded = true;
+        }
+
+        private void EnableActionLogConfigCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            mAction.EnableActionLogConfig = true;
+            if (mAction.ActionLogConfig == null)
+            {
+                mAction.ActionLogConfig = new ActionLogConfig();
+            }
+            ResetActionLog();
+            SetActionLogFrameView();
+        }
+
+        private void EnableActionLogConfigCheckBox_UnChecked(object sender, RoutedEventArgs e)
+        {
+            mAction.EnableActionLogConfig = false;
+            ResetActionLog();
+            SetActionLogFrameView();
+        }
+
+        private void ActionLogConfigExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            SetActionLogFrameView();
+        }
+
+        private void ActionLogConfigExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            ActionLogRow.Height = new GridLength(30);
+        }
+
+        private void ResetActionLog()
+        {
+            if (mAction.EnableActionLogConfig)
+            {
+                ShowActionLogConfig();
+            }
+            else
+            {
+                ActionLogConfigFrame.Content = null;
+            }
+        }
+
+        private void SetActionLogFrameView()
+        {
+            if (ActionLogConfigExpander.IsExpanded)
+            {
+                if (EnableActionLogConfigCheckBox.IsChecked == true)
+                {
+                    ActionLogRow.Height = new GridLength(230);
+                }
+                else
+                {
+                    ActionLogRow.Height = new GridLength(60);
+                }
+            }
+            else
+                ActionLogRow.Height = new GridLength(32);
+
+            if (mAction.EnableActionLogConfig)
+            {
+                ActionLogDetailsStackPanel.IsEnabled = true;
+            }
+            else
+            {
+                ActionLogDetailsStackPanel.IsEnabled = false;
+            }
+        }
+
+        private void GridClearExpectedValueBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (OutputValuesGrid.Grid.SelectedItem != null)
+            {
+                ((ActReturnValue)OutputValuesGrid.Grid.SelectedItem).Expected = null;
+            }
         }
     }
 }

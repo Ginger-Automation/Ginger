@@ -20,9 +20,10 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.ApplicationModelsLib.APIModels;
 using Ginger.Extensions;
 using Ginger.UserControls;
-using GingerCoreNET.ReporterLib;
+using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using GingerWPF.BindingLib;
@@ -35,6 +36,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using static GingerWPF.ApplicationModelsLib.APIModelWizard.ModelParamsPage;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels
 {
@@ -57,6 +59,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             WorkSpace.Instance.RefreshGlobalAppModelParams(mApplicationAPIModel);
             page = new ModelParamsPage(mApplicationAPIModel);
             xDynamicParamsFrame.Content = page;
+
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel);
             xOutputTemplateFrame.Content = outputTemplatePage;
 
@@ -134,9 +137,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     mApplicationAPIModel.TargetApplicationKey = key;
                 }
                 else
-                {
-                    //TODO: Fix with New Reporter (on GingerWPF)
-                    System.Windows.MessageBox.Show(string.Format("The mapped '{0}' Target Application was not found, please select new Target Application", mApplicationAPIModel.Key.ItemName), "Missing Target Application", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                {                                        
+                    Reporter.ToUser(eUserMsgKeys.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
             xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms;
@@ -210,10 +212,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     break;
             }
 
-            //Do Not Fail Action On Bad Respose
+            //Do Not Fail Action On Bad Response
             GingerWPF.BindingLib.ControlsBinding.ObjFieldBinding(DoNotFailActionOnBadRespose, CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.DoNotFailActionOnBadRespose));
 
-            //Request Body fiedls:
+            //Request Body fields:
             ControlsBinding.ObjFieldBinding(RequestBodyTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.RequestBody));
             RequestBodyTextBox.Height = 200;
 
@@ -629,9 +631,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (APIModelTabs.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
@@ -640,7 +642,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
         }
 
@@ -763,7 +765,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CloseWinClicked(object sender, EventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == GingerCoreNET.ReporterLib.MessageBoxResult.No)
+            if (Reporter.ToUser(eUserMsgKeys.ToSaveChanges) == MessageBoxResult.No)
             {
                 UndoChangesAndClose();
             }

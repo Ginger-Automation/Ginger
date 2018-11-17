@@ -27,6 +27,7 @@ using GingerCore.GeneralLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Import
 {
@@ -34,7 +35,7 @@ namespace Ginger.Import
     {
         public static BusinessFlow ConvertSeleniumScript(string FileName)
         {
-            //TODO: move code from here to convertor/import class
+            //TODO: move code from here to converter/import class
             var doc = new HtmlDocument();
             Activity result = new Activity() { Active = true };
             
@@ -71,7 +72,7 @@ namespace Ginger.Import
                     {
                         if (bf != null)
                         {
-                            App.LocalRepository.SaveNewItem(bf);
+                            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(bf);                            
                         }
                         bf = new BusinessFlow(row.Descendants("title").FirstOrDefault().InnerText);
                         result = new Activity() { Active = true };

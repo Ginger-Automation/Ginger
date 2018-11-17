@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Amdocs.Ginger.Common.Enums
+﻿namespace Amdocs.Ginger.Common.Enums
 {
 
     public enum eImageType
@@ -21,6 +17,8 @@ namespace Amdocs.Ginger.Common.Enums
         /// Ginger Icon image
         /// </summary>
         Ginger,
+        GingerIconWhite,
+        GingerIconGray,
         #endregion
 
 
@@ -28,33 +26,48 @@ namespace Amdocs.Ginger.Common.Enums
         //############################## Repository Items Images:
         Solution,
         BusinessFlow,
+        ActivitiesGroup,
         Activity,
         Action,
         Agent,
         RunSet,
-        APIModel32,
-        APIModel16,
-        ApplicationPOM,
+        ApplicationModel,
+        APIModel,
+        ApplicationPOMModel,
         Runner,
         Operations,
         Environment,
-        Parameter,
         HtmlReport,
+        SharedRepositoryItem,
+        NonSharedRepositoryItem,
+        Tag,
+        DataSource,
+        PluginPackage,
         #endregion
 
 
+        #region Variable Items Images
+        Variable,
+        VariableList,
+        Password,
+        Random,
+        Sequence,
+        Timer,
+        #endregion
+
         #region Execution Status Images
+        Unknown,
         //############################## Execution Status Images:
         /// <summary>
         /// Show spinner 
         /// </summary>
         Processing,
         /// <summary>
-        ///  Show green flag, use when action, activity, businees flows execution pass
+        ///  Show green flag, use when action, activity, businessflows execution pass
         /// </summary>
         Passed,
         /// <summary>
-        ///  Show red flag, use when action, activity, businees flows execution fail
+        ///  Show red flag, use when action, activity, businessflows execution fail
         /// </summary>
         Failed,
         Pending,
@@ -109,14 +122,21 @@ namespace Amdocs.Ginger.Common.Enums
         Visible,
         Invisible,
         View,
+        GetLatest,
+        CheckIn,
+        Download,
+        Fix,
         Expand,
         Collapse,
         ExpandAll,
         CollapseAll,
-        ActiveAll,
-        Info,
+        ActiveAll,        
         Exchange,
         Export,
+        Filter,
+        ImportFile,
+        Upgrade,
+        Recover,
         #endregion
 
 
@@ -130,6 +150,7 @@ namespace Amdocs.Ginger.Common.Enums
         ItemModified,
         Email,
         List,
+        Parameter,
         ListGroup,
         FlowDiagram,
         EllipsisH,
@@ -137,39 +158,70 @@ namespace Amdocs.Ginger.Common.Enums
         Clock,
         File,
         Link,
+        InstanceLink,
         Search,
         Remove,
         Report,
         Active,
         InActive,
         History,
+        ChevronDown,
+        Question,
+        Help,
+        Info,
+        Screen,        
+        Text,
+        Globe,
+        Service,
+        FileVideo,
+        Ticket,
+        Window,
         Pointer,
         Camera,
-
+        Wrench,
         Power,
+        ArrowDown,
+        ExcelFile,
+        User,
+        UserProfile,
+        Forum,
+        Website,
+        Beta,
+        Error,
+        Coffee,
+        MapSigns,
+        Image,
+        Elements,
+        LocationPointer,
+        GitHub,
+        #endregion
 
+        #region Other Images
+        Database,
+        TextBox,
         #endregion
 
 
-        #region Source control Images        
+        #region Source control Images     
+        SourceControl,
         SourceControlNew,
         SourceControlModified,
         SourceControlDeleted,
         SourceControlEquel,
         SourceControlLockedByAnotherUser,
         SourceControlLockedByMe,
+        SourceControlError,
         #endregion
 
         Times_Red,
         Times,
         Share,
         ShareExternal,
-        Download,
         Application,
         OpenFolder,
         Check,
         Bug,
-        DataSource,
-        PluginPackage,
+        PlusSquare,        
+        DataTable        
     }
 }

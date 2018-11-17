@@ -7,9 +7,9 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowFolder;
 using Ginger.BusinessFlowWindows;
-using Ginger.Environments;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
+using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using Ginger.Variables;
 using GingerCore;
@@ -303,7 +303,7 @@ namespace Ginger.Functionalities
                     title = string.Format("Find & Replace in '{0}' {1}", App.BusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     break;
                 case eContext.RunsetPage:
-                    title = string.Format("Find & Replace in '{0}' {1}", App.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                    title = string.Format("Find in '{0}' {1}", App.RunsetExecutor.RunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                     break;
                 default:
                     title = "Find & Replace";
@@ -442,7 +442,7 @@ namespace Ginger.Functionalities
             switch (mContext)
             {
                 case eContext.SolutionPage:                   
-                    foreach (BusinessFlow BF in App.LocalRepository.GetSolutionBusinessFlows())
+                    foreach (BusinessFlow BF in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
                         mItemsToSearchIn.Add(new ItemToSearchIn(BF, BF, BF, string.Empty, string.Empty));                    
                     break;
                 case eContext.AutomatePage:
@@ -462,7 +462,7 @@ namespace Ginger.Functionalities
             {
                 case eContext.SolutionPage:
                     //Pull Activities from all businessflows
-                    foreach (BusinessFlow bf in App.LocalRepository.GetSolutionBusinessFlows())
+                    foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
                     {
                         foreach (Activity activity in bf.Activities)
                         {
@@ -472,7 +472,7 @@ namespace Ginger.Functionalities
                     }
 
                     //Pull Activities from shared repository
-                    ObservableList<Activity> RepoActions = App.LocalRepository.GetSolutionRepoActivities();
+                    ObservableList<Activity> RepoActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     foreach (Activity activity in RepoActions)
                     {
                         if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
@@ -510,7 +510,7 @@ namespace Ginger.Functionalities
             {
                 case eContext.SolutionPage:
                     //Pull actions from all solutions
-                    foreach (BusinessFlow bf in App.LocalRepository.GetSolutionBusinessFlows())
+                    foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
                     {
                         foreach (Activity activity in bf.Activities)
                         {
@@ -527,7 +527,7 @@ namespace Ginger.Functionalities
                     }
 
                     //Pull all shared repostory actions inside shared repository activities
-                    ObservableList<Activity> RepoActivities = App.LocalRepository.GetSolutionRepoActivities();
+                    ObservableList<Activity> RepoActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     foreach (Activity activity in RepoActivities)
                     {
                         foreach (Act action in activity.Acts)
@@ -542,7 +542,7 @@ namespace Ginger.Functionalities
                     }
 
                     //Pull all shared repository actions
-                    ObservableList<Act> RepoActions = App.LocalRepository.GetSolutionRepoActions();
+                    ObservableList<Act> RepoActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
                     foreach (Act action in RepoActions)
                     {
                         if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
@@ -605,10 +605,10 @@ namespace Ginger.Functionalities
                     }
 
                     //pull variables from all repository BF's
-                    AddVariableFromBusinessFlowList(App.LocalRepository.GetSolutionBusinessFlows());
+                    AddVariableFromBusinessFlowList(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
 
-                    //pull variabels from shared repository activities
-                    ObservableList<Activity> RepoActivities = App.LocalRepository.GetSolutionRepoActivities();
+                    //pull variables from shared repository activities
+                    ObservableList<Activity> RepoActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     foreach (Activity activity in RepoActivities)
                     {
                         foreach (VariableBase VB in activity.Variables)
@@ -618,7 +618,7 @@ namespace Ginger.Functionalities
                                 mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, activity, ActivityVariablePath, string.Empty));
                         }
                     }
-                    ObservableList<VariableBase> RepoVariables = App.LocalRepository.GetSolutionRepoVariables();
+                    ObservableList<VariableBase> RepoVariables =  WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
                     foreach (VariableBase VB in RepoVariables)
                     {
                         if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
@@ -638,7 +638,7 @@ namespace Ginger.Functionalities
             }
         }
 
-        private void AddVariableFromBusinessFlowList(ObservableList<BusinessFlow> businessFlowList, string itemPathPrefix="", RepositoryItem parent = null)
+        private void AddVariableFromBusinessFlowList(ObservableList<BusinessFlow> businessFlowList, string itemPathPrefix="", RepositoryItemBase parent = null)
         {
             foreach (BusinessFlow BF in businessFlowList)
             {
@@ -669,7 +669,7 @@ namespace Ginger.Functionalities
 
         private void GetRunSetsToSearchIn()
         {
-            ObservableList<RunSetConfig> RunSets = App.LocalRepository.GetSolutionRunSets();
+            ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
             foreach (RunSetConfig RSC in RunSets)
             {
                 if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
@@ -848,9 +848,9 @@ namespace Ginger.Functionalities
             else if(mContext == eContext.AutomatePage)
                 w = new ActionEditPage(act, General.RepositoryItemPageViewMode.Automation);
             else if (Parent is BusinessFlow)
-                w = new ActionEditPage(act, General.RepositoryItemPageViewMode.Child, Parent as BusinessFlow);
+                w = new ActionEditPage(act, General.RepositoryItemPageViewMode.ChildWithSave, Parent as BusinessFlow);
             else if (Parent is Activity)
-                w = new ActionEditPage(act, General.RepositoryItemPageViewMode.Child, actParentActivity: Parent as Activity);
+                w = new ActionEditPage(act, General.RepositoryItemPageViewMode.ChildWithSave, actParentActivity: Parent as Activity);
             else
                 w = new ActionEditPage(act, General.RepositoryItemPageViewMode.SharedReposiotry);
 
@@ -889,7 +889,7 @@ namespace Ginger.Functionalities
             RepositoryItemBase Parent = (RepositoryItemBase)activityToViewFoundItem.ParentItemToSave;
             ActivityEditPage w;
             if (mContext == eContext.SolutionPage)
-                w = new ActivityEditPage(activity, General.RepositoryItemPageViewMode.Child, Parent as BusinessFlow);
+                w = new ActivityEditPage(activity, General.RepositoryItemPageViewMode.ChildWithSave, Parent as BusinessFlow);
             else if(mContext == eContext.AutomatePage)
                 w = new ActivityEditPage(activity, General.RepositoryItemPageViewMode.Automation);
             else
@@ -995,17 +995,8 @@ namespace Ginger.Functionalities
                 if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
 
                 try
-                {
-                    if (foundItem.ParentItemToSave.UseNewRepositorySerializer)
-                    {
-                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(foundItem.ParentItemToSave);
-                    }
-                    else
-                    {
-                        if (foundItem.ParentItemToSave is RepositoryItem)
-                            ((RepositoryItem)foundItem.ParentItemToSave).Save();
-                    }
-
+                {                    
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(foundItem.ParentItemToSave);                                        
                     foundItem.Status = FoundItem.eStatus.Saved;
                 }
                 catch

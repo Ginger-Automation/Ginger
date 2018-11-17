@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Windows;
+using GingerCore;
 using GingerCore.Helpers;
 
 namespace Ginger.Imports.UFT
@@ -43,7 +44,7 @@ namespace Ginger.Imports.UFT
 
         public DataTable ProcessExcel(string sExcelFileName)
         {
-            //Ftech Connecion string
+            //Fetch Connection string
             string ConnString = GetExcelString(sExcelFileName);
             
             //DB Objects
@@ -84,8 +85,8 @@ namespace Ginger.Imports.UFT
                     return dt;
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.ExcelProcessingError, ex.Message);
                     return null;
                 }
             }  
@@ -93,7 +94,7 @@ namespace Ginger.Imports.UFT
 
          public Dictionary<string, string> FetchVariableValuesfromCalendar(string sExcelFileName, string sSelectedBusFunction, DataTable dt_BizFlow)
          {
-             //Dictionary for storing varaible name and its value
+             //Dictionary for storing variable name and its value
             Dictionary<string, string> Variables = new Dictionary<string, string>();
             int i = 1;
 
@@ -129,7 +130,7 @@ namespace Ginger.Imports.UFT
 
          public string ReadKEEP_REFER(string sVarName, string sExcelFileName)
         {
-            //Ftech Connecion string
+            //Fetch Connection string
             string ConnString = GetExcelString(sExcelFileName);
             string Value="";
 
@@ -173,8 +174,8 @@ namespace Ginger.Imports.UFT
                     return Value;
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.ExcelProcessingError, ex.Message);
                     return null;
                 }
             }  

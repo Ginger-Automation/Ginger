@@ -26,6 +26,7 @@ using GingerCore;
 using GingerCore.Variables;
 using Ginger.UserControls;
 using Ginger.Environments;
+using Ginger.SolutionGeneral;
 
 namespace Ginger.Variables
 {

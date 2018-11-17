@@ -63,14 +63,11 @@ namespace GingerCore.Actions.XML
                     return mPlatforms;
                 }
             }
-          
-            [IsSerializedForLocalRepository]
+                      
             public ActInputValue TemplateFileName { get { return GetOrCreateInputParam(Fields.TemplateFileName); } }
-
-            [IsSerializedForLocalRepository]
+           
             public ActInputValue TargetFileName { get { return GetOrCreateInputParam(Fields.TargetFileName); } }
-
-            [IsSerializedForLocalRepository]
+            
             public ActInputValue ProcessedFileName { get { return GetOrCreateInputParam(Fields.ProcessedFileName); } }
 
             [IsSerializedForLocalRepository]

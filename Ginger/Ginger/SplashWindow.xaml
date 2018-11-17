@@ -1,24 +1,15 @@
-    <Window x:Class="Ginger.SplashWindow"
+<Window x:Class="Ginger.SplashWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="SplashWindow" Height="300" Width="700" WindowStartupLocation="CenterScreen" Topmost="True" Loaded="Window_Loaded" WindowStyle="None" ShowInTaskbar="False">
-    <!--Redesiging the splash screen and cleaning all commented code-->
-    <Grid >
-        <Border BorderBrush="{StaticResource @Skin1_ColorA}" BorderThickness="2" Padding="1">
-            <Canvas>
-                <Canvas.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                        <GradientStop Color="Black" Offset="1"/>
-                        <GradientStop Color="#FFF3EEE9" Offset="0.085"/>
-                        <GradientStop Color="#FFC1BBB4" Offset="0.997"/>
-                        <GradientStop Color="WhiteSmoke" Offset="0.745"/>
-                    </LinearGradientBrush>
-                </Canvas.Background>
-                <Image Source="{StaticResource @GingerLogoNew_Small}" Height="200" Width="641" Canvas.Left="21" Canvas.Top="6"/>
-                <Label x:Name="lblAppVersion" Content="AppVersion" Style="{StaticResource @AppVerStyle}" Canvas.Left="38" Canvas.Top="197" Width="500"></Label>
-                <Label x:Name="lblLoading" Content="Loading..." FontFamily="open sans" FontSize="15" Foreground="{DynamicResource @Skin1_ColorA}" Height="37" Width="135" Canvas.Left="10" Canvas.Top="229" FontWeight="Bold"></Label>
-                <Label  x:Name="lblLoadingInfo" Content="Loading Info" FontFamily="open sans" FontSize="12" Foreground="#FF5F5D5D" Height="29" Width="135" Canvas.Left="10" Canvas.Top="251" FontWeight="Bold"></Label>
-            </Canvas>
-        </Border>
-    </Grid>
+    <!--Redesigning the splash screen and cleaning all commented code-->
+
+    <Border BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <DockPanel Background="{StaticResource $BackgroundColor_White}">
+            <Image Source="{StaticResource @GingerLogoNew_Small}" Height="200" Width="641" DockPanel.Dock="Top" HorizontalAlignment="Center"/>
+            <Label x:Name="lblAppVersion" Content="AppVersion" Style="{StaticResource $LabelStyle}" Foreground="{StaticResource $SelectionColor_Pink}"  DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="35,0,0,0" FontWeight="Bold"></Label>
+            <Label x:Name="lblLoading" Content="Loading..." FontFamily="open sans" FontSize="15" Foreground="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="35,5,0,0" ></Label>
+            <Label  x:Name="lblLoadingInfo" Content="Loading Info" FontFamily="open sans" FontSize="12" Foreground="{StaticResource $BackgroundColor_Gray}" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="35,-5,0,0"></Label>
+        </DockPanel>
+    </Border>
 </Window>

@@ -59,8 +59,8 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.NewRepositoryItemTreeHeader(mAPIModelFolder, nameof(RepositoryFolder<ApplicationAPIModel>.DisplayName), eImageType.Folder, eImageType.Null, false);
+        {            
+            return NewTVItemFolderHeaderStyle(mAPIModelFolder);
         }
 
         public override ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)
@@ -96,7 +96,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // untrack sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
-            //Add direct childrens        
+            //Add direct children's        
             mChildAPIs = mAPIModelFolder.GetFolderItems();
             mChildAPIs.CollectionChanged -= TreeFolderItems_CollectionChanged;
             mChildAPIs.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
@@ -134,8 +134,8 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
             MenuItem addMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Add API Model", eImageType.Add);
             TreeViewUtils.AddSubMenuItem(addMenu, "Import API's", AddAPIModelFromDocument, null, eImageType.Download); 
-            TreeViewUtils.AddSubMenuItem(addMenu, "SOAP API Model", AddSoapAPIModel, null, eImageType.APIModel16);
-            TreeViewUtils.AddSubMenuItem(addMenu, "REST API Model", AddRESTAPIModel, null, eImageType.APIModel16); 
+            TreeViewUtils.AddSubMenuItem(addMenu, "SOAP API Model", AddSoapAPIModel, null, eImageType.APIModel);
+            TreeViewUtils.AddSubMenuItem(addMenu, "REST API Model", AddRESTAPIModel, null, eImageType.APIModel); 
             if (mAPIModelFolder.IsRootFolder)
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew:false, allowDeleteFolder:false, allowRenameFolder:false, allowRefresh: false);
             else

@@ -29,6 +29,7 @@ using GingerCore.Repository;
 using System.IO.Compression;
 using Ginger.Reports.HTMLReports;
 using System.Collections.Generic;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -68,8 +69,8 @@ namespace Ginger.Run.RunSetActions
         public Email Email = new Email();
         
         //User can attach several templates to the email
-        // Attch template + RI
-        // Attch its own file
+        // Attach template + RI
+        // Attach its own file
         [IsSerializedForLocalRepository]
         public ObservableList<EmailAttachment> EmailAttachments = new ObservableList<EmailAttachment>();
 
@@ -145,7 +146,8 @@ namespace Ginger.Run.RunSetActions
             string html = String.Empty;
 
             HTMLReportTemplate HTMLR = new HTMLReportTemplate();
-            foreach (HTMLReportTemplate HT in App.LocalRepository.GetSolutionHTMLReportTemplates())
+            ObservableList<HTMLReportTemplate> HTMLReports = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>();
+            foreach (HTMLReportTemplate HT in HTMLReports)
             {
                 if (HT.Name ==CustomHTMLReportTemplate)
                 {

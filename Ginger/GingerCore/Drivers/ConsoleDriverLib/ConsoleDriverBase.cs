@@ -26,6 +26,7 @@ using System.IO;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Threading;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -98,11 +99,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message, ex);
             }
             IsDriverConnected = false;
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
@@ -159,6 +160,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                             return;
                         }
 
+                        act.AddOrUpdateReturnParamActual("Result", sRC);
+
                         sRC =sRC.Replace("\r", "");
                         sRC = sRC.Replace("\t", "");
                         string[] RCValues = sRC.Split('\n');
@@ -168,7 +171,16 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                             {
                                 string Param;
                                 string Value;
-                                int i = RCValue.IndexOf('=');
+                                int i = -1;
+                                if (!string.IsNullOrEmpty(ACC.Delimiter))
+                                {
+                                    i = RCValue.IndexOf(ACC.Delimiter);
+                                }
+                                else
+                                {
+                                    i = RCValue.IndexOf('=');
+                                }
+                                
                                 if ((i > 0) && ( i != RCValue.IndexOf("==")) && (i != RCValue.IndexOf("!=") +1))
                                 {
                                     Param = (RCValue.Substring(0, i)).Trim();
@@ -217,7 +229,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             catch(Exception ex)
             {
                 act.Error = "Failed to create console window screenshot. Error= " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, act.Error, ex);
             }
         }
 

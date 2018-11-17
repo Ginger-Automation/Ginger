@@ -1,285 +1,275 @@
-﻿    <RibbonWindow x:Class="Ginger.MainWindow" x:Name="MainRibbonWindow"
-              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-              xmlns:h="clr-namespace:Ginger.Help"
-              xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"              
-              Title="Amdocs BEAT Ginger Automation"    
+﻿<Window x:Class="Ginger.MainWindow" x:Name="xMainWindow" h:GingerHelpProvider.HelpString="Main Window"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:h="clr-namespace:Ginger.Help"
+        xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+        xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+        Title="Amdocs BEAT Ginger Automation"        
         Icon="GingerIconNew.ico"
-       h:GingerHelpProvider.HelpString="Main Window"
-        Height="600" Width="800" WindowState="Normal" Closing="RibbonWindow_Closing" PreviewKeyDown="RibbonWindow_PreviewKeyDown" 
-        >        
-        <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="86*"/>
-            <ColumnDefinition Width="334*"/>
-            <ColumnDefinition Width="97*"/>
-        </Grid.ColumnDefinitions>
+        Height="600" Width="1000" WindowState="Normal" 
+        Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="140"/>
-            <RowDefinition Height="317*"/>
-            <RowDefinition Height="32"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="200*"/>
+            <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
-        <!--<Ribbon>-->
 
-        <Ribbon x:Name="MainRibbon" ContextMenu="{x:Null}" SelectionChanged="MainRibbon_SelectionChanged"  Grid.ColumnSpan="3" Margin="0,0,0,380" Grid.RowSpan="2" MouseLeftButtonUp="MainRibbon_MouseLeftButtonUp" MouseDoubleClick="MainRibbon_MouseDoubleClick">
-            <Ribbon.TitleTemplate>
-                <DataTemplate>
-                    <TextBlock  Width="{Binding ElementName=MainRibbonWindow, Path=ActualWidth}" Margin="-5,0,0,0" VerticalAlignment="Center">    
-                            <Label FontSize="11" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold" Content="Amdocs BEAT Ginger Automation" VerticalAlignment="Center" Margin="0,0,0,0"/>
-                    </TextBlock>
-                </DataTemplate>
-            </Ribbon.TitleTemplate>
+        <!--Main Menu -->
+        <Grid Grid.Row="0" Background="{StaticResource $BackgroundColor_DarkBlue}" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="150*"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="30"/>
+            </Grid.ColumnDefinitions>
 
-            <Ribbon.ApplicationMenu>
-                <RibbonApplicationMenu KeyTip="F">
-                    <RibbonApplicationMenuItem x:Name="btnSetTerminologyType" Header="Set Terminology Type" Click="btnSetTerminologyType_Click"/>
-                    <RibbonApplicationMenuItem x:Name="btnSetUserType" Header="Set User Type" Click="btnSetUserType_Click"/>
-                    <RibbonApplicationSplitMenuItem  Header="Ginger Log">
-                        <RibbonApplicationMenuItem x:Name="btnSetLoggingLevel" Header="Set Logging Level" Click="btnSetLoggingLevel_Click" />
-                        <RibbonApplicationMenuItem x:Name="btnViewLog" Header="Open Log" Click="btnViewLog_Click" />
-                        <RibbonApplicationMenuItem x:Name="btnViewLogLocation" Header="Open Log Location" Click="btnViewLogLocation_Click" />
-                        <RibbonApplicationMenuItem x:Name="btnLaunchConsole" Header="Open Debug Console" Click="btnLaunchConsole_Click" />
-                        
-                    </RibbonApplicationSplitMenuItem>
+            <!--Main Menu- Ginger Icon-->
+            <DockPanel Grid.Column="0" VerticalAlignment="Center">
+                <usercontrols:ImageMakerControl x:Name="xGingerIconImg" ImageType="GingerIconWhite" SetAsFontImageWithSize="18" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                <GridSplitter Width="1" Height="40" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" Margin="10,0,10,0" IsEnabled="False"/>
+            </DockPanel>
 
-                    <RibbonApplicationMenuItem x:Name="btnAbout" Header="About" Click="btnAbout_Click"  />
-                    <RibbonApplicationMenuItem x:Name="btnExit" Header="Exit" Click="btnExit_Click"  />
-                </RibbonApplicationMenu>
-            </Ribbon.ApplicationMenu>
+            <!--Main Menu- Solution Menu's-->
+            <DockPanel Grid.Column="1" VerticalAlignment="Center">
+                <!--Main Menu- Solution Selection-->
+                <StackPanel x:Name="xSolutionSelectionPnl" Orientation="Horizontal" DockPanel.Dock="Left" >
+                    <TextBlock x:Name="xSolutionNameTextBlock" TextTrimming="CharacterEllipsis" MaxWidth="300"  TextWrapping="NoWrap" Margin="0,0,0,0" Text="Please Load Solution" VerticalAlignment="Center" HorizontalAlignment="Left" FontFamily="Open Sans" FontSize="20" FontWeight="Normal" Foreground="{StaticResource $SelectionColor_Pink}"   ></TextBlock>
+                    <Menu x:Name="xSolutionSelectionMenu" Background="{StaticResource $BackgroundColor_DarkBlue}"  Margin="5,0,0,0" VerticalAlignment="Center" >
+                        <MenuItem x:Name="xSolutionSelectionMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Solution Selection" Margin="0,0,0,0"  StaysOpenOnClick="True">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="20" ImageType="ArrowDown" Width="20" Height="20" Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                            <MenuItem x:Name="xRecentSolutionsMenuItem" Header="Recently Used Solutions" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xRecentSolutionsMenuItem_Click" StaysOpenOnClick="True" Visibility="Collapsed" >
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="History"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="xOpenSolutionMenuItem" Header="Open Existing Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xOpenSolutionMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16"  ImageType="OpenFolder"  Margin="0,0,0,0" HorizontalAlignment="Center"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="xDownloadSolutionMenuItem" Header="Download Existing Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xDownloadSolutionMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Download"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="xCreateNewSolutionMenuItem" Header="Create New Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xCreateNewSolutionMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Add"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+                </StackPanel>
 
-            <!-- Home  group-->
-            <RibbonTab x:Name="HomeRibbon"  ContextMenu="{x:Null}"  ToolTip="Home Tab" AutomationProperties.AutomationId="QA-HomeRibbon" KeyTip="H" Header="Home" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}">
-                <RibbonGroup x:Name="Start"  ContextMenu="{x:Null}" Header="Start">
-                    <RibbonButton Label="Getting Started"  ContextMenu="{x:Null}" Click="btnStart_Click" ToolTip="Getting started Ginger Automation Tool" KeyTip="S" LargeImageSource="{StaticResource @GetStarted_32x32}" SmallImageSource="{StaticResource @GetStarted16x16}" ></RibbonButton>
-                </RibbonGroup>
-                <RibbonGroup x:Name="News" Header="News"  ContextMenu="{x:Null}" >
-                    <RibbonButton Label="What's New?"  ContextMenu="{x:Null}"  Click="btnNews_Click" KeyTip="N" ToolTip="New Information Available" LargeImageSource="{StaticResource @NewsTV_32x32}" SmallImageSource="{StaticResource @NewsTV16x16}" ></RibbonButton>
-                </RibbonGroup>
-            </RibbonTab>
+                <!--Main Menu- Loaded Solution Menu's-->
+                <DockPanel x:Name="xLoadedSolutionMenusPnl" DockPanel.Dock="Left" VerticalAlignment="Center">
+                    <!--Main Menu- Solution Tabs-->
+                    <ListView x:Name="xSolutionTabsListView" Background="{StaticResource $BackgroundColor_DarkBlue}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" SelectionChanged="xSolutionTopNavigationListView_SelectionChanged" Margin="0,5,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" >
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListViewItem x:Name="xBusinessFlowsListItem" Style="{StaticResource $TopListViewItemStyle}" IsSelected="True">
+                            <ListViewItem.Content>
+                                <GingerCore:ucTextDicResource Text="[BusinessFlows]" Typography.Capitals="AllSmallCaps" FontSize="20" Margin="0,0,0,3"/>
+                            </ListViewItem.Content>
+                        </ListViewItem>
+                        <ListViewItem x:Name="xRunListItem" Style="{StaticResource $TopListViewItemStyle}" >RUN</ListViewItem>
+                        <ListViewItem x:Name="xConfigurationsListItem" Style="{StaticResource $TopListViewItemStyle}">CONFIGURATIONS</ListViewItem>
+                        <ListViewItem x:Name="xResourcesListItem" Style="{StaticResource $TopListViewItemStyle}">RESOURCES</ListViewItem>
+                    </ListView>
 
-            <!-- Solution  group-->
-            <RibbonTab x:Name="SolutionRibbon" h:GingerHelpProvider.HelpString="Solution" ContextMenu="{x:Null}" ToolTip="Solution Tab" AutomationProperties.AutomationId="QA-SolutionRibbon" Header="Solution" KeyTip="H" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" >
-                <RibbonGroup x:Name="SolutionRibbonGroup" Header="Solution"  ContextMenu="{x:Null}" >
-                    <RibbonButton Label="Open"  Click="btnOpenSolutions_Click"  ContextMenu="{x:Null}"  LargeImageSource="{StaticResource @Open_32x32}" ToolTip="Open Existing Solution" SmallImageSource="{StaticResource @Open_16x16}"></RibbonButton>
-                    <RibbonButton Label="New" Click="btnNewSolutions_Click"  ContextMenu="{x:Null}" ToolTip="Create New Solution" LargeImageSource="{StaticResource @Add_32x32}" SmallImageSource="{StaticResource @Add_16x16}" AutomationProperties.AutomationId="QA-NewSolutionButton"></RibbonButton>
-                    <RibbonButton x:Name="DownloadSolutionBtn" Label="Download Solution"  ToolTip="Download Solution from SVN"  ContextMenu="{x:Null}" Click="btnSourceControlDownloadSolution_Click" LargeImageSource="{StaticResource @Download_32x32}" SmallImageSource="{StaticResource @Download_16x16}"></RibbonButton>
-                    <RibbonButton x:Name="RefreshSolutionBtn" ToolTip="Refresh Solution"  ContextMenu="{x:Null}" Label="Refresh"  Click="RefreshSolution_Click"></RibbonButton>
-                    <RibbonButton x:Name="SaveAllBtn" Label="Save All" ToolTip="Save all pending changes done currently"  ContextMenu="{x:Null}" Click="btnSaveSolutions_Click" LargeImageSource="{StaticResource @SaveAll_32x32}" SmallImageSource="{StaticResource @Save_16x16}"></RibbonButton>
-                    <RibbonButton x:Name="btnUpgrade" Label="Upgrade" ToolTip="Upgrade all Solution items files to latest version"  ContextMenu="{x:Null}" Click="btnUpgrade_Click" LargeImageSource="{StaticResource @Upgrade_32x32}" SmallImageSource="{StaticResource @Upgrade_16x16}"></RibbonButton>
-                    <RibbonButton x:Name="ViewSolutionFiles" Label="View Files"  ContextMenu="{x:Null}" ToolTip="View Solution Files from File Explorer "  Click="ViewSolutionFiles_Click"  LargeImageSource="{StaticResource @Glass_32x32}" SmallImageSource="{StaticResource @Glass_16x16}"></RibbonButton>
-                    <RibbonButton x:Name="AnalyzerButton" Label="Solution Analyzer"  ContextMenu="{x:Null}" ToolTip="Analyze Solution to Detect Issues" Click="AnalyzerButton_Click" LargeImageSource="{StaticResource @Stethoscope_32x32.png}" SmallImageSource="{StaticResource @Stethoscope_16x16}"></RibbonButton>
-                    <RibbonButton x:Name="xFindAndReplaceSolutionPageButton" Label="Find &amp; Replace"  ContextMenu="{x:Null}" ToolTip="Find and Replace" Click="FindAndReplaceSolutionPageButton_Click" LargeImageSource="{StaticResource @MagnifyingGlass_32x32.png}" SmallImageSource="{StaticResource @MagnifyingGlass_24x24.png}"></RibbonButton>
-                    <RibbonButton x:Name="btnRecover" Label="Recover" ToolTip="Recover all Solution items files "  ContextMenu="{x:Null}" Click="btnRecover_Click" ></RibbonButton>
+                    <!--Main Menu- Solution Operations-->
+                    <Menu x:Name="xExtraSolutionOperationsMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <MenuItem x:Name="xExtraSolutionOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Extra Solution Operations" StaysOpenOnClick="True">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="ArrowDown" Width="18" Height="18" Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                            <MenuItem  Header="Analyze Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="AnalyzerButton_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Analyze" Width="16" SetAsFontImageWithSize="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem  Header="Upgrade Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnUpgrade_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Upgrade" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem  Header="Recover Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnRecover_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Recover" Width="16" SetAsFontImageWithSize="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem  Header="View/Edit Solution Details" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="EditSolutionDetailsMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Edit" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem  Header="Open Solution Folder" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="ViewSolutionFiles_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="OpenFolder" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
 
-                </RibbonGroup>
-                <RibbonGroup x:Name="SolutionGherkin" Header="BDD" Visibility="Collapsed">
-                    <RibbonButton x:Name="ImportFeatureFile" Visibility="Collapsed" ContextMenu="{x:Null}" ToolTip="Import Gherkin Feature File" Click="ImportFeatureFile_Click"  Label="Import Feature File" LargeImageSource="{StaticResource @FeatureFile_32x32 }" SmallImageSource="{StaticResource @FeatureFile_16X16}" />
-                    <RibbonButton x:Name="CreateFeatureFile" Visibility="Collapsed" ContextMenu="{x:Null}" ToolTip="Create Gherkin Feature File" Click="CreateFeatureFile_Click"  Label="Create Feature File" LargeImageSource="{StaticResource @FeatureFile_32x32 }" SmallImageSource="{StaticResource @FeatureFile_16X16}" />
-                </RibbonGroup>
-                <RibbonGroup x:Name="SourceControlSolutioRibbonGroup" Header="Solution Source Control" ContextMenu="{x:Null}" Visibility="Collapsed" >
-                    <RibbonButton x:Name="ConnectionDetailsBtn" Label="Configurations" ToolTip="Connection Details"  ContextMenu="{x:Null}" Click="btnSourceControlConnectionDetails_Click" LargeImageSource="{StaticResource @Config_32x32}" Visibility="Collapsed" SmallImageSource="{StaticResource @Config_16x16.png}"></RibbonButton>
-                    <RibbonButton x:Name="RepositoryDetailsBtn" Label="Repository Details" ToolTip="Solution Repository Details"  ContextMenu="{x:Null}" Click="btnSourceControlRepositoryDetails_Click" LargeImageSource="{StaticResource @Info_32x32.png}" Visibility="Collapsed" SmallImageSource="{StaticResource @Info_16x16.png}"></RibbonButton>
-                    <RibbonButton x:Name="CheckInSolutionBtn" ToolTip="CheckIn Solution to Source Control Server" ContextMenu="{x:Null}"  Label="Check-In Changes"  Click="btnSourceControlCheckIn_Click" Visibility="Collapsed" LargeImageSource="{StaticResource @CheckIn2_32x32}" SmallImageSource="{StaticResource @CheckIn2_16x16}"></RibbonButton>
-                    <RibbonButton x:Name="GetLatestSolutionBtn" ToolTip="Get Latest Solution from SVN" Label="Get Latest Updates"  ContextMenu="{x:Null}"  Click="btnSourceControlGetLatest_Click" Visibility="Collapsed" LargeImageSource="{StaticResource @GetLatest2_32x32}" SmallImageSource="{StaticResource @GetLatest2_16x16}"></RibbonButton>
-                    <RibbonMenuButton x:Name="ResolveConflictsBtn" ToolTip="Resolve Conflicts"  ContextMenu="{x:Null}" Label="Resolve Conflicts" Visibility="Collapsed" LargeImageSource="{StaticResource @AidBug_32x32.png}">
-                        <RibbonMenuItem x:Name="ResolveConflictsLocalMenuItem"  Click="ResolveConflictsLocalMenuItem_Click"  ContextMenu="{x:Null}"  Header="Keep Local Changes" Icon="{StaticResource TBD32x32}"/>
-                        <RibbonMenuItem x:Name="ResolveConflictsServerMenuItem"  Click="ResolveConflictsServerMenuItem_Click"  ContextMenu="{x:Null}"  Header="Accept Server Changes" Icon="{StaticResource TBD32x32}"/>
-                    </RibbonMenuButton>
-                    
-                </RibbonGroup>
-               
-                <RibbonGroup x:Name="ALMConfigurationsGroup" Header="ALM" ContextMenu="{x:Null}" >
-                    <RibbonMenuButton x:Name="ALMMenuBtn" Label="ALM"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @ALM_32x32.png}">
-                        <RibbonMenuItem x:Name="ALMConnectionSettingsMenuItem" ContextMenu="{x:Null}"  Header="ALM Connection Settings" Click="ALMConfigButton_Click" Icon="{StaticResource TBD32x32}"/>
-                        <RibbonMenuItem x:Name="ALMItemsFieldsConfigurationMenuItem" ContextMenu="{x:Null}"  Header="ALM Items Fields Configuration" Click="QCFieldConfiguration_Click" Icon="{StaticResource TBD32x32}"/>
-                        <RibbonMenuItem x:Name="ALMDefectsProfilesMenuItem" ContextMenu="{x:Null}"  Header="ALM Defect's Profiles" Click="ALMDefectsProfiles_Click" Icon="{StaticResource TBD32x32}"/>
-                        <RibbonMenuItem x:Name="ALMManagerReportMenuItem" ContextMenu="{x:Null}"  Header="ALM Manager Report" Click="QCManagerReport_Click" Icon="{StaticResource TBD32x32}"/>
-                    </RibbonMenuButton>
-                    
-                </RibbonGroup>
-            </RibbonTab>
+                    <Menu x:Name="xSolutionALMMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                        <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Share Operations">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Share" Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                            <MenuItem Header="ALM Connection Settings" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ALMConfigButton_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Parameter"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="ALM Items Fields Configuration" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ALMFieldsConfiguration_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="ListGroup"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="ALM Defect's Profiles" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ALMDefectsProfiles_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Bug"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
 
-            <!-- Automate -->
-            <RibbonTab x:Name="AutomateRibbon" AutomationProperties.AutomationId="AutomateRibbon" Header="Automate" h:GingerHelpProvider.HelpString="Automate"  ToolTip="Automate Tab" ContextMenu="{x:Null}" KeyTip="A" Margin="0,3,0,-3" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" IsHitTestVisible="True">
-                <RibbonGroup x:Name="BusFlowGroup" ContextMenu="{x:Null}" Header="{DynamicResource BusinessFlow}">
-                    <RibbonButton x:Name="SaveBizFlowButton" Click="SaveBizFlowButton_Click"  ContextMenu="{x:Null}" Label="Save" LargeImageSource="{StaticResource @Save_32x32}" SmallImageSource="{StaticResource @Save_16x16}" 
-                                  ToolTip="Save the currently opened Business Flow" 
-                                  />
-                    <RibbonButton x:Name="UndoBizFlowChangesButton" ContextMenu="{x:Null}" ToolTip="Undo all changes made" Click="UndoBizFlowChangesButton_Click" Label="Undo All Changes" LargeImageSource="{StaticResource @Undo_32x32.png}" SmallImageSource="{StaticResource @Undo_16x16}" />
-                    <RibbonButton x:Name="AutomateAnalyzerButton" Label="Analyzer" ContextMenu="{x:Null}"  Click="AutomateAnalyzerButton_Click"  LargeImageSource="{StaticResource @Stethoscope_32x32.png}" SmallImageSource="{StaticResource @Stethoscope_16x16}">
-                        <RibbonButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Analyze the [BusinessFlow]- Detect Integrity Issues"/>
-                        </RibbonButton.ToolTip>
-                    </RibbonButton>
-                    <RibbonButton x:Name="btnActionConversion" Label="Actions Conversion" ContextMenu="{x:Null}"  Click="btnActionConversion_Click"  LargeImageSource="{StaticResource @Connection_32x32}" SmallImageSource="{StaticResource @Connection_32x32}"/>
-                    <RibbonMenuButton x:Name="btnResetStatus" Label="Reset Status" ContextMenu="{x:Null}">
-                        <RibbonMenuItem  x:Name="btnResetFlow" Header="Reset Status of Business Flow" Click="btnResetFlow_Click"/>
-                        <RibbonMenuItem  x:Name="btnResetFromCurrentActivity" Header="Reset Status from Current Activity"  Click="btnResetFromCurrentActivity_Click"/>
-                        <RibbonMenuItem x:Name="btnResetFromCurrentAction"  Header="Reset Status from Current Action" Click="btnResetFromCurrentAction_Click"/>
-                        <RibbonMenuButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Reset Status"/>
-                        </RibbonMenuButton.ToolTip>
-                    </RibbonMenuButton>
-                    <RibbonButton x:Name="xFindAndReplaceAutomatePageButton" Label="Find &amp; Replace"  ContextMenu="{x:Null}" Click="FindAndReplaceAutomatePage_Click" LargeImageSource="{StaticResource @MagnifyingGlass_32x32.png}" SmallImageSource="{StaticResource @MagnifyingGlass_24x24.png}">
-                        <RibbonButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Find and Replace in [BusinessFlow]"/>
-                        </RibbonButton.ToolTip>
-                    </RibbonButton>
-                </RibbonGroup>
-                <RibbonGroup x:Name="Gherkin" Header="BDD" Visibility="Collapsed">
-                    <RibbonButton x:Name="GenerateScenario" Visibility="Collapsed" ContextMenu="{x:Null}" ToolTip="Generate BDD Scenarios" Click="GenerateScenarioButton_Click"  Label="Generate Scenarios" LargeImageSource="{StaticResource @AddScnearios_32x32 }" SmallImageSource="{StaticResource @Report_16x16}" />
-                    <RibbonButton x:Name="CleanScenario" Visibility="Collapsed" ContextMenu="{x:Null}" ToolTip="Clean BDD Scenarios" Click="CleanScenarioButton_Click"  Label="Clean Scenarios" LargeImageSource="{StaticResource @CleanScenarios_32x32 }" SmallImageSource="{StaticResource @Report_16x16}" />
-                    <RibbonButton x:Name="OpenFeatureFile" Visibility="Collapsed" ContextMenu="{x:Null}" ToolTip="Open Feature File" Click="OpenFeatureFileButton_Click"  Label="Open Feature File" LargeImageSource="{StaticResource @FeatureFile_32x32 }" SmallImageSource="{StaticResource @Report_16x16}" />
-                </RibbonGroup>
-                <RibbonGroup x:Name="Execution" Header="Execution"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @Play_32x32}" SmallImageSource="{StaticResource @Play_16x16}">
-                    <RibbonButton x:Name="RunActionButton"  ContextMenu="{x:Null}" ToolTip="Run Current Action" Click="RunActionButton_Click" Label="Run Action" LargeImageSource="{StaticResource @PlayAction_32x32}" SmallImageSource="{StaticResource @PlayAction_16x16.png}" />
-                    <RibbonButton x:Name="btnRunActivity"  ContextMenu="{x:Null}" ToolTip="Run Current Activity" Click="btnRunActivity_Click" LargeImageSource="{StaticResource @Play_32x32}" SmallImageSource="{StaticResource @Play_16x16}"/>
+                    <Menu x:Name="xSolutionSourceControlMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                        <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Source Control Operations">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="SourceControl" FontWeight="Bold" Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                            <MenuItem Header="Source Control Settings" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlConnectionDetails_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Parameter"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Get Latest Solution Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlGetLatest_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="GetLatest"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Check-In Solution Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlCheckIn_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="CheckIn"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="View Repository Details" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlRepositoryDetails_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="View"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Resolve Conflicts" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Fix"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                                <MenuItem Header="Keep Local Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsLocalMenuItem_Click">
+                                </MenuItem>
+                                <MenuItem Header="Accept Server Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsServerMenuItem_Click">
+                                </MenuItem>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
 
-                    <RibbonMenuButton x:Name="btnRunFlow" Label="Run Flow" ContextMenu="{x:Null}" LargeImageSource="{StaticResource @PlayFlow_32x32}" SmallImageSource="{StaticResource @PlayFlow_16x16}">
-                        <RibbonMenuItem  Header="Run Flow" Click="btnRunFlow_Click" ImageSource="{StaticResource @PlayFlow_16x16}" />
-                        <RibbonMenuItem  Header="Run Flow without Analyzing" Click="btnRunFlowNoAnaylze_Click" ImageSource="{StaticResource @LightRunFlow_16x16}" />
-                        <RibbonMenuItem  Header="Run Flow And Generate Report" Click="btnRunFlowAndGenerateReport_Click" ImageSource="{StaticResource @RunAndReport_16x16}" />
-                        <RibbonMenuButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Run whole [BusinessFlow]"/>
-                        </RibbonMenuButton.ToolTip>
-                    </RibbonMenuButton>
-                    <RibbonButton x:Name="StopRunButton"  ContextMenu="{x:Null}" ToolTip="Stop ongoing Execution" Click="StopRunButton_Click" Label="Stop" LargeImageSource="{StaticResource @Stop_32x32}" SmallImageSource="{StaticResource @Stop_16x16}"/>
-                    <RibbonMenuButton x:Name="btnContinueFlow" Label="Continue Flow" ContextMenu="{x:Null}" LargeImageSource="{StaticResource @ContinueFlow_32x32}" SmallImageSource="{StaticResource @ContinueFlow_16x16}">
-                        <RibbonMenuItem  Header="Continue Run from Last Stopped Action" Click="btnContinute_Click" ImageSource="{StaticResource @ContinueFlow_16x16}" />
-                        <RibbonMenuItem  x:Name="ContinuteRunActiviy"  Click="ContinuteRunActiviytButton_Click" ImageSource="{StaticResource @ContinueFlow_16x16}"/>
-                        <RibbonMenuItem  Header="Continue Run from Current Action" Click="ContinuteRunButton_Click" ImageSource="{StaticResource @ContinueFlow_16x16}" />
-                        <RibbonMenuButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Continue from Current"/>
-                        </RibbonMenuButton.ToolTip>
-                    </RibbonMenuButton>
-                    
-                    <StackPanel>
-                        <ComboBox x:Name="lstEnvs"  ContextMenu="{x:Null}" SelectionChanged="lstEnvs_SelectionChanged" Width="150" Style="{DynamicResource @InputComboBoxStyle}" Margin="5,5,5,3"></ComboBox>
-                        <Label HorizontalAlignment="Center">Environment</Label>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel Orientation="Vertical">
-                            <StackPanel Orientation="Horizontal">
-                                <Label HorizontalAlignment="Center">Speed:</Label>
-                                <ComboBox Name="cboSpeed" Style="{DynamicResource @InputComboBoxStyle}" Width="40" Margin="5,5,5,3">
-                                    <ComboBoxItem ToolTip="Super Fast">0</ComboBoxItem>
-                                    <ComboBoxItem ToolTip="1 Sec wait between actions">1</ComboBoxItem>
-                                    <ComboBoxItem ToolTip="2 Sec wait between actions">2</ComboBoxItem>
-                                    <ComboBoxItem>3</ComboBoxItem>
-                                </ComboBox>
-                            </StackPanel>
-                            <RibbonCheckBox x:Name="SimulationMode"  ContextMenu="{x:Null}" Style="{DynamicResource @CheckBoxGridCellElemntStyle}" Label="Run in simulation mode"  Margin="0,5,5,0" />
-                        </StackPanel>
-                    </StackPanel>
-                </RibbonGroup>
-                <RibbonGroup x:Name="AgentsRibbon"  ContextMenu="{x:Null}" ToolTip="Current Agents Available" Header="Agent(s)" LargeImageSource="{StaticResource @Agent_32x32}">
-                    
-                    <Frame x:Name="AppAgentsMappingExpander2Frame" NavigationUIVisibility="Hidden"></Frame>
-                    
-                    <RibbonButton x:Name="StartAgent" Click="StartAgent_Click" ContextMenu="{x:Null}" Label="Start All Agents" KeyTip="X" LargeImageSource="{StaticResource @AgentsLaunch_32x32.png}" SmallImageSource="{StaticResource @AgentsLaunch_16x16}" />
-                </RibbonGroup>
-                <RibbonGroup x:Name="Views" ContextMenu="{x:Null}"  Header="Views" ToolTip="View Grids" LargeImageSource="{StaticResource @GridView_32x32}" SmallImageSource="{StaticResource @Grid_16x16.png}">
-                    <RibbonMenuButton Label="Grids View" ContextMenu="{x:Null}" LargeImageSource="{StaticResource @GridView_32x32}" SmallImageSource="{StaticResource @Grid_16x16.png}">
-                        <RibbonMenuItem x:Name="btnGridViewAll"  Click="btnGridViewAll_Click"  Header="All" />
-                        <RibbonMenuItem x:Name="btnGridViewDesign"  Click="btnGridViewDesign_Click" Header="Design"/>
-                        <RibbonMenuItem x:Name="btnGridViewExecution"  Click="btnGridViewExecution_Click" Header="Execution" />
-                    </RibbonMenuButton>
-                    
-                </RibbonGroup>
-                <RibbonGroup x:Name="Reports" Header="Reports"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @Report2_32x32.png}" SmallImageSource="{StaticResource @Report2_16x16}">
-                    <RibbonButton x:Name="SummeryReportButton"  ContextMenu="{x:Null}" ToolTip="View Summary Report" Click="SummeryReportButton_Click"  Label="Execution Summary" LargeImageSource="{StaticResource @Report_32x32 }" SmallImageSource="{StaticResource @Report_16x16}" />
-                    
-                    <RibbonMenuButton Label="Generate Report"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @Report2_32x32.png}" ToolTip="Generate execution report" SmallImageSource="{StaticResource @Report2_16x16}">
-                        <RibbonMenuItem x:Name="btnLastExecutionHTMLReport"  Click="btnLastExecutionHTMLReport_click"  Header="Generate Last Executed Item Report" />
-                        <RibbonMenuItem x:Name="btnOfflineExecutionHTMLReport"  Click="btnOfflineExecutionHTMLReport_click" Header="Generate Full Business Flow Report"/>
-                    </RibbonMenuButton>
-                </RibbonGroup>
-                <RibbonGroup x:Name="ALMGroup" Header="{DynamicResource ALM}" ContextMenu="{x:Null}" LargeImageSource="{StaticResource @ALM_32x32.png}" SmallImageSource="{StaticResource @ALM_16x16.png}">
-                    <RibbonButton x:Name="ExportBizFlowButton" ContextMenu="{x:Null}" ToolTip="Export to ALM" Click="ExportBizFlowButton_Click" Label="Export to ALM" LargeImageSource="{StaticResource @ExportToALM_32x32}" SmallImageSource="{StaticResource @ExportToALM_16x16}" />
-                    <RibbonButton x:Name="RefreshFromALM" ContextMenu="{x:Null}" ToolTip="Refresh From ALM" Click="RefreshFromALM_Click" Label="Refresh From ALM" LargeImageSource="{StaticResource @RefreshALM_32x32}" SmallImageSource="{StaticResource @RefreshALM_16x16}" />
-                    <RibbonButton x:Name="ExportExecutionResultsToALM" ContextMenu="{x:Null}" ToolTip="Export Execution Results to ALM " Click="ExportExecutionResultsToALM_Click" Label="Export Results to ALM " LargeImageSource="{StaticResource @ExportExecutionResultsToALM_32x32}" SmallImageSource="{StaticResource @ExportExecutionResultsToALM_16x16}" />
-                </RibbonGroup>
-            </RibbonTab>
+                    <usercontrols:ucButton x:Name="xFindAndReplaceBtn" ButtonType="ImageButton" ToolTip="Find and Replace in Solution"  ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Search" Click="xFindAndReplaceSolutionButton_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="20,0,5,0"/>
+                </DockPanel>
+            </DockPanel>
 
+            <!--Main Menu- User Operations-->
+            <DockPanel Grid.Column="2" VerticalAlignment="Center">
+                <GridSplitter Width="1" Height="40" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" Margin="10,0,10,0" IsEnabled="False"/>
+                <StackPanel VerticalAlignment="Center">
+                    <Ellipse x:Name="xProfileImageEllipse" Grid.Column="0" Height="38" Width="38" Margin="0,5,0,0">
+                        <Ellipse.Fill>
+                            <ImageBrush x:Name="xProfileImageImgBrush" RenderOptions.BitmapScalingMode="HighQuality"  Stretch="Uniform"  />
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <Label x:Name="xUserNameLbl" Content="User Name" Style="{StaticResource $LabelStyle}" FontSize="8" Foreground="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+                </StackPanel>
+                <Menu x:Name="xUserOperationsMenu" DockPanel.Dock="Left" Background="Transparent"  Margin="5,0,0,0" VerticalAlignment="Center">
+                    <MenuItem x:Name="xUserOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="User Operations" Margin="0,0,0,0"  StaysOpenOnClick="True">
+                        <MenuItem.Icon>
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="ArrowDown" Width="18" Height="18" Margin="0,0,0,0"/>
+                        </MenuItem.Icon>
+                        <MenuItem x:Name="xUserProfileMenuItem" Header="User Profile" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xUserProfileMenuItem_Click" >
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="UserProfile"  Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="xUserSettingsMenuItem" Header="User Settings" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xUserSettingsMenuItem_Click">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16"  ImageType="Parameter"  Margin="0,0,0,0" HorizontalAlignment="Center"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="xLogOptionsMenuItem" Header="Log" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xLogOptionsMenuItem_Click">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="File"  Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+            </DockPanel>
 
-            <RibbonTab x:Name="xNewAutomate" Header="New Automate" AutomationProperties.AutomationId="NewAutomate" h:GingerHelpProvider.HelpString="NewAutomate" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" Visibility="Collapsed">
-            </RibbonTab>
+            <!--Main Menu- Extra Operations-->
+            <DockPanel Grid.Column="3" VerticalAlignment="Center">
+                <Menu x:Name="xExtraOperationsMenu" DockPanel.Dock="Left" Background="Transparent"  Margin="0,0,0,0" VerticalAlignment="Center">
+                    <MenuItem x:Name="xExtraOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Extra Operations" Margin="0,0,0,0"  StaysOpenOnClick="True">
+                        <MenuItem.Icon>
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="EllipsisH" Width="18" Height="18" Margin="0,0,0,0"/>
+                        </MenuItem.Icon>
+                        <MenuItem  Header="Ginger Help Library" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="HelpButton_Click">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl ImageType="FileVideo" Width="16" SetAsFontImageWithSize="16"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="xSupportOptionsMenuItem" Header="Support" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xSupportOptionsMenuItem_Click">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Help" Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="xContactOptionsMenuItem" Header="Contact" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xContactOptionsMenuItem_Click">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Email" Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem  Header="About" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnAbout_Click">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl ImageType="Info" Width="16" SetAsFontImageWithSize="16"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem  Header="Close Application" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnExit_Click">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl ImageType="Close" Width="16" SetAsFontImageWithSize="16"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+            </DockPanel>
+        </Grid>
 
-            <RibbonTab x:Name="RunRibbon" AutomationProperties.AutomationId="RunRibbon" Header="Run" h:GingerHelpProvider.HelpString="Run" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" IsHitTestVisible="True">
-            </RibbonTab>
+        <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1"/>
+        <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerIconGray" Width="100" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-
-            <!-- Configurations Tab-->
-            <RibbonTab x:Name="xConfigurations" Header="Configurations" AutomationProperties.AutomationId="Configurations" h:GingerHelpProvider.HelpString="Configurations" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" >
-            </RibbonTab>
-
-            <!-- Resources Tab-->
-            <RibbonTab x:Name="xResources" Header="Resources" AutomationProperties.AutomationId="Resources" h:GingerHelpProvider.HelpString="Resources" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}" >
-            </RibbonTab>
-
-            <!-- Support Tab-->
-            <RibbonTab x:Name="SupportRibbon" Header="Support" h:GingerHelpProvider.HelpString="Support" ContextMenu="{x:Null}" RibbonTab.HeaderStyle="{StaticResource @RibbonTabHeaderStyle}">
-                <RibbonGroup x:Name="SupportSite" Header="Support Center" ContextMenu="{x:Null}" >
-                    <RibbonButton x:Name="btnBack" Click="btnBack_Click"  ContextMenu="{x:Null}" Label="Back" LargeImageSource="{StaticResource @LeftArrow_32x32.png}" SmallImageSource="{StaticResource @LeftArrow_16x16.png}" />
-                    <RibbonButton x:Name="btnRefresh" Click="btnRefresh_Click"  ContextMenu="{x:Null}" Label="Refresh"/>
-                    <RibbonButton x:Name="SupportSitebutton" Click="SupportSitebutton_Click" ContextMenu="{x:Null}"  Label="Support Site" LargeImageSource="{StaticResource @HelpMe_32x32}" SmallImageSource="{StaticResource @HelpMe_32x32}" />
-                    <RibbonButton x:Name="NewTicketbutton" Click="NewTicketbutton_Click" ContextMenu="{x:Null}"  Label="Open Ticket" LargeImageSource="{StaticResource @Ticket_32x32.png}" SmallImageSource="{StaticResource @Ticket_16x16}" />
-                    <RibbonButton x:Name="Forum" Click="GingerForum" ContextMenu="{x:Null}"  Label="Q&amp;A Forum" LargeImageSource="{StaticResource @Forum_32x32}" SmallImageSource="{StaticResource @Ticket_16x16}" />
-                </RibbonGroup>
-                <RibbonGroup x:Name="Help" Header="Help" ContextMenu="{x:Null}" >
-                    <RibbonButton x:Name="HelpButton" Click="HelpButton_Click"  ContextMenu="{x:Null}"  Label="Help Library" LargeImageSource="{StaticResource @Help_32x32}"/>
-                </RibbonGroup>
-            </RibbonTab>
-            
-           
-        </Ribbon>
-      
-        <Frame x:Name="MainFrame" Content="Main Frame" Grid.Column="0" HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Row="1" Grid.ColumnSpan="3" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
-
-        <GridSplitter  Grid.Row="2" IsEnabled="False" Grid.ColumnSpan="3"  HorizontalAlignment="Stretch" VerticalAlignment="Top"  Height="2" Width="Auto" />
-
-        <StatusBar x:Name="StatusBarwindow" 
-                   Grid.ColumnSpan="3"   
-                   Grid.Row="2" 
-                   HorizontalAlignment="Stretch"
-                   VerticalAlignment="Bottom"
-                   Height="30"                   
-                   Margin="0,0,0,0"
-                   BorderBrush="#B9C9DA"
-                   BorderThickness="1" Foreground="Black">
-            <StatusBar.Background>
-                <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                    <GradientStop Color="#FFDBE6F1" Offset="0.718"/>
-                    <GradientStop Color="White" Offset="0.133"/>
-                </LinearGradientBrush>
-            </StatusBar.Background>
-            <StatusBar.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <DockPanel LastChildFill="False" />
-                </ItemsPanelTemplate>
-            </StatusBar.ItemsPanel>
-            <Label x:Name="lblVersion" DockPanel.Dock="Right"  Content="Version" Height="25" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}"/>
-            <Label x:Name="lblBetaFeatures" DockPanel.Dock="Right" Content="with/out beta features" VerticalAlignment="Center" Height="25"  Style="{StaticResource @LabelStyle}" Foreground="Orange" FontWeight="Bold" MouseLeftButtonDown="lblBetaFeatures_MouseLeftButtonDown" ToolTip="Click to view which Beta features are selected"/>
-            <Label Content="|" DockPanel.Dock="Right" Height="25" Width="15" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}"/>
-            <Label x:Name="ErrorsLabel" DockPanel.Dock="Right" Content="Errors(3)" VerticalAlignment="Center" Height="25"  Style="{StaticResource @LabelStyle}" Foreground="Red" FontWeight="Bold" MouseLeftButtonDown="ErrorsLabel_MouseLeftButtonDown"  ToolTip="Click to view erros"/>
-            <Label Content="|" DockPanel.Dock="Right" Height="25" Width="15" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}"/>
-            <Label x:Name="lblStatus" AutomationProperties.AutomationId="QA-StatusLabel" DockPanel.Dock="Right"  Content="Loading" Height="25" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}"/>
-            <Label Content="|" DockPanel.Dock="Right" Height="25" Width="15" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}"/>
-            <Label x:Name="lblSolution" DockPanel.Dock="Right" Content="No Solution" VerticalAlignment="Center" Height="25"  Style="{StaticResource @LabelStyle}"/>
-            <Label Content="|" DockPanel.Dock="Right" Height="25" Width="15" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}"/>
-            <Label x:Name="lblBizFlow" DockPanel.Dock="Right" VerticalAlignment="Center" Height="25"  Style="{StaticResource @LabelStyle}">
-                <Label.Content>
-                    <GingerCore:ucTextDicResource Text="No [BusinessFlow]"/>
-                </Label.Content>
-            </Label>
-
-            <StatusBarItem DockPanel.Dock="Right">
-                <Grid  VerticalAlignment="Center">
-                    <ProgressBar x:Name="pbStatus" Width="300" Height="18" Margin="0,0,5,1" />
-                    <TextBlock x:Name="pbText" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource @Skin1_ColorA}" FontSize="8">%</TextBlock>
-                </Grid>
-            </StatusBarItem>
-        </StatusBar>
-
+        <Border Grid.Row="2" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" >
+            <DockPanel VerticalAlignment="Center">
+                <usercontrols:ImageMakerControl x:Name="xBetaFeaturesIcon" ImageType="Beta" ToolTip="Running With Beta Features" SetAsFontImageWithSize="18" Foreground="OrangeRed" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="5,0,0,0" MouseLeftButtonDown="xBetaFeaturesIcon_MouseLeftButtonDown"/>
+                <StackPanel x:Name="xLogErrorsPnl" Orientation="Horizontal" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <usercontrols:ImageMakerControl x:Name="xLogErrorsIcon" ImageType="Error" SetAsFontImageWithSize="18" Foreground="Red" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="10,0,0,0" MouseLeftButtonDown="xLogErrors_MouseLeftButtonDown"/>
+                    <Label x:Name="xLogErrorsLbl" Content="[0]" Style="{StaticResource $LabelStyle}" Foreground="Red" FontWeight="Bold" MouseLeftButtonDown="xLogErrors_MouseLeftButtonDown" Margin="-5,0,0,0"/>
+                </StackPanel>
+                <StackPanel x:Name="xProcessMsgPnl" Orientation="Horizontal" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <usercontrols:ImageMakerControl x:Name="xProcessMsgIcon" ImageType="Processing" ToolTip="Running With Beta Features" SetAsFontImageWithSize="18" Foreground="OrangeRed" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="10,0,5,0"/>
+                    <TextBlock x:Name="xProcessMsgTxtBlock" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Text="Showing something is running" MaxWidth="400" />
+                </StackPanel>
+                <Label x:Name="lblVersion" DockPanel.Dock="Right"  Content="Version" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Right" Margin="0,0,5,0"/>
+            </DockPanel>
+        </Border>
     </Grid>
-</RibbonWindow>
+</Window>

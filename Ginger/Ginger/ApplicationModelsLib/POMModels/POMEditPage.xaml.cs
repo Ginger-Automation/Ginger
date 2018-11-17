@@ -18,16 +18,24 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
+using Ginger.Agents;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.BindingLib;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Ginger.ApplicationModelsLib.POMModels
@@ -38,72 +46,78 @@ namespace Ginger.ApplicationModelsLib.POMModels
     public partial class POMEditPage : Page
     {
         ApplicationPOMModel mPOM;
-        
+        ScreenShotViewPage mScreenShotViewPage;
+
+
+        private Agent mAgent;
+        public Agent Agent
+        {
+            get
+            {
+                return mAgent;
+            }
+            set
+            {
+                mAgent = value;
+                mPomAllElementsPage.SetAgent(mAgent);
+            }
+        }
+
+        public IWindowExplorer mWinExplorer
+        {
+            get
+            {
+                if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
+                {
+                    return mAgent.Driver as IWindowExplorer;
+                }
+                else
+                {
+                    if (mAgent != null)
+                    {
+                        mAgent.Close();
+                    }
+                    return null;
+                }
+            }
+        }
+
+
         ScreenShotViewPage pd;
+
+        readonly PomAllElementsPage mPomAllElementsPage;
         public POMEditPage(ApplicationPOMModel POM)
         {
             InitializeComponent();
             mPOM = POM;
             ControlsBinding.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             ControlsBinding.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
+            ControlsBinding.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
 
             xTargetApplicationComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             FillTargetAppsComboBox();
             xTargetApplicationComboBox.Init(mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTagsViewer.Init(mPOM.TagsKeys);
 
+            ePlatformType mAppPlatform = App.UserProfile.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
+            ObservableList<Agent>  optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
+            xAgentControlUC.Init(optionalAgentsList);
+            App.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
+
             BitmapSource source = null;
             if (mPOM.ScreenShotImage != null)
             {
-                source = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.ScreenShotImage.ToString()));
+                source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mPOM.ScreenShotImage.ToString()));
             }
 
-            //Bitmap ScreenShot = BitmapFromSource(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetImageStream(Ginger.Reports.GingerExecutionReport.ExtensionMethods.Base64ToImage(mPOM.LogoBase64Image.ToString())));
+            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
+            xScreenShotFrame.Content = mScreenShotViewPage;
 
-            ScreenShotViewPage p = new ScreenShotViewPage(mPOM.Name, source);
-            xScreenShotFrame.Content = p;
+            mPomAllElementsPage = new PomAllElementsPage(mPOM);
+            xUIElementsFrame.Content = mPomAllElementsPage;
 
-            //PomElementsMappingPage mappedUIElementsPage = new PomElementsMappingPage(mPOM,null);
-            PomAllElementsPage pomAllElementsPage = new PomAllElementsPage(mPOM, null);
-            //pomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
-            //pomAllElementsPage.unmappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
-            xUIElementsFrame.Content = pomAllElementsPage;
+            UIElementTabTextBlockUpdate();
 
-            //PageNameTextBox.BindControl(mApplicationPOM, nameof(ApplicationPOM.Name));
-
-            //ObservableList<ApplicationPlatform> Apps = App.UserProfile.Solution.ApplicationPlatforms;
-            //ApplicationPlatform AP = (from x in Apps where x.Guid == mApplicationPOM.TargetApplicationKey.Guid select x).FirstOrDefault();
-            //mApplicationPOM.TargetApplicationKey = AP.Key;  // Create new binding and get updates if exist as key app name might changed
-
-            //Yuval Uncomment
-            //TargetApplicationComboBox.BindControl<ApplicationPlatform>(mApplicationPOM, nameof(mApplicationPOM.TargetAppplicationKey), Apps, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
-
-            //TODO: lazy load based on tabs with cache
-            //if (mPOM.ScreenShot == null)
-            //{
-            //    string filename = mPOM.FileName.Replace("xml", "Screenshot.bmp");  // TODO: use same const
-            //    //mPom.ScreenShot = General.LoadBitmapFromFile(filename);
-            //}
-
-
-            //POMSimulatorFrame.Content = new POMSimulatorPage(mPom);
-
-
-            //LearnWizardPage p2 = new LearnWizardPage(mPom);
-            //UIElementsFrame.Content = p2;
-
-            //MappingFrame.Content = new MapUIElementsWizardPage(mPom);
-
-            //NaviagtionsFrame.Content = new NavigationsPage(mPom);
-
-            ////TODO: create a page and move code to design page
-            //pd = new ScreenShotViewPage(mPom.Name, mPom.ScreenShot);
-            //pd.MouseClickOnScreenshot += MouseClickOnScreenshot;
-            //pd.MouseUpOnScreenshot += MouseUpOnScreenshot;
-            //pd.MouseMoveOnScreenshot += MouseMoveOnScreenshot;
-            //DesignFrame.Content = pd;
-
-            //InitControlPropertiesGrid();
         }
 
         private void FillTargetAppsComboBox()
@@ -117,14 +131,21 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     mPOM.TargetApplicationKey = key;
                 }
                 else
-                {
-                    //TODO: Fix with New Reporter (on GingerWPF)
-                    System.Windows.MessageBox.Show(string.Format("The mapped '{0}' Target Application was not found, please select new Target Application", mPOM.Key.ItemName), "Missing Target Application", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning, System.Windows.MessageBoxResult.OK);
+                {                    
+                    Reporter.ToUser(eUserMsgKeys.MissingTargetApplication, "The mapped" + mPOM.Key.ItemName + "Target Application was not found, please select new Target Application");
+
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms;
+            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
+
+            App.UserProfile.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
+        }
+
+        private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            xTargetApplicationComboBox.ComboBox.ItemsSource = App.UserProfile.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
         }
 
         public static Bitmap BitmapFromSource(BitmapSource bitmapsource)
@@ -140,141 +161,125 @@ namespace Ginger.ApplicationModelsLib.POMModels
             return bitmap;
         }
 
-        //private void InitControlPropertiesGrid()
-        //{
-        //    string[] list = new string[] {"Name=ABC", "Mandatory=No", "FontColor=Black" };
-        //    ControlPropertiesGrid.ItemsSource = list;
-        //}
+        private void UIElementTabTextBlockUpdate()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xUIElementTabTextBlock.Text = string.Format("UI Elements ({0})", mPOM.MappedUIElements.Count + mPOM.UnMappedUIElements.Count);
+            });
+        }
 
-        //double MX = -1;
-        //double MY = -1;
+        private void TakeScreenShotButtonClicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ShowScreenShot();
+        }
 
-        //private void MouseClickOnScreenshot(object arg1, MouseclickonScrenshot arg2)
-        //{
-        //    MX = arg2.X;
-        //    MY = arg2.Y;            
-        //}
+        public void ShowScreenShot()
+        {
 
-        //private void MouseMoveOnScreenshot(object arg1, MouseMoveonScrenshot arg2)
-        //{
-        //    if (MX != -1 && MY != -1)
-        //    {
-        //        Rectangle r = GetMouseRectangle(MX, MY, arg2.X, arg2.Y);
-        //        pd.HighLight(r);
-        //    }
-        //}
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                return;
+            }
 
+            mWinExplorer.UnHighLightElements();
+            Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mAgent.Driver).GetScreenShot();
+            mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
+            mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
+            xScreenShotFrame.Content = mScreenShotViewPage;
+        }
 
-        // Return correct rectangle when x, Y is always top left, user can draw rectangle in different direction, below function avoid get width/height in minus
-        //Rectangle GetMouseRectangle(double X1, double Y1, double X2, double Y2)
-        //{
-        //    Rectangle r = new Rectangle();
+        private void BrowseImageButtonClicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
+            op.Title = "Select a picture";
+            op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
+            if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (!string.IsNullOrEmpty(op.FileName))
+                {
+                    var fileLength = new FileInfo(op.FileName).Length;
+                    if (fileLength <= 50000)
+                    {
+                        if ((op.FileName != null) && (op.FileName != string.Empty))
+                        {
+                            using (var ms = new MemoryStream())
+                            {
+                                BitmapImage bi = new BitmapImage(new Uri(op.FileName));
+                                Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
 
-        //    if (X1 < X2)
-        //    {
-        //        r.X = (int)X1;
-        //    }
-        //    else
-        //    {
-        //        r.X = (int)X2 + 1;  // + 1 to make sure our highlighert is not under mouse and we will not get th mouse events, help when drawing back or up
-        //    }
+                                BitmapImage bi_resized = new BitmapImage();
+                                bi_resized.BeginInit();
+                                bi_resized.UriSource = new Uri(op.FileName);
+                                bi_resized.DecodePixelHeight = sizes.Item2;
+                                bi_resized.DecodePixelWidth = sizes.Item1;
+                                bi_resized.EndInit();
+                                Bitmap ScreenShotBitmap = Ginger.General.BitmapImage2Bitmap(bi_resized);
+                                mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
+                                mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
+                                xScreenShotFrame.Content = mScreenShotViewPage;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKeys.ImageSize, "50");
+                    }
+                }
+            }
+            
+        }
 
-        //    if (Y1 < Y2)
-        //    {
-        //        r.Y = (int)Y1;
-        //    }
-        //    else
-        //    {
-        //        r.Y = (int)Y2 + 1; // + 1 to make sure our highlighert is not under mouse and we will not get th mouse events, help when drawing back or up
-        //    }
+        private void xPageURLBtn_Click(object sender, RoutedEventArgs e)
+        {
+            GoToPageURL();
+        }
 
-        //    r.Width = (int)System.Math.Abs(X1 - X2);
-        //    r.Height = (int)System.Math.Abs(Y1 - Y2);
+        public void GoToPageURL()
+        {
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                return;
+            }
 
-        //    return r;
-        //}
+            ActGotoURL act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = mPOM.PageURL, ValueForDriver = mPOM.PageURL, Active = true };
+            mAgent.Driver.RunAction(act);
+        }
 
+        private void AgentStartedHandler()
+        {
+            GoToPageURL();
+        }
 
-        //private void MouseUpOnScreenshot(object arg1, MouseUponScrenshot arg2)
-        //{
-        //    Rectangle r = GetMouseRectangle(MX, MY, arg2.X, arg2.Y);
-        //    MX = -1;
-        //    MY = -1;
-        //    CreateControl(r);
-        //}
+        private void xPomTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //set the selected tab text style
+            try
+            {
+                if (xPomTabs.SelectedItem != null)
+                {
+                    foreach (TabItem tab in xPomTabs.Items)
+                    {
+                        foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
 
-        //private void CreateControl(Rectangle r)
-        //{
-        //    // ******************************************************************************
-        //    //DO NOT  DELETE Temp commented for moving to GingerCoreCommon
-        //    // ******************************************************************************
-        //    //if (ControlsListBox.SelectedItem == null) return;
-        //    //var c = ((ListBoxItem)ControlsListBox.SelectedItem).Content;
+                            if (ctrl.GetType() == typeof(TextBlock))
+                            {
+                                if (xPomTabs.SelectedItem == tab)
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                else
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
-        //    //Control control = null;
-
-        //    //if (c is Label)
-        //    //{
-        //    //    Label l = new Label();                
-        //    //    l.Content = "Label";
-        //    //    l.MouseDown += Label_MouseDown;                
-        //    //    control = l;
-
-        //    //    //TODO: create at the end for all the same
-        //    //    ElementInfo EI = new ElementInfo();
-        //    //    EI.ElementName = "New Label";
-        //    //    EI.X = r.X;
-        //    //    EI.Y = r.Y;
-        //    //    EI.Width = (int)l.Width;
-        //    //    EI.Height = (int)l.Height;
-        //    //    EI.ElementType = "Label";
-        //    //    EI.Active = true;
-        //    //    mApplicationPOM.UIElements.Add(EI);
-        //    //    l.Tag = EI;
-        //    //}
-
-        //    //if (c is Button)
-        //    //{
-        //    //    Button b = new Button();                
-        //    //    b.Content = "Button";
-        //    //    b.Click += B_Click;
-        //    //    control = b;
-        //    //}
-
-        //    //if (c is TextBox)
-        //    //{
-        //    //    TextBox TB = new TextBox();
-        //    //    control = TB;
-        //    //}
-
-        //    //if (c is ComboBox)
-        //    //{
-        //    //    ComboBox CB = new ComboBox();                
-        //    //    CB.ItemsSource = new string[] { "A", "B", "C" };
-        //    //    control = CB;
-        //    //}
-
-        //    //if (control != null)
-        //    //{
-        //    //    control.Width = r.Width;
-        //    //    control.Height = r.Height;
-        //    //    pd.AddControl(control, r.X, r.Y);
-        //    //}
-
-        //    ////TODO: common Setcontrol location for all C
-        //}
-
-        //private void B_Click(object sender, System.Windows.RoutedEventArgs e)
-        //{
-        //}
-
-        //private void Label_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        //{
-        //}
-
-        //private void ClearButton_Click(object sender, System.Windows.RoutedEventArgs e)
-        //{
-        //    pd.ClearControls();
-        //}
+                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in POM Edit Page tabs style", ex);
+            }
+        }
     }
 }

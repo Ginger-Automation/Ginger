@@ -18,8 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.UserControls;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace GingerWPFUnitTest.POMs
 {
@@ -32,28 +30,30 @@ namespace GingerWPFUnitTest.POMs
             ucButton = b;
         }
 
-        Button mButton
+        ucButton mButton
         {
             get
             {
-                return (Button)FindElementByName(ucButton, "xButton");
+                return ucButton; 
             }
         }
 
         public void Click()
         {            
             Task.Factory.StartNew(() => { 
-                mDispatcher.Invoke(() =>
-                {                                
-                    mButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));                    
+                Dispatcher.Invoke(() =>
+                {                                                                         
+                    Execute(() =>
+                    {                    
+                        mButton.DoClick();
+                    });
                 });
             });
             
-            SleepWithDoEvents(500);            
-
+             SleepWithDoEvents(500);            
         }
 
-
+     
         public bool IsEnabled
         {
             get
@@ -66,8 +66,7 @@ namespace GingerWPFUnitTest.POMs
                 return b;
             }
         }
-
-        //TODO: remove the set
-        public string Text { get { return (string)mButton.Content; } set { Button b = mButton; b.Content = value; } }
+        
+        public string Text { get { return mButton.ButtonText;  }  }
     }
 }

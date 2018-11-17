@@ -28,7 +28,7 @@ using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor
 {
-    public abstract class TextEditorBase
+    public abstract class TextEditorBase 
     {
         // TODO: clean or virtual        
 
@@ -40,7 +40,7 @@ namespace Ginger.UserControlsLib.TextEditor
         {
             get
             {
-                // we return null so it will use the deafult text editor, however editor can override and return it's own page editor like Gherkin does                
+                // we return null so it will use the default text editor, however editor can override and return it's own page editor like Gherkin does                
                 return null;
             }
         }
@@ -62,7 +62,7 @@ namespace Ginger.UserControlsLib.TextEditor
             }
         }
 
-        public abstract List<ITextEditorToolBarItem> Tools { get; }
+        public abstract List<ITextEditorToolBarItem> Tools { get; }       
 
         public virtual string Title()
         {

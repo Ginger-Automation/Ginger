@@ -72,7 +72,7 @@ namespace GingerTest.POMs
             wizard.NextButton.Click();
             wizard.Finish();
 
-            // Verify agent apear on tree, might take some time
+            // Verify agent appear on tree, might take some time
             bool b = mTreeView.IsItemExist(name);
             if (!b) throw new Exception("Cannot find new agent in tree: " + name);
 

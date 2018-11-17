@@ -1,9 +1,11 @@
 ﻿using ALM_Common.DataContracts;
 using ALMRestClient;
+using Amdocs.Ginger.Common;
 using GingerCore.ALM.QC;
 using QCRestClient;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -24,10 +26,17 @@ namespace GingerCore.ALM.QCRestAPI
 
         public static bool ConnectQCServer(string qcServerUrl, string qcUserName, string qcPassword)
         {
-            if (QcRestClient == null || qcServerUrl != ServerURL || qcUserName != UserName || qcPassword != Password)
-                QcRestClient = new QCClient(qcServerUrl, qcUserName, qcPassword);
+            string validateQcServerUrl = qcServerUrl;
+            if (validateQcServerUrl.ToLowerInvariant().EndsWith("qcbin"))
+            {
+                validateQcServerUrl = qcServerUrl.Remove(qcServerUrl.Length - 5);
+            }  
+            if (QcRestClient == null || validateQcServerUrl != ServerURL || qcUserName != UserName || qcPassword != Password)
+            {
+                QcRestClient = new QCClient(validateQcServerUrl, qcUserName, qcPassword);
+            }
 
-            ServerURL = qcServerUrl;
+            ServerURL = validateQcServerUrl;
             UserName = qcUserName;
             Password = qcPassword;
 
@@ -51,7 +60,7 @@ namespace GingerCore.ALM.QCRestAPI
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     return false;
                 }
             }
@@ -149,7 +158,7 @@ namespace GingerCore.ALM.QCRestAPI
             return int.Parse(separatePath.Last());
         }
 
-        //get test plan explorer(tree view)
+        // get test plan explorer(tree view)
         public static List<string> GetTestPlanExplorer(string PathNode)
         {
             string[] separatePath = PathNode.Split('\\');
@@ -201,7 +210,7 @@ namespace GingerCore.ALM.QCRestAPI
             return testlabPathList;
         }
 
-        //get test set explorer(tree view)
+        // get test set explorer(tree view)
         public static List<QCTestSetSummary> GetTestSetExplorer(string PathNode)
         {
             List<QCTestSetSummary> testlabPathList = new List<QCTestSetSummary>();
@@ -289,7 +298,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test cases with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test cases with REST API", ex);
                 return null;
             }
         }
@@ -302,7 +311,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test set details with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test set details with REST API", ex);
                 return null;
             }
         }
@@ -315,7 +324,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to convert resource type with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to convert resource type with REST API", ex);
                 return null;
             }
         }
@@ -328,7 +337,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get fields with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get fields with REST API", ex);
                 return null;
             }
         }
@@ -341,7 +350,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test case steps with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test case steps with REST API", ex);
                 return null;
             }
         }
@@ -354,7 +363,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test instances with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test instances with REST API", ex);
                 return null;
             }
         }
@@ -367,7 +376,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test instances of test set with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test instances of test set with REST API", ex);
                 return null;
             }
         }
@@ -380,7 +389,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test cases steps with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test cases steps with REST API", ex);
                 return null;
             }
         }
@@ -393,7 +402,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get runs by test id with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get runs by test id with REST API", ex);
                 return null;
             }
         }
@@ -407,7 +416,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test cases parameters with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test cases parameters with REST API", ex);
                 return null;
             }
         }
@@ -420,7 +429,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get test instance details with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get test instance details with REST API", ex);
                 return null;
             }
         }
@@ -433,9 +442,19 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to create entity with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to create entity with REST API", ex);
                 return null;
             }
+        }
+
+        public static ALMResponseData CreateAttachment(ResourceType resourceType, string id, string zipFileName)
+        {
+            FileStream fs = new FileStream(zipFileName, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs);
+            byte[] fileData = br.ReadBytes((Int32)fs.Length);
+            ALMResponseData response = QcRestClient.CreateAttachmentForEntitiyId(ResourceType.TEST_RUN, id, zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData);
+            fs.Close();
+            return response;
         }
 
         public static void DeleteEntity(ResourceType resourceType, string id)
@@ -446,7 +465,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to delete entity with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to delete entity with REST API", ex);
             }
         }
 
@@ -458,7 +477,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to update entity with REST API", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to update entity with REST API", ex);
                 return null;
             }
         }

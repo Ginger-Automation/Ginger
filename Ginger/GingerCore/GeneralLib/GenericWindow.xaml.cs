@@ -25,7 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Ginger
-{
+{    
     public enum eWindowShowStyle
     {
         Free,
@@ -38,7 +38,11 @@ namespace Ginger
     /// </summary>
     public partial class GenericWindow : Window
     {
-        private EventHandler mCloseEventHandler;
+
+        // Used for Ginger Automator
+        public static GenericWindow CurrentWindow;
+
+        private RoutedEventHandler mCloseEventHandler;
 
         public eWindowShowStyle CurrentWinStyle { get; set; }
         public bool NeedToReShow { get; set; }
@@ -48,10 +52,12 @@ namespace Ginger
         double mPageOriginalHeight = -1;
 
         public GenericWindow(Window Owner, eWindowShowStyle windowStyle, string windowTitle,
-                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", EventHandler closeEventHandler = null)
+                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null)
         {
             InitializeComponent();   
             this.Owner = Owner;
+
+            CurrentWindow = this;
 
             //set style
             CurrentWinStyle = windowStyle;
@@ -130,7 +136,7 @@ namespace Ginger
                             windowPage.Tag = "PageSizeWasModified";
                     }
 
-                    //set min hieght and width
+                    //set min height and width
                     if (windowPage.MinWidth > 0)
                     {
                         if (windowPage.Width < windowPage.MinWidth)
@@ -165,15 +171,24 @@ namespace Ginger
                 PageFrame.Content = windowPage;
             }
 
+
             //set window buttons
+
+            //close buttons handling
+            mCloseEventHandler = closeEventHandler;
             if (!showClosebtn)
             {
                 CloseBtn.Visibility = System.Windows.Visibility.Collapsed;
+                if (mCloseEventHandler == null)
+                {
+                    UpperCloseBtn.Visibility = System.Windows.Visibility.Collapsed;
+                }
             }
-            else
+            if (!string.IsNullOrEmpty(closeBtnText))
             {
                 CloseBtn.Content = closeBtnText;
-            }
+                UpperCloseBtn.ToolTip = closeBtnText;
+            }            
 
             if (windowBtnsList != null)
             {
@@ -184,21 +199,21 @@ namespace Ginger
                     if (margin.Right < 10)
                         margin.Right = 10;
                     btn.Margin = margin;
-                    btn.Style = this.FindResource("@WindowButtonStyle") as Style;
+                    btn.Style = this.FindResource("$WindowButtonStyle") as Style;
                     DockPanel.SetDock(btn, Dock.Right);
                     BottomPanel.Children.Add(btn);
                 }
-            }
-
-            mCloseEventHandler = closeEventHandler;
-        }     
+            }            
+        }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
             Window parentWindow = Window.GetWindow((Button)sender);
             parentWindow.IsEnabled = false;
-            if (mCloseEventHandler != null) 
-                mCloseEventHandler.Invoke(this, new EventArgs());
+            if (mCloseEventHandler != null)
+            {
+                mCloseEventHandler.Invoke(this, new RoutedEventArgs());                
+            }
             else
                 this.Close();
             parentWindow.IsEnabled = true;            
@@ -290,7 +305,7 @@ namespace Ginger
 
 
         public static void LoadGenericWindow(ref GenericWindow genWindow, System.Windows.Window owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage,
-                                        ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", EventHandler closeEventHandler = null, bool startupLocationWithOffset = false)
+                                        ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset = false)
         {
             //GenericWindow win = null;
             genWindow = null;
@@ -323,5 +338,24 @@ namespace Ginger
             while (genWindow.NeedToReShow);
         }
 
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            //to make sure the parent window will be showen
+            if (this.Owner != null)
+            {
+                if (!this.Owner.IsVisible)
+                {
+                    this.Owner.Show();
+                }
+                if (this.Owner.WindowState == WindowState.Minimized)
+                {
+                    this.Owner.WindowState = WindowState.Normal;
+                }
+                this.Owner.Activate();
+                this.Owner.Topmost = true;  
+                this.Owner.Topmost = false; 
+                this.Owner.Focus();
+            }
+        }
     }
 }

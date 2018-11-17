@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 
 namespace GingerCore.Drivers.ScriptDriverLib
@@ -43,16 +44,16 @@ namespace GingerCore.Drivers.ScriptDriverLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
             }
         }
 
         protected virtual string RunScript(string cmd) { return cmd; }
        
         protected void Process_Exited(object sender, EventArgs e)
-        {
-            System.Windows.MessageBox.Show("Data=" + DataBuffer);
-            System.Windows.MessageBox.Show("Error=" + ErrorBuffer);
+        {            
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Data=" + DataBuffer);
+            Reporter.ToLog(eAppReporterLogLevel.INFO, "Error=" + ErrorBuffer);
         }
 
         protected void AddError(string outLine)

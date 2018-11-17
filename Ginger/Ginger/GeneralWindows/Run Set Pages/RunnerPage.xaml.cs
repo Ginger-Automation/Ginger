@@ -37,6 +37,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Amdocs.Ginger.Common.Enums;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run
 {
@@ -318,15 +319,15 @@ namespace Ginger.Run
             }
             else
             {
-                ((RunnerItemPage)sender).xItemName.Foreground = FindResource("$DarkBlue") as Brush;
+                ((RunnerItemPage)sender).xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
             }
         }
         private void Businessflow_ClickAutomate(object sender, RoutedEventArgs e)
         {
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
-            BusinessFlow actualBf = App.LocalRepository.GetSolutionBusinessFlows().Where(x => x.Guid == bf.Guid).FirstOrDefault();
+            BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == bf.Guid).FirstOrDefault();
             if (actualBf != null)
-                App.MainWindow.AutomateBusinessFlow(actualBf);
+                App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.Automate, actualBf);
         }
         private void dispatcherTimerElapsedTick(object sender, EventArgs e)
         {
@@ -437,7 +438,7 @@ namespace Ginger.Run
             }
             catch (InvalidOperationException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Stats", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Update Stats", e);
             }
         }
         //ToDo : move to piechart section or create usercontrol
@@ -681,7 +682,7 @@ namespace Ginger.Run
             }
             else
             {
-                xRunnerNameTxtBlock.Foreground = FindResource("$DarkBlue") as Brush;
+                xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
             }
         }
 

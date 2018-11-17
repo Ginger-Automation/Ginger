@@ -34,6 +34,18 @@ namespace Ginger.Agents
             }
         }
 
+        public delegate void AgentStartedUCEventHandler();
+
+        public event AgentStartedUCEventHandler AgentStartedUCEvent;
+
+        public void AgentStartedEvent()
+        {
+            if (AgentStartedUCEvent != null)
+            {
+                AgentStartedUCEvent();
+            }
+        }
+
         ObservableList<Agent> mOptionalAgentsList = null;
 
         public ucAgentControl()
@@ -184,7 +196,7 @@ namespace Ginger.Agents
                     SelectedAgent.SolutionFolder = App.UserProfile.Solution.Folder;
                     SelectedAgent.ProjEnvironment = null;// App.AutomateTabEnvironment;
                     SelectedAgent.BusinessFlow = null; //App.BusinessFlow; ;                    
-                    SelectedAgent.DSList = null; //App.LocalRepository.GetSolutionDataSources();
+                    SelectedAgent.DSList = null; //WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                     SelectedAgent.StartDriver();
                     Reporter.CloseGingerHelper();
                     //If there is errorMessageFromDriver is populated then do not wait. 
@@ -199,6 +211,7 @@ namespace Ginger.Agents
                         Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgentFailed, null, errorMessage);
                     }
                     SelectedAgent.Tag = "Started with Agent Control";
+                    AgentStartedEvent();
                     break;
 
                 case Agent.eStatus.Starting:
@@ -241,10 +254,12 @@ namespace Ginger.Agents
                 //xAgentWindowsRefreshBtn.ButtonImageForground = Brushes.Gray;
                 return;
             }
+            List<AppWindow> winsList = null;
 
-            //xAgentWindowsRefreshBtn.ButtonImageForground = (SolidColorBrush)FindResource("$DarkBlue"); 
-
-            List<AppWindow> winsList = ((IWindowExplorer)(SelectedAgent.Driver)).GetAppWindows();
+            if (SelectedAgent.Status == Agent.eStatus.Completed || SelectedAgent.Status == Agent.eStatus.Ready || SelectedAgent.Status == Agent.eStatus.Running)
+            {
+                winsList = ((IWindowExplorer)(SelectedAgent.Driver)).GetAppWindows();
+            }
             xAgentWindowsComboBox.ItemsSource = winsList;
             xAgentWindowsComboBox.DisplayMemberPath = nameof(AppWindow.WinInfo);
 

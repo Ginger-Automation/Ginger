@@ -16,8 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Dynamic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -29,6 +35,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
     /// </summary>
     public partial class ActionInputValueUserControl : UserControl
     {
+        ActInputValue mActInputValue;
         public ActionInputValueUserControl()
         {
             InitializeComponent();
@@ -36,11 +43,12 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
         public void BindControl(ActInputValue AIV)
         {
+            mActInputValue = AIV;
             this.ValueTextBox.Visibility = Visibility.Collapsed;
             this.ValueDataGrid.Visibility = Visibility.Collapsed;
             this.ValueComboBox.Visibility = Visibility.Collapsed;
             
-
+            // simple string or unknown type show text box
             if  (AIV.ParamType == typeof(string) || AIV.ParamType == null)
             {
                 this.ValueTextBox.Visibility = Visibility.Visible;
@@ -49,6 +57,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 return;
             }
 
+            // Int
             if (AIV.ParamType == typeof(int))
             {
                 this.ValueTextBox.Visibility = Visibility.Visible;
@@ -59,11 +68,24 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 return;
             }
 
-            if (AIV.ParamType == typeof(List<string>))
+            
+            // List - Show in Grid
+            if (AIV.ParamType == typeof(DynamicListWrapper))
             {
+                ValueExpressionButton.Visibility = Visibility.Collapsed;
                 this.ValueDataGrid.Visibility = Visibility.Visible;
+                xUCcGrid.Visibility = Visibility.Visible;
+                xUCcGrid.Title = AIV.Param;                
+                ObservableList<dynamic> DynList = mActInputValue.ListDynamicValue;
+                DynList.CollectionChanged += ListCollectionChanged;
+                xUCcGrid.DataSourceList = DynList;
+                xUCcGrid.btnAdd.Click += AddItem;
+                SetListGridView();
                 return;
             }
+
+            
+
 
             if (AIV.ParamType.IsEnum)
             {
@@ -73,6 +95,44 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 this.ValueComboBox.Style = App.GetStyle("@ComboBoxStyle");   // TODO: use const/enum so will pass compile check             
                 return;
             }
+        }
+
+        private void AddItem(object sender, RoutedEventArgs e)
+        {
+            dynamic expando = new ExpandoObject();
+            // TODO set obj with item default value - expando.Name = "";
+            
+            ((ObservableList<dynamic>)xUCcGrid.DataSourceList).Add(expando);
+        }
+
+        private void ListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ObservableList<dynamic> list = (ObservableList<dynamic>)xUCcGrid.DataSourceList;
+            mActInputValue.ListDynamicValue = list;
+        }
+
+        void SetListGridView()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            view.GridColsView = viewCols;
+
+            // Create grid columns based on list item properties
+            List<string> props = mActInputValue.GetListItemProperties();
+            foreach(string prop in props)
+            {
+                viewCols.Add(new GridColView() { Field = prop, WidthWeight = 10 });
+            }
+
+            xUCcGrid.SetAllColumnsDefaultView(view);
+            xUCcGrid.InitViewItems();
+        }
+
+      
+        private void ValueExpressionButton_Click(object sender, RoutedEventArgs e)
+        {
+            ValueExpressionEditorPage valueExpressionEditorPage = new ValueExpressionEditorPage(mActInputValue, nameof(ActInputValue.Value));
+            valueExpressionEditorPage.ShowAsWindow();
         }
     }
 }

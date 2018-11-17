@@ -39,7 +39,7 @@ namespace UnitTests.NonUITests.AutoPilot
         {
 
         }
-
+        [Level2]
         [TestMethod]
         public void SwaggerParseCheckHeaderAndParamsCount()
         {
@@ -49,7 +49,7 @@ namespace UnitTests.NonUITests.AutoPilot
             ObservableList<ApplicationAPIModel> requests = new ObservableList<ApplicationAPIModel>();
 
             //Act   
-            requests = parserForBillingAccount.ParseDocument(createPaymentProfileFileName);
+            requests = parserForBillingAccount.ParseDocument(createPaymentProfileFileName, requests);
             ApplicationAPIModel RequestToTest = requests.Where(x => x.Name == @"Deletes a pet").ElementAt(0);
 
             //Assert

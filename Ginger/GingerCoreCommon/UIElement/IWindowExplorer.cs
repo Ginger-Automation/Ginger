@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.Common.UIElement
         string GetFocusedControl();
         ElementInfo GetControlFromMousePosition();       
         AppWindow GetActiveWindow();
-        List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null);
+        List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false);
         List<ElementInfo> GetElementChildren(ElementInfo ElementInfo);
         // Get All element properties to be displayed in properties 
         ObservableList<ControlProperty> GetElementProperties(ElementInfo ElementInfo);
@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.Common.UIElement
         ObservableList<ElementLocator> GetElementLocators(ElementInfo ElementInfo);
 
         // Get the data of the element
-        // For Combo box: will return all valid values - options avaialble - List<ComboBoxElementItem>
+        // For Combo box: will return all valid values - options available - List<ComboBoxElementItem>
         // For Table: will return list of rows data: List<TableElementItem>        
         object GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue);
         
@@ -50,6 +50,6 @@ namespace Amdocs.Ginger.Common.UIElement
 
         bool IsElementObjectValid(object obj);
 
-        void TestElementLocators(ObservableList<ElementLocator> elementLocators);
+        bool TestElementLocators(ObservableList<ElementLocator> elementLocators,bool GetOutAfterFoundElement = false);
     }
 }

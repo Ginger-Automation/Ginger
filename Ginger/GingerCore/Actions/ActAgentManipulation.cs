@@ -32,11 +32,11 @@ namespace GingerCore.Actions
         }
 
         public override string ActionDescription { get { return "Agent Manipulation Action"; } }
-        public override string ActionUserDescription { get { return "Use this action oto Start, Stop, Restart the agent in middle of the flow"; } }
+        public override string ActionUserDescription { get { return "Use this action to Start, Stop, Restart the agent in middle of the flow"; } }
 
         public override void ActionUserRecommendedUseCase(TextBlockHelper TBH)
         {
-            TBH.AddText("Use this action oto Start, Stop, Restart the agent in middle of the flow");
+            TBH.AddText("Use this action to Start, Stop, Restart the agent in middle of the flow");
             TBH.AddLineBreak();
         }
 

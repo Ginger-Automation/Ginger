@@ -57,8 +57,8 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.NewRepositoryItemTreeHeader(mPOMModelFolder, nameof(RepositoryFolder<ApplicationPOMModel>.DisplayName), eImageType.Folder, eImageType.Null, false);
+        {           
+            return NewTVItemFolderHeaderStyle(mPOMModelFolder);
         }
 
         public override ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)
@@ -95,7 +95,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // untrack sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
-            //Add direct childrens        
+            //Add direct children's        
             mChildPoms = mPOMModelFolder.GetFolderItems();
             mChildPoms.CollectionChanged -= TreeFolderItems_CollectionChanged;
             mChildPoms.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
@@ -144,7 +144,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         internal void AddPOM(object sender, RoutedEventArgs e)
         {            
-            WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder));            
+            WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), DoNotShowAsDialog:true);            
         }
     }
 }

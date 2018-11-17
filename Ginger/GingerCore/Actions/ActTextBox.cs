@@ -160,7 +160,6 @@ namespace GingerCore.Actions
 
         Act IObsoleteAction.GetNewAction()
         {
-            bool uIElementTypeAssigned = false;
             AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
 
@@ -172,10 +171,10 @@ namespace GingerCore.Actions
                 switch (this.TextBoxAction)
                 {
                     case eTextBoxAction.SetValueFast:
-                        newAct.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        newAct.ElementAction = ActUIElement.eElementAction.SetValue;
                         break;
                     case eTextBoxAction.SetValue:
-                        newAct.ElementAction = ActUIElement.eElementAction.SendKeys;
+                        newAct.ElementAction = ActUIElement.eElementAction.SetText;
                         break;
                     case eTextBoxAction.Clear:
                         newAct.ElementAction = ActUIElement.eElementAction.ClearValue;
@@ -190,15 +189,14 @@ namespace GingerCore.Actions
                         newAct.ElementAction = ActUIElement.eElementAction.GetTextLength;
                         break;
                     default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ActionType.ToString());
+                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.TextBoxAction.ToString());
                         break;
                 }
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
             newAct.ElementLocateValue = String.Copy(this.LocateValue);
-            if (!uIElementTypeAssigned)
-                newAct.ElementType = eElementType.TextBox;
+            newAct.ElementType = eElementType.TextBox;
             newAct.Active = true;
 
             return newAct;

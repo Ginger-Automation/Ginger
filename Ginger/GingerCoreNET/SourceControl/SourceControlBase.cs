@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using static GingerCoreNET.SourceControl.SourceControlFileInfo;
+using System.Threading.Tasks;
 
 namespace GingerCoreNET.SourceControl
 {
@@ -117,7 +118,7 @@ namespace GingerCoreNET.SourceControl
         // get one file status
         public abstract SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems,ref string error);
 
-        // get list of files changed in path recursivley - modifed, add, deleted
+        // get list of files changed in path recursively - modified, add, deleted
         public abstract ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path,ref string error, List<string> PathsToIgnore=null, bool includLockedFiles = false);
 
         public abstract bool GetLatest(string path, ref string error, ref List<string> conflictsPaths);
@@ -185,36 +186,36 @@ namespace GingerCoreNET.SourceControl
 
         public abstract SourceControlItemInfoDetails GetRepositoryInfo(ref string error);
 
-        public eImageType GetFileStatusForRepositoryItemPath(string FullPath)
+        public async Task<eImageType> GetFileStatusForRepositoryItemPath(string FullPath)
         {
-            // return GetFileStatusForRepositoryItemPath(FullPath);
-
-//            SourceControlIntegration.get
-
             string err = null;
-            eRepositoryItemStatus ss =  GetFileStatus(FullPath, true, ref err);
-            switch (ss)
+            return await Task.Run(() =>
             {
-                case eRepositoryItemStatus.New:
-                    return eImageType.SourceControlNew;
-                case eRepositoryItemStatus.Modified:
-                    return eImageType.SourceControlModified;
-                case eRepositoryItemStatus.Equel:
-                    return eImageType.SourceControlEquel;
-                default:
-                    return eImageType.SourceControlDeleted;
-            }
-                
-            //return  eImageType.ActiveAll;
-            //SourceControlFileInfo.eRepositoryItemStatus st = GetFileStatus(FullPath, true, ref err);
-            
-            //    string err=null;
-            //    SourceControlFileInfo.eRepositoryItemStatus st = GetFileStatus(FullPath, true, ref err);
-            //    if (st == SourceControlFileInfo.eRepositoryItemStatus.New) return eSourceControlFileStatus.New;
-            //    if (st == SourceControlFileInfo.eRepositoryItemStatus.Modified) return eSourceControlFileStatus.Modified;
-            //    if (st == SourceControlFileInfo.eRepositoryItemStatus.Equel) return eSourceControlFileStatus.NoChange;
+                eRepositoryItemStatus ss = GetFileStatus(FullPath, true, ref err);
+                switch (ss)
+                {
+                    case eRepositoryItemStatus.New:
+                        return eImageType.SourceControlNew;
 
-            //    throw new Exception("Unknow source control status for: " + FullPath);
+                    case eRepositoryItemStatus.Modified:
+                        return eImageType.SourceControlModified;
+
+                    case eRepositoryItemStatus.Equel:
+                        return eImageType.SourceControlEquel;
+
+                    case eRepositoryItemStatus.LockedByMe:
+                        return eImageType.SourceControlLockedByMe;
+
+                    case eRepositoryItemStatus.LockedByAnotherUser:
+                        return eImageType.SourceControlLockedByAnotherUser;
+
+                    case eRepositoryItemStatus.Unknown:
+                        return eImageType.SourceControlError;
+
+                    default:
+                        return eImageType.SourceControlDeleted;
+                }
+            }).ConfigureAwait(true);
         }
     }
 }

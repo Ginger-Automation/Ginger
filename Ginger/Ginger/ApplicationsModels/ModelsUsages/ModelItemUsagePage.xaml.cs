@@ -79,7 +79,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             {
                 xProcessingImage.Visibility = Visibility.Visible;
 
-                ObservableList<BusinessFlow> BizFlows = App.LocalRepository.GetSolutionBusinessFlows();
+                ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
                 await Task.Run(() =>
                 {
                     foreach (BusinessFlow BF in BizFlows)
@@ -186,7 +186,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update the model item usage", ex);
+                            Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to update the model item usage", ex);
                             usage.Status = ModelItemUsage.eStatus.UpdateFailed;
                         }
                     }
@@ -282,15 +282,15 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                         if (usage.Status == ModelItemUsage.eStatus.Updated || usage.Status == ModelItemUsage.eStatus.SaveFailed)
                         {
                             try
-                            {
-                                usage.HostBusinessFlow.Save();
+                            {                                
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
                                 usage.Status = ModelItemUsage.eStatus.UpdatedAndSaved;
                             }
                             catch (Exception ex)
                             {
                                 usage.Status = ModelItemUsage.eStatus.SaveFailed;
                                 Reporter.CloseGingerHelper();
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             }
                         }
                     }

@@ -28,16 +28,13 @@ using GingerCore.Activities;
 using GingerCore.FlowControlLib;
 using GingerCoreNET.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore
 {
-    public class BusinessFlow : RepositoryItem
-    {
-        //  This class is container for AAA
-        //This class is being serialized and saved to XML when working local
-        // Regex to find variable between {} like: {Var=FirstName}  or {Var=City} , can also find if string contains "AA {Var=First} - {Var=Last} BB"
-        // private static string rxVar = "Var=";
-        // private static Regex rx = new Regex(@"{" + rxVar + "[^}]*}", RegexOptions.Compiled);
+    public class BusinessFlow : RepositoryItemBase
+    {        
+
         public BusinessFlow()
         {
 
@@ -144,8 +141,8 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public string RunDescription { get { return mRunDescription; } set { if (mRunDescription != value) { mRunDescription = value; OnPropertyChanged(Fields.RunDescription); } } }
 
-        double? mElapsed;
-        [IsSerializedForLocalRepository]
+        double? mElapsed; 
+        [IsSerializedForLocalRepository]     // TODO: Needed?
         public double? Elapsed
         {
             get { return mElapsed; }
@@ -191,7 +188,7 @@ namespace GingerCore
         }
 
         private bool mActive = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool Active
         {
             get { return mActive; }
@@ -257,8 +254,28 @@ namespace GingerCore
         //@ Run info 
 
 
+        private ObservableList<Activity> mActivities;
+
         [IsSerializedForLocalRepository]
-        public ObservableList<Activity> Activities; //DO NOT USE  { get; set; } it will break repo serializer
+        public ObservableList<Activity> Activities
+        {
+            get
+            {
+                if (mActivities == null)
+                {
+                    mActivities = new ObservableList<Activity>();
+                }
+                if (mActivities.LazyLoad)
+                {
+                    mActivities.GetItemsInfo();
+                }
+                return mActivities;
+            }
+            set
+            {
+                mActivities = value;
+            }
+        }        
 
         [IsSerializedForLocalRepository]
         public new string ExternalID { get; set; } // will use it for QC ID or other external ID
@@ -501,17 +518,20 @@ namespace GingerCore
             }
         }
 
-        public void AddActivity(Activity a, bool setAfterCurrentActivity = false)
+        public void AddActivity(Activity a, bool setAfterCurrentActivity = false, Activity indexActivity = null)
         {
             if (a == null)
                 return;
-
-            if (CurrentActivity != null && setAfterCurrentActivity)
+            if(indexActivity == null)
+            {
+                indexActivity = CurrentActivity;
+            }
+            if (indexActivity != null && setAfterCurrentActivity)
             {
                 int selectedActivityIndex = -1;
-                if (CurrentActivity != null)
+                if (indexActivity != null)
                 {
-                    selectedActivityIndex = Activities.IndexOf(CurrentActivity);
+                    selectedActivityIndex = Activities.IndexOf(indexActivity);
                 }
 
                 if (selectedActivityIndex >= 0)
@@ -584,7 +604,7 @@ namespace GingerCore
             if (activitiesGroup == null)
             {
                 activitiesGroup = new ActivitiesGroup();
-                activitiesGroup.Name = "NewGroup";
+                activitiesGroup.Name = "New " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
             }
             SetUniqueActivitiesGroupName(activitiesGroup);
             ActivitiesGroups.Add(activitiesGroup);
@@ -595,7 +615,7 @@ namespace GingerCore
             if (activitiesGroup == null)
             {
                 activitiesGroup = new ActivitiesGroup();
-                activitiesGroup.Name = "NewGroup";
+                activitiesGroup.Name = "New " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
             }
             SetUniqueActivitiesGroupName(activitiesGroup);
             if ((index != -1) && (ActivitiesGroups.Count > index))
@@ -622,9 +642,8 @@ namespace GingerCore
                 counter++;
             activitiesGroup.Name = activitiesGroup.Name + "_" + counter.ToString();
         }
-
         public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,
-                                                                        ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false)
+                                                                        ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false, Activity indexActivity = null)
         {
             string missingActivities = string.Empty;
 
@@ -646,8 +665,16 @@ namespace GingerCore
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
                         if (keepOriginalTargetApplicationMapping == false)
                             SetActivityTargetApplication(actInstance);
-                        this.AddActivity(actInstance);
+                        if(indexActivity == null && ActivitiesGroups.Count > 1)
+                        {
+                            this.AddActivity(actInstance, (CurrentActivity != null), CurrentActivity);
+                        }
+                        else
+                        {
+                            this.AddActivity(actInstance, (CurrentActivity != null), indexActivity);
+                        }
                         actIdent.IdentifiedActivity = actInstance;
+                        indexActivity = actInstance;
                     }
                     else
                     {
@@ -1076,5 +1103,20 @@ namespace GingerCore
             }
         }
 
+        public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.BusinessFlow;
+            }
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return nameof(this.Name);
+            }
+        }
     }
 }

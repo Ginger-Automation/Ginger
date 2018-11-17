@@ -147,7 +147,7 @@ namespace Ginger.Actions.UserControls
                         {
                             foreach (BusinessFlow bf in mBfParentRunner.BusinessFlows)
                             {
-                                if (App.MainWindow.MainRibbonSelectedTab == eRibbonTab.Run.ToString() && mActParentBusinessFlow == bf)//TODO: do better condition 
+                                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.Run && mActParentBusinessFlow == bf)//TODO: do better condition 
                                     continue;
                                 
                                 GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
@@ -196,8 +196,10 @@ namespace Ginger.Actions.UserControls
                             foreach (Act a in mActParentActivity.Acts)
                             {
                                 //avoid current Action
-                                if (App.MainWindow.MainRibbonSelectedTab == eRibbonTab.Automate.ToString() && App.BusinessFlow.CurrentActivity.Acts.CurrentItem == a)//TODO: do better condition 
+                                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && App.BusinessFlow.CurrentActivity.Acts.CurrentItem == a)//TODO: do better condition 
+                                {
                                     continue;
+                                }
 
                                 GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
                                 CEI.Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.Description;//adding also name as second option search to be used when pulling the actions from Shared Repository
@@ -207,7 +209,7 @@ namespace Ginger.Actions.UserControls
                                 if (ActionValueComboBox.SelectedItem == null ||
                                     ((ActionValueComboBox.SelectedItem != null && a.Active)))
                                 {
-                                    if (FC.GetGuidFromValue(true) == a.Guid)//we leeting it run each time becase in Convertion mechinsem we have 2 actions with same GUID
+                                    if (FC.GetGuidFromValue(true) == a.Guid)//we letting it run each time because in Conversion mechanism we have 2 actions with same GUID
                                     {
                                         ActionValueComboBox.SelectedItem = CEI;
                                     }
@@ -231,8 +233,10 @@ namespace Ginger.Actions.UserControls
                         {
                             foreach (Activity a in mActParentBusinessFlow.Activities)
                             {
-                                if (App.MainWindow.MainRibbonSelectedTab == eRibbonTab.Automate.ToString() && App.BusinessFlow.CurrentActivity == a)//TODO: do better condition 
+                                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && App.BusinessFlow.CurrentActivity == a)//TODO: do better condition 
+                                {
                                     continue;
+                                }
 
                                 GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
                                 CEI.Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.ActivityName;//adding also name as second option search to be used when pulling the activity from Shared Repository

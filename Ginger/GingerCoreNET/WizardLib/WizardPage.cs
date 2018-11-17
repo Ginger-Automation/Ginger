@@ -25,6 +25,6 @@ namespace GingerWPF.WizardLib
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public IWizardPage Page { get; set; }
-        public bool HasErrors { get; set; }
+        public bool HasErrors { get; set; }        
     }
 }

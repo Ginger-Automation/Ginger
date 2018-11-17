@@ -16,16 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Amdocs.Ginger.Common.Repository;
-using GingerCore;
-using Ginger;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ginger.SolutionGeneral;
 using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
 {
@@ -36,7 +29,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            
+            Ginger.App.InitClassTypesDictionary();
         }
 
         [TestInitialize]
@@ -44,7 +37,7 @@ namespace UnitTests.NonUITests
         {
 
         }
-        //test trigger unitest
+        //test trigger unit test
         /// <summary>
         /// Test the new solution been created successfully
         /// </summary>
@@ -52,39 +45,32 @@ namespace UnitTests.NonUITests
         public void CreateNewSolution()
         {
             // Arrange
-            Ginger.Environments.Solution createSol = new Ginger.Environments.Solution();
+            Solution createSol = new Solution();
             createSol.Name = "NonUi Solution Test";
-            createSol.Folder = @"C:\NonUI_Tests\";
-            // createSol.MainPlatform = GingerCore.Platforms.Platform.eType.Web;
-            if (!System.IO.Directory.Exists(createSol.Folder))
-            {
-                System.IO.Directory.CreateDirectory(createSol.Folder);
-            }
+            
+            string SolFile = TestResources.GetTempFile("Solution1.Ginger.Solution.xml");
 
             //Act
-            createSol.SaveToFile(createSol.Folder + @"\Ginger.Solution.xml");
-            Ginger.Environments.Solution loadSol = (Ginger.Environments.Solution)RepositoryItem.LoadFromFile(typeof(Ginger.Environments.Solution), createSol.Folder + @"\Ginger.Solution.xml");
+            createSol.RepositorySerializer.SaveToFile(createSol, SolFile);
+            Solution loadSol = Solution.LoadSolution(SolFile, false);
 
             //Assert
            Assert.AreEqual(loadSol.Name, createSol.Name);
            Assert.AreEqual(loadSol.MainPlatform, createSol.MainPlatform);
         }
+
+
         [TestMethod]
         public void CreateNewSolutionWithMultiUnderscore()
         {
             // Arrange
-            Ginger.Environments.Solution createSol = new Ginger.Environments.Solution();
+            Solution createSol = new Solution();
             createSol.Name = "Non_Ui_Solution_Test";
-            createSol.Folder = @"C:\temp\Non_Ui_Solution_Test\";
-            // createSol.MainPlatform = GingerCore.Platforms.Platform.eType.Web;
-            if (!System.IO.Directory.Exists(createSol.Folder))
-            {
-                System.IO.Directory.CreateDirectory(createSol.Folder);
-            }
-
+            string solFile = TestResources.GetTempFile("Solution2.Ginger.Solution.xml");
+            
             //Act
-            createSol.SaveToFile(createSol.Folder + @"\Non_Ui_Solution_Test.Solution.xml");
-            Ginger.Environments.Solution loadSol = (Ginger.Environments.Solution)RepositoryItem.LoadFromFile(typeof(Ginger.Environments.Solution), createSol.Folder + @"\Non_Ui_Solution_Test.Solution.xml");
+            createSol.RepositorySerializer.SaveToFile(createSol, solFile);
+            Solution loadSol = Solution.LoadSolution(solFile, false);
 
             //Assert
            Assert.AreEqual(loadSol.Name, createSol.Name);

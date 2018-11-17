@@ -65,7 +65,6 @@ namespace GingerCoreCommonTest.Repository
                                                                rootFolder: SolutionRepository.cSolutionRootFolderSign + "MyRepositoryItems", 
                                                                containRepositoryItems: true, 
                                                                displayName: "My Repository Item", 
-                                                               addToRootFolders: true,
                                                                PropertyNameForFileName: nameof(MyRepositoryItem.Name)
                                                                );
 
@@ -89,7 +88,6 @@ namespace GingerCoreCommonTest.Repository
                                                                rootFolder: SolutionRepository.cSolutionRootFolderSign + "MyRepositoryItems",
                                                                containRepositoryItems: true,
                                                                displayName: "My Repository Item",
-                                                               addToRootFolders: true,
                                                                PropertyNameForFileName: nameof(MyRepositoryItem.Name)
                                                                );
 
@@ -140,7 +138,7 @@ namespace GingerCoreCommonTest.Repository
 
       
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void GetAllRepositoryItems()
         {
             Console.WriteLine("===> Test 1 start");
@@ -161,7 +159,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void AddNewMyRepositoryItemAndVerifyFileSaved()
         {
             //Arrange
@@ -178,7 +176,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void GetRepositoryItemByName()
         {
             //Arrange            
@@ -190,7 +188,7 @@ namespace GingerCoreCommonTest.Repository
             Assert.IsTrue(MRI1 != null);
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void UpdateRepositoryItem()
         {
             //Arrange  
@@ -208,7 +206,7 @@ namespace GingerCoreCommonTest.Repository
             Assert.AreEqual(MRI2.Name, MRI2FromDisk.Name);
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void DeleteRepositoryItem()
         {
             //Arrange            
@@ -225,7 +223,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void AddNewRepositoryItemThenGetByName()
         {
             //Arrange
@@ -244,7 +242,7 @@ namespace GingerCoreCommonTest.Repository
             Assert.AreEqual(MRI1.Guid, MRI2.Guid);
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void AddNewMyRepositoryItemAndGetByGuid()
         {
             //Arrange
@@ -259,7 +257,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void AddAndDeleteRepositoryItem()
         {
             //Arrange
@@ -270,7 +268,7 @@ namespace GingerCoreCommonTest.Repository
 
             // Call get MRIs so the MRI will be also in a list cache, so we can validate removal from list too
             ObservableList<MyRepositoryItem> MRIs = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();
-            //The added MRI in Arrange will apear in the list
+            //The added MRI in Arrange will appear in the list
 
             //Act            
             mSolutionRepository.DeleteRepositoryItem(MRI);
@@ -289,7 +287,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void GetMRIListThenAddNewMRI()
         {
             //Arrange
@@ -309,7 +307,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void AddMyRepositoryItemToSubFolder()
         {
             //Arrange
@@ -327,7 +325,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void DeleteMyRepositoryItemFromSubFolder()
         {
             //Arrange
@@ -346,7 +344,7 @@ namespace GingerCoreCommonTest.Repository
 
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void DeleteMyRepositoryItemFromSubSubsubFolder()
         {
             //Arrange
@@ -365,7 +363,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
         //FIXME
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void DeleteMRIsSubFolder()
         //{
         //    //Arrange            
@@ -385,14 +383,14 @@ namespace GingerCoreCommonTest.Repository
         //    mSolutionRepository.DeleteRepositoryItemFolder(folderToDelete);
 
         //    //Assert
-        //    Assert.IsTrue(Directory.Exists(folderToDelete.FolderFullPath) == false, "Verify Direcorty not exist");
+        //    Assert.IsTrue(Directory.Exists(folderToDelete.FolderFullPath) == false, "Verify Directory not exist");
         //    Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI1.Guid)), null, "make sure all deleted folder items were removed from cache");
         //    Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI3.Guid)), null, "make sure all deleted folder sub folder items were removed from cache");
         //}
 
 
         //FIXME
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void DeleteBfsSubFolderWithAllItemsLoaded()
         //{
         //    //Arrange       
@@ -420,7 +418,7 @@ namespace GingerCoreCommonTest.Repository
 
         //FIXME
 
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void RenameSubSubFolder()
         //{
         //    //Arrange            
@@ -466,7 +464,7 @@ namespace GingerCoreCommonTest.Repository
 
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void VerifyBFRepositoryItemHeader()
         {
             //Arrange
@@ -481,7 +479,7 @@ namespace GingerCoreCommonTest.Repository
             Assert.AreEqual(MRI.RepositoryItemHeader.LastUpdateBy, Environment.UserName);
         }
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void VerifyBFRepositoryItemHeaderVersionChangeAfterSave()
         {
             //Arrange
@@ -497,7 +495,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void ValidatelongFileMorethan255()
         {
             //Arrange
@@ -512,7 +510,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
         //[Ignore]
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void ValidatelongFileName200_300()
         //{
         //    // Since MAX_PATH is 260 we cover all the range to verify the automatic file name shrinker works well
@@ -540,7 +538,7 @@ namespace GingerCoreCommonTest.Repository
 
         //}
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void ValidateInvlidCharsinFilename()
         {
             //Arrange
@@ -555,7 +553,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void SaveRIThenLoadChanegNameSaveCheckFileName()
         //{
         //    //Arrange
@@ -569,7 +567,7 @@ namespace GingerCoreCommonTest.Repository
         //    Assert.AreEqual(MRI.RepositoryItemHeader.Version, 2);
         //}
 
-        //[TestMethod,Timeout(60000)]
+        //[TestMethod]
         //public void ItemNotSerilizedIsNotSaved()
         //{
         //    //Arrange
@@ -584,7 +582,7 @@ namespace GingerCoreCommonTest.Repository
         //}
 
 
-        [TestMethod,Timeout(60000)]
+        [TestMethod]
         public void FileWatcherChangeExisitingMRIOnDisk()
         {
             //Arrange

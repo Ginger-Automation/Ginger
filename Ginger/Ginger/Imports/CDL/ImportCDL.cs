@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions;
@@ -27,7 +28,7 @@ namespace Ginger.Imports.CDL
     {
         public string CDLText { get; set; }
 
-        //TODO: return list of errrors
+        //TODO: return list of errors
         public void CheckSyntax()
         {
             
@@ -35,7 +36,7 @@ namespace Ginger.Imports.CDL
 
         public void Run()
         {
-            ObservableList<BusinessFlow> BFs = App.LocalRepository.GetSolutionBusinessFlows();
+            ObservableList<BusinessFlow> BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
             List<Activity> activities = new List<Activity>();
 

@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
@@ -40,6 +41,19 @@ namespace GingerCore.Platforms.PlatformsInfo
             return mElementLocatorsTypeList;
         }
 
+        public override List<ActBrowserElement.eControlAction> GetPlatformBrowserControlOperations()
+        {
+            List<ActBrowserElement.eControlAction> browserActElementList = new List<ActBrowserElement.eControlAction>();
+
+            browserActElementList.Add(ActBrowserElement.eControlAction.InitializeBrowser);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageSource);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageURL);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchFrame);
+
+            return browserActElementList;
+        }
+
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
             //TOOD: Currently we support only drag and drop for PB. So avoiding the call to get actions list from base
@@ -56,6 +70,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                     break;                
                 case eElementType.List:
                 case eElementType.ComboBox:
+                    pbTableControlActionlist.Add(ActUIElement.eElementAction.SendKeysAndValidate);
+                    pbTableControlActionlist.Add(ActUIElement.eElementAction.SelectandValidate);
+                    break;
                 case eElementType.TextBox:
                 case eElementType.Text:
                     pbTableControlActionlist.Add(ActUIElement.eElementAction.SendKeysAndValidate);
@@ -73,6 +90,15 @@ namespace GingerCore.Platforms.PlatformsInfo
             return null;
         }
 
+        public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
+        {
+            List<ActUIElement.eSubElementType> list = new List<ActUIElement.eSubElementType>();
+            if (elementType== eElementType.List || elementType == eElementType.ComboBox)
+            {                
+                list.Add(ActUIElement.eSubElementType.Pane);                
+            }
+            return list;
+        }
         public override List<string> GetPlatformUIElementPropertiesList(eElementType ElementType)
         {
             //TODO: cache in hashmap per elem type

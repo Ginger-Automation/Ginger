@@ -26,6 +26,7 @@ using GingerTestHelper;
 
 namespace UnitTests.UITests.WebBrowserPageTest
 {
+    [Ignore]
     [Level3]
     [TestClass]
     public class WebBrowserPageTest
@@ -120,10 +121,10 @@ namespace UnitTests.UITests.WebBrowserPageTest
                 throw new Exception("ERROR: QA2 != DataQAValue - " + QA2);
             }
 
-            //Validate we found the same exact element based on QA tag - Uniqe
+            //Validate we found the same exact element based on QA tag - Unique
             Assert.AreEqual(QA2, DataQAValue);
 
-            // Check if we created same XPath - can be differnt so fail only if QA2 != DataQAValue , else warning
+            // Check if we created same XPath - can be different so fail only if QA2 != DataQAValue , else warning
             //TODO: Make warning - not fail!! can be several XPath to same element
             //Assert.AreEqual(FireBugXPath, XPath);  // False alarm so removed
 

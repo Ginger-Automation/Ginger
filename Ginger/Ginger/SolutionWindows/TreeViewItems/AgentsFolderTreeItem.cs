@@ -33,15 +33,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     public class AgentsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        public RepositoryFolder<Agent> mAgentsFolder;
+        private readonly RepositoryFolder<Agent> mAgentsFolder;
         private AgentsPage mAgentsPage;
         
-
         public AgentsFolderTreeItem(RepositoryFolder<Agent> agentsFolder)
         {
             mAgentsFolder = agentsFolder;
         }
-
 
         Object ITreeViewItem.NodeObject()
         {
@@ -58,20 +56,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {           
-            return TreeViewUtils.NewRepositoryItemTreeHeader(mAgentsFolder, nameof(RepositoryFolder<Agent>.DisplayName), eImageType.Folder, GetSourceControlImage(mAgentsFolder), false);
+            return NewTVItemFolderHeaderStyle(mAgentsFolder);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return GetChildrentGeneric<Agent>(mAgentsFolder, nameof(Agent.Name));               
+            return GetChildrentGeneric<Agent>(mAgentsFolder);               
         }
         
-
         public override ITreeViewItem GetTreeItem(object item)
         {
             if (item is Agent)
             {
-                return new AgentTreeItem() { Agent = (Agent)item };
+                return new AgentTreeItem((Agent)item);
             }
 
             if (item is RepositoryFolderBase)
@@ -86,7 +83,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             WizardWindow.ShowWizard(new AddAgentWizard(mAgentsFolder));
         }
-
 
         bool ITreeViewItem.IsExpandable()
         {
@@ -129,10 +125,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void RefreshApplicationAgents(object sender, System.Windows.RoutedEventArgs e)
         {
             App.UpdateApplicationsAgentsMapping(false);
-        }
-
-        public override void PostSaveTreeItemHandler()
-        {            
         }
 
         public override void PostDeleteTreeItemHandler()

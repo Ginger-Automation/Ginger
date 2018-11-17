@@ -16,46 +16,83 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using GingerWPFUnitTest.POMs;
 using System;
-using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace GingerWPFUnitTest
 {
 
     public class GingerAutomator
     {
-        // Enable to run only one GingerWPF for all tests
-        public static Mutex mutex = new Mutex();
+        // Enable to run only one Ginger for all tests and one test at a time
+        private static Mutex TestMutex = new Mutex();
 
         static Ginger.App app;
         public MainWindowPOM MainWindowPOM;
+        static bool isReady = false;
+        static Thread mGingerThread = null;
 
-        //public static Dispatcher mDispatcher;
-        public void StartGinger()
+        static GingerAutomator gingerAutomatorInstance;  // currently we have only one Ginger running for all tests
+        static int SessionCount = 0; // count how many sessions are waiting in queue
+
+
+        // Set to true if you want highlights when automation run and speak
+        public static bool Highlight { get { return false; }  }
+
+        public static GingerAutomator StartSession()
         {
-            mutex.WaitOne();
+            SessionCount++;
+            TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
+            if (app == null)
+            {
+                gingerAutomatorInstance = new GingerAutomator();
+                gingerAutomatorInstance.StartGinger();
+                while (!isReady)
+                {
+                    Thread.Sleep(100);
+                }
+            }            
+            return gingerAutomatorInstance;
+        }
 
-            if (app != null) return;
+        public static void EndSession()
+        {
+            SessionCount--;
+            TestMutex.ReleaseMutex();
 
+
+            if (SessionCount == 0)
+            {
+                gingerAutomatorInstance.CloseGinger();                
+            }            
+        }
+
+      
+
+        private void StartGinger()
+        {            
             Ginger.SplashWindow splash = null;
             // We start Ginger on STA thread
-            var t = new Thread(() =>
+            mGingerThread = new Thread(() =>
             {
+
+                SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
+
                 // we need sample class - Dummy
                 Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
-                Assembly asm1 = d.GetType().Assembly;
+                Assembly asm1 = d.GetType().Assembly;                
                 // Set the app resources to Ginger so image an other will be locally to Ginger
                 Application.ResourceAssembly = asm1;
 
                 app = new Ginger.App();
+                Ginger.App.RunningFromUnitTest = true;
                 splash = new Ginger.SplashWindow();
-                splash.Show();
+                splash.Show();                
                 //Ginger.App.UserProfile.AutoLoadLastSolution = false;                
 
                 while (!app.IsReady && splash.IsVisible)
@@ -63,17 +100,22 @@ namespace GingerWPFUnitTest
                     Thread.Sleep(100);
                 }
 
-                GingerPOMBase.mDispatcher = app.GetMainWindowDispatcher();
+                GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
+
+                //Ginger.App.MainWindow.Closed += (sender1, e1) => 
+                //    Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+
                 MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
-                
+
                 // Makes the thread support message pumping                 
-                System.Windows.Threading.Dispatcher.Run();                
+                System.Windows.Threading.Dispatcher.Run();                                    
             });
 
 
-            //// Configure the thread
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
+            //// Configure the thread            
+            mGingerThread.SetApartmentState(ApartmentState.STA);
+            mGingerThread.IsBackground = true;
+            mGingerThread.Start();
 
             //max 60 seconds for Mainwindow to be ready
             int i = 0;
@@ -87,16 +129,59 @@ namespace GingerWPFUnitTest
             while (splash.IsVisible)
             {
                 Thread.Sleep(100);
-            }
-            // Here Ginger WPF is live and visible
-
+            }            
+            // Here Ginger is live and visible
+            isReady = true;
         }
 
         
-        internal void CloseGinger()
+        void CloseGinger()
         {
+            // app.Shutdown(0);
             MainWindowPOM.Close();
-            mutex.ReleaseMutex();
+            Thread.Sleep(5000);
+
+            //while (!Dispatcher.CurrentDispatcher.HasShutdownFinished)
+            //{
+            //    Thread.Sleep(100);
+            //}
+
+            //MainWindowPOM.Dispatcher.Invoke(() => {
+            //    try
+            //    {
+            //        //Console.WriteLine("Closing Ginger");
+            //        //app.ShutdownMode = ShutdownMode.OnMainWindowClose;
+            //        // Thread.Sleep(30000);
+
+            //        //Console.WriteLine("MainWindow closed");
+
+            //        //app.Shutdown();
+            //        //app = null;                    
+            //        //int i = 0;
+            //        //while (mGingerThread.IsAlive  && i<100)
+            //        //{
+            //        //    Thread.Sleep(100);
+            //        //    i++;
+            //        //}
+
+            //        //int i = 0;
+            //        //while (app.Windows.Count > 0 && i < 100) //max 10 seconds for closing all windows
+            //        //{
+            //        //    i++;
+            //        //    Thread.Sleep(100);
+            //        //}
+            //        //app.Shutdown();                
+            //    }
+            //    catch(Exception ex)
+            //    {
+
+            //    }
+
+            //Thread.Sleep(5000);
+            //});
+
+            // Thread.Sleep(30000);
+            // mGingerThread.Abort();
         }
 
 
@@ -115,7 +200,7 @@ namespace GingerWPFUnitTest
             //TW = new TestWindow(p);
             //TW.Show();
 
-            //TODO: we need to diable mouse event as elemnt on screen can look different
+            //TODO: we need to disable mouse event as element on screen can look different
             // or we need to make sure it is not in focus by loading another dummy window and focus
 
             //while (!TW.IsLoaded)
@@ -154,7 +239,8 @@ namespace GingerWPFUnitTest
 
         internal void OpenSolution(string folder)
         {
-            GingerPOMBase.mDispatcher.Invoke(() =>
+            MainWindowPOM.ClickSolutionTab();
+            GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
                 Ginger.App.SetSolution(folder);                
@@ -163,7 +249,7 @@ namespace GingerWPFUnitTest
 
         internal void CloseSolution()
         {
-            GingerPOMBase.mDispatcher.Invoke(() =>
+            GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
                 Ginger.App.CloseSolution();

@@ -29,17 +29,27 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using GingerCore;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     class DataSourceFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
+        public enum eDataTableView
+        {
+            All, Key, Customized
+        }
+
+        private eDataTableView mDataSourceView;
+
         private DataSourcesPage mDataSourcesPage;
         private RepositoryFolder<DataSourceBase> mDataSourcesRepositoryFolder;
 
-        public DataSourceFolderTreeItem(RepositoryFolder<DataSourceBase> repositoryFolder)
+
+        public DataSourceFolderTreeItem(RepositoryFolder<DataSourceBase> repositoryFolder, eDataTableView TableView=eDataTableView.All)
         {
             mDataSourcesRepositoryFolder = repositoryFolder;
+            mDataSourceView = TableView;
         }
 
         
@@ -57,8 +67,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {
-            return TreeViewUtils.NewRepositoryItemTreeHeader(mDataSourcesRepositoryFolder, nameof(RepositoryFolder<DataSourceBase>.DisplayName), eImageType.DataSource, GetSourceControlImage(mDataSourcesRepositoryFolder), false);
+        {           
+            return NewTVItemFolderHeaderStyle(mDataSourcesRepositoryFolder);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -66,22 +76,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return GetChildrentGeneric<DataSourceBase>(mDataSourcesRepositoryFolder);
         }
 
-        List<ITreeViewItem> GetChildrentGeneric<T>(RepositoryFolder<T> RF)
-        {
-            return GetChildrentGeneric<DataSourceBase>(mDataSourcesRepositoryFolder, nameof(DataSourceBase.Name));
-           
-        }
-
         public override ITreeViewItem GetTreeItem(object item)
         {
             if (item is DataSourceBase)
             {
-                return new DataSourceTreeItem() { DSDetails = (DataSourceBase)item };
+                return new DataSourceTreeItem() { DSDetails = (DataSourceBase)item , TableTreeView = mDataSourceView};
             }
 
             if (item is RepositoryFolderBase)
             {
-                return new DataSourceFolderTreeItem((RepositoryFolder<DataSourceBase>)item);
+                return new DataSourceFolderTreeItem((RepositoryFolder<DataSourceBase>)item,mDataSourceView);
             }
 
             throw new Exception("Error unknown item added to Agents folder");
@@ -176,7 +180,37 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     ((DataSourceTableTreeItem)node).SaveTreeItem();
                 }
             }
-            
+
+        }
+        public override void SaveAllTreeFolderItems()
+        {
+            List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+
+            int itemsSavedCount = 0;
+            foreach (ITreeViewItem node in childNodes)
+            {
+                if (node != null && node.NodeObject() is RepositoryItemBase)
+                {
+                    RepositoryItemBase RI = (RepositoryItemBase)node.NodeObject();
+                    if (RI != null)
+                    {                        
+                        if (node is DataSourceTableTreeItem)
+                        {
+                            ((DataSourceTableTreeItem)node).SaveTreeItem();
+                            itemsSavedCount++;
+                        }
+                        else if (node is DataSourceTreeItem)
+                        {
+                            SaveTreeItem(RI);
+                            itemsSavedCount++;
+                        }
+                    }
+                }
+            }
+            if (itemsSavedCount == 0)
+            {
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "Nothing found to Save.");
+            }
         }
         public override void AddTreeItem()
         {            

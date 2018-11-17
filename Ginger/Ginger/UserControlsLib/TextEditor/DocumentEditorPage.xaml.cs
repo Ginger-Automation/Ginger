@@ -49,7 +49,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 ITextEditorPage p = TE.EditorPage;
                 if (p != null)
                 {
-                    // text editor can return customzied editor
+                    // text editor can return customized editor
                     EditorFrame.Content = p;
                     p.Load(FileName);
 
@@ -62,9 +62,9 @@ namespace Ginger.UserControlsLib.TextEditor
                     UCTextEditor UCTE = new UCTextEditor();                    
                     UCTE.Init(FileName, TE, enableEdit, RemoveToolBar);
                     if (UCTextEditorTitle != null)
-                       UCTE.ContentEditorTitleLabel.Content = UCTextEditorTitle;
+                       UCTE.SetContentEditorTitleLabel(UCTextEditorTitle);
                     else if (!string.IsNullOrEmpty(TE.Title()))
-                        UCTE.ContentEditorTitleLabel.Content = TE.Title();
+                        UCTE.SetContentEditorTitleLabel(TE.Title());
                     EditorFrame.Content = UCTE;
 
                     if (TE is PlugInTextEditorWrapper)
@@ -85,7 +85,7 @@ namespace Ginger.UserControlsLib.TextEditor
                     TE = AD;                    
                     UCTE.Init(FileName, TE, enableEdit, RemoveToolBar, EnableWrite:true);
                     if (UCTextEditorTitle != null)
-                        UCTE.ContentEditorTitleLabel.Content = UCTextEditorTitle;
+                        UCTE.SetContentEditorTitleLabel(UCTextEditorTitle);
                     EditorFrame.Content = UCTE;
                 }
                 else
@@ -110,8 +110,8 @@ namespace Ginger.UserControlsLib.TextEditor
             // Method #1
             if (IsTextFileByExtension(Path.GetExtension(fileName).ToLower())) return true;
 
-            // Mehtod #2
-            //Not full proof but good enought
+            // Method #2
+            //Not full proof but good enough
             // Check for consecutive nulls in the first 10K..
             byte[] content = File.ReadAllBytes(fileName);
                 for (int i = 1; i < 10000 && i < content.Length; i++)

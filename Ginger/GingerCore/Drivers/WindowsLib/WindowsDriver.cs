@@ -178,25 +178,25 @@ namespace GingerCore.Drivers.WindowsLib
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);
                 return;
             }
             catch (ElementNotAvailableException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);
                 return;
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);
                 return;
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Exception at Run action", e);
+                Reporter.ToLog(eAppReporterLogLevel.WARN, "Exception at Run action", e);
                 act.Error = e.Message;
             }
         }
@@ -646,7 +646,7 @@ namespace GingerCore.Drivers.WindowsLib
             return GetControlFromMousePosition();
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
             return list;
@@ -943,7 +943,7 @@ namespace GingerCore.Drivers.WindowsLib
             throw new NotImplementedException();
         }
 
-        public void TestElementLocators(ObservableList<ElementLocator> elementLocators)
+        public bool TestElementLocators(ObservableList<ElementLocator> elementLocators, bool GetOutAfterFoundElement = false)
         {
             throw new NotImplementedException();
         }

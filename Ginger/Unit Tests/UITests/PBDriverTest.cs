@@ -60,7 +60,7 @@ namespace UnitTest {
             }
             
                 mGR = new GingerRunner();
-                mGR.CurrentSolution = new Ginger.Environments.Solution();
+                mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
                 mBF = new BusinessFlow();
                 mBF.Activities = new ObservableList<Activity>();
                 mBF.Name = "BF Test PB Driver";
@@ -1344,7 +1344,77 @@ namespace UnitTest {
             Assert.AreEqual(actual, "File", "Ret Param Actual");
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
-        
+
+        [Ignore]
+        public void ClickMenuItem()
+        {
+            ActMenuItem c = new ActMenuItem();
+            c.LocateBy = eLocateBy.ByName;
+            c.MenuAction = ActMenuItem.eMenuAction.Click;
+            c.LocateValueCalculated = "File|New";            
+            c.AddNewReturnParams = true;
+            c.Active = true;
+
+            //Act
+            mBF.CurrentActivity.Acts.Add(c);
+            mBF.CurrentActivity.Acts.CurrentItem = c;
+            mGR.RunAction(c, false);
+
+            Assert.AreEqual(c.Status, eRunStatus.Passed, "c.Status");
+            Assert.AreEqual(c.Error, null, "c.Error");
+
+            ActPBControl pbAct = new ActPBControl();
+            pbAct.LocateBy = eLocateBy.ByXPath;
+            pbAct.ControlAction = ActPBControl.eControlAction.Click;
+            pbAct.LocateValueCalculated = "/Menu/OK";
+            pbAct.Wait = 5;
+            pbAct.Active = true;
+            //Act
+            mBF.CurrentActivity.Acts.Add(pbAct);
+            mBF.CurrentActivity.Acts.CurrentItem = pbAct;
+            mGR.RunAction(pbAct, false);
+
+            Assert.AreEqual(pbAct.Status, eRunStatus.Passed, "c.Status");
+            Assert.AreEqual(pbAct.Error, null, "c.Error");
+
+           
+        }
+
+        [Ignore]
+        public void ExpandMenuItem()
+        {
+            ActMenuItem c = new ActMenuItem();
+            c.LocateBy = eLocateBy.ByName;
+            c.MenuAction = ActMenuItem.eMenuAction.Expand;
+            c.LocateValueCalculated = "File";
+            c.AddNewReturnParams = true;
+            c.Active = true;
+
+            //Act
+            mBF.CurrentActivity.Acts.Add(c);
+            mBF.CurrentActivity.Acts.CurrentItem = c;
+            mGR.RunAction(c, false);
+
+            Assert.AreEqual(c.Status, eRunStatus.Passed, "c.Status");
+            Assert.AreEqual(c.Error, null, "c.Error");
+
+            ActPBControl pbAct = new ActPBControl();
+            pbAct.LocateBy = eLocateBy.ByName;
+            pbAct.ControlAction = ActPBControl.eControlAction.IsExist;
+            pbAct.LocateValueCalculated = "New";
+            pbAct.Wait = 5;
+            pbAct.Active = true;
+            pbAct.AddNewReturnParams = true;
+            //Act
+            mBF.CurrentActivity.Acts.Add(pbAct);
+            mBF.CurrentActivity.Acts.CurrentItem = pbAct;
+            mGR.RunAction(pbAct, false);
+
+            Assert.AreEqual(pbAct.Status, eRunStatus.Passed, "Action Status");
+            string actual = pbAct.GetReturnParam("Actual");
+            Assert.AreEqual("True", actual,  "Ret Param Actual");            
+        }
+
         #endregion
 
         #region XPath locator

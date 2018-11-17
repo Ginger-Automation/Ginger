@@ -39,6 +39,11 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Amdocs.Ginger.Common;
+using GingerWPF.UserControlsLib.UCTreeView;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Enums;
+using GingerWPF.TreeViewItemsLib;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.GherkinLib
 {
@@ -64,21 +69,22 @@ namespace Ginger.GherkinLib
         string folder;
         string FeatureName;
         string BFName;
+        RepositoryFolder<BusinessFlow> targetBFFolder;
         bool isBFexists = false;
+        string featureFileName = "";
 
         int ColorIndex = 0;
 
         public GherkinPage()
         {           
             InitializeComponent();
-                       
-            folder = App.UserProfile.Solution.BusinessFlowsMainFolder;
-            
-            //GherkinTextEditor.AddToolbarTool("Save", General.GetImage("@Save_16x16.png"), Save_Click, "Save Gherkin Feature");
 
+            folder = App.UserProfile.Solution.BusinessFlowsMainFolder;
+
+            GherkinTextEditor.AddToolbarTool(General.GetImage("@Save_16x16.png"), Save_Click, "Save Gherkin Feature");
             GherkinTextEditor.SaveButton.Visibility = Visibility.Collapsed;
 
-            // GherkinTextEditor.AddToolbarTool("Add examples table", General.GetImage("@Grid_16x16.png"),  AddTable, "Add Examples Table");            
+            GherkinTextEditor.AddToolbarTool(General.GetImage("@Grid_16x16.png"),  AddTable, "Add Examples Table");            
 
             DragDrop2.HookEventHandlers(GherkinTextEditor);
 
@@ -113,7 +119,7 @@ namespace Ginger.GherkinLib
                 if (guid != Guid.Empty)
                     mSolTags.Add(guid);
             }
-            ARP.grdActivitiesRepository.Tags = mSolTags;
+            ARP.xActivitiesRepositoryGrid.Tags = mSolTags;
             SharedActivitiesFrame.Content = ARP;
         }
 
@@ -253,7 +259,7 @@ namespace Ginger.GherkinLib
                     }
                 }
                 
-                // Warnings - TODO check other possisble warnings
+                // Warnings - TODO check other possible warnings
                 // Check Dups Scenario names 
                 var query = mGherkinScenarioDefinition.GroupBy(x => x.Name)
                     .Where(g => g.Count() > 1)
@@ -293,7 +299,7 @@ namespace Ginger.GherkinLib
             }
 
             
-            ARP.grdActivitiesRepository.Tags = mSolTags;
+            ARP.xActivitiesRepositoryGrid.Tags = mSolTags;
             SharedActivitiesFrame.Content = ARP;
 
             foreach(GherkinStep gStep in mOptimizedSteps)
@@ -346,7 +352,9 @@ namespace Ginger.GherkinLib
             //TODO: get 
             string BusinessFlowFolder = "";
             string path = BusinessFlowFolder;
-            Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true,"",true, mSolTags) where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            //FIXME to use tags 
+            Activity a2 = (from x in activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
             if (a2 != null)
             {                
                 return "Automated in Shared Repo - " + path;
@@ -429,31 +437,29 @@ namespace Ginger.GherkinLib
             return GH;
         }
 
-        public void CreateNewBF(string BizFlowName,string fileName = null)
+        public void CreateNewBF(string BizFlowName,string fileName = null, RepositoryFolder<BusinessFlow> targetFolder = null)
         {
             if (GherkinTextEditor.FileName == null && fileName != null)
             {
                 GherkinTextEditor.FileName = fileName;
             }
 
-            //TODO: get file name from repo not hard coded extension...
-            if (BFName == null)
-            {                
-                BFName =App.UserProfile.Solution.Folder + @"BusinessFlows\" + BizFlowName;
-            }
-
-            if (!Directory.Exists(Path.GetDirectoryName(BFName)))
+           
+            if (targetFolder == null)
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(BFName));
+                targetFolder = targetBFFolder;                
             }
-            mBizFlow = LocalRepository.CreateNewBizFlow(BFName);
-            mBizFlow.Source = BusinessFlow.eSource.Gherkin;
-            mBizFlow.ExternalID = GherkinTextEditor.FileName.Replace(App.UserProfile.Solution.Folder, @"~\") ;            
-            mBizFlow.Save();
-            App.LocalRepository.AddItemToCache(mBizFlow);
 
+            mBizFlow = App.CreateNewBizFlow(BizFlowName);
+            mBizFlow.Source = BusinessFlow.eSource.Gherkin;
+            mBizFlow.ExternalID = GherkinTextEditor.FileName.Replace(App.UserProfile.Solution.Folder, "~") ;                                                
             mBizFlow.Name = BizFlowName;
             mBizFlow.Activities.Clear();
+            
+            mBizFlow.ContainingFolder = targetFolder.FolderFullPath.Replace(App.UserProfile.Solution.Folder,"~");
+            mBizFlow.ContainingFolderFullPath = targetFolder.FolderFullPath;            
+            targetFolder.AddRepositoryItem(mBizFlow);
+            targetFolder.RefreshFolderAndChildElementsSourceControlStatus();            
         }
 
         //TODO: show message on screen TBD!?
@@ -515,30 +521,44 @@ namespace Ginger.GherkinLib
         {
             if (!isBFexists)
             {
+                BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(),eBusinessFlowsTreeViewMode.ReadOnly);
+                
+                bfsFolder.IsGingerDefualtFolder = true;
+                SingleItemTreeViewSelectionPage mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);
+
+                List<object> selectedBfs = mTargetFolderSelectionPage.ShowAsWindow();
+                if(selectedBfs !=null)
+                {
+                    targetBFFolder = (RepositoryFolder<BusinessFlow>)((ITreeViewItem)selectedBfs[0]).NodeObject();                
+                }
                 CreateNewBF(FeatureName);
                 CreateActivities();
-                mBizFlow.Save();
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBizFlow);
                 if (genWin != null)
                 {
                     genWin.Close();
                 }
                 UpdateBFButton.Content = "Update " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                 isBFexists = true;
-                Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\", "") + mBizFlow.Name, "Created");
+                Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\", "") + "\\" + mBizFlow.Name, "Created");
             }
             else
             {
                 UpdateBFButton_Click();
-                Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\","") + mBizFlow.Name, "Updated");
+                Reporter.ToUser(eUserMsgKeys.BusinessFlowUpdate, mBizFlow.ContainingFolder.Replace("BusinessFlows\\","") + "\\" + mBizFlow.Name, "Updated");
             }
 
-            App.MainWindow.RefreshSolutionPage(SolutionExplorerPage.eRefreshSolutionType.RefreshTreeFolder ,typeof(BusinessFlowsFolderTreeItem));            
+            if(App.BusinessFlow == mBizFlow)
+            {
+                App.BusinessFlow = mBizFlow;
+                App.BusinessFlow.SaveBackup();                
+            }            
         }
 
 
         public void CreateActivities()
         {
-            // We put all template optimized activitiy in Activities Group 
+            // We put all template optimized activity in Activities Group 
 
             ActivitiesGroup AG = (from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities" select x).FirstOrDefault();
 
@@ -570,8 +590,10 @@ namespace Ginger.GherkinLib
                 if (a1 == null)
                 {
                     if (GH.AutomationStatus == "Automated in Shared Repo - ")
-                    {                       
-                        Activity a2 = (from x in App.LocalRepository.GetSolutionRepoActivities(true, "", true, mSolTags) where x.ActivityName == GH.Text select x).FirstOrDefault();
+                    {
+                        ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                        Activity a2 = (from x in activities where x.ActivityName == GH.Text select x).FirstOrDefault();
+                        //FIXME
                         if (a2 != null)
                         {
                             mBizFlow.AddActivity(a2);
@@ -604,8 +626,8 @@ namespace Ginger.GherkinLib
                 Activity a1 = (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
                 if (AG.CheckActivityInGroup(a1))
                     AG.RemoveActivityFromGroup(a1);
-            }            
-            mBizFlow.Save();
+            }
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBizFlow);
         }
 
 
@@ -632,10 +654,15 @@ namespace Ginger.GherkinLib
             Mouse.OverrideCursor = Cursors.Wait;
             try
             {
-                string path = BFName;
-                mBizFlow=App.LocalRepository.GetItemByFileName<BusinessFlow>(typeof(BusinessFlow), BFName);
-                if (mBizFlow == null)
+                string externalID = featureFileName.Replace(App.UserProfile.Solution.Folder, "~");
+                if(BFName.EndsWith(".Ginger.BusinessFlow.xml"))
                 {
+                    BFName = Path.GetFileName(BFName).Replace(".Ginger.BusinessFlow.xml", "");
+                }
+                
+                mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x =>x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == featureFileName)).SingleOrDefault();
+                if (mBizFlow == null)
+                {                    
                     CreateNewBF(FeatureName);
                 }
                 CreateActivities();
@@ -648,8 +675,8 @@ namespace Ginger.GherkinLib
 
         public bool Load(string FileName)
         {
-            GherkinTextEditor.ContentEditorTitleLabel.Content = Path.GetFileName(FileName);
-            GherkinTextEditor.ContentEditorTitleLabel.Style = (Style)TryFindResource("@ucGridTitleLightStyle");
+            featureFileName = FileName;
+            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName), (Style)TryFindResource("@ucGridTitleLightStyle"));
             GherkinDcoumentEditor g = new GherkinDcoumentEditor();                        
             g.OptimizedSteps = mOptimizedSteps;
             g.OptimizedTags = mTags;
@@ -662,21 +689,28 @@ namespace Ginger.GherkinLib
                     mSolTags.Add(guid);
             }
             
-            ARP = new ActivitiesRepositoryPage("",null, mSolTags, ArrowButtonHandler);
-            ARP.grdActivitiesRepository.EnableTagsPanel = false;
+            ARP = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), null, mSolTags, ArrowButtonHandler);
+            ARP.xActivitiesRepositoryGrid.EnableTagsPanel = false;
             SharedActivitiesFrame.Content = ARP;
 
-            BFName =  FileName.Replace(App.UserProfile.Solution.Folder,"");
+            BFName = FileName.Replace(App.UserProfile.Solution.Folder, "");
             //to prevent creating a folder rather than putting them on BF level.
-            if (BFName.Contains("Business Flows")) { BFName = BFName.Replace("Business Flows", ""); }
-            BFName = BFName.Replace(@"Documents\Features\", "");
-            BFName = BFName.Replace(".feature", "");
-            BFName = folder + BFName + ".Ginger.BusinessFlow.xml";
-            // search if we have the BF defined already, so search in BF will work
-            mBizFlow = App.LocalRepository.GetItemByFileName<BusinessFlow>(typeof(BusinessFlow), BFName);
-
-            if (File.Exists(BFName))
+            if (BFName.Contains("Business Flows"))
             {
+                BFName = BFName.Replace("Business Flows", "");
+            }
+            if (BFName.EndsWith(".feature"))
+            {
+                BFName = Path.GetFileName(FileName).Replace(".feature", "");
+            }            
+            // search if we have the BF defined already, so search in BF will work
+            string externalID = FileName.Replace(App.UserProfile.Solution.Folder, "~");
+            
+            mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x =>x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).SingleOrDefault();                           
+            
+            if (mBizFlow != null)
+            {
+                BFName = mBizFlow.FileName;
                 isBFexists = true;
                 UpdateBFButton.Content = "Update "+ GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
             }
@@ -692,7 +726,7 @@ namespace Ginger.GherkinLib
 
         private void ArrowButtonHandler(object sender, RoutedEventArgs e)
         {
-            foreach (Activity selectedItem in ARP.grdActivitiesRepository.Grid.SelectedItems)
+            foreach (Activity selectedItem in ARP.xActivitiesRepositoryGrid.Grid.SelectedItems)
             {
                 GherkinTextEditor.textEditor.SelectedText = GherkinTextEditor.textEditor.SelectedText + selectedItem.ActivityName + Environment.NewLine;
             }    

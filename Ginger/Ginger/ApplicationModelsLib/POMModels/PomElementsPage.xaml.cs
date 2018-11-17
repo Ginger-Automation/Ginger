@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
@@ -7,393 +8,37 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
 
 namespace Ginger.ApplicationModelsLib.POMModels
 {
-    /// <summary>
-    /// Interaction logic for MappedUIElementsPage.xaml
-    /// </summary>
     public partial class PomElementsPage : Page
     {
-
-        ApplicationPOMModel mPOM;
-        public ObservableList<ElementLocator> mLocators = new ObservableList<ElementLocator>();
-        public ObservableList<ControlProperty> mProperties = new ObservableList<ControlProperty>();
-        GenericWindow _GenWin;
-        public IWindowExplorer mWinExplorer;
-
-        public bool DriverIsBusy { get; set; }
-
         public PomAllElementsPage.eElementsContext mContext;
+        ApplicationPOMModel mPOM;
+        ObservableList<ElementInfo> mElements;
+        bool IsFirstSelection = true;
 
-        public PomElementsPage(ApplicationPOMModel POM, PomAllElementsPage.eElementsContext context, IWindowExplorer winExplorer)
+
+        private Agent mAgent;
+        IWindowExplorer mWinExplorer
         {
-            InitializeComponent();
-            mPOM = POM;
-            mWinExplorer = winExplorer;
-            mContext = context;
-
-            mLocators.CollectionChanged += Locators_CollectionChanged;
-            mProperties.CollectionChanged += Properties_CollectionChanged;
-
-            SetControlsGridView();
-
-            if (mContext == PomAllElementsPage.eElementsContext.Mapped)
-                xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
-            else
-                xMainElementsGrid.DataSourceList = mPOM.UnMappedUIElements;
-
-            InitControlPropertiesGridView();
-            InitLocatorsGrid();
-
-        }
-
-        private void Properties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
+            get
             {
-                xPropertiesTextBlock.Text = string.Format("Properties ({0})", mProperties.Count);
-            });
-        }
-
-        private void Locators_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                xLocatorsTextBlock.Text = string.Format("Locators ({0})", mLocators.Count);
-            });
-        }
-
-        private void AddButtonClicked(object sender, RoutedEventArgs e)
-        {
-            if (DriverIsBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-            List<ElementInfo> ItemsToAddList = xMainElementsGrid.grdMain.SelectedItems.Cast<ElementInfo>().ToList();
-
-            foreach (ElementInfo EI in ItemsToAddList)
-            {
-                mPOM.MappedUIElements.Add(EI);
-                mPOM.UnMappedUIElements.Remove(EI);
-            }
-        }
-
-        private void RemoveButtonClicked(object sender, RoutedEventArgs e)
-        {
-            if (DriverIsBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-
-            List<ElementInfo> ItemsToRemoveList = xMainElementsGrid.grdMain.SelectedItems.Cast<ElementInfo>().ToList();
-
-            foreach (ElementInfo EI in ItemsToRemoveList)
-            {
-                mPOM.MappedUIElements.Remove(EI);
-                mPOM.UnMappedUIElements.Add(EI);
-            }
-        }
-
-        internal void SetWindowExplorer(IWindowExplorer windowExplorerDriver)
-        {
-            mWinExplorer = windowExplorerDriver;
-        }
-
-        private void SetControlsGridView()
-        {
-
-            xMainElementsGrid.SetTitleLightStyle = true;
-
-
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 60, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 100, AllowSorting = true });
-
-            List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 60, AllowSorting = true , StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100, AllowSorting = true });
-            //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100, AllowSorting = true });
-            //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 8, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
-
-            if (mContext == PomAllElementsPage.eElementsContext.Mapped)
-            {
-                xMainElementsGrid.AddToolbarTool("@RoadSign_16x16.png", "Remove Items from mapped list", new RoutedEventHandler(RemoveButtonClicked));
-                xMainElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddMappedElementRow));
-                xMainElementsGrid.ShowDelete = Visibility.Collapsed;
-
-            }
-            else
-            {
-                xMainElementsGrid.AddToolbarTool("@RoadSign_16x16.png", "Add Items to mapped list", new RoutedEventHandler(AddButtonClicked));
-                xMainElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddUnMappedElementRow));
-                
-                xMainElementsGrid.SetbtnDeleteHandler(DeleteUnMappedElementRow);
-            }
-
-            //xMainElementsGrid.AddToolbarTool("@Spy_24x24.png", "Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key", new RoutedEventHandler(LiveSpyHandler));
-
-
-            xMainElementsGrid.SetAllColumnsDefaultView(view);
-            xMainElementsGrid.InitViewItems();
-        }
-
-        private void DeleteUnMappedElementRow(object sender, RoutedEventArgs e)
-        {
-            if (DriverIsBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-
-            mPOM.UnMappedUIElements.Remove(mMainElementsGridCurrentItem);
-        }
-
-        System.Windows.Threading.DispatcherTimer dispatcherTimer = null;
-
-        private void LiveSpyHandler(object sender, RoutedEventArgs e)
-        {
-            if (DriverIsBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-
-            if (LiveSpyButton.IsChecked == true)
-            {
-                xStatusLable.Content = "Spying on";
-                if (dispatcherTimer == null)
-                {
-                    dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-                    dispatcherTimer.Tick += new EventHandler(timenow);
-                    dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-                }
-
-                dispatcherTimer.IsEnabled = true;
-            }
-            else
-            {
-                xCreateNewElement.Visibility = Visibility.Collapsed;
-                xStatusLable.Content = "Spying off";
-                dispatcherTimer.IsEnabled = false;
-            }
-        }
-
-        private void StopSpying()
-        {
-            xCreateNewElement.Visibility = Visibility.Collapsed;
-            xStatusLable.Content = "Spying off";
-            dispatcherTimer.IsEnabled = false;
-        }
-
-        ElementInfo mSpyElement;
-
-        private void timenow(object sender, EventArgs e)
-        {
-            // Get control info only if control key is pressed
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-            {
-                xStatusLable.Content = "Spying Element, Please Wait...";
-                xCreateNewElement.Visibility = Visibility.Collapsed;
-                GingerCore.General.DoEvents();
-                mSpyElement = mWinExplorer.GetControlFromMousePosition();
-                if (mSpyElement != null)
-                {
-                    xStatusLable.Content = "Element found";
-                    FocusSpyItemOnElementsGrid();
-                    mWinExplorer.HighLightElement(mSpyElement);
+                if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
+                {                    
+                    return mAgent.Driver as IWindowExplorer;
                 }
                 else
                 {
-                    xStatusLable.Content = "Failed to spy element.";
-                    GingerCore.General.DoEvents();
+                    if (mAgent != null)
+                    {
+                        mAgent.Close();
+                    }
+                    return null;
                 }
-            }
-        }
-
-        private void FocusSpyItemOnElementsGrid()
-        {
-            bool elementfocused = false;
-            if (mSpyElement == null) return;
-            foreach (ElementInfo EI in mPOM.MappedUIElements)
-            {
-                mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
-
-                if (EI.XPath == mSpyElement.XPath && EI.Path == mSpyElement.Path)
-                {
-                    elementfocused = true;
-                    mPOM.MappedUIElements.CurrentItem = EI;
-                    xMainElementsGrid.ScrollToViewCurrentItem();
-                    break;
-                }
-            }
-
-            foreach (ElementInfo EI in mPOM.UnMappedUIElements)
-            {
-                mWinExplorer.UpdateElementInfoFields(EI);//Not sure if needed
-
-                if (EI.XPath == mSpyElement.XPath && EI.Path == mSpyElement.Path)
-                {
-                    elementfocused = true;
-                    mPOM.UnMappedUIElements.CurrentItem = EI;
-                    xMainElementsGrid.ScrollToViewCurrentItem();
-                    break;
-                }
-            }
-
-            if (!elementfocused)
-            {
-                xStatusLable.Content = "Element has not been found on the list, Click here to create new Element ";
-                xCreateNewElement.Visibility = Visibility.Visible;
-            }
-        }
-
-
-        private void AddMappedElementRow(object sender, RoutedEventArgs e)
-        {
-            if (DriverIsBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-
-            ElementInfo EI = new ElementInfo();
-            mPOM.MappedUIElements.Add(EI);
-            mPOM.MappedUIElements.CurrentItem = EI;
-            xMainElementsGrid.ScrollToViewCurrentItem();
-        }
-
-        private void AddUnMappedElementRow(object sender, RoutedEventArgs e)
-        {
-            if (DriverIsBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-
-            ElementInfo EI = new ElementInfo();
-            mPOM.UnMappedUIElements.Add(EI);
-            mPOM.UnMappedUIElements.CurrentItem = EI;
-            xMainElementsGrid.ScrollToViewCurrentItem();
-        }
-
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
-        {
-            string Title = "Mappaed Elements Page";
-
-            GingerCore.General.LoadGenericWindow(ref _GenWin, null, windowStyle, Title, this);
-        }
-
-        private void InitLocatorsGrid()
-        {
-            //TODO: need to add Help text or convert to icon...
-            //xLocatorsGrid.AddButton("Test", TestSelectedLocator);
-            //xLocatorsGrid.AddButton("Test All", TestAllLocators);
-
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            //view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 30, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
-
-            List<GingerCore.General.ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 40, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList });
-
-            //defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), WidthWeight = 10 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 150 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 70, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 15, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
-            //defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.TestStatus), Header = "Test Status", WidthWeight = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateStatusIcon), Header = "Status", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
-
-            xLocatorsGrid.AddToolbarTool("@Play_16x16.png", "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
-            xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorHandler));
-            xLocatorsGrid.SetAllColumnsDefaultView(defView);
-            xLocatorsGrid.InitViewItems();
-            xLocatorsGrid.DataSourceList = mLocators;
-            xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-        }
-
-        private void AddLocatorHandler(object sender, RoutedEventArgs e)
-        {
-            ElementLocator newElementLocator = new ElementLocator();
-            mMainElementsGridCurrentItem.Locators.Add(newElementLocator);
-            mLocators.Add(newElementLocator);
-        }
-
-
-        private void InitControlPropertiesGridView()
-        {
-            // Grid View
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 8, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 20, ReadOnly = true });
-
-            xPropertiesGrid.SetAllColumnsDefaultView(view);
-            xPropertiesGrid.InitViewItems();
-            xPropertiesGrid.SetTitleLightStyle = true;
-            xPropertiesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPropertyHandler));
-            xPropertiesGrid.DataSourceList = mProperties;
-        }
-
-        private void AddPropertyHandler(object sender, RoutedEventArgs e)
-        {
-            mProperties.Add(new ControlProperty());
-        }
-
-        bool IsFirstSelection = true;
-
-        private void MappedElementsGrid_RowChangedEvent(object sender, EventArgs e)
-        {
-            if (IsFirstSelection)
-            {
-                xDetailsExpander.IsExpanded = true;
-                IsFirstSelection = false;
-            }
-
-
-            mLocators.Clear();
-            mProperties.Clear();
-            if (((DataGrid)sender).SelectedItem != null)
-            {
-                ElementInfo SelectedElement = (ElementInfo)((DataGrid)sender).SelectedItem;
-                if (SelectedElement.ElementTitle != null)
-                {
-                    xDetailsExpanderLabel.Content ="'" + SelectedElement.ElementTitle + "' Details";
-                }
-                foreach (ElementLocator EL in SelectedElement.Locators)
-                    mLocators.Add(EL);
-
-                foreach (ControlProperty CP in SelectedElement.Properties)
-                    mProperties.Add(CP);
-
-                //ObservableList<ControlProperty> ElementsProperties = SelectedElement.GetElementProperties();
-                //if (mWinExplorer != null)
-                //{
-                //    ObservableList<ControlProperty> ElementsProperties = mWinExplorer.GetElementProperties(SelectedElement);
-                //    foreach (ControlProperty CP in ElementsProperties)
-                //        mProperties.Add(CP);
-                //}
-
             }
         }
 
@@ -403,30 +48,403 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 return xMainElementsGrid;
             }
-
         }
 
-
-        private ElementInfo mMainElementsGridCurrentItem { get { return (ElementInfo)xMainElementsGrid.CurrentItem; } }
-
-        private ElementLocator mLocatorsGridCurrentItem { get { return (ElementLocator)xLocatorsGrid.CurrentItem; } }
-
-
-
-        private void HighlightElementClicked(object sender, RoutedEventArgs e)
+        ElementInfo mSelectedElement
         {
-            if (DriverIsBusy)
+            get
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                if (xMainElementsGrid.Grid.SelectedItem != null)
+                {
+                    return (ElementInfo)xMainElementsGrid.Grid.SelectedItem;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        ElementLocator mSelectedLocator
+        {
+            get
+            {
+                if (xLocatorsGrid.Grid.SelectedItem != null)
+                {
+                    return (ElementLocator)xLocatorsGrid.Grid.SelectedItem;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public PomElementsPage(ApplicationPOMModel pom, PomAllElementsPage.eElementsContext context)
+        {
+            InitializeComponent();
+            mPOM = pom;
+            mContext = context;
+            if (mContext == PomAllElementsPage.eElementsContext.Mapped)
+            {
+                mElements = mPOM.MappedUIElements;
+            }
+            else
+            {
+                mElements = mPOM.UnMappedUIElements;
+            }
+            
+            SetControlPropertiesGridView();
+            SetLocatorsGridView();
+            SetElementsGridView();
+
+            xMainElementsGrid.DataSourceList = mElements;
+            if (mElements.Count > 0)
+            {
+                xMainElementsGrid.Grid.SelectedItem = mElements[0];
+            }
+            else
+            {
+                DisableDetailsExpander();
+            }
+        }
+
+        private void PasteElementEvent(PasteItemEventArgs EventArgs)
+        {
+            ((ElementInfo)EventArgs.RepositoryItemBaseObject).IsAutoLearned = false;
+        }
+
+        private void PasteLocatorEvent(PasteItemEventArgs EventArgs)
+        {
+            ((ElementLocator)EventArgs.RepositoryItemBaseObject).IsAutoLearned = false;
+        }
+
+        private void Properties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdatePropertiesHeader();
+        }
+        private void UpdatePropertiesHeader()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xPropertiesTextBlock.Text = string.Format("Properties ({0})", mSelectedElement.Properties.Count);
+            });
+        }
+
+        private void Locators_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateLocatorsHeader();
+        }
+        private void UpdateLocatorsHeader()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xLocatorsTextBlock.Text = string.Format("Locators ({0})", mSelectedElement.Locators.Count);
+            });
+        }
+
+        private void AddElementsToMappedBtnClicked(object sender, RoutedEventArgs e)
+        {
+            List<ElementInfo> ItemsToAddList = xMainElementsGrid.Grid.SelectedItems.Cast<ElementInfo>().ToList();
+            foreach (ElementInfo EI in ItemsToAddList)
+            {
+                mPOM.MappedUIElements.Add(EI);
+                mPOM.UnMappedUIElements.Remove(EI);
+            }
+        }
+
+        private void RemoveElementsToMappedBtnClicked(object sender, RoutedEventArgs e)
+        {
+            List<ElementInfo> ItemsToRemoveList = xMainElementsGrid.Grid.SelectedItems.Cast<ElementInfo>().ToList();
+            foreach (ElementInfo EI in ItemsToRemoveList)
+            {
+                mPOM.MappedUIElements.Remove(EI);
+                mPOM.UnMappedUIElements.Add(EI);
+            }
+        }
+
+        internal void SetAgent(Agent agent)
+        {
+            mAgent = agent;
+        }
+
+        public enum eGridView
+        {
+            RegularView,
+        }
+        private void SetElementsGridView()
+        {
+            xMainElementsGrid.SetTitleLightStyle = true;
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 40, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), WidthWeight = 35, AllowSorting = true });
+
+            List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 15, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = "", Header = "Highlight", WidthWeight = 10, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
+
+
+            GridViewDef mRegularView = new GridViewDef(eGridView.RegularView.ToString());
+            mRegularView.GridColsView = new ObservableList<GridColView>();
+            mRegularView.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Visible = false });
+
+            xMainElementsGrid.AddCustomView(mRegularView);
+            xMainElementsGrid.SetAllColumnsDefaultView(view);
+            xMainElementsGrid.InitViewItems();
+            xMainElementsGrid.ChangeGridView(eGridView.RegularView.ToString());
+
+            if (mContext == PomAllElementsPage.eElementsContext.Mapped)
+            {
+                xMainElementsGrid.AddToolbarTool(eImageType.MapSigns, "Remove elements from mapped list", new RoutedEventHandler(RemoveElementsToMappedBtnClicked));
+                xMainElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddMappedElementRow));
+                xMainElementsGrid.ShowDelete = Visibility.Collapsed;
+            }
+            else
+            {
+                xMainElementsGrid.AddToolbarTool(eImageType.MapSigns, "Add elements to mapped list", new RoutedEventHandler(AddElementsToMappedBtnClicked));
+                xMainElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddUnMappedElementRow));
+                xMainElementsGrid.SetbtnDeleteHandler(DeleteUnMappedElementRow);
+            }
+
+            xMainElementsGrid.grdMain.PreparingCellForEdit += MainElementsGrid_PreparingCellForEdit;
+            xMainElementsGrid.PasteItemEvent += PasteElementEvent;
+
+
+            xMainElementsGrid.SelectedItemChanged += XMainElementsGrid_SelectedItemChanged;
+            xMainElementsGrid.Grid.SelectionChanged += Grid_SelectionChanged;
+        }
+
+        private void XMainElementsGrid_SelectedItemChanged(object selectedItem)
+        {
+            HandelElementSelectionChange();
+        }
+
+        private void Grid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            HandelElementSelectionChange();
+        }
+
+        bool disabeledElementMsgShown;
+        private void MainElementsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        {
+            if (e.Column.Header == "Name" || e.Column.Header == nameof(ElementInfo.Description))
+            {
                 return;
             }
 
-            mWinExplorer.HighLightElement(mMainElementsGridCurrentItem, true);
+            ElementInfo ei = (ElementInfo)xMainElementsGrid.CurrentItem;
+            if (ei.IsAutoLearned)
+            {
+                Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "You can not edit this field of an Element which was auto learned, please duplicate it and create customized Element.");
+                e.EditingElement.IsEnabled = false;
+            }
+        }
+
+        private void DeleteUnMappedElementRow(object sender, RoutedEventArgs e)
+        {
+            bool msgShowen = false;
+            List<ElementInfo> elementsToDelete = xMainElementsGrid.Grid.SelectedItems.Cast<ElementInfo>().ToList();
+            foreach (ElementInfo element in elementsToDelete)
+            {
+                if (element.IsAutoLearned)
+                {
+                    if (!msgShowen)
+                    {
+                        Reporter.ToUser(eUserMsgKeys.POMCannotDeleteAutoLearnedElement);
+                        msgShowen = true;
+                    }
+                }
+                else
+                {
+                    mPOM.UnMappedUIElements.Remove(element);
+                }
+            }
+        }
+
+        private void AddMappedElementRow(object sender, RoutedEventArgs e)
+        {
+            xMainElementsGrid.Grid.CommitEdit();
+
+            ElementInfo EI = new ElementInfo();
+            mPOM.MappedUIElements.Add(EI);
+            
+            xMainElementsGrid.Grid.SelectedItem = EI;
+            xMainElementsGrid.ScrollToViewCurrentItem();
+        }
+
+        private void AddUnMappedElementRow(object sender, RoutedEventArgs e)
+        {
+            xMainElementsGrid.Grid.CommitEdit();
+
+            ElementInfo EI = new ElementInfo();
+            mPOM.UnMappedUIElements.Add(EI);
+
+            xMainElementsGrid.Grid.SelectedItem = EI;
+            xMainElementsGrid.ScrollToViewCurrentItem();
+        }
+
+        private void SetLocatorsGridView()
+        {
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
+            defView.GridColsView = new ObservableList<GridColView>();
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+            List<GingerCore.General.ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
+            xLocatorsGrid.SetAllColumnsDefaultView(defView);
+            xLocatorsGrid.InitViewItems();
+
+            xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
+            xLocatorsGrid.AddToolbarTool(eImageType.Play, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
+            xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorButtonClicked));
+            xLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteLocatorClicked));
+
+            xLocatorsGrid.grdMain.PreparingCellForEdit += LocatorsGrid_PreparingCellForEdit;
+            xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
+        }
+
+        private void DeleteLocatorClicked(object sender, RoutedEventArgs e)
+        {
+            bool msgShowen = false;
+            List<ElementLocator> locatorsToDelete = xLocatorsGrid.Grid.SelectedItems.Cast<ElementLocator>().ToList();
+            foreach (ElementLocator locator in locatorsToDelete)
+            {
+                if (locator.IsAutoLearned)
+                {
+                    if (!msgShowen)
+                    {
+                        Reporter.ToUser(eUserMsgKeys.POMCannotDeleteAutoLearnedElement);
+                        msgShowen = true;
+                    }
+                }
+                else
+                {
+                    mSelectedElement.Locators.Remove(locator);
+                }
+            }
+        }
+
+        private void AddLocatorButtonClicked(object sender, RoutedEventArgs e)
+        {
+            xLocatorsGrid.Grid.CommitEdit();
+
+            ElementLocator locator = new ElementLocator() { Active = true };
+            mSelectedElement.Locators.Add(locator);
+
+            xLocatorsGrid.Grid.SelectedItem = locator;
+            xLocatorsGrid.ScrollToViewCurrentItem();
+        }
+
+        bool disabeledLocatorsMsgShown;
+        private void LocatorsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        {
+            if (e.Column.Header.ToString() != nameof(ElementLocator.Active) && mSelectedLocator.IsAutoLearned)
+            {
+                if (!disabeledLocatorsMsgShown)
+                {
+                    Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "You can not edit Locator which was auto learned, please duplicate it and create customized Locator.");
+                    disabeledLocatorsMsgShown = true;
+                }
+                e.EditingElement.IsEnabled = false;
+            }
+        }
+
+        private void SetControlPropertiesGridView()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75, ReadOnly = true });
+
+            xPropertiesGrid.SetAllColumnsDefaultView(view);
+            xPropertiesGrid.InitViewItems();
+            xPropertiesGrid.SetTitleLightStyle = true;
+            xPropertiesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPropertyHandler));
+        }
+
+        private void AddPropertyHandler(object sender, RoutedEventArgs e)
+        {
+            mSelectedElement.Properties.Add(new ControlProperty());
+        }
+
+        private void HandelElementSelectionChange()
+        {                      
+            if (mSelectedElement != null)
+            {
+                xDetailsExpander.IsEnabled = true;
+                if (IsFirstSelection)
+                {
+                    xDetailsExpander.IsExpanded = true;
+                    IsFirstSelection = false;
+                }
+
+                if (mSelectedElement.ElementName != null)
+                {
+                    string title;
+                    if (mSelectedElement.ElementName.Length > 100)
+                    {
+                        title = string.Format("'{0}...' Details", mSelectedElement.ElementName.Substring(0, 25));
+                    }
+                    else
+                    {
+                        title = string.Format("'{0}' Details", mSelectedElement.ElementName);
+                    }
+                    xDetailsExpanderLabel.Content = title;
+                }
+                else
+                {
+                    xDetailsExpanderLabel.Content = "Element Details";
+                }
+
+                mSelectedElement.Locators.CollectionChanged -= Locators_CollectionChanged;
+                mSelectedElement.Locators.CollectionChanged += Locators_CollectionChanged;
+                xLocatorsGrid.DataSourceList = mSelectedElement.Locators;
+                UpdateLocatorsHeader();
+
+                mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
+                mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
+                xPropertiesGrid.DataSourceList = mSelectedElement.Properties;
+                UpdatePropertiesHeader();
+
+            }
+            else
+            {
+                DisableDetailsExpander();
+            }
+        }
+
+        private void DisableDetailsExpander()
+        {
+            xDetailsExpanderLabel.Content = "Element Details";
+            xDetailsExpander.IsEnabled = false;
+            xDetailsExpander.IsExpanded = false;
+        }
+
+        private void HighlightElementClicked(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateDriverAvalability())
+            {
+                return;
+            }
+
+            if (mSelectedElement != null)
+            {
+                mWinExplorer.HighLightElement(mSelectedElement, true);               
+            }
         }
 
         private void DetailsGrid_Expanded(object sender, RoutedEventArgs e)
         {
-            Row2.Height = new GridLength(100, GridUnitType.Star);
+            Row2.Height = new GridLength(30, GridUnitType.Star);
         }
 
         private void DetailsGrid_Collapsed(object sender, RoutedEventArgs e)
@@ -436,40 +454,94 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void TestElementButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (DriverIsBusy)
+            if (!ValidateDriverAvalability())
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
             }
 
-            mWinExplorer.TestElementLocators(new ObservableList<ElementLocator>() { mLocatorsGridCurrentItem });
-            
+            if (mSelectedLocator != null)
+            {
+                mWinExplorer.TestElementLocators(new ObservableList<ElementLocator>() { mSelectedLocator });
+            }
         }
 
         private void TestAllElementsLocators(object sender, RoutedEventArgs e)
         {
-            if (DriverIsBusy)
+            if (!ValidateDriverAvalability())
             {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
                 return;
             }
 
-            mWinExplorer.TestElementLocators(mLocators);
+            if (mSelectedElement != null)
+            {
+                mWinExplorer.TestElementLocators(mSelectedElement.Locators);
+            }
         }
 
-        private void CreateNewElemetClicked(object sender, RoutedEventArgs e)
+        private bool ValidateDriverAvalability()
         {
-            if (mContext == PomAllElementsPage.eElementsContext.Mapped)
+            if (mWinExplorer == null)
             {
-                mPOM.MappedUIElements.Add(mSpyElement);
+                Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
+                return false;
+            }
+
+            if (IsDriverBusy())
+            {
+                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsDriverBusy()
+        {
+            if (mAgent != null && mAgent.Driver.IsDriverBusy)
+            {
+                return true;
             }
             else
             {
-                mPOM.UnMappedUIElements.Add(mSpyElement);
+                return false;
             }
-
-            xCreateNewElement.Visibility = Visibility.Collapsed;
-            xStatusLable.Content = "Element added to the list";
         }
+
+        public void FinishEditInGrids()
+        {
+            xMainElementsGrid.Grid.CommitEdit();
+            xLocatorsGrid.Grid.CommitEdit();
+        }
+
+
+        private void xElementDetailsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //set the selected tab text style
+            try
+            {
+                if (xElementDetailsTabs.SelectedItem != null)
+                {
+                    foreach (TabItem tab in xElementDetailsTabs.Items)
+                    {
+                        foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
+
+                            if (ctrl.GetType() == typeof(TextBlock))
+                            {
+                                if (xElementDetailsTabs.SelectedItem == tab)
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                else
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+
+                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in POM Edit Page tabs style", ex);
+            }
+        }
+
     }
 }

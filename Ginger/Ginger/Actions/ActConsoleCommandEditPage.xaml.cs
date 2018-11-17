@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.IO;
-using System.Windows.Controls;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -32,21 +31,22 @@ namespace Ginger.Actions
     /// </summary>
     public partial class ActConsoleCommandEditPage : Page
     {
-        private GingerCore.Actions.ActConsoleCommand f;
+        private ActConsoleCommand mActConsoleCommand;
 
-        string SHFilesPath = App.UserProfile.Solution.Folder + @"\Documents\sh\";        
+        string SHFilesPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\sh\");        
 
-        public ActConsoleCommandEditPage(GingerCore.Actions.ActConsoleCommand Act)
+        public ActConsoleCommandEditPage(ActConsoleCommand actConsoleCommand)
         {
             InitializeComponent();
-            this.f = Act;
+            this.mActConsoleCommand = actConsoleCommand;
             List<object> list = GetActionListPlatform();            
-            App.FillComboFromEnumVal(ConsoleActionComboBox, Act.ConsoleCommand, list);
-            App.ObjFieldBinding(ConsoleActionComboBox, ComboBox.TextProperty, Act, ActConsoleCommand.Fields.ConsoleCommand);
-            App.ObjFieldBinding(CommandTextBox, TextBox.TextProperty, Act, ActConsoleCommand.Fields.Command);
-            App.ObjFieldBinding(ScriptNameComboBox, ComboBox.TextProperty, Act, ActConsoleCommand.Fields.ScriptName);
-            App.ObjFieldBinding(txtWait, TextBox.TextProperty, Act, ActConsoleCommand.Fields.WaitTime);
-            txtExpected.Init(f, ActConsoleCommand.Fields.ExpString);           
+            App.FillComboFromEnumVal(ConsoleActionComboBox, actConsoleCommand.ConsoleCommand, list);
+            App.ObjFieldBinding(ConsoleActionComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ConsoleCommand);
+            App.ObjFieldBinding(CommandTextBox, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.Command);
+            App.ObjFieldBinding(ScriptNameComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ScriptName);
+            App.ObjFieldBinding(txtWait, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.WaitTime);
+            xDelimiterVE.BindControl(actConsoleCommand, nameof(ActConsoleCommand.Delimiter));
+            txtExpected.Init(mActConsoleCommand, ActConsoleCommand.Fields.ExpString);           
         }
 
         private List<object> GetActionListPlatform()
@@ -78,9 +78,9 @@ namespace Ginger.Actions
             switch (comm)
             {                
                 case ActConsoleCommand.eConsoleCommand.FreeCommand:                    
-                    f.RemoveAllButOneInputParam("Free Command");
-                    f.AddInputValueParam("Free Command");
-                    f.ScriptName = "";
+                    mActConsoleCommand.RemoveAllButOneInputParam("Free Command");
+                    mActConsoleCommand.AddInputValueParam("Free Command");
+                    mActConsoleCommand.ScriptName = "";
                     break;
                 case ActConsoleCommand.eConsoleCommand.Script:
                     ScriptStackPanel.Visibility = System.Windows.Visibility.Visible;                    
@@ -88,14 +88,14 @@ namespace Ginger.Actions
                     break;
                 case ActConsoleCommand.eConsoleCommand.ParametrizedCommand:
                     CommandPanel.Visibility = System.Windows.Visibility.Visible;
-                    f.RemoveAllButOneInputParam("Value");
-                    f.AddInputValueParam("Value");
-                    f.ScriptName = "";
+                    mActConsoleCommand.RemoveAllButOneInputParam("Value");
+                    mActConsoleCommand.AddInputValueParam("Value");
+                    mActConsoleCommand.ScriptName = "";
                     break;
                 default:
-                    f.RemoveAllButOneInputParam("Value");
-                    f.AddInputValueParam("Value");
-                    f.ScriptName = "";
+                    mActConsoleCommand.RemoveAllButOneInputParam("Value");
+                    mActConsoleCommand.AddInputValueParam("Value");
+                    mActConsoleCommand.ScriptName = "";
                     break;
             }
         }
@@ -111,10 +111,10 @@ namespace Ginger.Actions
                 string s = file.Replace(SHFilesPath, "");
                 ScriptNameComboBox.Items.Add(s);                
             }
-            if(f.ScriptName =="")
+            if(mActConsoleCommand.ScriptName =="")
             {
-                f.ReturnValues.Clear();
-                f.InputValues.Clear();
+                mActConsoleCommand.ReturnValues.Clear();
+                mActConsoleCommand.InputValues.Clear();
             }
         }
 
@@ -123,10 +123,10 @@ namespace Ginger.Actions
             string ScriptFile = SHFilesPath + ScriptNameComboBox.SelectedValue;
 
             if (ScriptNameComboBox.SelectedValue == null) return;            
-            if (f.ScriptName != ScriptNameComboBox.SelectedValue.ToString())
+            if (mActConsoleCommand.ScriptName != ScriptNameComboBox.SelectedValue.ToString())
             {
-                f.ReturnValues.Clear();
-                f.InputValues.Clear();
+                mActConsoleCommand.ReturnValues.Clear();
+                mActConsoleCommand.InputValues.Clear();
                 string[] script = File.ReadAllLines(ScriptFile);
                 ScriptDescriptionLabel.Content = "";
                 foreach (string line in script)
@@ -137,7 +137,7 @@ namespace Ginger.Actions
                     }
                     if (line.StartsWith("'GINGER_$") || line.StartsWith("//GINGER_$") || line.StartsWith("#GINGER_$"))
                     {
-                        f.AddOrUpdateInputParamValue(line.Replace("'GINGER_$", "").Replace("#GINGER_$", "").Replace("//GINGER_$", ""), "");
+                        mActConsoleCommand.AddOrUpdateInputParamValue(line.Replace("'GINGER_$", "").Replace("#GINGER_$", "").Replace("//GINGER_$", ""), "");
                     }
                 }
             }
