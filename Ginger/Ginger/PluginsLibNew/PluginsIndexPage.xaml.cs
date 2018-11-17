@@ -1,6 +1,10 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -27,7 +31,7 @@ namespace Ginger.PlugInsWindows
             xDownloads.Text = null;
             xInstallButonn.Visibility = Visibility.Collapsed;
 
-            dynamic release = (dynamic)xVersionComboBox.SelectedItem;
+            OnlinePluginPackageRelease release = (OnlinePluginPackageRelease)xVersionComboBox.SelectedItem;
             if (release != null)
             {
                 xPublishedTextBlock.Text = release.published_at;
@@ -51,6 +55,7 @@ namespace Ginger.PlugInsWindows
             view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Name), WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Description), WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.URL), WidthWeight = 30 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Status), WidthWeight = 30 });
 
             xPluginsGrid.SetAllColumnsDefaultView(view);
             xPluginsGrid.InitViewItems();
@@ -70,39 +75,53 @@ namespace Ginger.PlugInsWindows
         }
 
         private void GetPluginsList()
-        {
-            SetStatus("Loading...");
+        {            
             PluginsManager p = new PluginsManager();
-            xPluginsGrid.DataSourceList = p.GetPluginsIndex();
-            SetStatus("Found " + xPluginsGrid.DataSourceList.Count + " Plugin Packages");
-        }
-
-
-        private void SetStatus(string text)
-        {
-            xStatusTextBlock.Text = text;
-            xStatusTextBlock.Refresh();
+            xProcessingImage.Visibility = Visibility.Visible;
+            xPluginsGrid.DataSourceList = p.GetOnlinePluginsIndex();
+            xProcessingImage.Visibility = Visibility.Collapsed;         
         }
 
 
         private void ShowPluginInfo()
         {            
-            PluginsManager p = new PluginsManager();
+            xProcessingImage.Visibility = Visibility.Visible;                        
             OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;            
-            xNameTextBlock.Text = pluginPackageInfo.Name;            
-            xVersionComboBox.ItemsSource = p.GetPluginReleases(pluginPackageInfo.URL);
-            xVersionComboBox.DisplayMemberPath = "tag_name";
-            // select the first item/latest release
-            xVersionComboBox.SelectedIndex = 0;
+            xNameTextBlock.Text = pluginPackageInfo.Name;
+            ObservableList<OnlinePluginPackageRelease> list = null;
+            Task.Factory.StartNew(() =>
+            {
+                list = pluginPackageInfo.Releases;
+                
+            }).ContinueWith((a) => {
+                    Dispatcher.Invoke(() =>
+                    {
+                        xVersionComboBox.ItemsSource = list;
+                        xVersionComboBox.DisplayMemberPath = nameof(OnlinePluginPackageRelease.Version);
+                        // select the first item/latest release
+                        xVersionComboBox.SelectedIndex = 0;
+                        xProcessingImage.Visibility = Visibility.Collapsed;
+                    });
+            });
         }
 
         private void xInstallButonn_Click(object sender, RoutedEventArgs e)
         {
-            dynamic release = (dynamic)xVersionComboBox.SelectedItem;
-            string zipFileURL = release.assets[0].browser_download_url;
-            string version = release.tag_name;            
-            PluginsManager p = new PluginsManager();
-            p.InstallPluginPackage((OnlinePluginPackage)xPluginsGrid.CurrentItem, version , zipFileURL);
+            xProcessingImage.Visibility = Visibility.Visible;
+            OnlinePluginPackageRelease release = (OnlinePluginPackageRelease)xVersionComboBox.SelectedItem;
+            Task.Factory.StartNew(() =>
+            {                                
+                PluginsManager p = new PluginsManager();
+                OnlinePluginPackage onlinePluginPackage = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
+                p.InstallPluginPackage(onlinePluginPackage, release);
+                onlinePluginPackage.Status = "Installed";
+            }).ContinueWith((a) =>
+            {                
+                Dispatcher.Invoke(() =>
+                {
+                    xProcessingImage.Visibility = Visibility.Collapsed;
+                });
+            });
         }
     }
 }

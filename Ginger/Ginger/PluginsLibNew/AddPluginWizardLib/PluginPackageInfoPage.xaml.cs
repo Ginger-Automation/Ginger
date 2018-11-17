@@ -48,13 +48,13 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                     break;
                 case EventType.Active:
                     mPluginPackage = wiz.PluginPackage;
-                    xIDTextBox.Text = mPluginPackage.PluginID;
+                    xIDTextBox.Text = mPluginPackage.PluginId;
                     xVersionTextBox.Text = mPluginPackage.PluginPackageVersion;
                     FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
 
                     List<StandAloneAction> actions = mPluginPackage.LoadServicesInfoFromFile();
 
-                    // show distict list of the services
+                    // show distinct list of the services
                     ServicesGrid.ItemsSource = (from x in actions select x.ServiceId).Distinct();
 
                     // TODO: get selected service only  - add radio show all or per selected

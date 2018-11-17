@@ -30,7 +30,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {            
-            eImageType ico = eImageType.Pending;//defualt icon
+            eImageType ico = eImageType.Pending;//default icon
 
             if (value != null && value.GetType() == typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus))
             {

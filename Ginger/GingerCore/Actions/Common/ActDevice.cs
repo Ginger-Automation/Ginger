@@ -27,7 +27,7 @@ namespace GingerCore.Actions.Common
 {
     // this action is for items to do on the device
     // Like install app
-    // like screenrecord
+    // like screen-record
     // reboot
     // get power/cpu etc...
 

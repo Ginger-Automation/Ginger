@@ -71,7 +71,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
 
         // --------------------------------------------------------------------------------
-        // Calc impl on server side
+        // Calculator implemented on server side
         // --------------------------------------------------------------------------------
         public class Calculator : IDisplay
         {

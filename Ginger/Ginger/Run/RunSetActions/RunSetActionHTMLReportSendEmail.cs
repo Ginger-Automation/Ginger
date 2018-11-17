@@ -91,8 +91,8 @@ namespace Ginger.Run.RunSetActions
         }
 
         //User can attach several templates to the email
-        // Attch template + RI
-        // Attch its own file
+        // attach template + RI
+        // attach its own file
         [IsSerializedForLocalRepository]
         public ObservableList<EmailAttachment> EmailAttachments = new ObservableList<EmailAttachment>();
 
@@ -710,7 +710,7 @@ namespace Ginger.Run.RunSetActions
                                             }
                                         }
 
-                                        // Bussines Flow Level
+                                        // Business Flow Level
                                         foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.BusinessFlowFieldsToSelect.Where(x => (x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
                                         {
                                             if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Seq)

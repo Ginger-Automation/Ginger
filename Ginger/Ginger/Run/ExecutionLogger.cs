@@ -216,8 +216,7 @@ namespace Ginger.Run
                 }
             }
             catch(Exception ex)
-            {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error-{ex.Message}");
+            {                
                 return false;
             }
             
@@ -781,7 +780,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occured in ExecutionLogger Action end" , ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception occurred in ExecutionLogger Action end", ex);
             }                   
         }
 

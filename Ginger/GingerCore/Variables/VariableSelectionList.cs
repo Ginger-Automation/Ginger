@@ -67,7 +67,7 @@ namespace GingerCore.Variables
             return formula;
         }
  
-        // Support backword comptibility - function when we had the list with delimiter
+        // Support backward compatibility - function when we had the list with delimiter
         private ObservableList<OptionalValue> ConvertOptionalValuesStringToList(string valsString)
         {
             try

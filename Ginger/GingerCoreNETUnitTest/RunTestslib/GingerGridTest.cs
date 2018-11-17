@@ -97,7 +97,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         // FIXME
         //[TestMethod]
-        //// TODO: find how we can utilzie categories
+        //// TODO: find how we can utilize categories
         //public void DummyDriverA1()
         //{
         //    //Arrange

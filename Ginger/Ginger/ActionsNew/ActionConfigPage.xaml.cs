@@ -42,7 +42,7 @@ namespace Ginger.ActionLib
         private void LoadEditPage()
         {
             // we can have several types of Edit page
-            // 1. deafult grid - created automatically if action didn't define edit page
+            // 1. default grid - created automatically if action didn't define edit page
             // 2. Simple Xaml only no code behind layout only - will load and bind
             // 3. Xaml with code behind, will create as object and load
             // 4. auto generated form 
@@ -114,7 +114,7 @@ namespace Ginger.ActionLib
                 // recursive bind for example for StackPanel or other controls Panel
                 if (e is Panel) BindControlsToAction((Panel)e);
                 
-                // If we have property Tag filled it means it will be Binded to InputValue - Tag value = Param nane
+                // If we have property Tag filled it means it will be Binded to InputValue - Tag value = Param name
                 string tag = (string)e.GetValue(TagProperty);                
                 
                 // We bind control based on their tag value 

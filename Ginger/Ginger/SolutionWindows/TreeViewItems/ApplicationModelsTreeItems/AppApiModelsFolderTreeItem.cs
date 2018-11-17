@@ -96,7 +96,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // untrack sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
-            //Add direct childrens        
+            //Add direct children's        
             mChildAPIs = mAPIModelFolder.GetFolderItems();
             mChildAPIs.CollectionChanged -= TreeFolderItems_CollectionChanged;
             mChildAPIs.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
