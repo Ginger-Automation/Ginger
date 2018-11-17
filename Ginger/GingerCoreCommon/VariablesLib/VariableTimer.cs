@@ -1,19 +1,16 @@
-﻿using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Threading;
+using System.Timers;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
     public class VariableTimer : VariableBase
     {
-
         public Stopwatch RunWatch = new Stopwatch();
-        public DispatcherTimer DispatcherTimerElapsed = new System.Windows.Threading.DispatcherTimer();
-
+        public Timer timer;
 
         public override string VariableUIType
         {
@@ -43,23 +40,27 @@ namespace GingerCore.Variables
         }
 
         public void StartTimer(bool isContinue=false)
-        {
-           
+        { 
+            if (timer == null)
+            {
+                timer = new Timer();
+            }
+
             if(isContinue==false)
                 RunWatch.Reset();
 
             if (TimerUnit == eTimerUnit.MilliSeconds)
-                DispatcherTimerElapsed.Interval = new TimeSpan(0, 0, 0, 0, 1);
+                timer.Interval = new TimeSpan(0, 0, 0, 0, 1).TotalMilliseconds;
             if (TimerUnit == eTimerUnit.Seconds)
-                DispatcherTimerElapsed.Interval = new TimeSpan(0, 0, 0, 1, 0);
+                timer.Interval = new TimeSpan(0, 0, 0, 1, 0).TotalSeconds;
             if (TimerUnit == eTimerUnit.Minutes)
-                DispatcherTimerElapsed.Interval = new TimeSpan(0, 0, 1, 0, 0);
+                timer.Interval = new TimeSpan(0, 0, 1, 0, 0).TotalMinutes;
             if (TimerUnit == eTimerUnit.Hours)
-                DispatcherTimerElapsed.Interval = new TimeSpan(0, 1, 0, 0, 0);
+                timer.Interval = new TimeSpan(0, 1, 0, 0, 0).TotalHours;
             
             RunWatch.Start();
-            DispatcherTimerElapsed.Start();
-            DispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;          
+            timer.Start();
+            timer.Elapsed += dispatcherTimerElapsedTick;
         }
               
 
@@ -68,10 +69,9 @@ namespace GingerCore.Variables
             if (RunWatch.IsRunning)
             {
                 RunWatch.Stop();
-                DispatcherTimerElapsed.Stop();
-                DispatcherTimerElapsed.Tick -= dispatcherTimerElapsedTick;
+                timer.Stop();
+                timer.Elapsed -= dispatcherTimerElapsedTick;
             }
-
         }
 
         public void ContinueTimer()
@@ -85,8 +85,8 @@ namespace GingerCore.Variables
             if (RunWatch.IsRunning)
             {                
                 RunWatch.Reset();
-                DispatcherTimerElapsed.Stop();
-                DispatcherTimerElapsed.Tick -= dispatcherTimerElapsedTick;
+                timer.Stop();
+                timer.Elapsed -= dispatcherTimerElapsedTick;
                 UpdateTimervalue();
             }
             else
@@ -105,7 +105,6 @@ namespace GingerCore.Variables
 
         private void UpdateTimervalue()
         {
-
             switch (TimerUnit)
             {
                 case eTimerUnit.MilliSeconds:
@@ -124,7 +123,6 @@ namespace GingerCore.Variables
                     Value = "" + Math.Round(RunWatch.Elapsed.TotalHours, 2);
                     break;
             }
-
         }
 
         public override void GenerateAutoValue()
@@ -133,18 +131,18 @@ namespace GingerCore.Variables
         }
 
         public override eImageType Image { get { return eImageType.Timer; } }
+        public override bool SupportSetValue { get { return false; } }
         public override string VariableType() { return "Timer"; }
 
-        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.StartTimer);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.StopTimer);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ContinueTimer);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ResetValue);
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
+            supportedOperations.Add(VariableBase.eSetValueOptions.StartTimer);
+            supportedOperations.Add(VariableBase.eSetValueOptions.StopTimer);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ContinueTimer);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
-        public override bool SupportSetValue { get { return false; } }
 
     }
 }

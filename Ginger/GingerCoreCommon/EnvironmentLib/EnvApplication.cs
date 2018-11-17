@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -26,17 +26,6 @@ namespace GingerCore.Environments
     public class EnvApplication : RepositoryItemBase
     {        
 
-        public  static class Fields
-        {
-            public static string Name = "Name";
-            public static string CoreProductName = "CoreProductName";
-            public static string Description = "Description";
-            public static string CoreVersion = "CoreVersion";
-            public static string AppVersion = "AppVersion";
-            public static string Url = "Url";
-            public static string Vendor = "Vendor";
-            public static string Active = "Active";
-        }
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -71,7 +60,7 @@ namespace GingerCore.Environments
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Database> Dbs = new ObservableList<Database>();
+        public ObservableList<IDatabase> Dbs = RepositoryItemHelper.RepositoryItemFactory.GetDatabaseList();
 
         [IsSerializedForLocalRepository]
         public ObservableList<UnixServer> UnixServers = new ObservableList<UnixServer>();

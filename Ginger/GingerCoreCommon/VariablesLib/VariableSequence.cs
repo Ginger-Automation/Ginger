@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,23 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using System.Collections.Generic;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using System.Collections.Generic;
 
 namespace GingerCore.Variables
 {
     public class VariableSequence : VariableBase
     {
-        public new static  partial class Fields
-        {
-            public static string Min = "Min";
-            public static string Max = "Max";
-            public static string Interval = "Interval";
-            public static string IsInteger = "IsInteger";
-        }
-
         public VariableSequence()
         {
             Min = 0;
@@ -90,16 +81,15 @@ namespace GingerCore.Variables
             Value = val.ToString();
         }
     
-        public override eImageType Image { get { return eImageType.List; } }
+        public override eImageType Image { get { return eImageType.Sequence; } }
         public override string VariableType() { return "Sequence"; }
-
         public override bool SupportSetValue { get { return false; } }
 
-        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.AutoGenerateValue);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ResetValue);
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
+            supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
     }

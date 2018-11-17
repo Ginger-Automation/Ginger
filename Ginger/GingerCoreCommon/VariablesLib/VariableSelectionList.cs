@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,19 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GingerCore.Variables
 {
     public class VariableSelectionList : VariableBase
     {
-        
         public override string VariableUIType
         {
             get { return GingerDicser.GetTermResValue(eTermResKey.Variable) + " Selection List"; }
@@ -36,7 +33,7 @@ namespace GingerCore.Variables
 
         public override string VariableEditPage { get { return "VariableSelectionListPage"; } }
 
-        public override eImageType Image { get { return eImageType.List; } }
+        public override eImageType Image { get { return eImageType.VariableList; } }
 
         public override string VariableType() { return "Selection List"; }
 
@@ -48,13 +45,11 @@ namespace GingerCore.Variables
                 OptionalValuesList = ConvertOptionalValuesStringToList(value);
             }
         }
-        
+
         [IsSerializedForLocalRepository]
         public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
 
-        
         public string SelectedValue { set { Value = value; OnPropertyChanged(nameof(SelectedValue)); } get { return Value; } }
-
 
         public override string GetFormula()
         {
@@ -66,7 +61,7 @@ namespace GingerCore.Variables
             formula = formula.TrimEnd(',');
             return formula;
         }
- 
+
         // Support backward compatibility - function when we had the list with delimiter
         private ObservableList<OptionalValue> ConvertOptionalValuesStringToList(string valsString)
         {
@@ -80,12 +75,10 @@ namespace GingerCore.Variables
             }
             catch
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Cannot Convert Optional Values String To List - " + valsString);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Cannot Convert Optional Values String To List - " + valsString);
                 return new ObservableList<OptionalValue>();
             }
         }
-
-        
 
         public override void ResetValue()
         {
@@ -100,12 +93,13 @@ namespace GingerCore.Variables
 
         public override bool SupportSetValue { get { return true; } }
 
-        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.SetValue);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ResetValue);
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
+            supportedOperations.Add(VariableBase.eSetValueOptions.SetValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
+
     }
 }

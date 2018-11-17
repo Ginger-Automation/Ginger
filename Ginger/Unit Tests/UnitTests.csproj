@@ -206,6 +206,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerActionLogTest.cs" />
+    <Compile Include="NonUITests\GingerRunnerTests\GingerVariableTests.cs" />
     <Compile Include="NonUITests\ObservableListTest.cs" />
     <Compile Include="NonUITests\UsedVariablesTest.cs" />
     <Compile Include="TestAssemblyInit.cs" />
@@ -254,7 +255,6 @@
     <Compile Include="UITests\UIAAutomationTest.cs" />
     <Compile Include="NonUITests\UnixShellTest.cs" />
     <Compile Include="NonUITests\ValueExpressionTest.cs" />
-    <Compile Include="NonUITests\VariableTest.cs" />
     <Compile Include="NonUITests\VBScriptTest.cs" />
     <Compile Include="UITests\VisualCompareTest.cs" />
     <Compile Include="UITests\WebBrowserPageTest.cs" />

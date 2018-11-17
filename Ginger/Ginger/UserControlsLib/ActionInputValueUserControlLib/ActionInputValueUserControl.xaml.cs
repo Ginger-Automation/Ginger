@@ -19,11 +19,9 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Dynamic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;

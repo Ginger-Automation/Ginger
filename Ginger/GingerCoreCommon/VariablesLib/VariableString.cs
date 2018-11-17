@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,20 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using System.Collections.Generic;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using System.Collections.Generic;
 
 namespace GingerCore.Variables
 {
     public class VariableString : VariableBase 
     {
-        public new static partial class Fields
-        {
-            public static string InitialStringValue = "InitialStringValue";
-        }
-
         public VariableString()
         {
         }
@@ -77,12 +71,12 @@ namespace GingerCore.Variables
         public override eImageType Image { get { return eImageType.Variable; } }
         public override string VariableType() { return "String"; }
 
-        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.SetValue);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ResetValue);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ClearSpecialChar);
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
+            supportedOperations.Add(VariableBase.eSetValueOptions.SetValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ClearSpecialChar);
             return supportedOperations;
         }
 

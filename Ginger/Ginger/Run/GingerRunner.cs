@@ -19,12 +19,10 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
-using Ginger.GeneralLib;
-using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
@@ -49,7 +47,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
 
 //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -314,18 +311,22 @@ namespace Ginger.Run
         }
 
 
-        public void SetExecutionEnvironment(ProjEnvironment defualtEnv, ObservableList<ProjEnvironment> allEnvs)
+        public void SetExecutionEnvironment(ProjEnvironment defaultEnv, ObservableList<ProjEnvironment> allEnvs)
         {
             ProjEnvironment = null;
             if (UseSpecificEnvironment == true && string.IsNullOrEmpty(SpecificEnvironmentName) == false)
             {
                 ProjEnvironment specificEnv = (from x in allEnvs where x.Name == SpecificEnvironmentName select x).FirstOrDefault();
                 if (specificEnv != null)
+                {
                     ProjEnvironment = specificEnv;
+                }
             }
 
             if (ProjEnvironment == null)
-                ProjEnvironment = defualtEnv;
+            {
+                ProjEnvironment = defaultEnv;
+            }
         }
 
         public Solution CurrentSolution { get; set; }
@@ -380,10 +381,13 @@ namespace Ginger.Run
                 BFR.BusinessFlowInstanceGuid = bf.InstanceGuid;
 
                 foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(true))
+                {
                     if (var.DiffrentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputValue) == false)//save only variables which were modified in this run configurations
+                    {
                         BFR.BusinessFlowCustomizedRunVariables.Add(var);
+                    }
+                }
                 BFR.BusinessFlowRunDescription = bf.RunDescription;
-
                 BFR.BFFlowControls = bf.BFFlowControls ;
                 BusinessFlowsRunList.Add(BFR);
             }
@@ -412,11 +416,12 @@ namespace Ginger.Run
                 mIsRunning = true;
                 mStopRun = false;
                 if (doContinueRun == false)
+                {
                     RunnerExecutionWatch.StartRunWatch();
+                }
                 else
                 {
                     RunnerExecutionWatch.ContinueWatch();
-
                     ContinueTimerVariables(BusinessFlow.SolutionVariables);
                 }
 
@@ -424,7 +429,9 @@ namespace Ginger.Run
 
                 //Do execution preparations
                 if (doContinueRun == false)
+                {
                     UpdateApplicationAgents();
+                }
 
                 //Start execution
                 Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
@@ -447,7 +454,9 @@ namespace Ginger.Run
 
                     //stop if needed before executing next BF
                     if (mStopRun)
+                    {
                         break;
+                    }
 
                     //validate BF run
                     if (!executedBusFlow.Active)
@@ -501,7 +510,6 @@ namespace Ginger.Run
                 
                 if (Active)
                 {
-
                     if (!mStopRun)//not on stop run
                     {
                         CloseAgents();
@@ -531,9 +539,13 @@ namespace Ginger.Run
         private void CalculateNextBFIndx(ref int? flowControlIndx, ref int bfIndx)
         {
             if (flowControlIndx != null) //set bfIndex in case of BfFlowControl
+            {
                 bfIndx = (int)flowControlIndx;
+            }
             else
+            {
                 bfIndx++;
+            }
         }
 
         private void SetBusinessFlowInputVarsWithOutputValues(BusinessFlow bfToUpdate)
@@ -544,29 +556,43 @@ namespace Ginger.Run
             //set the vars to get value from
             List<VariableBase> outputVariables;
             if (BusinessFlow.SolutionVariables != null)
+            {
                 outputVariables = BusinessFlow.SolutionVariables.ToList();
+            }
             else
+            {
                 outputVariables = new List<VariableBase>();
+            }
             ObservableList<BusinessFlow> prevBFs = new ObservableList<BusinessFlow>();
             for (int i = 0; i < BusinessFlows.IndexOf(bfToUpdate); i++)
+            {
                 prevBFs.Add(BusinessFlows[i]);
+            }
             foreach (BusinessFlow bf in prevBFs.Reverse())//doing in reverse for passing the most updated value of variables with similar name
+            {
                 foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(false, false, true))
+                {
                     outputVariables.Add(var);
+                }
+            }
 
             //do actual value update
-            foreach(VariableBase inputVar in inputVarsToUpdate)
+            foreach (VariableBase inputVar in inputVarsToUpdate)
             {
                 string mappedValue = "";
                 if (inputVar.MappedOutputType == VariableBase.eOutputType.Variable)
                 {
                     VariableBase outputVar = outputVariables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();
-                    if (outputVar != null)                    
-                        mappedValue = outputVar.Value;                    
+                    if (outputVar != null)
+                    {
+                        mappedValue = outputVar.Value;
+                    }
                 }                    
                 else if(inputVar.MappedOutputType == VariableBase.eOutputType.DataSource)
-                    mappedValue=GingerCore.ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
-                                
+                {
+                    mappedValue = GingerCore.ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
+                }
+
                 if (mappedValue != "")
                 {
                     if (inputVar.GetType() == typeof(VariableString))
@@ -577,14 +603,18 @@ namespace Ginger.Run
                     if (inputVar.GetType() == typeof(VariableSelectionList))
                     {
                         if (((VariableSelectionList)inputVar).OptionalValuesList.Where(pv => pv.Value == mappedValue).FirstOrDefault() != null)
+                        {
                             ((VariableSelectionList)inputVar).Value = mappedValue;
+                        }
                         continue;
                     }
                     if (inputVar.GetType() == typeof(VariableList))
                     {
                         string[] possibleVals = ((VariableList)inputVar).Formula.Split(',');
                         if (possibleVals != null && possibleVals.Contains(mappedValue))
+                        {
                             ((VariableList)inputVar).Value = mappedValue;
+                        }
                         continue;
                     }
                     if (inputVar.GetType() == typeof(VariableDynamic))
@@ -1356,7 +1386,6 @@ namespace Ginger.Run
             {
                 VariableDynamic vd = (VariableDynamic)v;
                 vd.Init(ProjEnvironment, CurrentBusinessFlow);
-
             }
         }
 
@@ -2055,7 +2084,7 @@ namespace Ginger.Run
                                     {
                                         ActSetVariableValue setValueAct = new ActSetVariableValue();
                                         setValueAct.VariableName = vals[0];
-                                        setValueAct.SetVariableValueOption = ActSetVariableValue.eSetValueOptions.SetValue;
+                                        setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                                         setValueAct.Value = vals[1];
                                         setValueAct.RunOnBusinessFlow = this.CurrentBusinessFlow;
                                         setValueAct.DSList = this.DSList;
@@ -3736,7 +3765,9 @@ namespace Ginger.Run
                                 IsStopLoop = true;
                             }
                             else
+                            {
                                 FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                            }
                             break;
 
                         case FlowControl.eBusinessFlowControlAction.RerunBusinessFlow:
@@ -3757,7 +3788,7 @@ namespace Ginger.Run
                                 {
                                     ActSetVariableValue setValueAct = new ActSetVariableValue();
                                     setValueAct.VariableName = vals[0];
-                                    setValueAct.SetVariableValueOption = ActSetVariableValue.eSetValueOptions.SetValue;
+                                    setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                                     setValueAct.Value = vals[1];
                                     setValueAct.RunOnBusinessFlow = this.CurrentBusinessFlow;
                                     setValueAct.DSList = this.DSList;
@@ -3817,19 +3848,29 @@ namespace Ginger.Run
 
             List<BusinessFlow> lstBusinessFlow = null;
             if (guidToLookBy != Guid.Empty)
+            {
                 lstBusinessFlow = BusinessFlows.Where(x => x.InstanceGuid == guidToLookBy).ToList();
+            }
             
             if (lstBusinessFlow == null || lstBusinessFlow.Count == 0)
+            {
                 bf = null;
+            }
             else if (lstBusinessFlow.Count == 1)
+            {
                 bf = lstBusinessFlow[0];
+            }
             else//we have more than 1
             {
                 BusinessFlow firstActive = lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
                 if (firstActive != null)
+                {
                     bf = firstActive;
+                }
                 else
-                    bf = lstBusinessFlow[0];//no one is Active so returning the first one
+                {
+                    bf = lstBusinessFlow[0]; //no one is Active so returning the first one
+                }
             }
 
             if (bf != null)

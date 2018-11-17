@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,26 +16,20 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using GingerCore.Environments;
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
     public class VariableDynamic : VariableBase
     {
-        public new static partial class Fields
-        {
-            public static string ValueExpression = "ValueExpression";
-        }
-
         // Do not serialize being set at runtime by Ginger Runner
-        ProjEnvironment mProjEnvironment;
-        BusinessFlow mBusinessFlow;
-        
+        IProjEnvironment mProjEnvironment;
+        IBusinessFlow mBusinessFlow;
+
         private string mValueExpression;
         [IsSerializedForLocalRepository]
         public string ValueExpression 
@@ -53,7 +47,7 @@ namespace GingerCore.Variables
             get { return GingerDicser.GetTermResValue(eTermResKey.Variable) + " Dynamic"; }
         }
 
-        public void Init(ProjEnvironment ProjEnvironment, BusinessFlow BusinessFlow)
+        public void Init(IProjEnvironment ProjEnvironment, IBusinessFlow BusinessFlow)
         {
             mProjEnvironment = ProjEnvironment;
             mBusinessFlow = BusinessFlow;
@@ -94,30 +88,32 @@ namespace GingerCore.Variables
             try
             {
                 if (mProjEnvironment == null && mBusinessFlow == null)
+                {
                     return "Value will be calculated during execution.";
+                }   
 
-                ValueExpression Ve = new ValueExpression(mProjEnvironment, mBusinessFlow);
+                IValueExpression Ve = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(mProjEnvironment, mBusinessFlow);
                 Ve.Value = ValueExpression;
 
-                if (Ve.Value != null && Ve.Value.Contains("{Var Name="+Name+"}"))
-                    return "ERROR: " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value cannot point to itself. "; 
-                    
+                if (Ve.Value != null && Ve.Value.Contains("{Var Name=" + Name + "}"))
+                {
+                    return "ERROR: " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value cannot point to itself. ";
+                }
+
                 return Ve.ValueCalculated;
             }
             catch (Exception ex)//Env and BF objects were not set by Ginger Runner
             {
-
                 return ex.Message;
             }
         }
 
         public override eImageType Image { get { return eImageType.Random; } }
-
         public override string VariableType() { return "Dynamic"; }
 
         public override bool SupportSetValue { get { return true; } }
 
-        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
             throw new NotImplementedException();
         }        

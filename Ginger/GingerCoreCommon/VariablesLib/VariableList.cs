@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,22 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
     public class VariableList:VariableBase
     {
-        public new static partial class Fields
-        {
-            public static string ValueList = "ValueList";
-            public static string RandomOrder = "RandomOrder";                   
-        }
-
         public VariableList()
         {
             ValueList = "";
@@ -95,24 +88,21 @@ namespace GingerCore.Variables
             }
             else
             {
-                CurrentValueIndex++;
+                Value = listValues[CurrentValueIndex++];
                 if (CurrentValueIndex >= listValues.Length) CurrentValueIndex = 0;
-                Value = listValues[CurrentValueIndex];
             }
         }
 
-        public override eImageType Image { get { return eImageType.List; } }
-
+        public override eImageType Image { get { return eImageType.VariableList; } }
         public override string VariableType() { return "List"; }
-
         public override bool SupportSetValue { get { return true; } }
 
-        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.SetValue);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.AutoGenerateValue);
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.ResetValue);
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
+            supportedOperations.Add(VariableBase.eSetValueOptions.SetValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
     }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,20 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using System.Collections.Generic;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using System.Collections.Generic;
 
 namespace GingerCore.Variables
 {
     public class VariablePasswordString : VariableBase 
     {
-        public new static partial class Fields
-        {
-            public static string Password = "Password";
-        }
-
         public VariablePasswordString()
         {
         }
@@ -66,12 +60,12 @@ namespace GingerCore.Variables
 
         public override eImageType Image { get { return eImageType.Password; } }
         public override string VariableType() { return "PasswordString"; }
+        public override bool SupportSetValue { get { return false; } }
 
-        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
             throw new System.NotImplementedException();
         }
 
-        public override bool SupportSetValue { get { return false; } }
     }
 }

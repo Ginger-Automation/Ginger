@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,15 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
@@ -34,9 +33,29 @@ namespace GingerCore.Variables
         Activity = 1,
         Solution = 2
     }
-    
+
+
     public abstract class VariableBase : RepositoryItemBase
     {
+
+        public enum eSetValueOptions
+        {
+            [EnumValueDescription("Set Value")]
+            SetValue,
+            [EnumValueDescription("Reset Value")]
+            ResetValue,
+            [EnumValueDescription("Auto Generate Value")]
+            AutoGenerateValue,
+            [EnumValueDescription("Start Timer")]
+            StartTimer,
+            [EnumValueDescription("Stop Timer")]
+            StopTimer,
+            [EnumValueDescription("Continue Timer")]
+            ContinueTimer,
+            [EnumValueDescription("Clear Special Characters")]
+            ClearSpecialChar
+        }
+
         public enum eItemParts
         {
             All
@@ -187,8 +206,6 @@ namespace GingerCore.Variables
         public abstract void ResetValue();
         public abstract void GenerateAutoValue();
         public virtual eImageType Image { get { return eImageType.Variable; } }
-
-
         public override string GetNameForFileName() { return Name; }
         public abstract string VariableEditPage { get; }
 
@@ -249,7 +266,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true, true);
+                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex, true);
                 }
 
                 if (value is IObservableList)
@@ -324,7 +341,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true, true);
+                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex, true);
                     value = null;
                 } 
                 
@@ -456,17 +473,19 @@ namespace GingerCore.Variables
                     {
                         //replace old instance object with new
                         int originalIndex = 0;
-                        if (hostItem is Activity)
+
+                        //TODO: Fix the issues
+                        if (hostItem is IActivity)
                         {
-                            originalIndex = ((Activity)hostItem).Variables.IndexOf(variableBaseInstance);
-                            ((Activity)hostItem).Variables.Remove(variableBaseInstance);
-                            ((Activity)hostItem).Variables.Insert(originalIndex, newInstance);                            
+                            originalIndex = ((IActivity)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((IActivity)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((IActivity)hostItem).GetVariables().Insert(originalIndex, newInstance);
                         }
                         else
                         {
-                            originalIndex = ((BusinessFlow)hostItem).Variables.IndexOf(variableBaseInstance);
-                            ((BusinessFlow)hostItem).Variables.Remove(variableBaseInstance);
-                            ((BusinessFlow)hostItem).Variables.Insert(originalIndex, newInstance);                            
+                            originalIndex = ((IBusinessFlow)hostItem).GetVariables().IndexOf(variableBaseInstance);
+                            ((IBusinessFlow)hostItem).GetVariables().Remove(variableBaseInstance);
+                            ((IBusinessFlow)hostItem).GetVariables().Insert(originalIndex, newInstance);
                         }
                     }
                     break;
@@ -559,7 +578,7 @@ namespace GingerCore.Variables
         }
         public abstract bool SupportSetValue { get; }
 
-        public abstract List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations();
+        public abstract List<eSetValueOptions> GetSupportedOperations();
 
         public abstract String VariableUIType { get; }
 

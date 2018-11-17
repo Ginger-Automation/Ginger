@@ -16,23 +16,23 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using System;
-using System.Linq;
-using GingerCore.Variables;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.Platforms;
-using System.Collections.Generic;
 using GingerCore.Activities;
 using GingerCore.FlowControlLib;
+using GingerCore.Platforms;
+using GingerCore.Variables;
 using GingerCoreNET.GeneralLib;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GingerCore
 {
-    public class BusinessFlow : RepositoryItemBase
+    public class BusinessFlow : RepositoryItemBase, IBusinessFlow
     {        
 
         public BusinessFlow()
@@ -306,8 +306,10 @@ namespace GingerCore
             }
         }
 
+
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
+
 
         static public ObservableList<VariableBase> SolutionVariables;
 
@@ -317,7 +319,7 @@ namespace GingerCore
             return v;
         }
 
-        public VariableBase GetHierarchyVariableByName(string varName, bool considreLinkedVar = true)
+        public VariableBase GetHierarchyVariableByName(string varName, bool considerLinkedVar = true)
         {
             VariableBase var = null;
             if (SolutionVariables != null)
@@ -330,7 +332,7 @@ namespace GingerCore
             }
 
             //check if linked variable was used and return it instead of original one if yes
-            if (considreLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
+            if (considerLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
             {
                 var = GetHierarchyVariableByName(var.LinkedVariableName, false);
             }
@@ -338,7 +340,7 @@ namespace GingerCore
             return var;
         }
 
-        public VariableBase GetHierarchyVariableByNameAndType(string varName, string varType, bool considreLinkedVar = true)
+        public VariableBase GetHierarchyVariableByNameAndType(string varName, string varType, bool considerLinkedVar = true)
         {
             VariableBase var = null;
             if (SolutionVariables != null)
@@ -351,7 +353,7 @@ namespace GingerCore
             }
 
             //check if linked variable was used and return it instead of original one if yes
-            if (considreLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
+            if (considerLinkedVar && var != null && string.IsNullOrEmpty(var.LinkedVariableName) == false)
             {
                 var = GetHierarchyVariableByNameAndType(var.LinkedVariableName, varType, false);
             }
@@ -1083,6 +1085,11 @@ namespace GingerCore
                     break;
             }
             return false;
+        }
+
+        public ObservableList<VariableBase> GetVariables()
+        {
+            return Variables;
         }
 
         [IsSerializedForLocalRepository]

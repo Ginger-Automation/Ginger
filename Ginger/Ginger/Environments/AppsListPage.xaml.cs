@@ -74,14 +74,14 @@ namespace Ginger.Environments
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = EnvApplication.Fields.Active, WidthWeight = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = EnvApplication.Fields.Name, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = EnvApplication.Fields.Description, WidthWeight = 200 });
-            view.GridColsView.Add(new GridColView() { Field = EnvApplication.Fields.Vendor, WidthWeight = 50 });
-            view.GridColsView.Add(new GridColView() { Field = EnvApplication.Fields.CoreVersion, WidthWeight = 100, Header = "Core Version" });
-            view.GridColsView.Add(new GridColView() { Field = EnvApplication.Fields.CoreProductName, WidthWeight = 150, Header = "Core Product Name" });
-            view.GridColsView.Add(new GridColView() { Field = EnvApplication.Fields.AppVersion, WidthWeight = 150, Header = "Application Version" });
-            view.GridColsView.Add(new GridColView() { Field = EnvApplication.Fields.Url, WidthWeight = 100, Header = "URL" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Active), WidthWeight = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Description), WidthWeight = 200 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Vendor), WidthWeight = 50 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.CoreVersion), WidthWeight = 100, Header = "Core Version" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.CoreProductName), WidthWeight = 150, Header = "Core Product Name" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.AppVersion), WidthWeight = 150, Header = "Application Version" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Url), WidthWeight = 100, Header = "URL" });
             
             grdApps.SetAllColumnsDefaultView(view);
             grdApps.InitViewItems();

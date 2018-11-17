@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -16,24 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using System.Collections.Generic;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using System.Collections.Generic;
 
 namespace GingerCore.Variables
 {
     public class VariableRandomNumber : VariableBase
     {
         DecimalRandom mDecimalRandom = new DecimalRandom();
-
-        public new static  partial class Fields
-        {
-            public static string Min = "Min";
-            public static string Max = "Max";
-            public static string Interval = "Interval";
-            public static string isInteger = "IsInteger";     
-        }
 
         public VariableRandomNumber()
         {
@@ -110,16 +101,15 @@ namespace GingerCore.Variables
         }
 
         public override eImageType Image { get { return eImageType.Random; } }
-
         public override string VariableType() { return "RandomNumber"; }
-
         public override bool SupportSetValue { get { return false; } }
 
-        public override List<ActSetVariableValue.eSetValueOptions> GetSupportedOperations()
+        public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<ActSetVariableValue.eSetValueOptions> supportedOperations = new List<ActSetVariableValue.eSetValueOptions>();  
-            supportedOperations.Add(ActSetVariableValue.eSetValueOptions.AutoGenerateValue);
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();  
+            supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
             return supportedOperations;
         }
+
     }
 }
