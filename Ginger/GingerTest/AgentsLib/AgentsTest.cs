@@ -330,5 +330,30 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.AreEqual(MyAgent, ACopyTag, "Same agent object in memory");
         }
 
+        [TestMethod]
+        public void DuplicateAgentinSubFolder()
+        {
+            //Arrange
+            string folderName = "sub folder dup";
+            string agentName = "agent 1";
+            string agentDupName = "agent 1 dup";
+
+            AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
+            AgentsPOM.AgentsTree.SelectRootItem();
+            AgentsPOM.AddSubFolder(folderName);
+            AgentsPOM.CreateAgent(folderName, agentName, ePlatformType.Web, Agent.eDriverType.SeleniumChrome);
+            mGingerAutomator.ReloadSolution();
+
+            //Act   
+            AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
+            AgentsPOM.AgentsTree.SelectItem(folderName);
+            AgentsPOM.AgentsTree.SelectItem(agentName);
+            AgentsPOM.AgentsTree.Duplicate(agentDupName);
+            bool b = AgentsPOM.AgentsTree.IsItemExist(agentDupName);
+
+            // Assert            
+            Assert.IsTrue(b, "Dup agent exist in tree");            
+        }
+
     }
 }
