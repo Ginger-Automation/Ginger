@@ -238,15 +238,16 @@ namespace GingerCore.Variables
         public string NameBeforeEdit;
 
         public static void UpdateVariableNameChangeInItem(object item, string prevVarName, string newVarName, ref bool namechange)
-        {
-            ///zzzz fix me too
+        {            
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
                 if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
                     mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
                     mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" ||
-                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath") continue;
+                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath"
+                    || mi.Name == nameof(ActInputValue.ListDynamicValue)
+                    ) continue;
 
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
