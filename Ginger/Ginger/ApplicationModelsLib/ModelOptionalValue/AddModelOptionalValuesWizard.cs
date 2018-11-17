@@ -132,7 +132,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         public bool SetFirstDefaultValueInParameterValues(ParameterValues parm)
         {
             bool isPresent = false;
-            parm.ParameterValuesByNameDic[0] = string.Format("{0}*", parm.ParameterValuesByNameDic[0]); 
+            if (parm.ParameterValuesByNameDic.Count > 0)
+            {
+                parm.ParameterValuesByNameDic[0] = string.Format("{0}*", parm.ParameterValuesByNameDic[0]);  
+            }
             return isPresent;
         }
     }

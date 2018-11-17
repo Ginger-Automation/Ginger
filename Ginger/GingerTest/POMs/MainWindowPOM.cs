@@ -19,6 +19,7 @@ limitations under the License.
 using Ginger.GeneralWindows;
 using Ginger.MoveToGingerWPF;
 using Ginger.TwoLevelMenuLib;
+using Ginger.Variables;
 using GingerTest.POMs;
 using GingerWPF.UserControlsLib;
 using System;
@@ -37,6 +38,7 @@ namespace GingerWPFUnitTest.POMs
         Ginger.MainWindow mMainWindow;
         public EnvironmentsPOM Environments;
         public AgentsPOM Agents;
+        public GlobalVariablesPOM GlobalVariables;
 
         public MainWindowPOM(Ginger.MainWindow mainWin)
         {
@@ -282,6 +284,39 @@ namespace GingerWPFUnitTest.POMs
             if (Agents == null) throw new Exception("Cannot goto Agents");
 
             return Agents;
+
+        }
+
+
+        internal GlobalVariablesPOM GotoGlobalVariables()
+        {
+            GlobalVariables = null;
+            Execute(() => {
+                                
+                ClickResourcesRibbon();
+                Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                TwoLevelMenuPage resourcesPage = (TwoLevelMenuPage)f.Content;
+
+                ListView lv = (ListView)resourcesPage.FindName("xMainNavigationListView");
+                lv.SelectedItem = null;
+                foreach (TopMenuItem topMenuItem in lv.Items)
+                {
+                    if (topMenuItem.AutomationID == "Global Variables AID")
+                    {
+                        lv.SelectedItem = topMenuItem;
+                        SleepWithDoEvents(100);
+                        Frame f1 = (Frame)FindElementByName(resourcesPage, "xSelectedItemFrame");
+                        VariablesPage variablesPage = (VariablesPage)f1.Content;
+                        
+                        GlobalVariables = new GlobalVariablesPOM(variablesPage);
+                        break;
+                    }
+                }
+            });
+
+            if (GlobalVariables == null) throw new Exception("Cannot goto Global Variables");
+
+            return GlobalVariables;
 
         }
 

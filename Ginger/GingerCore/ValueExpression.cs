@@ -173,12 +173,12 @@ namespace GingerCore
             mValueCalculated = Value;
 
             //Do the operation based on order!!!
-            //First replace Vars - since they can apear in other func like VBS v1+v2 or VBS mid(v1,1,4);
+            //First replace Vars - since they can appear in other func like VBS v1+v2 or VBS mid(v1,1,4);
             ReplaceVars();
 
             ReplaceGlobalParameters();
 
-            //replace environment parameters which embeded into functions like VBS
+            //replace environment parameters which embedded into functions like VBS
             ReplaceEnvVars();
             ReplaceDataSources();
 
@@ -262,7 +262,7 @@ namespace GingerCore
                     bool bChange = false;
                     if (bUpdate == true)
                     {
-                        // Addign this to update value only for the main DS Expression .. not VE in Parameter
+                        // Adding this to update value only for the main DS Expression .. not VE in Parameter
                         Regex rxDS = new Regex("{DS Name=");
                         MatchCollection dsMatch = rxDS.Matches(mValueCalculated);
                         if (dsMatch.Count > 1)
@@ -307,7 +307,7 @@ namespace GingerCore
                 if (DataSource.FileFullPath.StartsWith("~"))
                 {
                     DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
-                    DataSource.FileFullPath = Path.Combine(DataSource.ContainingFolderFullPath.Replace("DataSources", "") , DataSource.FileFullPath);
+                    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
                 }
                 DataSource.Init(DataSource.FileFullPath);
             }
@@ -405,16 +405,16 @@ namespace GingerCore
                         Query = p.Substring(p.IndexOf("QUERY=") + 6, p.Length - 7);                        
                         if (Query.ToUpper().IndexOf("SELECT *") == -1)
                         {
-                            Query = Regex.Replace(Query, " FROM ", ",GINGER_ID FROM ", RegexOptions.IgnoreCase);
+                            Query = Regex.Replace(Query, " FROM ", ",[GINGER_ID] FROM ", RegexOptions.IgnoreCase);
                         }
                     }
                     else
                     {
                         Query = "Select ";
                         iColVal = p.Substring(p.IndexOf("ICOLVAL=") + 8, p.IndexOf("IROW=") - 9);
-                        iColVal = "[" + iColVal + "]";
+                        iColVal = "[" + iColVal + "]";                        
                         p = p.Substring(p.TrimStart().IndexOf("IROW="));
-                        Query = Query + iColVal + ",GINGER_ID from " + DSTable;
+                        Query = Query + iColVal + ",[GINGER_ID] from " + DSTable;
 
                         if (p.IndexOf(" ") > 0)
                             IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf(" ") - 5);

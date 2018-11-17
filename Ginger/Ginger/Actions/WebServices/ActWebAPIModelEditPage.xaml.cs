@@ -42,6 +42,8 @@ namespace Ginger.Actions.WebServices
         private ActWebAPIModel mAct;
         ApplicationAPIModel AAMB;
         SingleItemTreeViewSelectionPage apiModelPage;
+        RepositoryFolder<ApplicationAPIModel> mAPIModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
+
         public ActWebAPIModelEditPage(ActWebAPIModel Act)
         {
             InitializeComponent();
@@ -192,8 +194,8 @@ namespace Ginger.Actions.WebServices
 
         private bool ChangeAPIMapping(bool showNewMappingMessage = false)
         {
-            RepositoryFolder<ApplicationAPIModel> APIModels = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
-            if (APIModels.GetFolderItems().Count == 0)
+            ObservableList<ApplicationAPIModel> APIModelsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>();
+            if (APIModelsList.Count == 0)
             {
                 Reporter.ToUser(eUserMsgKeys.NoAPIExistToMappedTo);
                 return false;
@@ -204,7 +206,8 @@ namespace Ginger.Actions.WebServices
 
             if (apiModelPage == null)
             {
-                AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModels);
+                RepositoryFolder<ApplicationAPIModel> APIModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
+                AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModelsFolder);
                 apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single);
             }
             List<object> selectedList = apiModelPage.ShowAsWindow();
@@ -221,7 +224,7 @@ namespace Ginger.Actions.WebServices
 
         private void UpdateOptionalValuesAndParams(bool showParametersUpdatedMessage = false)
         {
-            APIModelTextBox.Text = AAMB.Name;
+            APIModelTextBox.Text = AAMB.FilePath.Substring(0, AAMB.FilePath.LastIndexOf("\\")).Substring(mAPIModelFolder.FolderFullPath.Length) + @"\" + AAMB.ItemName;
             if (UpdateParamsEnhancedLists(AAMB.MergedParamsList) && showParametersUpdatedMessage)
                 Reporter.ToUser(eUserMsgKeys.APIParametersListUpdated);
             UpdateOptionalValues();
@@ -252,7 +255,7 @@ namespace Ginger.Actions.WebServices
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while mapping the API Model params to Data Source", ex);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while mapping the API Model params to Data Source", ex);
                 Reporter.ToUser(eUserMsgKeys.MappedtoDataSourceError);
             }
         }

@@ -69,8 +69,8 @@ namespace Ginger.Run.RunSetActions
         public Email Email = new Email();
         
         //User can attach several templates to the email
-        // Attch template + RI
-        // Attch its own file
+        // Attach template + RI
+        // Attach its own file
         [IsSerializedForLocalRepository]
         public ObservableList<EmailAttachment> EmailAttachments = new ObservableList<EmailAttachment>();
 

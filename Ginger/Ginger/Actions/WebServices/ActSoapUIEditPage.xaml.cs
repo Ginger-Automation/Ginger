@@ -210,7 +210,7 @@ namespace Ginger.Actions.WebServices
             if (currentValue == "PlaceHolders")
             {
                 // In older version we were storing placeHolders in TestCaseProperties itself and now moved it to new TestSuitePlaceHolder list
-                //  for backward compatiblitiy  here we moving older placholders items into TestSuitePlaceHolder
+                //  for backward compatibility  here we moving older placeholders items into TestSuitePlaceHolder
 
                 foreach (var item in mAct.TestCaseProperties)
                 {

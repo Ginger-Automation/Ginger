@@ -125,7 +125,7 @@ namespace GingerCore.Actions
         {
 
             SpeechRecognitionEngine SpeechEngine = new SpeechRecognitionEngine(); //create new speech engine
-            Grammar Grm = new DictationGrammar(); //Create grammer
+            Grammar Grm = new DictationGrammar(); //Create grammar
 
             SpeechEngine.LoadGrammar(Grm);
 

@@ -35,7 +35,7 @@ namespace Ginger.Import
     {
         public static BusinessFlow ConvertSeleniumScript(string FileName)
         {
-            //TODO: move code from here to convertor/import class
+            //TODO: move code from here to converter/import class
             var doc = new HtmlDocument();
             Activity result = new Activity() { Active = true };
             

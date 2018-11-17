@@ -59,7 +59,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         }
 
         /// <summary>
-        /// Constrtuctor for ImportDataSourceFinishPage class
+        /// Constructor for ImportDataSourceFinishPage class
         /// </summary>
         public ImportDataSourceFinishPage(DataSourceBase mDSDetails)
         {           

@@ -35,7 +35,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
             TextBlockHelper TBH = new TextBlockHelper(xNewEnvironmentIntroTxtBlock);
 
-            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorA")).ToString());
+            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
             //Application info
             TBH.AddFormattedText("For What Environments are Needed?", foregroundColor, true);
             TBH.AddLineBreak();            

@@ -57,7 +57,7 @@ namespace UnitTests.NonUITests
 
         private void CalculateARC(ActReturnValue ARC)
         {
-            // We do only  simple calc not including BF or proj env params so it will work 
+            // We do only  simple calculation not including BF or proj env params so it will work 
             ARC.ExpectedCalculated = ARC.Expected;
             GingerRunner.ReplaceActualPlaceHolder(ARC);
             GingerRunner.CalculateARCStatus(ARC);

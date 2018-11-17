@@ -53,7 +53,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         public SoapUIUtils(Act act, string soapUIDirectoryPath, string reportExportDirectoryPath, string soapUISettingFile, string soapUISettingFilePassword, string projectPassword, bool RunSoapUIProcessAsAdmin, bool SoapUIProcessRedirectStandardError, bool SoapUIProcessRedirectStandardOutput, bool SoapUIProcessUseShellExecute, bool SoapUIProcessWindowStyle, bool SoapUIProcessCreateNoWindow)
         {
-            //initilizing components.
+            //initializing components.
             mAct = (ActSoapUI)act;
             SoapUIDirectoryPath = soapUIDirectoryPath;
             ReportExportDirectoryPath = reportExportDirectoryPath;
@@ -122,7 +122,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 if (Boolean.Parse((mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.UIrelated))))
                 //if ((Boolean)mAct.GetValueForDriverParamWithCustomType(ActSoapUI.Fields.UIrelated, typeof(Boolean)) == true)
                     commandParam = commandParam + " -i";
-                //Overridds the endpoint
+                //Overrides the endpoint
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.EndPoint)))
                     commandParam = commandParam + " -e" + '\u0022' + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.EndPoint) + '\u0022';
                 //The host:port to use when invoking test-requests, overrides only the host part of the endpoint set in the project file
@@ -242,7 +242,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             catch (Exception ex)
             {
-                mAct.Error = "An Error ocurred while running the process.";
+                mAct.Error = "An Error occurred while running the process.";
                 mAct.ExInfo = ex.Message;
                 return false;
             }
@@ -295,7 +295,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         //returns all the namespace in order to use manager for  SelectNodes method
 
-        //retreivs all requests and respons for each test step, to be used after running the batch command.
+        //retrieves all requests and response for each test step, to be used after running the batch command.
         public Dictionary<string, List<string>> RequestsAndResponds()
         {
             Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
@@ -333,7 +333,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
             if (fileName.Count() > 247)
             {
-                mAct.Error = mAct.Error + "FileName is too long for validation, Please define shorter path for execution report under the agant and/or please make test suite + test case + test step shorter" + Environment.NewLine;
+                mAct.Error = mAct.Error + "FileName is too long for validation, Please define shorter path for execution report under the agent and/or please make test suite + test case + test step shorter" + Environment.NewLine;
                 return false;
             }
             else
@@ -361,7 +361,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             return dict;
         }
 
-        //fetchs the test step from the generated txt file
+        //fetches the test step from the generated txt file
         private string GenerateTestStepName(string fileName)
         {
             string fileContent = File.ReadAllText(fileName);
@@ -452,7 +452,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             return PropertiesSection;
         }
 
-        //fetchs the requestXML from the generated txt file
+        //fetches the requestXML from the generated txt file
         private string GenerateRequest(string fileName)
         {
             string fileContent =  File.ReadAllText(fileName);
@@ -471,7 +471,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             return requestXML;
         }
 
-        //fetchs the responseXML from the generated txt file
+        //fetches the responseXML from the generated txt file
         private string GenerateResponse(string fileName)
         {
             string fileContent = File.ReadAllText(fileName);

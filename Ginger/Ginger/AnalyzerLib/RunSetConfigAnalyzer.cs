@@ -35,7 +35,7 @@ namespace Ginger.AnalyzerLib
             if (RSC.GingerRunners.Count() == 0)
             {
                 RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
-                AGR.Description = "Missign Runners";
+                AGR.Description = "Missing Runners";
                 AGR.Details = "No Runners to run";
                 AGR.HowToFix = "Add Runners";
                 AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
@@ -65,7 +65,7 @@ namespace Ginger.AnalyzerLib
                             AGR.ItemParent = GR.Name;
                             AGR.Description = "Same Agent was configured on more than one Runner";
                             AGR.Details = string.Format("The '{0}' Runner '{1}' Target Application is mapped to the '{2}' Agent which is already configured on another Runner", GR.Name, AA.AppName, AA.AgentName);
-                            AGR.HowToFix = "Map the Target Application to diffrent Agent";
+                            AGR.HowToFix = "Map the Target Application to different Agent";
                             AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                             AGR.IssueType = eType.Error;
                             AGR.Impact = "Execution will fail.";

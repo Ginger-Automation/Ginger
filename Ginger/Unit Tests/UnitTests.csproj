@@ -207,6 +207,7 @@
   <ItemGroup>
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerActionLogTest.cs" />
     <Compile Include="NonUITests\ObservableListTest.cs" />
+    <Compile Include="NonUITests\UsedVariablesTest.cs" />
     <Compile Include="TestAssemblyInit.cs" />
     <Compile Include="TestResources\IEBrowser\IEBrowserWindow.xaml.cs">
       <DependentUpon>IEBrowserWindow.xaml</DependentUpon>

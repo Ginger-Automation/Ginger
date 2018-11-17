@@ -757,7 +757,7 @@ namespace GingerCore.Drivers.ASCF
             SetActionStatus(actScreenShot, RC);
             string[] a;
 
-            //This Addiotional check is to support old version of GTB which are using '@' delimiter. Can be removed later
+            //This Additional check is to support old version of GTB which are using '@' delimiter. Can be removed later
             if (RC.Contains("~|"))
             {
                 a = RC.Split('~');

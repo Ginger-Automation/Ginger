@@ -174,7 +174,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(Directory.Exists(subFolder),"sub folder exist");
         }
 
-        [Ignore]  // FIXME failing beacuse the folder doesn't exapnd to show the added agent
+        [Ignore]  // FIXME failing because the folder doesn't expand to show the added agent
         [TestMethod]
         public void AddAgentsFolderUsingMenuAndAddAgent()
         {
@@ -241,7 +241,7 @@ namespace GingerWPFUnitTest.AgentsLib
         }
 
 
-        [Ignore] // FIXME missing functionailty
+        [Ignore] // FIXME missing functionality
         [TestMethod]
         public void CopyPasteAgentinAgentRoot()
         {
@@ -268,7 +268,7 @@ namespace GingerWPFUnitTest.AgentsLib
 
         }
 
-        [Ignore] // FIXME missing functionailty
+        [Ignore] // FIXME missing functionality
         [TestMethod]
         public void CutPasteAgentFromRootToSubFolder()
         {
@@ -296,10 +296,10 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(agentExist, "Agent exist");
             Assert.IsTrue(ACopyTag != null);
             Assert.AreEqual(@"~\Agents\" + folderName, ACopyTag.ContainingFolder);
-            Assert.AreEqual(MyAgent, ACopyTag, "Same agent object in memeory");
+            Assert.AreEqual(MyAgent, ACopyTag, "Same agent object in memory");
         }
 
-        [Ignore] // FIXME missing functionailty
+        [Ignore] // FIXME missing functionality
         [TestMethod]
         public void CutPasteAgentFromSubFolderToRoot()
         {
@@ -327,7 +327,7 @@ namespace GingerWPFUnitTest.AgentsLib
             Assert.IsTrue(agentExist, "Agent exist");
             Assert.IsTrue(ACopyTag != null);
             Assert.AreEqual(@"~\Agents\" + folderName, ACopyTag.ContainingFolder);
-            Assert.AreEqual(MyAgent, ACopyTag, "Same agent object in memeory");
+            Assert.AreEqual(MyAgent, ACopyTag, "Same agent object in memory");
         }
 
         [TestMethod]

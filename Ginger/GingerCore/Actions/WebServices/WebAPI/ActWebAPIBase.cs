@@ -155,7 +155,7 @@ namespace GingerCore.Actions.WebServices
                     AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "True");//old action- for backward support- for not breaking existing validations using old parsing
 
                 if (IsInputParamExist(Fields.UseLegacyJSONParsing) == false)
-                    AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "False"); //as defualt use new JSON parser
+                    AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "False"); //as default use new JSON parser
 
                 bool eVal = true;
                 if (bool.TryParse(GetInputParamValue(Fields.UseLegacyJSONParsing), out eVal))

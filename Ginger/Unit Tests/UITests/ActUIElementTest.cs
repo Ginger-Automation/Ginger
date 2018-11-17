@@ -65,7 +65,7 @@ namespace UnitTests.UITests
 
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
-
+            
             mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
 
@@ -73,38 +73,6 @@ namespace UnitTests.UITests
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "WebApp", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(mBF);
-        }
-
-        [TestMethod]
-        public void DragAndDropJS()
-        {
-            ResetBusinessFlow();
-
-            Activity a1 = new Activity();
-            a1.Active = true;
-            a1.TargetApplication = "WebApp";
-            mBF.Activities.Add(a1);
-
-            ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://www.w3schools.com/html/html5_draganddrop.asp", Active = true };
-            a1.Acts.Add(act1);
-
-            ActUIElement act2 = new ActUIElement();
-
-            act2.ElementLocateBy = eLocateBy.ByXPath;
-            act2.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='drag1']");
-            act2.ElementAction = ActUIElement.eElementAction.DragDrop;
-            act2.GetOrCreateInputParam(ActUIElement.Fields.DragDropType, ActUIElement.eElementDragDropType.DragDropJS.ToString());
-            act2.TargetLocateBy = eLocateBy.ByXPath;
-            act2.GetOrCreateInputParam(ActUIElement.Fields.TargetLocateValue, "//*[@id='div2']");
-            act2.Active = true;
-            a1.Acts.Add(act2);
-
-            mGR.RunRunner();
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(a1.Status, eRunStatus.Passed);
-            Assert.AreEqual(act1.Status, eRunStatus.Passed);
-            Assert.AreEqual(act2.Status, eRunStatus.Passed);
-
         }
 
         [TestMethod]
@@ -138,6 +106,38 @@ namespace UnitTests.UITests
             Assert.AreEqual(a1.Status, eRunStatus.Passed);
             Assert.AreEqual(act1.Status, eRunStatus.Passed);
             Assert.AreEqual(act3.Status, eRunStatus.Passed);
+
+        }
+
+        [TestMethod]
+        public void DragAndDropJS()
+        {
+            ResetBusinessFlow();
+
+            Activity a1 = new Activity();
+            a1.Active = true;
+            a1.TargetApplication = "WebApp";
+            mBF.Activities.Add(a1);
+
+            ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://www.w3schools.com/html/html5_draganddrop.asp", Active = true };
+            a1.Acts.Add(act1);
+
+            ActUIElement act2 = new ActUIElement();
+
+            act2.ElementLocateBy = eLocateBy.ByXPath;
+            act2.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='drag1']");
+            act2.ElementAction = ActUIElement.eElementAction.DragDrop;
+            act2.GetOrCreateInputParam(ActUIElement.Fields.DragDropType, ActUIElement.eElementDragDropType.DragDropJS.ToString());
+            act2.TargetLocateBy = eLocateBy.ByXPath;
+            act2.GetOrCreateInputParam(ActUIElement.Fields.TargetLocateValue, "//*[@id='div2']");
+            act2.Active = true;
+            a1.Acts.Add(act2);
+
+            mGR.RunRunner();
+            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
+            Assert.AreEqual(a1.Status, eRunStatus.Passed);
+            Assert.AreEqual(act1.Status, eRunStatus.Passed);
+            Assert.AreEqual(act2.Status, eRunStatus.Passed);
 
         }
 

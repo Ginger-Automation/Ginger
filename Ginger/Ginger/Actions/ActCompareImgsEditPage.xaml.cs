@@ -45,7 +45,7 @@ namespace Ginger.Actions
             ScreenCaptureWindow sc = new ScreenCaptureWindow(f);
             sc.Show();
             ExpectedImageTextBox.Text = sc.GetPathToExpectedImage();
-            //ScreenAreaCoordinatesTextBox.Text = sc.GetCordinates(); TODO: Need to check to get the cordinates 
+            //ScreenAreaCoordinatesTextBox.Text = sc.GetCordinates(); TODO: Need to check to get the coordinates 
         }
     }
 }

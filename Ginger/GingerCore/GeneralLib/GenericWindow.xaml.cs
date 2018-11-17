@@ -25,7 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Ginger
-{
+{    
     public enum eWindowShowStyle
     {
         Free,
@@ -38,6 +38,10 @@ namespace Ginger
     /// </summary>
     public partial class GenericWindow : Window
     {
+
+        // Used for Ginger Automator
+        public static GenericWindow CurrentWindow;
+
         private RoutedEventHandler mCloseEventHandler;
 
         public eWindowShowStyle CurrentWinStyle { get; set; }
@@ -52,6 +56,8 @@ namespace Ginger
         {
             InitializeComponent();   
             this.Owner = Owner;
+
+            CurrentWindow = this;
 
             //set style
             CurrentWinStyle = windowStyle;
@@ -130,7 +136,7 @@ namespace Ginger
                             windowPage.Tag = "PageSizeWasModified";
                     }
 
-                    //set min hieght and width
+                    //set min height and width
                     if (windowPage.MinWidth > 0)
                     {
                         if (windowPage.Width < windowPage.MinWidth)
@@ -205,10 +211,12 @@ namespace Ginger
             Window parentWindow = Window.GetWindow((Button)sender);
             parentWindow.IsEnabled = false;
             if (mCloseEventHandler != null)
-                mCloseEventHandler.Invoke(this, new RoutedEventArgs());
+            {
+                mCloseEventHandler.Invoke(this, new RoutedEventArgs());                
+            }
             else
                 this.Close();
-            parentWindow.IsEnabled = true;
+            parentWindow.IsEnabled = true;            
         }
 
         private void PinBtn_Click(object sender, RoutedEventArgs e)
@@ -330,5 +338,24 @@ namespace Ginger
             while (genWindow.NeedToReShow);
         }
 
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            //to make sure the parent window will be showen
+            if (this.Owner != null)
+            {
+                if (!this.Owner.IsVisible)
+                {
+                    this.Owner.Show();
+                }
+                if (this.Owner.WindowState == WindowState.Minimized)
+                {
+                    this.Owner.WindowState = WindowState.Normal;
+                }
+                this.Owner.Activate();
+                this.Owner.Topmost = true;  
+                this.Owner.Topmost = false; 
+                this.Owner.Focus();
+            }
+        }
     }
 }
