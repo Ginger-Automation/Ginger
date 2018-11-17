@@ -34,7 +34,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBusinessFlow.Name = "MyDriver BF";
             mBusinessFlow.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.PluginOther;   // !!!!!!!!!!!!!!!!!!!!!!!!!!
+            p.PlatformType = ePlatformType.NA; 
             mBusinessFlow.Platforms = new ObservableList<Platform>();
             mBusinessFlow.Platforms.Add(p);
             mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = mAppName });
@@ -50,7 +50,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             mGingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = mAppName, Agent = agent });
             mGingerRunner.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGingerRunner.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.PluginOther });
+            mGingerRunner.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.NA });
             mGingerRunner.BusinessFlows.Add(mBusinessFlow);
 
 
