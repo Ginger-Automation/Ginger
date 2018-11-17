@@ -45,7 +45,7 @@ namespace Ginger.WindowExplorer.Appium
                     return new AppiumAndroidWidgetEditTextTreeItem() { AppiumElementInfo = AEI };
 
                 default:
-                    // retrun simple basic Appium TVI
+                    // return simple basic Appium TVI
                     return new AppiumElementTreeItemBase() { AppiumElementInfo = AEI };
             }
         }

@@ -62,7 +62,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
                 Description = "Validate CheckBox is Enabled " + this.ElementInfo.ElementTitle,
                 GenElementAction = ActGenElement.eGenElementAction.Enabled,
                 Value = ""
-                //TODO: add REturn value Actula = Enabled=true
+                //TODO: add REturn value Actual = Enabled=true
             });
             
             AddGeneralHTMLActions(list);

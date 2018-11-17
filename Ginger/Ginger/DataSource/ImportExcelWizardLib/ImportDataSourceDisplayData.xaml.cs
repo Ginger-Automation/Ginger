@@ -79,7 +79,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         }
 
         /// <summary>
-        /// Constrtuctor for ImportDataSourceDisplayData class
+        /// Constructor for ImportDataSourceDisplayData class
         /// </summary>
         public ImportDataSourceDisplayData()
         {           

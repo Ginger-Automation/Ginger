@@ -66,7 +66,7 @@ namespace Ginger.Run
                 ScreenShotsGrid.ColumnDefinitions.Add(cf);
             }
 
-            // loop thru the screen shot and create new frame per each to show and place in the grid
+            // loop through the screen shot and create new frame per each to show and place in the grid
 
             int r = 0;
             int c = 0;

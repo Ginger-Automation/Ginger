@@ -86,7 +86,7 @@ namespace GingerCore.Drivers
             if (mBusinessFlow!= null)
             {
                 lstActivities.ItemsSource = mBusinessFlow.Activities;
-                // Select the first Acitivity
+                // Select the first Activity
                 if (mBusinessFlow.Activities!= null &&  mBusinessFlow.Activities.Count > 0)
                 {
                     lstActivities.SelectedItem = lstActivities.Items[0];

@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
 {
     // This is Roslyn global file which is passed to the script code
     // DO NOT put here general code unless it is intended to be used from script
-    // DO NOT change functions signature once published as we might have script which use them, or make sure it is backword compatibile
+    // DO NOT change functions signature once published as we might have script which use them, or make sure it is backward compatible
 
     public class GingerConsoleScriptGlobals
     {

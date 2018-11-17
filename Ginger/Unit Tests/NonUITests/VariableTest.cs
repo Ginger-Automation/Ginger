@@ -84,7 +84,7 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(num2 >= 10 && num2 <= 100, "num2 >= 10 && num2 <= 100");
             Assert.IsTrue(num3 >= 10 && num3 <= 100, "num3 >= 10 && num3 <= 100");
 
-            // Now check tha validy 5,10,15 etc..
+            // Now check the validy 5,10,15 etc..
             //Verify that the num modolu 5 is give remainder of 0 or 5
             Assert.IsTrue(num1 % 5 == 0 || num1 % 5 == 5, "num1 % 5 == 0 || num1 % 5 == 5");
             Assert.IsTrue(num2 % 5 == 0 || num2 % 5 == 5, "num1 % 5 == 0 || num1 % 5 == 5");

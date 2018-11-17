@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:Ginger.TagsLib"
       xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.TagsLib.TagsPage"
       mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Tag"
       d:DesignHeight="300" d:DesignWidth="300"
       Title="TagsEditorPage">
 

@@ -18,7 +18,7 @@
 
 //using Amdocs.Ginger.Repository;
 
-////TODO: chang add core
+////TODO: change add core
 //namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActivitiesLib
 //{
 //    //Activity can have several steps - Acts

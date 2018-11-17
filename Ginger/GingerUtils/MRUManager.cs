@@ -21,7 +21,7 @@ using System.IO;
 
 namespace Ginger.GeneralLib
 {
-    // Moset Recently Used Manager Class
+    // Most Recently Used Manager Class
     public class MRUManager
     {
         public string MRUFileName {get; set;}

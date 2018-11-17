@@ -69,7 +69,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
-            string Title = "Unmappaed Elements Page";
+            string Title = "Unmapped Elements Page";
 
             GingerCore.General.LoadGenericWindow(ref _GenWin, null, windowStyle, Title, this);
         }

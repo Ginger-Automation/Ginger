@@ -25,7 +25,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Actions
 {
-    //This class is for UI link elemnet
+    //This class is for UI link element
     public class ActSmartSync : Act
     {
         public override string ActionDescription { get { return "Smart Sync Action"; } }

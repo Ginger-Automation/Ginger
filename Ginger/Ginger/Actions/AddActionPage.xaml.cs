@@ -74,7 +74,7 @@ namespace Ginger.Actions
                     {
                         ActPlugIn act = new ActPlugIn();                        
                         act.Description = standAloneAction.Description;
-                        act.PluginId = pluginPackage.PluginID;
+                        act.PluginId = pluginPackage.PluginId;
                         act.ServiceId = standAloneAction.ServiceId;
                         act.ActionId = standAloneAction.ActionId;
                         foreach (var v in standAloneAction.InputValues)
@@ -88,7 +88,7 @@ namespace Ginger.Actions
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginID + "'", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginId + "'", ex);
                 }
             }
           
@@ -327,9 +327,9 @@ namespace Ginger.Actions
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (ActionsTabs.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }

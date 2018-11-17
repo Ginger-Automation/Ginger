@@ -94,7 +94,7 @@ namespace GingerCore.Variables
             try
             {
                 if (mProjEnvironment == null && mBusinessFlow == null)
-                    return "Value will be calulated during execution.";
+                    return "Value will be calculated during execution.";
 
                 ValueExpression Ve = new ValueExpression(mProjEnvironment, mBusinessFlow);
                 Ve.Value = ValueExpression;

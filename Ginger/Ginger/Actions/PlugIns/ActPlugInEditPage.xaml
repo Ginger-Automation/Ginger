@@ -22,11 +22,11 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Label Style="{StaticResource @SubInputFieldLabelStyle}">Plugin Id</Label>
-            <Label x:Name="PluginIdLabel" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold">P ID</Label>
+            <Label x:Name="PluginIdLabel" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">P ID</Label>
             <Label Style="{StaticResource @SubInputFieldLabelStyle}">Service Id</Label>
-            <Label x:Name="ServiceIdLabel" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold">S ID</Label>
+            <Label x:Name="ServiceIdLabel" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">S ID</Label>
             <Label Style="{StaticResource @SubInputFieldLabelStyle}">Action Id</Label>
-            <Label x:Name="ActionIdLabel" Foreground="{StaticResource @Skin1_ColorA}" FontWeight="Bold">A ID</Label>
+            <Label x:Name="ActionIdLabel" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">A ID</Label>
         </StackPanel>
         <!--<UserControls:UCDataColGrid HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Grid.RowSpan="3"/>-->
         

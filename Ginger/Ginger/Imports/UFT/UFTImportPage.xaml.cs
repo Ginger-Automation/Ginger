@@ -86,7 +86,7 @@ namespace Ginger.Imports.UFT
             eFilter mFilter = eFilter.AllLines;
             App.FillComboFromEnumVal(FilterComboBox, mFilter);
             
-            //Pre Load all the Target Applictaions
+            //Pre Load all the Target Applications
             TargetApplication.Items.Add("Google");
             TargetApplication.Items.Add("CRM");
             TargetApplication.Items.Add("CSM");
@@ -177,7 +177,7 @@ namespace Ginger.Imports.UFT
         {
             ObservableList<Act> ActionsList = new ObservableList<Act>();
 
-            // We creat one dummy activity in case we convert code without function
+            // We create one dummy activity in case we convert code without function
             mBusinessFlow.Activities = new ObservableList<Activity>();
             Activity at = new Activity();
             at.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + "1";
@@ -337,7 +337,7 @@ namespace Ginger.Imports.UFT
             }
         }
 
-        //On Click on Fetch GUI buttoin
+        //On Click on Fetch GUI button
         private void FetchGUI_Button_Click(object sender, RoutedEventArgs e)
         {
             string flowName="";
@@ -361,14 +361,14 @@ namespace Ginger.Imports.UFT
             {
                 mBusinessFlow.Activities = new ObservableList<Activity>();
 
-                // We creat one dummy activity in case we convert code without function
+                // We create one dummy activity in case we convert code without function
                 mBusinessFlow.Activities.Add(new Activity() { ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + "1" });
 
                 //Process BUS File (fetch BUS function and their respective GUI )
                 BusFunctionHandler BusHandler = new BusFunctionHandler();
                 BusList = BusHandler.ProcessBusScript(ScriptBUSFileTextBox.Text);
 
-                // Now depening on Drop down selection , Show only the GUI which are part of that BUS function
+                // Now depending on Drop down selection , Show only the GUI which are part of that BUS function
                 ShowGuiAsPerBus();
 
                 //Read the Entire GUI file
@@ -458,21 +458,21 @@ namespace Ginger.Imports.UFT
 
         public void ConvertButton_Click(object sender, RoutedEventArgs e)
         {
-                //If List contains elments for common function, then assign it to main list as well 
+                //If List contains elements for common function, then assign it to main list as well 
                 if (Convertor.CommonFunctionMappingList.Count>0)    
                 {
                     mCommonFunctionConvertor.CommonFunctionMappingList = Convertor.CommonFunctionMappingList;
                 }
 
-                //Extract Objects from XML repsiotry
+                //Extract Objects from XML repository
                 ProcessUFTObjectRepository();
 
                 if (ListOfSelectedGuis.Count != 0)
                 {
-                     //Identify acions from Script
+                     //Identify actions from Script
                     ProcessScript();
                 }
-                else //if BUS function does not conatin any GUI functions, process BUS function to see if any Actions can be retireved
+                else //if BUS function does not contain any GUI functions, process BUS function to see if any Actions can be retireved
                 {
                     //Create an Activity with the BUS function Name
                     ConvertedCodeLine Bus = new ConvertedCodeLine();
@@ -481,10 +481,10 @@ namespace Ginger.Imports.UFT
                     int Pos = 0;
                     string BusLineUpper="";
 
-                    //Fetech the Entire BUS script
+                    //Fetch the Entire BUS script
                     string[] BusCodeLines = System.IO.File.ReadAllLines(ScriptBUSFileTextBox.Text);
 
-                    //Ftech the positon of Bus function the BUS script
+                    //Fetch the position of Bus function the BUS script
                     Pos = FetchBusPosition(BusCodeLines);
                     if (Pos!=0)
                     {
@@ -533,7 +533,7 @@ namespace Ginger.Imports.UFT
                 //Show script conversion status
                 ShowStats();
 
-                //Create Variables for each of teh Parameter in the selected flow
+                //Create Variables for each of the Parameter in the selected flow
                 CreateVaribales();
             }
 
@@ -565,7 +565,7 @@ namespace Ginger.Imports.UFT
    
         private void ProcessUFTObjectRepository()
         {
-             //initalizing variables
+             //initializing variables
             string sXMLPath;
 
             //Fetch the XML Object Repository path
@@ -701,7 +701,7 @@ namespace Ginger.Imports.UFT
             CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
         }
 
-        //Function to indentify Locate By and Locate Value
+        //Function to identify Locate By and Locate Value
         public string ProcessLocateBy_Value(string ObjectName)
         {
             string xpath = "";
@@ -803,7 +803,7 @@ namespace Ginger.Imports.UFT
                     //With Space in End 
                     if (SetValueinObject=="") SetValueinObject = GetStringBetween(CodeLine, ".WebEdit(\"", "\" )");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
                 else if (CodeLine.Contains("WebCheckBox"))
@@ -814,7 +814,7 @@ namespace Ginger.Imports.UFT
                     //With Space in End 
                     if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".WebCheckBox(\"", "\" )");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
 
@@ -872,7 +872,7 @@ namespace Ginger.Imports.UFT
                     //With Space in End 
                     if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".WebButton(\"", "\" )");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
                 else if (CodeLine.Contains("Link"))
@@ -883,7 +883,7 @@ namespace Ginger.Imports.UFT
                     //With Space in End 
                     if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".Link(\"", "\" )");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
                 else if (CodeLine.Contains("WebElement"))
@@ -894,7 +894,7 @@ namespace Ginger.Imports.UFT
                     //With Space in End 
                     if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".WebElement(\"", "\" )");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
                 else if (CodeLine.Contains("Image"))
@@ -905,7 +905,7 @@ namespace Ginger.Imports.UFT
                     //With Space in End 
                     if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".Image(\"", "\" )");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
 
@@ -935,7 +935,7 @@ namespace Ginger.Imports.UFT
                     //With Space in End 
                     if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".WebList(\"", "\" )");
                     
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
                 else if (CodeLine.Contains("WebRadiogroup"))
@@ -946,7 +946,7 @@ namespace Ginger.Imports.UFT
                     //With Space in End 
                     if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".WebRadiogroup(\"", "\" )");
 
-                    //Calling function to indentify Locate By and Locate Value
+                    //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
 
@@ -1006,7 +1006,7 @@ namespace Ginger.Imports.UFT
                 CCL.Converted = "New Action - ActGotoURL : " + URL;
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
             }
-             // Extract the URL launced using SystemUtil.Run
+             // Extract the URL launched using SystemUtil.Run
             else if (CodeLine.Contains("SystemUtil.Run") && CodeLine.Contains("iexplore.exe"))
             {
                 // Extract the URL

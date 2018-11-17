@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-  <name>gingerPlugin_v1.9</name>
+  <name>gingerPlugin_v2.0</name>
   <comment>This pluign allows to add a dedicated build step to run Ginger headless tests. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
     <project>gingerHelpers</project>

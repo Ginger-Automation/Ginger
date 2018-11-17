@@ -259,7 +259,7 @@ namespace Ginger.GherkinLib
                     }
                 }
                 
-                // Warnings - TODO check other possisble warnings
+                // Warnings - TODO check other possible warnings
                 // Check Dups Scenario names 
                 var query = mGherkinScenarioDefinition.GroupBy(x => x.Name)
                     .Where(g => g.Count() > 1)
@@ -558,7 +558,7 @@ namespace Ginger.GherkinLib
 
         public void CreateActivities()
         {
-            // We put all template optimized activitiy in Activities Group 
+            // We put all template optimized activity in Activities Group 
 
             ActivitiesGroup AG = (from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities" select x).FirstOrDefault();
 

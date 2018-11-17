@@ -118,7 +118,7 @@ namespace GingerCoreNET.SourceControl
         // get one file status
         public abstract SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems,ref string error);
 
-        // get list of files changed in path recursivley - modifed, add, deleted
+        // get list of files changed in path recursively - modified, add, deleted
         public abstract ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path,ref string error, List<string> PathsToIgnore=null, bool includLockedFiles = false);
 
         public abstract bool GetLatest(string path, ref string error, ref List<string> conflictsPaths);

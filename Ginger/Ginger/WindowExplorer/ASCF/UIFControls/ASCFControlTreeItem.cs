@@ -85,7 +85,7 @@ namespace Ginger.Actions.Locators.ASCF
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            // Will be overriden in derived class
+            // Will be overridden in derived class
              ObservableList<Act> list = new ObservableList<Act>();
             return list;
         }

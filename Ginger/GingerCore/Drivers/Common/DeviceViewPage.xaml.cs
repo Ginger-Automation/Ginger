@@ -94,7 +94,7 @@ namespace GingerCore.Drivers.Common
             }
             else
             {
-                // put some defualt pics
+                // put some default pics
                 string img = "pack://application:,,,/Ginger;component/Images/RemoteAgentScreen.jpg";             
                 BitmapSource Bs = new BitmapImage(new Uri(img));
                 DeviceScreenShotImageBK.Source = Bs; 
@@ -219,7 +219,7 @@ namespace GingerCore.Drivers.Common
             double vscale = (double)image.Height / e.NewSize.Height;
             scaleFactor = Math.Max(hscale, vscale);
 
-            // Calculate where the image will lcoated calc left & Top Margin as it goes uniform and centered
+            // Calculate where the image will located calc left & Top Margin as it goes uniform and centered
             double leftMargin = (e.NewSize.Width - DeviceScreenShotImageBK.ActualWidth) / 2;
             double TopMargin = (e.NewSize.Height - DeviceScreenShotImageBK.ActualHeight) / 2;
 

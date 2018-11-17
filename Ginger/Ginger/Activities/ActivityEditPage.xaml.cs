@@ -129,6 +129,8 @@ namespace Ginger.BusinessFlowWindows
             if (!mActivity.IsNotGherkinOptimizedActivity)
                 txtActivityName.IsEnabled = false;
 
+            SetExpandersLabels();
+
             txtActivityName.Focus();        
         }
 
@@ -289,6 +291,39 @@ namespace Ginger.BusinessFlowWindows
             ErrorHandlerMappingPage errorHandlerMappingPage = new ErrorHandlerMappingPage(mActivity, mActivityParentBusinessFlow);
             errorHandlerMappingPage.ShowAsWindow();
             AutoLogProxy.UserOperationEnd();
+        }
+
+        private void SetExpandersLabels()
+        {
+            UpdateVariabelsExpanderLabel();
+            mActivity.Variables.CollectionChanged += Variables_CollectionChanged;
+            UpdateActionsExpanderLabel();
+            mActivity.Acts.CollectionChanged += Acts_CollectionChanged;
+        }
+
+        private void Acts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateActionsExpanderLabel();
+        }
+
+        private void Variables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateVariabelsExpanderLabel();
+        }
+
+        private void UpdateVariabelsExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                VariablesExpanderLabel.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mActivity.Variables.Count);
+            });
+        }
+        private void UpdateActionsExpanderLabel()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ActionsExpanderLabel.Content = string.Format("Actions ({0})", mActivity.Acts.Count);
+            });
         }
     }
 }
