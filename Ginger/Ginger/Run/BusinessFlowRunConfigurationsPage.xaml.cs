@@ -282,7 +282,7 @@ namespace Ginger.Run
             string originalValue= varToEdit.Value;            
             VariableEditPage w = new VariableEditPage(varToEdit, true);
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            if (varToEdit.Formula != originalFormula || varToEdit.Value != originalValue)//varibale was changed
+            if (varToEdit.Formula != originalFormula || varToEdit.Value != originalValue)//variable was changed
             {
                 varToEdit.VarValChanged = true;
                 varToEdit.DiffrentFromOrigin = true;
@@ -395,9 +395,9 @@ namespace Ginger.Run
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (BusinessFlowTab.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }

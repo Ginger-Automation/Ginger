@@ -300,7 +300,7 @@ namespace Ginger.Actions
                                         else
                                             wCond = ActDSConditon.eCondition.OR;
                                         string[] condVal = arrORCond[iOrCount].Trim().Split(new string[] { " " }, StringSplitOptions.None);
-                                        string wCol = condVal[0];
+                                        string wCol = condVal[0].Replace("[","").Replace("]","");
                                         if (condVal[1] == "=")
                                         {
                                             wOpr = ActDSConditon.eOperator.Equals;
@@ -362,7 +362,7 @@ namespace Ginger.Actions
                                         {
                                             wColVal=wColVal.Replace("<GINGER_COND_" + i + ">", matches[i].Groups[0].Value);
                                         }
-                                        mActDSTblElem.AddDSCondition(wCond, condVal[0], wOpr, wColVal.Replace("~QUOTE~","'"), mColNames);
+                                        mActDSTblElem.AddDSCondition(wCond, wCol, wOpr, wColVal.Replace("~QUOTE~","'"), mColNames);
                                         
                                     }
                                 }                                
@@ -870,7 +870,7 @@ namespace Ginger.Actions
                                 {
                                     string wQuery = "";
                                     string wCond = mActDSTblElem.WhereConditions[i].wCondition.ToString();
-                                    string wColVal = mActDSTblElem.WhereConditions[i].wTableColumn.ToString();
+                                    string wColVal = "[" + mActDSTblElem.WhereConditions[i].wTableColumn.ToString().Trim() + "]";
                                     string wOpr = mActDSTblElem.WhereConditions[i].wOperator.ToString();
                                     string wRowVal = mActDSTblElem.WhereConditions[i].wValue.ToString();
                                     if (wRowVal.IndexOf("{DS Name") == -1)
@@ -881,17 +881,25 @@ namespace Ginger.Actions
 
                                     if (wOpr == "Equals")
                                     {
-                                        if(wColVal == "GINGER_ID")
+                                        if(wColVal == "[GINGER_ID]")
+                                        { 
                                             wQuery = wQuery + " " + wCond + " " + wColVal + " = " + wRowVal;
+                                        }
                                         else
+                                        { 
                                             wQuery = wQuery + " " + wCond + " " + wColVal + " = '" + wRowVal + "'";
+                                        }
                                     }                                    
                                     else if (wOpr == "NotEquals")
                                     {
-                                        if (wColVal == "GINGER_ID")
+                                        if (wColVal == "[GINGER_ID]")
+                                        { 
                                             wQuery = wQuery + " " + wCond + " " + wColVal + " <> " + wRowVal;
+                                        }
                                         else
+                                        { 
                                             wQuery = wQuery + " " + wCond + " " + wColVal + " <> '" + wRowVal + "'";
+                                        }
                                     }                                    
                                     else if (wOpr == "Contains")
                                         wQuery = wQuery + " " + wCond + " " + wColVal + " LIKE " + "'%" + wRowVal + "%'";

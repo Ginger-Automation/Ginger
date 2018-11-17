@@ -74,7 +74,7 @@ namespace Ginger.AnalyzerLib
 
         private static void FixMissingAgentForApp(object sender, EventArgs e)
         {
-            //TODO: auto map an agent based on platfrom
+            //TODO: auto map an agent based on platform
         }
 
         static AnalyzeGingerRunner CreateNewIssue(List<AnalyzerItemBase> IssuesList, GingerRunner GR)

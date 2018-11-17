@@ -21,7 +21,7 @@ namespace GingerCoreNET.DisplayLib
 {
     /// <summary>
     /// Base class for Display elements
-    /// Enable to describe UI screen without knwoning the target framework
+    /// Enable to describe UI screen without knowing the target framework
     /// So we can create it in WPF or Web
     /// </summary>
     public abstract class DisplayElement

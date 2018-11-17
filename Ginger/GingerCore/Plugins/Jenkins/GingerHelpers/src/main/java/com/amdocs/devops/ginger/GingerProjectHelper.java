@@ -96,6 +96,9 @@ public class GingerProjectHelper
 
 			Node node = document.getElementsByTagName( "Ginger.Run.RunSetConfig" ).item( 0 );// TODO externalize
 			
+			if(node== null)
+				node = document.getElementsByTagName( "RunSetConfig" ).item( 0 );
+
 			if(node != null)
 				envName = node.getAttributes( ).getNamedItem( "Name" ).getNodeValue( );
 		}

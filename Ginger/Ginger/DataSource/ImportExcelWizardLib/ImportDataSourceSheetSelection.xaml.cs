@@ -59,6 +59,9 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     mWizard = (ImportDataSourceFromExcelWizard)WizardEventArgs.Wizard;
                     xSheetNameComboBox.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.SheetName));                    
                     xSheetNameComboBox.AddValidationRule(new EmptyValidationRule());
+
+                    chkHeadingRow.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.HeadingRow));
+                    chkModelParamsFile.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.IsModelParamsFile));
                     break;
                 case EventType.Active:
                     string excelPath = ((ImportDataSourceFromExcelWizard)WizardEventArgs.Wizard).Path;
@@ -68,6 +71,10 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                         List<string> SheetsList = impParams.GetSheets(false);
                         SheetsList.Insert(0, "-- All --");
                         GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
+                        if(SheetsList.Contains(mWizard.SheetName))
+                        {
+                            xSheetNameComboBox.SelectedIndex = SheetsList.IndexOf(mWizard.SheetName);
+                        }
                     }                    
                     break;
                 default:
@@ -76,7 +83,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         }
 
         /// <summary>
-        /// Constrtuctor for ImportDataSourceSheetSelection class
+        /// Constructor for ImportDataSourceSheetSelection class
         /// </summary>
         public ImportDataSourceSheetSelection()
         {           

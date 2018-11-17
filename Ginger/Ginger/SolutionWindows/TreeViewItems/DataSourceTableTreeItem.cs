@@ -180,12 +180,22 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void Rename(object sender, RoutedEventArgs e)
-        {            
+        {         
+            if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == MessageBoxResult.No)
+            {
+                return;
+            }
             string oldName = DSTableDetails.Name;
             RenameItem("Table Name:", DSTableDetails, DataSourceTable.Fields.Name);
             try
             {
                 DSTableDetails.DSC.RenameTable(oldName, DSTableDetails.Name);
+                DSTableDetails.DataTable.RejectChanges();
+                if (mDataSourceTablePage != null)
+                {
+                    mDataSourceTablePage.RefreshGrid();
+                }                
+                DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;
             }
             catch(Exception ex)
             {

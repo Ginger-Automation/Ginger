@@ -78,7 +78,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                     closestpos = i1;
                     break;
                 }
-                if (c == "}" && i1 != SelectedContentArgs.TextEditor.CaretOffset)  // we stop if we found } - except for the first char - in case the usr click on the closing } of exp
+                if (c == "}" && i1 != SelectedContentArgs.TextEditor.CaretOffset)  // we stop if we found } - except for the first char - in case the user click on the closing } of exp
                 {                    
                     break;
                 }

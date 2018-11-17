@@ -272,8 +272,8 @@ namespace Ginger.ALM
                             else
                             {
                                 BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
-                                result += GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + BizFlow.Name + " - dosen't have ExternalID, cannot execute publish to ALM RunSet Action" + Environment.NewLine;
-                                Reporter.ToLog(eAppReporterLogLevel.INFO, BizFlow.Name + " - dosen't have ExternalID, cannot execute publish to ALM RunSet Action");                               
+                                result += GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + BizFlow.Name + " - doesn't have ExternalID, cannot execute publish to ALM RunSet Action" + Environment.NewLine;
+                                Reporter.ToLog(eAppReporterLogLevel.INFO, BizFlow.Name + " - doesn't have ExternalID, cannot execute publish to ALM RunSet Action");                               
                             }
                         }
                         catch (Exception ex)

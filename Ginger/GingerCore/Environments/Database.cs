@@ -87,8 +87,8 @@ namespace GingerCore.Environments
         private DbTransaction tran = null;
 
         public ObservableList<DataSourceBase> DSList { get; set; }
-        public bool mKeepConnectionOpen= true;
-        [IsSerializedForLocalRepository]
+        public bool mKeepConnectionOpen;
+        [IsSerializedForLocalRepository(true)]
         public bool KeepConnectionOpen
         {
             get

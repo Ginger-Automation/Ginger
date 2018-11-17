@@ -25,7 +25,7 @@ namespace GingerCore.Actions.Common
     // it cause the action to be removed from add action window
     public interface IObsoleteAction
     {
-        // Check if relevant for the paltform of the activity
+        // Check if relevant for the platform of the activity
         bool IsObsoleteForPlatform(ePlatformType Platfrom);
 
         // return convert action

@@ -44,7 +44,7 @@ namespace Ginger.Imports.UFT
 
         public DataTable ProcessExcel(string sExcelFileName)
         {
-            //Ftech Connecion string
+            //Fetch Connection string
             string ConnString = GetExcelString(sExcelFileName);
             
             //DB Objects
@@ -94,7 +94,7 @@ namespace Ginger.Imports.UFT
 
          public Dictionary<string, string> FetchVariableValuesfromCalendar(string sExcelFileName, string sSelectedBusFunction, DataTable dt_BizFlow)
          {
-             //Dictionary for storing varaible name and its value
+             //Dictionary for storing variable name and its value
             Dictionary<string, string> Variables = new Dictionary<string, string>();
             int i = 1;
 
@@ -130,7 +130,7 @@ namespace Ginger.Imports.UFT
 
          public string ReadKEEP_REFER(string sVarName, string sExcelFileName)
         {
-            //Ftech Connecion string
+            //Fetch Connection string
             string ConnString = GetExcelString(sExcelFileName);
             string Value="";
 

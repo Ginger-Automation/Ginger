@@ -73,7 +73,7 @@ namespace Ginger.Reports
             mActivity = Activity;
         }
 
-        // Put here averything we want to make public for users customizing the reports, never give direct access to the Activitiy iteself.
+        // Put here everything we want to make public for users customizing the reports, never give direct access to the Activity itself.
         // serve as facade to expose only what we want
         // must not change as it will break existing reports, no compile check on XAML
 
@@ -298,7 +298,7 @@ namespace Ginger.Reports
 
         public string LogFolder { get; set; }
 
-        // no need to Json serialized, for backword compatibility
+        // no need to Json serialized, for backward compatibility
         public string Status { get { return mActivity.Status.ToString(); } }
 
         public int ExecutionLogActionsCounter { get; set; }
