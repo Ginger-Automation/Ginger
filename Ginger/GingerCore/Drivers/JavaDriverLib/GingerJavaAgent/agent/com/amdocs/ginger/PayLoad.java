@@ -80,7 +80,7 @@ public class PayLoad {
 
         SetDataLen(mBufferIndex-4);
 
-        //Reduce buffer size ot the len of the packet
+        //Reduce buffer size to the length of the packet
         //TODO: find if there is better way
         byte[] bytesfinal = new byte[mBufferIndex]; 
         System.arraycopy(mBuffer, 0,bytesfinal , 0, mBufferIndex);        
@@ -276,7 +276,7 @@ public class PayLoad {
     }
 
         /// <summary>
-    /// Check that we have enought space to add Len bytes of data, if not space will be addded, so it make sure data will be added with no err
+    /// Check that we have enough space to add Len bytes of data, if not space will be added, so it make sure data will be added with no err
     /// </summary>
     /// <param name="Len">Length of data to be added</param>
     private void CheckBuffer(int Len)
@@ -286,9 +286,9 @@ public class PayLoad {
             int SpaceToAdd = 1024;
             if (Len > SpaceToAdd) 
             {
-                SpaceToAdd = Len + 1024;  // Make sure that we add enought space to hold the new data                   
+                SpaceToAdd = Len + 1024;  // Make sure that we add enough space to hold the new data                   
             }
-            //TODO: find a way to avoid realloc of new array, just to resize to bigger
+            //TODO: find a way to avoid reallocate of new array, just to resize to bigger
             byte[] NewBytes = new byte[mBuffer.length + SpaceToAdd]; 
             System.arraycopy(mBuffer, 0, NewBytes , 0, mBufferIndex);        
             mBuffer = NewBytes;      

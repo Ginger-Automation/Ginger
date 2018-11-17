@@ -39,8 +39,8 @@ namespace Ginger.Environments
             InitializeComponent();
             mEnvApplication = app;
 
-            App.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, EnvApplication.Fields.Name);
-            App.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, EnvApplication.Fields.Description);
+            App.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Name));
+            App.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
 
             UpdateParametersTabHeader();
             app.GeneralParams.CollectionChanged += GeneralParams_CollectionChanged;
@@ -127,9 +127,9 @@ namespace Ginger.Environments
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (AppTab.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }

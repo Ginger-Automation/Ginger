@@ -74,7 +74,7 @@ namespace GingerCore.Actions.Common
                     mPlatforms.Add(ePlatformType.PowerBuilder);
                     mPlatforms.Add(ePlatformType.Windows);
 
-                    //TODO: to see the Web impl uncommnet
+                    //TODO: to see the Web impl uncomment
                     // DO NOT remove comment before we have Selenium support this action and converter for old action
                     mPlatforms.Add(ePlatformType.Web);
                 }

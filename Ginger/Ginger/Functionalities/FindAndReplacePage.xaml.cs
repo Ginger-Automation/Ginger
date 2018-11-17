@@ -607,7 +607,7 @@ namespace Ginger.Functionalities
                     //pull variables from all repository BF's
                     AddVariableFromBusinessFlowList(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
 
-                    //pull variabels from shared repository activities
+                    //pull variables from shared repository activities
                     ObservableList<Activity> RepoActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     foreach (Activity activity in RepoActivities)
                     {

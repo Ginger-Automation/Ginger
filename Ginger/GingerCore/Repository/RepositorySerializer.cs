@@ -23,7 +23,6 @@ using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
-using GingerCore.XMLConverters;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -33,7 +32,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -43,16 +41,16 @@ namespace GingerCore.Repository
 
 
     // This class is for storing RepositoryItem on disk, it needs to be serialized to XML
-    // reason for not using some of the exisiting options:
-    // Binary - makes it diffcult to compare version/history in CC + some say it is slower!?
-    // XML formatter - the default have some chllenges and with some NG objects    
-    // Pros - With our own seriliaztion we can solve the problem of copy vs link of Action, during load/save we can take the items from repo
+    // reason for not using some of the existing options:
+    // Binary - makes it difficult to compare version/history in CC + some say it is slower!?
+    // XML formatter - the default have some challenges and with some NG objects    
+    // Pros - With our own serialization we can solve the problem of copy vs link of Action, during load/save we can take the items from repo
     // We can have several style of serialization - 1 store to repo - not all attrs are save, 2 store local save most attrs
     // It should work faster - to be tested and optimized
-    // + We can keep backword compatibiity much easier
-    // + It solve the copy/link to other repo item during serailzation/de-serailzation
+    // + We can keep backward compatibility much easier
+    // + It solve the copy/link to other repo item during serialization/de-serialization
     // It will also solve problems with older agents - no need to update all agents, since sending xml and parsing with defaults
-    // we can also decide on ad hoc serialzation based on the target: if we send it to agent, save to disk or other
+    // we can also decide on ad hoc serialization based on the target: if we send it to agent, save to disk or other
     // We can also decide on ignore error and get partial object - to be fixed- but maybe better than nothing
     // We cam also read partial files - i.e: if we just need the Business flow name for list, no need to read all file
     // We can add custom attr at the top

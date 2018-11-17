@@ -577,7 +577,7 @@ namespace Ginger.Run
             {
                 string[] Args = Environment.GetCommandLineArgs();
 
-                // We xpect Autorun as arg[1]
+                // We expect Autorun as arg[1]
                 string[] arg1 = Args[1].Split('=');
 
                 if (arg1[0] != "ConfigFile")

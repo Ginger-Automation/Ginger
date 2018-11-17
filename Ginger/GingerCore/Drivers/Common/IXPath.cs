@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace GingerCore.Drivers.Common
 {
-    //All drivers who want easy XPath creation and finding element should implemnt this and XpathHelper will do the magic
+    //All drivers who want easy XPath creation and finding element should implement this and XpathHelper will do the magic
     public class XpathPropertyCondition
     {
         public enum XpathConditionOperator

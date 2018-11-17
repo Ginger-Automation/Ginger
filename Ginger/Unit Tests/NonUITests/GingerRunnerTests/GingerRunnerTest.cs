@@ -63,7 +63,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             Agent a = new Agent();
-            //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have knowen firefox issues with selenium 3
+            //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have known firefox issues with selenium 3
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
             mGR.SolutionAgents = new ObservableList<Agent>();

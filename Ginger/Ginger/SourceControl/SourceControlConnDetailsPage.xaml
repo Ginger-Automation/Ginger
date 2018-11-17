@@ -7,7 +7,7 @@
       mc:Ignorable="d" 
      Height="300" Width="500" MinHeight="155"
 	  Title="Source Control Connection Details">
-    <Grid HorizontalAlignment="Stretch" Background="{StaticResource @Skin1_ColorC}">
+    <Grid HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}">
         <StackPanel HorizontalAlignment="Stretch" Margin="5">
             <Label Content="Source Control Type:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch"  />
             <TextBox x:Name="SourceControlClassTextBox" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" />

@@ -145,7 +145,7 @@ namespace GingerCore.Actions
             }
         }
 
-        // TODO: make uniqie icon
+        // TODO: make unique icon
         public override System.Drawing.Image Image { get { return Resources.Excel16x16; } }
         
         [IsSerializedForLocalRepository]

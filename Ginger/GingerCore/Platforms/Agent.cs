@@ -657,17 +657,19 @@ namespace GingerCore
         public void Close()
         {
             try
-            {                
-                if (Driver == null) return;
-
-                Driver.IsDriverRunning = false;
-                Thread.Sleep(1000);
+            {
+                if (Driver == null)
+                {
+                    return;
+                }
+                Driver.IsDriverRunning = false;                
                 if (Driver.Dispatcher != null)
                 {
 
                     Driver.Dispatcher.Invoke(() =>
                    {
                        Driver.CloseDriver();
+                       Thread.Sleep(1000);
                    });
                 }
                 else

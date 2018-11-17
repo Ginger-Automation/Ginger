@@ -289,7 +289,7 @@ namespace Ginger.Variables
                             Style colStyle = new System.Windows.Style(typeof(DataGridColumnHeader));                          
                             SolidColorBrush backgroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString(variableColumnBackgroundColor[colorIndx % 8]);
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.BackgroundProperty, backgroundColor));
-                            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("@Skin1_ColorA")).ToString());
+                            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.ForegroundProperty, foregroundColor));
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.FontWeightProperty, FontWeights.Bold));
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.BorderThicknessProperty, new Thickness(0.5, 0.5, 0.5, 0.5)));

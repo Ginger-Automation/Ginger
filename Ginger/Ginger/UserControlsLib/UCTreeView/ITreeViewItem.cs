@@ -32,5 +32,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         ContextMenu Menu();
         void SetTools(ITreeView TV);
         Object NodeObject();
+        
+        ITreeView TreeView
+        {
+            get;
+            set;
+        }
     }
 }

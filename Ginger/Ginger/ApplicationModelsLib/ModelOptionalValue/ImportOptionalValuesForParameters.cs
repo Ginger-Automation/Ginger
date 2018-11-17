@@ -640,7 +640,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             try
             {
                 SharedStringTablePart stringTablePart = document.WorkbookPart.SharedStringTablePart;
-                value = cell.CellValue.InnerXml;
+                value = cell.CellValue.InnerText;
 
                 if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
                 {
@@ -942,7 +942,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 string tableName = ParameterType == eParameterType.Global ? "GlobalModelParameters" : "ModelParameters";
 
-                DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName);
+                DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName, true);
 
                 if (!string.IsNullOrEmpty(fPath))
                 {
@@ -967,9 +967,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             return filePath;
         }
 
-        private DataTable ExportParametertoDataTable(List<AppParameters> parameters,string tableName)
+        private DataTable ExportParametertoDataTable(List<AppParameters> parameters,string tableName, bool isExcelExport)
         {            
-            int colCount = 0;
+            int colCount = isExcelExport ? 100 : 0;
             foreach (var paramVal in parameters)
             {
                 if (paramVal.OptionalValuesString.Contains(CURRENT_VAL_PARAMETER))
@@ -1007,17 +1007,28 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                             item.Value = "";
                         }
                         if (!item.Value.StartsWith(CURRENT_VAL_PARAMETER))
-                        {                            
-                            dr[index] = Convert.ToString(item.Value);
+                        {
+                            if (isExcelExport)
+                            {
+                                dr[index] = Convert.ToString(item.Value) + (item.IsDefault ? "*" : ""); 
+                            }
+                            else
+                            {
+                                dr[index] = Convert.ToString(item.Value);
+                            }
                             index++;
                         }                        
                     }
-                    while (index < colCount + 2)
+                    if (!isExcelExport)
                     {
-                        dr[index] = Convert.ToString(prm.OptionalValuesList.Where(x => x.IsDefault == true).Select(x => x.Value).FirstOrDefault());
-                        index++;
+                        while (index < colCount + 2)
+                        {
+                            dr[index] = Convert.ToString(prm.OptionalValuesList.Where(x => x.IsDefault == true && x.Value != CURRENT_VAL_PARAMETER).Select(x => x.Value).FirstOrDefault());
+                            index++;
+                        } 
                     }
                 }
+
                 dtTemplate.Rows.Add(dr);
             }
             return dtTemplate;            
@@ -1259,7 +1270,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 foreach (DataTable dt in ds.Tables)
                 {
-                    DataTable dtNew = PivotTable(dt);
+                    DataTable dtNew = PivotTable(dt, isFirstRowHeader);
                     //Removing Paramter Name Column
                     if (dtNew.Columns.Contains(PARAMETER_NAME))
                     {                                             
@@ -1278,37 +1289,83 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        private DataTable PivotTable(DataTable dt)
+        private DataTable PivotTable(DataTable dt, bool isFirstRowHeader)
         {
             DataTable dtNew = new DataTable();
-            dtNew.TableName = dt.TableName;            
+            dtNew.TableName = dt.TableName;
             //adding columns    
-            for (int cols = 0; cols < dt.Rows.Count; cols++)
+            int cols = 0;
+            for (; cols < dt.Rows.Count; cols++)
             {
                 string colName = Convert.ToString(dt.Rows[cols].ItemArray[0]).Replace("[", "_").Replace("]", "").Replace("{","").Replace("}","");
                 dtNew.Columns.Add(colName);
             }
 
             //Adding Row Data
-            for (int cols = 1; cols < dt.Columns.Count; cols++)
+            cols = 2;
+            for (; cols < dt.Columns.Count; cols++)
             {
                 DataRow row = dtNew.NewRow();
                 bool emptyRow = true;
-                for (int indx = 0; indx < dt.Rows.Count; indx++)
+                int indx = isFirstRowHeader ? 0 : 1;
+                for (; indx < dt.Rows.Count; indx++)
                 {
                     if (Convert.ToString(dt.Rows[indx][cols]) != "")
                     {
                         emptyRow = false;
                     }                        
-                    row[indx] = Convert.ToString(dt.Rows[indx][cols]);                       
+                    row[indx] = Convert.ToString(dt.Rows[indx][cols]).Replace("*", "");
                 }
-                if(emptyRow == false)
+
+                if (emptyRow == false)
                 {
                     dtNew.Rows.Add(row);
-                }
-                    
+                }                    
             }
+
+            UpdateDefauktValuesInBlankCell(dtNew, dt);
             return dtNew;
+        }
+
+        /// <summary>
+        /// This method is used to update the default values in the blank cells
+        /// </summary>
+        /// <param name="dtNew"></param>
+        /// <param name="dt"></param>
+        private void UpdateDefauktValuesInBlankCell(DataTable dtNew, DataTable dt)
+        {
+            try
+            {
+                for (int newCols = 1; newCols < dtNew.Columns.Count; newCols++)
+                {
+                    string defaultValue = string.Empty;
+                    for (int olCols = 1; olCols < dt.Columns.Count; olCols++)
+                    {
+                        if(Convert.ToString(dt.Rows[newCols][olCols]).EndsWith("*"))
+                        {
+                            defaultValue = Convert.ToString(dt.Rows[newCols][olCols]).Replace("*", "");
+                            break;
+                        }
+                    }
+
+                    if(string.IsNullOrEmpty(defaultValue))
+                    {
+                        defaultValue = Convert.ToString(dt.Rows[newCols][2]);
+                    }
+
+                    for (int newRows = 1; newRows < dtNew.Rows.Count; newRows++)
+                    {
+                        if (string.IsNullOrEmpty(Convert.ToString(dtNew.Rows[newRows][newCols])))
+                        {
+                            dtNew.Rows[newRows][newCols] = defaultValue;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error while exporting Paramters to File", ex);
+            }
         }
 
         /// <summary>
@@ -1443,8 +1500,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         mDSDetails.AddColumn(tableName, "GINGER_USED", "Text");
                     }
 
-                    DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName);                    
-                    dtTemplate = PivotTable(dtTemplate);
+                    DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName, false);                    
+                    dtTemplate = PivotTable(dtTemplate, true);
                     //Removing Paramter Name Column                    
                     if (dtTemplate.Columns.Contains(PARAMETER_NAME))
                     {                                                

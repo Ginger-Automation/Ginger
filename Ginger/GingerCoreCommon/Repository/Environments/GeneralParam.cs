@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -109,10 +109,12 @@ namespace Amdocs.Ginger.Repository
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
-                if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
-                    mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
-                    mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" ||
+                if (mi.Name == "BackupDic" || mi.Name == "FileName" || mi.Name == "ItemNameField" || mi.Name == "ItemName" ||
+                    mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" ||
+                    mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ListStringValue" ||mi.Name == "ItemImageType" ||
                     mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath") continue;
+
+                
 
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);

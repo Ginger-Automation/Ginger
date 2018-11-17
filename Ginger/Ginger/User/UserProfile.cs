@@ -201,7 +201,7 @@ namespace Ginger
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to to load the recent solution which in path '{0}'", s), ex);
+                        Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Failed to load the recent solution which in path '{0}'", s), ex);
                     }
 
                     counter++;
