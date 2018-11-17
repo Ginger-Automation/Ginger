@@ -127,8 +127,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Path, WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Header = "Simulated Value", WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Header = "Expected Value", WidthWeight = 150 });
-            viewCols.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, ComboboxDisplayMemberField = nameof(GlobalAppModelParameter.PlaceHolder), ComboboxSelectedValueField = nameof(GlobalAppModelParameter.Guid), ComboboxSortBy = nameof(GlobalAppModelParameter.PlaceHolder), CellValuesList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>() });
+            viewCols.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });          
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, ComboboxDisplayMemberField = nameof(GlobalAppModelParameter.PlaceHolder), ComboboxSelectedValueField = nameof(GlobalAppModelParameter.Guid), CellValuesList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>() });
             viewCols.Add(new GridColView() { Field = "Clear Store To", Header = "Clear Store To", WidthWeight = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ClearStoreToBtnTemplate"] });
 
             //Default mode view

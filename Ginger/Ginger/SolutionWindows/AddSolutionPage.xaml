@@ -7,7 +7,7 @@
       Height="220" Width="500" MinHeight="220"
 	Title="Add Solution">
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <StackPanel>
             <Label Style="{StaticResource @InputFieldLabelStyle}">Solution Name:</Label>
             <TextBox x:Name="SolutionNameTextBox" AutomationProperties.AutomationId="QA-SolutionNameTextBox" Style="{StaticResource @TextBoxStyle}" FontWeight="Bold"/>

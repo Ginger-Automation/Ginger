@@ -1,8 +1,8 @@
     <Window x:Class="Ginger.ClosingWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Closing" Height="190" Width="300" BorderThickness="10" BorderBrush="{StaticResource @Skin1_ColorC}" WindowStyle="None"  Topmost="True" WindowStartupLocation="CenterScreen">
-    <Grid Background="{StaticResource @Skin1_ColorA}">
+        Title="Closing" Height="190" Width="300" BorderThickness="10" BorderBrush="{StaticResource $BackgroundColor_LightGray}" WindowStyle="None"  Topmost="True" WindowStartupLocation="CenterScreen">
+    <Grid Background="{StaticResource $Color_DarkBlue}">
         <Grid.RowDefinitions>
             <RowDefinition Height="120"/>
             <RowDefinition Height="2"/>
@@ -10,7 +10,7 @@
         </Grid.RowDefinitions>
         
         <Label VerticalAlignment="Center" FontSize="20" Height="100" FontWeight="Bold" Grid.Row="0" Foreground="White">Preparing to Close...</Label>
-        <GridSplitter Grid.Row="1" ResizeDirection="Rows" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{StaticResource @Skin1_ColorC}" ></GridSplitter>       
+        <GridSplitter Grid.Row="1" ResizeDirection="Rows" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}" ></GridSplitter>       
         <Label FontSize="12" Grid.Row="2" Foreground="White">Saving User Profile and Logs</Label>
     </Grid>
 </Window>

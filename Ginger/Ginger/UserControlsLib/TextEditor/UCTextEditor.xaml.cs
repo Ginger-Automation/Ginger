@@ -296,7 +296,7 @@ namespace Ginger.UserControlsLib.TextEditor
             tool.Execute((ITextEditor)mTextEditor);
         }
 
-        //TODO: looks liek too many calls, even the the caret didn't move, can first check if pos cheanged otherwise return - keep last
+        //TODO: looks liek too many calls, even the the caret didn't move, can first check if pos changed otherwise return - keep last
         private void Caret_PositionChanged(object sender, EventArgs e)
         {                                       
             SelectedContentArgs args = new SelectedContentArgs();

@@ -9,7 +9,7 @@
       Height="500" Width="600"
 	Title="Ginger Runner Configurations">
     
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <DockPanel>
             <StackPanel x:Name="GingerDetailsPanel" DockPanel.Dock="Top" Margin="0,10,0,10">
                 <StackPanel Orientation="Horizontal">

@@ -126,8 +126,8 @@ namespace Ginger.SourceControl
                          {
                              if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML"))
                              {
-                             //try to unsearlize
-                             object item = RepositoryItem.LoadFromFile(SCFI.Path);
+                                 //try to unserialize
+                                 object item = RepositoryItem.LoadFromFile(SCFI.Path);
                                  SCFI.Name = ((RepositoryItem)item).GetNameForFileName();
                              }
                              else
@@ -153,7 +153,7 @@ namespace Ginger.SourceControl
                          else if (SCFI.Path.ToUpper().Contains("VARIABLES")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
                          else if (SCFI.Path.ToUpper().Contains("REPORTTEMPLATE")) SCFI.FileType = "Report Template";
                          else if (SCFI.Path.Contains("ApplicationAPIModel")) SCFI.FileType = "Application API Model";
-                         else if (SCFI.Path.Contains("GlobalAppModelParameter")) SCFI.FileType = "Global Applocations Model Parameter";
+                         else if (SCFI.Path.Contains("GlobalAppModelParameter")) SCFI.FileType = "Global Applications Model Parameter";
                      });
                 });
 
@@ -461,7 +461,7 @@ namespace Ginger.SourceControl
 
         private void CloseWindow()
         {   
-            //TODO: remove sol refresh afetr all RIs moved to new repo and using new tree item if mCheckInWasDone true            
+            //TODO: remove sol refresh after all RIs moved to new repo and using new tree item if mCheckInWasDone true            
             genWin.Close();
         }
 

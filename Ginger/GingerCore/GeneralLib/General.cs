@@ -39,6 +39,7 @@ using System.Windows.Threading;
 using System.Xml;
 using GingerCore.DataSource;
 using System.Reflection;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore
 {
@@ -1162,7 +1163,7 @@ namespace GingerCore
                 if (DataSource.FileFullPath.StartsWith("~"))
                 {
                     DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
-                    DataSource.FileFullPath = Path.Combine(DataSource.ContainingFolderFullPath.Replace("DataSources", "") , DataSource.FileFullPath);
+                    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
                 }
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();

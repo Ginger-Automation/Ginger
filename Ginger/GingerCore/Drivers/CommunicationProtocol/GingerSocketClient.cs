@@ -30,10 +30,10 @@ namespace GingerCore.Drivers.CommunicationProtocol
     // Can be C# to C# - like Ginger and GingerRemoteAgent
     // Can be C# to Java - like C# to Java driver.
     // Can be C# to Java - like C# to Android Java driver etc.
-    // protocol is send/recevie Payload will make it easier for consumers
+    // protocol is send/receive Payload will make it easier for consumers
 
     // Target is to avoid the implementation in each driver
-    // It also includes built in pakckets logger to see the communication
+    // It also includes built in packets logger to see the communication
 
     // TODO: remove it from Andorid driver
     // TODO: remove it from java driver
@@ -155,7 +155,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
         {
             if (GingerSocket.SocketConnected(mClientSocket))            
             {
-                // send gracefull disconnect
+                // send graceful disconnect
                 PayLoad PL = new PayLoad("GingerSocket", "Disconnect");
                 SendPayLoad(PL);
             }

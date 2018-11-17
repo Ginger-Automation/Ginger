@@ -141,20 +141,8 @@ namespace GingerCore.Actions
             Refresh,
             [EnumValueDescription("Navigate Back")]
             NavigateBack,
-            [EnumValueDescription("Select From List Scr")]
-            SelectFromListScr,
-            [EnumValueDescription("Key Type")]
-            KeyType,
-            [EnumValueDescription("Get Inner Text")]
-            GetInnerText,
-            [EnumValueDescription("Close Browser")]
-            CloseBrowser,
             [EnumValueDescription("Dismiss Message Box")]
             DismissMessageBox,
-            [EnumValueDescription("Message Box")]
-            MsgBox,
-            [EnumValueDescription("Start Browser")]
-            StartBrowser,
             [EnumValueDescription("Delete All Cookies")]
             DeleteAllCookies,
             [EnumValueDescription("Accept Message Box")]

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -39,7 +39,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
-        /// If Defaul value is set and the value in the attr is the same as default it will not be save to the xml, save space and load time
+        /// If Default value is set and the value in the attr is the same as default it will not be save to the xml, save space and load time
         /// </summary>
         /// <param name="DefaultValue">True or False</param>
         public IsSerializedForLocalRepositoryAttribute(bool DefaultValue)
@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
-        /// If Defaul value is set and the value in the attr is the same as default it will not be save to the xml, save space and load time
+        /// If Default value is set and the value in the attr is the same as default it will not be save to the xml, save space and load time
         /// </summary>
         /// <param name="DefaultValue">Can be Enum value or any object which can be default for the attr</param>
         public IsSerializedForLocalRepositoryAttribute(object DefaultValue)

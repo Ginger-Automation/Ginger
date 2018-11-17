@@ -127,8 +127,17 @@ namespace GingerCore
                 try
                 {
                     // Convert strToEncrypt into a byte array.
-                    byte[] strToDecryptBytes = Convert.FromBase64String(strToDecrypt);
-
+                    byte[] strToDecryptBytes;
+                    try
+                    {
+                        strToDecryptBytes = Convert.FromBase64String(strToDecrypt);
+                    }
+                    catch(Exception ex)
+                    {
+                        //probabaly not encrypted value
+                        result = false;
+                        return strToDecrypt;
+                    }
                     // Set encryption mode to Cipher Block Chaining(CBC)
                     _rijndaelObject.Mode = CipherMode.CBC;
 

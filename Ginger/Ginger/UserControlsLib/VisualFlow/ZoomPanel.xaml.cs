@@ -58,7 +58,7 @@ namespace Ginger.UserControlsLib.VisualFlow
         }
         private void ZoomMinus_Click(object sender, RoutedEventArgs e)
         {
-            // We reduce 0.1 and round it nicely to the nearest 10% - so it will go from 57% to 50% instaed of 47%
+            // We reduce 0.1 and round it nicely to the nearest 10% - so it will go from 57% to 50% instead of 47%
             ZoomSlider.Value = Math.Round(ZoomPercent * 10 - 1) / 10;
         }
 

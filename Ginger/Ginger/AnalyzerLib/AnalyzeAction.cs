@@ -66,7 +66,7 @@ namespace Ginger.AnalyzerLib
             //            AA.HowToFix = "Convert to new action"; // TODO: get name of new action
             //            AA.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
             //            AA.IssueType = eType.Warning;
-            //            AA.Impact = "New action can have more capabilites and more stable, good to upgrade";
+            //            AA.Impact = "New action can have more capabilities and more stable, good to upgrade";
             //            AA.Severity = eSeverity.Medium;
             //            AA.FixItHandler = UpgradeAction;
             //            AA.ActivitySourcePlatform = ActivitySourcePlatform;                        
@@ -370,7 +370,7 @@ namespace Ginger.AnalyzerLib
                 foreach (string Param in mMissingStoreToGlobalParameters)
                 {
                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                    AA.Description = "The Output Value with Parameter '" + Param + "' is having store to Parameter which doesnt exist anymore";
+                    AA.Description = "The Output Value with Parameter '" + Param + "' is having store to Parameter which doesn't exist anymore";
                     AA.Details = "The Output Value with Parameter: '" + Param + "' can be found at " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '" + BusinessFlow.Name + "' => " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + parentActivity.ActivityName + "' =>" + "Action '" + a.Description + "' ";
                     AA.HowToFix = " Create new Parameter and change to it in the 'Store to' dropdown under the above path";
                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;

@@ -65,7 +65,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         }
 
         /// <summary>
-        /// This is used to initialise the wizard
+        /// This is used to initialize the wizard
         /// </summary>
         public ImportDataSourceFromExcelWizard(DataSourceBase DSDetails)
         {
@@ -120,9 +120,12 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 colList.Append("[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text,");
                 foreach (DataColumn col in dt.Columns)
                 {
+                    if(col.ColumnName == "GINGER_ID" || col.ColumnName == "GINGER_USED" || col.ColumnName == "GINGER_LAST_UPDATED_BY" || col.ColumnName == "GINGER_LAST_UPDATE_DATETIME")
+                    {
+                        continue;
+                    }
                     colList.Append(string.Format("[{0}] Text,", col.ColumnName));
                 }
-
                 cols = colList.ToString().Remove(colList.ToString().LastIndexOf(","), 1);
             }
             catch (System.Exception ex)

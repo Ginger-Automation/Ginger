@@ -604,7 +604,7 @@ namespace GingerCore
             if (activitiesGroup == null)
             {
                 activitiesGroup = new ActivitiesGroup();
-                activitiesGroup.Name = "NewGroup";
+                activitiesGroup.Name = "New " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
             }
             SetUniqueActivitiesGroupName(activitiesGroup);
             ActivitiesGroups.Add(activitiesGroup);
@@ -615,7 +615,7 @@ namespace GingerCore
             if (activitiesGroup == null)
             {
                 activitiesGroup = new ActivitiesGroup();
-                activitiesGroup.Name = "NewGroup";
+                activitiesGroup.Name = "New " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
             }
             SetUniqueActivitiesGroupName(activitiesGroup);
             if ((index != -1) && (ActivitiesGroups.Count > index))
