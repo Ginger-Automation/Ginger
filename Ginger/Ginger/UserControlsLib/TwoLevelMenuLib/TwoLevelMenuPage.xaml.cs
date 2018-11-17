@@ -60,12 +60,10 @@ namespace Ginger.GeneralWindows
         {
             mTwoLevelMenu.Reset();
             xMainNavigationListView.SelectedItem = null;
-            xSubNavigationListView.SelectedItem = null;            
+            xSubNavigationListView.SelectedItem = null;
+            xSubNavigationListView.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.SetContent(null);
-            if (App.UserProfile.Solution != null)
-            {
-                SelectFirstTopMenu();
-            }
+
         }
 
         private void LoadMenus()
@@ -73,8 +71,7 @@ namespace Ginger.GeneralWindows
             foreach(TopMenuItem menu in mTwoLevelMenu.MenuList)
             {
                 xMainNavigationListView.Items.Add(menu);
-            }
-            SelectFirstTopMenu();            
+            }          
         }
 
         private void SelectFirstTopMenu()

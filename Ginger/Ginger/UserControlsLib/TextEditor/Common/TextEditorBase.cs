@@ -40,7 +40,7 @@ namespace Ginger.UserControlsLib.TextEditor
         {
             get
             {
-                // we return null so it will use the deafult text editor, however editor can override and return it's own page editor like Gherkin does                
+                // we return null so it will use the default text editor, however editor can override and return it's own page editor like Gherkin does                
                 return null;
             }
         }

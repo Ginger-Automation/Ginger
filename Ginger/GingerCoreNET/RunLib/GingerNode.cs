@@ -38,7 +38,7 @@ namespace GingerCoreNET.DriversLib
         GingerSocketClient2 mHubClient;
         Guid mSessionID;
 
-        //TODO: check what we can hide from here and move to GingerCore  -- all the communcation Payload stuff move from here
+        //TODO: check what we can hide from here and move to GingerCore  -- all the communication Payload stuff move from here
 
         //public GingerNode(DriverCapabilities DriverCapabilities, IGingerService service)
         //{

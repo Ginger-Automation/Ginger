@@ -54,10 +54,16 @@ namespace Ginger.MenusLib
             return twoLevelMenuGet;
         }
 
+        static NewRunSetPage runSetPage;
         private static Page GetRunSetPage()
         {            
-            return new NewRunSetPage();
+            if (runSetPage == null)
+            {
+                runSetPage= new NewRunSetPage();
+            }
+            return runSetPage;
         }
+
         private static Page GetExecutionsHistoryPage()
         {
             return new RunSetsExecutionsHistoryPage(RunSetsExecutionsHistoryPage.eExecutionHistoryLevel.Solution);

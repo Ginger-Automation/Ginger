@@ -125,7 +125,7 @@ namespace Ginger.Agents.AddAgentWizardLib
 
                 // Plugin combo
                 xPluginIdComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-                xPluginIdComboBox.DisplayMemberPath = nameof(PluginPackage.PluginID);                
+                xPluginIdComboBox.DisplayMemberPath = nameof(PluginPackage.PluginId);                
                 xPluginIdComboBox.BindControl(mWizard.Agent, nameof(Agent.PluginId));
             }
             else

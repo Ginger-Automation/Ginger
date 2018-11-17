@@ -32,7 +32,7 @@
 //using System.Linq;
 //using Amdocs.Ginger.CoreNET.Execution;
 //using Amdocs.Ginger.Common.Enums;
-////TODO: chang add core
+////TODO: change add core
 //namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActivitiesLib
 //{
 //    //Activity can have several steps - Acts

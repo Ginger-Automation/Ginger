@@ -151,7 +151,7 @@ namespace GingerCore.Drivers.WindowsLib
                     ConditionBase CurCond2 = new PropertyCondition(AutomationObjectIds.NameProperty, LocateValue);
                     CurAE = this.CurrentWindow.FindFirst(TreeScope.Subtree, CurCond2);
 
-                    //For old compativity where Name was the text we fail over to search by Text, PB Only, it is slower as it scan the tree and call win api to get the text
+                    //For old compatibility where Name was the text we fail over to search by Text, PB Only, it is slower as it scan the tree and call win api to get the text
                     if (Object.ReferenceEquals(CurAE, null) && mPlatform == ePlatform.PowerBuilder)
                     {
                     }

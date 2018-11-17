@@ -64,14 +64,14 @@ namespace GingerCore.Actions
                 AutomationElement e = TryGetActElementByLocator(act, act.LocateBy, act.LocateValue);
                 if (e == null)
                 {
-                    act.Error = "Element not found - " + act.LocateBy + " - " + act.LocateValue + Environment.NewLine; //TODO add to accomidate multiple locators need to be done for UIA
+                    act.Error = "Element not found - " + act.LocateBy + " - " + act.LocateValue + Environment.NewLine; //TODO add to accommodate multiple locator's need to be done for UIA
                 }
                 return e;
             }
             catch (Exception e)
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                act.Error = "Element not found - " + act.LocateBy + " - " + act.LocateValue + Environment.NewLine + e.Message; //TODO add to accomidate multiple locators need to be done for UIA
+                act.Error = "Element not found - " + act.LocateBy + " - " + act.LocateValue + Environment.NewLine + e.Message; //TODO add to accommodate multiple locator's need to be done for UIA
                 return null;
             }
         }

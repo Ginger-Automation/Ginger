@@ -26,7 +26,7 @@ using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions
 {
-    //This class is for UI checkbox elemnet
+    //This class is for UI checkbox element
     public class ActCheckbox : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Check Box Action"; } }

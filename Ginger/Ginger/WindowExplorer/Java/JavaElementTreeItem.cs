@@ -33,7 +33,7 @@ using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.Java
 {
-    // Will serve as base class for Java Element, or will defult to this class when there is no specific control type yet
+    // Will serve as base class for Java Element, or will default to this class when there is no specific control type yet
     public class JavaElementTreeItem : JavaElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
         Object ITreeViewItem.NodeObject()
@@ -74,7 +74,7 @@ namespace Ginger.WindowExplorer.Java
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            // Will be overriden in derived class
+            // Will be overridden in derived class
             ObservableList<Act> list = new ObservableList<Act>();
             ActUIElement act = new ActUIElement();
             act.AddNewReturnParams = true;

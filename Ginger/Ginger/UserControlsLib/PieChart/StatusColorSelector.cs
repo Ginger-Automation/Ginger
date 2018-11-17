@@ -24,7 +24,7 @@ using GingerCoreNET.GeneralLib;
 namespace Ginger.UserControlsLib.PieChart
 {
     /// <summary>
-    /// Selects a colour based on Status
+    /// Selects a color based on Status
     /// </summary>
     public class StatusColorSelector : DependencyObject, IColorSelector
     {
@@ -52,7 +52,7 @@ namespace Ginger.UserControlsLib.PieChart
             StatItem st = (StatItem)item;
             resourceDictionary = new ResourceDictionary();
             resourceDictionary.Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefaultSkinDictionary.xaml");
-            //TODO: find better pallete colors
+            //TODO: find better pallets colors
             switch (st.Description)
             {
                 case "Automated":
@@ -71,7 +71,7 @@ namespace Ginger.UserControlsLib.PieChart
                 case "Started":
                 case "Running":
                 case "Wait":
-                case "Cancelling":
+                case "Canceling":
                     return (Brush)resourceDictionary["$RunningStatusColor"];
                 case "Stopped":
                     return (Brush)resourceDictionary["$StoppedStatusColor"];

@@ -57,22 +57,23 @@ namespace Amdocs.Ginger.Repository
 
         
         [IsSerializedForLocalRepository]
-        public string PluginID { get; set;  }
+        public string PluginId { get; set;  }
 
         [IsSerializedForLocalRepository]
         public string PluginPackageVersion { get; set; }
         
         public bool Isloaded = false;
-
+        // must have empty constructor
         public PluginPackage()
         {
         }
+
 
         public PluginPackage(string folder)
         {            
             mFolder = folder;
             LoadInfoFromJSON();            
-            PluginID = PluginPackageInfo.Id;
+            PluginId = PluginPackageInfo.Id;
             PluginPackageVersion = PluginPackageInfo.Version;
         }
 
@@ -126,9 +127,17 @@ namespace Amdocs.Ginger.Repository
 
         //}
 
-        string mFolder;
-        [IsSerializedForLocalRepository]        
-        public string Folder { get { return mFolder; }
+        string mFolder;        
+        public string Folder {
+            get
+            {       
+                if (string.IsNullOrEmpty(mFolder))
+                {
+                    mFolder = Path.Combine(LocalPluginsFolder, PluginId, PluginPackageVersion);
+                }
+
+                return mFolder;
+            }
             set
             {
                 if (mFolder != value)
@@ -141,27 +150,34 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+
+        public static string LocalPluginsFolder
+        {
+            get
+            {
+                string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                userFolder = Path.Combine(userFolder, "Ginger", "PluginPackages");
+                return userFolder;
+            }
+        }
+      
         List<PluginAssemblyInfo> mAssembliesInfo = new List<PluginAssemblyInfo>();
 
-        public override string ItemName { get { return PluginID; } set {  } }
-
+        public override string ItemName { get { return PluginId; } set {  } }
         
 
         public override string GetNameForFileName()
         {
-            return PluginID;
+            return PluginId;
         }
 
         public void LoadInfoFromDLL()
         {
             LoadGingerPluginsDLL();
-
-            string startupDLLFileName = Path.Combine(mFolder, mPluginPackageInfo.StartupDLL);
-            AssemblyName assmenblyName = AssemblyName.GetAssemblyName(startupDLLFileName);
+            string startupDLLFileName = Path.Combine(mFolder, mPluginPackageInfo.StartupDLL);            
             PluginAssemblyInfo PAI = new PluginAssemblyInfo();
             PAI.Name = startupDLLFileName;
             PAI.FilePath = startupDLLFileName;
-
             mAssembliesInfo.Add(PAI);
 
             LoadPluginServicesFromDll();
@@ -468,7 +484,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                return nameof(this.PluginID);
+                return nameof(this.PluginId);
             }
         }
 

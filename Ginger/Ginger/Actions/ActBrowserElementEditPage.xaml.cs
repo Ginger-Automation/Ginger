@@ -23,6 +23,8 @@ using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions._Common.ActUIElementLib;
+using GingerCore.Platforms.PlatformsInfo;
+using System.Collections.Generic;
 
 namespace Ginger.Actions
 {
@@ -32,15 +34,24 @@ namespace Ginger.Actions
     public partial class ActBrowserElementEditPage : Page
     {
         private ActBrowserElement mAct;
-
+        PlatformInfoBase mPlatform;
         public ActBrowserElementEditPage(ActBrowserElement act)
         {
             InitializeComponent();
             mAct = act;
-           
+
+            if (act.Platform == ePlatformType.NA)
+            {
+                act.Platform = GetActivityPlatform();
+            }
+            mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
+
+            List<ActBrowserElement.eControlAction> supportedControlActions = mPlatform.GetPlatformBrowserControlOperations();
+
             //bind controls
-            App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction);
+            App.FillComboFromEnumVal(xControlActionComboBox, mAct.ControlAction, supportedControlActions.Cast<object>().ToList());
             App.ObjFieldBinding(xControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActBrowserElement.Fields.ControlAction);
+
             ValueUC.Init(mAct.GetOrCreateInputParam("Value"));
             xLocateValueVE.BindControl(mAct, Act.Fields.LocateValue);
             xGotoURLTypeRadioButton.Init(typeof(ActBrowserElement.eGotoURLType), xGotoURLTypeRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString()));
@@ -63,7 +74,7 @@ namespace Ginger.Actions
             SetVisibleControlsForAction();
         }
 
-        private ePlatformType GetActionPlatform()
+        private ePlatformType GetActivityPlatform()
         {
             string targetapp = App.BusinessFlow.CurrentActivity.TargetApplication;
             ePlatformType platform = (from x in App.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
@@ -73,7 +84,7 @@ namespace Ginger.Actions
         private void SetVisibleControlsForAction()
         {
             ResetView();
-            ePlatformType ActivityPlatform = GetActionPlatform();
+            ePlatformType ActivityPlatform = mAct.Platform;
 
             if (mAct.ControlAction == ActBrowserElement.eControlAction.SwitchFrame || mAct.ControlAction == ActBrowserElement.eControlAction.SwitchWindow || mAct.ControlAction == ActBrowserElement.eControlAction.CloseTabExcept)
             {
@@ -88,7 +99,7 @@ namespace Ginger.Actions
                     if (mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL)
                     {
                         xOpenURLInPnl.Visibility = System.Windows.Visibility.Visible;
-                    }                    
+                    }
                     xValueGrid.Visibility = System.Windows.Visibility.Visible;
                     xValueLabel.Content = "URL:";
                 }

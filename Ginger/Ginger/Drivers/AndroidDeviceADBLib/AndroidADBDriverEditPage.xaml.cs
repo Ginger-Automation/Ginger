@@ -164,7 +164,7 @@ namespace Ginger.Drivers
 
         private void DeviceConfigFileCombo_DropDownOpened(object sender, EventArgs e)
         {
-            string DevicesFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"\Documents\Devices\");
+            string DevicesFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"Documents\Devices\");
 
             DeviceConfigFolderComboBox.Items.Clear();            
 
@@ -206,7 +206,7 @@ namespace Ginger.Drivers
             // push the apk
 
             //TODO: removed hard coded path, use ginger folder
-            //  getting permsission denided - fix me
+            //  getting permission denied - fix me
 
             string GingerAPKPath = GingerCore.General.GetGingerEXEPath() + @"Drivers\AndroidADB\Java\GingerService\app\build\outputs\apk\";
 

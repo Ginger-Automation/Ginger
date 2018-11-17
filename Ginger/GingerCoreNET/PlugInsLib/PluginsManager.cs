@@ -16,9 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Newtonsoft.Json;
 using System;
@@ -145,6 +147,13 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public string InstallPluginPackage(OnlinePluginPackage currentItem, OnlinePluginPackageRelease release)
+        {
+            string folder = currentItem.InstallPluginPackage(release);
+            AddPluginPackage(folder);
+            return folder;
+        }
+
         internal DriverInfo GetDriverInfo(string PluginDriverName)
         {
             foreach (DriverInfo di in GetAllDrivers())
@@ -171,43 +180,45 @@ namespace Amdocs.Ginger.Repository
         //    throw new Exception("Action handler not found for Action ID: " + ID);
         //}
 
-        static List<PluginPackage> mInstalledPluginPackages = null;
+        // static List<PluginPackage> mInstalledPluginPackages = null;
+
+       
 
         // Get list of installed plugins in Ginger folder 'PluginPackages'
-        public List<PluginPackage> GetInstalledPluginPackages()
-        {
-            if (mInstalledPluginPackages != null)
-            {
-                //TODO: check for new added plugins
+        //public List<PluginPackage> GetInstalledPluginPackages()
+        //{
+        //    if (mInstalledPluginPackages != null)
+        //    {
+        //        //TODO: check for new added plugins
 
-                return mInstalledPluginPackages;
-            }
+        //        return mInstalledPluginPackages;
+        //    }
 
-            mInstalledPluginPackages = new List<PluginPackage>();
+        //    mInstalledPluginPackages = new List<PluginPackage>();
 
-            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        //    string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            if (path.Contains("GingerWPF"))   // We are running from GingerWPF in debug mode
-            {
-                path = path.Replace(@"GingerWPF\bin\Debug", "");   // temp need to be Ginger installation folder !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            }
+        //    if (path.Contains("GingerWPF"))   // We are running from GingerWPF in debug mode
+        //    {
+        //        path = path.Replace(@"GingerWPF\bin\Debug", "");   // temp need to be Ginger installation folder !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //    }
 
-            if (path.Contains("GingerCoreNETUnitTest"))   // We are running from GingerWPF in debug mode
-            {
-                path = path.Replace(@"GingerCoreNETUnitTest\bin\Debug\netcoreapp2.0", "");
-            }
+        //    if (path.Contains("GingerCoreNETUnitTest"))   // We are running from GingerWPF in debug mode
+        //    {
+        //        path = path.Replace(@"GingerCoreNETUnitTest\bin\Debug\netcoreapp2.0", "");
+        //    }
 
-            string pluginPackagesPath = Path.Combine(path, "PluginPackages");
+        //    string pluginPackagesPath = Path.Combine(path, "PluginPackages");
 
-            // Each directory is a plugin package
+        //    // Each directory is a plugin package
 
-            foreach (string d in Directory.GetDirectories(pluginPackagesPath))
-            {
-                PluginPackage p = new PluginPackage(d);
-                mInstalledPluginPackages.Add(p);
-            }
-            return mInstalledPluginPackages;
-        }
+        //    foreach (string d in Directory.GetDirectories(pluginPackagesPath))
+        //    {
+        //        PluginPackage p = new PluginPackage(d);
+        //        mInstalledPluginPackages.Add(p);
+        //    }
+        //    return mInstalledPluginPackages;
+        //}
 
 
 
@@ -276,12 +287,12 @@ namespace Amdocs.Ginger.Repository
         {
             if (string.IsNullOrEmpty(PluginId))
             {
-                throw new Exception("Plugin action missing PluginId");
+                throw new ArgumentNullException(nameof(PluginId));
             }
-            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == PluginId select x).SingleOrDefault();
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == PluginId select x).SingleOrDefault();
 
             if (pluginPackage == null)
-            {
+            {                
                 throw new Exception("PluginPackage not found in solution PluginId=" + PluginId);
             }
             if (string.IsNullOrEmpty(pluginPackage.StartupDLL))
@@ -305,99 +316,29 @@ namespace Amdocs.Ginger.Repository
 
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
         {
-            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
             PluginServiceAction standAloneAction = (from x in pluginServiceInfo.Actions where x.ActionId == actionId select x).SingleOrDefault();
             return standAloneAction.InputValues;
         }
 
-        public ObservableList<OnlinePluginPackage> GetPluginsIndex()
-        {            
+        public ObservableList<OnlinePluginPackage> GetOnlinePluginsIndex()
+        {
             // edit at: "https://github.com/Ginger-Automation/Ginger-Plugins-Index/blob/master/PluginsList.json";
 
-            // raw url to get the file content
+            // raw url to get the file content            
             string url = "https://raw.githubusercontent.com/Ginger-Automation/Ginger-Plugins-Index/master/PluginsList.json";
-            string packagesjson = GetResponseString(url).Result;
-
-            ObservableList<OnlinePluginPackage> list = JsonConvert.DeserializeObject<ObservableList<OnlinePluginPackage>>(packagesjson);
+            ObservableList < OnlinePluginPackage > list = GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);
+            ObservableList<PluginPackage> installedPlugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            foreach (OnlinePluginPackage onlinePluginPackage in list)
+            {                
+                PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Name select x).SingleOrDefault();
+                if (pluginPackage != null)
+                {                
+                    onlinePluginPackage.Status = "Installed - " + pluginPackage.PluginPackageVersion;
+                }
+            }
             return list;
-        }
-
-
-        /// <summary>
-        /// Get list of releases for plguin from Git        
-        /// </summary>
-        /// <param name="pluginRepositoryName"></param>
-        /// Repositry name in Fit for example: Ginger-PACT-Plugin
-        /// <returns></returns>
-        public List<dynamic> GetPluginReleases(string URL)
-        {
-            if (string.IsNullOrEmpty(URL))
-            {
-                return null;
-            }
-            // string url = "https://api.github.com/repos/Ginger-Automation" + pluginRepositoryName +  "/releases";
-                            
-            string url = URL.Replace("https://github.com/Ginger-Automation", "https://api.github.com/repos/Ginger-Automation");
-            url += "/releases";            
-            string releases = GetResponseString(url).Result;
-
-            List<dynamic> lst = JsonConvert.DeserializeObject<List<dynamic>>(releases);
-            return lst;
-        }
-
-        async Task<string> GetResponseString(string url)
-        {
-            using (var client = new HttpClient())
-            {
-                // Simulate a browser
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-
-                var result = client.GetAsync(url).Result;
-
-                if (result.IsSuccessStatusCode)
-                {
-                    var json = await result.Content.ReadAsStringAsync();                    
-                    return json;
-                }
-                else
-                {
-                    return "Error: " + result.ReasonPhrase;
-                }
-            }
-        }
-
-        public void InstallPluginPackage(OnlinePluginPackage onlinePluginPackage, string version, string zipFileURL)
-        {                 
-                string f = Path.Combine(onlinePluginPackage.Name, version);
-                string folder = DownloadPackage(zipFileURL, f).Result;
-                AddPluginPackage(folder);
-                // PluginPackage p = new PluginPackage(folder);
-         
-        }
-
-        async Task<string> DownloadPackage(string url, string subfolder)
-        {
-            //TODO: show user some progress... update a shared string status
-            using (var client = new HttpClient())
-            {
-                var result = client.GetAsync(url).Result;
-
-                if (result.IsSuccessStatusCode)
-                {
-                    byte[] zipContent = await result.Content.ReadAsByteArrayAsync();  // Get the Plugin package zip content
-                    string fileName = Path.GetTempFileName();  // temp file for the zip
-                    File.WriteAllBytes(fileName, zipContent);  // save content to file                    
-                    string localPluginPackageFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); // target folder to extract the plugin to on user folder
-                    localPluginPackageFolder = Path.Combine(localPluginPackageFolder, "Ginger", "PluginPackages", subfolder); // Extract it to: \users\[user]\Ginger\PluginPackages/[PluginFolder]
-                    ZipFile.ExtractToDirectory(fileName, localPluginPackageFolder); // Extract 
-                    return localPluginPackageFolder;
-                }
-                else
-                {
-                    throw new Exception("Error downloading Plugin Package: " + result.ReasonPhrase + Environment.NewLine + url);
-                }
-            }
         }
 
         public bool IsRunOnPluginDriver(string pluginId, string serviceId)

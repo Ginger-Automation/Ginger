@@ -41,7 +41,7 @@ namespace Ginger.Actions
         }
 
         /// <summary>
-        /// Initilize and Bind the UCGrid, also defines the Titles and sets the AddRow Handler.
+        /// Initialize and Bind the UCGrid, also defines the Titles and sets the AddRow Handler.
         /// </summary>
         /// <param name="dataSource">The List which all the ActInputValue are saved</param>
         /// <param name="gridTitle">Sets the Grid Title</param>

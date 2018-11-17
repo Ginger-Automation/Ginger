@@ -94,8 +94,24 @@ namespace Amdocs.Ginger.Repository
             return false;
         }
 
+        RepositoryItemKey mTargetApplicationKey;
         [IsSerializedForLocalRepository]
-        public RepositoryItemKey TargetApplicationKey { get; set; }
+        public RepositoryItemKey TargetApplicationKey
+        {
+            get
+            {
+                return mTargetApplicationKey;
+            }
+            set
+            {
+                RepositoryItemKey previousKey = mTargetApplicationKey;
+                mTargetApplicationKey = value;
+                if ((previousKey == null && value != null) || previousKey.Guid != value.Guid || previousKey.ItemName != value.ItemName)//workaround to make show as modified only when really needed
+                {
+                    OnPropertyChanged(nameof(this.TargetApplicationKey));
+                }
+            }
+        }
 
         #region Output Template
         [IsSerializedForLocalRepository]

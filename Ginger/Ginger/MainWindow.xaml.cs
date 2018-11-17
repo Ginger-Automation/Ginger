@@ -69,7 +69,7 @@ namespace Ginger
             {
                 //General
                 this.WindowState = System.Windows.WindowState.Maximized;
-                Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will apear running from Main Window STA
+                Reporter.MainWindowDispatcher = this.Dispatcher; //Make sure msgbox will appear running from Main Window STA
 
                 //App
                 App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
@@ -521,6 +521,11 @@ namespace Ginger
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
         {
+            if(!ALMIntegration.Instance.AlmConfigurations.UseRest)
+            {
+                Reporter.ToUser(eUserMsgKeys.ALMDefectsUserInOtaAPI, "");
+                return;
+            }
             ALMIntegration.Instance.ALMDefectsProfilesPage();
         }
 
@@ -653,6 +658,12 @@ namespace Ginger
             ShowGingerLog();
         }
 
+        private void btnViewLogDetails_Click(object sender, RoutedEventArgs e)
+        {
+            LogDetailsPage log = new LogDetailsPage();
+            log.ShowAsWindow();
+        }
+
         private void ShowGingerLog()
         {
             string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
@@ -702,7 +713,9 @@ namespace Ginger
 
         private void xLogErrors_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ShowGingerLog();
+            //ShowGingerLog();
+            LogDetailsPage logDetailsPage = new LogDetailsPage();
+            logDetailsPage.ShowAsWindow();
 
             xLogErrorsPnl.Visibility = Visibility.Collapsed;
             mErrorsNum = 0;
@@ -758,6 +771,11 @@ namespace Ginger
         private void xLoadForumSiteMenuItem_Click(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("http://ilrnaginger01:81/");
+        }
+
+        private void xGingerGithubMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/Ginger-Automation");
         }
 
         private void xOpenTicketMenuItem_Click(object sender, RoutedEventArgs e)
@@ -864,8 +882,9 @@ namespace Ginger
                 //Insert
                 int insertIndex = xUserOperationsMainMenuItem.Items.IndexOf(xLogOptionsMenuItem) + 1;
 
-                AddSubMenuItem(xUserOperationsMainMenuItem, "View Log", "Log", btnViewLog_Click, insertIndex++, iconType: eImageType.View);
-                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log Location Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "View Current Log Details", "Log", btnViewLogDetails_Click, insertIndex++, iconType: eImageType.View);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Full Log File", "Log", btnViewLog_Click, insertIndex++, iconType: eImageType.File);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log File Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);
                 AddSubMenuItem(xUserOperationsMainMenuItem, "Open Debug Console", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Screen);
             }
         }
@@ -925,7 +944,8 @@ namespace Ginger
 
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Support Site", "Support", xLoadSupportSiteMenuItem_Click, insertIndex++, iconType: eImageType.Website);
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Q&A Fourm Site", "Support", xLoadForumSiteMenuItem_Click, insertIndex++, iconType: eImageType.Forum);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Ticket to Core Team", "Support", xOpenTicketMenuItem_Click, insertIndex, iconType: eImageType.Ticket);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Ticket to Core Team", "Support", xOpenTicketMenuItem_Click, insertIndex++, iconType: eImageType.Ticket);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger on GitHub", "Support", xGingerGithubMenuItem_Click, insertIndex, iconType: eImageType.GitHub);
             }
         }
 
