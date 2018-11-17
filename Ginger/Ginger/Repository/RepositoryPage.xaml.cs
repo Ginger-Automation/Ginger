@@ -68,6 +68,10 @@ namespace Ginger.Repository
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
+
+            xActivitiesGroupsTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups);
+            xActivitiesTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.Activities);
+            xVariablesTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.Variables);
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -83,9 +87,9 @@ namespace Ginger.Repository
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (tabRepository.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
@@ -97,7 +101,7 @@ namespace Ginger.Repository
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
-            // We do looad on demand
+            // We do load on demand
             if (tabRepository.SelectedItem == tbiActivitiesGroups)
             {
                 if (((string)tbiActivitiesGroups.Tag) != "Done")

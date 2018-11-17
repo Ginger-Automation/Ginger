@@ -106,7 +106,7 @@
                   AlternationCount="2" AlternatingRowBackground="#F6F6F6"
                   LoadingRow="grdMain_LoadingRow" 
                   Background="{StaticResource $BackgroundColor_White}"
-                  BorderBrush="{DynamicResource @Skin1_ColorA}"
+                  BorderBrush="{DynamicResource $Color_DarkBlue}"
                   BorderThickness="1"    
                   ScrollViewer.VerticalScrollBarVisibility="Auto"                  
                   SizeChanged="grdMain_SizeChanged"        
@@ -118,16 +118,16 @@
                         <EventSetter Event="MouseDoubleClick" Handler="Row_DoubleClick"/>
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource @Skin1_ColorF}"/>
+                                <Setter Property="Background" Value="{DynamicResource $SelectionColor_LightBlue}"/>
                                 <!--<Setter Property="Foreground" Value="White"/>-->
-                                <Setter Property="BorderBrush" Value="{DynamicResource @Skin1_ColorA}"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource $Color_DarkBlue}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
                 </DataGrid.RowStyle>
                 <DataGrid.RowHeaderStyle>
                     <Style TargetType="DataGridRowHeader">
-                        <Setter Property="Foreground" Value="{DynamicResource @Skin1_ColorA}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}"/>
                     </Style>
                 </DataGrid.RowHeaderStyle>
             </DataGrid>

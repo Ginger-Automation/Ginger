@@ -76,7 +76,7 @@ namespace Ginger.GherkinLib
                     examples = so.Examples;
                 }
 
-                // Cretae new BF per each scenario
+                // Create new BF per each scenario
 
                 if (examples == null)
                 {
@@ -257,7 +257,7 @@ namespace Ginger.GherkinLib
             // Each scenario is in one ActivitiesGroup
             ActivitiesGroup AG = new ActivitiesGroup();
             AG.Name = sc.Name;
-            if (index != null) AG.Name += " #" + index;  // Adding Scenario index so it will be uniqe
+            if (index != null) AG.Name += " #" + index;  // Adding Scenario index so it will be unique
             mBizFlow.AddActivitiesGroup(AG);
 
             //Add Tags - on ActivitiesGroup and solution if needed
@@ -278,7 +278,7 @@ namespace Ginger.GherkinLib
             
             foreach (Gherkin.Ast.Step step in sc.Steps)
             {
-                // Find the Acitivity from the tempalte BF with All activity, create a copy and add to BF
+                // Find the Activity from the template BF with All activity, create a copy and add to BF
                 string GN = GherkinGeneral.GetActivityGherkinName(step.Text);
                 Activity a = SearchActivityByName(GN);
                 if (a != null)
@@ -340,7 +340,7 @@ namespace Ginger.GherkinLib
             Activity a = null;
             if (a == null)
             {
-                //TODO: need to search only in the optimzied Acitivites group
+                //TODO: need to search only in the optimized Activities group
                 a = (from x in mBizFlow.Activities where x.ActivityName == Name select x).FirstOrDefault();
             }
             return a;

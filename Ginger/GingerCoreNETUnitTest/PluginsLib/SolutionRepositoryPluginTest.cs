@@ -52,7 +52,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             }
 
             SR = new SolutionRepository();
-            SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", addToRootFolders: true, PropertyNameForFileName: nameof(PluginPackage.PluginId));
+            SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", @"~\Plugins", true, "Plugins", PropertyNameForFileName: nameof(PluginPackage.PluginId));
             SR.CreateRepository(folder);
             SR.Open(folder);
             WorkSpace.Instance.SolutionRepository = SR;

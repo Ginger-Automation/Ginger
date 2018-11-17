@@ -76,7 +76,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            //Add direct childrens 
+            //Add direct children's 
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
             ObservableList<HTMLReportConfiguration> templates = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();                   
             templates.CollectionChanged -= TreeFolderItems_CollectionChanged;

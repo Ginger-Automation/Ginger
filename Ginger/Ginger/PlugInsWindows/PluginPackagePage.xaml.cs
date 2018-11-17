@@ -128,9 +128,9 @@ namespace Ginger.PlugInsWindows
             //                if (ctrl.GetType() == typeof(TextBlock))
             //                {
             //                    if (PlugInTab.SelectedItem == tab)
-            //                        ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorB");
+            //                        ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
             //                    else
-            //                        ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("@Skin1_ColorA");
+            //                        ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
 
             //                    ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
             //                }

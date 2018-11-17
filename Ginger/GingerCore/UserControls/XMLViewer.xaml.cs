@@ -26,7 +26,7 @@ namespace GingerCore.UserControls
     /// Interaction logic for XMLViewer.xaml
     /// </summary>
 
-    //TODO: this is dupliacte class with NextGenWPF - create new project Ginger Control and move it 
+    //TODO: this is duplicate class with NextGenWPF - create new project Ginger Control and move it 
     public partial class XMLViewer : UserControl
     {
         private XmlDocument _xmldocument;

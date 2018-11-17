@@ -37,7 +37,7 @@ namespace GingerCore.XPathParser {
 
         Node JoinStep(Node left, Node right);
         
-        // reverseStep is how parser communicates to builder diference between "ansestor[1]" and "(ansestor)[1]" 
+        // reverseStep is how parser communicates to builder difference between "ansestor[1]" and "(ansestor)[1]" 
         Node Predicate(Node node, Node condition, bool reverseStep);
 
         Node Variable(string prefix, string name);

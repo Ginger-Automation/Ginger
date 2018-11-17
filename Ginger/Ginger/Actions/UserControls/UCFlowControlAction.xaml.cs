@@ -209,7 +209,7 @@ namespace Ginger.Actions.UserControls
                                 if (ActionValueComboBox.SelectedItem == null ||
                                     ((ActionValueComboBox.SelectedItem != null && a.Active)))
                                 {
-                                    if (FC.GetGuidFromValue(true) == a.Guid)//we leeting it run each time becase in Convertion mechinsem we have 2 actions with same GUID
+                                    if (FC.GetGuidFromValue(true) == a.Guid)//we letting it run each time because in Conversion mechanism we have 2 actions with same GUID
                                     {
                                         ActionValueComboBox.SelectedItem = CEI;
                                     }

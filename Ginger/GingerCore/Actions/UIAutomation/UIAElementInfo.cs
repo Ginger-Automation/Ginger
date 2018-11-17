@@ -36,7 +36,7 @@ namespace GingerCore.Actions.UIAutomation
         {
             // give the element name for Tree View
             // make it user friendly as much as possible just not empty
-            // start with the text on the contorl 
+            // start with the text on the control 
             // then try Name
             // else get control type and automation ID
             
@@ -50,7 +50,7 @@ namespace GingerCore.Actions.UIAutomation
 
         public override string GetValue()
         {
-            //TODO: check and find the best, if no value take maybe Name or somthing else, maybe change to content instead of value
+            //TODO: check and find the best, if no value take maybe Name or something else, maybe change to content instead of value
           return  ((UIAutomationDriverBase)WindowExplorer).mUIAutomationHelper.GetControlPropertyValue(ElementObject,"Value");
         }
     }

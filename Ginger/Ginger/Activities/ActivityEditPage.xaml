@@ -11,7 +11,7 @@
       h:GingerHelpProvider.HelpString="Activity"
       d:DesignHeight="800" d:DesignWidth="800">
 
-    <Grid Background="{DynamicResource @Skin1_ColorC}">
+    <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
         
         <Grid.RowDefinitions>
             <RowDefinition x:Name="Row1" Height="300"/>
@@ -111,13 +111,13 @@
             </Expander.Content>
         </Expander>
 
-        <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="4" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
+        <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="4" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
 
         <Expander x:Name="ActionsExpander" Grid.Column="0" Grid.Row="5" Margin="0,0,0,0" ExpandDirection="Down" IsExpanded="True" Expanded="ActionsExpander_Expanded" Collapsed="ActionsExpander_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
             <Expander.Header>
                 <Label x:Name="ActionsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
                     <Label.Content>
-                        <GingerCore:ucTextDicResource Text="[Actions]"/>
+                        <GingerCore:ucTextDicResource Text="Actions"/>
                     </Label.Content>
                 </Label>
             </Expander.Header>

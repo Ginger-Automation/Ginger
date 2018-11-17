@@ -10,14 +10,14 @@
 	Title="RunSetActionHTMLReportEmailEditPage">
     
 
-    <Grid Background="{StaticResource @Skin1_ColorC}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="399*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TabControl Grid.RowSpan="2">
             <TabItem Header="Message">
-                <Grid Background="{StaticResource @Skin1_ColorC}">
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="57*"/>
                         <ColumnDefinition Width="238*"/>
@@ -58,8 +58,8 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Attachments" Background="{StaticResource @Skin1_ColorC}">
-                <Grid Background="{StaticResource @Skin1_ColorC}" x:Name="GridAttachment">
+            <TabItem Header="Attachments" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="GridAttachment">
                     <Grid.Resources>
                         <DataTemplate x:Key="ReportAttachment">
                             <CheckBox x:Name="AttachmentsGrid_TemplateIsReport"  Style="{StaticResource @CheckBoxStyle}" IsEnabled="{Binding IsReport}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="{Binding ZipIt}"/>
@@ -75,8 +75,8 @@
             </TabItem>
 
 
-            <TabItem Header="Delivery Method" Background="{StaticResource @Skin1_ColorC}">
-                <Grid Background="{StaticResource @Skin1_ColorC}">
+            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="-2,10,0,10" Width="118">E-mail Method:</Label>

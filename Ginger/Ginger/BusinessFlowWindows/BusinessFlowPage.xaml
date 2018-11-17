@@ -18,16 +18,21 @@
                 <ColumnDefinition Width="180"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="200*"/>
+                <RowDefinition Height="180*"/>
                 <RowDefinition x:Name="Row3" Height="35*" MinHeight="35" />
                 <RowDefinition x:Name="Row4" Height="70*" MinHeight="35" />
                 <RowDefinition x:Name="Row5" Height="105*" MinHeight="35"/>
             </Grid.RowDefinitions>
 
-            <ScrollViewer  Grid.Row="0" Grid.Column="0" Margin="5,0,0,10">
+        <ScrollViewer  Grid.Row="0" Grid.Column="0" Margin="5,0,0,10">
             <StackPanel>
+               
                 <StackPanel  Margin="0,5,10,0">
-                    <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
+                    <DockPanel>
+                        <Label Style="{StaticResource $LabelStyle}" Content="Name:" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+                        <UserControls:ucButton x:Name="xAutomateBtn" ButtonType="RoundTextAndImageButton" ButtonText="Automate" ButtonImageType="Automate" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20"  Click="xAutomateBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Margin="0,5,0,5" HorizontalAlignment="Right" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+                    </DockPanel>
+                    
                     <TextBox x:Name="txtName" AutomationProperties.AutomationId="QA-BizFlowName" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" />
                 </StackPanel>
                 <StackPanel Margin="0,5,10,0">
@@ -36,37 +41,31 @@
                 </StackPanel>
                 <StackPanel Margin="0,5,10,0" >
                     <Label Style="{StaticResource @LabelStyle}">Run Description:</Label>
-                    <BussinesFlow:UCValueExpression x:Name="RunDescritpion" ToolTip="Run Descritpion" HorizontalAlignment="Stretch" HideVEBusinessFlowAndActivityVariables="True" />
+                    <BussinesFlow:UCValueExpression x:Name="RunDescritpion" ToolTip="Run Description" HorizontalAlignment="Stretch" HideVEBusinessFlowAndActivityVariables="True" />
                 </StackPanel>
-                <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="0,5,0,0" HorizontalAlignment="Left" Width="762"/>
-                
-                <StackPanel x:Name="xBusinessflowinfo" Margin="0,15,0,0" >
-                    <StackPanel Orientation="Horizontal"  >
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                            <Label Style="{StaticResource $LabelStyle}" Content="Automation %:"/>
-                            <TextBox x:Name="AutoPrecentageTextBox" Style="{StaticResource $TextBoxStyle}" IsReadOnly="True" Width="40" Margin="5,0,0,0" Text="10%" HorizontalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
-                            <Label Style="{StaticResource $LabelStyle}" Content="Created By:"/>
-                            <TextBox x:Name="CreatedByTextBox" Style="{StaticResource $TextBoxStyle}" Width="125" Margin="5,0,0,0"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
-                            <Frame x:Name="SourceFrame" Width="700"></Frame>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
+                <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="0,5,0,0" HorizontalAlignment="Left" />
 
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel Orientation="Horizontal" >
-                        <Label Style="{StaticResource $LabelStyle}" Content="Status:" Margin="-5,0,0,2" VerticalAlignment="Bottom"/>
+                <DockPanel x:Name="xBusinessflowinfo" Margin="0,10,0,0" >
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" >
+                        <Label Style="{StaticResource $LabelStyle}" Content="Status:" Margin="0,0,0,2" VerticalAlignment="Bottom"/>
                         <ComboBox x:Name="StatusComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="125" Margin="5,0,0,5" VerticalAlignment="Bottom"/>
                     </StackPanel>
-                    <UserControls:ucButton x:Name="xAutomateBtn" ButtonType="RoundTextAndImageButton" ButtonText="Automate" ButtonImageType="Automate" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20"  Click="xAutomateBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Margin="10,20,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" Margin="10,0,10,5" DockPanel.Dock="Right"  HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Created By:" VerticalAlignment="Bottom"/>
+                        <TextBox x:Name="CreatedByTextBox" Style="{StaticResource $TextBoxStyle}" Width="125" Margin="5,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10,0,10,5" DockPanel.Dock="Right"  HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Automation %:" VerticalAlignment="Bottom"/>
+                        <TextBox x:Name="AutoPrecentageTextBox" Style="{StaticResource $TextBoxStyle}" IsReadOnly="True" Width="40" Margin="5,0,0,0" Text="10%" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </DockPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
+                    <Frame x:Name="SourceFrame" Width="700"></Frame>
                 </StackPanel>
             </StackPanel>
-            </ScrollViewer>
-            
-            <TabControl x:Name="xTargetApplication" Grid.Row="0" Grid.Column="1" Margin="0,0,0,10" Background="{StaticResource $BackgroundColor_LightGray}">
+        </ScrollViewer>
+
+        <TabControl x:Name="xTargetApplication" Grid.Row="0" Grid.Column="1" Margin="0,0,0,10" Background="{StaticResource $BackgroundColor_LightGray}">
                 <TabItem  Header="Target Application(s)" Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -118,9 +117,9 @@
                 </Expander.Content>
             </Expander>
 
-            <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
-            <GridSplitter x:Name="RowSplitter2" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
-            <GridSplitter x:Name="RowSplitter3" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource @Skin1_ColorA}" />
+            <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
+            <GridSplitter x:Name="RowSplitter2" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
+            <GridSplitter x:Name="RowSplitter3" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
         </Grid>
     <!--</ScrollViewer>-->
 </Page>
