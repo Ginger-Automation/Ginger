@@ -73,9 +73,7 @@ namespace Ginger.PlugInsWindows
             view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
             ServicesGrid.SetAllColumnsDefaultView(view);
             ServicesGrid.InitViewItems();
-
-            var services = mPluginPackage.LoadServicesInfoFromFile(); 
-            PlugInsActionsGrid.Grid.ItemsSource = services;
+            PlugInsActionsGrid.Grid.ItemsSource = mPluginPackage.Services; 
 
         }
 
@@ -98,14 +96,8 @@ namespace Ginger.PlugInsWindows
             view.GridColsView.Add(new GridColView() { Field = "Description", Header = "Action Type", AllowSorting = true, WidthWeight = 300, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = "UserDescription", Header = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
             PlugInsActionsGrid.SetAllColumnsDefaultView(view);
-            PlugInsActionsGrid.InitViewItems();
-
-            ObservableList<StandAloneAction> list = new ObservableList<StandAloneAction>();
-            foreach(StandAloneAction action in mPluginPackage.LoadServicesInfoFromFile())
-            {
-                list.Add(action);
-            }
-            PlugInsActionsGrid.DataSourceList =  list; 
+            PlugInsActionsGrid.InitViewItems();          
+            PlugInsActionsGrid.DataSourceList = mPluginPackage.Services; 
             
         }
 

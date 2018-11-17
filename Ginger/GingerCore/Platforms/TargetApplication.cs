@@ -32,7 +32,7 @@ namespace GingerCore.Platforms
         public bool Selected { get; set; }
 
         //TODO: how about use GUID or add it for in case
-        private string mAppName;
+        private string mAppName;   // or Plugin ID
         [IsSerializedForLocalRepository]
         public string AppName
         {
@@ -63,5 +63,11 @@ namespace GingerCore.Platforms
                 return;
             }
         }
+
+        [IsSerializedForLocalRepository]
+        public Agent.eAgentType TargetAgentType { get; set; }
+
+        
+        // Plugin agent config here !?
     }
 }

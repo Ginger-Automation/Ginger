@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -68,22 +69,23 @@ namespace Ginger.Actions
             {
                 try
                 {
-                    List<StandAloneAction> actions = pluginPackage.LoadServicesInfoFromFile(); // GetStandAloneActions();
-                    
-                    foreach (StandAloneAction standAloneAction in actions)
+                    foreach (PluginServiceInfo pluginServiceInfo in pluginPackage.Services)
                     {
-                        ActPlugIn act = new ActPlugIn();                        
-                        act.Description = standAloneAction.Description;
-                        act.PluginId = pluginPackage.PluginID;
-                        act.ServiceId = standAloneAction.ServiceId;
-                        act.ActionId = standAloneAction.ActionId;
-                        foreach (var v in standAloneAction.InputValues)
+                        foreach (PluginServiceAction pluginServiceAction in pluginServiceInfo.Actions)
                         {
-                            if (v.Param == "GA") continue; // not needed
-                            act.InputValues.Add(new ActInputValue() { Param = v.Param, ParamTypeEX = v.ParamTypeStr  });
-                        }                        
-                        act.Active = true;                        
-                        PlugInsActions.Add(act);
+                            ActPlugIn act = new ActPlugIn();
+                            act.Description = pluginServiceAction.Description;
+                            act.PluginId = pluginPackage.PluginID;
+                            act.ServiceId = pluginServiceInfo.ServiceId;
+                            act.ActionId = pluginServiceAction.ActionId;
+                            foreach (var v in pluginServiceAction.InputValues)
+                            {
+                                if (v.Param == "GA") continue; // not needed
+                                act.InputValues.Add(new ActInputValue() { Param = v.Param, ParamTypeEX = v.ParamTypeStr });
+                            }
+                            act.Active = true;
+                            PlugInsActions.Add(act);
+                        }
                     }
                 }
                 catch(Exception ex)
@@ -269,6 +271,27 @@ namespace Ginger.Actions
                     //allowing to edit the action
                     ActionEditPage actedit = new ActionEditPage(aNew);
                     actedit.ShowAsWindow();
+
+                    if (aNew is ActPlugIn)
+                    {
+                        ActPlugIn p = (ActPlugIn)aNew;
+                        // TODO: add per group or... !!!!!!!!!
+
+                        //Check if target already exist else add it
+                        TargetApplication targetApplication = (from x in App.BusinessFlow.TargetApplications where x.AppName == p.ServiceId select x).SingleOrDefault();
+                        if (targetApplication == null)
+                        {
+                            App.BusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = p.ServiceId, TargetAgentType = Agent.eAgentType.Service });
+
+                            //Search for default agent which match 
+                            App.AutomateTabGingerRunner.UpdateApplicationAgents();
+                            // TODO: update automate page target/agent
+
+                            // if agent not found auto add or ask user 
+                        }
+
+                    }
+                    
                 }
             }
         }

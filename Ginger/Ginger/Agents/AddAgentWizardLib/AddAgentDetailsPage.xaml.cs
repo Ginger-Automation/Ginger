@@ -16,6 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System.Collections.Generic;
@@ -35,7 +38,7 @@ namespace Ginger.Agents.AddAgentWizardLib
         
         public AddAgentDetailsPage()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }        
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -59,6 +62,16 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
                     xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);
                     xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
+
+                    if (mWizard.Agent.AgentType == Agent.eAgentType.Service)
+                    {
+                        xPluginRadioButton.IsChecked = true;
+                    }
+                    else
+                    {
+                        xDriverRadioButton.IsChecked = true;
+                    }
+                    
                     break;                
             }
 
@@ -88,6 +101,47 @@ namespace Ginger.Agents.AddAgentWizardLib
         private void xDriverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mWizard.Agent.InitDriverConfigs();
-        }        
+        }
+
+        private void xDriverRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mWizard.Agent.AgentType = Agent.eAgentType.Driver;            
+            ShowConfig();
+        }
+
+        private void xPluginRadioButton_Checked(object sender, RoutedEventArgs e)
+        {            
+            mWizard.Agent.AgentType = Agent.eAgentType.Service;
+            mWizard.Agent.DriverType = Agent.eDriverType.NA;
+            ShowConfig();
+        }
+
+        void ShowConfig()
+        {
+            if (mWizard.Agent.AgentType == Agent.eAgentType.Service)
+            {
+                xPluginConfigStackPanel.Visibility = Visibility.Visible;
+                xDriverConfigStackPanel.Visibility = Visibility.Collapsed;
+
+                // Plugin combo
+                xPluginIdComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+                xPluginIdComboBox.DisplayMemberPath = nameof(PluginPackage.PluginID);                
+                xPluginIdComboBox.BindControl(mWizard.Agent, nameof(Agent.PluginId));
+            }
+            else
+            {
+                xPluginConfigStackPanel.Visibility = Visibility.Collapsed;
+                xDriverConfigStackPanel.Visibility = Visibility.Visible;
+            }
+            
+            
+        }
+
+        private void xPluginIdComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            PluginPackage p = (PluginPackage)xPluginIdComboBox.SelectedItem;
+            xServiceIdComboBox.ItemsSource = p.Services;
+            xServiceIdComboBox.DisplayMemberPath = nameof(PluginServiceInfo.ServiceId);
+        }
     }
 }

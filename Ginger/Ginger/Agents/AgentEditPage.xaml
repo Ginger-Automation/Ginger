@@ -13,13 +13,14 @@
     <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="130"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="3"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="125"/>
+            <RowDefinition Height="160"/>
             <RowDefinition Height="25*"/>
             <RowDefinition Height="40"/>
+            <RowDefinition Height="150"/>
             <RowDefinition Height="71*"/>
         </Grid.RowDefinitions>
 
@@ -32,7 +33,12 @@
             <TextBox x:Name="AgentNameTextBox" Style="{StaticResource @TextBoxStyle}" FontSize="14" FontWeight="Bold"/>
             <TextBox x:Name="txtPlatformType" Style="{StaticResource @TextBoxStyle}" Width="250" HorizontalAlignment="Left"  Margin="0,15,0,0"  IsReadOnly="True" Background="#FFE8E8EC" />
             <ComboBox x:Name="driverTypeComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,15,0,0"/>
+
+            
+
         </StackPanel>
+
+        
 
         <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Vertical">
             <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Description:"/>
@@ -52,6 +58,19 @@
         </StackPanel>-->
 
         <usercontrols:ucButton x:Name="xTestBtn" Grid.Row="2" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="0,0,10,0" ButtonType="RoundTextAndImageButton" ButtonText="Test Agent" ButtonImageType="Play" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ToolTip="Test will start the Agent, run test Action and will close it"/>
-        <Frame x:Name="DriverConfigFrmae" Grid.Row="3" Grid.ColumnSpan="3"></Frame>
+
+        <StackPanel x:Name="xPluginConfigStackPanel" Visibility="Visible" Grid.Row="3" Grid.ColumnSpan="3">
+            <StackPanel Margin="0,20,0,0">
+                <Label Content="Plugin Id" Style="{StaticResource @LabelStyle}"/>
+                <ComboBox x:Name="xPluginIdComboBox"  Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+            </StackPanel>
+
+            <StackPanel Margin="0,20,0,0">
+                <Label Content="Service Id" Style="{StaticResource @LabelStyle}"/>
+                <ComboBox x:Name="xServiceIdComboBox"  Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+            </StackPanel>
+        </StackPanel>
+
+        <Frame x:Name="DriverConfigFrmae" Grid.Row="4" Grid.ColumnSpan="3"></Frame>
     </Grid>
 </Page>

@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Newtonsoft.Json;
 using System;
@@ -86,13 +87,13 @@ namespace Amdocs.Ginger.Repository
             if (list == null)
             {
                 list = new ObservableList<StandAloneAction>();
-                foreach (PluginPackage p in mPluginPackages)
-                {
-                    foreach (StandAloneAction SAA in p.GetStandAloneActions())
-                    {
-                        list.Add(SAA);
-                    }
-                }
+                //foreach (PluginPackage p in mPluginPackages)
+                //{
+                //    foreach (StandAloneAction SAA in p.GetStandAloneActions())
+                //    {
+                //        list.Add(SAA);
+                //    }
+                //}
             }
             return list;
         }
@@ -271,7 +272,7 @@ namespace Amdocs.Ginger.Repository
         //        }
 
 
-        public void StartService(string PluginId)
+        public System.Diagnostics.Process StartService(string PluginId)
         {
             if (string.IsNullOrEmpty(PluginId))
             {
@@ -296,8 +297,8 @@ namespace Amdocs.Ginger.Repository
             procStartInfo.UseShellExecute = true;             
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
-            proc.Start();
-
+            proc.Start();            
+            return proc;
             //TODO: delete the temp file - or create temp files tracker with auto delete 
         }
 
@@ -305,7 +306,8 @@ namespace Amdocs.Ginger.Repository
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
         {
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
-            StandAloneAction standAloneAction = (from x in pluginPackage.LoadServicesInfoFromFile() where x.ServiceId == serviceId && x.ActionId == actionId select x).SingleOrDefault();
+            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
+            PluginServiceAction standAloneAction = (from x in pluginServiceInfo.Actions where x.ActionId == actionId select x).SingleOrDefault();
             return standAloneAction.InputValues;
         }
 

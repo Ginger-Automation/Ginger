@@ -75,7 +75,8 @@ namespace Ginger.Run
             RunWithoutDriver,
             RunOnDriver,
             RunInSimulationMode,
-            RunOnPlugIn
+            RunOnPlugIn,
+            RunOnPlugInDriver
         }
 
         public enum eRunOptions
@@ -1316,7 +1317,19 @@ namespace Ginger.Run
             else
             {
                 if (typeof(ActPlugIn).IsAssignableFrom(act.GetType()))
-                    ActExecutorType = eActionExecutorType.RunOnPlugIn;
+                {
+                    ActPlugIn pp =  (ActPlugIn)act;
+                    bool IsRunOnDriver = WorkSpace.Instance.PlugInsManager.IsRunOnPluginDriver(pp.PluginId, pp.ServiceId);
+                    if (IsRunOnDriver)
+                    {
+                        ActExecutorType = eActionExecutorType.RunOnPlugInDriver;
+                    }
+                    else
+                    {
+                        ActExecutorType = eActionExecutorType.RunOnPlugIn;
+                    }
+                    
+                }
                 else if (typeof(ActWithoutDriver).IsAssignableFrom(act.GetType()))
                     ActExecutorType = eActionExecutorType.RunWithoutDriver;
                 else
@@ -1334,8 +1347,9 @@ namespace Ginger.Run
         public void PrepActionVE(Act act)
         {
             ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
-            if (act.LocateValue != null)
+            if (!string.IsNullOrEmpty(act.LocateValue))
             {
+                
                 VE.Value = act.LocateValue;
                 act.LocateValueCalculated = VE.ValueCalculated;
             }
@@ -1556,6 +1570,9 @@ namespace Ginger.Run
 
                         case eActionExecutorType.RunOnPlugIn:
                             ExecutePlugInAction((ActPlugIn)act);
+                            break;
+                        case eActionExecutorType.RunOnPlugInDriver:
+                            ExecutePlugInActionOnDriver((ActPlugIn)act);
                             break;
 
                         case eActionExecutorType.RunInSimulationMode:
@@ -1803,36 +1820,54 @@ namespace Ginger.Run
             }
         }
 
+        private void ExecutePlugInActionOnDriver(ActPlugIn actPlugin)
+        {
+            SetCurrentActivityAgent();            
+            GingerNodeInfo GNI = CurrentBusinessFlow.CurrentActivity.CurrentAgent.GingerNodeInfo;
+            ExecutePlugInAction(actPlugin, GNI);
+        }
 
-        private void ExecutePlugInAction(ActPlugIn actPlugin)     
+
+        private void ExecutePlugInAction(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo = null)     
         {
             // first verify we have service ready or start service
             Stopwatch st = Stopwatch.StartNew();
-            GingerNodeInfo GNI = GetGingerNode(actPlugin);
+            GingerNodeInfo GNI = null;
+            
+            if (gingerNodeInfo != null)
+            {
+                GNI = gingerNodeInfo;
+            }
+            else
+            {
+                // running stand alone plugin action
+                GNI = GetGingerNode(actPlugin);
 
-            if (GNI == null)
-            {                   
-                // call plugin to start service and wait for ready
-                WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId);  
-
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                while (GNI == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
-                {
-                    Thread.Sleep(500);
-                    GNI = GetGingerNode(actPlugin);
-                }
                 if (GNI == null)
                 {
-                    actPlugin.Error = "GNI not found";  //temp fix me!!!   !!!!
-                    throw new Exception("Timeout waiting for service to start");
-                }
-            }
+                    // call plugin to start service and wait for ready
+                    WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId);
 
-            GNI.Status = "Reserved";
+                    Stopwatch stopwatch = Stopwatch.StartNew();
+                    while (GNI == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
+                    {
+                        Thread.Sleep(500);
+                        GNI = GetGingerNode(actPlugin);
+                    }
+                    if (GNI == null)
+                    {
+                        actPlugin.Error = "GNI not found";  //temp fix me!!!   !!!!
+                        throw new Exception("Timeout waiting for service to start");
+                    }
+                }
+
+                GNI.Status = "Reserved";
+            }
 
             // Pack the action to payload
             NewPayLoad p = CreateActionPayload(actPlugin);
 
+            // keep the proxy on agent
             GingerNodeProxy GNP = new GingerNodeProxy(GNI);
             
             GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
@@ -1886,8 +1921,12 @@ namespace Ginger.Run
             }
 
             GNI.IncreaseActionCount();
-            GNI.Status = "Ready";
 
+            if (gingerNodeInfo == null)
+            {
+                // standalone plugin action release the node
+                GNI.Status = "Ready";
+            }
             st.Stop();
             long millis = st.ElapsedMilliseconds;
             actPlugin.ExInfo += Environment.NewLine + "Elapsed: " +  millis + "ms";
@@ -1936,11 +1975,11 @@ namespace Ginger.Run
         }
 
         private void DoFlowControl(Act act)
-        {
+        {            
             try
-            {
+            {                                                 
                 //TODO: on pass, on fail etc...
-                bool IsStopLoop = false;
+                bool IsStopLoop = false;                
                 ValueExpression VE = new ValueExpression(this.ProjEnvironment, this.CurrentBusinessFlow, this.DSList);
 
                 foreach (FlowControl FC in act.FlowControls)
@@ -1988,7 +2027,7 @@ namespace Ginger.Run
                         switch (FC.FlowControlAction)
                         {
                             case FlowControl.eFlowControlAction.MessageBox:
-                                VE.Value = FC.Value;                                
+                                VE.Value = FC.Value;
                                 Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, VE.ValueCalculated);
                                 break;
                             case FlowControl.eFlowControlAction.GoToAction:
@@ -2105,7 +2144,7 @@ namespace Ginger.Run
                     // Go out the foreach in case we have a goto so no need to process the rest of FCs
                     if (IsStopLoop) break;
                 }
-
+                
 
                 // If all above completed and no change on flow then move to next in the activity unless it is the last one
                 if (!IsStopLoop)
@@ -2710,7 +2749,7 @@ namespace Ginger.Run
             finally
             {
                 st.Stop();
-                Activity.Elapsed = st.ElapsedMilliseconds;
+                Activity.Elapsed = st.ElapsedMilliseconds;                
                 if (!statusCalculationIsDone)
                 {
                     CalculateActivityFinalStatus(Activity);
@@ -3513,8 +3552,12 @@ namespace Ginger.Run
                     foreach (TargetApplication TA in BF.TargetApplications)
                     {
                         if (bfsTargetApplications.Where(x => x.AppName == TA.AppName).FirstOrDefault() == null)
+                        {
                             bfsTargetApplications.Add(TA);
+                        }
                     }
+
+                    
                 }
             }
             else if (CurrentBusinessFlow != null) // Automate Tab

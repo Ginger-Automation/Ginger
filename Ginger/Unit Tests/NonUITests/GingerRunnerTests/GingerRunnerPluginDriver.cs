@@ -19,8 +19,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
     [Level1]
     public class GingerRunnerPluginDriver
     {
-        static BusinessFlow mBF;
-        static GingerRunner mGR;
+        static BusinessFlow mBusinessFlow;
+        static GingerRunner mGingerRunner;
+        static string mAppName = "Memo app";
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
@@ -28,66 +29,76 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             AutoLogProxy.Init("Unit Tests");
             
             // Create new solution
-
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "MyDriver BF";
-            mBF.Active = true;
+            mBusinessFlow = new BusinessFlow();
+            mBusinessFlow.Activities = new ObservableList<Activity>();
+            mBusinessFlow.Name = "MyDriver BF";
+            mBusinessFlow.Active = true;
             Platform p = new Platform();
             p.PlatformType = ePlatformType.PluginOther;   // !!!!!!!!!!!!!!!!!!!!!!!!!!
-            mBF.Platforms = new ObservableList<Platform>();
-            mBF.Platforms.Add(p);
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "Memo app" });
+            mBusinessFlow.Platforms = new ObservableList<Platform>();
+            mBusinessFlow.Platforms.Add(p);
+            mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = mAppName });
 
-            mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGingerRunner = new GingerRunner();
+            mGingerRunner.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
-            Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.Plugin;   // ??????????????
+            Agent agent = new Agent();
+            agent.AgentType = Agent.eAgentType.Service;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(a);
+            mGingerRunner.SolutionAgents = new ObservableList<Agent>();
+            mGingerRunner.SolutionAgents.Add(agent);
 
-            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "Memo app", Agent = a });
-            mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "Memo app", Platform = ePlatformType.PluginOther });
-            mGR.BusinessFlows.Add(mBF);
+            mGingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = mAppName, Agent = agent });
+            mGingerRunner.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGingerRunner.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.PluginOther });
+            mGingerRunner.BusinessFlows.Add(mBusinessFlow);
 
 
             // Add the plugin to solution
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = Ginger.App.CreateGingerSolutionRepository();
 
-            Directory.Delete(@"c:\temp\sol1", true);
-            WorkSpace.Instance.SolutionRepository.CreateRepository(@"c:\temp\sol1");  // !!!!!!!!!!!!!!!!!
-            WorkSpace.Instance.SolutionRepository.Open(@"c:\temp\sol1");
-            
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            WorkSpace.Instance.PlugInsManager.AddPluginPackage(@"C:\Users\yaronwe\source\repos\Ginger-Core-Plugin\PluginDriverExample4\bin\Debug\netcoreapp2.1");
- 
+            string solutionfolder = TestResources.getGingerUnitTesterTempFolder("sol1");
+            if (Directory.Exists(solutionfolder))
+            {
+                Directory.Delete(solutionfolder,true);
+            }            
+            WorkSpace.Instance.SolutionRepository.CreateRepository(solutionfolder);
+            WorkSpace.Instance.SolutionRepository.Open(solutionfolder);
+
+            string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins\PluginDriverExample4");
+            WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder); 
         }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            // mGingerRunner.StopAgents();
+        }
+
 
         [TestMethod]
         public void PluginSay()
         {
             //Arrange
             ResetBusinessFlow();
+            WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
 
-            Activity a1 = new Activity() { Active = true, TargetApplication = "Memo app"};                        
-            mBF.Activities.Add(a1);
+            Activity a1 = new Activity() { Active = true, TargetApplication = mAppName };                        
+            mBusinessFlow.Activities.Add(a1);
 
             ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "MemoService", ActionId = "Say",  Active = true };
             act1.AddOrUpdateInputParamValue("text", "hello");
             a1.Acts.Add(act1);
 
             //Act            
-            mGR.RunRunner();
+            mGingerRunner.RunRunner();
             string outVal = act1.GetReturnValue("I said").Actual;
 
             //Assert
             Assert.AreEqual("hello", outVal, "outVal=hello");
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(a1.Status, eRunStatus.Passed);            
+            Assert.AreEqual(eRunStatus.Passed, mBusinessFlow.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, a1.Status);            
         }
 
 
@@ -97,32 +108,33 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             //Arrange
             ResetBusinessFlow();
+            WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
 
-            Activity a0 = new Activity() { Active = true, TargetApplication = "Memo app" };
-            mBF.Activities.Add(a0);
+            Activity activitiy1 = new Activity() { Active = true, TargetApplication = mAppName };
+            mBusinessFlow.Activities.Add(activitiy1);
             
             for (int i = 0; i < 1000; i++)
             {
                 ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "MemoService", ActionId = "Say", Active = true };
                 act1.AddOrUpdateInputParamValue("text", "hello " + i);
-                a0.Acts.Add(act1);
+                activitiy1.Acts.Add(act1);
             }
             
             //Act
-            mGR.RunRunner();
+            mGingerRunner.RunRunner();
 
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed, "mBF.RunStatus");
-            Assert.AreEqual(mBF.Activities.Count(), (from x in mBF.Activities where x.Status == eRunStatus.Passed select x).Count(), "All activities should Passed");
-            Assert.IsTrue(a0.Elapsed < 10000, "a0.Elapsed Time less than 10000ms/10sec");
+            Assert.AreEqual(mBusinessFlow.RunStatus, eRunStatus.Passed, "mBF.RunStatus");
+            Assert.AreEqual(eRunStatus.Passed, activitiy1.Status);            
+            Assert.IsTrue(activitiy1.Elapsed < 20000, "a0.Elapsed Time less than 20000ms/10sec");
         }
 
 
         private void ResetBusinessFlow()
         {
-            mBF.Activities.Clear();
-            mBF.RunStatus = eRunStatus.Pending;
+            mBusinessFlow.Activities.Clear();
+            mBusinessFlow.RunStatus = eRunStatus.Pending;
         }
 
 

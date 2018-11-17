@@ -19,9 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
-using GingerCoreNET.Drivers;
 using GingerCoreNET.Drivers.CommunicationProtocol;
-// using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,11 +30,8 @@ namespace GingerCoreNET.DriversLib
 {
     //This class is for end driver side communication - the GingerNodeAgent will connect to it and send commands
     public class GingerNode
-    {
-        public string ConnectionString { get; set; }
-
-        // private PluginDriverBase mDriver;
-        private IGingerService mService;   // one service per GingerNode
+    {                
+        private object mService;   // one service per GingerNode, can be any class object marked with [GingerService] Attr like:  [GingerService("MyDriver", "My driver who can speak")]
         private string mServiceID;
 
         // We use Hub client to send Register/UnRegister message - to GingerGrid manager
@@ -45,17 +40,17 @@ namespace GingerCoreNET.DriversLib
 
         //TODO: check what we can hide from here and move to GingerCore  -- all the communcation Payload stuff move from here
 
-        public GingerNode(DriverCapabilities DriverCapabilities, IGingerService service)
-        {
+        //public GingerNode(DriverCapabilities DriverCapabilities, IGingerService service)
+        //{
 
-            //TODO: remove me!?
-            mService = service;
+        //    //TODO: remove me!?
+        //    mService = service;
             
-        }
+        //}
 
-        public GingerNode(IGingerService service)
+        public GingerNode(object gingerServiceObject)
         {
-            mService = service;
+            mService = gingerServiceObject;
 
             GingerServiceAttribute attr = (GingerServiceAttribute)Attribute.GetCustomAttribute(mService.GetType(), typeof(GingerServiceAttribute), false);
             mServiceID = attr.Id;
@@ -143,6 +138,23 @@ namespace GingerCoreNET.DriversLib
             else
             {
                 throw new Exception("Unable to find Ginger Grid at: " + HubIP + ":" + HubPort);
+            }
+        }
+
+        // Being used in plugin - DO NOT Remove will show 0 ref
+        public void NotifyNodeClosing()
+        {
+            Console.WriteLine("GingerNode is closing");
+            //Unregister the service in GG
+            NewPayLoad PLUnregister = new NewPayLoad(SocketMessages.Unregister);
+            PLUnregister.AddValue(mSessionID);
+            PLUnregister.ClosePackage();
+            NewPayLoad RC = mHubClient.SendRequestPayLoad(PLUnregister);
+
+            if (RC.Name == "OK")
+            {
+                Console.WriteLine("GingerNode removed successsfully from Grid");
+
             }
         }
 
@@ -442,8 +454,8 @@ namespace GingerCoreNET.DriversLib
 
         private NewPayLoad CloseDriver()
         {
-            Console.WriteLine("Payload - Close Driver");
-            ((IGingerDriver)mService).Stop();
+            Console.WriteLine("Payload - Stop Session");
+            ((IServiceSession)mService).StopSession();
             NewPayLoad PLRC = new NewPayLoad("OK");
             PLRC.ClosePackage();
             return PLRC;            
@@ -451,8 +463,8 @@ namespace GingerCoreNET.DriversLib
 
         private NewPayLoad StartDriver()
         {
-            Console.WriteLine("Payload - Start Driver");
-            ((IGingerDriver)mService).Start();
+            Console.WriteLine("Payload - Start Session");
+            ((IServiceSession)mService).StartSession();
             NewPayLoad PLRC = new NewPayLoad("OK");
             PLRC.ClosePackage();
             return PLRC;
