@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" ItemType="BusinessFlow" CreatedBy="RAVIKET" Created="201811021558" GingerVersion="3.0.0.0" Version="7" LastUpdateBy="RAVIKET" LastUpdate="201811021634" />
+<BusinessFlow Active="False" Guid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" Name="Business Flow 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="4fa2ffd2-dc73-4f53-9d68-bad6db7b64dc" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" TargetApplication="Amdo CSP">
+<Variables>
+<VariablePasswordString Guid="2626ce25-81e8-467d-ae62-4963f5233c3c" MappedOutputType="None" Name="TestActvPasswordVar" ParentGuid="00000000-0000-0000-0000-000000000000" Password="+S+B0OE+KDopqrquyaOF2Q==" Value="+S+B0OE+KDopqrquyaOF2Q==" />
+<VariableDynamic Guid="bcae4cb8-73c2-4987-9ec4-c0b079ae7297" MappedOutputType="None" Name="TestActvDynamicVar" ParentGuid="00000000-0000-0000-0000-000000000000" ValueExpression="12" />
+<VariableList Guid="0a01ee4a-e1d2-47cf-9f15-319fb2e3443d" MappedOutputType="None" Name="TestActvListVar" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Apple" ValueList="Apple&#xD;&#xA;Banana&#xD;&#xA;Cherry&#xD;&#xA;" />
+<VariableRandomNumber Guid="29572718-3c5e-4158-96ef-64602b8325da" Interval="0" MappedOutputType="None" Max="15" Min="10" Name="TestActvRandomNumVar" ParentGuid="00000000-0000-0000-0000-000000000000" Value="13.824331560286435571357106697" />
+<VariableRandomString Guid="46001dc8-376f-434c-a9b0-00505c9f1100" IsDigit="True" IsUpperCase="True" MappedOutputType="None" Max="2" Min="2" Name="TestActvRandomStrVar" ParentGuid="00000000-0000-0000-0000-000000000000" Value="87" />
+<VariableSequence Guid="af1f5f90-1f6f-49e0-93d6-0005b13e7039" Interval="1" MappedOutputType="None" Max="99" Min="11" Name="TestActvSequenceVar" ParentGuid="00000000-0000-0000-0000-000000000000" Value="11" />
+<VariableString Guid="d9d32fe4-32d4-414b-b3b7-bf08aef81e37" InitialStringValue="hello" MappedOutputType="None" Name="TestActvStringVar" ParentGuid="00000000-0000-0000-0000-000000000000" Value="hello" />
+<VariableTimer Guid="fd6f13fb-bfe8-4ebe-a49a-5ffdac0b6076" MappedOutputType="None" Name="TestActvTimerVar" ParentGuid="00000000-0000-0000-0000-000000000000" TimerUnit="Seconds" Value="0" />
+</Variables>
+</Activity>
+</Activities>
+
+<TargetApplications>
+<TargetApplication AppName="Amdo CSP" Guid="74f2f292-f647-4336-9b17-588850dbd70c" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+
+<Variables>
+<VariablePasswordString Guid="107e8fcf-893d-43a4-9f3d-d893e62ddd7b" MappedOutputType="None" Name="TestPasswordVar" ParentGuid="00000000-0000-0000-0000-000000000000" Password="+S+B0OE+KDopqrquyaOF2Q==" Value="+S+B0OE+KDopqrquyaOF2Q==" />
+<VariableDynamic Guid="c6145eec-375c-4f77-8330-2c51e78793f5" MappedOutputType="None" Name="TestDynamicVar" ParentGuid="00000000-0000-0000-0000-000000000000" ValueExpression="12" />
+<VariableList Guid="ef71713e-81ec-42c2-b477-7f571bb656d6" MappedOutputType="None" Name="TestListVar" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Apple" ValueList="Apple&#xD;&#xA;Banana&#xD;&#xA;Cherry&#xD;&#xA;" />
+<VariableRandomNumber Guid="49bbc2b2-f261-4a14-bfd0-09ec1557faff" Interval="0" MappedOutputType="None" Max="15" Min="10" Name="TestRandomNumVar" ParentGuid="00000000-0000-0000-0000-000000000000" Value="11.158732692714862679944591900" />
+<VariableRandomString Guid="6e68db2e-1106-4ea7-8a85-42f7861af99a" IsDigit="True" IsUpperCase="True" MappedOutputType="None" Max="2" Min="2" Name="TestRandomStrVar" ParentGuid="00000000-0000-0000-0000-000000000000" Value="57" />
+<VariableSequence Guid="33b94433-e602-4fc4-825d-c5c1ba7dcba5" Interval="1" MappedOutputType="None" Max="99" Min="11" Name="TestSequenceVar" ParentGuid="00000000-0000-0000-0000-000000000000" Value="11" />
+<VariableString Guid="37e405bb-65f5-4eb5-83d2-407acada981b" InitialStringValue="hello" MappedOutputType="None" Name="TestStringVar" ParentGuid="00000000-0000-0000-0000-000000000000" Value="hello" />
+<VariableTimer Guid="56afde51-c078-4002-b96f-4038d5cfac83" MappedOutputType="None" Name="TestTimerVar" ParentGuid="00000000-0000-0000-0000-000000000000" TimerUnit="Seconds" Value="0" />
+</Variables>
+</BusinessFlow></GingerRepositoryItem>

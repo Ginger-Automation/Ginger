@@ -108,6 +108,7 @@
     <Compile Include="POMs\WizardPOM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\GingerSolutionRepositoryTest.cs" />
+    <Compile Include="Repository\GingerSolutionRepositorySyncTest.cs" />
     <Compile Include="Scenarios.cs" />
     <Compile Include="TestAssemblyInit.cs" />
     <Compile Include="UserControlsLib\ImageMakerLib\ImageMakerControlTest.cs" />
@@ -168,6 +169,19 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\Solutions\AgentsTest\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\DosConsole\Agents\MyDosApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\DosConsole\BusinessFlows\DOS_RegressionTestingSuite.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\DosConsole\Documents\Scripts\GetSolutionFolder.vbs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\DosConsole\Environments\Default.Ginger.Environment.xml" />
+    <Content Include="TestResources\Solutions\DosConsole\Ginger.Solution.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\Solutions\ReportSR\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
