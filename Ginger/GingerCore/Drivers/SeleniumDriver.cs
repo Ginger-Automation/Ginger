@@ -2967,7 +2967,7 @@ namespace GingerCore.Drivers
             {
                 ActUIElement aev = (ActUIElement)act;
                 Enum.TryParse<eLocateBy>(aev.ElementLocateBy.ToString(), true, out locateBy);
-                locateValue = aev.ElementLocateValue;
+                locateValue = aev.ElementLocateValueForDriver;
             }
 
             if (locateBy == eLocateBy.POMElement)
