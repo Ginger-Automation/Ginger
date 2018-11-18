@@ -28,7 +28,7 @@ using System.Threading;
 
 namespace GingerCoreNET.DriversLib
 {
-    //This class is for end driver side communication - the GingerNodeAgent will connect to it and send commands
+    //This class is for end driver side communication - the GingerNodeProxy will connect to it and send commands
     public class GingerNode
     {                
         private object mService;   // one service per GingerNode, can be any class object marked with [GingerService] Attr like:  [GingerService("MyDriver", "My driver who can speak")]
@@ -38,15 +38,6 @@ namespace GingerCoreNET.DriversLib
         GingerSocketClient2 mHubClient;
         Guid mSessionID;
 
-        //TODO: check what we can hide from here and move to GingerCore  -- all the communication Payload stuff move from here
-
-        //public GingerNode(DriverCapabilities DriverCapabilities, IGingerService service)
-        //{
-
-        //    //TODO: remove me!?
-        //    mService = service;
-            
-        //}
 
         public GingerNode(object gingerServiceObject)
         {
@@ -67,13 +58,10 @@ namespace GingerCoreNET.DriversLib
 
         public void StartGingerNode(string configFileName)
         {
-            NodeConfigFile nodeConfigFile = new NodeConfigFile(configFileName);
-            
+            NodeConfigFile nodeConfigFile = new NodeConfigFile(configFileName);            
             StartGingerNode(nodeConfigFile.Name, nodeConfigFile.GingerGridHost, nodeConfigFile.GingerGridPort);
         }
-
         
-
         public void StartGingerNode(string Name, string HubIP, int HubPort)
         {
             Console.WriteLine("Starting Ginger Node");
@@ -117,15 +105,12 @@ namespace GingerCoreNET.DriversLib
             NewPayLoad PLRegister = new NewPayLoad(SocketMessages.Register);
             PLRegister.AddValue(Name);
             PLRegister.AddValue(mServiceID);
-            PLRegister.AddValue(OSVersion);  // TODO: translate to normal name?
-            PLRegister.AddValue(MachineName);  // TODO: if local host write local host
-            PLRegister.AddValue(IP);
-            
+            PLRegister.AddValue(OSVersion);  
+            PLRegister.AddValue(MachineName); 
+            PLRegister.AddValue(IP);            
             PLRegister.ClosePackage();
             NewPayLoad RC = mHubClient.SendRequestPayLoad(PLRegister);
-            
-            //TODO: we can disconnect from hub, make Register/Unregister a function
-
+                        
             if (RC.Name == "SessionID")
             {                
                 mSessionID = RC.GetGuid();                
@@ -203,6 +188,8 @@ namespace GingerCoreNET.DriversLib
        
         private NewPayLoad AttachDisplay(NewPayLoad pl)
         {
+            // DO NOT remove will be fixed back later
+
             //string host = pl.GetValueString();
             //int port = pl.GetValueInt();
             //RemoteObjectsClient c = new RemoteObjectsClient();            
@@ -238,19 +225,8 @@ namespace GingerCoreNET.DriversLib
             Console.WriteLine(">>> Payload - Run Ginger Action");
             string ActionID = pl.GetValueString();
             Console.WriteLine("Received RunAction, ActionID - " + ActionID);
-
-
-            ActionHandler AH = null;
-            //if (mDriver != null)
-            //{
-            //    AH = (from x in this.mDriver.ActionHandlers where x.ID == ActionID select x).FirstOrDefault();
-            //}
-            //else if (mService != null)
-            //{
-                AH = (from x in mServiceActions where x.ServiceActionId == ActionID select x).FirstOrDefault();
-            //}
             
-
+            ActionHandler AH = (from x in mServiceActions where x.ServiceActionId == ActionID select x).FirstOrDefault();
             if (AH == null)
             {
                 Console.WriteLine("Unknown ActionID to handle - " + ActionID);
@@ -258,16 +234,13 @@ namespace GingerCoreNET.DriversLib
             }
 
             //Conver the Payload to GingerAction
-
-            NodeGingerAction NGA = new NodeGingerAction();
-            AH.NodeGingerAction = NGA;
-            //AH.GingerAction.ID = ActionID;   // !!!!!!!!!!!!!!!!!!!!! why do we need to keep the ID twice !!
-
+            NodeGingerAction nodeGingerAction = new NodeGingerAction();
+            AH.NodeGingerAction = nodeGingerAction;            
             Console.WriteLine("Found Action Handler, setting parameters");
-            List<NewPayLoad> Params = pl.GetListPayLoad();
 
+            // setting parameters
+            List<NewPayLoad> Params = pl.GetListPayLoad();            
             Console.WriteLine("Found " + Params.Count + " parameters");
-
             ActionInputParams actionInputParams = new ActionInputParams();
 
             foreach (NewPayLoad PLP in Params)
@@ -287,41 +260,20 @@ namespace GingerCoreNET.DriversLib
                 }
             }
 
-            //Console.WriteLine("Setting params done");
-
-            //TODO: print to console:  Running Action: GotoURL(URL="aaa");  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            // TODO: cache  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            //if (mDriver != null)
-            //{
-            //    mDriver.BeforeRunAction(AH.GingerAction);
-            //    mDriver.RunAction(AH.GingerAction);
-            //    mDriver.AfterRunAction(AH.GingerAction);
-            //}
-            //else if (mService != null)
-            //{
+            // TODO: add hookd for before and after using interface
+            //if (IBeforeAfterAction != null)            
             //    mService.BeforeRunAction(AH.GingerAction);
             // mService.RunAction(AH.GingerAction);
             
-            // GA.Output = new ActionOutput();
-            RunServiceAction(AH, actionInputParams, NGA);
-            //    mService.AfterRunAction(AH.GingerAction);
-            //}
-
+            ExecuteMethod(AH, actionInputParams, nodeGingerAction);
+            
             // We send back only item which can change - ExInfo and Output values
             NewPayLoad PLRC = new NewPayLoad("ActionResult");   //TODO: use const
-            PLRC.AddValue(NGA.ExInfo);
-            PLRC.AddValue(NGA.Errors);
-            
-
-            PLRC.AddListPayLoad(GetOutpuValuesPayLoad(NGA.Output.OutputValues));
-
-
+            PLRC.AddValue(nodeGingerAction.ExInfo);
+            PLRC.AddValue(nodeGingerAction.Errors);            
+            PLRC.AddListPayLoad(GetOutpuValuesPayLoad(nodeGingerAction.Output.OutputValues));
             PLRC.ClosePackage();
-            return PLRC;
-
-            
+            return PLRC;            
         }
 
         private List<NewPayLoad> GetOutpuValuesPayLoad(object values)
@@ -329,7 +281,7 @@ namespace GingerCoreNET.DriversLib
             throw new NotImplementedException();
         }
 
-        public static void RunServiceAction(ActionHandler AH, ActionInputParams p, NodeGingerAction GA)  
+        public static void ExecuteMethod(ActionHandler AH, ActionInputParams p, NodeGingerAction GA)  
         {            
             try
             {                    
@@ -410,17 +362,16 @@ namespace GingerCoreNET.DriversLib
             }
         }
 
-
-        // Maybe use later check if faster than reflection
+        
         List<ActionHandler> mServiceActions = null;
         private void ScanService()
         {
             // Scan once and cache
-
-            if (mServiceActions != null) return;
-
+            if (mServiceActions != null)
+            {
+                return;
+            }
             Console.WriteLine("Scanning Service: " + mService.GetType().FullName) ;
-
             mServiceActions = new List<ActionHandler>();
 
             // Register all actions which have 'GingerAction' attribute
@@ -476,7 +427,6 @@ namespace GingerCoreNET.DriversLib
             List<NewPayLoad> OutputValuesPayLoad = new List<NewPayLoad>();
             foreach (NodeActionOutputValue AOV in AOVs)
             {
-
                 NewPayLoad PLO = new NewPayLoad(SocketMessages.ActionOutputValue);  
                 PLO.AddValue(AOV.Param);
                 PLO.AddEnumValue(AOV.GetParamType());
