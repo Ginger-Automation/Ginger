@@ -783,19 +783,10 @@
     <Content Include="TestResources\Plugins\PluginDriverExample4\GingerCoreNET.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestResources\Plugins\PluginDriverExample4\GingerCoreNET.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="TestResources\Plugins\PluginDriverExample4\GingerPluginCore.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestResources\Plugins\PluginDriverExample4\GingerPluginCore.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.pdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\WindowsApp\WindowsTestApplication.exe">
