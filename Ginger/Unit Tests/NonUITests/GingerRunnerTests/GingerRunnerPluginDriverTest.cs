@@ -17,7 +17,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 {
     [TestClass]
     [Level1]
-    public class GingerRunnerPluginDriver
+    public class GingerRunnerPluginDriverTest
     {
         static BusinessFlow mBusinessFlow;
         static GingerRunner mGingerRunner;
