@@ -268,6 +268,11 @@ namespace GingerWPFUnitTest
 
         }
 
-
+        internal void ReloadSolution()
+        {
+            string path = Ginger.App.UserProfile.Solution.ContainingFolderFullPath;
+            CloseSolution();
+            OpenSolution(path);
+        }
     }
 }

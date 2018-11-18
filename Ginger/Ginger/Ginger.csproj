@@ -516,6 +516,7 @@
     <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Repository\RepositoryItemFactory.cs" />
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
