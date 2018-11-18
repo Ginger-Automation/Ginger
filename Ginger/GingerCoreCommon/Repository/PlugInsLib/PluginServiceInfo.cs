@@ -13,6 +13,9 @@ namespace Amdocs.Ginger.Common
         [JsonProperty]
         public string ServiceId { get; set; }
 
+        [JsonProperty]
+        public string Description { get; set; }
+
         List<PluginServiceActionInfo> mActions = new List<PluginServiceActionInfo>();
 
         [JsonProperty]
