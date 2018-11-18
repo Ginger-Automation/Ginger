@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
+using Amdocs.Ginger.Plugin.Core;
 using GingerCoreNET.Drivers;
 using GingerCoreNET.DriversLib;
 using GingerCoreNET.RunLib;
@@ -51,9 +52,12 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //DC.Platform = "Web";   //TODO: use const
             //GingerNode GN = new GingerNode(DC, DummyDriver1);
             //GN.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: HubPort);
+            GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
+            gingerNodeStarter.StartNode("N1", new DummyDriver());
 
+            gingerNodeStarter.StartNode("N2", new DummyDriver());
 
-            DummyDriver DummyDriver2 = new DummyDriver();
+            // DummyDriver DummyDriver2 = new DummyDriver();
             //DriverCapabilities DC2 = new DriverCapabilities();
             //DC2.OS = "Mac";
             //DC2.Platform = "Java";
@@ -81,7 +85,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
 
-
+        [Ignore]
         [TestMethod]
         public void ListGingerNodes()
         {
