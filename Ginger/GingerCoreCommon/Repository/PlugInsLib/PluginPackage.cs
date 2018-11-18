@@ -212,7 +212,7 @@ namespace Amdocs.Ginger.Repository
                             // pluginServiceInfo.Actions = GetActionFromDLL(pluginServiceInfo);
 
                             // GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);
-                            PluginServiceAction action = new PluginServiceAction();
+                            PluginServiceActionInfo action = new PluginServiceActionInfo();
                             action.ActionId = token.Id;                            
                             action.Description = token.Description;
                             foreach (ParameterInfo PI in MI.GetParameters())

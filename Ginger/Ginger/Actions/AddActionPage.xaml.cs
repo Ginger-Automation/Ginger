@@ -71,7 +71,7 @@ namespace Ginger.Actions
                 {
                     foreach (PluginServiceInfo pluginServiceInfo in pluginPackage.Services)
                     {
-                        foreach (PluginServiceAction pluginServiceAction in pluginServiceInfo.Actions)
+                        foreach (PluginServiceActionInfo pluginServiceAction in pluginServiceInfo.Actions)
                         {
                             ActPlugIn act = new ActPlugIn();
                             act.Description = pluginServiceAction.Description;

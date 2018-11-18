@@ -8,7 +8,7 @@ namespace Amdocs.Ginger.Common.Repository.PlugInsLib
 {
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class PluginServiceAction
+    public class PluginServiceActionInfo
     {
         [JsonProperty]
         public string ActionId { get; set; }
