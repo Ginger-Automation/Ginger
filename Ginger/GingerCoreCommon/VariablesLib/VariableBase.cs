@@ -325,7 +325,8 @@ namespace GingerCore.Variables
                 if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
                     mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
                     mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ScreenShots" ||
-                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType" ||                   
+                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType" ||
+                    mi.Name == nameof(ActInputValue.ListDynamicValue) ||
                     mi.Name == "GetNameForFileName" || mi.Name == "FilePath") continue;
                
                 //Get the attr value
