@@ -191,7 +191,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void GetOnlinePluginReleases()
         {
             //Arrange       
-            PluginsManager pluginsManager = new PluginsManager();
+            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
             ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
             OnlinePluginPackage PACT = (from x in list where x.Name == "PACT" select x).SingleOrDefault();
 
