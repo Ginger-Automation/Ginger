@@ -14,15 +14,14 @@
                 <Label Margin="0,0,10,0" Style="{StaticResource @LabelStyle}" Content="Select Report Template:"/>
                 <ComboBox x:Name="CurrentTemplatePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource @InputComboBoxStyle}" SelectionChanged="CurrentTemplatePickerCbx_SelectionChanged" ></ComboBox>
             </StackPanel>
-            <CheckBox x:Name="UsePermanentHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Content="Save HTML report to Permanent folder"></CheckBox>
-            <CheckBox x:Name="UseAlternativeHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Content="Save HTML report to Alternative folder" Checked="UseAlternativeHTMLReportFolderCbx_Checked" Unchecked="UseAlternativeHTMLReportFolderCbx_Unchecked"></CheckBox>
-            <StackPanel x:Name="HTMLReportFolderPanel" Orientation="Vertical" IsEnabled="False">
-                
+            <CheckBox x:Name="UseAlternativeHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Content="Use custom root path for report folder" Checked="UseAlternativeHTMLReportFolderCbx_Checked" Unchecked="UseAlternativeHTMLReportFolderCbx_Unchecked"></CheckBox>
+            <StackPanel x:Name="HTMLReportFolderPanel" Orientation="Vertical" IsEnabled="False" Visibility="Hidden">
                 <StackPanel Orientation="Horizontal">
                     <TextBox x:Name="HTMLReportFolderTextBox" Margin="5" Width="500" Style="{StaticResource @TextBoxStyle}" ></TextBox>
                     <Button x:Name="SelectFolderButton" Style="{StaticResource @InputButtonStyle}" Width="55" Margin="5,0,0,0" VerticalAlignment="Center" Click="SelectFolderButton_Click">Browse</Button>
                 </StackPanel>
             </StackPanel>
+            <CheckBox x:Name="UsePermanentHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5,15" Content="Keep single report folder for all Run Set executions "></CheckBox>
         </StackPanel>
     </Grid>
 </Page>
