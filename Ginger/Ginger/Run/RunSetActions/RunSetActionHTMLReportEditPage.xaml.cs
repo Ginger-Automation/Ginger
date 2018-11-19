@@ -87,6 +87,7 @@ namespace Ginger.Run.RunSetActions
             if ((bool)UseAlternativeHTMLReportFolderCbx.IsChecked)
             {
                 HTMLReportFolderPanel.IsEnabled = true;
+                HTMLReportFolderPanel.Visibility = Visibility.Visible;
             }
         }
 
@@ -100,6 +101,7 @@ namespace Ginger.Run.RunSetActions
             if (!(bool)UseAlternativeHTMLReportFolderCbx.IsChecked)
             {
                 HTMLReportFolderPanel.IsEnabled = false;
+                HTMLReportFolderPanel.Visibility = Visibility.Hidden;
             }
         }
     }
