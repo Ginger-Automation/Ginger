@@ -112,7 +112,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (HTMLReportConfiguration.IsDefault == true)
             {
-                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Template is already defualt");
+                Reporter.ToUser(eUserMsgKeys.StaticInfoMessage, "Template is already default");
                 return;
             }
 

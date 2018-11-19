@@ -29,6 +29,8 @@ using System.Text.RegularExpressions;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions.Common;
 
 namespace Ginger.AnalyzerLib
 {
@@ -64,7 +66,7 @@ namespace Ginger.AnalyzerLib
             //            AA.HowToFix = "Convert to new action"; // TODO: get name of new action
             //            AA.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
             //            AA.IssueType = eType.Warning;
-            //            AA.Impact = "New action can have more capabilites and more stable, good to upgrade";
+            //            AA.Impact = "New action can have more capabilities and more stable, good to upgrade";
             //            AA.Severity = eSeverity.Medium;
             //            AA.FixItHandler = UpgradeAction;
             //            AA.ActivitySourcePlatform = ActivitySourcePlatform;                        
@@ -337,7 +339,10 @@ namespace Ginger.AnalyzerLib
 
                 }
             }
+
             
+
+
             GlobalAppModelParameter.GetListOfUsedGlobalParameters(a, ref mUsedGlobalParameters);
             if (mUsedGlobalParameters.Count > 0)
             {
@@ -365,7 +370,7 @@ namespace Ginger.AnalyzerLib
                 foreach (string Param in mMissingStoreToGlobalParameters)
                 {
                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                    AA.Description = "The Output Value with Parameter '" + Param + "' is having store to Parameter which doesnt exist anymore";
+                    AA.Description = "The Output Value with Parameter '" + Param + "' is having store to Parameter which doesn't exist anymore";
                     AA.Details = "The Output Value with Parameter: '" + Param + "' can be found at " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '" + BusinessFlow.Name + "' => " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + parentActivity.ActivityName + "' =>" + "Action '" + a.Description + "' ";
                     AA.HowToFix = " Create new Parameter and change to it in the 'Store to' dropdown under the above path";
                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
@@ -397,6 +402,59 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
+            if (a.LocateBy == eLocateBy.POMElement || ((a is ActUIElement) && ((ActUIElement)a).ElementLocateBy == eLocateBy.POMElement))
+            {
+                try
+                {
+                    string[] pOMandElementGUIDs = ((ActUIElement)a).ElementLocateValue.Split('_');
+                    Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+                    ApplicationPOMModel POM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+                    if (POM == null)
+                    {
+                        AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
+                        AA.Description = "Action's mapped Page Objects Model is missing";
+                        AA.Details =  "Action " + a.ActionDescription + " has mapped Page Objects Model which is missing, reason can be that the Page Objects Model has been deleted after mapping it to this action.";
+                        AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Page Objects Model and Element";
+                        AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;                
+                        AA.IssueType = eType.Error;
+                        AA.Impact =  "Action will fail during execution";
+                        AA.Severity = eSeverity.High;
+
+                        IssuesList.Add(AA);
+                    }
+                    else
+                    {
+                        Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                        ElementInfo selectedPOMElement = (ElementInfo)POM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                        if (selectedPOMElement == null)
+                        {
+                            AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
+                            AA.Description = "Page Objects Model Element which mapped to this action is missing";
+                            AA.Details = "Action " + a.ActionDescription + " has mapped Page Objects Model Element which is missing, reason can be that the Element has been deleted after mapping it to this action.";
+                            AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Element";
+                            AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;                
+                            AA.IssueType = eType.Error;
+                            AA.Impact = "Action will fail during execution";
+                            AA.Severity = eSeverity.High;
+
+                            IssuesList.Add(AA);
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
+                    AA.Description = "Action's mapped Page Objects Model or Element is invalid";
+                    AA.Details = "Action " + a.ActionDescription + " has invalid mapped Page Objects Model or Element.";
+                    AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Page Objects Model and Element";
+                    AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                    AA.IssueType = eType.Error;
+                    AA.Impact = "Action will fail during execution";
+                    AA.Severity = eSeverity.High;
+
+                    IssuesList.Add(AA);
+                }
+            }
                 return IssuesList;
         }
 

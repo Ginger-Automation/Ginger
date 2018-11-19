@@ -26,7 +26,7 @@ using Amdocs.Ginger.Common.Enums;
 namespace Amdocs.Ginger.Common.UIElement
 {
     /// <summary>
-    /// Base class for differnet Control type for each driver, enable to show unified list in Window Explorer Grid
+    /// Base class for different Control type for each driver, enable to show unified list in Window Explorer Grid
     /// </summary>
     /// 
     // We can persist ElementInfo - for example when saving DOR Page UIElements, but when used in Window Explorer there is no save
@@ -78,6 +78,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public enum eElementStatus
         {
+            Unknown,
             Pending,
             Passed,
             Failed
@@ -109,8 +110,9 @@ namespace Amdocs.Ginger.Common.UIElement
                     case eElementStatus.Failed:
                         return eImageType.Failed;
                     case eElementStatus.Pending:
-                    default:
                         return eImageType.Pending;
+                    default:
+                        return eImageType.Unknown;
                 }
             }
         }
@@ -133,20 +135,31 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetElementTitle()
         {
             // we return Name unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mElementTitle;
         }
 
-
+        string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }
+        public string Description
+        {
+            get
+            {
+                return mDescription;
+            }
+            set
+            {
+                mDescription = value;
+                OnPropertyChanged(nameof(Description));
+            }
+        }
 
-        
+
         public override string ItemName { get { return this.ElementName; } set { this.ElementName = value; } }
 
         private string mElementName = null;
         [IsSerializedForLocalRepository]
-        public string ElementName // elemnt name is given by the user when he maps UI elements and give them name to use in DOR
+        public string ElementName // element name is given by the user when he maps UI elements and give them name to use in DOR
         {
             get
             {
@@ -157,6 +170,7 @@ namespace Amdocs.Ginger.Common.UIElement
             set
             {
                 mElementName = value;
+                OnPropertyChanged(nameof(ElementName));
             }
         }
 
@@ -180,7 +194,11 @@ namespace Amdocs.Ginger.Common.UIElement
             {
                 return mElementTypeEnum;
             }
-            set { mElementTypeEnum = value; }
+            set
+            {
+                mElementTypeEnum = value;
+                OnPropertyChanged(nameof(ElementTypeEnum));
+            }
         }
 
         public string ElementTypeEnumDescription
@@ -215,7 +233,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetElementType()
         {
             // we return ElementType unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mElementType;
         }
 
@@ -234,7 +252,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetValue()
         {
             // we return XPath unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return mValue;
         }
 
@@ -267,7 +285,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public virtual string GetAbsoluteXpath()
         {
             // we return XPath unless it was overridden as expected
-            // So we keep backword compatibility until all drivers do it correctly
+            // So we keep backward compatibility until all drivers do it correctly
             return null;
         }
 
@@ -301,6 +319,8 @@ namespace Amdocs.Ginger.Common.UIElement
         NA,
         [EnumValueDescription("")]
         Unknown,
+        [EnumValueDescription("Page Objects Model Element")]
+        POMElement,
         [EnumValueDescription("By ID")]
         ByID,
         [EnumValueDescription("By Name")]
@@ -363,8 +383,6 @@ namespace Amdocs.Ginger.Common.UIElement
         ByModelName,
         [EnumValueDescription("By CSS Selector")]
         ByCSSSelector,
-        [EnumValueDescription("Page Objects Model Element")]
-        POMElement,
     }
 
     public enum eElementType

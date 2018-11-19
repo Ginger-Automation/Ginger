@@ -34,7 +34,7 @@ namespace GingerPlugIns.TextEditorLib
 
         //Output
         /// <summary>
-        /// Will contain all lines numbers which the errors are occures.
+        /// Will contain all lines numbers which the errors are occurs.
         /// </summary>
         public List<int> ErrorLines { get; set; }
 
@@ -49,7 +49,7 @@ namespace GingerPlugIns.TextEditorLib
         public string SuccessMessage { get; set; }
 
         /// <summary>
-        /// Will contain all Wraning messages 
+        /// Will contain all Warning messages 
         /// </summary>
         public string WarnMessage { get; set; }
     }

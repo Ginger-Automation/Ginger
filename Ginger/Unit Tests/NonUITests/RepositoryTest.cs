@@ -621,7 +621,7 @@ namespace UnitTests.NonUITests
         {
             //Arrange
             BusinessFlow BF = new BusinessFlow() { Name = "Biz flow VariableSelectionList" };
-                        
+
             VariableSelectionList sl = new VariableSelectionList();
             sl.Name = "Var 2";
             sl.OptionalValuesList = new ObservableList<OptionalValue>();
@@ -638,14 +638,37 @@ namespace UnitTests.NonUITests
             sl.OptionalValuesList[0].Value = "aaaa";
             sl.OptionalValuesList.Add(new OptionalValue("44"));
             sl.OptionalValuesList.Add(new OptionalValue("55"));
-            
+
             BF.RestoreFromBackup();
 
             //Assert
-           Assert.AreEqual(BF.Variables.Count, 1, "BF.Variables.Count");
-           Assert.AreEqual(BF.Variables[0], sl, "BF.Variables[0] REF");
-           Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList[0].Value, "11", "BF.Variables[0].Value");
-           Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count(), 3, "(VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count()");
+            Assert.AreEqual(BF.Variables.Count, 1, "BF.Variables.Count");
+            Assert.AreEqual(BF.Variables[0], sl, "BF.Variables[0] REF");
+            Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList[0].Value, "11", "BF.Variables[0].Value");
+            Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count(), 3, "(VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count()");
+        }
+
+
+        [TestMethod]
+        public void BackUpRestoreVariableSelectionList()
+        {
+            //Arrange            
+                        
+            VariableSelectionList sl = new VariableSelectionList();
+            sl.Name = "Var 2";
+            sl.OptionalValuesList = new ObservableList<OptionalValue>();
+            sl.OptionalValuesList.Add(new OptionalValue("11"));            
+
+            //Act
+            sl.SaveBackup();
+
+            // Modify the SL
+            sl.OptionalValuesList[0].Value = "00";            
+            
+            sl.RestoreFromBackup();
+
+            //Assert           
+           Assert.AreEqual("11", sl.OptionalValuesList[0].Value, "OptionalValuesList[0].Value");           
         }
 
         //[TestMethod]

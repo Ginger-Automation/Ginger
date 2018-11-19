@@ -592,7 +592,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                             }
                                         }
 
-                                        // Bussines Flow Level
+                                        // Businessflow Level
                                         foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.BusinessFlowFieldsToSelect.Where(x => (x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
                                         {
                                             if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Seq)
@@ -961,10 +961,10 @@ namespace Ginger.Reports.GingerExecutionReport
                                     {
                                         fieldsValuesHTMLTableCells.Append("<td>" + ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac) + "</td>");
                                     }
-                                    else
+                                    else if (selectedField_internal.FieldKey == ActivityReport.Fields.ActivityGroupName)
                                     {
                                         if (ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac) != null)
-                                        {                                           
+                                        {
                                             fieldsValuesHTMLTableCells.Append(@"<td><a href='.\" + lastbusinessflow + "\\" + @"ActivityGroups\" + ExtensionMethods.folderNameNormalazing(ac.ActivityGroupSeq + " " + ExtensionMethods.OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString())) +
                                                                                           @"\ActivityGroupReport.html'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + @"</a></td>");
                                         }
@@ -972,6 +972,10 @@ namespace Ginger.Reports.GingerExecutionReport
                                         {
                                             fieldsValuesHTMLTableCells.Append("<td></td>");
                                         }
+                                    }
+                                    else
+                                    {
+                                        fieldsValuesHTMLTableCells.Append("<td>" + ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac) + "</td>");
                                     }
                                 }
                             }
@@ -2562,8 +2566,8 @@ namespace Ginger.Reports.GingerExecutionReport
             StringBuilder mStyleBundle = new StringBuilder();
             if (!currentTemplate.UseLocalStoredStyling)
             {
-                //1. copy the assest folder from installtion folder to the root report folder
-                //2. convert logos back to images and place them in the assest or logos/images
+                //1. copy the assets folder from installation folder to the root report folder
+                //2. convert logos back to images and place them in the assets or logos/images
                 //3. update links and style to be relative to the above       
                 if (!Directory.Exists(HTMLReportMainFolder + "/assets"))
                 {
@@ -2628,9 +2632,10 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 var HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
                 HTMLReportConfiguration defualtConfig = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                // TODO - need to delete, template always should be initialize with fields.
                 if (defualtConfig != null)
                 {
-                    l.currentTemplate = Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig); ;
+                    l.currentTemplate = Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig);
                 }
                 else
                 {
@@ -2648,6 +2653,10 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 if ((mHTMLReportsFolder != null) && (mHTMLReportsFolder != string.Empty))
                 {
+                    if(isHTMLReportPermanentFolderNameUsed)
+                    {
+                        mHTMLReportsFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
+                    }
                     l.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder);
                 }
                 else

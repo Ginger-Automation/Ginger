@@ -106,14 +106,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)
-        {           
-            mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+        {   
             if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == MessageBoxResult.No)
             {
                 return;
             }
+            mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+            if (mDataSourceTablePage != null)
+            {
+                mDataSourceTablePage.RefreshGrid();
+            }
             DSTableDetails.DataTable.RejectChanges();
-            DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;            
+            DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;                        
         }
                
         private void DeleteTable(object sender, RoutedEventArgs e)
@@ -176,12 +180,22 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void Rename(object sender, RoutedEventArgs e)
-        {            
+        {         
+            if (Reporter.ToUser(eUserMsgKeys.LooseLocalChanges) == MessageBoxResult.No)
+            {
+                return;
+            }
             string oldName = DSTableDetails.Name;
             RenameItem("Table Name:", DSTableDetails, DataSourceTable.Fields.Name);
             try
             {
                 DSTableDetails.DSC.RenameTable(oldName, DSTableDetails.Name);
+                DSTableDetails.DataTable.RejectChanges();
+                if (mDataSourceTablePage != null)
+                {
+                    mDataSourceTablePage.RefreshGrid();
+                }                
+                DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;
             }
             catch(Exception ex)
             {

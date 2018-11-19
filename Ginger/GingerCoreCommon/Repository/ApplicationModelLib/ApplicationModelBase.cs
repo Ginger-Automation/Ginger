@@ -94,8 +94,24 @@ namespace Amdocs.Ginger.Repository
             return false;
         }
 
+        RepositoryItemKey mTargetApplicationKey;
         [IsSerializedForLocalRepository]
-        public RepositoryItemKey TargetApplicationKey { get; set; }
+        public RepositoryItemKey TargetApplicationKey
+        {
+            get
+            {
+                return mTargetApplicationKey;
+            }
+            set
+            {
+                RepositoryItemKey previousKey = mTargetApplicationKey;
+                mTargetApplicationKey = value;
+                if ((previousKey == null && value != null) || previousKey.Guid != value.Guid || previousKey.ItemName != value.ItemName)//workaround to make show as modified only when really needed
+                {
+                    OnPropertyChanged(nameof(this.TargetApplicationKey));
+                }
+            }
+        }
 
         #region Output Template
         [IsSerializedForLocalRepository]
@@ -152,39 +168,42 @@ namespace Amdocs.Ginger.Repository
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
-                if (mi.Name == "OptionalValuesString" || mi.Name == "Path" || mi.Name == "PlaceHolder" || mi.Name == "FileName" || mi.Name == "TagsKeys" || mi.Name == "AppModelParameters" || mi.Name == "ContainingFolderFullPath" || mi.Name == "mName" || mi.Name == "Name" || mi.Name == "ItemName" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" || mi.Name == "ObjFileExt" || mi.Name == "ObjFolderName") continue;
-
-                PropertyInfo PI = item.GetType().GetProperty(mi.Name);
-                dynamic value = null;
-                if (mi.MemberType == MemberTypes.Property)
-                    value = PI.GetValue(item);
-                else if (mi.MemberType == MemberTypes.Field)
-                    value = item.GetType().GetField(mi.Name).GetValue(item);
-
-                if (value != null && value is IObservableList)
-                {
-                    foreach (object o in value)
-                        UpdateParamsPlaceholder(o, placeHoldersToReplace, newVarName);
-                }
-                else if (value != null && value is string)
-                {
-                    try
+                    if (mi.Name == "ItemImageType" || mi.Name == "OptionalValuesString" || mi.Name == "Path" || mi.Name == "PlaceHolder" || mi.Name == "FileName" || mi.Name == "TagsKeys" || mi.Name == "AppModelParameters" || mi.Name == "ContainingFolderFullPath" || mi.Name == "mName" || mi.Name == "Name" || mi.Name == "ItemName" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" || mi.Name == "ObjFileExt" || mi.Name == "ObjFolderName" || mi.Name == "ItemNameField")
                     {
-                        string valueString = (string)PI.GetValue(item);
-                        foreach (string palceHolder in placeHoldersToReplace)
-                        {
-                            bool notifyPropertyChanged = false;
-                            if (valueString.Contains(palceHolder))
-                                notifyPropertyChanged = true;
-                            valueString = valueString.Replace(palceHolder, newVarName);
-                            PI.SetValue(item, valueString);
-
-                            if (notifyPropertyChanged)
-                                ((dynamic)item).OnPropertyChanged(mi.Name);
-                        }
+                        continue;
                     }
-                    catch (Exception) { }
-                }
+
+                    PropertyInfo PI = item.GetType().GetProperty(mi.Name);
+                    dynamic value = null;
+                    if (mi.MemberType == MemberTypes.Property)
+                        value = PI.GetValue(item);
+                    else if (mi.MemberType == MemberTypes.Field)
+                        value = item.GetType().GetField(mi.Name).GetValue(item);
+
+                    if (value != null && value is IObservableList)
+                    {
+                        foreach (object o in value)
+                            UpdateParamsPlaceholder(o, placeHoldersToReplace, newVarName);
+                    }
+                    else if (value != null && value is string)
+                    {
+                        try
+                        {
+                            string valueString = (string)PI.GetValue(item);
+                            foreach (string palceHolder in placeHoldersToReplace)
+                            {
+                                bool notifyPropertyChanged = false;
+                                if (valueString.Contains(palceHolder))
+                                    notifyPropertyChanged = true;
+                                valueString = valueString.Replace(palceHolder, newVarName);
+                                PI.SetValue(item, valueString);
+
+                                if (notifyPropertyChanged)
+                                    ((dynamic)item).OnPropertyChanged(mi.Name);
+                            }
+                        }
+                        catch (Exception) { }
+                    }
             }
         }
 

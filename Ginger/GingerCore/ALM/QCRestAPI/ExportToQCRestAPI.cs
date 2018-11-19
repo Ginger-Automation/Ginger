@@ -1,17 +1,17 @@
-﻿using Amdocs.Ginger.Common;
+﻿using ALM_Common.DataContracts;
+using ALMRestClient;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.Activities;
+using GingerCore.Variables;
 using QCRestClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using ALM_Common.DataContracts;
-using GingerCore.Variables;
-using System.Reflection;
-using GingerCore.Actions;
-using ALMRestClient;
-using Amdocs.Ginger.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Reflection;
 
 namespace GingerCore.ALM.QCRestAPI
 {
@@ -20,7 +20,7 @@ namespace GingerCore.ALM.QCRestAPI
 
         #region public Methods
         /// <summary>
-        /// Export Activities Group details to QC, can be used for creating new matching QC Test Case or updating an exisitng one
+        /// Export Activities Group details to QC, can be used for creating new matching QC Test Case or updating an existing one
         /// </summary>
         /// <param name="activitiesGroup">Activities Group to Export</param>
         /// <param name="mappedTest">The QC Test Case which mapped to the Activities Group (in case exist) and needs to be updated</param>
@@ -115,11 +115,11 @@ namespace GingerCore.ALM.QCRestAPI
                             || publishToALMConfig.FilterStatus == FilterByStatus.All)
                             {
                                 QCTestInstance tsTest = null;
-                                //go by TC ID = TC Instancs ID
+                                //go by TC ID = TC Instances ID
                                 tsTest = qcTSTests.Find(x => x.TestId == activGroup.ExternalID && x.Id == activGroup.ExternalID2);
                                 if (tsTest == null)
                                 {
-                                    //go by Linked TC ID + TC Instancs ID
+                                    //go by Linked TC ID + TC Instances ID
                                     tsTest = qcTSTests.Find(x => ImportFromQCRest.GetTSTestLinkedID(x) == activGroup.ExternalID && x.Id == activGroup.ExternalID2);
                                 }
                                 if (tsTest == null)
@@ -430,7 +430,7 @@ namespace GingerCore.ALM.QCRestAPI
                 foreach (VariableBase var in activity.Variables)
                 {
                     paramsSigns += "&lt;&lt;&lt;" + var.Name.ToLower() + "&gt;&gt;&gt;<br />";
-                    //try to add the paramter to the test case parameters list
+                    //try to add the parameter to the test case parameters list
                     try
                     {
                         QCTestCaseParam newParam = new QCTestCaseParam();
@@ -583,7 +583,7 @@ namespace GingerCore.ALM.QCRestAPI
                     foreach (VariableBase var in identifiedActivity.Variables)
                     {
                         paramsSigns += "&lt;&lt;&lt;" + var.Name.ToLower() + "&gt;&gt;&gt;<br />";
-                        //try to add the paramter to the test case parameters list
+                        //try to add the parameter to the test case parameters list
                         try
                         {
                             QCTestCaseParam newParam = new QCTestCaseParam();

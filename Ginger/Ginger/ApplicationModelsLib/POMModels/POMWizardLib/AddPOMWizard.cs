@@ -100,23 +100,27 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
             }
 
-            if (mPomModelsFolder !=null)
-                mPomModelsFolder.AddRepositoryItem(POM);   
+            if (mPomModelsFolder != null)
+                mPomModelsFolder.AddRepositoryItem(POM);
             else
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
 
             //close all Agents raised in Wizard
             CloseStartedAgents();
-
         }
 
 
         public override void Cancel()
         {
-            base.Cancel();
+            if (mAgent != null && mAgent.Driver != null && mAgent.Driver.IsDriverBusy)
+            {
+                mAgent.Driver.mStopProcess = true;
+            }
 
             //close all Agents raised in Wizard
             CloseStartedAgents();
+
+            base.Cancel();
         }
 
         private void CloseStartedAgents()
@@ -124,8 +128,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (OptionalAgentsList != null)
             {
                 foreach (Agent agent in OptionalAgentsList)
-                    if (agent != null && agent.Status == Agent.eStatus.Running && agent.Tag!=null && agent.Tag.ToString() == "Started with Agent Control")
-                        agent.Close();
+                    if (agent != null && agent.Status == Agent.eStatus.Running && agent.Tag != null && agent.Tag.ToString() == "Started with Agent Control" && !agent.Driver.IsDriverBusy)
+                    {
+                        if (Reporter.ToUser(eUserMsgKeys.AskIfToCloseAgent, agent.Name) == System.Windows.MessageBoxResult.Yes)
+                        {
+                            agent.Close();
+                        }
+                    }
             }
         }
 

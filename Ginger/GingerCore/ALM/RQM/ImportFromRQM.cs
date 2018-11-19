@@ -16,27 +16,27 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GingerCore.Activities;
-using System.Text.RegularExpressions;
-using System.Web;
-using GingerCore.Variables;
-using System.Xml;
-using RQM_Repository.Data_Contracts;
-using RQM_Repository;
-using System.IO;
-using ALM_Common.DataContracts;
 using ALM_Common.Abstractions;
-using System.Collections.Concurrent;
-using System.ComponentModel;
-using System.Reflection;
-using Newtonsoft.Json;
-using GingerCore.External;
+using ALM_Common.DataContracts;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using GingerCore.Activities;
+using GingerCore.External;
+using GingerCore.Variables;
+using Newtonsoft.Json;
+using RQM_Repository;
+using RQM_Repository.Data_Contracts;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web;
+using System.Xml;
 
 namespace GingerCore.ALM.RQM
 {
@@ -56,7 +56,7 @@ namespace GingerCore.ALM.RQM
             {
                 if (testPlan == null) return null;
 
-                //Creat Business Flow
+                //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
                 busFlow.Name = testPlan.Name;
                 busFlow.ExternalID = "RQMID=" + testPlan.RQMID;
@@ -67,7 +67,7 @@ namespace GingerCore.ALM.RQM
                 //Create Activities Group + Activities for each TC
                 foreach (RQMTestCase tc in testPlan.TestCases)
                 {
-                    //Add the TC steps as Activities if not already on the Activties group
+                    //Add the TC steps as Activities if not already on the Activities group
                     RQMTestScript selectedScript = tc.TestScripts.Where(y => y.Name == tc.SelectedTestScriptName).ToList().FirstOrDefault();
                     if (selectedScript == null)
                     {
@@ -244,8 +244,7 @@ namespace GingerCore.ALM.RQM
                                 {
                                     //no such variable value option so add it
                                     stepActivityVarOptionalVar = new OptionalValue(param.Value);
-                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                    ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                    
                                     if (isflowControlParam == true)
                                         stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                                 }
@@ -312,7 +311,7 @@ namespace GingerCore.ALM.RQM
                     {
                         if (ExportToRQM.GetExportedIDString(tcToBeUpdatedID, "RQMID") == tc.RQMID)
                         {
-                            //Add the TC steps as Activities if not already on the Activties group
+                            //Add the TC steps as Activities if not already on the Activities group
                             RQMTestScript selectedScript = tc.TestScripts.Where(y => y.Name == tc.SelectedTestScriptName).ToList().FirstOrDefault();
                             if (selectedScript == null)
                             {
@@ -481,8 +480,7 @@ namespace GingerCore.ALM.RQM
                                         {
                                             //no such variable value option so add it
                                             stepActivityVarOptionalVar = new OptionalValue(param.Value);
-                                            ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                            ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                                            ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                            
                                             if (isflowControlParam == true)
                                                 stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                                         }
@@ -527,7 +525,7 @@ namespace GingerCore.ALM.RQM
                 foreach (RQMTestCase tc in testPlan.TestCases)
                 {
 
-                    //Add the TC steps as Activities if not already on the Activties group
+                    //Add the TC steps as Activities if not already on the Activities group
                     RQMTestScript selectedScript = tc.TestScripts.Where(y => y.Name == tc.SelectedTestScriptName).ToList().FirstOrDefault();
                     if (selectedScript == null)
                     {
@@ -696,8 +694,7 @@ namespace GingerCore.ALM.RQM
                                 {
                                     //no such variable value option so add it
                                     stepActivityVarOptionalVar = new OptionalValue(param.Value);
-                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                    ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                    
                                     if (isflowControlParam == true)
                                         stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                                 }

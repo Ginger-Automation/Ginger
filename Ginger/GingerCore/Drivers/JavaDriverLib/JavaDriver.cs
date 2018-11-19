@@ -511,7 +511,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     PLClose.ClosePackage();
                     Response = Send(PLClose);
 
-                    //TODO: Add a separate aciton to close the driver if closing the applicaiton window
+                    //TODO: Add a separate action to close the driver if closing the applicaiton window
                     //if (!(Response.IsErrorPayLoad()))
                     //{
                     //    CloseDriver();                      
@@ -1753,7 +1753,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return list;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             List<ElementInfo> list = new List<ElementInfo>();
 

@@ -91,8 +91,8 @@ namespace Ginger.Run.RunSetActions
         }
 
         //User can attach several templates to the email
-        // Attch template + RI
-        // Attch its own file
+        // attach template + RI
+        // attach its own file
         [IsSerializedForLocalRepository]
         public ObservableList<EmailAttachment> EmailAttachments = new ObservableList<EmailAttachment>();
 
@@ -389,12 +389,12 @@ namespace Ginger.Run.RunSetActions
             HTMLReportConfiguration currentTemplate = new HTMLReportConfiguration();
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
             currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault();
-            System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
-            CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
             if (currentTemplate == null)
             {
                 currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
+            System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
+            CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
             Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
             if ((RI.ReportInfoRootObject == null) || (RI.ReportInfoRootObject.GetType() == typeof(Object)))
             {
@@ -710,7 +710,7 @@ namespace Ginger.Run.RunSetActions
                                             }
                                         }
 
-                                        // Bussines Flow Level
+                                        // Business Flow Level
                                         foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.BusinessFlowFieldsToSelect.Where(x => (x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
                                         {
                                             if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Seq)

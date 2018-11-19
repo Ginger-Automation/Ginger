@@ -40,6 +40,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using System;
+using Ginger.SolutionWindows.TreeViewItems;
 
 namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 {
@@ -150,7 +151,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             ModelParametersGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteParams_Clicked));
             ModelParametersGrid.SetbtnClearAllHandler(new RoutedEventHandler(ClearAllParams_Clicked));
-            ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parametrs to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
+            ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parameters to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
             ModelParametersGrid.AddToolbarTool(eImageType.DataSource, "Export Parameters to DataSource", new RoutedEventHandler(ExportParametersToDataSource));
         }
 
@@ -220,8 +221,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             try
             {
-                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>());
-                SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
+                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>(),DataSourceFolderTreeItem.eDataTableView.Customized);
+                SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource - Customized Table", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
                 List<object> selectedRunSet = mDataSourceSelectionPage.ShowAsWindow();
                 if (selectedRunSet != null && selectedRunSet.Count > 0)
                 {
@@ -322,17 +323,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void SyncParamsPendingDeleteWithBodyNodes(List<AppModelParameter> paramList)
         {
-            bool someParamContainPath = false;
-            foreach (AppModelParameter param in paramList)
-                if (!string.IsNullOrEmpty(param.Path))
-                    someParamContainPath = true;
-
             APIModelBodyNodeSyncPage bodyNodeSyncPage;
-            if (someParamContainPath)
-            {
-                bodyNodeSyncPage = new APIModelBodyNodeSyncPage((ApplicationAPIModel)mApplicationModel, paramList);
-                bodyNodeSyncPage.ShowAsWindow();
-            }
+            bodyNodeSyncPage = new APIModelBodyNodeSyncPage((ApplicationAPIModel)mApplicationModel, paramList);
+            bodyNodeSyncPage.ShowAsWindow();
         }
 
         private void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)
@@ -365,7 +358,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             string newParamName = ((AppModelParameter)ModelParametersGrid.Grid.SelectedItems[0]).PlaceHolder;
 
-            if (InputBoxWindow.GetInputWithValidation("Merge Parameters", "Set Palceholder for Merged Parameters", ref newParamName, new char[0]))
+            if (InputBoxWindow.GetInputWithValidation("Merge Parameters", "Set Placeholder for Merged Parameters", ref newParamName, new char[0]))
             {
                 //Create new Merged param
                 AppModelParameter mergedParam = new AppModelParameter();
@@ -447,7 +440,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 CurrentAMDP = (AppModelParameter)ModelParametersGrid.CurrentItem;
                 if (CurrentAMDP != null && !IsParamPlaceholderNameConflict(CurrentAMDP))
-                    mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, new List<string> { LocalParamValueBeforeEdit }, CurrentAMDP.PlaceHolder);
+                {
+                  mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, new List<string> { LocalParamValueBeforeEdit }, CurrentAMDP.PlaceHolder);
+                }  
             }
         }
 

@@ -36,9 +36,11 @@ using Ginger.DataSource.ImportExcelWizardLib;
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     class DataSourceTreeItem : NewTreeViewItemBase, ITreeViewItem
-    {
+    {        
         public DataSourceBase DSDetails { get; set; }
-        private DataSourcePage mDataSourcePage;
+        private DataSourcePage mDataSourcePage;       
+
+        public DataSourceFolderTreeItem.eDataTableView TableTreeView { get; set; }
 
         public string Folder { get; set; }
         public string Path { get; set; }
@@ -60,7 +62,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             return NewTVItemHeaderStyle(DSDetails);
         }
-
+               
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
              List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
@@ -75,13 +77,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 DSDetails.DSTableList = new ObservableList<DataSourceTable>();
             
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
-            {
-                DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();                
-                DSTTI.DSTableDetails = dsTable;
-                DSTTI.DSDetails= DSDetails;
-                Childrens.Add(DSTTI);
+            {    
+                if(TableTreeView == DataSourceFolderTreeItem.eDataTableView.All || (TableTreeView == DataSourceFolderTreeItem.eDataTableView.Key && dsTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue) || (TableTreeView == DataSourceFolderTreeItem.eDataTableView.Customized && dsTable.DSTableType == DataSourceTable.eDSTableType.Customized))
+                {
+                    DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
+                    DSTTI.DSTableDetails = dsTable;
+                    DSTTI.DSDetails= DSDetails;
+                    Childrens.Add(DSTTI);
+                }                
             }
-
             return Childrens;    
         }
 
@@ -166,9 +170,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 string name = string.Empty;
-                if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Customized Table", "Table Name", ref name, System.IO.Path.GetInvalidPathChars()))
+                char[] pathChars = System.IO.Path.GetInvalidPathChars();
+                char[] inValidTableNameChars = new char[pathChars.Length + 1];
+                pathChars.CopyTo(inValidTableNameChars, 0);
+                inValidTableNameChars[pathChars.Length] = ' ';
+                if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Customized Table", "Table Name", ref name, inValidTableNameChars))
                 {
-                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
+                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.Customized);
                 }
             }
             catch (Exception ex)
@@ -187,10 +195,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 string name = string.Empty;
-
-                if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Key Value Table", "Table Name", ref name, System.IO.Path.GetInvalidPathChars()))
+                char[] pathChars = System.IO.Path.GetInvalidPathChars();
+                char[] inValidTableNameChars = new char[pathChars.Length+1];
+                pathChars.CopyTo(inValidTableNameChars,0);
+                inValidTableNameChars[pathChars.Length] = ' ';
+                if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Key Value Table", "Table Name", ref name, inValidTableNameChars))
                 {
-                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
+                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text",DataSourceTable.eDSTableType.GingerKeyValue);
                 }
             }
             catch (Exception ex)
@@ -203,28 +214,27 @@ namespace Ginger.SolutionWindows.TreeViewItems
         /// This method is used to create the table
         /// </summary>
         /// <param name="query"></param>
-        private string CreateTable(string name, string query)
-        {
+        private string CreateTable(string name, string query, DataSourceTable.eDSTableType DSTableType=DataSourceTable.eDSTableType.GingerKeyValue)
+        {           
             string fileName = string.Empty;
             try
             {
-                DataSourceTable dsTableDetails = new DataSourceTable();
-                if (dsTableDetails != null)
-                {
-                    dsTableDetails.Name = name;
-                    dsTableDetails.DSC = DSDetails.DSC;
-                    DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
-                    DSTTI.DSTableDetails = dsTableDetails;
-                    DSTTI.DSDetails = DSDetails;
-                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, query);
-                    mTreeView.Tree.AddChildItemAndSelect(this, DSTTI);
-                    DSDetails.DSTableList.Add(dsTableDetails);
+                DataSourceTable dsTableDetails = new DataSourceTable();                
+                dsTableDetails.Name = name;
+                dsTableDetails.DSC = DSDetails.DSC;
+                dsTableDetails.DSTableType = DSTableType;
+                DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
+                DSTTI.DSTableDetails = dsTableDetails;
+                DSTTI.DSDetails = DSDetails;
+                dsTableDetails.DSC.AddTable(dsTableDetails.Name, query);
+                mTreeView.Tree.AddChildItemAndSelect(this, DSTTI);
+                DSDetails.DSTableList.Add(dsTableDetails);
 
-                    fileName = this.DSDetails.FileFullPath;
-                }
+                fileName = this.DSDetails.FileFullPath;                
             }
             catch (Exception ex)
             {
+                Reporter.ToUser(eUserMsgKeys.CreateTableError, ex.Message);
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, ex.StackTrace);
             }
             return fileName;
@@ -271,8 +281,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void RefreshItems(object sender, RoutedEventArgs e)
         {            
-            mTreeView.Tree.RefresTreeNodeChildrens(this);
-            //RefreshTreeItems();
+            RefreshTreeItems();
         }
         private void RefreshTreeItems()
         {
@@ -296,7 +305,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Error while deleteing Data Soucre File", ex);
+                    Reporter.ToLog(eAppReporterLogLevel.WARN, "Error while deleting Data Source File", ex);
                     Reporter.ToUser(eUserMsgKeys.DeleteDSFileError, DSDetails.FileFullPath);                    
                 }
             }

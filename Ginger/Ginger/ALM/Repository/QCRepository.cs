@@ -262,7 +262,7 @@ namespace Ginger.ALM.Repository
                 matchingTC = ((QCCore)ALMIntegration.Instance.AlmCore).GetQCTest(activtiesGroup.ExternalID);
                 if (matchingTC != null)
                 {
-                    //ask user if want to continute
+                    //ask user if want to continue
                     MessageBoxResult userSelec = Reporter.ToUser(eUserMsgKeys.ActivitiesGroupAlreadyMappedToTC, activtiesGroup.Name, matchingTC["TS_SUBJECT"].Path + "\\" + matchingTC.Name);
                     if (userSelec == MessageBoxResult.Cancel)
                         return false;
@@ -273,7 +273,7 @@ namespace Ginger.ALM.Repository
 
             if (matchingTC == null && String.IsNullOrEmpty(uploadPath))
             {
-                //get the QC Test Plan path to upload the activties group to
+                //get the QC Test Plan path to upload the activities group to
                 uploadPath = SelectALMTestPlanPath();
                 if (String.IsNullOrEmpty(uploadPath))
                 {
@@ -339,7 +339,7 @@ namespace Ginger.ALM.Repository
                 matchingTS = ((QCCore)ALMIntegration.Instance.AlmCore).GetQCTestSet(businessFlow.ExternalID);
                 if (matchingTS != null)
                 {
-                    //ask user if want to continute
+                    //ask user if want to continue
                     userSelec = Reporter.ToUser(eUserMsgKeys.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.TestSetFolder.Path + "\\" + matchingTS.Name);
                     if (userSelec == MessageBoxResult.Cancel)
                         return false;
@@ -365,7 +365,7 @@ namespace Ginger.ALM.Repository
                 if(userSelec == MessageBoxResult.No)
                     Reporter.ToUser(eUserMsgKeys.ExportQCNewTestSetSelectDiffFolder);
 
-                //get the QC Test Plan path to upload the activties group to
+                //get the QC Test Plan path to upload the activities group to
                 testLabUploadPath = SelectALMTestLabPath();
                 if (String.IsNullOrEmpty(testLabUploadPath))
                 {
@@ -377,7 +377,7 @@ namespace Ginger.ALM.Repository
             //upload the business flow
             Reporter.ToGingerHelper(eGingerHelperMsgKey.ExportItemToALM, null, businessFlow.Name);
             string res = string.Empty;
-            //TODO : need to update to retireve only Test Set Item Fields -->DONE
+            //TODO : need to update to retrieve only Test Set Item Fields -->DONE
             ObservableList<ExternalItemFieldBase> testSetFields = App.UserProfile.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(testSetFields, true, null);
 

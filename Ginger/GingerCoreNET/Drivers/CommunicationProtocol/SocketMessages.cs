@@ -18,7 +18,7 @@ limitations under the License.
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 {
-    //TODO: move all messgaes hard coded string to here
+    //TODO: move all messages hard coded string to here
 
     public static class SocketMessages
     {

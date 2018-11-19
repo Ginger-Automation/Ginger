@@ -49,7 +49,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private Dictionary<string, int> AllPlaceHolders = new Dictionary<string, int>();
         private List<Element> ElementsList = new List<Element>();
         private List<ComplexType> ComplexTypesList = new List<ComplexType>();
-        private ObservableList<ApplicationAPIModel> AAMList = new ObservableList<ApplicationAPIModel>();
+        private ObservableList<ApplicationAPIModel> mAAMList = new ObservableList<ApplicationAPIModel>();
         private List<Tuple<string,string>> AllURLs = new List<Tuple<string, string>>();
         private List<ServiceDescriptionExtended> mServiceDescriptionsExtendedList = new List<ServiceDescriptionExtended>();
         private BindingCollection bindColl;
@@ -65,10 +65,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
 
 
-        public override ObservableList<ApplicationAPIModel> ParseDocument(string URL, bool avoidDuplicatesNodes = false)
+        public override ObservableList<ApplicationAPIModel> ParseDocument(string URL, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
             mURL = URL;
-            
+            mAAMList = AAMSList;
             AddServiceDescription(URL);
 
             //Make it recursivly
@@ -135,7 +135,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             string UserTempFile = Path.Combine(UserTempPath, "APIParserLogFile" + timeStamp + ".log");
             File.WriteAllText(UserTempFile, LogFile);
 
-            return AAMList;
+            return mAAMList;
         }
 
         private void ImportAllServiceDescription(ImportCollection imports, string containingFolder)
@@ -270,7 +270,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     AAM.ReturnValues = XMLTemplateParser.ParseXMLResponseSampleIntoReturnValues(ResponseBody);
 
-                    AAMList.Add(AAM);
+                    mAAMList.Add(AAM);
                 }
 
             }
@@ -1036,7 +1036,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private string GetNameWithoutDots(string headNameSpace, List<string> AllNameSpacesShortCuts = null)
         {
-            //TODO:Get A List to make it uniq
+            //TODO:Get A List to make it unique
             if (string.IsNullOrEmpty(headNameSpace))
                 return string.Empty;
             string s = string.Empty;

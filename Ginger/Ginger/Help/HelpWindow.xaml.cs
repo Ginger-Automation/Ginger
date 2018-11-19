@@ -186,12 +186,11 @@ namespace Ginger.Help
             try
             {
                 mWebBrowser.Dispose();
-                mWebBrowser = null;
+                mWebBrowser = null;                
                 VideoPlayer.Pause();
             }
             catch(Exception ex)
-            {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            {               
             }
         }
     }

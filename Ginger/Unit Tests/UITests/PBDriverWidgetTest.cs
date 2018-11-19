@@ -20,7 +20,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace UnitTests.UITests.PBDriverTest
 {
-
+       
     [TestClass]
     public class PBDriverWidgetTest
     {

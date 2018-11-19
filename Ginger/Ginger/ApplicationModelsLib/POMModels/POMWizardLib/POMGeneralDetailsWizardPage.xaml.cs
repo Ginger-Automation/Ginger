@@ -62,6 +62,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xNameTextBox.AddValidationRule(new POMNameValidationRule());
                     xNameTextBox.Focus();
 
+                    xURLTextBox.BindControl(mWizard.POM, nameof(ApplicationPOMModel.PageURL));
+
                     xDescriptionTextBox.BindControl(mWizard.POM, nameof(ApplicationPOMModel.Description));
                     xTagsViewer.Init(mWizard.POM.TagsKeys);
                     break;

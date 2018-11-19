@@ -34,6 +34,18 @@ namespace Ginger.Agents
             }
         }
 
+        public delegate void AgentStartedUCEventHandler();
+
+        public event AgentStartedUCEventHandler AgentStartedUCEvent;
+
+        public void AgentStartedEvent()
+        {
+            if (AgentStartedUCEvent != null)
+            {
+                AgentStartedUCEvent();
+            }
+        }
+
         ObservableList<Agent> mOptionalAgentsList = null;
 
         public ucAgentControl()
@@ -199,6 +211,7 @@ namespace Ginger.Agents
                         Reporter.ToGingerHelper(eGingerHelperMsgKey.StartAgentFailed, null, errorMessage);
                     }
                     SelectedAgent.Tag = "Started with Agent Control";
+                    AgentStartedEvent();
                     break;
 
                 case Agent.eStatus.Starting:
@@ -241,8 +254,12 @@ namespace Ginger.Agents
                 //xAgentWindowsRefreshBtn.ButtonImageForground = Brushes.Gray;
                 return;
             }
+            List<AppWindow> winsList = null;
 
-            List<AppWindow> winsList = ((IWindowExplorer)(SelectedAgent.Driver)).GetAppWindows();
+            if (SelectedAgent.Status == Agent.eStatus.Completed || SelectedAgent.Status == Agent.eStatus.Ready || SelectedAgent.Status == Agent.eStatus.Running)
+            {
+                winsList = ((IWindowExplorer)(SelectedAgent.Driver)).GetAppWindows();
+            }
             xAgentWindowsComboBox.ItemsSource = winsList;
             xAgentWindowsComboBox.DisplayMemberPath = nameof(AppWindow.WinInfo);
 

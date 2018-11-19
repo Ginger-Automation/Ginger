@@ -74,7 +74,7 @@ namespace GingerCore.Actions.Common
                     mPlatforms.Add(ePlatformType.PowerBuilder);
                     mPlatforms.Add(ePlatformType.Windows);
 
-                    //TODO: to see the Web impl uncommnet
+                    //TODO: to see the Web impl uncomment
                     // DO NOT remove comment before we have Selenium support this action and converter for old action
                     mPlatforms.Add(ePlatformType.Web);
                 }
@@ -633,8 +633,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("4. Very Long - more than 30 seconds (test for idle every 5 seconds , max 5 minutes wait)")]
             VeryLong,
         }
-
-        [IsSerializedForLocalRepository]
+        
         public string ElementLocateValue
         {
             get
@@ -644,6 +643,7 @@ namespace GingerCore.Actions.Common
             set
             {
                 GetOrCreateInputParam(Fields.ElementLocateValue).Value = value;
+                OnPropertyChanged(nameof(ElementLocateValue));
             }
         }
 

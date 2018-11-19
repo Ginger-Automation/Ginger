@@ -255,7 +255,7 @@ namespace GingerCore.DragDrop
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.AnimateResize(newWidth - 38 ,newHeight - 38, 1000.0);
-            //run mouse binding on seperate thread
+            //run mouse binding on separate thread
             Parallel.Invoke(()=>{bindmouse();});
         }
 

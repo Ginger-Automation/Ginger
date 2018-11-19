@@ -23,7 +23,7 @@ using System.Text;
 
 namespace GingerCoreNET.Drivers.CommunicationProtocol
 {
-    // Prep for better and faster communication Protocol between platfomss: C#, JS, Java    
+    // Prep for better and faster communication Protocol between platforms: C#, JS, Java    
     // We will have the same pack/unpack - C#, JS, Java
     // Payload is the data we want to pass between 2 end points
     // Can be from Ginger socket C# client/server  
@@ -41,10 +41,10 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
     // This class must be super fast as will be used a lot!! - so not generating objects or doing XMLs processing
 
-    // Payload Tempalte structure
+    // Payload Template structure
 
-    // Sample - | are not part of the packaet
-    // Packaet contains 1 int value=5 and String="ABC"
+    // Sample - | are not part of the packet
+    // Packet contains 1 int value=5 and String="ABC"
     // |  0123      4 5678 9 10 - 16|17   
     // |  0013d    |2|0005|1|0003ABC|&
 
@@ -55,7 +55,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
     {
         // static for reuse and speed
 
-        //UTF8 for ergualr string which are not created by the user and not language or special chars needed
+        //UTF8 for regular string which are not created by the user and not language or special chars needed
         public static System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
 
         //UTF16 for String which are created by the user and might have language or special chars
@@ -264,7 +264,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         }
 
         /// <summary>
-        /// Check that we have enought space to add Len bytes of data, if not space will be addded, so it make sure data will be added with no err
+        /// Check that we have enough space to add Len bytes of data, if not space will be added, so it make sure data will be added with no err
         /// </summary>
         /// <param name="Len">Length of data to be added</param>
         private void CheckBuffer(int Len)

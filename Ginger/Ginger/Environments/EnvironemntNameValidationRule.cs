@@ -14,7 +14,7 @@ namespace Ginger.Environments
     {
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            //TODO: split to 2 rules name and uniqu
+            //TODO: split to 2 rules name and unique
             if (value ==null || string.IsNullOrEmpty(value.ToString()))
             {
                 return new ValidationResult(false, "Environment name cannot be empty");

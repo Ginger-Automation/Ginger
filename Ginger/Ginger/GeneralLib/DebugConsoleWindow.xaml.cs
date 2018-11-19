@@ -93,7 +93,7 @@ namespace GingerWPF
     }
 
 
-    //TODO: Move to seperate class
+    //TODO: Move to separate class
     public class ConsoleTextWriter : TextWriter
     {
         TextBlock mTextBlock = null;

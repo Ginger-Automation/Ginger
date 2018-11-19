@@ -43,6 +43,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using Ginger.SolutionWindows.TreeViewItems;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
@@ -115,12 +116,11 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 xModelsGlobalParamsGrid.ShowAdd = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowDelete = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowClearAll = Visibility.Visible;
+                xModelsGlobalParamsGrid.ShowUpDown = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.Grid.CanUserDeleteRows = false;
 
                 xModelsGlobalParamsGrid.Grid.BeginningEdit += grdMain_BeginningEdit;
                 xModelsGlobalParamsGrid.Grid.CellEditEnding += grdMain_CellEditEndingAsync;
-
-                xModelsGlobalParamsGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForGlobalParameters));
             }
 
             
@@ -129,7 +129,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             xModelsGlobalParamsGrid.InitViewItems();
 
 
-            mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+            mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();          
             if (!mSelectionModePage)
             {
                 foreach (GlobalAppModelParameter param in mModelsGlobalParamsList)
@@ -139,7 +139,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             }
             xModelsGlobalParamsGrid.DataSourceList = mModelsGlobalParamsList;
             xModelsGlobalParamsGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForGlobalParameters));
-            xModelsGlobalParamsGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parametrs to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
+            xModelsGlobalParamsGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parameters to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
             xModelsGlobalParamsGrid.AddToolbarTool(eImageType.DataSource, "Export Parameters to DataSource", new RoutedEventHandler(ExportParametersToDataSource));
         }
 
@@ -174,8 +174,8 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             try
             {
-                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>());
-                SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
+                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>(),DataSourceFolderTreeItem.eDataTableView.Customized);
+                SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource - Customized Table", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
                 List<object> selectedRunSet = mDataSourceSelectionPage.ShowAsWindow();
                 if (selectedRunSet != null && selectedRunSet.Count > 0)
                 {
@@ -316,7 +316,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     if (mi.Name == "mBackupDic" || mi.Name == nameof(RepositoryItemBase.FileName) || mi.Name == nameof(RepositoryItemBase.FilePath) ||
                         mi.Name == nameof(RepositoryItemBase.ObjFolderName) || mi.Name == nameof(RepositoryItemBase.ObjFileExt) ||
                         mi.Name == nameof(RepositoryItemBase.ContainingFolder) || mi.Name == nameof(RepositoryItemBase.ContainingFolderFullPath) ||
-                        mi.Name == nameof(Act.ActInputValues) || mi.Name == nameof(Act.ActReturnValues) || mi.Name == nameof(Act.ActFlowControls)) //needed?                   
+                        mi.Name == nameof(Act.ActInputValues) || mi.Name == nameof(Act.ActReturnValues) || mi.Name == nameof(Act.ActFlowControls) || mi.Name == nameof(Act.ItemNameField)) //needed?                   
                         continue;
 
                     //Get the attr value
@@ -382,6 +382,10 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     newModelGlobalParam.OptionalValuesList.Add(new OptionalValue() { Value = GlobalAppModelParameter.CURRENT_VALUE, IsDefault = true });
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newModelGlobalParam);
                     newModelGlobalParam.StartDirtyTracking();
+
+                    //making sure rows numbers are ok
+                    xModelsGlobalParamsGrid.Grid.UpdateLayout();
+                    xModelsGlobalParamsGrid.Renum();
                     break;
                 }
             }

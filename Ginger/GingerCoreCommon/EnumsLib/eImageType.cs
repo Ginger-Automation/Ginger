@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Amdocs.Ginger.Common.Enums
+﻿namespace Amdocs.Ginger.Common.Enums
 {
 
     public enum eImageType
@@ -42,27 +38,35 @@ namespace Amdocs.Ginger.Common.Enums
         Operations,
         Environment,
         HtmlReport,
-        Variable,
         SharedRepositoryItem,
         NonSharedRepositoryItem,
         Tag,
         DataSource,
         PluginPackage,
         #endregion
-
+        
+        #region Variable Items Images
+        Variable,
+        VariableList,
+        Password,
+        Random,
+        Sequence,
+        Timer,
+        #endregion
 
         #region Execution Status Images
+        Unknown,
         //############################## Execution Status Images:
         /// <summary>
         /// Show spinner 
         /// </summary>
         Processing,
         /// <summary>
-        ///  Show green flag, use when action, activity, businees flows execution pass
+        ///  Show green flag, use when action, activity, businessflows execution pass
         /// </summary>
         Passed,
         /// <summary>
-        ///  Show red flag, use when action, activity, businees flows execution fail
+        ///  Show red flag, use when action, activity, businessflows execution fail
         /// </summary>
         Failed,
         Pending,
@@ -72,8 +76,7 @@ namespace Amdocs.Ginger.Common.Enums
         Stopped,
         Running,
         #endregion
-
-
+        
         #region Operations Images
         //############################## Operations Images:        
         Refresh,
@@ -133,8 +136,7 @@ namespace Amdocs.Ginger.Common.Enums
         Upgrade,
         Recover,
         #endregion
-
-
+        
         #region Items Images
         //############################## Items Images:
         /// <summary>
@@ -184,9 +186,18 @@ namespace Amdocs.Ginger.Common.Enums
         Beta,
         Error,
         Coffee,
+        MapSigns,
+        Image,
+        Elements,
+        LocationPointer,
+        GitHub,
         #endregion
 
-
+        #region Other Images
+        Database,
+        TextBox,
+        #endregion
+        
         #region Source control Images     
         SourceControl,
         SourceControlNew,

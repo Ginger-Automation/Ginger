@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Common.UIElement;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.UserControls;
@@ -38,10 +39,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 else
                 {
+                    if (mAgent != null)
+                    {
+                        mAgent.Close();
+                    }
                     return null;
                 }
             }
-
         }
 
         public Agent mAgent;
@@ -50,7 +54,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             Mapped,
             Unmapped
-
         }
 
         public PomElementsPage mappedUIElementsPage;
@@ -62,8 +65,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM = POM;
             mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
-
-
 
             mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped);
             xMappedElementsFrame.Content = mappedUIElementsPage;
@@ -88,7 +89,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             });
         }
 
-
         private void MappedUIElements_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             MappedUIElementsUpdate();
@@ -99,7 +99,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             get { return xTestAllElements.Visibility; }
             set { xTestAllElements.Visibility = value; }
         }
-
 
         private void MappedUIElementsUpdate()
         {
@@ -114,7 +113,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mAgent = agent;
             mappedUIElementsPage.SetAgent(mAgent);
             unmappedUIElementsPage.SetAgent(mAgent);
-
         }
 
         private void CreateNewElemetClicked(object sender, RoutedEventArgs e)
@@ -132,22 +130,21 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void LiveSpyHandler(object sender, RoutedEventArgs e)
         {
-            if (mAgent.Driver.IsDriverBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-
             if (mWinExplorer == null)
             {
                 Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
                 return;
             }
 
+            if (mAgent.Driver.IsDriverBusy)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                return;
+            }
 
             if (LiveSpyButton.IsChecked == true)
             {
-                xStatusLable.Content = "Spying on";
+                xStatusLable.Content = "Spying is On";
                 if (dispatcherTimer == null)
                 {
                     dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
@@ -160,7 +157,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             else
             {
                 xCreateNewElement.Visibility = Visibility.Collapsed;
-                xStatusLable.Content = "Spying off";
+                xStatusLable.Content = "Spying is Off";
                 dispatcherTimer.IsEnabled = false;
             }
         }
@@ -168,7 +165,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void StopSpying()
         {
             xCreateNewElement.Visibility = Visibility.Collapsed;
-            xStatusLable.Content = "Spying off";
+            xStatusLable.Content = "Spying is Off";
             dispatcherTimer.IsEnabled = false;
         }
 
@@ -179,21 +176,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
             // Get control info only if control key is pressed
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                xStatusLable.Content = "Spying Element, Please Wait...";
+                xStatusLable.Content = "Spying element, please wait...";
                 xCreateNewElement.Visibility = Visibility.Collapsed;
                 GingerCore.General.DoEvents();
                 mSpyElement = mWinExplorer.GetControlFromMousePosition();
-
-                mWinExplorer.UpdateElementInfoFields(mSpyElement);
-                mSpyElement.Locators = mWinExplorer.GetElementLocators(mSpyElement);
-                mSpyElement.Properties = mWinExplorer.GetElementProperties(mSpyElement);
-                mSpyElement.WindowExplorer = mWinExplorer;
-                mSpyElement.IsAutoLearned = true;
-
                 if (mSpyElement != null)
                 {
+                    
+                    mWinExplorer.UpdateElementInfoFields(mSpyElement);
+                    mSpyElement.Locators = mWinExplorer.GetElementLocators(mSpyElement);
+                    mSpyElement.Properties = mWinExplorer.GetElementProperties(mSpyElement);
+                    mSpyElement.WindowExplorer = mWinExplorer;
+                    mSpyElement.IsAutoLearned = true;
                     xStatusLable.Content = "Element found";
-
                     FocusSpyItemOnElementsGrid();
                     mWinExplorer.HighLightElement(mSpyElement);
                 }
@@ -242,14 +237,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (!elementfocused)
             {
-                xStatusLable.Content = "Element has not been found on the list, Click here to create new Element ";
+                xStatusLable.Content = "Found element is not included in below elements list, click here to add it ";
                 xCreateNewElement.Visibility = Visibility.Visible;
             }
         }
 
         private bool IsTheSameElement(ElementInfo firstEI, ElementInfo secondEI)
         {
-            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && firstEI.Path == secondEI.Path;
+            bool HasSimilarXpath = firstEI.XPath == secondEI.XPath && (firstEI.Path == secondEI.Path || string.IsNullOrEmpty(firstEI.Path) && string.IsNullOrEmpty(secondEI.Path)) ;
 
             bool HasSimilarLocators = true;
             foreach (ElementLocator EL in firstEI.Locators)
@@ -271,58 +266,69 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void TestAllElementsClicked(object sender, RoutedEventArgs e)
         {
-
-            //Change Grid View
-            
-            if (mAgent.Driver.IsDriverBusy)
-            {
-                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
-                return;
-            }
-
             if (mWinExplorer == null)
             {
                 Reporter.ToUser(eUserMsgKeys.POMAgentIsNotRunning);
                 return;
             }
 
-            mappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
-            TestAllElementsAsync().ConfigureAwait(false);
+            if (mAgent != null && mAgent.Driver.IsDriverBusy)
+            {
+                Reporter.ToUser(eUserMsgKeys.POMDriverIsBusy);
+                return;
+            }
+
+            if (xMappedElementsTab.IsSelected)
+            {
+                mappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
+            }
+            else if (xUnmappedElementsTab.IsSelected)
+            {
+                unmappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
+            }
+            
+            TestAllElementsAsync();
         }
 
 
-        public async Task TestAllElementsAsync()
+        public async void TestAllElementsAsync()
         {
             xTestAllElements.Visibility = Visibility.Collapsed;
             xStopTestAllElements.Visibility = Visibility.Visible;
             mStopProcess = false;
-            await Task.Run(() => TestAllElements()).ConfigureAwait(false);
+            if (xMappedElementsTab.IsSelected)
+            {
+                await Task.Run(() => TestAllElements(mPOM.MappedUIElements));
+            }
+            else if (xUnmappedElementsTab.IsSelected)
+            {
+                await Task.Run(() => TestAllElements(mPOM.UnMappedUIElements));
+            }
+
             xTestAllElements.Visibility = Visibility.Visible;
             xStopTestAllElements.Visibility = Visibility.Collapsed;
         }
 
-        private void TestAllElements()
+        private void TestAllElements(ObservableList<ElementInfo> Elements)
         {
-            int TotalElements = mPOM.MappedUIElements.Count;
+            int TotalElements = Elements.Count;
             int TotalFails = 0;
 
             bool WarnErrorOccured = false;
-            foreach (ElementInfo EI in mPOM.MappedUIElements)
+            foreach (ElementInfo EI in Elements)
             {
                 EI.ElementStatus = ElementInfo.eElementStatus.Pending;
             }
 
-            foreach (ElementInfo EI in mPOM.MappedUIElements)
+            foreach (ElementInfo EI in Elements)
             {
                 if (mStopProcess)
                 {
                     return;
                 }
-                    
+
                 if (mWinExplorer.TestElementLocators(EI.Locators,true))
                 {
-                    //TODO: Add Error frm locators
-                    //EI.ElementStatus = EI.Locators.Where(x=>x.StatusError)
                     EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                 }
                 else
@@ -350,6 +356,49 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xStopTestAllElements.Visibility = Visibility.Collapsed;
         }
 
+        public void FinishEditInAllGrids()
+        {
+            mappedUIElementsPage.FinishEditInGrids();
+            unmappedUIElementsPage.FinishEditInGrids();
+        }
+
+        private void POMModelTabsSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xMappedElementsTab.IsSelected)
+            {
+                xTestAllElements.ButtonText = "Test All Mapped Elements";
+            }
+            else if (xUnmappedElementsTab.IsSelected)
+            {
+                xTestAllElements.ButtonText = "Test All Unmapped Elements";
+            }
+
+            //set the selected tab text style
+            try
+            {
+                if (xPOMModelTabs.SelectedItem != null)
+                {
+                    foreach (TabItem tab in xPOMModelTabs.Items)
+                    {
+                        foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
+
+                            if (ctrl.GetType() == typeof(TextBlock))
+                            {
+                                if (xPOMModelTabs.SelectedItem == tab)
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                else
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+
+                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error in POM All Elements Page tabs style", ex);
+            }
+        }
 
 
     }

@@ -42,7 +42,7 @@ namespace GingerCore.Actions.VisualTesting
 
         void IVisualAnalyzer.Compare()
         {
-            //TODO: use interface on the driver to get elelemnts
+            //TODO: use interface on the driver to get elements
             if (mDriver is IVisualTestingDriver)
             {
                 IVisualTestingDriver d = (IVisualTestingDriver)mDriver;
@@ -94,7 +94,7 @@ namespace GingerCore.Actions.VisualTesting
             VisualElementsInfo VEI = mDriver.GetVisualElementsInfo();
             if (string.IsNullOrEmpty(mAct.BaselineInfoFile))
             {
-                // Cretae default file name for info file
+                // Create default file name for info file
                 mAct.BaselineInfoFile = @"~\Documents\ScreenShots\" + mAct.Description + " - Baseline.txt";
             }
             string filename = mAct.GetFullFilePath(mAct.BaselineInfoFile);

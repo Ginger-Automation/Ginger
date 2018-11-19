@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -20,7 +20,7 @@ using System;
 
 namespace Amdocs.Ginger.Repository
 {
-    //Class to create link to repository item by GUID - which is saved - serialized and contain also the item name in case needed for analyzer when taregt item Guid not found can auto repair
+    //Class to create link to repository item by GUID - which is saved - serialized and contain also the item name in case needed for analyzer when target item Guid not found can auto repair
 
     public class RepositoryItemKey 
     {        

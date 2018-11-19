@@ -48,7 +48,7 @@ namespace GingerCore.Actions.ActionConversion
         public string SourceActionTypeName { get; set; }
         public string TargetActionTypeName { get; set;}
 
-        // holds occurences/count of convertible action types in the list
+        // holds occurrences/count of convertible action types in the list
         public int ActionCount { get; set; }
 
         public Type TargetActionType { get; set; }

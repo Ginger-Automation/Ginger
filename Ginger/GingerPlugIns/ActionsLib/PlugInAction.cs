@@ -28,7 +28,7 @@ namespace GingerPlugIns.ActionsLib
 
         public string EditPage { get; set; }
 
-        public string ID { get; set; }  // Uniqe ID of the action
+        public string ID { get; set; }  // Unique ID of the action
 
         /// <summary>
         /// More descriptive information on the action
@@ -36,7 +36,7 @@ namespace GingerPlugIns.ActionsLib
         public string UserDescription { get; set; }
 
         /// <summary>
-        /// Use Case decription for the user to know when to use this action
+        /// Use Case description for the user to know when to use this action
         /// </summary>
         public string UserRecommendedUseCase { get; set; }
     }

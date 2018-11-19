@@ -3,7 +3,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Variables;
 using QCRestClient;
-using QCRestClient.Data_Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -169,7 +168,7 @@ namespace GingerCore.ALM.QCRestAPI
             {
                 if (testSet == null) return null;
 
-                //Creat Business Flow
+                //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
                 busFlow.Name = testSet.TestSetName;
                 busFlow.ExternalID = testSet.TestSetID;
@@ -228,7 +227,7 @@ namespace GingerCore.ALM.QCRestAPI
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                     }
 
-                    //Add the TC steps as Activities if not already on the Activties group
+                    //Add the TC steps as Activities if not already on the Activities group
                     foreach (QC.QCTSTestStep step in tc.Steps)
                     {
                         Activity stepActivity;
@@ -380,8 +379,7 @@ namespace GingerCore.ALM.QCRestAPI
                                 {
                                     //no such variable value option so add it
                                     stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
-                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                    ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                    
                                     if (isflowControlParam == true)
                                         stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                                 }
@@ -410,7 +408,7 @@ namespace GingerCore.ALM.QCRestAPI
                         }
                     }
 
-                    //order the Activities Group activities accourding to the order of the matching steps in the TC
+                    //order the Activities Group activities according to the order of the matching steps in the TC
                     try
                     {
                         int startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
@@ -497,7 +495,7 @@ namespace GingerCore.ALM.QCRestAPI
                     ActivitiesGroup tcActivsGroup = CheckIfTCAlreadyExistInRepo(busFlow, testInstance, tSTestCaseSteps);
                     AddTcStepsAsActivities(tcActivsGroup, busFlow, testInstance, tSTestCaseSteps, tSTestCasesParams, busVariables);
 
-                    //order the Activities Group activities accourding to the order of the matching steps in the TC
+                    //order the Activities Group activities according to the order of the matching steps in the TC
                     try
                     {
                         int startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
@@ -901,7 +899,7 @@ namespace GingerCore.ALM.QCRestAPI
                         //no such variable value option so add it
                         stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
                         ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                        ((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
+                        //((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
                         if (isflowControlParam == true)
                             stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
                     }
@@ -949,6 +947,7 @@ namespace GingerCore.ALM.QCRestAPI
                     if (itemfield.Mandatory)
                         itemfield.ToUpdate = true;
                     itemfield.ItemType = testSetfieldInRestSyntax.ToString();
+                    itemfield.Type = field.Type;
 
                     if ((field.ListId != null) && (field.ListId != string.Empty) && (field.FieldValues != null) && (field.FieldValues.Count > 0))
                     {

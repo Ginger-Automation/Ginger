@@ -54,7 +54,7 @@ namespace GingerCore.ALM
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, bool useREST = false)
         {
-            throw new NotImplementedException();
+            return GingerCore.ALM.QC.ImportFromQC.CreateNewDefectQCREST(defectsForOpening);
         }
 
         public override bool DisconnectALMProjectStayLoggedIn()
