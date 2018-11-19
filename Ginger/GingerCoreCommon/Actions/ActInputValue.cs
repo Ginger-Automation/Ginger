@@ -105,8 +105,8 @@ namespace Amdocs.Ginger.Repository
         {
             return mDynamicListWrapper.GetListItemProperties();
         }
-
-        public ObservableList<dynamic> ListStringValue
+        
+        public ObservableList<dynamic> ListDynamicValue
         {
             get
             {
