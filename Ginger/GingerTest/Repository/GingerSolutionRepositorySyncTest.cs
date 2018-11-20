@@ -22,7 +22,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.Repository;
 using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
-using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
@@ -161,6 +160,89 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
+        [TestMethod]
+        public void TestActivityVariablesSyncWithRepo_v2()
+        {
+            string variableName = "ACTVAR1";
+            string initialValue = "123";
+            string updatedValue = "abc123";
+
+            mBF = new BusinessFlow() { Name = "TestActvVarSync", Active = true };
+            mBF.Activities = new ObservableList<Activity>();
+
+            VariableString V1 = new VariableString() { Name = variableName, InitialStringValue = initialValue };
+
+            // add variable to the activity
+            Activity activity = new Activity() { ActivityName = "Activity1" };
+            activity.AddVariable(V1);
+            mBF.Activities.Add(activity);
+
+            // add business flow to the solution repository
+            mSolutionRepository.AddRepositoryItem(mBF);
+
+            // prepare to add the variable to the shared repository
+            UploadItemSelection uploadItemSelection = new UploadItemSelection() { UsageItem = V1, ItemUploadType = UploadItemSelection.eItemUploadType.New };
+            SharedRepositoryOperations.UploadItemToRepository(uploadItemSelection);
+
+            // find the newly added variable in the shared repo
+            VariableBase sharedVariableBase = (from x in mSolutionRepository.GetAllRepositoryItems<VariableBase>() where x.Name == variableName select x).SingleOrDefault();
+            VariableString sharedV1 = (VariableString)sharedVariableBase;
+
+            //update the new value in the shared repo variable
+            sharedV1.InitialStringValue = updatedValue;
+
+            //sync the updated instance with the business flow instance
+            sharedV1.UpdateInstance(V1, "All", mBF.Activities[0]);
+
+            // get the updated value from the business flow
+            VariableString V2 = (VariableString)mBF.Activities[0].Variables[0];
+
+            //Assert
+            Assert.AreEqual(1, mBF.Activities.Count);
+            Assert.AreEqual(1, mBF.Activities[0].Variables.Count);
+            Assert.AreNotSame(V1, V2);
+            Assert.AreEqual(updatedValue, V2.InitialStringValue);
+        }
+
+
+        //[TestMethod]
+        //public void TestSolutionVariablesSyncWithRepo()
+        //{
+        //    string variableName = "SOLVAR1";
+        //    string initialValue = "123";
+        //    string updatedValue = "abc123";
+
+        //    mBF = new BusinessFlow() { Name = "TestSolutionVarSync", Active = true };
+        //    mBF.Activities = new ObservableList<Activity>();
+
+        //    VariableString V1 = new VariableString() { Name = variableName, InitialStringValue = initialValue };
+
+        //    // add variable to the activity
+        //    mSolutionRepository.AddRepositoryItem(V1);
+
+        //    // prepare to add the variable to the shared repository
+        //    UploadItemSelection uploadItemSelection = new UploadItemSelection() { UsageItem = V1, ItemUploadType = UploadItemSelection.eItemUploadType.New };
+        //    SharedRepositoryOperations.UploadItemToRepository(uploadItemSelection);
+
+        //    // find the newly added variable in the shared repo
+        //    VariableBase sharedVariableBase = (from x in mSolutionRepository.GetAllRepositoryItems<VariableBase>() where x.Name == variableName select x).SingleOrDefault();
+        //    VariableString sharedV1 = (VariableString)sharedVariableBase;
+
+        //    //update the new value in the shared repo variable
+        //    sharedV1.InitialStringValue = updatedValue;
+
+        //    //sync the updated instance with the business flow instance
+        //    sharedV1.UpdateInstance(V1, "All", mSolutionRepository.);
+
+        //    // get the updated value from the business flow
+        //    VariableString V2 = (VariableString)mBF.Activities[0].Variables[0];
+
+        //    //Assert
+        //    Assert.AreEqual(1, mBF.Activities.Count);
+        //    Assert.AreEqual(1, mBF.Activities[0].Variables.Count);
+        //    Assert.AreNotSame(V1, V2);
+        //    Assert.AreEqual(updatedValue, V2.InitialStringValue);
+        //}
 
     }
 }
