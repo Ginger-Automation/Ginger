@@ -298,11 +298,11 @@
     <Reference Include="UIAComWrapper, Version=1.1.0.14, Culture=neutral, PublicKeyToken=78cbcf77433a85e5, processorArchitecture=MSIL">
       <HintPath>..\packages\UIAComWrapper.1.1.0.14\lib\net40\UIAComWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="WebDriver, Version=3.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Selenium.WebDriver.3.12.1\lib\net45\WebDriver.dll</HintPath>
+    <Reference Include="WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.3.141.0\lib\net45\WebDriver.dll</HintPath>
     </Reference>
-    <Reference Include="WebDriver.Support, Version=3.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Selenium.Support.3.12.1\lib\net45\WebDriver.Support.dll</HintPath>
+    <Reference Include="WebDriver.Support, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.Support.3.141.0\lib\net45\WebDriver.Support.dll</HintPath>
     </Reference>
     <Reference Include="WebDriverExtended, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WebDriverExtended.1.2.0.0\lib\net45\WebDriverExtended.dll</HintPath>
@@ -740,7 +740,6 @@
     <Compile Include="Helpers\TextBlockHelper.cs" />
     <Compile Include="Platforms\ApplicationAgent.cs" />
     <Compile Include="Platforms\ApplicationPlatform.cs" />
-    <Compile Include="Platforms\TargetApplication.cs" />
     <Compile Include="Reporter\GingerHelperMsgsPool.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1050000_to_V1060000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1040000_to_V1050000.cs" />

@@ -302,7 +302,7 @@ namespace Ginger.SolutionGeneral
                 HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
                 HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
             }
-
+            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
             App.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 

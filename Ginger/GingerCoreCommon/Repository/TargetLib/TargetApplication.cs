@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -22,12 +22,7 @@ namespace GingerCore.Platforms
 {
     public class TargetApplication : RepositoryItemBase
     {
-        public new static partial class Fields
-        {
-            public static string Selected = "Selected";
-            public static string AppName = "AppName";        
-        }
-
+       
         //TOOD: is it needed to serialized?
         public bool Selected { get; set; }
 
