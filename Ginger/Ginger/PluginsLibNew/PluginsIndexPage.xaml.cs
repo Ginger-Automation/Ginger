@@ -53,7 +53,7 @@ namespace Ginger.PlugInsWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
                                     
-            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Name), WidthWeight = 30 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Id), WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Description), WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.URL), WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(OnlinePluginPackage.Status), WidthWeight = 30 });
@@ -88,7 +88,7 @@ namespace Ginger.PlugInsWindows
         {            
             xProcessingImage.Visibility = Visibility.Visible;                        
             OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;            
-            xNameTextBlock.Text = pluginPackageInfo.Name;
+            xNameTextBlock.Text = pluginPackageInfo.Id;
             ObservableList<OnlinePluginPackageRelease> list = null;
             Task.Factory.StartNew(() =>
             {

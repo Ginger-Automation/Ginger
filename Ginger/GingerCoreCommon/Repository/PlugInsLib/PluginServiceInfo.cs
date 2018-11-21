@@ -16,9 +16,15 @@ namespace Amdocs.Ginger.Common
         [JsonProperty]
         public string Description { get; set; }
 
+        [JsonProperty]
+        public bool IsSession { get; set; }
+
+
         List<PluginServiceActionInfo> mActions = new List<PluginServiceActionInfo>();
 
         [JsonProperty]
         public List<PluginServiceActionInfo> Actions { get { return mActions; } }
+
+      
     }
 }

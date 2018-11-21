@@ -17,6 +17,9 @@ namespace Amdocs.Ginger.Common.Repository.PlugInsLib
         public string Description { get; set; }
 
         [JsonProperty]
+        public string Interface { get; internal set; }
+
+        [JsonProperty]
         public List<ActionInputValueInfo> InputValues = new List<ActionInputValueInfo>();
     }
 }

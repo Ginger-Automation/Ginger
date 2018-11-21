@@ -60,7 +60,7 @@ namespace Ginger.Agents.AddAgentWizardLib
 
                     xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
-                    xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);
+                    xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);                    
                     xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
 
                     if (mWizard.Agent.AgentType == Agent.eAgentType.Service)
@@ -140,8 +140,17 @@ namespace Ginger.Agents.AddAgentWizardLib
         private void xPluginIdComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             PluginPackage p = (PluginPackage)xPluginIdComboBox.SelectedItem;
+            p.LoadServicesFromJSON();
             xServiceIdComboBox.ItemsSource = p.Services;
             xServiceIdComboBox.DisplayMemberPath = nameof(PluginServiceInfo.ServiceId);
+            xServiceIdComboBox.SelectedValuePath = nameof(PluginServiceInfo.ServiceId);
+            xServiceIdComboBox.BindControl(mWizard.Agent, nameof(Agent.ServiceId));
+
+            // auto select if there is only one service in the plugin
+            if (p.Services.Count == 1)
+            {
+                xServiceIdComboBox.SelectedItem = p.Services[0];
+            }
         }
     }
 }

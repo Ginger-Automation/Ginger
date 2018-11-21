@@ -43,7 +43,7 @@ namespace Ginger.PlugInsWindows
         }
 
         private void Init()
-        {
+        {            
             // xSummaryTextBlock.Text = string.Empty;
             // TextBlockHelper TBH = new TextBlockHelper(txtBlkDescritpion);
             // xSummaryTextBlock.Text = mPluginPackage.des
@@ -52,6 +52,7 @@ namespace Ginger.PlugInsWindows
             xPlugInPackageVersionLabel.BindControl(mPluginPackage, nameof(PluginPackage.PluginPackageVersion));
             xPlugInFolderLabel.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
 
+            mPluginPackage.LoadServicesFromJSON();
             SetServicesGrid();
             SetActionsGrid();
             // SetTextEditorGrid();

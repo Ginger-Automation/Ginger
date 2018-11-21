@@ -42,9 +42,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GingerPluginCore, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ginger.Plugin.Core.3.0.0\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="GingerPluginCore, Version=3.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ginger.Plugin.Core.3.0.2\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
     </Reference>
     <Reference Include="GingerTestHelper, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GingerTestHelper.1.0.4\lib\netstandard2.0\GingerTestHelper.dll</HintPath>

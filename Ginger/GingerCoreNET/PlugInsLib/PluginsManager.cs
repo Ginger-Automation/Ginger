@@ -145,13 +145,17 @@ namespace Amdocs.Ginger.Repository
             }
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == PluginId select x).SingleOrDefault();
 
+            // TODO: only once !!!!!!!!!!!!!!!!!!!!!!!!! temp             
+            pluginPackage.LoadServicesFromJSON();
+
+
             if (pluginPackage == null)
             {                
                 throw new Exception("PluginPackage not found in solution PluginId=" + PluginId);
             }
             if (string.IsNullOrEmpty(pluginPackage.StartupDLL))
             {
-                throw new Exception("PluginPackage StartupDLL is missing in the Ginger.PluginPackage.json" + PluginId);
+                throw new Exception("StartupDLL is missing in the Ginger.PluginPackage.json for: " + PluginId);
             }
 
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
@@ -171,7 +175,7 @@ namespace Amdocs.Ginger.Repository
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
         {
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
-            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
+            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();            
             PluginServiceActionInfo standAloneAction = (from x in pluginServiceInfo.Actions where x.ActionId == actionId select x).SingleOrDefault();
             return standAloneAction.InputValues;
         }
@@ -186,7 +190,7 @@ namespace Amdocs.Ginger.Repository
             ObservableList<PluginPackage> installedPlugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
             foreach (OnlinePluginPackage onlinePluginPackage in list)
             {                
-                PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Name select x).SingleOrDefault();
+                PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Id select x).SingleOrDefault();
                 if (pluginPackage != null)
                 {                
                     onlinePluginPackage.Status = "Installed - " + pluginPackage.PluginPackageVersion;

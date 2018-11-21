@@ -61,7 +61,25 @@ namespace Amdocs.Ginger.Repository
 
         [IsSerializedForLocalRepository]
         public string PluginPackageVersion { get; set; }
-        
+
+
+        // When in dev mode we can add package from folder  which will ref a local folder
+        string mLocalFolder;
+        [IsSerializedForLocalRepository]
+        public string LocalFolder
+        {
+            get
+            {
+                return mLocalFolder;
+            }
+            set
+            {
+                mLocalFolder = value;
+                mFolder = value;
+            }
+        }
+
+
         public bool Isloaded = false;
         // must have empty constructor
         public PluginPackage()
@@ -98,6 +116,11 @@ namespace Amdocs.Ginger.Repository
             // load info
             string txt = System.IO.File.ReadAllText(pluginInfoFile);
             mPluginPackageInfo = (PluginPackageInfo)JsonConvert.DeserializeObject(txt, typeof(PluginPackageInfo));
+            if (mPluginPackageInfo.Version.ToLower().StartsWith("v"))
+            {
+                mPluginPackageInfo.Version = mPluginPackageInfo.Version.Substring(1);
+
+            }
         }
 
 
@@ -107,7 +130,14 @@ namespace Amdocs.Ginger.Repository
             {       
                 if (string.IsNullOrEmpty(mFolder))
                 {
-                    mFolder = Path.Combine(LocalPluginsFolder, PluginId, PluginPackageVersion);
+                    //if (!string.IsNullOrEmpty(LocalFolder))
+                    //{
+                    //    mFolder = LocalFolder;  // use for debug or when adding local folder instead of download
+                    //}
+                    //else
+                    //{
+                        mFolder = Path.Combine(LocalPluginsFolder, PluginId, PluginPackageVersion);
+                   //}
                 }
 
                 return mFolder;
@@ -165,29 +195,76 @@ namespace Amdocs.Ginger.Repository
                 foreach (PluginAssemblyInfo asssembly in mAssembliesInfo)
                 {                    
                     IEnumerable<Type> types = from x in asssembly.Assembly.GetTypes() where x.GetCustomAttribute(typeof(GingerServiceAttribute)) != null select x;
-                    foreach (Type t in types)
+                    foreach (Type type in types)
                     {
-                        GingerServiceAttribute gingerServiceAttribute = (GingerServiceAttribute)Attribute.GetCustomAttribute(t, typeof(GingerServiceAttribute), false);
-                        PluginServiceInfo pluginServiceInfo = new PluginServiceInfo() { ServiceId = gingerServiceAttribute.Id };
+                        GingerServiceAttribute gingerServiceAttribute = (GingerServiceAttribute)Attribute.GetCustomAttribute(type, typeof(GingerServiceAttribute), false);
+                        bool IsServiceSession = typeof(IServiceSession).IsAssignableFrom(type);  
+                        // if service impl IServiceSession then mark it so we know we need and agent Start/Stop
+                        // if it is not session , then all actions are stand alone 
+
+                        PluginServiceInfo pluginServiceInfo = new PluginServiceInfo() { ServiceId = gingerServiceAttribute.Id, IsSession = IsServiceSession };
                         // expecting to get ExcelAction, FileAction, DatabaseAction...
-                        MethodInfo[] methods = t.GetMethods();
+                        MethodInfo[] methods = type.GetMethods();
+                        Type[] interfaces = type.GetInterfaces();
                         foreach (MethodInfo MI in methods)
                         {
-                            //Check if method have token [GingerAction]  else we ignore
-                            GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);
+                            //Check if method have token [GingerAction] or is is of interface else we ignore
+                            GingerActionAttribute gingerActionAttr = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);                            
 
-                            if (token == null)
+                            if (gingerActionAttr == null && !MI.IsVirtual)   // Virtual if it is interface
+                            {                                
+                                 continue;                                
+                            }
+                            
+                            PluginServiceActionInfo action = new PluginServiceActionInfo();
+
+                            if (gingerActionAttr != null)
                             {
-                                continue;
+                                action.ActionId = gingerActionAttr.Id;
+                                action.Description = gingerActionAttr.Description;
+                            }
+                            else
+                            {
+                                // Check if the method is from interface
+                                if (MI.IsVirtual)
+                                {
+                                    foreach (Type serviceInterface in interfaces)
+                                    {
+                                        //check if marked with [GingerInterface] 
+                                        GingerInterfaceAttribute gingerInterfaceAttr = (GingerInterfaceAttribute)Attribute.GetCustomAttribute(serviceInterface, typeof(GingerInterfaceAttribute), false);
+                                        
+                                        if (gingerInterfaceAttr != null)
+                                        {
+                                            var mm = serviceInterface.GetMethod(MI.Name);
+                                            if (mm != null)
+                                            {
+                                                // Get the action id and desc from the interface
+                                                action.Interface = serviceInterface.FullName;
+
+                                                GingerActionAttribute interfaceGAAttr = (GingerActionAttribute)Attribute.GetCustomAttribute(mm, typeof(GingerActionAttribute), false);
+                                                if (interfaceGAAttr == null)
+                                                {
+                                                    // no GA attr then ignore
+                                                    continue;
+                                                }
+                                                else
+                                                {
+                                                    action.ActionId = interfaceGAAttr.Id;
+                                                    action.Description = interfaceGAAttr.Description;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    continue;
+                                }
                             }
 
-                            // pluginService.mStandAloneMethods.Add(MI);
-                            // pluginServiceInfo.Actions = GetActionFromDLL(pluginServiceInfo);
+                            if (string.IsNullOrEmpty(action.ActionId)) continue;
 
-                            // GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);
-                            PluginServiceActionInfo action = new PluginServiceActionInfo();
-                            action.ActionId = token.Id;                            
-                            action.Description = token.Description;
                             foreach (ParameterInfo PI in MI.GetParameters())
                             {
                                 if (PI.ParameterType.Name != nameof(IGingerAction))
@@ -314,7 +391,17 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public string StartupDLL { get { return mPluginPackageInfo.StartupDLL; } }
+        public string StartupDLL
+        {
+            get
+            {
+                if (mPluginPackageInfo == null)
+                {
+                    LoadInfoFromJSON();
+                }
+                return mPluginPackageInfo.StartupDLL;
+            }
+        }
 
 
     }
