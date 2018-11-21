@@ -58,6 +58,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
 using System.Windows.Input;
+using Amdocs.Ginger.Common.Repository;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -988,7 +989,7 @@ namespace Ginger
                     {
                         // take it from solution main platform
                         if (App.BusinessFlow.TargetApplications == null)
-                            App.BusinessFlow.TargetApplications = new ObservableList<TargetApplication>();
+                            App.BusinessFlow.TargetApplications = new ObservableList<TargetBase>();
 
                         App.BusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
                     }
@@ -1086,6 +1087,8 @@ namespace Ginger
                 App.BusinessFlow.SaveBackup();
             }
         }        
+
+        
 
     }
 }
