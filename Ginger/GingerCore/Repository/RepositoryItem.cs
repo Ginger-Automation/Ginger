@@ -19,10 +19,8 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
 using GingerCore.DataSource;
-using GingerCore.Properties;
 using GingerCore.Repository;
 using GingerCore.Variables;
 using System;

@@ -298,11 +298,11 @@
     <Reference Include="UIAComWrapper, Version=1.1.0.14, Culture=neutral, PublicKeyToken=78cbcf77433a85e5, processorArchitecture=MSIL">
       <HintPath>..\packages\UIAComWrapper.1.1.0.14\lib\net40\UIAComWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="WebDriver, Version=3.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Selenium.WebDriver.3.12.1\lib\net45\WebDriver.dll</HintPath>
+    <Reference Include="WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.3.141.0\lib\net45\WebDriver.dll</HintPath>
     </Reference>
-    <Reference Include="WebDriver.Support, Version=3.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Selenium.Support.3.12.1\lib\net45\WebDriver.Support.dll</HintPath>
+    <Reference Include="WebDriver.Support, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.Support.3.141.0\lib\net45\WebDriver.Support.dll</HintPath>
     </Reference>
     <Reference Include="WebDriverExtended, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WebDriverExtended.1.2.0.0\lib\net45\WebDriverExtended.dll</HintPath>
@@ -694,8 +694,6 @@
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\DecimalRandom.cs" />
-    <Compile Include="Variables\VariableDependency.cs" />
     <Compile Include="Activities\ErrorHandler.cs" />
     <Compile Include="Activities\Activity.cs" />
     <Compile Include="Animations\Animations.cs" />
@@ -731,10 +729,7 @@
     </Compile>
     <Compile Include="Drivers\WebServicesDriverLib\WebServiceXML.cs" />
     <Compile Include="Drivers\WindowsLib\WindowsDriver.cs" />
-    <Compile Include="Environments\EnvApplication.cs" />
-    <Compile Include="Environments\LoginUser.cs" />
     <Compile Include="Environments\ProjEnvironment.cs" />
-    <Compile Include="Environments\UnixServer.cs" />
     <Compile Include="FlowControlLib\FlowControl.cs" />
     <Compile Include="Environments\Database.cs" />
     <Compile Include="GeneralLib\General.cs" />
@@ -747,9 +742,6 @@
     <Compile Include="Platforms\ApplicationPlatform.cs" />
     <Compile Include="Platforms\TargetApplication.cs" />
     <Compile Include="Reporter\GingerHelperMsgsPool.cs" />
-    <Compile Include="Variables\VariableDynamic.cs" />
-    <Compile Include="Variables\VariableSelectionList.cs" />
-    <Compile Include="Variables\VariablePasswordString.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1050000_to_V1060000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1040000_to_V1050000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1030000_to_V1040000.cs" />
@@ -792,13 +784,6 @@
     </Compile>
     <Compile Include="Repository\RepositoryItem.cs" />
     <Compile Include="ValueExpression.cs" />
-    <Compile Include="Variables\VariableBase.cs" />
-    <Compile Include="Variables\VariableRandomString.cs" />
-    <Compile Include="Variables\VariableSequence.cs" />
-    <Compile Include="Variables\VariableTimer.cs" />
-    <Compile Include="Variables\VariableString.cs" />
-    <Compile Include="Variables\VariableList.cs" />
-    <Compile Include="Variables\VariableRandomNumber.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1020000_to_V1030000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2010000_to_V2020000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2000000_to_V2010000.cs" />
