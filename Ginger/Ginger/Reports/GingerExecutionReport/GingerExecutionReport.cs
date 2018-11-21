@@ -2632,9 +2632,10 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 var HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
                 HTMLReportConfiguration defualtConfig = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                // TODO - need to delete, template always should be initialize with fields.
                 if (defualtConfig != null)
                 {
-                    l.currentTemplate = Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig); ;
+                    l.currentTemplate = Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig);
                 }
                 else
                 {
@@ -2652,6 +2653,10 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 if ((mHTMLReportsFolder != null) && (mHTMLReportsFolder != string.Empty))
                 {
+                    if(isHTMLReportPermanentFolderNameUsed)
+                    {
+                        mHTMLReportsFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
+                    }
                     l.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder);
                 }
                 else

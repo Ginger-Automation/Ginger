@@ -161,6 +161,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                             return;
                         }
 
+                        act.AddOrUpdateReturnParamActual("Result", sRC);
+
                         sRC =sRC.Replace("\r", "");
                         sRC = sRC.Replace("\t", "");
                         string[] RCValues = sRC.Split('\n');
@@ -170,7 +172,16 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                             {
                                 string Param;
                                 string Value;
-                                int i = RCValue.IndexOf('=');
+                                int i = -1;
+                                if (!string.IsNullOrEmpty(ACC.Delimiter))
+                                {
+                                    i = RCValue.IndexOf(ACC.Delimiter);
+                                }
+                                else
+                                {
+                                    i = RCValue.IndexOf('=');
+                                }
+                                
                                 if ((i > 0) && ( i != RCValue.IndexOf("==")) && (i != RCValue.IndexOf("!=") +1))
                                 {
                                     Param = (RCValue.Substring(0, i)).Trim();

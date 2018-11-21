@@ -17,20 +17,18 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Repository;
+using GingerCore.Helpers;
+using GingerCore.Properties;
+using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
-using System.Linq;
-using System.Windows;
-using GingerCore.Helpers;
-using GingerCore.Properties;
-using GingerCore.Variables;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using Amdocs.Ginger.Repository;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 //TODO: add and use below with ReadCellDataNew - need to be tested
 // using DocumentFormat.OpenXml.Packaging;
