@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
@@ -73,7 +74,7 @@ namespace Ginger.Run
             RunOnDriver,
             RunInSimulationMode,
             RunOnPlugIn,
-            RunOnPlugInDriver
+            // RunOnPlugInDriver
         }
 
         public enum eRunOptions
@@ -1348,16 +1349,8 @@ namespace Ginger.Run
             {
                 if (typeof(ActPlugIn).IsAssignableFrom(act.GetType()))
                 {
-                    ActPlugIn pp =  (ActPlugIn)act;
-                    bool IsRunOnDriver = WorkSpace.Instance.PlugInsManager.IsRunOnPluginDriver(pp.PluginId, pp.ServiceId);
-                    if (IsRunOnDriver)
-                    {
-                        ActExecutorType = eActionExecutorType.RunOnPlugInDriver;
-                    }
-                    else
-                    {
-                        ActExecutorType = eActionExecutorType.RunOnPlugIn;
-                    }
+                    ActExecutorType = eActionExecutorType.RunOnPlugIn;
+
                     
                 }
                 else if (typeof(ActWithoutDriver).IsAssignableFrom(act.GetType()))
@@ -1599,10 +1592,7 @@ namespace Ginger.Run
 
                         case eActionExecutorType.RunOnPlugIn:
                             ExecutePlugInAction((ActPlugIn)act);
-                            break;
-                        case eActionExecutorType.RunOnPlugInDriver:
-                            ExecutePlugInActionOnDriver((ActPlugIn)act);
-                            break;
+                            break;                        
 
                         case eActionExecutorType.RunInSimulationMode:
                             RunActionInSimulationMode(act);
@@ -1849,12 +1839,12 @@ namespace Ginger.Run
             }
         }
 
-        private void ExecutePlugInActionOnDriver(ActPlugIn actPlugin)
-        {
-            SetCurrentActivityAgent();            
-            GingerNodeInfo GNI = CurrentBusinessFlow.CurrentActivity.CurrentAgent.GingerNodeInfo;
-            ExecutePlugInAction(actPlugin, GNI);
-        }
+        //private void ExecutePlugInActionOnDriver(ActPlugIn actPlugin)
+        //{
+        //    // SetCurrentActivityAgent();            
+        //    GingerNodeInfo GNI = CurrentBusinessFlow.CurrentActivity.CurrentAgent.GingerNodeInfo;
+        //    ExecutePlugInAction(actPlugin, GNI);
+        //}
 
 
         private void ExecutePlugInAction(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo = null)     
@@ -1886,7 +1876,9 @@ namespace Ginger.Run
                     if (GNI == null)
                     {
                         actPlugin.Error = "GNI not found";  //temp fix me!!!   !!!!
-                        throw new Exception("Timeout waiting for service to start");
+                        actPlugin.Error += "Timeout waiting for service to be available in GingerGrid";
+                        return;
+                        // throw new Exception("Timeout waiting for service to start");
                     }
                 }
 
@@ -3573,12 +3565,12 @@ namespace Ginger.Run
             // Make it based on current if we run from automate tab
 
             //Get the TargetApplication list
-            ObservableList<TargetApplication> bfsTargetApplications = new ObservableList<TargetApplication>();
+            ObservableList<TargetBase> bfsTargetApplications = new ObservableList<TargetBase>();
             if (BusinessFlows.Count() != 0)// Run Tab
             {
                 foreach (BusinessFlow BF in BusinessFlows)
                 {
-                    foreach (TargetApplication TA in BF.TargetApplications)
+                    foreach (TargetBase TA in BF.TargetApplications)
                     {
                         if (bfsTargetApplications.Where(x => x.AppName == TA.AppName).FirstOrDefault() == null)
                         {
@@ -3631,7 +3623,7 @@ namespace Ginger.Run
             }
 
             //Set the ApplicationAgents
-            foreach (TargetApplication TA in bfsTargetApplications)
+            foreach (TargetBase TA in bfsTargetApplications)
             {
                 // make sure GR got it covered
                 if (ApplicationAgents.Where(x => x.AppName == TA.AppName).FirstOrDefault() == null)
