@@ -197,7 +197,7 @@ namespace GingerWPFUnitTest
         }
 
 
-        
+        [Ignore]
         [Level3]
         [TestMethod]
         public void DeleteEnvFolderRemovedfromTree()
