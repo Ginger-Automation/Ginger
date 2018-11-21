@@ -50,6 +50,12 @@ namespace Ginger.GeneralLib
 
             //cut all log not relevent to last application launch
             int indexOfStart = mLogText.LastIndexOf("######################## Application version");
+
+            if(indexOfStart==-1)
+            {
+                indexOfStart = 0;
+            }
+
             mLogText = mLogText.Substring(indexOfStart);
 
             //split the log per log info
