@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -150,12 +151,12 @@ namespace Ginger.Actions
                 if (a.IsSelectableAction == false) 
                     continue;
 
-                TargetApplication TA = (from x in App.BusinessFlow.TargetApplications where x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
+                TargetApplication TA = (TargetApplication)(from x in App.BusinessFlow.TargetApplications where x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
                 if (TA == null)
                 {
                     if (App.BusinessFlow.TargetApplications.Count == 1)
                     {
-                        TA = App.BusinessFlow.TargetApplications.FirstOrDefault();
+                        TA = (TargetApplication)App.BusinessFlow.TargetApplications.FirstOrDefault();
                         App.BusinessFlow.CurrentActivity.TargetApplication = TA.AppName;
                     }
                     else
@@ -278,10 +279,14 @@ namespace Ginger.Actions
                         // TODO: add per group or... !!!!!!!!!
 
                         //Check if target already exist else add it
-                        TargetApplication targetApplication = (from x in App.BusinessFlow.TargetApplications where x.AppName == p.ServiceId select x).SingleOrDefault();
-                        if (targetApplication == null)
+                        // TODO: search only in targetplugin type
+                        TargetPlugin targetPlugin = (TargetPlugin)(from x in App.BusinessFlow.TargetApplications where x.AppName == p.ServiceId select x).SingleOrDefault();
+                        if (targetPlugin == null)
                         {
-                            App.BusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = p.ServiceId, TargetAgentType = Agent.eAgentType.Service });
+                            // check if interface add it
+                            // App.BusinessFlow.TargetApplications.Add(new TargetPlugin() { AppName = p.ServiceId });
+
+                            App.BusinessFlow.TargetApplications.Add(new TargetPlugin() { AppName = p.ServiceId });
 
                             //Search for default agent which match 
                             App.AutomateTabGingerRunner.UpdateApplicationAgents();
