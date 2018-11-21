@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Activities;
 using Ginger.BusinessFlowWindows;
@@ -67,7 +68,7 @@ namespace Ginger.BusinessFlowFolder
 
             if (mBusinessFlow.TargetApplications == null)
             {
-                mBusinessFlow.TargetApplications = new ObservableList<TargetApplication>();
+                mBusinessFlow.TargetApplications = new ObservableList<TargetBase>();
             }
             PlatformListBox.ItemsSource = mBusinessFlow.TargetApplications;
             PlatformListBox.DisplayMemberPath = nameof(TargetApplication.AppName);
