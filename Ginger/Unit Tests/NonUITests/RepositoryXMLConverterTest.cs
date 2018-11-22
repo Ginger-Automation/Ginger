@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Repository;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Repository;
@@ -34,6 +36,12 @@ namespace UnitTests.NonUITests
         public static void ClassInitialize(TestContext TC)
         {
             Ginger.App.InitClassTypesDictionary();            
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
         }
 
         [TestMethod]

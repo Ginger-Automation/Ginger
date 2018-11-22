@@ -207,7 +207,11 @@ namespace Ginger.Run.RunSetActions
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
                 DefaultTemplatePickerCbx.SelectedValuePath = HTMLReportConfiguration.Fields.ID;
-                DefaultTemplatePickerCbx.SelectedIndex = DefaultTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault());
+                if (runSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID == 0)
+                {
+                    DefaultTemplatePickerCbx.SelectedIndex = DefaultTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault());
+                }
+                DefaultTemplatePickerCbx.SelectedIndex = DefaultTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.ID == runSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID)).FirstOrDefault());
             }
         }
         private void EmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

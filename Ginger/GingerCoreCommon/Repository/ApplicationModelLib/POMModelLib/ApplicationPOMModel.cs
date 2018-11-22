@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.Repository
         {
         }
 
-        public static List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web };
+        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web };
 
         private string mPageURL = string.Empty;
 

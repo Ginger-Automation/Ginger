@@ -231,7 +231,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
         bool disabeledElementMsgShown;
         private void MainElementsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
-            if (e.Column.Header == "Name" || e.Column.Header == nameof(ElementInfo.Description)) return;
+            if (e.Column.Header == "Name" || e.Column.Header == nameof(ElementInfo.Description))
+            {
+                return;
+            }
 
             ElementInfo ei = (ElementInfo)xMainElementsGrid.CurrentItem;
             if (ei.IsAutoLearned)
