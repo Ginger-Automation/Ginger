@@ -221,30 +221,29 @@ namespace GingerCore.Drivers.Appium
                     DriverDeviceType = eDeviceType.Phone;
 
                 //Setting capabilities
-                DesiredCapabilities capabilities = new DesiredCapabilities();
-                capabilities = this.GetCapabilities();
+                DriverOptions driverOptions = this.GetCapabilities();
 
                 foreach(DriverConfigParam UserCapability in AdvanceDriverConfigurations)
                 {
                  
-                    capabilities.SetCapability(UserCapability.Parameter, UserCapability.Value);
+                    driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
                 }
                 //creating driver
                 switch (DriverPlatformType)
                 {
                     case eSeleniumPlatformType.Android:
-                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, capabilities, INIT_TIMEOUT_SEC);
+                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
                         break;
                     case eSeleniumPlatformType.iOS:
-                        Driver = new IOSDriver<AppiumWebElement>(serverUri, capabilities, INIT_TIMEOUT_SEC);
+                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
                         break;
                     case eSeleniumPlatformType.AndroidBrowser:
-                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, capabilities, INIT_TIMEOUT_SEC);
+                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
                         Driver.Navigate().GoToUrl("http://www.google.com");
                         break;
                     case eSeleniumPlatformType.iOSBrowser:
                         //TODO: start ios-web-proxy automatically
-                        Driver = new IOSDriver<AppiumWebElement>(serverUri, capabilities, INIT_TIMEOUT_SEC);
+                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
                         break;
                 }
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
@@ -428,9 +427,9 @@ namespace GingerCore.Drivers.Appium
             return portIsFree;
         }
 
-        private DesiredCapabilities GetCapabilities()
+        private DriverOptions GetCapabilities()
         {
-            DesiredCapabilities capabilities = new DesiredCapabilities();
+            DriverOptions driverOptions = new AppiumOptions();
 
             //see http://appium.io/slate/en/master/?csharp#appium-server-capabilities for full list of capabilities values
 
@@ -440,28 +439,28 @@ namespace GingerCore.Drivers.Appium
                     //Appium capabilities
                     //capabilities.SetCapability("automationName", "Appium");
                     //capabilities.SetCapability("platformName", "Android");                    
-                    capabilities.SetCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
+                    driverOptions.AddAdditionalCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
 
                     //Tested device capabilities
-                    capabilities.SetCapability("deviceName", DeviceName); //don't really impact anything, can be used for AppPackage+AppActivity switch case based on device type
-                    capabilities.SetCapability("platformVersion", DevicePlatformVersion);//Mobile OS version                  
+                    driverOptions.AddAdditionalCapability("deviceName", DeviceName); //don't really impact anything, can be used for AppPackage+AppActivity switch case based on device type
+                    driverOptions.AddAdditionalCapability("platformVersion", DevicePlatformVersion);//Mobile OS version                  
                     if (!string.IsNullOrEmpty(DeviceID))
-                        capabilities.SetCapability("udid", DeviceID);
+                        driverOptions.AddAdditionalCapability("udid", DeviceID);
 
                     //Tested application capabilities     
                     if (!string.IsNullOrEmpty(AppInstallerPath))
                     {
-                        capabilities.SetCapability("app", AppInstallerPath);
-                        capabilities.SetCapability("browserName", "");
+                        driverOptions.AddAdditionalCapability("app", AppInstallerPath);
+                        driverOptions.AddAdditionalCapability("browserName", "");
                     }
                     else
                     {
                         if (!string.IsNullOrEmpty(InstalledAppPackage))
                         {
-                            capabilities.SetCapability("appPackage", InstalledAppPackage);
-                            capabilities.SetCapability("appActivity", InstalledAppActivity);
-                            capabilities.SetCapability("appWaitPackage", InstalledAppPackage);
-                            capabilities.SetCapability("appWaitActivity", InstalledAppActivity);
+                            driverOptions.AddAdditionalCapability("appPackage", InstalledAppPackage);
+                            driverOptions.AddAdditionalCapability("appActivity", InstalledAppActivity);
+                            driverOptions.AddAdditionalCapability("appWaitPackage", InstalledAppPackage);
+                            driverOptions.AddAdditionalCapability("appWaitActivity", InstalledAppActivity);
                         }
                     }
                     break;
@@ -470,61 +469,61 @@ namespace GingerCore.Drivers.Appium
                     //Appium capabilities
                     //capabilities.SetCapability("automationName", "Appium");                    
                     //capabilities.SetCapability("platformName", "iOS");
-                    capabilities.SetCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
+                    driverOptions.AddAdditionalCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
 
                     //Tested device capabilities
-                    capabilities.SetCapability("deviceName", DeviceName); 
-                    capabilities.SetCapability("platformVersion", DevicePlatformVersion);//Mobile OS version 
+                    driverOptions.AddAdditionalCapability("deviceName", DeviceName); 
+                    driverOptions.AddAdditionalCapability("platformVersion", DevicePlatformVersion);//Mobile OS version 
                     if (!string.IsNullOrEmpty(DeviceID))
-                        capabilities.SetCapability("udid", DeviceID);
+                        driverOptions.AddAdditionalCapability("udid", DeviceID);
 
                     //Tested application capabilities     
                     if (!string.IsNullOrEmpty(AppInstallerPath))
                     {
-                        capabilities.SetCapability("app", AppInstallerPath);
-                        capabilities.SetCapability("browserName", "");
+                        driverOptions.AddAdditionalCapability("app", AppInstallerPath);
+                        driverOptions.AddAdditionalCapability("browserName", "");
                     }
                     if (!string.IsNullOrEmpty(InstalledAppBundleID))
-                        capabilities.SetCapability("bundleId", InstalledAppBundleID);                   
+                        driverOptions.AddAdditionalCapability("bundleId", InstalledAppBundleID);                   
                     break;
 
                 case eSeleniumPlatformType.AndroidBrowser:
                     //Appium capabilities
-                    capabilities.SetCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
+                    driverOptions.AddAdditionalCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
 
                     //Tested device capabilities
-                    capabilities.SetCapability("deviceName", DeviceName); //don't really impact anything, can be used for AppPackage+AppActivity switch case based on device type
-                    capabilities.SetCapability("platformVersion", DevicePlatformVersion);//Mobile OS version  
+                    driverOptions.AddAdditionalCapability("deviceName", DeviceName); //don't really impact anything, can be used for AppPackage+AppActivity switch case based on device type
+                    driverOptions.AddAdditionalCapability("platformVersion", DevicePlatformVersion);//Mobile OS version  
                     if (!string.IsNullOrEmpty(DeviceID))
-                        capabilities.SetCapability("udid", DeviceID);
+                        driverOptions.AddAdditionalCapability("udid", DeviceID);
 
                     //Tested application capabilities 
-                    capabilities.SetCapability("browserName", "chrome");
+                    driverOptions.AddAdditionalCapability("browserName", "chrome");
                     //capabilities.SetCapability("chromedriverExecutable", ""); //The absolute local path to webdriver executable (if Chromium embedder provides its own webdriver, it should be used instead of original chromedriver bundled with Appium); exp: /abs/path/to/webdriver
                     //capabilities.SetCapability("chromeOptions", ""); //Allows passing chromeOptions capability for chrome driver. For more information see chromeOptions: https://sites.google.com/a/chromium.org/chromedriver/capabilities
                     break;
 
                 case eSeleniumPlatformType.iOSBrowser:
                     //Appium capabilities
-                    capabilities.SetCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
+                    driverOptions.AddAdditionalCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
 
                     //Tested device capabilities
-                    capabilities.SetCapability("deviceName", DeviceName);
-                    capabilities.SetCapability("platformVersion", DevicePlatformVersion);//Mobile OS version 
+                    driverOptions.AddAdditionalCapability("deviceName", DeviceName);
+                    driverOptions.AddAdditionalCapability("platformVersion", DevicePlatformVersion);//Mobile OS version 
                     if (!string.IsNullOrEmpty(DeviceID))
-                        capabilities.SetCapability("udid", DeviceID);
+                        driverOptions.AddAdditionalCapability("udid", DeviceID);
 
                     //Tested application capabilities 
-                    capabilities.SetCapability("browserName", "safari");
+                    driverOptions.AddAdditionalCapability("browserName", "safari");
                     //capabilities.setCapability("safariInitialUrl", "");  //(Sim-only) (>= 8.1) Initial safari url, default is a local welcome page
-                    capabilities.SetCapability("safariAllowPopups", false);  //(Sim-only) Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.
+                    driverOptions.AddAdditionalCapability("safariAllowPopups", false);  //(Sim-only) Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.
                     //capabilities.setCapability("safariOpenLinksInBackground", false);  //(Sim-only) Whether Safari should allow links to open in new windows. Default keeps current sim setting.
                     if (!string.IsNullOrEmpty(InstalledAppBundleID))
-                        capabilities.SetCapability("bundleId", InstalledAppBundleID);
+                        driverOptions.AddAdditionalCapability("bundleId", InstalledAppBundleID);
                     break;
             }
 
-            return capabilities;                        
+            return driverOptions;                        
         }
 
 
