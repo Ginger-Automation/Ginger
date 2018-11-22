@@ -49,6 +49,20 @@ namespace Ginger.Run.RunSetActions
                 RunActionBtn.Visibility = Visibility.Visible;
         }
 
+        public GetEditPage(RunSetActionBase R)
+        {
+            if (a.ActionEditPage != null)
+            {
+                string classname = "Ginger.Actions." + a.ActionEditPage;
+                Type t = Assembly.GetExecutingAssembly().GetType(classname);
+                if (t == null)
+                {
+                    throw new Exception("Action edit page not found - " + classname);
+                }
+                Page p = (Page)Activator.CreateInstance(t, a);
+            }
+        }
+
         private void RunActionBtn_Click(object sender, RoutedEventArgs e)
         {
             mRunSetAction.SolutionFolder = App.UserProfile.Solution.Folder;

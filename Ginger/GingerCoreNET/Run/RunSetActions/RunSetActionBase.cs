@@ -5,6 +5,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.ReporterLib;
 using System.Diagnostics;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
 {
@@ -24,7 +25,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
 
         public abstract bool SupportRunOnConfig { get; }
 
-        public abstract void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers);
+        public abstract void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers);
 
         public enum eRunSetActionStatus
         {
@@ -165,7 +166,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
 
         public abstract void Execute(ReportInfo RI);
 
-        public abstract Page GetEditPage();
+        public abstract string GetEditPage();
 
         internal void ExecuteWithRunPageBFES()
         {
