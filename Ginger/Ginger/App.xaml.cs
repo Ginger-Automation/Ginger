@@ -662,7 +662,7 @@ namespace Ginger
                 OnPropertyChanged(nameof(LoadingSolution));
 
                 // Cleanup last loaded solution 
-                //WorkSpace.Instance.LocalGingerGrid.Reset();  //Temp
+                WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
                 AppSolutionAutoSave.SolutionAutoSaveEnd();
 
                 //Cleanup
