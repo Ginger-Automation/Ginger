@@ -242,10 +242,10 @@ namespace GingerCore.Variables
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
-                if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
-                    mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
-                    mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" ||
-                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath") continue;
+                if (Amdocs.Ginger.Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
+                {
+                    continue;
+                }
 
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
@@ -320,15 +320,11 @@ namespace GingerCore.Variables
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
-                // TODO: !!! change to nameof
+                if (Amdocs.Ginger.Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
+                {
+                    continue;
+                }
 
-                if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
-                    mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
-                    mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ScreenShots" ||
-                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType" ||
-                    mi.Name == nameof(ActInputValue.ListDynamicValue) ||
-                    mi.Name == "GetNameForFileName" || mi.Name == "FilePath") continue;
-               
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
                 dynamic value = null;

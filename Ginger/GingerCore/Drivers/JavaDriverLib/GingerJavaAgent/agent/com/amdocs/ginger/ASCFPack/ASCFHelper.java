@@ -19,11 +19,9 @@ package com.amdocs.ginger.ASCFPack;
 import java.awt.Component;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
@@ -257,6 +255,25 @@ public class ASCFHelper {
 				e.printStackTrace();
 			}
 			return false;	
+	}
+	
+	public String GetNodeText(Object node)
+	{
+			Class nodeClass= node.getClass();
+			try
+			{
+				Field field = nodeClass.getDeclaredField("text");
+			    field.setAccessible(true);
+			    Object o = field.get(node);			   
+			   
+			    return (String)o;
+			}
+			catch(Exception ex)
+			{
+				GingerAgent.WriteLog("Exception while trying to get node text");
+			}
+			return null;
+			
 	}
 	
 	public void setSelectedValue(Component c, String value) 
