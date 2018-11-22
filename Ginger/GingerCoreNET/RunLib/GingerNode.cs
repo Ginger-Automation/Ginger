@@ -358,7 +358,12 @@ namespace GingerCoreNET.DriversLib
             }
             catch (Exception ex)
             {
-                GA.AddError("Error when trying to invoke: " + AH.ServiceActionId + " - " + ex.Message);
+                string message = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    message += Environment.NewLine + ex.InnerException.Message;
+                }
+                GA.AddError("Error when trying to invoke: " + AH.ServiceActionId + " - " + message);
             }
         }
 
