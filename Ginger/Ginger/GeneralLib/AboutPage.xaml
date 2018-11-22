@@ -2,19 +2,20 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       Height="550" Width="700"
 	Title="About Ginger">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="200"/>
             <RowDefinition Height="150*"/>
         </Grid.RowDefinitions>
-
-        <Image Grid.Row="0"  Source="{StaticResource @GingerLogo}" DockPanel.Dock="Top" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" Margin="0,0,0,0" />
-
+        
+        <usercontrols:ImageMakerControl  ImageType="GingerLogo" Grid.Row="0" DockPanel.Dock="Top" HorizontalAlignment="Center" VerticalAlignment="Center" Width="450"/>
+        
         <DockPanel Grid.Row="1">
             <Label Content="Application Details:" Style="{StaticResource $HeaderStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Foreground="{StaticResource $SelectionColor_Pink}"/>
             <ScrollViewer DockPanel.Dock="Top" Margin="0,10,0,20">

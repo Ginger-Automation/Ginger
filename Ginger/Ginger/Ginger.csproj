@@ -3052,6 +3052,8 @@
     </Content>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconInGrayNoBackground.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
