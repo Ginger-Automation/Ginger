@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -204,6 +203,14 @@ namespace Amdocs.Ginger.Repository
             // PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
             // PluginService pluginService = pluginPackage.GetService(serviceId);
             return true; // temp!!!!!!!!!!!!!!!
+        }
+
+        public bool IsSessionService(string pluginId, string serviceId)
+        {
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
+            pluginPackage.LoadServicesFromJSON();
+            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
+            return pluginServiceInfo.IsSession;
         }
     }
 }
