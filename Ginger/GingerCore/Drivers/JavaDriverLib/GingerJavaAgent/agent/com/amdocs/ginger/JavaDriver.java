@@ -38,20 +38,16 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,7 +88,6 @@ import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.jsoup.nodes.Element;
@@ -1708,70 +1703,48 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			return PayLoad.Error("Element not found - " + locateBy + " " + locateValue);
 		}
 	}
-
-private TreePath SearchTreeNodes(JTree tree,String locateValue) 
-{
-	TreePath treePath = null;
-	int startNodeNumber = 0;
-	String[] nodes = locateValue.split("/");					
-
-	(tree).expandRow(startNodeNumber);
 	
-		for(int row = startNodeNumber; row < tree.getRowCount(); row++)
-		{
-				treePath = tree.getNextMatch(nodes[0].trim(), row, Position.Bias.Forward);
-				
-				if(treePath != null)
-				{
-					
-						DefaultMutableTreeNode lastNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
-						
-						if(nodes[0].equalsIgnoreCase((String)lastNode.getUserObject()))
-						{
-							
-						  if(nodes.length > 1)
-							{
-								treePath = SearchChildNodes(tree, treePath, nodes);
-							}
-							break;
-						}
-				}
+	private TreePath SearchTreeNodes(JTree tree,String locateValue) 
+	{
+		String[] nodes = locateValue.split("/");
 			
-	}
-	return treePath;
-}
-
-private TreePath SearchChildNodes(JTree tree, TreePath treePath, String[] nodes) 
-{
-	boolean nodeFound = false;
-	for (int i =1; i < nodes.length; i++)
-	{
-		nodeFound = false;
-		String nodeToSearch = nodes[i];
-		
-		TreeNode startNode = (TreeNode) treePath.getLastPathComponent();
-		
-		Enumeration<?> children =  startNode.children();
-		while(children.hasMoreElements())
+		TreePath matchingNodePath=null;
+		int row =0;
+		int i=0;
+		String node;
+		while(i<nodes.length)
 		{
-			DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
-			String userObject = (String) child.getUserObject();
-			if(userObject.equalsIgnoreCase(nodeToSearch))
-			{
-				nodeFound = true;
-				(tree).expandRow((tree).getRowForPath(treePath));
-			 	Object[] nodePath = child.getPath();
-			 	treePath = new TreePath(nodePath);
-			 	break;
+			node=nodes[i];
+			tree.expandRow(row);
+			matchingNodePath = tree.getNextMatch(node.trim(), row, Position.Bias.Forward);
+	
+			Object matchingNode= matchingNodePath.getLastPathComponent();
+			String nodeText="";
+		
+	
+			if(matchingNode.getClass().getName().contains("uif"))
+			{			
+				nodeText=mASCFHelper.GetNodeText(matchingNode);
 			}
-		}
+			else
+			{
+				nodeText=(String)((DefaultMutableTreeNode)matchingNode).getUserObject();
+			}
+		
+			if(node.equalsIgnoreCase(nodeText)) 
+			{			
+				row= tree.getRowForPath(matchingNodePath);
+				i++;
+			}
+			else
+			{
+				row= tree.getRowForPath(matchingNodePath)+1;
+			}
+		}	
+
+		return matchingNodePath;
+
 	}
-	if(nodeFound)
-	{
-		return treePath;
-	}
-	return null;
-}
 
 	
 	private Boolean IsImplicitSyncRequired(String controlAction, String Value, String ValueToSelect)
@@ -4477,7 +4450,7 @@ private PayLoad SetComponentFocus(Component c)
 			Rectangle size = CurrentTable.getCellRect(rowNum, colNum, true);
 			size.x += size.width/2;
 			size.y += size.height/2;
-			MousePressAndReleaseComponent(CurrentTable, size.x + "," + size.y,mCommandTimeout,2);
+			MousePressAndReleaseComponent(CurrentTable, size.x + "," + size.y,mCommandTimeout,2);			
 			
 			return PayLoad.OK("Double Click Activity Passed");
 		}
