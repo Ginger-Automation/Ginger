@@ -552,6 +552,9 @@ namespace Ginger.Actions
         {
             try
             {
+                if (txtDescription == null || cmbColSelectorValue.SelectedItem == null)
+                    return;
+
                 txtDescription.Text = string.Empty;
                 TextBlockHelper TBH = new TextBlockHelper(txtDescription);
 

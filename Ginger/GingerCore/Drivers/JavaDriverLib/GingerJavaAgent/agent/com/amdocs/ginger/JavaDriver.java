@@ -1575,7 +1575,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 				}	
 			    GingerAgent.WriteLog("Coordinates = " + Value);
 				GingerAgent.WriteLog("Inside Mouse Press/Release");
-				PayLoad plrc =  MousePressReleaseComponent(c,Value,mCommandTimeout,1);
+				PayLoad plrc =  MousePressReleaseComponent(c,Value,mCommandTimeout,1,MouseEvent.MOUSE_CLICKED,InputEvent.BUTTON1_DOWN_MASK);
 				GingerAgent.WriteLog("After Mouse Press/Release");
 				return plrc;				
 			}
@@ -1803,7 +1803,7 @@ private TreePath SearchChildNodes(JTree tree, TreePath treePath, String[] nodes)
 	
 
 	//TODO: fix coordinate to be better with X,Y not string...
-	private PayLoad MousePressReleaseComponent(final Component c,final String Coordinate, final int Timeout,final int numOfClicks) {
+	private PayLoad MousePressReleaseComponent(final Component c,final String Coordinate, final int Timeout,final int numOfClicks,final int mouseEvent,final int inputEvent) {
 		 final String[] response = new String[3];
 
 		 response[0]="false";// Set it to true before any doclick method inside
@@ -1844,7 +1844,7 @@ private TreePath SearchChildNodes(JTree tree, TreePath treePath, String[] nodes)
 					
 					GingerAgent.WriteLog("Sending Mouse Press to C");
 					
-						MouseEvent me = new MouseEvent(c, MouseEvent.MOUSE_CLICKED, when, InputEvent.BUTTON1_DOWN_MASK , x, y, numOfClicks, false);
+						MouseEvent me = new MouseEvent(c, mouseEvent, when, inputEvent , x, y, numOfClicks, false);
 										
 					response[0] = "true";	
 					c.dispatchEvent(me);
@@ -4238,6 +4238,7 @@ private PayLoad SetComponentFocus(Component c)
 				|| controlAction.equals("GetSelectedRow")
 				|| controlAction.equalsIgnoreCase("AsyncClick")
 				|| controlAction.equalsIgnoreCase("DoubleClick")
+				|| controlAction.equalsIgnoreCase("ActivateCell")
 				|| controlAction.equalsIgnoreCase("SetFocus")
 				|| controlAction.equalsIgnoreCase("IsVisible")				
 				|| controlAction.equalsIgnoreCase("MousePressAndRelease")
@@ -4480,6 +4481,25 @@ private PayLoad SetComponentFocus(Component c)
 			
 			return PayLoad.OK("Double Click Activity Passed");
 		}
+		else if (controlAction.equals("ActivateCell")) {
+				
+				GingerAgent.WriteLog("In ActivateCell");
+				
+				Component CellComponent = CurrentTable.prepareRenderer(CurrentTable.getCellRenderer(rowNum, colNum), rowNum,
+						colNum);
+				GingerAgent.WriteLog("CellComponent instanceof " + CellComponent.toString());
+				CurrentTable.grabFocus();
+				setFocus(CurrentTable,rowNum,colNum);
+						
+				Point pos = CurrentTable.getLocationOnScreen();	
+				//if false, return the true cell bounds - computed by subtracting the intercell spacing from the height and widths of the column and row models
+				Rectangle size = CurrentTable.getCellRect(rowNum, colNum, true);
+				size.x += size.width/2;
+				size.y += size.height/2;
+				MousePressReleaseComponent(CurrentTable, size.x + "," + size.y,mCommandTimeout,2,MouseEvent.MOUSE_CLICKED,InputEvent.BUTTON1_MASK);
+				
+				return PayLoad.OK("Activate Cell Activity Passed");
+		}
 		else if (controlAction.equals("Click")) {
 
 			Component CellComponent = CurrentTable.prepareRenderer(CurrentTable.getCellRenderer(rowNum, colNum), rowNum,
@@ -4666,7 +4686,7 @@ private PayLoad SetComponentFocus(Component c)
 				pos.y += size.y;
 
 				return MousePressReleaseComponent(CurrentTable, size.x + ","
-						+ size.y, -1,1);
+						+ size.y, -1,1,MouseEvent.MOUSE_CLICKED,InputEvent.BUTTON1_DOWN_MASK);
 
 			} else {
 				return ClickComponent(CellComponent, Value, -1);
