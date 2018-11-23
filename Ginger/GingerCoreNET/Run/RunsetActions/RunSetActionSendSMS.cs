@@ -26,16 +26,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
             get { return true; }
         }
 
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             //TODO: check number of chars and show err if more or update Errors field
             SMSEmail.Send();
         }
 
-        public override Page GetEditPage()
+        public override string GetEditPage()
         {
-            RunSetActionSendSMSEditPage p = new RunSetActionSendSMSEditPage(this);
-            return p;
+           // RunSetActionSendSMSEditPage p = new RunSetActionSendSMSEditPage(this);
+            return "RunSetActionSendSMSEditPage";
         }
 
         public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)

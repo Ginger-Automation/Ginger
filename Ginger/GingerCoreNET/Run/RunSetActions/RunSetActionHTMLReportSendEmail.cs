@@ -37,6 +37,7 @@ using System.Reflection;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Run.RunsetActions;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -139,7 +140,7 @@ namespace Ginger.Run.RunSetActions
 
         public string ReportPath = string.Empty;
         private string reportTimeStamp = string.Empty;
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             long s1 = new long();
             string extraInformationCalculated = string.Empty;
@@ -1166,10 +1167,10 @@ namespace Ginger.Run.RunSetActions
             }
             return s1;
         }
-        public override Page GetEditPage()
+        public override string GetEditPage()
         {
-            RunSetActionHTMLReportSendEmailEditPage RSAEREP = new RunSetActionHTMLReportSendEmailEditPage(this);
-            return RSAEREP;
+           // RunSetActionHTMLReportSendEmailEditPage RSAEREP = new RunSetActionHTMLReportSendEmailEditPage(this);
+            return "RunSetActionHTMLReportSendEmailEditPage";
         }
         public static string OverrideHTMLRelatedCharacters(string text)
         {
@@ -1181,6 +1182,11 @@ namespace Ginger.Run.RunSetActions
         }
 
         public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

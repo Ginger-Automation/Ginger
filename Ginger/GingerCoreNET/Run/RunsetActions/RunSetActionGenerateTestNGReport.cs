@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
             set { isStatusByActivity = value; }
         }
 
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             try
             {
@@ -83,12 +83,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
         }
 
         //TODO: move to Run SetAction
-        private void SaveBFResults(ReportInfo RI, string folder, bool statusByGroupActivity)
+        private void SaveBFResults(IReportInfo RI, string folder, bool statusByGroupActivity)
         {
-            //TestNGResultReport TNGReport = new TestNGResultReport();
-            string xml = TNGReport.CreateReport(RI, statusByGroupActivity);
+            //ITestNGResultReport TNGReport = new ITestNGResultReport();
+            //string xml = TNGReport.CreateReport(RI, statusByGroupActivity);
 
-            System.IO.File.WriteAllLines(folder + @"\testng-results.xml", new string[] { xml });
+            //System.IO.File.WriteAllLines(folder + @"\testng-results.xml", new string[] { xml });
             //TODO: let the user select file prefix
         }
 

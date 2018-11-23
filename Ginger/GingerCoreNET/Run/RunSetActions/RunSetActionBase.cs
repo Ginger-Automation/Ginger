@@ -164,7 +164,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
             }
         }
 
-        public abstract void Execute(ReportInfo RI);
+        public abstract void Execute(IReportInfo RI);
 
         public abstract string GetEditPage();
 
@@ -174,7 +174,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
             //RunAction(RI);
         }
 
-        internal void RunAction(ReportInfo RI)
+        internal void RunAction(IReportInfo RI)
         {
             Reporter.ToGingerHelper(eGingerHelperMsgKey.ExecutingRunSetAction, null, this.Name);
             try

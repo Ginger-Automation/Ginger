@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunsetActions;
 using Amdocs.Ginger.Repository;
 using System;
@@ -55,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public string CustomHTMLReportTemplate { get; set; }
 
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             //Make sure we clear in case use open the edit page twice
             Email.Attachments.Clear();
@@ -101,9 +102,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
             Email.Send();
         }
 
-        public void SetBodyFromHTMLReport(ReportInfo RI)
+        public void SetBodyFromHTMLReport(IReportInfo RI)
         {
-            HTMLReportBase HRB = null;
+            IHTMLReportBase HRB = null;
 
             switch (HTMLReportTemplate)
             {
@@ -184,13 +185,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
             }
         }
 
-        public override Page GetEditPage()
+        public override string GetEditPage()
         {
-            RunSetActionSendEmailEditPage RSAEREP = new RunSetActionSendEmailEditPage(this);
-            return RSAEREP;
+            //RunSetActionSendEmailEditPage RSAEREP = new RunSetActionSendEmailEditPage(this);
+            return "RunSetActionSendEmailEditPage";
         }
 
-        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

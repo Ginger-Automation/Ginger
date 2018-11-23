@@ -38,16 +38,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
         public Email Email = new Email();
 
         IValueExpression mValueExpression = null;
-        ValueExpression mVE
+        IValueExpression mVE
         {
-            get
-            {
-                if (mValueExpression == null)
-                {
-                    mValueExpression = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
-                }
-                return mValueExpression;
-            }
+            //get
+            //{
+            //    if (mValueExpression == null)
+            //    {
+            //        mValueExpression = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
+            //    }
+            //    return mValueExpression;
+            //}
         }
 
         private string mBodytext;
@@ -70,7 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
         [IsSerializedForLocalRepository]
         public string MailTo { get { return mMailTo; } set { if (mMailTo != value) { mMailTo = value; OnPropertyChanged(Fields.MailTo); } } }
 
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             Email.Attachments.Clear();
             Email.alternateView = null;
@@ -95,10 +95,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
             }
         }
 
-        public override Page GetEditPage()
+        public override string GetEditPage()
         {
-            RunSetActionSendFreeEmailEditPage RSAEREP = new RunSetActionSendFreeEmailEditPage(this);
-            return RSAEREP;
+            //RunSetActionSendFreeEmailEditPage RSAEREP = new RunSetActionSendFreeEmailEditPage(this);
+            return "RunSetActionSendFreeEmailEditPage";
         }
 
         public static string OverrideHTMLRelatedCharacters(string text)
