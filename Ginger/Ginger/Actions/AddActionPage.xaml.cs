@@ -151,7 +151,7 @@ namespace Ginger.Actions
                 if (a.IsSelectableAction == false) 
                     continue;
 
-                TargetApplication TA = (TargetApplication)(from x in App.BusinessFlow.TargetApplications where x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
+                TargetApplication TA = (TargetApplication)(from x in App.BusinessFlow.TargetApplications where x.Name == App.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
                 if (TA == null)
                 {
                     if (App.BusinessFlow.TargetApplications.Count == 1)
@@ -280,13 +280,13 @@ namespace Ginger.Actions
 
                         //Check if target already exist else add it
                         // TODO: search only in targetplugin type
-                        TargetPlugin targetPlugin = (TargetPlugin)(from x in App.BusinessFlow.TargetApplications where x.AppName == p.ServiceId select x).SingleOrDefault();
+                        TargetPlugin targetPlugin = (TargetPlugin)(from x in App.BusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
                         if (targetPlugin == null)
                         {
                             // check if interface add it
                             // App.BusinessFlow.TargetApplications.Add(new TargetPlugin() { AppName = p.ServiceId });
 
-                            App.BusinessFlow.TargetApplications.Add(new TargetPlugin() { AppName = p.ServiceId });
+                            App.BusinessFlow.TargetApplications.Add(new TargetPlugin() {PluginId = p.PluginId,  ServiceId = p.ServiceId });
 
                             //Search for default agent which match 
                             App.AutomateTabGingerRunner.UpdateApplicationAgents();

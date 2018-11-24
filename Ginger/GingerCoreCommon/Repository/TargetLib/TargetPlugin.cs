@@ -7,9 +7,11 @@ namespace Amdocs.Ginger.Common.Repository.TargetLib
 {
     public class TargetPlugin : TargetBase
     {
+        public override string Name { get { return mPluginID + "." + mServiceID; } }
+
         private string mPluginID;
         [IsSerializedForLocalRepository]
-        public string PluginID
+        public string PluginId
         {
             get
             {
@@ -20,27 +22,32 @@ namespace Amdocs.Ginger.Common.Repository.TargetLib
                 if (mPluginID != value)
                 {
                     mPluginID = value;
-                    OnPropertyChanged(nameof(PluginID));
+                    OnPropertyChanged(nameof(PluginId));
+                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
 
-
-        string mAppName;
-        public override string AppName
+        private string mServiceID;
+        [IsSerializedForLocalRepository]
+        public string ServiceId
         {
             get
             {
-                return mAppName;
+                return mServiceID;
             }
             set
             {
-                if (mAppName != value)
+                if (mServiceID != value)
                 {
-                    mAppName = value;
-                    OnPropertyChanged(nameof(AppName));
+                    mServiceID = value;
+                    OnPropertyChanged(nameof(ServiceId));
+                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
+
+
+
     }    
 }

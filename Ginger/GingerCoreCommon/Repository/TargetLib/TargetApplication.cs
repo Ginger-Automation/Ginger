@@ -22,9 +22,13 @@ using Amdocs.Ginger.Repository;
 namespace GingerCore.Platforms
 {
     public class TargetApplication : TargetBase
-    {        
-        //TODO: how about use GUID or add it for in case
-        private string mAppName;
+    {
+
+        public override string Name { get { return AppName; } }
+
+
+        string mAppName;
+        //TODO: how about use GUID or add it for in case        
         [IsSerializedForLocalRepository]
         public string AppName
         {
@@ -38,6 +42,7 @@ namespace GingerCore.Platforms
                 {
                     mAppName = value;
                     OnPropertyChanged(nameof(AppName));
+                    OnPropertyChanged(nameof(Name));
                 }
             }
         }

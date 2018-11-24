@@ -7,6 +7,8 @@ namespace Amdocs.Ginger.Common.Repository
 {
     public class TargetBase : RepositoryItemBase
     {
+        // impl in subclass
+        public virtual string Name { get; }
         public bool Selected { get; set; }
 
         public override string ItemName
@@ -16,7 +18,7 @@ namespace Amdocs.Ginger.Common.Repository
                 return string.Empty;
             }
             set
-            {  
+            {
                 // Do nothing
             }
         }
@@ -25,6 +27,8 @@ namespace Amdocs.Ginger.Common.Repository
         [IsSerializedForLocalRepository]
         public string LastExecutingAgentName { get; set; }
 
-        public virtual string AppName { get; set; }
+
+        // tmep in order to avoid changes in too many files.
+        public string AppName {get{ return Name; } }
     }
 }
