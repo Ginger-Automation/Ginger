@@ -406,7 +406,11 @@ namespace Ginger.SourceControl
             }
             finally
             {
-                xConnectButton.IsEnabled = true;
+                this.Dispatcher.Invoke(() =>
+               {
+                   xConnectButton.IsEnabled = true;
+               }
+                );
             }
         }
 
@@ -442,5 +446,12 @@ namespace Ginger.SourceControl
             ProxyPortTextBox.IsEnabled = false;
         }
 
+        private void txtConnectionTimeout_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(txtConnectionTimeout.Text))
+            {
+                App.UserProfile.SolutionSourceControlTimeout = Int32.Parse(txtConnectionTimeout.Text);
+            }
+        }
     }
 }

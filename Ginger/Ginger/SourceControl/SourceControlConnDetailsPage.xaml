@@ -9,7 +9,7 @@
 	  Title="Source Control Connection Details">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid HorizontalAlignment="Stretch" Background="{StaticResource @Skin1_ColorC}">
+        <Grid HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}" >
             <StackPanel HorizontalAlignment="Stretch" Margin="5">
                 <Label Content="Source Control Type:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch"  />
                 <TextBox x:Name="SourceControlClassTextBox" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" />
@@ -25,8 +25,10 @@
                 <TextBox x:Name="SourceControlUserAuthorNameTextBox" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged"/>
                 <Label Content="Author Email:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch"/>
                 <TextBox x:Name="SourceControlAuthorEmailTextBox" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged"/>
+                <StackPanel x:Name="TimeoutPanel" Visibility="Visible">
                 <Label x:Name="lblControlConnectionTimeout" Content="Connection Timeout:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Visibility="Visible"/>
-                <TextBox x:Name="txtSourceControlConnectionTimeout" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Visibility="Visible" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged"></TextBox>
+                <TextBox x:Name="txtSourceControlConnectionTimeout" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Visibility="Visible" Text="" HorizontalAlignment="Stretch" TextChanged="txtSourceControlConnectionTimeout_TextChanged"></TextBox>
+                </StackPanel>
 
             </StackPanel>
         </Grid>

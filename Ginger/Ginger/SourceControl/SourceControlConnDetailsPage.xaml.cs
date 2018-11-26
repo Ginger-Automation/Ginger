@@ -67,15 +67,17 @@ namespace Ginger.SourceControl
             App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlPass);
             if (SourceControlClassTextBox.Text == "GIT")
             {
-                lblControlConnectionTimeout.Visibility = Visibility.Hidden;
-                txtSourceControlConnectionTimeout.Visibility = Visibility.Hidden;
+                TimeoutPanel.Visibility = Visibility.Hidden;
+                //lblControlConnectionTimeout.Visibility = Visibility.Hidden;
+                //txtSourceControlConnectionTimeout.Visibility = Visibility.Hidden;
             }
             else
             {
                 App.ObjFieldBinding(txtSourceControlConnectionTimeout, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
-                lblControlConnectionTimeout.Visibility = Visibility.Visible;
-                txtSourceControlConnectionTimeout.Visibility = Visibility.Visible;
-                if (App.UserProfile.SolutionSourceControlTimeout == 80)
+                TimeoutPanel.Visibility = Visibility.Visible;
+                //lblControlConnectionTimeout.Visibility = Visibility.Visible;
+                //txtSourceControlConnectionTimeout.Visibility = Visibility.Visible;
+                if (App.UserProfile.SolutionSourceControlTimeout == 0)
                 {
                     txtSourceControlConnectionTimeout.Text = @"80";
                 }
@@ -157,8 +159,13 @@ namespace Ginger.SourceControl
         private void SourceControlUserDetails_TextChanged(object sender, TextChangedEventArgs e)
         {
             SourceControlIntegration.Init(App.UserProfile.Solution.SourceControl);
+            
         }
 
-
+        private void txtSourceControlConnectionTimeout_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SourceControlIntegration.Init(App.UserProfile.Solution.SourceControl);
+            App.UserProfile.SolutionSourceControlTimeout = Int32.Parse(txtSourceControlConnectionTimeout.Text);
+        }
     }
 }
