@@ -76,6 +76,8 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mElementTitle = value; }
         }
 
+        public InputValues InputValues = new InputValues();
+
         public enum eElementStatus
         {
             Unknown,
@@ -309,6 +311,11 @@ namespace Amdocs.Ginger.Common.UIElement
                 mData = this.WindowExplorer.GetElementData(this, elementLocateBy, elementLocateValue);
             }
             return mData;
+        }
+
+        public InputValues GetUniqueInputValues()
+        {
+            return InputValues;
         }
 
     }

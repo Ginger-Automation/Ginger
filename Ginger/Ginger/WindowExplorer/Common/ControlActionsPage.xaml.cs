@@ -44,7 +44,7 @@ namespace Ginger.WindowExplorer
         public ObservableList<Act> mActions; // List of available actions to choose from
         public ObservableList<ElementLocator> mLocators;
         private IWindowExplorer mWindowExplorerDriver;
-        ElementInfo mElementInfo = null;
+        ElementInfo mElementInfo = null;        
         Page mDataPage = null;
         double mLastDataGridRowHeight = 50;
 
@@ -57,8 +57,8 @@ namespace Ginger.WindowExplorer
             mWindowExplorerDriver = ElementInfo.WindowExplorer;
             mActions = Actions;
             mLocators = mWindowExplorerDriver.GetElementLocators(mElementInfo);
-            mDataPage = DataPage;
-
+            mDataPage = DataPage;          
+            
             InitActionsGrid();
             InitLocatorsGrid();
             InitDataPage();
@@ -173,7 +173,7 @@ namespace Ginger.WindowExplorer
                 ActUIElement actUI = (ActUIElement)act;
                 actUI.ElementLocateBy = EL.LocateBy;
                 actUI.ElementLocateValue = EL.LocateValue;
-                actUI.Value = ValueTextBox.Text;
+                actUI.Value = ValueTextBox.Text;                
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlActionValue, ValueTextBox.Text);
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementType, aaa.GetInputParamValue(ActUIElement.Fields.ElementType));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, aaa.GetInputParamValue(ActUIElement.Fields.ControlAction));
@@ -183,6 +183,8 @@ namespace Ginger.WindowExplorer
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, aaa.GetInputParamValue(ActUIElement.Fields.WhereOperator));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, aaa.GetInputParamValue(ActUIElement.Fields.WhereProperty));
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, mElementInfo.InputValues.XOffset);
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate, mElementInfo.InputValues.YOffset);
                 act = actUI;
             }
             else
@@ -231,7 +233,7 @@ namespace Ginger.WindowExplorer
                 ActUIElement aaa = (ActUIElement)mActions.CurrentItem;
                 ActUIElement actUI = (ActUIElement)act;
                 actUI.ElementLocateBy = EL.LocateBy;
-                actUI.ElementLocateValue = EL.LocateValue;
+                actUI.ElementLocateValue = EL.LocateValue;                
                 actUI.Value = ValueTextBox.Text;
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.ControlActionValue, ValueTextBox.Text);
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.ElementType, aaa.GetInputParamValue(ActUIElement.Fields.ElementType));
@@ -242,6 +244,8 @@ namespace Ginger.WindowExplorer
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, aaa.GetInputParamValue(ActUIElement.Fields.WhereOperator));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, aaa.GetInputParamValue(ActUIElement.Fields.WhereProperty));
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, mElementInfo.InputValues.XOffset);
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate, mElementInfo.InputValues.YOffset);
                 act = actUI;
             }
             else

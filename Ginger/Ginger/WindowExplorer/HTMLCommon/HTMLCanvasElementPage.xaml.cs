@@ -34,8 +34,8 @@ namespace Ginger.WindowExplorer.HTMLCommon
     public partial class HTMLCanvasElementPage : Page
     {
         ElementInfo ElementInfo;
-        ObservableList<Act> actList;
-
+        ObservableList<Act> actList;    
+        
         public HTMLCanvasElementPage(ObservableList<Act> list, ElementInfo elementInfo)
         {
             InitializeComponent();
@@ -77,13 +77,14 @@ namespace Ginger.WindowExplorer.HTMLCommon
             {
                 XOffset.Text = x;
                 YOffset.Text = y;
+                //foreach (Act act in actList)
+                //{
 
-                foreach (Act act in actList)
-                {
-
-                    ((ActGenElement)act).Xoffset = x;
-                    ((ActGenElement)act).Yoffset = y;
-                }
+                //((ActGenElement)act).Xoffset = x;
+                //((ActGenElement)act).Yoffset = y;
+                    ElementInfo.InputValues.XOffset = x;
+                    ElementInfo.InputValues.YOffset = y;
+                //}
             }
             //TODO list actions
         }
