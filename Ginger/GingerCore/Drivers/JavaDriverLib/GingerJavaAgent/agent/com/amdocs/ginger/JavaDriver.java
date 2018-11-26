@@ -2480,7 +2480,7 @@ private PayLoad GetComponentValue(Component c)
 				
 				val.add(dateValue);
 			}
-			else
+			else if(val.size() == 0)
 			{
 				val.add("");
 			}
