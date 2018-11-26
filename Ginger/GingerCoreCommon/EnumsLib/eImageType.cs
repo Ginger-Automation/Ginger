@@ -17,6 +17,8 @@
         /// Ginger Icon image
         /// </summary>
         Ginger,
+        GingerLogo,
+        GingerLogoGray,
         GingerIconWhite,
         GingerIconGray,
         #endregion
@@ -44,8 +46,7 @@
         DataSource,
         PluginPackage,
         #endregion
-
-
+        
         #region Variable Items Images
         Variable,
         VariableList,
@@ -77,8 +78,7 @@
         Stopped,
         Running,
         #endregion
-
-
+        
         #region Operations Images
         //############################## Operations Images:        
         Refresh,
@@ -138,8 +138,7 @@
         Upgrade,
         Recover,
         #endregion
-
-
+        
         #region Items Images
         //############################## Items Images:
         /// <summary>
@@ -200,8 +199,7 @@
         Database,
         TextBox,
         #endregion
-
-
+        
         #region Source control Images     
         SourceControl,
         SourceControlNew,

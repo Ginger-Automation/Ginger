@@ -264,6 +264,14 @@ namespace GingerWPFUnitTest.POMs
             SelectedItem.ContextMenu["Copy"].Click();            
         }
 
+        internal void Duplicate(string newName)
+        {
+            SelectedItem.ContextMenu["Duplicate"].Click();
+            InputBoxWindowPOM p = new InputBoxWindowPOM();
+            p.SetText(newName);
+            p.ClickOK();
+        }
+
         internal void Paste(string NewName = null)
         {
             SelectedItem.ContextMenu["Paste"].Click();
