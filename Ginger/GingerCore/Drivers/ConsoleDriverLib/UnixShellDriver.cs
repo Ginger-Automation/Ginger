@@ -86,10 +86,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public override void Disconnect()
         {
-            if(UnixClient!=null)
-            {
-                UnixClient.Disconnect();
-            }            
+            UnixClient.Disconnect();
         }
 
         public override string ConsoleWindowTitle()

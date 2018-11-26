@@ -93,8 +93,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 if (mConsoleDriverWindow != null)
                 {
-                    //mConsoleDriverWindow.Close();                    
-                    mConsoleDriverWindow.Hide();
+                    mConsoleDriverWindow.Close();                                        
                     mConsoleDriverWindow = null;
                 }
             }
