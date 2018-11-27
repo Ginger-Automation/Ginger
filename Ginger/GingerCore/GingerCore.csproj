@@ -741,7 +741,6 @@
     <Compile Include="Helpers\TextBlockHelper.cs" />
     <Compile Include="Platforms\ApplicationAgent.cs" />
     <Compile Include="Platforms\ApplicationPlatform.cs" />
-    <Compile Include="Platforms\TargetApplication.cs" />
     <Compile Include="Reporter\GingerHelperMsgsPool.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1050000_to_V1060000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1040000_to_V1050000.cs" />
