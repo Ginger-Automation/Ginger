@@ -53,15 +53,15 @@ namespace Ginger.Agents.AddAgentWizardLib
 
                     xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
                     App.FillComboFromEnumVal(xPlatformTypeComboBox, mWizard.Agent.Platform);
-                    xPlatformTypeComboBox.SelectedIndex = 0;
-
+                    
                     xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
                     xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);
                     xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
+
+                    xPlatformTypeComboBox.SelectedIndex = 0;
                     break;                
             }
-
         }
         
 
