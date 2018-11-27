@@ -539,6 +539,7 @@ namespace GingerCore.Drivers.PBDriver
             EI.Value = getElementValue(h1);
             EI.Name = getElementName(h1);
             EI.ElementType = getElementType(h1);
+            EI.ElementTypeEnum= GetElementTypeEnum(EI.ElementType);
             EI.Path = "";
             EI.ElementObject = h1;
             EI.XPath = getXPath(h1);
@@ -562,6 +563,7 @@ namespace GingerCore.Drivers.PBDriver
                 EI.Value = val;
                 EI.Name = val;
                 EI.ElementType = ElemTyp.Where(a => h1.nodeName.ToLower().Contains(a.Key)).Select(b => b.Value).ToString();
+                EI.ElementTypeEnum = GetElementTypeEnum(EI.ElementType);
                 EI.Path = "";
                 EI.XPath = "";
                 EI.RelXpath = "";
@@ -775,6 +777,102 @@ namespace GingerCore.Drivers.PBDriver
                     ElementValue = value;
             }
             return ElementValue;
+        }
+
+        public static eElementType GetElementTypeEnum(string elemType)
+        {
+            eElementType elementType = eElementType.Unknown;                     
+
+            if (elemType.ToUpper() == "INPUT.TEXT" || elemType.ToUpper() == "TEXTAREA" || elemType.ToUpper() == "INPUT.UNDEFINED" 
+                || elemType.ToUpper() == "INPUT.PASSWORD" || elemType.ToUpper() == "INPUT.EMAIL")  // HTML text 
+            {
+                elementType = eElementType.TextBox;
+            }
+            else if (elemType.ToUpper() == "INPUT.BUTTON" || elemType.ToUpper() == "BUTTON" || elemType.ToUpper() == "INPUT.IMAGE" || 
+                elemType.ToUpper() == "LINK" || elemType.ToUpper() == "INPUT.SUBMIT")  // HTML Button
+            {
+                elementType = eElementType.Button;
+            }
+            else if (elemType.ToUpper() == "TD" || elemType.ToUpper() == "TH" || elemType.ToUpper() == "TR")
+            {
+                elementType = eElementType.TableItem;
+            }
+            else if (elemType.ToUpper() == "LINK" || elemType.ToUpper() == "A") // HTML Link
+            {
+                elementType = eElementType.HyperLink;
+            }
+            else if (elemType.ToUpper() == "LABEL" || elemType.ToUpper() == "TITLE")// HTML Label
+            {
+                elementType = eElementType.Label;
+            }
+            else if (elemType.ToUpper() == "SELECT" || elemType.ToUpper() == "SELECT-ONE") // HTML Select/ComboBox
+            {
+                elementType = eElementType.ComboBox;
+            }
+            else if (elemType.ToUpper() == "TABLE" || elemType.ToUpper() == "CAPTION")// HTML Table
+            {
+                elementType = eElementType.Table;
+            }
+            else if (elemType.ToUpper() == "JEDITOR.TABLE")
+            {
+                elementType = eElementType.EditorPane;
+            }
+            else if (elemType.ToUpper() == "DIV") // DIV Element
+            {
+                elementType = eElementType.Div;
+            }
+            else if (elemType.ToUpper() == "SPAN")// SPAN Element
+            {
+                elementType = eElementType.Span;
+            }
+            else if (elemType.ToUpper() == "IMG" || elemType.ToUpper() == "MAP")// IMG Element
+            {
+                elementType = eElementType.Image;
+            }
+            else if (elemType.ToUpper() == "INPUT.CHECKBOX") // Check Box Element
+            {
+                elementType = eElementType.CheckBox;
+            }
+            else if (elemType.ToUpper() == "OPTGROUP" || elemType.ToUpper() == "OPTION")// HTML Radio
+            {
+                return eElementType.ComboBoxOption;
+            }
+            else if (elemType.ToUpper() == "INPUT.RADIO")// HTML Radio
+            {
+                elementType = eElementType.RadioButton;
+            }
+            else if (elemType.ToUpper() == "IFRAME")// HTML IFRAME
+            {
+                elementType = eElementType.Iframe;
+            }
+            else if (elemType.ToUpper() == "CANVAS")
+            {
+                elementType = eElementType.Canvas;
+            }
+            else if (elemType.ToUpper() == "FORM")
+            {
+                elementType = eElementType.Form;
+            }
+            else if (elemType.ToUpper() == "UL" || elemType.ToUpper() == "OL" || elemType.ToUpper() == "DL")
+            {
+                elementType = eElementType.List;
+            }
+            else if (elemType.ToUpper() == "LI" || elemType.ToUpper() == "DT" || elemType.ToUpper() == "DD")
+            {
+                elementType = eElementType.ListItem;
+            }
+            else if (elemType.ToUpper() == "MENU")
+            {
+                elementType = eElementType.MenuBar;
+            }
+            else if (elemType.ToUpper() == "H1" || elemType.ToUpper() == "H2" || elemType.ToUpper() == "H3" || elemType.ToUpper() == "H4" || elemType.ToUpper() == "H5" || elemType.ToUpper() == "H6" || elemType.ToUpper() == "P")
+            {
+                elementType = eElementType.Text;
+            }
+            else
+                elementType = eElementType.Unknown;
+
+            return elementType;
         }
 
         public string getElementType(IHTMLElement h1)
