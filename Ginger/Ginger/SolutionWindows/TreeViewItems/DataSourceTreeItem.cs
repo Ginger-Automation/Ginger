@@ -45,6 +45,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public string Folder { get; set; }
         public string Path { get; set; }
 
+        public DataSourceTreeItem(DataSourceBase dsDetails, DataSourceFolderTreeItem.eDataTableView TableView)
+        {
+            DSDetails = dsDetails;
+            TableTreeView = TableView;
+            InitDSConnection();
+        }
+
         Object ITreeViewItem.NodeObject()
         {
             return DSDetails;
@@ -67,12 +74,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
              List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
             
-            if (mDataSourcePage == null)
-            {
-                mDataSourcePage = new DataSourcePage(DSDetails);
-            }            
-            //Add Data Sources
-            DSDetails.DSTableList = mDataSourcePage.GetTableList();
+                      
+            //Get Data Source Tables List
+            DSDetails.DSTableList = DSDetails.DSC.GetTablesList();
             if (DSDetails.DSTableList == null)
                 DSDetails.DSTableList = new ObservableList<DataSourceTable>();
             
@@ -260,16 +264,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 return;
             }
-
-            if (DSDetails.DSTableList == null)
-            {
-                if (mDataSourcePage == null)
-                {
-                    mDataSourcePage = new DataSourcePage(DSDetails);
-                }
-                //Add Data Sources
-                DSDetails.DSTableList = mDataSourcePage.GetTableList();
-            }
+            
+                
+            //Add Data Source Tables List
+            DSDetails.DSTableList = DSDetails.DSC.GetTablesList();
 
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
@@ -332,6 +330,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void Duplicate(object sender, RoutedEventArgs e)
         {   
             AccessDataSource dsDetailsCopy = (AccessDataSource)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);
+            if (dsDetailsCopy == null)
+            { 
+                return;
+            }
             dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".mdb";
             dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\"+ dsDetailsCopy.Name + ".mdb";
 
@@ -346,6 +348,21 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void Rename(object sender, RoutedEventArgs e)
         {
             RenameItem("DataSource Name:", DSDetails, DataSourceBase.Fields.Name);
+        }
+        private void InitDSConnection()
+        {
+            if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
+            {
+                DataSourceBase ADC;
+                ADC = new AccessDataSource();
+                if (DSDetails.FilePath.StartsWith("~"))
+                {
+                    DSDetails.FileFullPath = DSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
+                    DSDetails.FileFullPath = System.IO.Path.Combine(App.UserProfile.Solution.Folder, DSDetails.FileFullPath);
+                }
+                ADC.Init(DSDetails.FileFullPath);
+                DSDetails.DSC = ADC;
+            }
         }
     }
 }
