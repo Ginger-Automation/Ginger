@@ -27,7 +27,7 @@
 
     </FlowDocument.Resources>
 
-    <Paragraph FontSize="12" TextAlignment="Center">Amdocs BEAT Ginger Automation</Paragraph>
+    <Paragraph FontSize="12" TextAlignment="Center">Ginger by amdocs</Paragraph>
     
     <Paragraph TextAlignment="Center">
         <Image Source="./Images/@GingerLogo.png" Width="300" Height="200" HorizontalAlignment="Center" />
