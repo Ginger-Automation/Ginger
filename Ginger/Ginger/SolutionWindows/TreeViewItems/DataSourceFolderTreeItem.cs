@@ -80,7 +80,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (item is DataSourceBase)
             {
-                return new DataSourceTreeItem() { DSDetails = (DataSourceBase)item , TableTreeView = mDataSourceView};
+                return new DataSourceTreeItem((DataSourceBase)item, mDataSourceView);
             }
 
             if (item is RepositoryFolderBase)

@@ -7,13 +7,13 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Ginger")]
-[assembly: AssemblyDescription("Spice it Up!")]
+[assembly: AssemblyTitle("Ginger by amdocs")]
+[assembly: AssemblyDescription("Automation testing creation framework")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Amdocs")]
-[assembly: AssemblyProduct("Amdocs BEAT Ginger Automation")]
+[assembly: AssemblyCompany("amdocs")]
+[assembly: AssemblyProduct("Ginger by amdocs")]
 [assembly: AssemblyCopyright("Copyright © 2015 Amdocs Corporation.")]
-[assembly: AssemblyTrademark("Amdocs BEAT Ginger Automation")]
+[assembly: AssemblyTrademark("Ginger by amdocs")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
