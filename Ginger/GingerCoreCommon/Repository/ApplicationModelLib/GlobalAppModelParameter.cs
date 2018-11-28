@@ -86,10 +86,10 @@ namespace Amdocs.Ginger.Repository
 
             foreach (MemberInfo mi in properties)
             {
-                if (mi.Name == "BackupDic" || mi.Name == "FileName" ||
-                    mi.Name == "ObjFolderName" || mi.Name == "ObjFileExt" ||
-                    mi.Name == "ActInputValues" || mi.Name == "ActReturnValues" || mi.Name == "ActFlowControls" || mi.Name == "ScreenShots" ||
-                    mi.Name == "ContainingFolder" || mi.Name == "ContainingFolderFullPath" || mi.Name == "ItemNameField" || mi.Name == "ItemImageType") continue;
+                if (Amdocs.Ginger.Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
+                {
+                    continue;
+                }
 
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
