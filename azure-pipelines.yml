@@ -29,3 +29,5 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
     TestAdapterPath:  'Ginger\packages\MSTest.TestAdapter.1.3.2\build\_common'
+    testResultsFiles: '**/*.trx'
+    
