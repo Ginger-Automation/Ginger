@@ -88,7 +88,7 @@
 
                             <Label Style="{StaticResource @LabelStyle}" x:Name="LabelPort">SMTP Port:</Label>
                             <TextBox x:Name="SMTPPortTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
-
+                            <CheckBox x:Name="cbUseDefaultCredential" Style="{StaticResource @InputCheckBoxStyle}"  VerticalAlignment="Center" Content="Use Default Credential" Margin="10"/>
                             <Label Style="{StaticResource @LabelStyle}" x:Name="LabelUser">SMTP User:</Label>
                             <TextBox x:Name="SMTPUserTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
 

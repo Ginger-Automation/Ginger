@@ -24,6 +24,7 @@ using System.Linq;
 using System.Net.Mail;
 using GingerCore.Repository;
 using OutLook = Microsoft.Office.Interop.Outlook;
+using System.Net;
 
 namespace GingerCore.GeneralLib
 {
@@ -44,6 +45,7 @@ namespace GingerCore.GeneralLib
             public static string Body = "Body";
             public static string EmailMethod = "EmailMethod";
             public static string EnableSSL = "EnableSSL";
+            public static string UseDefaultCredential = "UseDefaultCredential";
         }
         
         public enum eEmailMethod
@@ -127,6 +129,20 @@ namespace GingerCore.GeneralLib
                 if (mEnableSSL != value)
                 {
                     mEnableSSL = value;                    
+                }
+            }
+        }
+
+        private bool mUseDefaultCredential = true;
+        [IsSerializedForLocalRepository(true)]
+        public bool UseDefaultCredential
+        {
+            get { return mUseDefaultCredential; }
+            set
+            {
+                if (mUseDefaultCredential != value)
+                {
+                    mUseDefaultCredential = value;
                 }
             }
         }
@@ -304,9 +320,14 @@ namespace GingerCore.GeneralLib
                     Port = (int)this.SMTPPort,
                     EnableSsl = EnableSSL,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = true   
+                    UseDefaultCredentials = UseDefaultCredential   
                 };
-                
+
+                if (!UseDefaultCredential)
+                {
+                    smtp.Credentials = new NetworkCredential(SMTPUser, SMTPPass);
+                }
+
                 string emails = MailTo; 
                 Array arrEmails = emails.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 System.Net.Mail.MailMessage myMail = new System.Net.Mail.MailMessage();

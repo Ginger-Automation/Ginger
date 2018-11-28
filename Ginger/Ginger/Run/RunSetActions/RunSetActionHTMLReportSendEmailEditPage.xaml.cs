@@ -67,7 +67,8 @@ namespace Ginger.Run.RunSetActions
             App.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.SMTPPass);
             App.FillComboFromEnumVal(EmailMethodComboBox, runSetActionHTMLReportSendEmail.Email.EmailMethod);
             App.ObjFieldBinding(EmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EmailMethod);            
-            App.ObjFieldBinding(cbEnableSSL, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EnableSSL);            
+            App.ObjFieldBinding(cbEnableSSL, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EnableSSL);
+            App.ObjFieldBinding(cbUseDefaultCredential, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.UseDefaultCredential);
             InitAttachmentsGrid();
             RadioButtonInit();
         }

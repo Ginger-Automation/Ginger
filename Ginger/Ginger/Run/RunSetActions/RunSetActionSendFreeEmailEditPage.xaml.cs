@@ -47,6 +47,7 @@ namespace Ginger.Run.RunSetActions
             App.FillComboFromEnumVal(EmailMethodComboBox, runSetActionSendFreeEmail.Email.EmailMethod);
             App.ObjFieldBinding(EmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendFreeEmail.Email, Email.Fields.EmailMethod);
             App.ObjFieldBinding(cbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, Email.Fields.EnableSSL);
+            App.ObjFieldBinding(cbUseDefaultCredential, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, Email.Fields.UseDefaultCredential);
         }
 
         private void EmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
