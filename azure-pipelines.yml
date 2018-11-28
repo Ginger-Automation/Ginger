@@ -28,4 +28,4 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-    pathtoCustomTestAdapters:'Ginger\packages\MSTest.TestAdapter.1.3.2\build\_common'
+    TestAdapterPath:  'Ginger\packages\MSTest.TestAdapter.1.3.2\build\_common'
