@@ -20,18 +20,10 @@ using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using GingerCore.Actions;
-using GingerCore;
-using GingerCore.Common;
 using Newtonsoft.Json;
-using GingerCore.FlowControlLib;
 using System.Data;
-using GingerCore.Variables;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
 
 namespace Ginger.Reports
 {
@@ -426,8 +418,11 @@ namespace Ginger.Reports
         
         private string GetValueForDriverWithoutDescrypting(string value)
         {
-            ValueExpression VE = new ValueExpression(mExecutionEnviroment, App.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
-            VE.DecryptFlag = false;
+
+            IValueExpression Ve = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(mExecutionEnviroment, App.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
+
+
+            VE = new ValueExpression   VE.DecryptFlag = false;
             VE.Value = value;
 
             return VE.ValueCalculated;

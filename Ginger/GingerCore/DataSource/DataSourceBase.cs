@@ -22,11 +22,12 @@ using System;
 using System.Data;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.DataSource
 {    
 
-    public abstract class DataSourceBase : RepositoryItemBase
+    public abstract class DataSourceBase : RepositoryItemBase, IDataSourceBase
     {
         public enum eDSType
         {

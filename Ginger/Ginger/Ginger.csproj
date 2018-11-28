@@ -1412,7 +1412,6 @@
     <Compile Include="Reports\ActionReport.cs" />
     <Compile Include="Reports\ActivityReport.cs" />
     <Compile Include="Reports\BusinessFlowReport.cs" />
-    <Compile Include="Reports\ReportInfoAttribute.cs" />
     <Compile Include="Reports\HTMLReportConfiguration.cs" />
     <Compile Include="Reports\RunSetReport.cs" />
     <Compile Include="Reports\GingerReport.cs" />
