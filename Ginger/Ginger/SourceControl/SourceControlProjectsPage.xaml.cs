@@ -90,33 +90,28 @@ namespace Ginger.SourceControl
             App.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlProxyPort);
             if (String.IsNullOrEmpty(App.UserProfile.SolutionSourceControlProxyPort))
                 mSourceControl.SourceControlProxyPort = @"8080";
-            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
-            {
-                txtConnectionTimeout.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                App.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
-                mSourceControl.SourceControlTimeout = 80;
-            }
+
             SolutionsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
         }
-
+        private void UpdateTimeoutVisibility()
+        {
+            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                TimeoutPanel.Visibility = Visibility.Hidden;
+            }
+            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            {
+                TimeoutPanel.Visibility = Visibility.Visible;
+            }
+        }
+        
         private void Bind()
         {
             App.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlURL);
             App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlUser);
             App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlPass);
-            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
-            {
-                txtConnectionTimeout.Visibility = Visibility.Hidden;
-                lblConnectionTimeout.Visibility = Visibility.Hidden;
-            }
-            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
-            {
-                txtConnectionTimeout.Visibility = Visibility.Visible;
-                lblConnectionTimeout.Visibility = Visibility.Visible;
-            }
+            App.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
+            UpdateTimeoutVisibility();
             SourceControlPassTextBox.Password = mSourceControl.SourceControlPass;
             SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
         }
@@ -451,6 +446,7 @@ namespace Ginger.SourceControl
             if (!string.IsNullOrEmpty(txtConnectionTimeout.Text))
             {
                 App.UserProfile.SolutionSourceControlTimeout = Int32.Parse(txtConnectionTimeout.Text);
+                
             }
         }
     }

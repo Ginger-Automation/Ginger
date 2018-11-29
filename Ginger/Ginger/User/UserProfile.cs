@@ -276,10 +276,11 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public string SolutionSourceControlAuthorEmail { get; set; }
 
-        [IsSerializedForLocalRepository(false)]
+        [IsSerializedForLocalRepository]
         public string SolutionSourceControlProxyPort { get; set; }
 
-        [IsSerializedForLocalRepository]
+        
+        [IsSerializedForLocalRepository(80)]
         public int SolutionSourceControlTimeout { get; set; }
 
         [IsSerializedForLocalRepository]

@@ -77,7 +77,7 @@ namespace GingerCoreNET.SourceControl
         public string SourceControlProxyPort { get { return mSourceControlProxyPort; } set { mSourceControlProxyPort = value; OnPropertyChanged(Fields.SourceControlProxyPort); } }
 
 
-        int mSourceControlTimeout;
+        int mSourceControlTimeout=80;
         public int SourceControlTimeout { get { return mSourceControlTimeout; } set { mSourceControlTimeout = value; OnPropertyChanged(nameof(SourceControlTimeout)); } }
 
         bool mSourceControlConfigureProxy;

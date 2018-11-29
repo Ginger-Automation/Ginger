@@ -68,15 +68,12 @@ namespace Ginger.SourceControl
             if (SourceControlClassTextBox.Text == "GIT")
             {
                 TimeoutPanel.Visibility = Visibility.Hidden;
-                //lblControlConnectionTimeout.Visibility = Visibility.Hidden;
-                //txtSourceControlConnectionTimeout.Visibility = Visibility.Hidden;
             }
             else
             {
                 App.ObjFieldBinding(txtSourceControlConnectionTimeout, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
                 TimeoutPanel.Visibility = Visibility.Visible;
-                //lblControlConnectionTimeout.Visibility = Visibility.Visible;
-                //txtSourceControlConnectionTimeout.Visibility = Visibility.Visible;
+               
                 if (App.UserProfile.SolutionSourceControlTimeout == 0)
                 {
                     txtSourceControlConnectionTimeout.Text = @"80";
