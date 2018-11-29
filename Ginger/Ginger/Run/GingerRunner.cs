@@ -382,7 +382,7 @@ namespace Ginger.Run
 
                 foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(true))
                 {
-                    if (var.DiffrentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputValue) == false)//save only variables which were modified in this run configurations
+                    if (var.DifferentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputValue) == false)//save only variables which were modified in this run configurations
                     {
                         BFR.BusinessFlowCustomizedRunVariables.Add(var);
                     }

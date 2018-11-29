@@ -107,23 +107,23 @@ namespace Ginger.Run
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.ParentType, Header = "Level", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.ParentName, Header = "Parent Name", WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Name, WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Description, WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Formula, WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.Value, Header = "Initial Value", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });           
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Image), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentType), Header = "Level", WidthWeight = 10, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentName), Header = "Parent Name", WidthWeight = 15, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Name), WidthWeight = 20, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Description), WidthWeight = 20, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Formula), WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });           
             if (mWindowMode == eWindowMode.Configuration)
             {
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.MappedOutputValue, Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(VariableBase.Fields.MappedOutputType, VariableBase.Fields.MappedOutputValue,null, VariableBase.Fields.PossibleOutputVariables, VariableBase.Fields.SupportSetValue, "Output Variable", null), WidthWeight = 40 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(nameof(VariableBase.MappedOutputType), nameof(VariableBase.MappedOutputValue), null, nameof(VariableBase.PossibleOutputVariables), nameof(VariableBase.SupportSetValue), "Output Variable", null), WidthWeight = 40 });
             }                
             else if (mWindowMode == eWindowMode.SummaryView)
             {
-                view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.MappedOutputValue, Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 40});
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 40});
             }
                 
-            view.GridColsView.Add(new GridColView() { Field = VariableBase.Fields.DiffrentFromOrigin, Header = "Different From Origin", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.DifferentFromOrigin), Header = "Different From Origin", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
             grdVariables.SetAllColumnsDefaultView(view);
             grdVariables.InitViewItems();
 
@@ -212,7 +212,7 @@ namespace Ginger.Run
                                     if (copiedVar.Formula != originalFormula || copiedVar.Value != originalValue) //variable was changed
                                     {
                                         copiedVar.VarValChanged = true;
-                                        copiedVar.DiffrentFromOrigin = true;
+                                        copiedVar.DifferentFromOrigin = true;
                                     }
                                 }
                             }
@@ -285,7 +285,7 @@ namespace Ginger.Run
             if (varToEdit.Formula != originalFormula || varToEdit.Value != originalValue)//variable was changed
             {
                 varToEdit.VarValChanged = true;
-                varToEdit.DiffrentFromOrigin = true;
+                varToEdit.DifferentFromOrigin = true;
             }
             UpdateEditVariablesTabVisual();
         }
@@ -349,7 +349,7 @@ namespace Ginger.Run
         private void SetAutoDescription()
         {
             string autoDesc = string.Empty;
-            List<VariableBase> bfVariables = (mBusinessFlow.GetBFandActivitiesVariabeles(true)).Where(var => var.GetType() == typeof(VariableSelectionList) || var.DiffrentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputVariable)==false || string.IsNullOrEmpty(var.MappedOutputValue) == false).ToList(); ;
+            List<VariableBase> bfVariables = (mBusinessFlow.GetBFandActivitiesVariabeles(true)).Where(var => var.GetType() == typeof(VariableSelectionList) || var.DifferentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputVariable)==false || string.IsNullOrEmpty(var.MappedOutputValue) == false).ToList(); ;
             if (bfVariables != null && bfVariables.Count > 0)
             {
                 autoDesc = "Running Configurations: ";
@@ -433,7 +433,7 @@ namespace Ginger.Run
         {
             int count = 0;
             foreach (VariableBase var in mBusinessFlow.GetBFandActivitiesVariabeles(true,true))
-                if (var.DiffrentFromOrigin == true)
+                if (var.DifferentFromOrigin == true)
                     count++;
 
             if (count > 0)
