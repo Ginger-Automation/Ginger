@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using System.Data;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports
 {
@@ -53,8 +54,8 @@ namespace Ginger.Reports
             public static string ScreenShots = "ScreenShots";
         }
         
-        private GingerCore.Actions.Act mAction;
-        private GingerCore.Environments.ProjEnvironment mExecutionEnviroment;
+        private IAct mAction;
+        private IProjEnvironment mExecutionEnviroment;
         private string _localFolder;
 
         [JsonProperty]
@@ -143,9 +144,9 @@ namespace Ginger.Reports
             {
                 if (mAction != null)
                 {
-                    if (mAction.StatusConverter == Act.eStatusConverterOptions.IgnoreFail && mAction.Status==Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                    if (mAction.StatusConverter == eStatusConverterOptions.IgnoreFail && mAction.Status==Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                     {
-                        return Act.eStatusConverterOptions.IgnoreFail.ToString();
+                        return eStatusConverterOptions.IgnoreFail.ToString();
                     }
                     else
                     {
@@ -174,26 +175,26 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public string ExInfo { get { return mAction != null ? mAction.ExInfo : exInfo; } set { exInfo = value; } }  
-        
+        public string ExInfo { get { return mAction != null ? mAction.ExInfo : exInfo; } set { exInfo = value; } }
         [JsonProperty]
-        public List<string> InputValues
-        {
-            get
-            {
-                if (inputValues == null)
-                {
-                    inputValues = mAction.InputValues.Select(a => Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + GetValueForDriverWithoutDescrypting(a.Value))).ToList();
-                  
-                    if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Count > 0))
-                    {
-                        mAction.GetInputValueListForVEProcessing().ForEach(x => x.Select(a => Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + GetValueForDriverWithoutDescrypting(a.Value))).ToList().ForEach(z => inputValues.Add(z)));
-                    }
-                }
-                return inputValues;
-            }
-            set { inputValues = value; }
-        }
+        public List<string> InputValues;
+        //TODO before checkin
+        /* {
+             get
+             {
+                 if (inputValues == null)
+                 {
+                     inputValues = mAction.InputValues.Select(a => Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + GetValueForDriverWithoutDescrypting(a.Value))).ToList();
+
+                     if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Count > 0))
+                     {
+                         mAction.GetInputValueListForVEProcessing().ForEach(x => x.Select(a => Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + GetValueForDriverWithoutDescrypting(a.Value))).ToList().ForEach(z => inputValues.Add(z)));
+                     }
+                 }
+                 return inputValues;
+             }
+             set { inputValues = value; }
+         }*/
         private List<string> inputValues;
 
         [FieldParams]
@@ -363,7 +364,7 @@ namespace Ginger.Reports
         public bool IsSkipped { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped; } }
         public bool IsBlocked { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked; } }
 
-        public ActionReport(GingerCore.Actions.Act Act, GingerCore.Environments.ProjEnvironment environment=null)
+        public ActionReport(IAct Act, IProjEnvironment environment=null)
         {
             this.mAction = Act;
             this.mExecutionEnviroment = environment;
@@ -415,17 +416,14 @@ namespace Ginger.Reports
             }
         }
     
-        
-        private string GetValueForDriverWithoutDescrypting(string value)
+        /*
+         private string GetValueForDriverWithoutDescrypting(string value)
         {
-
-            IValueExpression Ve = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(mExecutionEnviroment, App.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
-
-
-            VE = new ValueExpression   VE.DecryptFlag = false;
+            IValueExpression VE = new ValueExpression(mExecutionEnviroment, WorkSpace.Businessflow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>(), false, "", false, UserProfile.Solution.Variables);
+            VE.DecryptFlag = false;
             VE.Value = value;
 
             return VE.ValueCalculated;
-        }
+        }*/
     }
 }

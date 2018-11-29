@@ -2615,7 +2615,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
     }
 
-    public static class ExtensionMethods
+    public  class ExtensionMethods
     {
         public static string defaultAutomationTabReportName = "{name_to_replace}_{date_to_replace}_AutomationTab_{objectType_to_replace}";
 

@@ -1453,7 +1453,6 @@
     <Compile Include="Reports\ReportTemplatesPage.xaml.cs">
       <DependentUpon>ReportTemplatesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReturnValueReport.cs" />
     <Compile Include="Reports\RTFtoPDF.cs" />
     <Compile Include="Reports\SpecialReports\XMLReportBase.cs" />
     <Compile Include="Reports\SpecialReports\TestNGResultReport.cs" />

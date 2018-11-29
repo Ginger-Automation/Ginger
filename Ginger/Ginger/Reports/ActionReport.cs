@@ -32,6 +32,7 @@ using GingerCore.Variables;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports
 {
@@ -151,9 +152,9 @@ namespace Ginger.Reports
             {
                 if (mAction != null)
                 {
-                    if (mAction.StatusConverter == Act.eStatusConverterOptions.IgnoreFail && mAction.Status==Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                    if (mAction.StatusConverter == eStatusConverterOptions.IgnoreFail && mAction.Status==Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                     {
-                        return Act.eStatusConverterOptions.IgnoreFail.ToString();
+                        return eStatusConverterOptions.IgnoreFail.ToString();
                     }
                     else
                     {
