@@ -65,19 +65,16 @@ namespace Ginger.SourceControl
 
             App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlUser);
             App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlPass);
-            if (SourceControlClassTextBox.Text == "GIT")
+            if (SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString())
             {
-                TimeoutPanel.Visibility = Visibility.Hidden;
+                xTimeoutPanel.Visibility = Visibility.Hidden;
             }
             else
             {
-                App.ObjFieldBinding(txtSourceControlConnectionTimeout, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
-                TimeoutPanel.Visibility = Visibility.Visible;
+                App.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
+                xTimeoutPanel.Visibility = Visibility.Visible;
                
-                if (App.UserProfile.SolutionSourceControlTimeout == 0)
-                {
-                    txtSourceControlConnectionTimeout.Text = @"80";
-                }
+              
             }
             App.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorName);
             App.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorEmail);
@@ -162,7 +159,7 @@ namespace Ginger.SourceControl
         private void txtSourceControlConnectionTimeout_TextChanged(object sender, TextChangedEventArgs e)
         {
             SourceControlIntegration.Init(App.UserProfile.Solution.SourceControl);
-            App.UserProfile.SolutionSourceControlTimeout = Int32.Parse(txtSourceControlConnectionTimeout.Text);
+            App.UserProfile.SolutionSourceControlTimeout = Int32.Parse(xTextSourceControlConnectionTimeout.Text);
         }
     }
 }

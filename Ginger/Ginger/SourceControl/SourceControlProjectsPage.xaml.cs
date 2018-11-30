@@ -91,17 +91,19 @@ namespace Ginger.SourceControl
             if (String.IsNullOrEmpty(App.UserProfile.SolutionSourceControlProxyPort))
                 mSourceControl.SourceControlProxyPort = @"8080";
 
+            App.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
+
             SolutionsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
         }
         private void UpdateTimeoutVisibility()
         {
             if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
-                TimeoutPanel.Visibility = Visibility.Hidden;
+                xTimeoutPanel.Visibility = Visibility.Hidden;
             }
             if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
             {
-                TimeoutPanel.Visibility = Visibility.Visible;
+                xTimeoutPanel.Visibility = Visibility.Visible;
             }
         }
         
@@ -324,7 +326,7 @@ namespace Ginger.SourceControl
 
         private void ConnectionDetailsExpended(object sender, RoutedEventArgs e)
         {
-            ExpenderDetailsRow.Height = new GridLength(280);
+            ExpenderDetailsRow.Height = new GridLength(200);
         }
 
         private void ConnectionDetailsCollapsed(object sender, RoutedEventArgs e)
@@ -438,16 +440,9 @@ namespace Ginger.SourceControl
         private void ConfigureProxyCheckBoxUnchecked(object sender, RoutedEventArgs e)
         {
             ProxyAddressTextBox.IsEnabled = false;
-            ProxyPortTextBox.IsEnabled = false;
+            ProxyPortTextBox.IsEnabled = false;            
         }
 
-        private void txtConnectionTimeout_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(txtConnectionTimeout.Text))
-            {
-                App.UserProfile.SolutionSourceControlTimeout = Int32.Parse(txtConnectionTimeout.Text);
-                
-            }
-        }
+  
     }
 }

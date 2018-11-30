@@ -25,9 +25,9 @@
                 <TextBox x:Name="SourceControlUserAuthorNameTextBox" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged"/>
                 <Label Content="Author Email:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch"/>
                 <TextBox x:Name="SourceControlAuthorEmailTextBox" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged"/>
-                <StackPanel x:Name="TimeoutPanel" Visibility="Visible">
-                <Label x:Name="lblControlConnectionTimeout" Content="Connection Timeout:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Visibility="Visible"/>
-                <TextBox x:Name="txtSourceControlConnectionTimeout" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Visibility="Visible" Text="" HorizontalAlignment="Stretch" TextChanged="txtSourceControlConnectionTimeout_TextChanged"></TextBox>
+                <StackPanel x:Name="xTimeoutPanel" Visibility="Visible">
+                <Label x:Name="xLabelConnectionTimeout" Content="Connection Timeout:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Visibility="Visible"/>
+                <TextBox x:Name="xTextSourceControlConnectionTimeout" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Visibility="Visible" Text="" HorizontalAlignment="Stretch" TextChanged="txtSourceControlConnectionTimeout_TextChanged"></TextBox>
                 </StackPanel>
 
             </StackPanel>
