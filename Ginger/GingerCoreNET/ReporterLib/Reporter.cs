@@ -89,7 +89,7 @@ namespace GingerCoreNET.ReporterLib
 
         #region ReportToLog
         
-        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true)
+        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, bool writeAlsoToConsoleIfNeeded = true, bool writeOnlyInDebugMode = false)
         {
             MessageBox.Show(messageToLog);
         }

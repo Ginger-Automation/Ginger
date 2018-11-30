@@ -23,11 +23,13 @@ using System.Xml;
 using System.Xml.Linq;
 using GingerCore;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports
 {
     // Base class for HTML report with helper functions to create nice HTML report
-    public abstract class HTMLReportBase
+    
+    public abstract class HTMLReportBase : IHTMLReportBase
     {
         public ReportInfo RI;
 

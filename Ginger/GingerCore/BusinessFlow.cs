@@ -1092,6 +1092,16 @@ namespace GingerCore
             return Variables;
         }
 
+        ObservableList<VariableBase> IBusinessFlow.GetVariables()
+        {
+            throw new NotImplementedException();
+        }
+
+        VariableBase IBusinessFlow.GetHierarchyVariableByName(string varName, bool considerLinkedVar)
+        {
+            throw new NotImplementedException();
+        }
+
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> BFFlowControls = new ObservableList<FlowControl>();
 
@@ -1125,5 +1135,8 @@ namespace GingerCore
                 return nameof(this.Name);
             }
         }
+
+        string IBusinessFlow.RunStatus { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        bool IBusinessFlow.Active { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

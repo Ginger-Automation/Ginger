@@ -4,8 +4,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
 {
-    public interface IDataSourceBase
+    public interface IReportTemplate
     {
-
     }
 }

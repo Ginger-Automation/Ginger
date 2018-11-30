@@ -27,7 +27,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.DataSource
 {    
 
-    public abstract class DataSourceBase : RepositoryItemBase, IDataSourceBase
+    public abstract class DataSourceBase : RepositoryItemBase , IDataSourceBase
     {
         public enum eDSType
         {

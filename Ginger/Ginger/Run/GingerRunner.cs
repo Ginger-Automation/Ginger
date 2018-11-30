@@ -47,6 +47,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common.InterfacesLib;
 using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
 
 //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -59,7 +60,7 @@ using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
 //TODO: move this class to GingerCore
 namespace Ginger.Run
 {
-    public class GingerRunner : RepositoryItemBase
+    public class GingerRunner : RepositoryItemBase, IGingerRunner
     {
         public enum eExecutedFrom
         {
