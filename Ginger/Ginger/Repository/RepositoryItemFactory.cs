@@ -1,6 +1,9 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore;
+using GingerCore.Activities;
 using GingerCore.Environments;
+using GingerCore.Variables;
 
 namespace Ginger.Repository
 {
@@ -16,6 +19,14 @@ namespace Ginger.Repository
             return new ValueExpression(mProjEnvironment, mBusinessFlow);
         }
 
+        public IValueExpression CreateValueExpression(IProjEnvironment Env, IBusinessFlow BF, ObservableList<IDataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
+        {
+            throw new System.NotImplementedException();
+        }
+        public IActivitiesGroup CreateActivitiesGroup()
+        {
+            return new ActivitiesGroup();
+        }
         public ObservableList<IDatabase> GetDatabaseList()
         {
             return new ObservableList<IDatabase>();

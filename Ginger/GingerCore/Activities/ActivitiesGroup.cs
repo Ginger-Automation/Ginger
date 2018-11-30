@@ -25,13 +25,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Activities
 {
     /// <summary>
     /// ActivitiesGroup used to store the ID's and execution order of few Activities
     /// </summary>
-    public class ActivitiesGroup : RepositoryItemBase
+    public class ActivitiesGroup : RepositoryItemBase, IActivitiesGroup
     {
         public enum eItemParts
         {
@@ -40,16 +41,6 @@ namespace GingerCore.Activities
             Activities
         }
 
-        public enum eActivitiesGroupRunStatus
-        {
-            Pending,
-            Running,
-            Passed,
-            Failed,
-            Stopped,
-            Blocked,
-            Skipped
-        }
 
         public enum executionLoggerStatus
         {
@@ -339,7 +330,7 @@ namespace GingerCore.Activities
             }
         }
 
-        public Dictionary<Guid, DateTime> ExecutedActivities = new Dictionary<Guid, DateTime>();
+        public Dictionary<Guid, DateTime> ExecutedActivities { get; set; } = new Dictionary<Guid, DateTime>();
 
         public string TempReportFolder { get; set; }
 

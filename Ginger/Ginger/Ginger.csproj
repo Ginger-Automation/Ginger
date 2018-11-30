@@ -853,7 +853,6 @@
     <Compile Include="GeneralWindows\Run Set Pages\NewRunSetPage.xaml.cs">
       <DependentUpon>NewRunSetPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ActivityGroupReport.cs" />
     <Compile Include="Repository\AddItemToRepositoryWizard\UploadSelectionItem.cs" />
     <Compile Include="Repository\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml.cs">
       <DependentUpon>UploadItemsSelectionPage.xaml</DependentUpon>

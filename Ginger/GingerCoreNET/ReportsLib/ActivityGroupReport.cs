@@ -19,11 +19,9 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ginger.Run;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Activities;
-using GingerCore.Variables;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+
 using Newtonsoft.Json;
 namespace Ginger.Reports
 {
@@ -65,7 +63,7 @@ namespace Ginger.Reports
             set { _showAllIterationsElements = value; }
         }
 
-        private ActivitiesGroup mActivitiesGroup;
+        private IActivitiesGroup mActivitiesGroup;
 
         /// <summary>
         /// This tag currently used due to common use of this class by new and old report!!! Should be removed in future!
@@ -79,10 +77,11 @@ namespace Ginger.Reports
         // We use empty constructor when we load from file via Json
         public ActivityGroupReport()
         {
-            mActivitiesGroup = new ActivitiesGroup();
+           
+            mActivitiesGroup = RepositoryItemHelper.RepositoryItemFactory.CreateActivitiesGroup();
         }
 
-        public ActivityGroupReport(ActivitiesGroup AG, GingerCore.BusinessFlow BF)
+        public ActivityGroupReport(IActivitiesGroup AG, IBusinessFlow BF)
         {
             mActivitiesGroup = AG;
             if ((AG != null) && (AG.ExecutedActivities != null))
@@ -159,7 +158,7 @@ namespace Ginger.Reports
         public string RunStatus
         {
             get { return mActivitiesGroup.RunStatus.ToString(); }
-            set { mActivitiesGroup.RunStatus = (ActivitiesGroup.eActivitiesGroupRunStatus)Enum.Parse(typeof(ActivitiesGroup.eActivitiesGroupRunStatus), value); }
+            set { mActivitiesGroup.RunStatus = (eActivitiesGroupRunStatus)Enum.Parse(typeof(eActivitiesGroupRunStatus), value); }
         }
        
         [FieldParams]
