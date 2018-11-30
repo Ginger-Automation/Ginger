@@ -18,11 +18,13 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -77,13 +79,17 @@ namespace Ginger.WindowExplorer.HTMLCommon
             {
                 XOffset.Text = x;
                 YOffset.Text = y;
+                ActInputValue AIX = (from aiv in ElementInfo.actInputValue where aiv.Param == "XCoordinate" select aiv).FirstOrDefault();
+                ActInputValue AIY = (from aiv in ElementInfo.actInputValue where aiv.Param == "YCoordinate" select aiv).FirstOrDefault();
+                AIX.Value = x;
+                AIY.Value = y;
                 //foreach (Act act in actList)
                 //{
 
                 //((ActGenElement)act).Xoffset = x;
                 //((ActGenElement)act).Yoffset = y;
-                    ElementInfo.InputValues.XOffset = x;
-                    ElementInfo.InputValues.YOffset = y;
+                //ElementInfo.actInputValue.XOffset = x;
+                //ElementInfo.actInputValue.YOffset = y;
                 //}
             }
             //TODO list actions

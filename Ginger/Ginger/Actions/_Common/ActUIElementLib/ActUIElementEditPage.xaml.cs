@@ -413,7 +413,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                                 mAction.ElementType == eElementType.Button))
                        ||
                        (mAction.Platform == ePlatformType.Web &&
-                        mAction.ElementAction == ActUIElement.eElementAction.ClickXY))
+                        mAction.ElementAction == ActUIElement.eElementAction.ClickXY || mAction.ElementAction == ActUIElement.eElementAction.XYDoubleClick || mAction.ElementAction == ActUIElement.eElementAction.XYSendKeys ))
                 {
                 elementList.Add(new ElementConfigControl()
                 {
@@ -431,6 +431,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate)) ? new List<string>() { "0" } :
                     mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate).Split(',').ToList()
                 });
+                if(mAction.ElementAction == ActUIElement.eElementAction.XYSendKeys)
+                {
+                    elementList.Add(new ElementConfigControl()
+                    {
+                        Title = "Value",
+                        BindedString = ActUIElement.Fields.Value,
+                        ControlType = eElementType.TextBox,
+                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
+                         mAction.GetInputParamValue(ActUIElement.Fields.Value).Split(',').ToList()
+                    });
+                }
             }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.GetControlProperty))
             {

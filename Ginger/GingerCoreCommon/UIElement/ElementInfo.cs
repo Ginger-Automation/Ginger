@@ -76,7 +76,7 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mElementTitle = value; }
         }
 
-        public InputValues InputValues = new InputValues();
+        public ObservableList<ActInputValue> actInputValue = new ObservableList<ActInputValue>();
 
         public enum eElementStatus
         {
@@ -311,11 +311,6 @@ namespace Amdocs.Ginger.Common.UIElement
                 mData = this.WindowExplorer.GetElementData(this, elementLocateBy, elementLocateValue);
             }
             return mData;
-        }
-
-        public InputValues GetUniqueInputValues()
-        {
-            return InputValues;
         }
 
     }
