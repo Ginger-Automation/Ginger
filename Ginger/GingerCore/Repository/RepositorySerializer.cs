@@ -23,7 +23,6 @@ using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
-using GingerCore.XMLConverters;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -33,7 +32,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 

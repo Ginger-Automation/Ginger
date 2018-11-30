@@ -109,6 +109,7 @@ namespace GingerCore.Actions
             DoubleClick,     
             SetFocus,
             ActivateRow,
+            ActivateCell,
             MousePressAndRelease,
             SendKeys,
             [EnumValueDescription("Is Checked")]

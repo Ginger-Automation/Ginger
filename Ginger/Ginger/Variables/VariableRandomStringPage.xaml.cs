@@ -30,14 +30,14 @@ namespace Ginger.Variables
         {
             InitializeComponent();
 
-            App.ObjFieldBinding(txtMinValue, TextBox.TextProperty, var, VariableRandomString.Fields.Min);
-            App.ObjFieldBinding(txtMaxValue, TextBox.TextProperty, var, VariableRandomString.Fields.Max);
+            App.ObjFieldBinding(txtMinValue, TextBox.TextProperty, var, nameof(VariableRandomString.Min));
+            App.ObjFieldBinding(txtMaxValue, TextBox.TextProperty, var, nameof(VariableRandomString.Max));
             
-            App.ObjFieldBinding(cbDigit, CheckBox.IsCheckedProperty, var, VariableRandomString.Fields.IsDigit);
-            App.ObjFieldBinding(cbLower, CheckBox.IsCheckedProperty, var, VariableRandomString.Fields.IsLowerCase);
-            App.ObjFieldBinding(cbUpper, CheckBox.IsCheckedProperty, var, VariableRandomString.Fields.IsUpperCase);
-            App.ObjFieldBinding(cbLowerCaseAndDigits, CheckBox.IsCheckedProperty, var, VariableRandomString.Fields.IsLowerCaseAndDigits);
-            App.ObjFieldBinding(cbUpperCaseAndDigits, CheckBox.IsCheckedProperty, var, VariableRandomString.Fields.IsUpperCaseAndDigits);
+            App.ObjFieldBinding(cbDigit, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsDigit));
+            App.ObjFieldBinding(cbLower, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsLowerCase));
+            App.ObjFieldBinding(cbUpper, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsUpperCase));
+            App.ObjFieldBinding(cbLowerCaseAndDigits, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsLowerCaseAndDigits));
+            App.ObjFieldBinding(cbUpperCaseAndDigits, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsUpperCaseAndDigits));
         }
     }
 }

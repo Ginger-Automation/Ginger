@@ -11,12 +11,12 @@
 
     <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         
-        <TabControl  Grid.Row="2" Grid.ColumnSpan="3">
+        <TabControl>
             <TabItem Header="Standard">
-                <StackPanel >
-                    <ginger:ucGrid x:Name="DriverConfigurationGrid"  Title="Driver Configurations" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
-                    <Frame x:Name="DriverConfigurationFrame"  Visibility="Collapsed"></Frame>
-                </StackPanel>
+                <DockPanel >
+                    <ginger:ucGrid x:Name="DriverConfigurationGrid" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Title="Driver Configurations" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
+                    <Frame x:Name="DriverConfigurationFrame"  DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"></Frame>
+                </DockPanel>
             </TabItem>
             <TabItem Header="Advanced" Name="AdvancedConfigurationTab" Visibility="Hidden">
                 <ginger:ucGrid x:Name="AdvancedConfigurationGrid" Title="Advanced Driver Configurations"/>

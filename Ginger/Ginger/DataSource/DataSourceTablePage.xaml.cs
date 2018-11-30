@@ -83,13 +83,19 @@ namespace Ginger.DataSource
         
         private void Grid_LostFocus(object sender, RoutedEventArgs e)
         {   
-            DataGridCell cell;
+            DataGridCell cell=null;
             if (e.OriginalSource.GetType() == typeof(CheckBox))
+            { 
                 cell = (DataGridCell)((CheckBox)e.OriginalSource).Parent;
+            }
             else if (e.OriginalSource.GetType() == typeof(TextBox))
+            { 
                 cell = (DataGridCell)((TextBox)e.OriginalSource).Parent;
-            else
+            }
+            else if (e.OriginalSource.GetType() == typeof(DataGridCell))
+            { 
                 cell = (DataGridCell)e.OriginalSource;
+            }
 
             if (cell == null)
             {

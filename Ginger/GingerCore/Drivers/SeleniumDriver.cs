@@ -44,7 +44,6 @@ using System.Threading.Tasks;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
 using System.Windows.Media.Imaging;
-using OpenQA.Selenium.PhantomJS;
 using System.Reflection;
 using Protractor;
 using Amdocs.Ginger.Common.UIElement;
@@ -308,15 +307,18 @@ namespace GingerCore.Drivers
                             else
                                 Driver = new InternetExplorerDriver(IEdriver64bitpath, ieoptions);
                         }
-                        if (Convert.ToInt32(HttpServerTimeOut) > 60)
-                        {
-                            InternetExplorerDriverService service = InternetExplorerDriverService.CreateDefaultService();
-                            Driver = new InternetExplorerDriver(service, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                        }
                         else
                         {
-                            Driver = new InternetExplorerDriver(ieoptions);
-                        }
+                            if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                            {
+                                InternetExplorerDriverService service = InternetExplorerDriverService.CreateDefaultService();
+                                Driver = new InternetExplorerDriver(service, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
+                            else
+                            {
+                                Driver = new InternetExplorerDriver(ieoptions);
+                            }
+                        }                        
                         break;
 
                     case eBrowserType.FireFox:
@@ -435,8 +437,8 @@ namespace GingerCore.Drivers
                         break;
 
                     case eBrowserType.PhantomJS:
-                        string PhantomJSServerPath = Path.Combine(General.GetGingerEXEPath(), @"Drivers\PhantomJS");
-                        Driver = new PhantomJSDriver(PhantomJSServerPath);
+
+                        throw new NotSupportedException("Support for PhantomJS is ended");
                         break;
 
                     //TODO: add Safari
@@ -477,7 +479,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            DesiredCapabilities capability = DesiredCapabilities.Chrome();
+                            DesiredCapabilities capability = new DesiredCapabilities();
                             capability.SetCapability(CapabilityType.BrowserName, RemoteBrowserName);
                             if (!string.IsNullOrEmpty(RemotePlatform))
                             {
@@ -710,14 +712,14 @@ namespace GingerCore.Drivers
             return a;
         }
 
-        public bool ValidateURL(String sURL)
+        public Uri ValidateURL(String sURL)
         {
             Uri myurl;
             if (Uri.TryCreate(sURL, UriKind.Absolute, out myurl))
             {
-                return true;
+                return myurl;
             }
-            return false;
+            return null;
         }
 
         private void GotoURL(Act act, string sURL)
@@ -727,9 +729,10 @@ namespace GingerCore.Drivers
                 sURL = "http://" + sURL;
             }
 
-            if (ValidateURL(sURL))
+            Uri uri = ValidateURL(sURL);
+            if (uri != null)
             {
-                Driver.Navigate().GoToUrl(sURL);
+                Driver.Navigate().GoToUrl(uri.AbsoluteUri);
             }
             else
             {
@@ -3003,7 +3006,7 @@ namespace GingerCore.Drivers
             {
                 ActUIElement aev = (ActUIElement)act;
                 Enum.TryParse<eLocateBy>(aev.ElementLocateBy.ToString(), true, out locateBy);
-                locateValue = aev.ElementLocateValue;
+                locateValue = aev.ElementLocateValueForDriver;
             }
 
             if (locateBy == eLocateBy.POMElement)

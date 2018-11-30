@@ -30,7 +30,7 @@ namespace Ginger.Variables
         {
             InitializeComponent();
             mVar = var;
-            App.ObjFieldBinding(txtPasswordValue, TextBox.TextProperty, var, VariablePasswordString.Fields.Password);
+            App.ObjFieldBinding(txtPasswordValue, TextBox.TextProperty, var, nameof(VariablePasswordString.Password));
         }
 
 
