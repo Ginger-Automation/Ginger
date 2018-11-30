@@ -45,7 +45,7 @@ namespace GingerCore.ALM.RQM
     public static class ImportFromRQM
     {
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
-        public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public static ObservableList<IActivity> GingerActivitiesRepo { get; set; }
 
         public static int totalValues = 0;
         public static string populatedValue = string.Empty;
@@ -61,7 +61,7 @@ namespace GingerCore.ALM.RQM
                 busFlow.Name = testPlan.Name;
                 busFlow.ExternalID = "RQMID=" + testPlan.RQMID;
                 busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Activities = new ObservableList<Activity>();
+                busFlow.Activities = new ObservableList<IActivity>();
                 busFlow.Variables = new ObservableList<VariableBase>();
  
                 //Create Activities Group + Activities for each TC

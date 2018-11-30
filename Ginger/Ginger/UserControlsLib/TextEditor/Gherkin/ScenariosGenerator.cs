@@ -227,7 +227,7 @@ namespace Ginger.GherkinLib
             {
                 if (act.IsSharedRepositoryInstance == true)
                 {
-                    ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     // FIXME to use (true, "", true, act.Tags)
                     Activity a2 = (from x in activities where x.ActivityName == act.ActivityName select x).FirstOrDefault();
                     if(a2 !=null)

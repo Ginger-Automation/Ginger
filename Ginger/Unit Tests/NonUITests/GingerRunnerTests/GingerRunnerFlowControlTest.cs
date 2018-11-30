@@ -50,7 +50,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             // Create a simple BF with simple Actions
             mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
+            mBF.Activities = new ObservableList<IActivity>();
             mBF.Name = "BF Test Flow Control";
             mBF.Active = true;
             Platform p = new Platform();

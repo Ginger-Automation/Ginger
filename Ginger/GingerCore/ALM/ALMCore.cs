@@ -76,7 +76,7 @@ namespace GingerCore.ALM
             get; set;
         }
 
-        public abstract ObservableList<Activity> GingerActivitiesRepo
+        public abstract ObservableList<IActivity> GingerActivitiesRepo
         {
             get; set;
         }

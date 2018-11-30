@@ -38,7 +38,7 @@ namespace GingerCore.ALM.QC
         static TDConnection mTDConn = QCConnect.TDConn;
 
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
-        public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public static ObservableList<IActivity> GingerActivitiesRepo { get; set; }
         
         public static QCTestSet ImportTestSetData(QCTestSet TS)
         {
@@ -290,7 +290,7 @@ namespace GingerCore.ALM.QC
                 busFlow.Name = testSet.TestSetName;
                 busFlow.ExternalID = testSet.TestSetID;
                 busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Activities = new ObservableList<Activity>();
+                busFlow.Activities = new ObservableList<IActivity>();
                 busFlow.Variables = new ObservableList<VariableBase>();
                 Dictionary<string, string> busVariables = new Dictionary<string, string>();//will store linked variables
 

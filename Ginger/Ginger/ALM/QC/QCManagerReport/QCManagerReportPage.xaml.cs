@@ -233,7 +233,7 @@ namespace Ginger.ALM.QC
                             //check for automation percentage
                             foreach (QCTSTestStep step in tc.Steps)
                             {
-                                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                                ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                                 Activity repoStepActivity = activities.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
                                 if (repoStepActivity != null)
                                     if (repoStepActivity.AutomationStatus == Activity.eActivityAutomationStatus.Automated)

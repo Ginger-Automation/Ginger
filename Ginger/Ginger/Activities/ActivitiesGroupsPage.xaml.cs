@@ -162,7 +162,7 @@ namespace Ginger.Activities
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
                 mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();                
+                ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();                
                 mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false, false, previousActivity);
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
 
@@ -289,7 +289,7 @@ namespace Ginger.Activities
             }
             else
             {
-                grdActivitiesGroups.DataSourceList = new ObservableList<Activity>();
+                grdActivitiesGroups.DataSourceList = new ObservableList<IActivity>();
             }
         }       
 

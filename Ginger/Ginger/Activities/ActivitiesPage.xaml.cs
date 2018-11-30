@@ -172,7 +172,7 @@ namespace Ginger.BusinessFlowFolder
                 
                 //Placing the item after current item
                 int selectedActIndex = -1;
-                ObservableList<Activity> actsList = mBusinessFlow.Activities;
+                ObservableList<IActivity> actsList = mBusinessFlow.Activities;
                 if (actsList.CurrentItem != null)
                 {
                     selectedActIndex = actsList.IndexOf((Activity)actsList.CurrentItem);
@@ -186,7 +186,7 @@ namespace Ginger.BusinessFlowFolder
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
                 mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
 
@@ -356,13 +356,13 @@ namespace Ginger.BusinessFlowFolder
             if (mBusinessFlow != null)
             {
                 grdActivities.Title = "'" + mBusinessFlow.Name + "' - " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.Activities, (IEnumerable<object>)activities);
                 grdActivities.DataSourceList = mBusinessFlow.Activities;                
             }
             else
             {
-                grdActivities.DataSourceList = new ObservableList<Activity>();
+                grdActivities.DataSourceList = new ObservableList<IActivity>();
             }
         }
         

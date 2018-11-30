@@ -241,7 +241,7 @@ namespace Ginger.GingerCoreNETTestLib
             ObservableList<BusinessFlow> BFs = mSolutionRepository.GetAllRepositoryItems<BusinessFlow>();
             foreach (BusinessFlow BF in BFs)
             {             
-                ObservableList<Activity> activities = BF.Activities; // force it to parse the activities objects
+                ObservableList<IActivity> activities = BF.Activities; // force it to parse the activities objects
                 int i = activities.Count;
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
             }
@@ -253,7 +253,7 @@ namespace Ginger.GingerCoreNETTestLib
             ObservableList<BusinessFlow> BFs = mSolutionRepository.GetAllRepositoryItems<BusinessFlow>();
             foreach (BusinessFlow BF in BFs)
             {
-                ObservableList<Activity> activities = BF.Activities;
+                ObservableList<IActivity> activities = BF.Activities;
                 Log(BF.Name + ", Activities count= " + activities.Count);
                 foreach (Activity a in BF.Activities)
                 {

@@ -65,7 +65,7 @@ namespace UnitTests.NonUITests
             BF.Name = "Biz flow 1";
             BF.Description = "Desc 1";
             //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
-            BF.Activities = new ObservableList<Activity>();
+            BF.Activities = new ObservableList<IActivity>();
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
             {
@@ -125,7 +125,7 @@ namespace UnitTests.NonUITests
             BF.Name = "Biz flow 1";
             BF.Description = "Desc 1";
             //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
-            BF.Activities = new ObservableList<Activity>();
+            BF.Activities = new ObservableList<IActivity>();
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
             {
@@ -171,7 +171,7 @@ namespace UnitTests.NonUITests
             BusinessFlow BF = new BusinessFlow();
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
-            BF.Activities = new ObservableList<Activity>();
+            BF.Activities = new ObservableList<IActivity>();
             
             Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };            
             BF.Activities.Add(a);
@@ -204,7 +204,7 @@ namespace UnitTests.NonUITests
             string FileName = TestResources.GetTempFile("activityClearBackup.xml");
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
-            BF.Activities = new ObservableList<Activity>();
+            BF.Activities = new ObservableList<IActivity>();
             Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };            
             BF.Activities.Add(a);
 
@@ -236,7 +236,7 @@ namespace UnitTests.NonUITests
             BusinessFlow BF = new BusinessFlow();
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
-            BF.Activities = new ObservableList<Activity>();
+            BF.Activities = new ObservableList<IActivity>();
             Activity a = new Activity();
             a.ActivityName = "Activity 1";
             a.Description = "Desciption -1";
@@ -280,7 +280,7 @@ namespace UnitTests.NonUITests
             BF.Name = "Biz flow 1";
             BF.Description = "Desc 1";
             //BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
-            BF.Activities = new ObservableList<Activity>();
+            BF.Activities = new ObservableList<IActivity>();
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
             {
@@ -466,7 +466,7 @@ namespace UnitTests.NonUITests
             //BF.Name = "Biz flow 1";
             //BF.Description = "Desc 1";
             ////BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
-            //BF.Activities = new ObservableList<Activity>();
+            //BF.Activities = new ObservableList<IActivity>();
 
             //for (int i = 1; i <= ActivitiesToCreate; i++)
             //{
@@ -510,7 +510,7 @@ namespace UnitTests.NonUITests
             BusinessFlow BF = new BusinessFlow() { Name = BizFlowName };
             BF.Status = BusinessFlow.eBusinessFlowStatus.Development;
             BF.Activities = new ObservableList<IActivity>();
-            ObservableList<Activity> OriginalActivitiesObj = BF.Activities;
+            ObservableList<IActivity> OriginalActivitiesObj = BF.Activities;
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
             {
@@ -536,11 +536,11 @@ namespace UnitTests.NonUITests
 
             //add flow control
             act1.FlowControls = new ObservableList<GingerCore.FlowControlLib.FlowControl>();
-            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.GoToActivity });
-            GingerCore.FlowControlLib.FlowControl.eFlowControlAction secondFlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.RerunAction;
+            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction =eFlowControlAction.GoToActivity });
+           eFlowControlAction secondFlowControlAction =eFlowControlAction.RerunAction;
             GingerCore.FlowControlLib.FlowControl secondFlowControl = new GingerCore.FlowControlLib.FlowControl() { Condition = "C>123", FlowControlAction = secondFlowControlAction };
             act1.FlowControls.Add(secondFlowControl);
-            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "D=111", FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.StopRun });
+            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "D=111", FlowControlAction =eFlowControlAction.StopRun });
 
             //BF Variables
             VariableString v = new VariableString();
@@ -571,7 +571,7 @@ namespace UnitTests.NonUITests
             act1.InputValues[0].Param = "qqq";
             act1.InputValues.Remove(act1.InputValues[1]);
 
-            act1.FlowControls[1].FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.MessageBox;
+            act1.FlowControls[1].FlowControlAction =eFlowControlAction.MessageBox;
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "Val=123" });
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "Val=555" });
 
@@ -679,7 +679,7 @@ namespace UnitTests.NonUITests
         //    //Arrange
         //    LocalRepository LR = new LocalRepository();
         //    string folder = TestResources.GetTestResourcesFolder(@"Repository\Activities");
-        //    ObservableList<Activity> list = new ObservableList<Activity>();
+        //    ObservableList<IActivity> list = new ObservableList<IActivity>();
 
         //    Stopwatch st = new Stopwatch();
         //    st.Reset();
@@ -738,7 +738,7 @@ namespace UnitTests.NonUITests
             BusinessFlow BF = new BusinessFlow();
             BF.Name = "Biz flow With Tags";
             BF.Description = "Desc 1";
-            BF.Activities = new ObservableList<Activity>();
+            BF.Activities = new ObservableList<IActivity>();
             Guid g1 = Guid.NewGuid();
             Guid g2 = Guid.NewGuid();
             BF.Tags.Add(g1);            
@@ -783,7 +783,7 @@ namespace UnitTests.NonUITests
         //    BF.Name = "Biz flow " + ActivitiesToCreate;
         //    BF.Description = "Desc " + ActivitiesToCreate;
             
-        //    BF.Activities = new ObservableList<Activity>();
+        //    BF.Activities = new ObservableList<IActivity>();
 
         //    for (int i = 1; i <= ActivitiesToCreate; i++)
         //    {

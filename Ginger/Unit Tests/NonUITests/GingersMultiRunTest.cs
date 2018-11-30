@@ -144,7 +144,7 @@
 //        {
 //            BusinessFlow mBF;
 //            mBF = new BusinessFlow();
-//            mBF.Activities = new ObservableList<Activity>();
+//            mBF.Activities = new ObservableList<IActivity>();
 //            mBF.Name = "BF Test Fire Fox";
 //            mBF.Active = true;
 //            mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });

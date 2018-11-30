@@ -737,7 +737,7 @@ namespace Ginger.Variables
                         case (eDependedItemsType.Activities):
                             foreach (DataRowView row in grdDependencies.grdMain.Items)
                             {
-                                Activity act = ((BusinessFlow)mParentObject).Activities[grdDependencies.grdMain.Items.IndexOf(row)];
+                                Activity act =(Activity)((BusinessFlow)mParentObject).Activities[grdDependencies.grdMain.Items.IndexOf(row)];
                                 int colsIndex = 2;
                                 foreach (VariableBase var in mParentListVars)
                                 {

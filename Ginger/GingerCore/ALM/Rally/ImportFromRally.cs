@@ -47,7 +47,7 @@ namespace GingerCore.ALM.Rally
     public static class ImportFromRally
     {
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
-        public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public static ObservableList<IActivity> GingerActivitiesRepo { get; set; }
 
         public static int totalValues = 0;
         public static string populatedValue = string.Empty;
@@ -63,7 +63,7 @@ namespace GingerCore.ALM.Rally
                 busFlow.Name = testPlan.Name;
                 busFlow.ExternalID = "RallyID=" + testPlan.RallyID;
                 busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Activities = new ObservableList<Activity>();
+                busFlow.Activities = new ObservableList<IActivity>();
                 busFlow.Variables = new ObservableList<VariableBase>();
 
                 //Create Activities Group + Activities for each TC

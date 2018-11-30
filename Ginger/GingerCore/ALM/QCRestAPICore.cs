@@ -84,7 +84,7 @@ namespace GingerCore.ALM
             set { ImportFromQCRest.GingerActivitiesGroupsRepo = value; }
         }
 
-        public override ObservableList<Activity> GingerActivitiesRepo
+        public override ObservableList<IActivity> GingerActivitiesRepo
         {
             get { return ImportFromQCRest.GingerActivitiesRepo; }
             set { ImportFromQCRest.GingerActivitiesRepo = value; }

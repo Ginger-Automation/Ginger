@@ -414,7 +414,7 @@ namespace Ginger.SourceControl
                 }
                 else if (SCFI.FileType == "Activity")
                 {
-                    ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     obj = activities.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
                 }
                 else if (SCFI.FileType == "Variable")

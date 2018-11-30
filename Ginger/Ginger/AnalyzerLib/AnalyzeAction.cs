@@ -193,7 +193,7 @@ namespace Ginger.AnalyzerLib
                             {
                                 //f.CalcualtedValue(BusinessFlow, App.ProjEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
                                 string RunSharedRepositoryActivity = f.GetNameFromValue();
-                                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                                ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                                 if (activities.Where(x => x.ActivityName == RunSharedRepositoryActivity).FirstOrDefault() == null)
                                 {
                                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);

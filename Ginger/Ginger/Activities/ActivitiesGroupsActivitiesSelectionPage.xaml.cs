@@ -62,7 +62,7 @@ namespace Ginger.Activities
 
         private void SetActivitiesGridData()
         {
-            ObservableList<Activity> freeActivities = new ObservableList<Activity>();
+            ObservableList<IActivity> freeActivities = new ObservableList<IActivity>();
             foreach (Activity activ in mBusinessFlow.Activities)
                 if (activ.ActivitiesGroupID == null || activ.ActivitiesGroupID == string.Empty)
                     freeActivities.Add(activ);

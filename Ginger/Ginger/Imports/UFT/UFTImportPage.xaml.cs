@@ -178,7 +178,7 @@ namespace Ginger.Imports.UFT
             ObservableList<Act> ActionsList = new ObservableList<Act>();
 
             // We create one dummy activity in case we convert code without function
-            mBusinessFlow.Activities = new ObservableList<Activity>();
+            mBusinessFlow.Activities = new ObservableList<IActivity>();
             Activity at = new Activity();
             at.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + "1";
             mBusinessFlow.Activities.Add(at);
@@ -359,7 +359,7 @@ namespace Ginger.Imports.UFT
 
             if (mBusinessFlow.Name != "")
             {
-                mBusinessFlow.Activities = new ObservableList<Activity>();
+                mBusinessFlow.Activities = new ObservableList<IActivity>();
 
                 // We create one dummy activity in case we convert code without function
                 mBusinessFlow.Activities.Add(new Activity() { ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + "1" });

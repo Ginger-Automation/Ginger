@@ -47,8 +47,10 @@ namespace Amdocs.Ginger.Common
         string ActivitiesGroupID { get; set; }
         string Screen { get; set; }
         string ItemName { get; set; }
+        object CurrentAgent { get; set; }
 
         ObservableList<VariableBase> GetVariables();
+        ObservableList<VariableDependency> VariablesDependencies
 
     }
 }

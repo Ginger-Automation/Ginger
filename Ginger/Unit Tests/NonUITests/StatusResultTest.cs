@@ -58,7 +58,7 @@ namespace UnitTests.NonUITests
         public void TestInitialize()
         {
             mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
+            mBF.Activities = new ObservableList<IActivity>();
             mBF.Name = "BF Status Result Test";
             mBF.Active = true;
             Platform p = new Platform();
@@ -447,7 +447,7 @@ namespace UnitTests.NonUITests
 
             ActDummy act3 = new ActDummy() { Description = "A3", Active = true, Status = eRunStatus.Stopped };
             a1.Acts.Add(act3);
-            //act3.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "1=1", FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.StopRun, Active = true });
+            //act3.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "1=1", FlowControlAction =eFlowControlAction.StopRun, Active = true });
 
             //Act
             mGR.CalculateActivityFinalStatus(a1);

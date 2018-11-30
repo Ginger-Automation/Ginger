@@ -63,7 +63,7 @@ namespace UnitTests.UITests.ASCFDriverTest
             if (mDriver == null)
             {
                 mBF = new BusinessFlow();
-                mBF.Activities = new ObservableList<Activity>();
+                mBF.Activities = new ObservableList<IActivity>();
                 mBF.Name = "BF Test ASCF Driver";
                 Platform p = new Platform();
                 p.PlatformType = Platform.eType.ASCF;

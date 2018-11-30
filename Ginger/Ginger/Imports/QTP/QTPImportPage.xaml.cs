@@ -278,7 +278,7 @@ namespace Ginger.Imports.QTP
             //Extract Objects from XML repository
             ProcessUFTObjectRepository();
 
-            mBusinessFlow.Activities = new ObservableList<Activity>();
+            mBusinessFlow.Activities = new ObservableList<IActivity>();
 
             if (ListOfSelectedGuis.Count != 0)
             {
@@ -397,7 +397,7 @@ namespace Ginger.Imports.QTP
             ObservableList<Act> ActionsList = new ObservableList<Act>();
 
             // We create one dummy activity in case we convert code without function
-            mBusinessFlow.Activities = new ObservableList<Activity>();
+            mBusinessFlow.Activities = new ObservableList<IActivity>();
             Activity at = new Activity();
             at.ActivityName = "Activity1";
             mBusinessFlow.Activities.Add(at);

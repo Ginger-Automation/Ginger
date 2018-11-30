@@ -64,7 +64,7 @@ namespace Ginger.Reports.Designer
             BusinessFlow BF1 = new BusinessFlow() { Name = "BF1 - Create Customer", Description = "Create any type of customer: Business/Residential..." };
             BF1.Active = true;
             BF1.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
-            BF1.Activities = new ObservableList<Activity>();
+            BF1.Activities = new ObservableList<IActivity>();
             BF1.Elapsed = 2364;
 
             //Activity 1
@@ -120,7 +120,7 @@ namespace Ginger.Reports.Designer
             
             //Add a few simple BFs            
             BusinessFlow BF2 = new BusinessFlow() { Name = "BF2 - Customer Order Product", Description = "", Active = true };            
-            BF2.Activities = new ObservableList<Activity>();
+            BF2.Activities = new ObservableList<IActivity>();
             BF2.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             BF2.Elapsed = 1249;
             

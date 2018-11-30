@@ -107,7 +107,7 @@ namespace GingerCore.ALM
             set { ImportFromRQM.GingerActivitiesGroupsRepo = value; }
         }
 
-        public override ObservableList<Activity> GingerActivitiesRepo
+        public override ObservableList<IActivity> GingerActivitiesRepo
         {
             get { return ImportFromRQM.GingerActivitiesRepo; }
             set { ImportFromRQM.GingerActivitiesRepo = value; }

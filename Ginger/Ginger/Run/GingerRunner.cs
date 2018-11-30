@@ -2263,7 +2263,7 @@ namespace Ginger.Run
         {
             //find activity            
             string activityName = fc.GetNameFromValue().ToUpper();
-            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             Activity sharedActivity = activities.Where(x => x.ActivityName.ToUpper() == activityName).FirstOrDefault();
 
             if (sharedActivity != null)
@@ -2644,7 +2644,7 @@ namespace Ginger.Run
 
                 // if it is not continue mode then goto first Action
                 if (!doContinueRun)
-                    act = Activity.Acts.FirstOrDefault();
+                    act = (Act)Activity.Acts.FirstOrDefault();
                 else
                     act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
 
@@ -2665,7 +2665,7 @@ namespace Ginger.Run
                             {
                                 Activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
 
-                                if (Activity.ActionRunOption == Activity.eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                                if (Activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
                                 {
                                     SetNextActionsBlockedStatus();
                                     statusCalculationIsDone = true;
@@ -2681,7 +2681,7 @@ namespace Ginger.Run
                         {
                             Activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
 
-                            if (Activity.ActionRunOption == Activity.eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                            if (Activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
                             {
                                 SetNextActionsBlockedStatus();
                                 statusCalculationIsDone = true;
@@ -2980,7 +2980,7 @@ namespace Ginger.Run
                 if (doContinueRun == false)
                 {
                     CurrentBusinessFlow = businessFlow;
-                    Activity bfFirstActivity = CurrentBusinessFlow.Activities.FirstOrDefault();
+                    Activity bfFirstActivity = (Activity)CurrentBusinessFlow.Activities.FirstOrDefault();
                     CurrentBusinessFlow.Activities.CurrentItem = bfFirstActivity;
                     CurrentBusinessFlow.CurrentActivity = bfFirstActivity;
                     bfFirstActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
@@ -3227,13 +3227,13 @@ namespace Ginger.Run
             bool Stopped = false;
 
             // Assume pass unless error
-            AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Passed;
+            AG.RunStatus = eActivitiesGroupRunStatus.Passed;
             
 
             if (AG.ActivitiesIdentifiers.Count == 0 ||
             AG.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped).ToList().Count == AG.ActivitiesIdentifiers.Count)
             {
-                AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Skipped;
+                AG.RunStatus = eActivitiesGroupRunStatus.Skipped;
                 return;
             }
 
@@ -3259,19 +3259,19 @@ namespace Ginger.Run
 
             if (Blocked)
             {
-                AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Blocked;
+                AG.RunStatus = eActivitiesGroupRunStatus.Blocked;
             }
             else if (Failed)
             {
-                AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Failed;
+                AG.RunStatus = eActivitiesGroupRunStatus.Failed;
             }
             else if (Stopped)
             {
-                AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Stopped;
+                AG.RunStatus = eActivitiesGroupRunStatus.Stopped;
             }
             else
             {
-                AG.RunStatus = ActivitiesGroup.eActivitiesGroupRunStatus.Passed;
+                AG.RunStatus = eActivitiesGroupRunStatus.Passed;
             }
         }
 
@@ -3313,7 +3313,7 @@ namespace Ginger.Run
                 CalculateActivitiesGroupFinalStatus(currentActivityGroup, CurrentBusinessFlow);
                 if (currentActivityGroup != null)
                 {
-                    if (currentActivityGroup.RunStatus != ActivitiesGroup.eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != ActivitiesGroup.eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != ActivitiesGroup.eActivitiesGroupRunStatus.Stopped)
+                    if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
                     {
                         currentActivityGroup.ExecutionLoggerStatus = ActivitiesGroup.executionLoggerStatus.NotStartedYet;
                     }
@@ -3760,7 +3760,7 @@ namespace Ginger.Run
                     switch (FC.BusinessFlowControlAction)
                     {
 
-                        case FlowControl.eBusinessFlowControlAction.GoToBusinessFlow:
+                        case eBusinessFlowControlAction.GoToBusinessFlow:
                             if (GotoBusinessFlow(FC, bf, ref fcReturnIndex))
                             {
                                 IsStopLoop = true;
@@ -3771,16 +3771,16 @@ namespace Ginger.Run
                             }
                             break;
 
-                        case FlowControl.eBusinessFlowControlAction.RerunBusinessFlow:
+                        case eBusinessFlowControlAction.RerunBusinessFlow:
                             fcReturnIndex = BusinessFlows.IndexOf(bf);
                             IsStopLoop = true;
                             break;
 
-                        case FlowControl.eBusinessFlowControlAction.StopRun:
+                        case eBusinessFlowControlAction.StopRun:
                             StopRun();
                             IsStopLoop = true;
                             break;
-                        case FlowControl.eBusinessFlowControlAction.SetVariableValue:
+                        case eBusinessFlowControlAction.SetVariableValue:
                             try
                             {
                                 VE.Value = FC.Value;

@@ -15,7 +15,7 @@ namespace GingerCore.ALM.QCRestAPI
     public static class ImportFromQCRest
     {
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
-        public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public static ObservableList<IActivity> GingerActivitiesRepo { get; set; }
 
         #region Public Functions
         public static QCTestInstanceColl ImportTestSetInstanceData(QCTestSet TS)
@@ -173,7 +173,7 @@ namespace GingerCore.ALM.QCRestAPI
                 busFlow.Name = testSet.TestSetName;
                 busFlow.ExternalID = testSet.TestSetID;
                 busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Activities = new ObservableList<Activity>();
+                busFlow.Activities = new ObservableList<IActivity>();
                 busFlow.Variables = new ObservableList<VariableBase>();
                 Dictionary<string, string> busVariables = new Dictionary<string, string>();//will store linked variables
 
@@ -655,7 +655,7 @@ namespace GingerCore.ALM.QCRestAPI
             busFlow.ExternalID = tS.Id;
             busFlow.Description = tS.ElementsField["description"].ToString();
             busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-            busFlow.Activities = new ObservableList<Activity>();
+            busFlow.Activities = new ObservableList<IActivity>();
             busFlow.Variables = new ObservableList<VariableBase>();
 
             return busFlow;

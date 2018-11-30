@@ -102,7 +102,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         public static bool CheckForItemWithDuplicateName(UploadItemSelection selectedItem)
         {
             List<RepositoryItemBase> existingRepoItems = new List<RepositoryItemBase>();
-            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             ObservableList<VariableBase> variables= WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
             ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
@@ -141,7 +141,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         public static string GetUniqueItemName(UploadItemSelection duplicateItem)
         {
             List<string> existingRepoItems = new List<string>();
-            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             ObservableList<Act> actions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
 

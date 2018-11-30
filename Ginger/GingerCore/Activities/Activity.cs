@@ -452,7 +452,7 @@ namespace GingerCore
         public override string GetNameForFileName() { return ActivityName; }
       
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableDependency> VariablesDependencies = new ObservableList<VariableDependency>();
+        public ObservableList<VariableDependency> VariablesDependencies { get; set; } = new ObservableList<VariableDependency>();
         
         /// <summary>
         /// Check if the Activity supposed to be executed according to it variables dependencies configurations

@@ -931,7 +931,7 @@ namespace Ginger
 
             BusinessFlow biz = new BusinessFlow();
             biz.Name = Name;
-            biz.Activities = new ObservableList<Activity>();
+            biz.Activities = new ObservableList<IActivity>();
             biz.Variables = new ObservableList<VariableBase>();
             // Set the new BF to be same like main app
             if (App.UserProfile.Solution.MainApplication != null)

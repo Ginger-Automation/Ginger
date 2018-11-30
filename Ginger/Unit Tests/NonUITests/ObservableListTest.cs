@@ -26,7 +26,7 @@ namespace UnitTests.NonUITests
         public void ObservableListCast()
         {
             //Arrange
-            ObservableList<Activity> activities = new ObservableList<Activity>();
+            ObservableList<IActivity> activities = new ObservableList<IActivity>();
             activities.Add(new Activity() { ActivityName = "a1" });
             activities.Add(new Activity() { ActivityName = "a2" });
 

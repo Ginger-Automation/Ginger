@@ -97,7 +97,7 @@ namespace Ginger.Activities
 
         public void AttachActivitiesGroupAndRepositoryActivities()
         {
-            ObservableList<Activity> activitiesRepository = new ObservableList<Activity>();
+            ObservableList<IActivity> activitiesRepository = new ObservableList<IActivity>();
 
             if (mEditMode == eEditMode.ExecutionFlow)
                 activitiesRepository = App.BusinessFlow.Activities;

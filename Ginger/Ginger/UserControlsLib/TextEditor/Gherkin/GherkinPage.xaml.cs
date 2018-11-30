@@ -44,6 +44,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.GherkinLib
 {
@@ -352,7 +353,7 @@ namespace Ginger.GherkinLib
             //TODO: get 
             string BusinessFlowFolder = "";
             string path = BusinessFlowFolder;
-            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             //FIXME to use tags 
             Activity a2 = (from x in activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
             if (a2 != null)
@@ -365,10 +366,10 @@ namespace Ginger.GherkinLib
             if (mBizFlow == null)
                 return "Pending BF Creation";
 
-            Activity a1 = (from x in mBizFlow.Activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
+            Activity a1 = (Activity)(from x in mBizFlow.Activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
             if (a1 != null)
             {
-                if (a1.AutomationStatus == Activity.eActivityAutomationStatus.Automated)
+                if (a1.AutomationStatus == eActivityAutomationStatus.Automated)
                 {
                     return "Automated in BF";
                 }
@@ -578,7 +579,7 @@ namespace Ginger.GherkinLib
 
             foreach(ActivityIdentifiers ia in AG.ActivitiesIdentifiers)
             {
-                Activity a1 = (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
+                Activity a1 = (Activity)(from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
                 if (!AG1.CheckActivityInGroup(a1))
                     AG1.AddActivityToGroup(a1);
             }
@@ -586,12 +587,12 @@ namespace Ginger.GherkinLib
             // Search each activity if not found create new
             foreach (GherkinStep GH in mOptimizedSteps)
             {                
-                Activity a1 = (from x in mBizFlow.Activities where x.ActivityName == GH.Text select x).FirstOrDefault();
+                Activity a1 = (Activity)(from x in mBizFlow.Activities where x.ActivityName == GH.Text select x).FirstOrDefault();
                 if (a1 == null)
                 {
                     if (GH.AutomationStatus == "Automated in Shared Repo - ")
                     {
-                        ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                        ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                         Activity a2 = (from x in activities where x.ActivityName == GH.Text select x).FirstOrDefault();
                         //FIXME
                         if (a2 != null)
@@ -607,7 +608,7 @@ namespace Ginger.GherkinLib
                         a.ActivityName = GH.Text;                        
                         a.Active = false;
                         a.TargetApplication = App.UserProfile.Solution.MainApplication;
-                        a.ActionRunOption = Activity.eActionRunOption.ContinueActionsRunOnFailure;
+                        a.ActionRunOption = eActionRunOption.ContinueActionsRunOnFailure;
                         CreateActivityVariables(a);
                         CreateActivitySelectionVariables(a);                        
                         mBizFlow.AddActivity(a);

@@ -84,7 +84,7 @@ namespace Ginger.Actions.ActionConversion
             if (grdGroups.DataSourceList.Count <= 0) return;
             if (grdGroups.DataSourceList.Count > 0)
             {
-                ObservableList<Activity> lstMarkUnMarkActivities = (ObservableList<Activity>)grdGroups.DataSourceList;
+                ObservableList<IActivity> lstMarkUnMarkActivities = (ObservableList<IActivity>)grdGroups.DataSourceList;
                 foreach (Activity act in lstMarkUnMarkActivities)
                 {
                     act.SelectedForConversion = ActiveStatus;

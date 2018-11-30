@@ -51,7 +51,7 @@
 //            mGR = new GingerRunner();
 
 //            mBF = new BusinessFlow();
-//            mBF.Activities = new ObservableList<Activity>();
+//            mBF.Activities = new ObservableList<IActivity>();
 //            mBF.Name = "BF UIAAutomationTest";
 //            Platform p = new Platform();
 //            p.PlatformType = ePlatformType.Windows;

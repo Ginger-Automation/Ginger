@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
+using GingerCore.Variables;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
 {
@@ -42,7 +43,10 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         bool Active { get; set; }
         bool FailIgnored { get; set; }
         IEnumerable<ActReturnValue> ActReturnValues { get; set; }
+        object LocateValue { get; set; }
 
         List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing();
+
+        ObservableList<VariableDependency> VariablesDependencies { get; set; }
     }
 }

@@ -210,7 +210,7 @@ namespace GingerCore.ALM
             set { ImportFromRally.GingerActivitiesGroupsRepo = value; }
         }
 
-        public override ObservableList<Activity> GingerActivitiesRepo
+        public override ObservableList<IActivity> GingerActivitiesRepo
         {
             get { return ImportFromRally.GingerActivitiesRepo; }
             set { ImportFromRally.GingerActivitiesRepo = value; }
