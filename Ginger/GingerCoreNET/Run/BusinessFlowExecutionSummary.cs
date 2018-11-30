@@ -18,18 +18,14 @@ limitations under the License.
 
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using GingerCore;
-using GingerCore.Repository;
 using GingerCore.Variables;
-using GingerCore.Actions;
-using GingerCore.FlowControlLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run
 {
     //This Class is for storing the Business Flow executed, it can have different Run Description, and a copy of the original BF
     // It is save as part of RunSetConfig
-    public class BusinessFlowExecutionSummary : RepositoryItem
+    public class BusinessFlowExecutionSummary : IRepositoryItem
     {       
         public new static class Fields
         {
@@ -66,7 +62,7 @@ namespace Ginger.Run
         public ObservableList<VariableBase> ExecutionVariabeles = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<FlowControl> ExecutionBFFlowControls = new ObservableList<FlowControl>();
+        public ObservableList<IFlowControl> ExecutionBFFlowControls = new ObservableList<IFlowControl>();
         
         public string PublishStatus 
         { 
@@ -83,7 +79,7 @@ namespace Ginger.Run
         [IsSerializedForLocalRepository]
         public Amdocs.Ginger.CoreNET.Execution.eRunStatus Status { get; set; }
         
-        public BusinessFlow BusinessFlow { get; set; }        
+        public IBusinessFlow BusinessFlow { get; set; }        
 
         public bool Selected { get; set; }
         
@@ -97,7 +93,7 @@ namespace Ginger.Run
             }
         }
 
-        public override string GetNameForFileName()
+        public  string GetNameForFileName()
         {
             return BusinessFlowName;
         }
@@ -118,7 +114,7 @@ namespace Ginger.Run
             get 
             {
                 if (BusinessFlow != null && BusinessFlow.CurrentActivity != null && BusinessFlow.CurrentActivity.Acts != null && BusinessFlow.CurrentActivity.Acts.CurrentItem != null)
-                    return ((Act)(BusinessFlow.CurrentActivity.Acts.CurrentItem)).Description;
+                    return ((IAct)(BusinessFlow.CurrentActivity.Acts.CurrentItem)).Description;
                 else
                     return string.Empty;
             }
@@ -126,7 +122,7 @@ namespace Ginger.Run
         
         public string GingerRunnerName { get; set; }
 
-        public override string ItemName
+        public  string ItemName
         {
             get
             {

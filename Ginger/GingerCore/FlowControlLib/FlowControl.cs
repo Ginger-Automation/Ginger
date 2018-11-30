@@ -40,18 +40,6 @@ namespace GingerCore.FlowControlLib
             public static string ConditionVE = "ConditionVE";
         }
 
-        public enum eBusinessFlowControlAction
-        {            
-            [EnumValueDescription("GoTo Business Flow")]
-            GoToBusinessFlow,  
-            [EnumValueDescription("Rerun Business Flow")]
-            RerunBusinessFlow,
-            [EnumValueDescription("Stop Runner")]
-            StopRun,
-            [EnumValueDescription("Set Variable Value")]
-            SetVariableValue,           
-        }
-
 
        
         public string GUID_NAME_SEPERATOR = "#GUID_NAME#";

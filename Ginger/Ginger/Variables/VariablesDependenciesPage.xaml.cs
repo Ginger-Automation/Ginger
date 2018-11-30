@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -708,7 +709,7 @@ namespace Ginger.Variables
                         case (eDependedItemsType.Actions):
                             foreach (DataRowView row in grdDependencies.grdMain.Items)
                             {
-                                Act act = ((Activity)mParentObject).Acts[grdDependencies.grdMain.Items.IndexOf(row)];
+                                IAct act = ((IActivity)mParentObject).Acts[grdDependencies.grdMain.Items.IndexOf(row)];
                                 int colsIndex = 2;
                                 foreach (VariableBase var in mParentListVars)
                                 {

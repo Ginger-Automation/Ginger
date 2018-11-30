@@ -283,7 +283,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             // define business flow
             BusinessFlow businessFlowWrite = new BusinessFlow();
             businessFlowWrite.Name = "Business Flow 1";
-            businessFlowWrite.Activities = new ObservableList<Activity>();
+            businessFlowWrite.Activities = new ObservableList<IActivity>();
 
             activity.Acts.Add(actDummy);
             businessFlowWrite.Activities.Add(activity);

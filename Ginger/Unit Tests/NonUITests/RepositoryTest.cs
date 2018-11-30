@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
@@ -414,7 +415,7 @@ namespace UnitTests.NonUITests
 
             BusinessFlow BF = new BusinessFlow() { Name = "Biz flow 1", Description = "Desc 1"};
                 
-            BF.Activities = new ObservableList<Activity>();
+            BF.Activities = new ObservableList<IActivity>();
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
             {
@@ -508,7 +509,7 @@ namespace UnitTests.NonUITests
 
             BusinessFlow BF = new BusinessFlow() { Name = BizFlowName };
             BF.Status = BusinessFlow.eBusinessFlowStatus.Development;
-            BF.Activities = new ObservableList<Activity>();
+            BF.Activities = new ObservableList<IActivity>();
             ObservableList<Activity> OriginalActivitiesObj = BF.Activities;
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
@@ -921,13 +922,13 @@ namespace UnitTests.NonUITests
             FlowControl flowControl = new FlowControl();
             flowControl.Active = true;
             flowControl.Condition = "1=1";
-            flowControl.FlowControlAction = FlowControl.eFlowControlAction.GoToActivity;
+            flowControl.FlowControlAction = eFlowControlAction.GoToActivity;
             flowControl.Value = activity2.Guid + flowControl.GUID_NAME_SEPERATOR + activity2.ItemName;
 
             FlowControl flowControl2 = new FlowControl();
             flowControl2.Active = true;
             flowControl2.Condition = "2=2";
-            flowControl2.FlowControlAction = FlowControl.eFlowControlAction.GoToAction;
+            flowControl2.FlowControlAction = eFlowControlAction.GoToAction;
             flowControl2.Value = act2.Guid + flowControl.GUID_NAME_SEPERATOR + act2.ItemName;
 
 
@@ -973,7 +974,7 @@ namespace UnitTests.NonUITests
             FlowControl flowControl = new FlowControl();
             flowControl.Active = true;
             flowControl.Condition = "1=1";
-            flowControl.FlowControlAction = FlowControl.eFlowControlAction.GoToAction;
+            flowControl.FlowControlAction = eFlowControlAction.GoToAction;
             flowControl.Value = act2.Guid + flowControl.GUID_NAME_SEPERATOR + act2.ItemName;
 
 

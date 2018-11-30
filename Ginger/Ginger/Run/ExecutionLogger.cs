@@ -37,6 +37,8 @@ using GingerCore.DataSource;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.CoreNET.Utility;
+using Amdocs.Ginger.Common.InterfacesLib;
+
 namespace Ginger.Run
 {
     // Each ExecutionLogger instance should be attach to one GingerRunner
@@ -239,16 +241,7 @@ namespace Ginger.Run
 
         public static object LoadObjFromJSonString(string str, Type t)
         {
-            MemoryStream stream = new MemoryStream();
-            StreamWriter writer = new StreamWriter(stream);
-            writer.Write(str);
-            writer.Flush();
-            stream.Position = 0;
-            using (StreamReader SR = new StreamReader(stream))
-            using (JsonReader reader = new JsonTextReader(SR))
-            {
-                return mJsonSerializer.Deserialize(reader, t);
-            }
+            return JsonLib.LoadObjFromJSonString(str, t, mJsonSerializer);
         }
 
         public void ExecutionStart(ReportInfo RI)
@@ -736,7 +729,7 @@ namespace Ginger.Run
                     }
                     // 
                     bool automatedOpeningFlag = false;
-                    if (act.FlowControls.Where(x => x.FlowControlAction == GingerCore.FlowControlLib.FlowControl.eFlowControlAction.FailureIsAutoOpenedDefect && x.Condition == "\"{ActionStatus}\" = \"Failed\"").ToList().Count > 0)
+                    if (act.FlowControls.Where(x => x.FlowControlAction == eFlowControlAction.FailureIsAutoOpenedDefect && x.Condition == "\"{ActionStatus}\" = \"Failed\"").ToList().Count > 0)
                         automatedOpeningFlag = true;
 
                     //

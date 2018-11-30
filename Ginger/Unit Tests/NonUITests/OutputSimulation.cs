@@ -44,7 +44,7 @@ namespace UnitTests.NonUITests
         {
             AutoLogProxy.Init("NonUITests");
             mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
+            mBF.Activities = new ObservableList<IActivity>();
             mBF.Name = "Output Simulation";
             mBF.Active = true;
 

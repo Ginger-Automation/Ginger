@@ -50,7 +50,7 @@ namespace UnitTests.NonUITests
         public void TestInitialize()
         {
             mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
+            mBF.Activities = new ObservableList<IActivity>();
             mBF.Name = "BF Visual Testing";
             mBF.Active = true;
             Platform p = new Platform();

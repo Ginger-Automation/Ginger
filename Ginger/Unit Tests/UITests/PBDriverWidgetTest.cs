@@ -50,7 +50,7 @@ namespace UnitTests.UITests.PBDriverTest
             mGR = new GingerRunner();
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
+            mBF.Activities = new ObservableList<IActivity>();
             mBF.Name = "BF Test PB Driver";
             Platform p = new Platform();
             p.PlatformType = ePlatformType.PowerBuilder;

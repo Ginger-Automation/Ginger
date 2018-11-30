@@ -37,28 +37,7 @@ namespace GingerCore
     // The activities can come from external like: QC TC Step, vStorm    
     public class Activity : RepositoryItemBase, IActivity
     {
-        public enum eActivityAutomationStatus
-        {
-            Development = 0,
-            Automated = 1
-        }
-       
-        public enum eActionRunOption
-        {
-            [EnumValueDescription("Stop Actions Run on Failure")]
-            StopActionsRunOnFailure = 0,
-            [EnumValueDescription("Continue Actions Run on Failure")]
-            ContinueActionsRunOnFailure = 1,
-        }
-
-        public enum eItemParts
-        {
-            All,
-            Details,
-            Actions,
-            Variables
-        }
-
+    
 
         public enum eHandlerMappingType
         {
@@ -654,7 +633,7 @@ namespace GingerCore
             newInstance.IsSharedRepositoryInstance = true;
 
             //update required part
-            Activity.eItemParts ePartToUpdate = (Activity.eItemParts)Enum.Parse(typeof(Activity.eItemParts), partToUpdate);
+            eItemParts ePartToUpdate = (eItemParts)Enum.Parse(typeof(eItemParts), partToUpdate);
             switch (ePartToUpdate)
             {
                 case eItemParts.All:
@@ -696,7 +675,7 @@ namespace GingerCore
             Activity updatedActivity = null;
             
             //update required part
-            eItemParts ePartToUpdate = (eItemParts)Enum.Parse(typeof(Activity.eItemParts), itemPartToUpdate);
+            eItemParts ePartToUpdate = (eItemParts)Enum.Parse(typeof(eItemParts), itemPartToUpdate);
 
             switch (ePartToUpdate)
             {
@@ -751,7 +730,7 @@ namespace GingerCore
                                 {
                                     //add the val
                                     repoVarList.OptionalValuesList.Add(usageValue);                                    
-                                    repositoryItem.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset the status because new variable optional value was added
+                                    repositoryItem.AutomationStatus = eActivityAutomationStatus.Development;//reset the status because new variable optional value was added
                                 }
                             }
 
@@ -768,9 +747,9 @@ namespace GingerCore
             }
         }
 
-        public Act GetAct(Guid guidValue, string nameValue = null)
+        public IAct GetAct(Guid guidValue, string nameValue = null)
         {
-            Act foundAct = null;
+            IAct foundAct = null;
             if (guidValue != null && guidValue != Guid.Empty)
                 foundAct = GetActFromPossibleList(guidValue.ToString());
             if (foundAct == null && guidValue == Guid.Empty && nameValue != null)//look by name only if do not have GUID so only old flows will still work with name mapping
@@ -778,7 +757,7 @@ namespace GingerCore
             return foundAct;
         }
 
-        private Act GetActFromPossibleList(String guidToLookByString = null, string nameToLookBy = null)
+        private IAct GetActFromPossibleList(String guidToLookByString = null, string nameToLookBy = null)
         {
             Guid guidToLookBy = Guid.Empty;
             if (!string.IsNullOrEmpty(guidToLookByString))
@@ -786,7 +765,7 @@ namespace GingerCore
                 guidToLookBy = Guid.Parse(guidToLookByString);
             }
            
-            List<Act> lstActions = null;
+            List<IAct> lstActions = null;
             if (guidToLookBy != Guid.Empty)
                 lstActions = Acts.Where(x => x.Guid == guidToLookBy).ToList();
             else
@@ -798,7 +777,7 @@ namespace GingerCore
                 return lstActions[0];
             else//we have more than 1
             {
-                Act firstActive = lstActions.Where(x => x.Active == true).FirstOrDefault();
+                IAct firstActive = lstActions.Where(x => x.Active == true).FirstOrDefault();
                 if (firstActive != null)
                     return firstActive;
                 else

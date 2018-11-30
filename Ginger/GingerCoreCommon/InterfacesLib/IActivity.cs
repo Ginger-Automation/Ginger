@@ -5,6 +5,28 @@ using GingerCore.Variables;
 using Amdocs.Ginger.CoreNET.Execution;
 namespace Amdocs.Ginger.Common
 {
+    public enum eActivityAutomationStatus
+    {
+        Development = 0,
+        Automated = 1
+    }
+
+    public enum eActionRunOption
+    {
+        [EnumValueDescription("Stop Actions Run on Failure")]
+        StopActionsRunOnFailure = 0,
+        [EnumValueDescription("Continue Actions Run on Failure")]
+        ContinueActionsRunOnFailure = 1,
+    }
+
+    public enum eItemParts
+    {
+        All,
+        Details,
+        Actions,
+        Variables
+    }
+
     public interface IActivity
     {
         Guid Guid { get; set; }
@@ -19,6 +41,12 @@ namespace Amdocs.Ginger.Common
         eRunStatus? Status { get; set; }
         ObservableList<VariableBase> Variables { get; set; }
         ObservableList<IAct> Acts { get; set; }
+        eActivityAutomationStatus? AutomationStatus { get; set; }
+        bool AddDynamicly { get; set; }
+        Guid ParentGuid { get; set; }
+        string ActivitiesGroupID { get; set; }
+        string Screen { get; set; }
+        string ItemName { get; set; }
 
         ObservableList<VariableBase> GetVariables();
 

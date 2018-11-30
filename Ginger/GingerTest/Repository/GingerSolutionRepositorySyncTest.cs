@@ -126,7 +126,7 @@ namespace GingerCoreCommonTest.Repository
             string updatedValue = "abc123";
 
             mBF = new BusinessFlow() { Name = "TestActvVarSync", Active = true };
-            mBF.Activities = new ObservableList<Activity>();
+            mBF.Activities = new ObservableList<IActivity>();
 
             VariableString V1 = new VariableString() { Name = variableName, InitialStringValue = initialValue };
 

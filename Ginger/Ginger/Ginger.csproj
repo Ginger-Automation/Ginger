@@ -1409,7 +1409,6 @@
     <Compile Include="Help\TreeViewItems\VideoHelpFileTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\MHTHelpFileTreeItem.cs" />
     <Compile Include="Reports\ActionReport.cs" />
-    <Compile Include="Reports\BusinessFlowReport.cs" />
     <Compile Include="Reports\HTMLReportConfiguration.cs" />
     <Compile Include="Reports\RunSetReport.cs" />
     <Compile Include="Reports\GingerReport.cs" />
@@ -1454,7 +1453,6 @@
     <Compile Include="Reports\RTFtoPDF.cs" />
     <Compile Include="Reports\SpecialReports\XMLReportBase.cs" />
     <Compile Include="Reports\SpecialReports\TestNGResultReport.cs" />
-    <Compile Include="Reports\VariableReport.cs" />
     <Compile Include="Run\RunSetActions\EmailAttachment.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionBase.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionEditPage.xaml.cs">
@@ -1845,7 +1843,6 @@
     <Compile Include="Run\AutoRunWindow.xaml.cs">
       <DependentUpon>AutoRunWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\BusinessFlowExecutionSummary.cs" />
     <Compile Include="Run\BusinessFlowRun.cs" />
     <Compile Include="Run\BusinessFlowRunConfigurationsPage.xaml.cs">
       <DependentUpon>BusinessFlowRunConfigurationsPage.xaml</DependentUpon>

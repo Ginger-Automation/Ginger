@@ -6,6 +6,8 @@ namespace Amdocs.Ginger.Common.InterfacesLib
 {
     public interface IRepositoryItem
     {
-
+        string GetNameForFileName();
+        string ItemName { get; set; }
+ 
     }
 }

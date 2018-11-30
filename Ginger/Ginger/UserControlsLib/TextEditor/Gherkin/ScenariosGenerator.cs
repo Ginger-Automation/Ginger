@@ -334,10 +334,10 @@ namespace Ginger.GherkinLib
             return TagGuid;
         }
 
-        private Activity SearchActivityByName(string Name)
+        private IActivity SearchActivityByName(string Name)
         {
             // First we search in Shared Repo if not found we try the BF
-            Activity a = null;
+            IActivity a = null;
             if (a == null)
             {
                 //TODO: need to search only in the optimized Activities group

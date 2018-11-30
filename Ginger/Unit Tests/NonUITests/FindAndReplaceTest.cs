@@ -35,7 +35,7 @@ namespace UnitTests.NonUITests
 
             AutoLogProxy.Init("Unit Tests");
             mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
+            mBF.Activities = new ObservableList<IActivity>();
             mBF.Name = "BF1";
            
             a1.ActivityName = "Activity1";

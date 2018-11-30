@@ -52,11 +52,27 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         [EnumValueDescription("Set Failure to be Auto-Opened Defect")]
         FailureIsAutoOpenedDefect
     }
+    public enum eBusinessFlowControlAction
+    {
+        [EnumValueDescription("GoTo Business Flow")]
+        GoToBusinessFlow,
+        [EnumValueDescription("Rerun Business Flow")]
+        RerunBusinessFlow,
+        [EnumValueDescription("Stop Runner")]
+        StopRun,
+        [EnumValueDescription("Set Variable Value")]
+        SetVariableValue,
+    }
+
+
     public interface IFlowControl
     {
         string Condition { get; set; }
         string ConditionCalculated { get; set; }
         string FlowControlAction { get; set; }
-        eStatus Status { get; set; }
+        eBusinessFlowControlAction Status { get; set; }
+        string BusinessFlowControlAction { get; set; }
+
+        Guid GetGuidFromValue();
     }
 }

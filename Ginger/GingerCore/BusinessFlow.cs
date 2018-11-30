@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -43,13 +44,13 @@ namespace GingerCore
         public BusinessFlow(string sName)
         {
             Name = sName;
-            Activities = new ObservableList<Activity>();
+            Activities = new ObservableList<IActivity>();
             Variables = new ObservableList<VariableBase>();
             TargetApplications = new ObservableList<TargetApplication>();
 
             Activity a = new Activity() { Active = true };
             a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
-            a.Acts = new ObservableList<Act>();
+            a.Acts = new ObservableList<IAct>();
             Activities.Add(a);
             Activities.CurrentItem = a;
             CurrentActivity = a;
@@ -254,16 +255,16 @@ namespace GingerCore
         //@ Run info 
 
 
-        private ObservableList<Activity> mActivities;
+        private ObservableList<IActivity> mActivities;
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Activity> Activities
+        public ObservableList<IActivity> Activities
         {
             get
             {
                 if (mActivities == null)
                 {
-                    mActivities = new ObservableList<Activity>();
+                    mActivities = new ObservableList<IActivity>();
                 }
                 if (mActivities.LazyLoad)
                 {
@@ -289,11 +290,11 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public ObservableList<TargetApplication> TargetApplications = new ObservableList<TargetApplication>();
 
-        private Activity mCurrentActivity { get; set; }
+        private IActivity mCurrentActivity { get; set; }
 
         public bool disableChangeonClick = true;
 
-        public Activity CurrentActivity
+        public IActivity CurrentActivity
         {
             get { return mCurrentActivity; }
             set
@@ -308,7 +309,7 @@ namespace GingerCore
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
 
         static public ObservableList<VariableBase> SolutionVariables;
@@ -520,7 +521,7 @@ namespace GingerCore
             }
         }
 
-        public void AddActivity(Activity a, bool setAfterCurrentActivity = false, Activity indexActivity = null)
+        public void AddActivity(IActivity a, bool setAfterCurrentActivity = false, IActivity indexActivity = null)
         {
             if (a == null)
                 return;
@@ -707,14 +708,14 @@ namespace GingerCore
                 for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
                 {
                     ActivityIdentifiers actIdentifis = group.ActivitiesIdentifiers[indx];
-                    Activity activ = this.Activities.Where(act => act.ActivityName == actIdentifis.ActivityName && act.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                    IActivity activ = this.Activities.Where(act => act.ActivityName == actIdentifis.ActivityName && act.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
                     if (activ == null)
                         activ = this.Activities.Where(act => act.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
                     if (activ == null)
                         activ = this.Activities.Where(act => act.ParentGuid == actIdentifis.ActivityGuid).FirstOrDefault();
                     if (activ != null)
                     {
-                        actIdentifis.IdentifiedActivity = activ;
+                        actIdentifis.IdentifiedActivity =(Activity) activ;
                         activ.ActivitiesGroupID = group.Name;
                         indx++;
                     }
@@ -842,8 +843,7 @@ namespace GingerCore
         {
             get
             {
-                List<Activity> automatedActs = Activities.Where(x => x.AutomationStatus ==
-                                                                               Activity.eActivityAutomationStatus.Automated).ToList();
+                List<IActivity> automatedActs = Activities.Where(x => x.AutomationStatus == eActivityAutomationStatus.Automated).ToList();
                 double automatedActsPrecantge;
                 if (automatedActs == null || automatedActs.Count == 0)
                 {
@@ -994,9 +994,9 @@ namespace GingerCore
             }
         }
 
-        public Activity GetActivity(Guid guidValue, string nameValue = null)
+        public IActivity GetActivity(Guid guidValue, string nameValue = null)
         {
-            Activity foundActivity = null;
+            IActivity foundActivity = null;
             if (guidValue != null && guidValue != Guid.Empty)
                 foundActivity = GetActivityFromPossibleList(guidValue.ToString());
             if (foundActivity == null && guidValue == Guid.Empty && nameValue != null)//look by name only if do not have GUID so only old flows will still work with name mapping
@@ -1004,7 +1004,7 @@ namespace GingerCore
             return foundActivity;
         }
 
-        private Activity GetActivityFromPossibleList(string guidToLookByString = null, string nameToLookBy = null)
+        private IActivity GetActivityFromPossibleList(string guidToLookByString = null, string nameToLookBy = null)
         {
 
             Guid guidToLookBy = Guid.Empty;
@@ -1012,7 +1012,7 @@ namespace GingerCore
             {
                 guidToLookBy = Guid.Parse(guidToLookByString);
             }
-            List<Activity> lstActivities = null;
+            List<IActivity> lstActivities = null;
             if (guidToLookBy != Guid.Empty)
                 lstActivities = Activities.Where(x => x.Guid == guidToLookBy).ToList();
             else
@@ -1024,7 +1024,7 @@ namespace GingerCore
                 return lstActivities[0];
             else//we have more than 1
             {
-                Activity firstActive = lstActivities.Where(x => x.Active == true).FirstOrDefault();
+                IActivity firstActive = lstActivities.Where(x => x.Active == true).FirstOrDefault();
                 if (firstActive != null)
                     return firstActive;
                 else
@@ -1103,7 +1103,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<FlowControl> BFFlowControls = new ObservableList<FlowControl>();
+        public ObservableList<IFlowControl> BFFlowControls { get; set; } = new ObservableList<IFlowControl>();
 
 
         public string Applications
@@ -1136,7 +1136,6 @@ namespace GingerCore
             }
         }
 
-        string IBusinessFlow.RunStatus { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        bool IBusinessFlow.Active { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+     
     }
 }

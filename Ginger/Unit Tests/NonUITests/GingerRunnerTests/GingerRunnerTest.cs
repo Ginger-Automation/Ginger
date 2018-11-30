@@ -47,7 +47,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             AutoLogProxy.Init("Unit Tests");
             mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
+            mBF.Activities = new ObservableList<IActivity>();
             mBF.Name = "BF Test Fire Fox";
             mBF.Active = true;
             Platform p = new Platform();

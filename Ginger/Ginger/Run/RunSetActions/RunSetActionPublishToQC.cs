@@ -99,7 +99,7 @@ namespace Ginger.Run.RunSetActions
         public override void Execute(ReportInfo RI)
         {
             string result = string.Empty;
-            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+            ObservableList<IBusinessFlow> bfs = new ObservableList<BusinessFlow>();
             SetExportToALMConfig();
             foreach (BusinessFlowReport BFR in RI.BusinessFlows)
             {

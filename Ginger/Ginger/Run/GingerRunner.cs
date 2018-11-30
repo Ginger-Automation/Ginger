@@ -1977,7 +1977,7 @@ namespace Ginger.Run
                 {
                     if (FC.Active == false)
                     {
-                        FC.Status = FlowControl.eStatus.Skipped;
+                        FC.Status = eStatus.Skipped;
                         continue;
                     }
 
@@ -2025,26 +2025,26 @@ namespace Ginger.Run
                                 if (GotoAction(FC, act))
                                     IsStopLoop = true;
                                 else
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 break;
                             case FlowControl.eFlowControlAction.GoToNextAction:
                                 if (FlowControlGotoNextAction(act))
                                     IsStopLoop = true;
                                 else
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 break;
                             case FlowControl.eFlowControlAction.GoToActivity:
                             case FlowControl.eFlowControlAction.GoToActivityByName:
                                 if (GotoActivity(FC, act))
                                     IsStopLoop = true;
                                 else
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 break;
                             case FlowControl.eFlowControlAction.GoToNextActivity:
                                 if (FlowControlGotoNextActivity(act))
                                     IsStopLoop = true;
                                 else
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 break;
                             case FlowControl.eFlowControlAction.RerunAction:
                                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
@@ -2093,13 +2093,13 @@ namespace Ginger.Run
                                     }
                                     else
                                     {
-                                        FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                        FC.Status = eStatus.Action_Execution_Failed;
                                     }
                                 }
                                 catch (Exception ex)
                                 {
                                     Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 }
                                 break;
                             case FlowControl.eFlowControlAction.RunSharedRepositoryActivity:
@@ -2108,12 +2108,12 @@ namespace Ginger.Run
                                     if (RunSharedRepositoryActivity(FC))
                                         IsStopLoop = true;
                                     else
-                                        FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                        FC.Status = eStatus.Action_Execution_Failed;
                                 }
                                 catch (Exception ex)
                                 {
                                     Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do RunSharedRepositoryActivity Flow Control", ex);
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 }
                                 break;
 
@@ -2122,14 +2122,14 @@ namespace Ginger.Run
                                 break;
                         }
 
-                        if (FC.Status == FlowControl.eStatus.Pending)
+                        if (FC.Status == eStatus.Pending)
                         {
-                            FC.Status = FlowControl.eStatus.Action_Executed;
+                            FC.Status = eStatus.Action_Executed;
                         }
                     }
                     else
                     {
-                        FC.Status = FlowControl.eStatus.Action_Not_Executed;
+                        FC.Status = eStatus.Action_Not_Executed;
                     }
 
                     // Go out the foreach in case we have a goto so no need to process the rest of FCs
@@ -3728,12 +3728,12 @@ namespace Ginger.Run
             {
                 if (FC.Active == false)
                 {
-                    FC.Status = FlowControl.eStatus.Skipped;
+                    FC.Status = eStatus.Skipped;
                     continue;
                 }
                 else
                 {
-                    FC.Status = FlowControl.eStatus.Pending;
+                    FC.Status = eStatus.Pending;
                 }
 
                 FC.CalculateCondition(CurrentBusinessFlow, ProjEnvironment, this.DSList);
@@ -3767,7 +3767,7 @@ namespace Ginger.Run
                             }
                             else
                             {
-                                FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                FC.Status = eStatus.Action_Execution_Failed;
                             }
                             break;
 
@@ -3797,13 +3797,13 @@ namespace Ginger.Run
                                 }
                                 else
                                 {
-                                    FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                    FC.Status = eStatus.Action_Execution_Failed;
                                 }
                             }
                             catch (Exception ex)
                             {
                                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
-                                FC.Status = FlowControl.eStatus.Action_Execution_Failed;
+                                FC.Status = eStatus.Action_Execution_Failed;
                             }
                             break;
 
@@ -3812,14 +3812,14 @@ namespace Ginger.Run
                             break;
                     }
 
-                    if (FC.Status == FlowControl.eStatus.Pending)
+                    if (FC.Status == eStatus.Pending)
                     {
-                        FC.Status = FlowControl.eStatus.Action_Executed;
+                        FC.Status = eStatus.Action_Executed;
                     }
                 }
                 else
                 {
-                    FC.Status = FlowControl.eStatus.Action_Not_Executed;
+                    FC.Status = eStatus.Action_Not_Executed;
                 }
 
                 // Go out the foreach in case we have a goto so no need to process the rest of FCs

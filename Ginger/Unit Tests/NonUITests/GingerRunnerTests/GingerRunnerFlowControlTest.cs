@@ -157,7 +157,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             ActDummy act3 = new ActDummy() { Description = "A3", Active = true };
             a1.Acts.Add(act3);
-            act3.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "1=1", FlowControlAction = GingerCore.FlowControlLib.FlowControl.eFlowControlAction.StopRun,  Active=true});
+            act3.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "1=1", FlowControlAction = GingerCore.FlowControlLib.eFlowControlAction.StopRun,  Active=true});
             
 
             ActDummy act4 = new ActDummy() { Description = "A2", Active = true };

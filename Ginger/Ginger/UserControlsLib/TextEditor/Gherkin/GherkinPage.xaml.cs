@@ -623,7 +623,7 @@ namespace Ginger.GherkinLib
             }
             foreach (ActivityIdentifiers ia in AG1.ActivitiesIdentifiers)
             {
-                Activity a1 = (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
+                IActivity a1 = (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
                 if (AG.CheckActivityInGroup(a1))
                     AG.RemoveActivityFromGroup(a1);
             }

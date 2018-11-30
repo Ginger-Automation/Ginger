@@ -226,7 +226,7 @@ namespace UnitTests.NonUITests
         {
             Activity a1 = new Activity();
             a1.Active = true;
-            a1.ActionRunOption = Activity.eActionRunOption.ContinueActionsRunOnFailure;
+            a1.ActionRunOption = eActionRunOption.ContinueActionsRunOnFailure;
             mBF.Activities.Add(a1);
 
             ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://ginger-automation.github.io/test.html", Active = true };
@@ -255,7 +255,7 @@ namespace UnitTests.NonUITests
         {
             //Arrange
             mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
+            mBF.Activities = new ObservableList<IActivity>();
             mBF.Name = "BF Status Test";
             mBF.Elapsed = 0;
             //mBF.Active = true;

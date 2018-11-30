@@ -19,12 +19,12 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ginger.Run;
-using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Variables;
 using Newtonsoft.Json;
 using System.Data;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Utility;
+using Ginger.Run;
 
 namespace Ginger.Reports
 {
@@ -69,8 +69,8 @@ namespace Ginger.Reports
             set { _showAllIterationsElements = value; }
         }
 
-        private BusinessFlowExecutionSummary mBusinessFlowExecutionSummary;
-        private BusinessFlow mBusinessFlow;
+       private BusinessFlowExecutionSummary mBusinessFlowExecutionSummary;
+        private IBusinessFlow mBusinessFlow;
 
         /// <summary>
         /// This tag currently used due to common use of this class by new and old report!!! Should be removed in future!
@@ -82,7 +82,7 @@ namespace Ginger.Reports
         // We use empty constructor when we load from file via Json
         public BusinessFlowReport()
         {
-            mBusinessFlow = new BusinessFlow();
+            mBusinessFlow = RepositoryItemHelper.RepositoryItemFactory.CreateBusinessFlow();
         }
 
         public BusinessFlowReport(BusinessFlowExecutionSummary BusinessFlowExecutionSummary)
@@ -91,7 +91,7 @@ namespace Ginger.Reports
             mBusinessFlow = BusinessFlowExecutionSummary.BusinessFlow;
         }
 
-        public BusinessFlowReport(BusinessFlow BF)
+        public BusinessFlowReport(IBusinessFlow BF)
         {
             mBusinessFlow = BF;
         }
@@ -198,7 +198,7 @@ namespace Ginger.Reports
         public bool IsSkipped { get { return mBusinessFlow.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped; } }
         public bool IsBlocked { get { return mBusinessFlow.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked; } }
 
-        internal BusinessFlow GetBusinessFlow()
+        public IBusinessFlow GetBusinessFlow()
         {
             return mBusinessFlow;
         }
@@ -218,7 +218,7 @@ namespace Ginger.Reports
                         {
                             try
                             {
-                                ActivityReport AR = (ActivityReport)ExecutionLogger.LoadObjFromJSonFile(folder + @"\Activity.txt", typeof(ActivityReport));
+                                ActivityReport AR = (ActivityReport)JsonLib.LoadObjFromJSonFile(folder + @"\Activity.txt", typeof(ActivityReport));
                                 AR.LogFolder = folder;
                                 if (ActivitiesGroupReports != null)
                                 {
@@ -253,7 +253,7 @@ namespace Ginger.Reports
                     int i = 0;
                     if (mBusinessFlow.Activities != null)
                     {
-                        foreach (Activity activity in mBusinessFlow.Activities)
+                        foreach (IActivity activity in mBusinessFlow.Activities)
                         {
                             i++;
                             ActivityReport ar = new ActivityReport(activity);
@@ -280,7 +280,7 @@ namespace Ginger.Reports
                         string[] linesActivityGroup = System.IO.File.ReadAllLines(LogFolder + @"\ActivityGroups.txt");
                         foreach (string lineActivityGroup in linesActivityGroup)
                         {
-                            ActivityGroupReport ARG = (ActivityGroupReport)ExecutionLogger.LoadObjFromJSonString(lineActivityGroup, typeof(ActivityGroupReport));
+                            ActivityGroupReport ARG = (ActivityGroupReport)JsonLib.LoadObjFromJSonString(lineActivityGroup, typeof(ActivityGroupReport));
                             mActivitiesGroups.Add(ARG);
                         }
                     }

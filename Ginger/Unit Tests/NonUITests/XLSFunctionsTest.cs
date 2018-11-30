@@ -48,7 +48,7 @@ namespace UnitTests.NonUITests
             XLSFile = TestResources.GetTestResourcesFile("Names.xlsx");
 
             mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
+            mBF.Activities = new ObservableList<IActivity>();
             mBF.Name = "BF Excel";
             mBF.Active = true;
             Activity aaa = new Activity();

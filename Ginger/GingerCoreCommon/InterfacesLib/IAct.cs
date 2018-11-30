@@ -40,6 +40,8 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         ObservableList<IFlowControl> FlowControls { get; set; }
         List<String> ScreenShots  { get; set; }
         bool Active { get; set; }
+        bool FailIgnored { get; set; }
+        IEnumerable<ActReturnValue> ActReturnValues { get; set; }
 
         List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing();
     }

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using System;
 
@@ -46,7 +47,7 @@ namespace GingerCore.Activities
         [IsSerializedForLocalRepository]
         public string ActivityExternalID { get; set; }
         [IsSerializedForLocalRepository]
-        public Activity.eActivityAutomationStatus? ActivityAutomationStatus { get; set; }
+        public eActivityAutomationStatus? ActivityAutomationStatus { get; set; }
         
         public bool ExistInRepository { get; set; }
 

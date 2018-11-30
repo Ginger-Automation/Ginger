@@ -418,7 +418,7 @@ namespace Ginger.Reports
     
         //todo
 
-       /*  private string GetValueForDriverWithoutDescrypting(string value)
+        private string GetValueForDriverWithoutDescrypting(string value)
         {
             IValueExpression VE = new ValueExpression(mExecutionEnviroment, WorkSpace.Businessflow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>(), false, "", false, UserProfile.Solution.Variables);
             VE.DecryptFlag = false;
@@ -426,6 +426,6 @@ namespace Ginger.Reports
 
             return VE.ValueCalculated;
         }
-    */
+  
     }
 }
