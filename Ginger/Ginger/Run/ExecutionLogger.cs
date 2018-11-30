@@ -36,7 +36,7 @@ using Amdocs.Ginger;
 using GingerCore.DataSource;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
-
+using Amdocs.Ginger.CoreNET.Utility;
 namespace Ginger.Run
 {
     // Each ExecutionLogger instance should be attach to one GingerRunner
@@ -234,11 +234,7 @@ namespace Ginger.Run
 
         public static object LoadObjFromJSonFile(string FileName, Type t)
         {
-            using (StreamReader SR = new StreamReader(FileName))
-            using (JsonReader reader = new JsonTextReader(SR))
-            {
-                return mJsonSerializer.Deserialize(reader, t);
-            }
+          return  JsonLib.LoadObjFromJSonFile(FileName,t,mJsonSerializer);
         }
 
         public static object LoadObjFromJSonString(string str, Type t)

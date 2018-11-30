@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -342,11 +343,11 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Act> Acts = new ObservableList<Act>();
+        public ObservableList<IAct> Acts { get; set; } = new ObservableList<IAct>();
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();

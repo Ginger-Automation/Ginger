@@ -19,12 +19,12 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GingerCore;
-using GingerCore.Actions;
 using Newtonsoft.Json;
-using GingerCore.Variables;
 using System.IO;
 using System.Data;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Utility;
 
 namespace Ginger.Reports
 {
@@ -53,7 +53,7 @@ namespace Ginger.Reports
         }
 
         private bool _showAllIterationsElements = false;
-        private Activity mActivity;
+        private IActivity mActivity;
         private string _localFolder;
 
         public bool AllIterationElements
@@ -63,12 +63,12 @@ namespace Ginger.Reports
         }
 
         // use empty constructor when we load from file - Json
-        public ActivityReport()
+       /* public ActivityReport()
         {
             mActivity = new Activity();
-        }
+        }*/
 
-        public ActivityReport(Activity Activity)
+        public ActivityReport(IActivity Activity)
         {
             mActivity = Activity;
         }
@@ -281,8 +281,8 @@ namespace Ginger.Reports
                     {
                         String[] elementsAfter = variable.Split(new string[] { "_:_" }, StringSplitOptions.None);
 
-                        var row_result = from row in dt.AsEnumerable() where row.Field<string>("Name") == elementsAfter[0] select row;
-                        dt.AsEnumerable().Where(p => p.Field<string>("Name") == elementsAfter[0]).FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
+
+                        dt.Select("Name =" + elementsAfter[0]).FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
                     }                
                 }                    
                 return dt;
@@ -324,7 +324,7 @@ namespace Ginger.Reports
                         {
                             try
                             {
-                                ActionReport actrR = (ActionReport)Ginger.Run.ExecutionLogger.LoadObjFromJSonFile(folder + @"\Action.txt", typeof(ActionReport));
+                                ActionReport actrR = (ActionReport)JsonLib.LoadObjFromJSonFile(folder + @"\Action.txt", typeof(ActionReport));
                                 actrR.LogFolder = folder;
                                 actionReports.Add(actrR);
                             }
@@ -353,7 +353,7 @@ namespace Ginger.Reports
                 {
                     List<ActionReport> list = new List<ActionReport>();
                     int i = 0;
-                    foreach (Act a in mActivity.Acts)
+                    foreach (IAct a in mActivity.Acts)
                     {
                         i++;
                         ActionReport ar = new ActionReport(a);
