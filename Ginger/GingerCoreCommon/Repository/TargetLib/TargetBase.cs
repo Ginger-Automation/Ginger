@@ -6,16 +6,15 @@ using Amdocs.Ginger.Repository;
 namespace Amdocs.Ginger.Common.Repository
 {
     public class TargetBase : RepositoryItemBase
-    {
-        // impl in subclass
-        public virtual string Name { get; }
+    {        
+        public virtual string Name { get; }// impl in subclass
         public bool Selected { get; set; }
 
         public override string ItemName
         {
             get
             {
-                return string.Empty;
+                return Name;
             }
             set
             {
@@ -23,12 +22,8 @@ namespace Amdocs.Ginger.Common.Repository
             }
         }
 
-        // Save the last agent who executed on this App, for reports
+        // Save the last agent who executed on this Target
         [IsSerializedForLocalRepository]
         public string LastExecutingAgentName { get; set; }
-
-
-        // tmep in order to avoid changes in too many files.
-        public string AppName {get{ return Name; } }
     }
 }

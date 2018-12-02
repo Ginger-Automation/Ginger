@@ -39,6 +39,10 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
+                if (mServices == null)
+                {
+                    LoadServicesFromJSON();
+                }
                 return mServices;
             }
         }

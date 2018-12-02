@@ -211,8 +211,8 @@ namespace Ginger.BusinessFlowFolder
 
             //make sure all Activities mapped to Application after change
             foreach (Activity activity in mBusinessFlow.Activities)
-                if (mBusinessFlow.TargetApplications.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault() == null)
-                    activity.TargetApplication = mBusinessFlow.TargetApplications[0].AppName;
+                if (mBusinessFlow.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
+                    activity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
         }
 
         private void ActivitiesGroupsExpander_Expanded(object sender, RoutedEventArgs e)

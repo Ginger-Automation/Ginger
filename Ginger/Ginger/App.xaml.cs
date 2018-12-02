@@ -945,7 +945,7 @@ namespace Ginger
             a.Acts = new ObservableList<Act>();
             if (biz.TargetApplications.Count > 0)
             {
-                a.TargetApplication = biz.TargetApplications[0].AppName;
+                a.TargetApplication = biz.TargetApplications[0].Name;
             }                
             biz.Activities.Add(a);
 

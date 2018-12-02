@@ -21,6 +21,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
@@ -1747,7 +1748,7 @@ namespace Ginger.Run
             {
                 // If we don't have Target App on activity then take first App from BF
                 if (CurrentBusinessFlow.TargetApplications.Count() > 0)
-                    AppName = CurrentBusinessFlow.TargetApplications[0].AppName;
+                    AppName = CurrentBusinessFlow.TargetApplications[0].Name;
             }
 
             if (string.IsNullOrEmpty(AppName))
@@ -3609,7 +3610,9 @@ namespace Ginger.Run
                 {
                     foreach (TargetBase TA in BF.TargetApplications)
                     {
-                        if (bfsTargetApplications.Where(x => x.AppName == TA.AppName).FirstOrDefault() == null)
+                        if (TA is TargetPlugin) continue;//FIX ME: workaround to avoid adding Plugin mapping till dev of it will be completed
+
+                        if (bfsTargetApplications.Where(x => x.Name == TA.Name).FirstOrDefault() == null)
                         {
                             bfsTargetApplications.Add(TA);
                         }
@@ -3622,7 +3625,7 @@ namespace Ginger.Run
             {
                 foreach (TargetApplication TA in CurrentBusinessFlow.TargetApplications)
                 {
-                    if (bfsTargetApplications.Where(x => x.AppName == TA.AppName).FirstOrDefault() == null)
+                    if (bfsTargetApplications.Where(x => x.Name == TA.AppName).FirstOrDefault() == null)
                         bfsTargetApplications.Add(TA);
                 }
             }
@@ -3630,7 +3633,7 @@ namespace Ginger.Run
             //Remove the non relevant ApplicationAgents
             for (int indx = 0; indx < ApplicationAgents.Count;)
             {
-                if (bfsTargetApplications.Where(x => x.AppName == ApplicationAgents[indx].AppName).FirstOrDefault() == null || ApplicationAgents[indx].Agent == null)
+                if (bfsTargetApplications.Where(x => x.Name == ApplicationAgents[indx].AppName).FirstOrDefault() == null || ApplicationAgents[indx].Agent == null)
                     ApplicationAgents.RemoveAt(indx);
                 else
                     indx++;
@@ -3663,10 +3666,10 @@ namespace Ginger.Run
             foreach (TargetBase TA in bfsTargetApplications)
             {
                 // make sure GR got it covered
-                if (ApplicationAgents.Where(x => x.AppName == TA.AppName).FirstOrDefault() == null)
+                if (ApplicationAgents.Where(x => x.AppName == TA.Name).FirstOrDefault() == null)
                 {
                     ApplicationAgent ag = new ApplicationAgent();
-                    ag.AppName = TA.AppName;
+                    ag.AppName = TA.Name;
 
                     //Map agent to the application
                     ApplicationPlatform ap = null;

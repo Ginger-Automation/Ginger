@@ -806,7 +806,7 @@ namespace GingerCore
             {
                 if (TargetApplications != null && TargetApplications.Count() > 0)
                 {
-                    return TargetApplications[0].AppName;
+                    return TargetApplications[0].Name;
                 }
                 else
                 {
@@ -943,7 +943,7 @@ namespace GingerCore
 
         public void SetActivityTargetApplication(Activity activity)
         {
-            if (this.TargetApplications.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault() == null)
+            if (this.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
                 activity.TargetApplication = this.MainApplication;
         }
 

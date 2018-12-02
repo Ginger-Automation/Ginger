@@ -23,9 +23,7 @@ namespace GingerCore.Platforms
 {
     public class TargetApplication : TargetBase
     {
-
         public override string Name { get { return AppName; } }
-
 
         string mAppName;
         //TODO: how about use GUID or add it for in case        
@@ -46,7 +44,5 @@ namespace GingerCore.Platforms
                 }
             }
         }
-
-       
     }
 }
