@@ -1400,6 +1400,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     break;
 
                 case ActTableElement.eTableAction.DoubleClick:
+                case ActTableElement.eTableAction.ActivateCell:
                     Locators.Add(AJTE.ColSelectorValue.ToString());
                     Locators.Add(AJTE.LocateColTitle);
                     PL1.AddValue(Locators);

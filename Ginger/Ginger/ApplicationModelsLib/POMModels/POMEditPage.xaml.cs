@@ -200,22 +200,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 if (!string.IsNullOrEmpty(op.FileName))
                 {
                     var fileLength = new FileInfo(op.FileName).Length;
-                    if (fileLength <= 50000)
+                    if (fileLength <= 500000)
                     {
                         if ((op.FileName != null) && (op.FileName != string.Empty))
                         {
                             using (var ms = new MemoryStream())
                             {
                                 BitmapImage bi = new BitmapImage(new Uri(op.FileName));
-                                Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(bi, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoWidth, Ginger.Reports.GingerExecutionReport.GingerExecutionReport.logoHight);
-
-                                BitmapImage bi_resized = new BitmapImage();
-                                bi_resized.BeginInit();
-                                bi_resized.UriSource = new Uri(op.FileName);
-                                bi_resized.DecodePixelHeight = sizes.Item2;
-                                bi_resized.DecodePixelWidth = sizes.Item1;
-                                bi_resized.EndInit();
-                                Bitmap ScreenShotBitmap = Ginger.General.BitmapImage2Bitmap(bi_resized);
+                                Bitmap ScreenShotBitmap = Ginger.General.BitmapImage2Bitmap(bi);
                                 mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
                                 mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
                                 xScreenShotFrame.Content = mScreenShotViewPage;
@@ -224,7 +216,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKeys.ImageSize, "50");
+                        Reporter.ToUser(eUserMsgKeys.ImageSize, "500");
                     }
                 }
             }
