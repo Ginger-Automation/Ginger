@@ -520,16 +520,16 @@ namespace GingerCore
             }
         }
 
-        public void AddActivity(Activity a,  Activity indexActivity= null)
+        public void AddActivity(Activity a, Activity indexActivity = null)
         {
             if (a == null)
                 return;
-                        
-             int selectedActivityIndex = 0;
-            if(indexActivity==null)
+
+            int selectedActivityIndex = 0;
+            if (indexActivity == null)
             {
-               
-              
+
+
                 String activityGroupName = CurrentActivity.ActivitiesGroupID;
                 if (!string.IsNullOrEmpty(activityGroupName))
                 {
@@ -537,96 +537,27 @@ namespace GingerCore
 
                     if (activitiesGroup != null)
                     {
-                        
-                        selectedActivityIndex +=  Activities.IndexOf(CurrentActivity)+ activitiesGroup.ActivitiesIdentifiers.Count;                       
-                      
-                    } 
-                }              
-               
+
+                        selectedActivityIndex += Activities.IndexOf(CurrentActivity) + activitiesGroup.ActivitiesIdentifiers.Count;
+
+                    }
+                }
+
             }
             else
             {
-                selectedActivityIndex = Activities.IndexOf(indexActivity) +1;
+                selectedActivityIndex = Activities.IndexOf(indexActivity) + 1;
             }
 
-            if(selectedActivityIndex>0)
+            if (selectedActivityIndex > 0)
             {
-                 Activities.Insert(selectedActivityIndex, a);
+                Activities.Insert(selectedActivityIndex, a);
             }
             else
             {
                 Activities.Add(a);
             }
-
-
-         
-
-            //if (indexActivity == null)
-            //{
-            //    indexActivity = CurrentActivity;
-            //}
-
-
-            //if (indexActivity != null )
-            //{
-            //    int selectedActivityIndex = -1;
-            //    selectedActivityIndex = Activities.IndexOf(indexActivity);
-
-            //    String activityGroupName = indexActivity.ActivitiesGroupID;
-            //    if (!string.IsNullOrEmpty(activityGroupName))
-            //    {
-            //        ActivitiesGroup activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == activityGroupName).FirstOrDefault();
-
-            //        if (activitiesGroup != null)
-            //        {
-            //            selectedActivityIndex += activitiesGroup.ActivitiesIdentifiers.Count - 1;
-            //        }
-            //    }
-
-
-
-
-            //    //while (indexActivity.ActivitiesGroupID == activityGroupName)
-            //    //{
-            //    //    this.Activities.MoveNext();
-            //    //    this.CurrentActivity = (Activity)this.Activities.CurrentItem;
-            //    //    indexActivity = this.CurrentActivity;
-            //    //}
-            //    //selectedActivityIndex = Activities.IndexOf(indexActivity);
-
-            //    if (selectedActivityIndex >= 0)
-            //    {
-            //        Activities.Insert(selectedActivityIndex + 1, a);
-            //    }
-            //}
-            //else
-            //{
-            //    Activities.Add(a);
-            //}
         }
-
-        //public int GetIndex()
-        //{
-        //        int selectedActivityIndex = 0;
-        //        Boolean flag=false;
-        //        String activityGroupName = CurrentActivity.ActivitiesGroupID;
-        //        if (!string.IsNullOrEmpty(activityGroupName))
-        //        {
-        //            ActivitiesGroup activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == activityGroupName).FirstOrDefault();
-
-        //            if (activitiesGroup != null && flag != true)
-        //            {
-                        
-        //                selectedActivityIndex += activitiesGroup.ActivitiesIdentifiers.Count;
-        //                flag=true;
-        //                return
-                      
-        //            } 
-        //            else{selectedActivityIndex=selectedActivityIndex + 1;}
-                    
-                
-        //        }
-        //}
 
         public void InsertActivity(Activity a, int index = -1)
         {
@@ -645,16 +576,6 @@ namespace GingerCore
 
         public void AddVariable(VariableBase v)
         {
-            //if (v.Name == null)
-            //{
-            //    //make sure the new name is unique
-            //    int counter = Variables.Count + 1;
-            //    while ((Variables.Where(c => c.Name == "NewVar" + counter).FirstOrDefault()) != null)
-            //        counter++;
-            //    v.Name = "NewVar" + counter;
-            //}
-            //Variables.Add(v);
-
             if (v != null)
             {
                 if (string.IsNullOrEmpty(v.Name)) v.Name = "NewVar";
