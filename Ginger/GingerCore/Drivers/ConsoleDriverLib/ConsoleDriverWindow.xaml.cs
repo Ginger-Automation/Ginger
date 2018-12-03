@@ -222,6 +222,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             try
             {
                 mConsoleDriver.Disconnect();
+                mConsoleDriver.mConsoleDriverWindow = null;
                 mConsoleDriver.CloseDriver();
             }
             catch (Exception ex)

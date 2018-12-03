@@ -43,7 +43,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return true;
         }
 
-        protected ConsoleDriverWindow mConsoleDriverWindow;
+        public ConsoleDriverWindow mConsoleDriverWindow;
 
         public abstract bool Connect();
         public abstract void Disconnect();

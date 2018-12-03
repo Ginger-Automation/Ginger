@@ -397,6 +397,12 @@ namespace Ginger
             get { return grdMain; }
             set { grdMain = value; }
         }
+
+        public DataGridSelectionMode SelectionMode
+        {
+            get { return grdMain.SelectionMode; }
+            set { grdMain.SelectionMode = value; }
+        }
         public Visibility ShowHeader
         {
             get { return xSimpleHeader.Visibility; }

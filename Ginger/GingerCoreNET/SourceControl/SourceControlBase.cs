@@ -28,9 +28,9 @@ using System.Threading.Tasks;
 namespace GingerCoreNET.SourceControl
 {
     // Base class for Source Control types can be SVN, GIT, TFS, XtraC etc...
-    public enum eResolveConflictsSide { Local,Server}
-    
-    public abstract class SourceControlBase : INotifyPropertyChanged  , ISourceControl
+    public enum eResolveConflictsSide { Local, Server }
+
+    public abstract class SourceControlBase : INotifyPropertyChanged, ISourceControl
     {
         public static class Fields
         {
@@ -41,7 +41,7 @@ namespace GingerCoreNET.SourceControl
             public static string SourceControlConfigureProxy = "SourceControlConfigureProxy";
             public static string SourceControlProxyAddress = "SourceControlProxyAddress";
             public static string SourceControlProxyPort = "SourceControlProxyPort";
-			 public static string SolutionSourceControlAuthorName = "SolutionSourceControlAuthorName";
+            public static string SolutionSourceControlAuthorName = "SolutionSourceControlAuthorName";
             public static string SolutionSourceControlAuthorEmail = "SolutionSourceControlAuthorEmail";
         }
 
@@ -69,29 +69,33 @@ namespace GingerCoreNET.SourceControl
 
         string mSourceControlLocalFolder;
         public string SourceControlLocalFolder { get { return mSourceControlLocalFolder; } set { mSourceControlLocalFolder = value; OnPropertyChanged(Fields.SourceControlLocalFolder); } }
-        
+
         string mSourceControlProxyAddress;
         public string SourceControlProxyAddress { get { return mSourceControlProxyAddress; } set { mSourceControlProxyAddress = value; OnPropertyChanged(Fields.SourceControlProxyAddress); } }
 
         string mSourceControlProxyPort;
         public string SourceControlProxyPort { get { return mSourceControlProxyPort; } set { mSourceControlProxyPort = value; OnPropertyChanged(Fields.SourceControlProxyPort); } }
 
+
+        int mSourceControlTimeout=80;
+        public int SourceControlTimeout { get { return mSourceControlTimeout; } set { mSourceControlTimeout = value; OnPropertyChanged(nameof(SourceControlTimeout)); } }
+
         bool mSourceControlConfigureProxy;
         public bool SourceControlConfigureProxy { get { return mSourceControlConfigureProxy; } set { mSourceControlConfigureProxy = value; OnPropertyChanged(Fields.SourceControlConfigureProxy); } }
-				
 
-		string mSolutionSourceControlAuthorName;
+
+        string mSolutionSourceControlAuthorName;
         public string SolutionSourceControlAuthorName { get { return mSolutionSourceControlAuthorName; } set { mSolutionSourceControlAuthorName = value; OnPropertyChanged(Fields.SourceControlConfigureProxy); } }
 
         string mSolutionSourceControlAuthorEmail;
         public string SolutionSourceControlAuthorEmail { get { return mSolutionSourceControlAuthorEmail; } set { mSolutionSourceControlAuthorEmail = value; OnPropertyChanged(Fields.SourceControlConfigureProxy); } }
-        
+
         public string SolutionFolder { get; set; }
 
         public string RepositoryRootFolder { get; set; }
 
         public bool supressMessage { get; set; }
-        
+
 
         public abstract eSourceControlType GetSourceControlType { get; }
 
@@ -116,15 +120,15 @@ namespace GingerCoreNET.SourceControl
         public abstract bool DeleteFile(string Path, ref string error);
 
         // get one file status
-        public abstract SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems,ref string error);
+        public abstract SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems, ref string error);
 
         // get list of files changed in path recursively - modified, add, deleted
-        public abstract ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path,ref string error, List<string> PathsToIgnore=null, bool includLockedFiles = false);
+        public abstract ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, List<string> PathsToIgnore = null, bool includLockedFiles = false);
 
         public abstract bool GetLatest(string path, ref string error, ref List<string> conflictsPaths);
 
-        public abstract bool GetProject(string Path, string URI,ref string error);
-        
+        public abstract bool GetProject(string Path, string URI, ref string error);
+
         public abstract void Init();
 
         public abstract bool TestConnection(ref string error);
@@ -133,13 +137,13 @@ namespace GingerCoreNET.SourceControl
 
         public abstract bool CommitChanges(string Comments, ref string error);
 
-        public abstract bool CommitChanges(ICollection<string> Paths, string Comments,  ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false);
+        public abstract bool CommitChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false);
 
         //clear locks
         public abstract void CleanUp(string path);
 
         //prevent other users from commiting changes to this item
-        public abstract bool Lock(string path,string lockComment, ref string error);
+        public abstract bool Lock(string path, string lockComment, ref string error);
         //allowing other users to commit changes to this item
         public abstract bool UnLock(string path, ref string error);
 
@@ -150,9 +154,9 @@ namespace GingerCoreNET.SourceControl
         public abstract bool Revert(string path, ref string error);
 
         public abstract SourceControlItemInfoDetails GetInfo(string path, ref string error);
-        
+
         public abstract ObservableList<SolutionInfo> GetProjectsList();
-        
+
         public class ConflictEventArgs : EventArgs
         {
             public List<string> Paths { get; set; }
