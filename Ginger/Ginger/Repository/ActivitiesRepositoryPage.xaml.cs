@@ -135,7 +135,7 @@ namespace Ginger.Repository
                             Activity instance = (Activity)selectedItem.CreateInstance(true);
                             instance.Active = true;
                             mBusinessFlow.SetActivityTargetApplication(instance);
-                            mBusinessFlow.AddActivity(instance, true);
+                            mBusinessFlow.AddActivity(instance);
                         }
                     }
                 }
