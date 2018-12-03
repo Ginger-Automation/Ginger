@@ -163,11 +163,11 @@ namespace GingerCoreCommonTest.Repository
         [TestMethod]
         public void TestActivityVariablesSyncWithRepo_v2()
         {
-            string variableName = "ACTVAR1";
+            string variableName = "ACTVAR2";
             string initialValue = "123";
             string updatedValue = "abc123";
 
-            mBF = new BusinessFlow() { Name = "TestActvVarSync", Active = true };
+            mBF = new BusinessFlow() { Name = "TestActvVarSyncV2", Active = true };
             mBF.Activities = new ObservableList<Activity>();
 
             VariableString V1 = new VariableString() { Name = variableName, InitialStringValue = initialValue };
