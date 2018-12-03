@@ -99,11 +99,11 @@ namespace Ginger.Run.RunSetActions
         public override void Execute(ReportInfo RI)
         {
             string result = string.Empty;
-            ObservableList<IBusinessFlow> bfs = new ObservableList<BusinessFlow>();
+            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             SetExportToALMConfig();
             foreach (BusinessFlowReport BFR in RI.BusinessFlows)
             {
-                bfs.Add(BFR.GetBusinessFlow());
+                bfs.Add((BusinessFlow)BFR.GetBusinessFlow());
             }
             
             if (!ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALMIntegration.eALMConnectType.Auto, false))

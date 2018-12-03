@@ -657,14 +657,14 @@ namespace GingerCore
             {
                 foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
                 {
-                    Activity repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                    IActivity repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
                     if (repoAct == null)
                         repoAct = activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
                     if (repoAct == null)
                         repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
                     if (repoAct != null)
                     {
-                        Activity actInstance = (Activity)repoAct.CreateInstance(true);
+                        Activity actInstance = (Activity)((Activity)repoAct).CreateInstance(true);
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
                         if (keepOriginalTargetApplicationMapping == false)
                             SetActivityTargetApplication(actInstance);

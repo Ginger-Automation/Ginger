@@ -48,5 +48,6 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing();
 
         ObservableList<VariableDependency> VariablesDependencies { get; set; }
+        bool SupportSimulation { get; set; }
     }
 }

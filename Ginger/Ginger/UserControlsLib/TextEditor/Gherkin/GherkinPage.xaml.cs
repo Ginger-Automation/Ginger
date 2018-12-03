@@ -353,7 +353,7 @@ namespace Ginger.GherkinLib
             //TODO: get 
             string BusinessFlowFolder = "";
             string path = BusinessFlowFolder;
-            ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             //FIXME to use tags 
             Activity a2 = (from x in activities where x.ActivityName == GherkinActivityName select x).FirstOrDefault();
             if (a2 != null)
@@ -592,8 +592,9 @@ namespace Ginger.GherkinLib
                 {
                     if (GH.AutomationStatus == "Automated in Shared Repo - ")
                     {
-                        ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                        Activity a2 = (from x in activities where x.ActivityName == GH.Text select x).FirstOrDefault();
+                        ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                        Activity a2 =(Activity) 
+                            (from x in activities where x.ActivityName == GH.Text select x).FirstOrDefault();
                         //FIXME
                         if (a2 != null)
                         {
@@ -624,7 +625,8 @@ namespace Ginger.GherkinLib
             }
             foreach (ActivityIdentifiers ia in AG1.ActivitiesIdentifiers)
             {
-                IActivity a1 = (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
+                Activity a1 =(Activity)
+                    (from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
                 if (AG.CheckActivityInGroup(a1))
                     AG.RemoveActivityFromGroup(a1);
             }

@@ -330,7 +330,7 @@ namespace GingerCore.ALM.QCRestAPI
                                     stepActivityVar = new VariableSelectionList();
                                     stepActivityVar.Name = param;
                                     stepActivity.AddVariable(stepActivityVar);
-                                    stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new flow control param was added
+                                    stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                                 }
                                 else
                                 {
@@ -353,7 +353,7 @@ namespace GingerCore.ALM.QCRestAPI
                                         stepActivityVar = new VariableSelectionList();
                                         stepActivityVar.Name = param;
                                         stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was added
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                                     }
                                 }
                                 else if (isflowControlParam == false)
@@ -366,7 +366,7 @@ namespace GingerCore.ALM.QCRestAPI
                                         stepActivityVar.Name = param;
                                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                         stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was removed
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
                                     }
                                 }
                             }
@@ -381,7 +381,7 @@ namespace GingerCore.ALM.QCRestAPI
                                     stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
                                     ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);                                    
                                     if (isflowControlParam == true)
-                                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
+                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
                                 }
                                 //set the selected value
                                 ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
@@ -849,7 +849,7 @@ namespace GingerCore.ALM.QCRestAPI
                         stepActivityVar = new VariableSelectionList();
                         stepActivityVar.Name = param;
                         stepActivity.AddVariable(stepActivityVar);
-                        stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new flow control param was added
+                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                     }
                     else
                     {
@@ -872,7 +872,7 @@ namespace GingerCore.ALM.QCRestAPI
                             stepActivityVar = new VariableSelectionList();
                             stepActivityVar.Name = param;
                             stepActivity.AddVariable(stepActivityVar);
-                            stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was added
+                            stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                         }
                     }
                     else if (isflowControlParam == false)
@@ -885,7 +885,7 @@ namespace GingerCore.ALM.QCRestAPI
                             stepActivityVar.Name = param;
                             ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                             stepActivity.AddVariable(stepActivityVar);
-                            stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because flow control param was removed
+                            stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
                         }
                     }
                 }
@@ -901,7 +901,7 @@ namespace GingerCore.ALM.QCRestAPI
                         ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
                         //((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
                         if (isflowControlParam == true)
-                            stepActivity.AutomationStatus = Activity.eActivityAutomationStatus.Development;//reset status because new param value was added
+                            stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
                     }
                     //set the selected value
                     ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;

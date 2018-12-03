@@ -22,6 +22,7 @@ using System;
 using GingerCore;
 using GingerCore.Variables;
 using GingerCore.FlowControlLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run
 {
@@ -54,7 +55,7 @@ namespace Ginger.Run
         public ObservableList<VariableBase> BusinessFlowCustomizedRunVariables = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<FlowControl> BFFlowControls = new ObservableList<FlowControl>();
+        public ObservableList<IFlowControl> BFFlowControls = new ObservableList<IFlowControl>();
 
         public override string ItemName
         {

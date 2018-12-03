@@ -47,10 +47,17 @@ namespace Amdocs.Ginger.Common
         string ActivitiesGroupID { get; set; }
         string Screen { get; set; }
         string ItemName { get; set; }
-        object CurrentAgent { get; set; }
+        IAgent CurrentAgent { get; set; }
+        string TargetApplication { get; set; }
 
         ObservableList<VariableBase> GetVariables();
-        ObservableList<VariableDependency> VariablesDependencies
+        ObservableList<VariableDependency> VariablesDependencies { get; set; }
+         string ExternalID { get; set; }
+        string FileName { get; set; }
+        IEnumerable<Guid> Tags { get; set; }
+        IEnumerable<Guid> MappedErrorHandlers { get; set; }
+        GingerCore.Activity.eHandlerMappingType ErrorHandlerMappingType { get; set; }
 
+        void AddVariable(VariableBase stepActivityVar);
     }
 }

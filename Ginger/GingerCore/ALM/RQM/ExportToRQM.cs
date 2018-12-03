@@ -33,6 +33,7 @@ using System.Xml.Serialization;
 using System.Reflection;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM.RQM
 {
@@ -111,8 +112,8 @@ namespace GingerCore.ALM.RQM
             List<ExecutionResult> exeResultList = new List<ExecutionResult>();
             foreach (ActivitiesGroup activGroup in businessFlow.ActivitiesGroups)
             {                 
-                if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Passed) 
-                    || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Failed)
+                if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed) 
+                    || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
                     || publishToALMConfig.FilterStatus == FilterByStatus.All)
                 {
                     ExecutionResult exeResult = GetExeResultforAg(businessFlow, bfExportedID, activGroup, ref result, testPlan);

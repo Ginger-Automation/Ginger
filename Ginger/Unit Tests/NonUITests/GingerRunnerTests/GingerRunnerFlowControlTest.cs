@@ -34,6 +34,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using GingerTestHelper;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
@@ -157,7 +158,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             ActDummy act3 = new ActDummy() { Description = "A3", Active = true };
             a1.Acts.Add(act3);
-            act3.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "1=1", FlowControlAction = GingerCore.FlowControlLib.eFlowControlAction.StopRun,  Active=true});
+            act3.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "1=1", FlowControlAction = eFlowControlAction.StopRun,  Active=true});
             
 
             ActDummy act4 = new ActDummy() { Description = "A2", Active = true };

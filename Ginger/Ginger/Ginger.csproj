@@ -1408,7 +1408,6 @@
     <Compile Include="Help\TreeViewItems\HelpDocumentsFolderTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\VideoHelpFileTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\MHTHelpFileTreeItem.cs" />
-    <Compile Include="Reports\ActionReport.cs" />
     <Compile Include="Reports\HTMLReportConfiguration.cs" />
     <Compile Include="Reports\RunSetReport.cs" />
     <Compile Include="Reports\GingerReport.cs" />

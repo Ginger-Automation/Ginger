@@ -609,7 +609,7 @@ namespace GingerCore
             return false; //no missing vars
         }
 
-        public Agent CurrentAgent { get; set; }
+        public IAgent CurrentAgent { get; set; }
 
         public override string ItemName
         {

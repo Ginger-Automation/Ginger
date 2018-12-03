@@ -227,7 +227,7 @@ namespace Ginger.GherkinLib
             {
                 if (act.IsSharedRepositoryInstance == true)
                 {
-                    ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     // FIXME to use (true, "", true, act.Tags)
                     Activity a2 = (from x in activities where x.ActivityName == act.ActivityName select x).FirstOrDefault();
                     if(a2 !=null)
@@ -280,7 +280,7 @@ namespace Ginger.GherkinLib
             {
                 // Find the Activity from the template BF with All activity, create a copy and add to BF
                 string GN = GherkinGeneral.GetActivityGherkinName(step.Text);
-                Activity a = SearchActivityByName(GN);
+                Activity a = (Activity)SearchActivityByName(GN);
                 if (a != null)
                 {                    
                     Activity a1 = (Activity)a.CreateCopy(false);

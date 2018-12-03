@@ -184,7 +184,7 @@ namespace GingerCore.Activities
             {
                 foreach (ActivityIdentifiers actIdent in ActivitiesIdentifiers) actIdent.RefreshActivityIdentifiers();
                 List<ActivityIdentifiers> automatedActsInGroup = ActivitiesIdentifiers.Where(x=>x.ActivityAutomationStatus ==
-                                                                               Activity.eActivityAutomationStatus.Automated).ToList();
+                                                                              eActivityAutomationStatus.Automated).ToList();
                 double automatedActsPrecanteg;
                 if (automatedActsInGroup == null || automatedActsInGroup.Count == 0)
                 {

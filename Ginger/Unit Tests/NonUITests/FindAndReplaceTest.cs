@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Functionalities;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -18,8 +19,8 @@ namespace UnitTests.NonUITests
     public class FindAndReplaceTest
     {
 
-        static ObservableList<BusinessFlow> mBFList = new ObservableList<BusinessFlow>();
-        static ObservableList<Act> mRepoActions = new ObservableList<Act>();
+        static ObservableList<IBusinessFlow> mBFList = new ObservableList<IBusinessFlow>();
+        static ObservableList<IAct> mRepoActions = new ObservableList<IAct>();
         static ObservableList<ApplicationAPIModel> mApplicationAPIModels = new ObservableList<ApplicationAPIModel>();
         static Activity a1 = new Activity();
         static SearchConfig mSearchConfig1;

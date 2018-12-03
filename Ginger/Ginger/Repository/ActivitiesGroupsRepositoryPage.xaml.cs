@@ -127,7 +127,7 @@ namespace Ginger.Repository
                     {                       
                         ActivitiesGroup droppedGroupIns = (ActivitiesGroup)selectedItem.CreateInstance(true);
                         mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                        ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                        ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivity>();
                         mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                         
                         int selectedActIndex = -1;

@@ -204,7 +204,7 @@ namespace Ginger.Run
                                     }
                                     if (selectedVar.ParentType == "Activity")
                                     {
-                                        Activity a = bf.GetActivity(selectedVar.ParentGuid);
+                                        Activity a =(Activity) bf.GetActivity(selectedVar.ParentGuid);
                                         int indexSelected = a.Variables.IndexOf(matchingVar);
                                         a.Variables.Remove(matchingVar);
                                         a.Variables.Insert(indexSelected, copiedVar);
