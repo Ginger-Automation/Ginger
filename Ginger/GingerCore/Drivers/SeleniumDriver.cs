@@ -307,15 +307,18 @@ namespace GingerCore.Drivers
                             else
                                 Driver = new InternetExplorerDriver(IEdriver64bitpath, ieoptions);
                         }
-                        if (Convert.ToInt32(HttpServerTimeOut) > 60)
-                        {
-                            InternetExplorerDriverService service = InternetExplorerDriverService.CreateDefaultService();
-                            Driver = new InternetExplorerDriver(service, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                        }
                         else
                         {
-                            Driver = new InternetExplorerDriver(ieoptions);
-                        }
+                            if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                            {
+                                InternetExplorerDriverService service = InternetExplorerDriverService.CreateDefaultService();
+                                Driver = new InternetExplorerDriver(service, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
+                            else
+                            {
+                                Driver = new InternetExplorerDriver(ieoptions);
+                            }
+                        }                        
                         break;
 
                     case eBrowserType.FireFox:
