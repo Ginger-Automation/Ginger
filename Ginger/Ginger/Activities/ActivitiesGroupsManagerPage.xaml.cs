@@ -264,7 +264,7 @@ namespace Ginger.Activities
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance();
                 App.BusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivity>();
                 App.BusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                 App.BusinessFlow.AttachActivitiesGroupsAndActivities();
             }

@@ -51,7 +51,7 @@ namespace Ginger.Reports.HTMLReports
 
             foreach (BusinessFlowReport BFR in BizFlows)
             {
-                BusinessFlow BF = BFR.GetBusinessFlow();
+                BusinessFlow BF =(BusinessFlow) BFR.GetBusinessFlow();
                 string runColor = "#00000";
                 TableSize = TableSize + 16.7;
                 if (BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)

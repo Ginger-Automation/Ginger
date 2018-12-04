@@ -80,7 +80,7 @@ namespace GingerCore.ALM.QC
                                 if (tsTest != null)
                                 {
                                     //get activities in group
-                                    List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
+                                    List<IActivity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
                                     string TestCaseName = PathHelper.CleanInValidPathChars(tsTest.TestName); 
                                     if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
                                     {
@@ -145,7 +145,7 @@ namespace GingerCore.ALM.QC
                                             {
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
                                                     step.Status = "Failed";
-                                                    List<Act> failedActs= matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
+                                                    List<IAct> failedActs= matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
                                                     string errors = string.Empty;
                                                     foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
                                                     step["ST_ACTUAL"] = errors;

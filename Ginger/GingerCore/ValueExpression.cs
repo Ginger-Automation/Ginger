@@ -117,7 +117,7 @@ namespace GingerCore
         string updateValue;
         bool bDone;
 
-        public bool DecryptFlag = false;
+        public bool DecryptFlag { get; set; } = false;
         private string mValueCalculated = null;
 
         ObservableList<VariableBase> mSolutionVariables = null;

@@ -4,5 +4,6 @@
     {
         string Value { get; set; }
         string ValueCalculated { get; }
+        bool DecryptFlag { get; set; }
     }
 }

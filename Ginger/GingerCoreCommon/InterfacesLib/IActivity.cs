@@ -26,7 +26,14 @@ namespace Amdocs.Ginger.Common
         Actions,
         Variables
     }
-
+    public enum eHandlerMappingType
+    {
+        [EnumValueDescription("All Available Error Handlers ")]
+        AllAvailableHandlers = 0,
+        None = 1,
+        [EnumValueDescription("Specific Error Handlers")]
+        SpecificErrorHandlers = 2
+    }
     public interface IActivity
     {
         Guid Guid { get; set; }
@@ -52,11 +59,12 @@ namespace Amdocs.Ginger.Common
 
         ObservableList<VariableBase> GetVariables();
         ObservableList<VariableDependency> VariablesDependencies { get; set; }
-         string ExternalID { get; set; }
+        string ExternalID { get; set; }
         string FileName { get; set; }
-        IEnumerable<Guid> Tags { get; set; }
-        IEnumerable<Guid> MappedErrorHandlers { get; set; }
-        GingerCore.Activity.eHandlerMappingType ErrorHandlerMappingType { get; set; }
+        ObservableList<Guid> Tags { get; set; }
+        ObservableList<Guid> MappedErrorHandlers { get; set; }
+        eHandlerMappingType ErrorHandlerMappingType { get; set; }
+        bool SelectedForConversion { get; set; }
 
         void AddVariable(VariableBase stepActivityVar);
     }

@@ -52,7 +52,7 @@ namespace Ginger.Reports
             
             foreach (BusinessFlowReport BFR in BizFlows)
             {
-                BusinessFlow BF = BFR.GetBusinessFlow();
+                BusinessFlow BF =(BusinessFlow) BFR.GetBusinessFlow();
                 bftable = "";
                 string runColor = "#00000";
                 TableSize = TableSize + 16.7;

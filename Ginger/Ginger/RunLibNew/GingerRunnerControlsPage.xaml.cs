@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common.Enums;
 using Ginger;
 using Ginger.Run;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCoreNET.RunLib;
 using GingerWPF.AgentsLib;
@@ -105,7 +106,7 @@ namespace GingerWPF.RunLib
         private async void RunActivityButton_Click(object sender, RoutedEventArgs e)
         {
             DisbleRunButtons();            
-            int result = await mGingerRunner.RunActivityAsync(mGingerRunner.CurrentBusinessFlow.CurrentActivity);
+            int result = await mGingerRunner.RunActivityAsync((Activity)mGingerRunner.CurrentBusinessFlow.CurrentActivity);
             EnableRunButtons();
         }
 

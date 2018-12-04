@@ -24,6 +24,7 @@ using GingerCore.ALM.RQM;
 using System.ComponentModel;
 using GingerCore.ALM.Rally;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.ALM
 {
@@ -71,7 +72,7 @@ namespace GingerCore.ALM
             return ImportFromRally.ConvertRallyTestPlanToBF(testPlan);
         }
 
-        public abstract ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
+        public abstract ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get; set;
         }

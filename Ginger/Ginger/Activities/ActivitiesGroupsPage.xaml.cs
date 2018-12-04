@@ -95,7 +95,7 @@ namespace Ginger.Activities
             string Name = ((GingerCore.Activities.ActivitiesGroup)((DataGrid)sender).SelectedItem).Name;
             if (Name == "Optimized Activities" || Name == "Optimized Activities - Not in Use")
                 return;
-            List<Activity> RelatedActivities = mBusinessFlow.Activities.Where(x => x.ActivitiesGroupID == Name).ToList();
+            List<IActivity> RelatedActivities = mBusinessFlow.Activities.Where(x => x.ActivitiesGroupID == Name).ToList();
 
             foreach (Activity a in RelatedActivities)
             {
@@ -162,7 +162,7 @@ namespace Ginger.Activities
             {
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
                 mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();                
+                ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivity>();                
                 mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false, false, previousActivity);
                 mBusinessFlow.AttachActivitiesGroupsAndActivities();
 

@@ -38,7 +38,7 @@ namespace GingerCore.ALM.QC
         static TDConnection mTDConn = QCConnect.TDConn;
 
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
-        public static ObservableList<IActivity> GingerActivitiesRepo { get; set; }
+        public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
         
         public static QCTestSet ImportTestSetData(QCTestSet TS)
         {
@@ -306,7 +306,7 @@ namespace GingerCore.ALM.QC
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
                     if (repoActivsGroup != null)
                     {
-                        List<IActivity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
+                        List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
                                                                                        .Where(x => !tc.Steps.Select(y => y.StepID).ToList().Contains(x.ExternalID)).ToList();
 
                         tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance(true);
@@ -323,7 +323,7 @@ namespace GingerCore.ALM.QC
 
                         tcActivsGroup.ExternalID2 = tc.TestID;
                         busFlow.AddActivitiesGroup(tcActivsGroup);
-                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup,GingerActivitiesRepo, true, true);
                         busFlow.AttachActivitiesGroupsAndActivities();
                     }
                     else //TC not exist in Ginger repository so create new one

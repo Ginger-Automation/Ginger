@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.CoreNET.Utility
             }
         }
 
-        public static ActivityGroupReport LoadObjFromJSonString(string str, Type type, JsonSerializer serializer = null)
+        public static object LoadObjFromJSonString(string str, Type type, JsonSerializer serializer = null)
         {
             JsonSerializer mJsonSerializer;
             if (serializer == null)
@@ -49,7 +49,7 @@ namespace Amdocs.Ginger.CoreNET.Utility
             using (StreamReader SR = new StreamReader(stream))
             using (JsonReader reader = new JsonTextReader(SR))
             {
-                return mJsonSerializer.Deserialize(reader, t);
+                return mJsonSerializer.Deserialize(reader, type);
             }
         }
     }

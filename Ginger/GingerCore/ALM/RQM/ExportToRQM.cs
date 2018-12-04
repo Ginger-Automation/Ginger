@@ -242,7 +242,7 @@ namespace GingerCore.ALM.RQM
 
                 ExecutionResult exeResult = new ExecutionResult {TestPlanExportID = bfExportedID};
 
-                List<Activity> relevantActivities = new List<Activity>();
+                List<IActivity> relevantActivities = new List<IActivity>();
                 relevantActivities = businessFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.FileName).ToList();
                 exeResult.ExecutionStep = new List<ExecutionStep>();
 
@@ -380,8 +380,8 @@ namespace GingerCore.ALM.RQM
                         case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
                             exeStep.StepStatus = ACL_Data_Contract.ExecutoinStatus.Failed;
                             string errors = string.Empty;
-                            List<Act> failedActs = act.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
-                            foreach (Act action in failedActs) errors += action.Error + Environment.NewLine;
+                            List<IAct> failedActs = act.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
+                            foreach (IAct action in failedActs) errors += action.Error + Environment.NewLine;
                             exeStep.StepActualResult = errors;
                             break;
                         case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed:

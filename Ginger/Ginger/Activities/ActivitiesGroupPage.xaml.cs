@@ -102,15 +102,15 @@ namespace Ginger.Activities
             if (mEditMode == eEditMode.ExecutionFlow)
                 activitiesRepository = App.BusinessFlow.Activities;
             else if (mEditMode == eEditMode.SharedRepository)
-                activitiesRepository = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                activitiesRepository = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivity>();
 
             foreach (ActivityIdentifiers actIdent in mActivitiesGroup.ActivitiesIdentifiers)
             {
-                Activity repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                Activity repoAct = (Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
                 if (repoAct == null)
-                    repoAct = activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                    repoAct =(Activity) activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
                 if (repoAct == null)
-                    repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
+                    repoAct =(Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
                 if (repoAct != null)
                 {
                     actIdent.IdentifiedActivity = repoAct;

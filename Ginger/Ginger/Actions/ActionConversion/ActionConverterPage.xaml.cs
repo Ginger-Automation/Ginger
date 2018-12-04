@@ -145,7 +145,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 mBusinessFlow.CurrentActivity = (Activity)grdGroups.CurrentItem;
                 if (mBusinessFlow.CurrentActivity != null)
-                    mBusinessFlow.CurrentActivity.PropertyChanged += CurrentActivity_PropertyChanged;
+                   ((Activity) mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
             }
         }
 
@@ -325,7 +325,7 @@ namespace Ginger.Actions.ActionConversion
             lstActionToBeConverted.Clear();
 
             // fetching list of selected convertible activities from the first grid
-            List<Activity> lstSelectedActivities = mBusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList();
+            List<IActivity> lstSelectedActivities = mBusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList();
 
             if (lstSelectedActivities.Count != 0)
             {

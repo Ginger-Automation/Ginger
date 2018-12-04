@@ -19,6 +19,7 @@ limitations under the License.
 using ALM_Common.Abstractions;
 using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.External;
@@ -44,7 +45,7 @@ namespace GingerCore.ALM.RQM
 
     public static class ImportFromRQM
     {
-        public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
+        public static ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<IActivity> GingerActivitiesRepo { get; set; }
 
         public static int totalValues = 0;

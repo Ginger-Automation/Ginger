@@ -69,10 +69,10 @@ namespace Amdocs.Ginger.Common.InterfacesLib
     {
         string Condition { get; set; }
         string ConditionCalculated { get; set; }
-        string FlowControlAction { get; set; }
-        eBusinessFlowControlAction Status { get; set; }
-        string BusinessFlowControlAction { get; set; }
+        eFlowControlAction FlowControlAction { get; set; }
+        eStatus Status { get; set; }
+        eBusinessFlowControlAction BusinessFlowControlAction { get; set; }
 
-        Guid GetGuidFromValue();
+        Guid GetGuidFromValue(bool doNotUseValueCalculated = false);
     }
 }

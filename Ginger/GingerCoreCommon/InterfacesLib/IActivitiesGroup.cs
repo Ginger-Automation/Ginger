@@ -26,5 +26,6 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         DateTime EndTimeStamp { get; set; }
         Single? ElapsedSecs { get; set; }
         eActivitiesGroupRunStatus RunStatus { get; set; }
+        string ExternalID { get; set; }
     }
 }

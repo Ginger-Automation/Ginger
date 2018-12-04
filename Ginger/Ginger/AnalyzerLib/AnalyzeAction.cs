@@ -31,6 +31,7 @@ using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.AnalyzerLib
 {
@@ -187,13 +188,13 @@ namespace Ginger.AnalyzerLib
                                 }
                             }
                         }
-                        if (f.FlowControlAction == FlowControl.eFlowControlAction.RunSharedRepositoryActivity)
+                        if (f.FlowControlAction == eFlowControlAction.RunSharedRepositoryActivity)
                         {
                             if (string.IsNullOrEmpty(f.Value) || ValueExpression.IsThisDynamicVE(f.Value) == false)
                             {
                                 //f.CalcualtedValue(BusinessFlow, App.ProjEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
                                 string RunSharedRepositoryActivity = f.GetNameFromValue();
-                                ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                                 if (activities.Where(x => x.ActivityName == RunSharedRepositoryActivity).FirstOrDefault() == null)
                                 {
                                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
@@ -385,7 +386,7 @@ namespace Ginger.AnalyzerLib
             //actions combination
             if (a.GetType() == typeof(ActLaunchJavaWSApplication))//forbidden combination: Launch & (platform\agent manipulation action)
             {
-                List<Act> driverActs = parentActivity.Acts.Where(x => ((x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false) && x.Active == true).ToList();
+                List<IAct> driverActs = parentActivity.Acts.Where(x => ((x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false) && x.Active == true).ToList();
                 if (driverActs.Count > 0)
                 {
                     string list = string.Join(",",driverActs.Select(x => x.ActionDescription).ToList().ToArray());

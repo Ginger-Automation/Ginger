@@ -39,14 +39,7 @@ namespace GingerCore
     {
     
 
-        public enum eHandlerMappingType
-        {
-            [EnumValueDescription("All Available Error Handlers ")]
-            AllAvailableHandlers = 0,
-            None = 1,
-            [EnumValueDescription("Specific Error Handlers")]
-            SpecificErrorHandlers = 2
-        }
+    
         
         public new static class Fields
         {            
@@ -84,12 +77,12 @@ namespace GingerCore
 
         #region Activity-Error Handler Mapping
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> MappedErrorHandlers = new ObservableList<Guid>();
+        public ObservableList<Guid> MappedErrorHandlers { get; set; } = new ObservableList<Guid>();
 
-        Activity.eHandlerMappingType mErrorHandlerMappingType;
+        eHandlerMappingType mErrorHandlerMappingType;
 
         [IsSerializedForLocalRepository]
-        public Activity.eHandlerMappingType  ErrorHandlerMappingType
+        public eHandlerMappingType  ErrorHandlerMappingType
         {
             get { return mErrorHandlerMappingType; }
             set
@@ -329,7 +322,7 @@ namespace GingerCore
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags { get; set; } = new ObservableList<Guid>();
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {

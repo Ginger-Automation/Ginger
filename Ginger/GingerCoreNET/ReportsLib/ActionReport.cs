@@ -420,7 +420,7 @@ namespace Ginger.Reports
 
         private string GetValueForDriverWithoutDescrypting(string value)
         {
-            IValueExpression VE = new ValueExpression(mExecutionEnviroment, WorkSpace.Businessflow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>(), false, "", false, UserProfile.Solution.Variables);
+            IValueExpression VE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(mExecutionEnviroment, WorkSpace.Businessflow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>(), false, "", false, WorkSpace.Instance.SolutionRepository.Solution.Variables);
             VE.DecryptFlag = false;
             VE.Value = value;
 

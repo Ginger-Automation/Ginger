@@ -58,6 +58,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
 using System.Windows.Input;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -941,7 +942,7 @@ namespace Ginger
 
             Activity a = new Activity() { Active = true };
             a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
-            a.Acts = new ObservableList<Act>();
+            a.Acts = new ObservableList<IAct>();
             if (biz.TargetApplications.Count > 0)
             {
                 a.TargetApplication = biz.TargetApplications[0].AppName;

@@ -37,13 +37,13 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         string Error { get; set; }
         string ExInfo { get; set; }
         ObservableList<ActInputValue> InputValues { get; set; }
-        ObservableList<ActReturnValue> ReturnValues { get; set; }
+        ObservableList<ActReturnValue> ReturnValues { get;  }
         ObservableList<IFlowControl> FlowControls { get; set; }
         List<String> ScreenShots  { get; set; }
         bool Active { get; set; }
         bool FailIgnored { get; set; }
-        IEnumerable<ActReturnValue> ActReturnValues { get; set; }
-        object LocateValue { get; set; }
+        ObservableList<ActReturnValue> ActReturnValues { get;  }
+        string LocateValue { get; set; }
 
         List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing();
 

@@ -189,7 +189,7 @@ namespace GingerCore.ALM.QCRestAPI
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
                     if (repoActivsGroup != null)
                     {
-                        List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
+                        List<IActivity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
                                                                                        .Where(x => !tc.Steps.Select(y => y.StepID).ToList().Contains(x.ExternalID)).ToList();
 
                         tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
@@ -234,7 +234,7 @@ namespace GingerCore.ALM.QCRestAPI
                         bool toAddStepActivity = false;
 
                         //check if mapped activity exist in repository
-                        Activity repoStepActivity = GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                        Activity repoStepActivity =(Activity) GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
@@ -242,7 +242,7 @@ namespace GingerCore.ALM.QCRestAPI
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity = busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
                                 // in any case update description/expected/name - even if "step" was taken from repository
                                 stepActivity.Description = StripHTML(step.Description);
                                 stepActivity.Expected = StripHTML(step.Expected);
@@ -679,7 +679,7 @@ namespace GingerCore.ALM.QCRestAPI
 
             if (repoActivsGroup != null)
             {
-                List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
+                List<IActivity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
                                                                                .Where(x => !tSTestCaseSteps.Where(item => item.TestId == testInstance.TestId).Select(y => y.Id).ToList().Contains(x.ExternalID)).ToList();
 
                 tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
@@ -729,7 +729,7 @@ namespace GingerCore.ALM.QCRestAPI
                 bool toAddStepActivity = false;
 
                 //check if mapped activity exist in repository
-                Activity repoStepActivity = GingerActivitiesRepo.Where(x => x.ExternalID == step.Id).FirstOrDefault();
+                Activity repoStepActivity =(Activity) GingerActivitiesRepo.Where(x => x.ExternalID == step.Id).FirstOrDefault();
                 if (repoStepActivity != null)
                 {
                     //check if it is part of the Activities Group
@@ -768,7 +768,7 @@ namespace GingerCore.ALM.QCRestAPI
             Activity stepActivity;
 
             //already in Activities Group so get link to it
-            stepActivity = busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+            stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
             // in any case update description/expected/name - even if "step" was taken from repository
             stepActivity.Description = StripHTML(step.Description);
             stepActivity.Expected = StripHTML(step.ElementsField["expected"].ToString());

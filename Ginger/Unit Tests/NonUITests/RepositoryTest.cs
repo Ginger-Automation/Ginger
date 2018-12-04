@@ -535,7 +535,7 @@ namespace UnitTests.NonUITests
             act1.InputValues.Add(new ActInputValue() { Param = "Param2" });
 
             //add flow control
-            act1.FlowControls = new ObservableList<GingerCore.FlowControlLib.FlowControl>();
+            act1.FlowControls = new ObservableList<IFlowControl>();
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction =eFlowControlAction.GoToActivity });
            eFlowControlAction secondFlowControlAction =eFlowControlAction.RerunAction;
             GingerCore.FlowControlLib.FlowControl secondFlowControl = new GingerCore.FlowControlLib.FlowControl() { Condition = "C>123", FlowControlAction = secondFlowControlAction };

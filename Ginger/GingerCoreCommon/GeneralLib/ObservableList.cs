@@ -60,6 +60,8 @@ namespace Amdocs.Ginger.Common
             : base(list)
         {
         }
+
+     
         void IObservableList.Move(int oldIndex, int newIndex)
         {
             //SaveUndoData();

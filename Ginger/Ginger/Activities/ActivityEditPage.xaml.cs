@@ -65,7 +65,7 @@ namespace Ginger.BusinessFlowWindows
             else
                 mActivityParentBusinessFlow = App.BusinessFlow;
 
-            List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(Activity.eActivityAutomationStatus));
+            List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
             AutomationStatusCombo.ItemsSource = automationStatusList;
             RunOptionCombo.BindControl(activity, Activity.Fields.ActionRunOption);            
             HandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(ErrorHandler.eHandlerType));
@@ -276,7 +276,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void cmbErrorHandlerMapping_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbErrorHandlerMapping.SelectedValue.ToString() == Activity.eHandlerMappingType.SpecificErrorHandlers.ToString())
+            if (cmbErrorHandlerMapping.SelectedValue.ToString() == eHandlerMappingType.SpecificErrorHandlers.ToString())
             {
                 btnSpecificErrorHandler.Visibility = Visibility.Visible;
 

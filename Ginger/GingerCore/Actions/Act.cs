@@ -296,7 +296,7 @@ namespace GingerCore.Actions
         public eStatusConverterOptions StatusConverter { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<FlowControl> FlowControls { get; set; } = new ObservableList<FlowControl>();
+        public ObservableList<IFlowControl> FlowControls { get; set; } = new ObservableList<IFlowControl>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> InputValues { get; set; } = new ObservableList<ActInputValue>();
@@ -308,7 +308,7 @@ namespace GingerCore.Actions
         public ObservableList<ActOutDataSourceConfig> DSOutputConfigParams = new ObservableList<ActOutDataSourceConfig>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableDependency> VariablesDependencies = new ObservableList<VariableDependency>();
+        public ObservableList<VariableDependency> VariablesDependencies { get; set; } = new ObservableList<VariableDependency>();
 
         // -----------------------------------------------------------------------------------------------------------------------------------------------
         // All serialized Attributes - END
@@ -532,7 +532,7 @@ namespace GingerCore.Actions
         }
 
 
-        public ObservableList<FlowControl> ActFlowControls
+        public ObservableList<IFlowControl> ActFlowControls
         {
             get
             {
@@ -1452,7 +1452,7 @@ namespace GingerCore.Actions
 
                 foreach (FlowControl FC in this.FlowControls)
                 {
-                    FC.Status = FlowControl.eStatus.Pending;
+                    FC.Status = eStatus.Pending;
                 }
 
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;

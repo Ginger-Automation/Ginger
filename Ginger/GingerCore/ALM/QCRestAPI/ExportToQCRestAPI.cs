@@ -1,6 +1,7 @@
 ﻿using ALM_Common.DataContracts;
 using ALMRestClient;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -110,8 +111,8 @@ namespace GingerCore.ALM.QCRestAPI
                     {
                         foreach (ActivitiesGroup activGroup in activGroups)
                         {
-                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Passed)
-                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == ActivitiesGroup.eActivitiesGroupRunStatus.Failed)
+                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
+                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
                             || publishToALMConfig.FilterStatus == FilterByStatus.All)
                             {
                                 QCTestInstance tsTest = null;
@@ -130,7 +131,7 @@ namespace GingerCore.ALM.QCRestAPI
                                 if (tsTest != null)
                                 {
                                     //get activities in group
-                                    List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
+                                    List<IActivity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
                                     string TestCaseName = PathHelper.CleanInValidPathChars(tsTest.Name);
                                     if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
                                     {
@@ -212,14 +213,14 @@ namespace GingerCore.ALM.QCRestAPI
                                     {
                                         //search for matching activity based on ID and not order, un matching steps need to be left as No Run
                                         string stepName = runStep.Name;
-                                        Activity matchingActivity = activities.Where(x => x.ExternalID == runStep.ElementsField["desstep-id"].ToString()).FirstOrDefault();
+                                        IActivity matchingActivity = activities.Where(x => x.ExternalID == runStep.ElementsField["desstep-id"].ToString()).FirstOrDefault();
                                         if (matchingActivity != null)
                                         {
                                             switch (matchingActivity.Status)
                                             {
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
                                                     runStep.Status = "Failed";
-                                                    List<Act> failedActs = matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
+                                                    List<IAct> failedActs = matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
                                                     string errors = string.Empty;
                                                     foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
                                                     runStep.Actual = errors;
