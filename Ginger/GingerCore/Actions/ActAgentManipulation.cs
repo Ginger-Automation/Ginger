@@ -130,7 +130,7 @@ namespace GingerCore.Actions
             RunOnBusinessFlow.CurrentActivity.CurrentAgent.WaitForAgentToBeReady();
             if (RunOnBusinessFlow.CurrentActivity.CurrentAgent.Status != Agent.eStatus.Running)
             {
-                this.Error = "Agent not running";
+                this.Error = "Failed to start agent";
             }
         }
 
