@@ -51,8 +51,8 @@ namespace Ginger.Run.RunSetActions
             this.runSetActionHTMLReportSendEmail = runSetActionHTMLReportSendEmail;
             if (runSetActionHTMLReportSendEmail.Email == null)
             {
-                runSetActionHTMLReportSendEmail.Email = new Email();
-            }
+                runSetActionHTMLReportSendEmail.Email = new Email();                
+            }                
             MailFromTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailFrom);
             MailToTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailTo);
             MailCCTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailCC);
@@ -60,14 +60,19 @@ namespace Ginger.Run.RunSetActions
 
             BodyTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.Bodytext);
             CommentTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.Comments);
-            BodyTextBox.AdjustHight(100);            
-            App.ObjFieldBinding(SMTPMailHostTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.SMTPMailHost);
-            App.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.SMTPPort);
-            App.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.SMTPUser);
-            App.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.SMTPPass);
-            App.FillComboFromEnumVal(EmailMethodComboBox, runSetActionHTMLReportSendEmail.Email.EmailMethod);
-            App.ObjFieldBinding(EmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EmailMethod);            
-            App.ObjFieldBinding(cbEnableSSL, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EnableSSL);            
+            BodyTextBox.AdjustHight(100);
+            App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.SMTPPort);
+            App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.SMTPPass);
+            App.FillComboFromEnumVal(xEmailMethodComboBox, runSetActionHTMLReportSendEmail.Email.EmailMethod);
+            xSMTPMailHostTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailHost);            
+            xSMTPUserTextBox.Init(runSetActionHTMLReportSendEmail, RunSetActionHTMLReportSendEmail.Fields.MailUser);            
+            App.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EmailMethod);            
+            App.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EnableSSL);
+            App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.ConfigureCredential);
+            if (string.IsNullOrEmpty(runSetActionHTMLReportSendEmail.MailTo))
+            {
+                runSetActionHTMLReportSendEmail.MailTo = App.UserProfile.UserEmail;
+            }
             InitAttachmentsGrid();
             RadioButtonInit();
         }
@@ -214,15 +219,15 @@ namespace Ginger.Run.RunSetActions
                 DefaultTemplatePickerCbx.SelectedIndex = DefaultTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.ID == runSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID)).FirstOrDefault());
             }
         }
-        private void EmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void xEmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (EmailMethodComboBox.SelectedItem.ToString() == "OUTLOOK")
+            if (xEmailMethodComboBox.SelectedItem.ToString() == "OUTLOOK")
             {
-                SMTPConfig.Visibility = Visibility.Collapsed;
+                xSMTPConfig.Visibility = Visibility.Collapsed;
             }
             else
             {
-                SMTPConfig.Visibility = Visibility.Visible;
+                xSMTPConfig.Visibility = Visibility.Visible;
             }
         }
 
@@ -236,6 +241,32 @@ namespace Ginger.Run.RunSetActions
 
                 VEEW.ShowAsWindow();
             }
+        }
+
+        private void xcbConfigureCredential_Checked(object sender, RoutedEventArgs e)
+        {            
+                xSMTPUserTextBox.Visibility = Visibility.Visible;
+                xSMTPPassTextBox.Visibility = Visibility.Visible;
+                xLabelPass.Visibility = Visibility.Visible;
+                xLabelUser.Visibility = Visibility.Visible;
+        }
+
+        private void xSMTPPassTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            bool res, checkValueDecrypt;
+            res = false;
+            checkValueDecrypt = true;                  
+            EncryptionHandler.DecryptString(xSMTPPassTextBox.Text, ref checkValueDecrypt);
+
+            if (!checkValueDecrypt) xSMTPPassTextBox.Text = EncryptionHandler.EncryptString(xSMTPPassTextBox.Text, ref res);
+        }
+
+        private void xcbConfigureCredential_Unchecked(object sender, RoutedEventArgs e)
+        {
+            xSMTPUserTextBox.Visibility = Visibility.Collapsed;
+            xSMTPPassTextBox.Visibility = Visibility.Collapsed;
+            xLabelPass.Visibility = Visibility.Collapsed;
+            xLabelUser.Visibility = Visibility.Collapsed;
         }
     }
 }
