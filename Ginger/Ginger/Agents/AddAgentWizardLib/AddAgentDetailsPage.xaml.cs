@@ -53,8 +53,13 @@ namespace Ginger.Agents.AddAgentWizardLib
 
                     xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
                     App.FillComboFromEnumVal(xPlatformTypeComboBox, mWizard.Agent.Platform);
-                    xPlatformTypeComboBox.SelectedIndex = 0;
 
+                    //Removing ASCF type from combobox list
+                    xPlatformTypeComboBox.SelectedValue = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF;
+                    var itemToRemove = xPlatformTypeComboBox.SelectedIndex;
+                    xPlatformTypeComboBox.SelectedIndex = 0;
+                    xPlatformTypeComboBox.Items.RemoveAt(itemToRemove);
+                    
                     xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
                     xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);
