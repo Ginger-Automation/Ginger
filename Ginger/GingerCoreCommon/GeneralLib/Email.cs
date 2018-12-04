@@ -4,7 +4,7 @@ using System.Net.Mail;
 using System.Text;
 using Amdocs.Ginger.Repository;
 
-namespace Amdocs.Ginger.Common.GeneralLib
+namespace GingerCore.GeneralLib
 {
     public class Email : RepositoryItemBase
     {

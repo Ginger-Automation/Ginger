@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Common.InterfacesLib;
+﻿using System;
+using Amdocs.Ginger.Common.InterfacesLib;
  using Amdocs.Ginger.Repository;
 using GingerCore.Variables;
 
@@ -13,6 +14,8 @@ namespace Amdocs.Ginger.Common
         IValueExpression CreateValueExpression(IProjEnvironment Env, IBusinessFlow BF, ObservableList<IDataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null);
 
 
+
         ObservableList<IDatabase> GetDatabaseList();
+        Type GetRepositoryItemTypeFromInterface(Type interfaceType);
     }
 }

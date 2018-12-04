@@ -48,7 +48,7 @@ namespace Ginger.Run.RunSetActions
         public RunSetActionHTMLReportSendEmailEditPage(RunSetActionHTMLReportSendEmail runSetActionHTMLReportSendEmail)
         {
             InitializeComponent();
-            this.runSetActionHTMLReportSendEmail = runSetActionHTMLReportSendEmail;
+         /*   this.runSetActionHTMLReportSendEmail = runSetActionHTMLReportSendEmail;
             if (runSetActionHTMLReportSendEmail.Email == null)
             {
                 runSetActionHTMLReportSendEmail.Email = new Email();
@@ -69,7 +69,7 @@ namespace Ginger.Run.RunSetActions
             App.ObjFieldBinding(EmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EmailMethod);            
             App.ObjFieldBinding(cbEnableSSL, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, Email.Fields.EnableSSL);            
             InitAttachmentsGrid();
-            RadioButtonInit();
+            RadioButtonInit();*/
         }
         public void RadioButtonInit()
         {

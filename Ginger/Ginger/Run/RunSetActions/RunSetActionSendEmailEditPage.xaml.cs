@@ -37,7 +37,7 @@ namespace Ginger.Run.RunSetActions
 
         
         public RunSetActionSendEmailEditPage(RunSetActionSendEmail runSetActionSendEmail)
-        {
+        {/*
             InitializeComponent();
             
             this.runSetActionEmailReport = runSetActionSendEmail;
@@ -72,7 +72,7 @@ namespace Ginger.Run.RunSetActions
             App.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPUser);
             App.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendEmail.Email, Email.Fields.SMTPPass);
             App.ObjFieldBinding(cbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendEmail.Email, Email.Fields.EnableSSL);
-
+            */
             InitAttachmentsGrid();
         }
 

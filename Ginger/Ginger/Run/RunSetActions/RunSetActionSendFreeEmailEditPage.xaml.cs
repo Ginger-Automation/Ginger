@@ -30,7 +30,7 @@ namespace Ginger.Run.RunSetActions
         public RunSetActionSendFreeEmailEditPage(RunSetActionSendFreeEmail runSetActionSendFreeEmail)
         {
             InitializeComponent();
-            if (runSetActionSendFreeEmail.Email == null)
+           /* if (runSetActionSendFreeEmail.Email == null)
             {
                 runSetActionSendFreeEmail.Email = new Email();
             }
@@ -47,7 +47,7 @@ namespace Ginger.Run.RunSetActions
             App.FillComboFromEnumVal(EmailMethodComboBox, runSetActionSendFreeEmail.Email.EmailMethod);
             App.ObjFieldBinding(EmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendFreeEmail.Email, Email.Fields.EmailMethod);
             App.ObjFieldBinding(cbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, Email.Fields.EnableSSL);
-        }
+        */}
 
         private void EmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

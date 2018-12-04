@@ -399,19 +399,24 @@ namespace Amdocs.Ginger.Repository
 
         public void AddItemInfo<T>(string pattern, string rootFolder, bool containRepositoryItems, string displayName, string PropertyNameForFileName)
         {
+            Type type = RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(typeof(T));
+          
             SolutionRepositoryItemInfo<T> SRII = new SolutionRepositoryItemInfo<T>();
             SRII.ItemFileSystemRootFolder = rootFolder;
             SRII.PropertyForFileName = PropertyNameForFileName;
             SRII.Pattern = pattern;
             SRII.ItemRootReposiotryfolder = new RepositoryFolder<T>(this, SRII, pattern, rootFolder, containRepositoryItems, displayName, true);
 
-            mSolutionRepositoryItemInfoDictionary.Add(typeof(T), SRII);
+            mSolutionRepositoryItemInfoDictionary.Add(type, SRII);
             mSolutionRootFolders.Add((RepositoryFolderBase)SRII.ItemRootRepositoryFolder);
         }
 
         private SolutionRepositoryItemInfoBase GetSolutionRepositoryItemInfo(Type type)
         {
             SolutionRepositoryItemInfoBase SRII;
+
+           type= RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(type);
+
             mSolutionRepositoryItemInfoDictionary.TryGetValue(type, out SRII);
 
             if (SRII == null)
@@ -428,11 +433,14 @@ namespace Amdocs.Ginger.Repository
             return SRII;
         }
 
+        
+
         private SolutionRepositoryItemInfo<T> GetSolutionRepositoryItemInfo<T>()
         {
-            SolutionRepositoryItemInfoBase SRIIBase = GetSolutionRepositoryItemInfo(typeof(T));
-            SolutionRepositoryItemInfo<T> SRII = (SolutionRepositoryItemInfo<T>)SRIIBase;
-            return SRII;
+            Type type= RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(typeof(T));
+            SolutionRepositoryItemInfoBase SRIIBase = GetSolutionRepositoryItemInfo(type);
+        SolutionRepositoryItemInfo<T> SRII = (SolutionRepositoryItemInfo<T>)SRIIBase;
+            return GetSolutionRepositoryItemInfo(type); ;
         }
 
         private void VerifyOrCreateSolutionFolders(string folder)
