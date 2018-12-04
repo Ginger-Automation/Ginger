@@ -45,7 +45,7 @@ namespace GingerCore.GeneralLib
             public static string Body = "Body";
             public static string EmailMethod = "EmailMethod";
             public static string EnableSSL = "EnableSSL";
-            public static string UseDefaultCredential = "UseDefaultCredential";
+            public static string ConfigureCredential = "ConfigureCredential";
         }
         
         public enum eEmailMethod
@@ -89,6 +89,7 @@ namespace GingerCore.GeneralLib
                 if (mSMTPMailHost != value)
                 {
                     mSMTPMailHost = value;
+                    OnPropertyChanged(Fields.SMTPMailHost);
                 }
             }
         }
@@ -103,15 +104,18 @@ namespace GingerCore.GeneralLib
                 if (mSMTPPort != value)
                 {
                     mSMTPPort = (int)value;
+                    OnPropertyChanged(Fields.SMTPPort);
                 }
             }
         }
 
+        private string mSMTPUser;
         [IsSerializedForLocalRepository]
-        public string SMTPUser { get; set; }
+        public string SMTPUser { get { return mSMTPUser; } set { if (mSMTPUser != value) { mSMTPUser = value; OnPropertyChanged(Fields.SMTPUser);  } } }
 
+        private string mSMTPPass;
         [IsSerializedForLocalRepository]
-        public string SMTPPass { get; set; }
+        public string SMTPPass { get { return mSMTPPass; } set { if (mSMTPPass != value) { mSMTPPass = value; OnPropertyChanged(Fields.SMTPPass); } } }
 
         [IsSerializedForLocalRepository]
         public string Event { get; set; }
@@ -133,16 +137,16 @@ namespace GingerCore.GeneralLib
             }
         }
 
-        private bool mUseDefaultCredential = true;
-        [IsSerializedForLocalRepository(true)]
-        public bool UseDefaultCredential
+        private bool mConfigureCredential = false;
+        [IsSerializedForLocalRepository(false)]
+        public bool ConfigureCredential
         {
-            get { return mUseDefaultCredential; }
+            get { return mConfigureCredential; }
             set
             {
-                if (mUseDefaultCredential != value)
+                if (mConfigureCredential != value)
                 {
-                    mUseDefaultCredential = value;
+                    mConfigureCredential = value;
                 }
             }
         }
@@ -320,12 +324,22 @@ namespace GingerCore.GeneralLib
                     Port = (int)this.SMTPPort,
                     EnableSsl = EnableSSL,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = UseDefaultCredential   
+                    UseDefaultCredentials = ConfigureCredential   
                 };
 
-                if (!UseDefaultCredential)
+                if (ConfigureCredential)
                 {
-                    smtp.Credentials = new NetworkCredential(SMTPUser, SMTPPass);
+                    bool checkValueDecrypt;
+                    checkValueDecrypt = true;
+                    string DecryptPass = EncryptionHandler.DecryptString(SMTPPass, ref checkValueDecrypt);
+                    if(checkValueDecrypt)
+                    {
+                        smtp.Credentials = new NetworkCredential(SMTPUser, DecryptPass);
+                    }
+                    else
+                    {
+                        smtp.Credentials = new NetworkCredential(SMTPUser, SMTPPass);
+                    }
                 }
 
                 string emails = MailTo; 
