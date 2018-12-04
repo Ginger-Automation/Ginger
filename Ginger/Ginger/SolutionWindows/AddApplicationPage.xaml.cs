@@ -66,7 +66,8 @@ namespace Ginger.SolutionWindows
         }
        
         private void SetAppsGridView()
-        {            
+        {         
+            SelectApplicationGrid.SelectionMode = DataGridSelectionMode.Single;
             SelectApplicationGrid.ShowDelete = System.Windows.Visibility.Collapsed;
             SelectApplicationGrid.ShowClearAll = System.Windows.Visibility.Collapsed;
             SelectApplicationGrid.ShowAdd = System.Windows.Visibility.Collapsed;
