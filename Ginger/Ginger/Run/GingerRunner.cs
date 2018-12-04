@@ -49,6 +49,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common.InterfacesLib;
 using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
+using static GingerCore.ErrorHandler;
 
 //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
@@ -861,7 +862,7 @@ namespace Ginger.Run
                     RunActionWithTimeOutControl(act, ActionExecutorType);
                     CalculateActionFinalStatus(act);
                     // fetch all pop-up handlers
-                    ObservableList<ErrorHandler> lstPopUpHandlers = GetAllErrorHandlersByType(ErrorHandler.eHandlerType.Popup_Handler);
+                    ObservableList<ErrorHandler> lstPopUpHandlers = GetAllErrorHandlersByType(eHandlerType.Popup_Handler);
                     if (lstPopUpHandlers.Count > 0)
                     {
                         executeErrorAndPopUpHandler(lstPopUpHandlers);
@@ -935,7 +936,7 @@ namespace Ginger.Run
                 ExecutionLogger.ActionEnd(activity, action);
             }
             
-        private ObservableList<ErrorHandler> GetAllErrorHandlersByType(ErrorHandler.eHandlerType errHandlerType)
+        private ObservableList<ErrorHandler> GetAllErrorHandlersByType(eHandlerType errHandlerType)
         {
             ObservableList<ErrorHandler> lstErrorHandler = new ObservableList<ErrorHandler>(CurrentBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && a.Active == true
               && ((GingerCore.ErrorHandler)a).HandlerType == errHandlerType).Cast<ErrorHandler>().ToList());
@@ -947,18 +948,18 @@ namespace Ginger.Run
         {
             ObservableList<ErrorHandler> errorHandlersToExecute = new ObservableList<ErrorHandler>();
 
-            ErrorHandler.eHandlerMappingType typeHandlerMapping = (ErrorHandler.eHandlerMappingType)((Activity)CurrentBusinessFlow.CurrentActivity).ErrorHandlerMappingType;
+            eHandlerMappingType typeHandlerMapping = (eHandlerMappingType)((Activity)CurrentBusinessFlow.CurrentActivity).ErrorHandlerMappingType;
 
-            if (typeHandlerMapping == ErrorHandler.eHandlerMappingType.None)
+            if (typeHandlerMapping == eHandlerMappingType.None)
             {
                 // if set to NONE then, return an empty list. Nothing to execute!
                 return errorHandlersToExecute;
             }
 
-            if (typeHandlerMapping == ErrorHandler.eHandlerMappingType.SpecificErrorHandlers)
+            if (typeHandlerMapping == eHandlerMappingType.SpecificErrorHandlers)
             {
                 // fetch list of all error handlers in the current business flow
-                ObservableList<ErrorHandler> allCurrentBusinessFlowErrorHandlers = GetAllErrorHandlersByType(ErrorHandler.eHandlerType.Error_Handler);
+                ObservableList<ErrorHandler> allCurrentBusinessFlowErrorHandlers = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
 
                 ObservableList<ErrorHandler> lstMappedErrorHandler = new ObservableList<ErrorHandler>();
                 foreach (Guid _guid in CurrentBusinessFlow.CurrentActivity.MappedErrorHandlers)
@@ -973,10 +974,10 @@ namespace Ginger.Run
                 // pass only specific mapped error handlers present the business flow
                 errorHandlersToExecute = lstMappedErrorHandler;
             }
-            else if (typeHandlerMapping == ErrorHandler.eHandlerMappingType.AllAvailableHandlers)
+            else if (typeHandlerMapping == eHandlerMappingType.AllAvailableHandlers)
             {
                 // pass all error handlers, by default
-                errorHandlersToExecute = GetAllErrorHandlersByType(ErrorHandler.eHandlerType.Error_Handler);
+                errorHandlersToExecute = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
             }
             return errorHandlersToExecute;
 
@@ -1302,7 +1303,7 @@ namespace Ginger.Run
                     st.Start();
                     if (act.Active)
                     {
-                        if (errActivity.HandlerType == ErrorHandler.eHandlerType.Popup_Handler)
+                        if (errActivity.HandlerType == eHandlerType.Popup_Handler)
                             act.Timeout = 1;
                         PrepAction(act, ref ActionExecutorType, st);
                         RunActionWithTimeOutControl(act, ActionExecutorType);
@@ -2566,19 +2567,19 @@ namespace Ginger.Run
             }
 
             // handling ActivityGroup execution
-            ActivitiesGroup currentActivityGroup = CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(Activity.Guid)).FirstOrDefault();
+            ActivitiesGroup currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(Activity.Guid)).FirstOrDefault();
             if (currentActivityGroup != null)
             {
                 switch (currentActivityGroup.ExecutionLoggerStatus)
                 {
-                    case ActivitiesGroup.executionLoggerStatus.NotStartedYet:
-                        currentActivityGroup.ExecutionLoggerStatus = ActivitiesGroup.executionLoggerStatus.StartedNotFinishedYet;
+                    case executionLoggerStatus.NotStartedYet:
+                        currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet;
                         ExecutionLogger.ActivityGroupStart(currentActivityGroup, CurrentBusinessFlow);
                         break;
-                    case ActivitiesGroup.executionLoggerStatus.StartedNotFinishedYet:
+                    case executionLoggerStatus.StartedNotFinishedYet:
                         // do nothing
                         break;
-                    case ActivitiesGroup.executionLoggerStatus.Finished:
+                    case executionLoggerStatus.Finished:
                         // do nothing
                         break;
                 }
@@ -2756,10 +2757,10 @@ namespace Ginger.Run
                 {
                     switch (currentActivityGroup.ExecutionLoggerStatus)
                     {
-                        case ActivitiesGroup.executionLoggerStatus.NotStartedYet:
+                        case executionLoggerStatus.NotStartedYet:
                             // do nothing
                             break;
-                        case ActivitiesGroup.executionLoggerStatus.StartedNotFinishedYet:
+                        case executionLoggerStatus.StartedNotFinishedYet:
                             if (currentActivityGroup.ExecutedActivities.ContainsKey(Activity.Guid))
                             {
                                 currentActivityGroup.ExecutedActivities[Activity.Guid] = DateTime.Now.ToUniversalTime();
@@ -2770,7 +2771,7 @@ namespace Ginger.Run
                             }
                             // do nothing
                             break;
-                        case ActivitiesGroup.executionLoggerStatus.Finished:
+                        case executionLoggerStatus.Finished:
                             // do nothing
                             break;
                     }
@@ -3306,7 +3307,7 @@ namespace Ginger.Run
             if ((CurrentBusinessFlow == null) && (automateTab != null) && offlineMode)
             {
                 CurrentBusinessFlow = automateTab;
-                CurrentBusinessFlow.ActivitiesGroups.ToList().ForEach(x => x.ExecutionLoggerStatus = ActivitiesGroup.executionLoggerStatus.StartedNotFinishedYet);
+                CurrentBusinessFlow.ActivitiesGroups.ToList().ForEach(x => x.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet);
             }
             foreach (ActivitiesGroup currentActivityGroup in CurrentBusinessFlow.ActivitiesGroups)
             {
@@ -3315,17 +3316,17 @@ namespace Ginger.Run
                 {
                     if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
                     {
-                        currentActivityGroup.ExecutionLoggerStatus = ActivitiesGroup.executionLoggerStatus.NotStartedYet;
+                        currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
                     }
                     else
                     {
                         switch (currentActivityGroup.ExecutionLoggerStatus)
                         {
-                            case ActivitiesGroup.executionLoggerStatus.NotStartedYet:
+                            case executionLoggerStatus.NotStartedYet:
                                 // do nothing
                                 break;
-                            case ActivitiesGroup.executionLoggerStatus.StartedNotFinishedYet:
-                                currentActivityGroup.ExecutionLoggerStatus = ActivitiesGroup.executionLoggerStatus.Finished;
+                            case executionLoggerStatus.StartedNotFinishedYet:
+                                currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.Finished;
                                 if (executionLogger != null)
                                 {
                                     executionLogger.ActivityGroupEnd(currentActivityGroup, CurrentBusinessFlow, offlineMode);
@@ -3335,7 +3336,7 @@ namespace Ginger.Run
                                     ExecutionLogger.ActivityGroupEnd(currentActivityGroup, CurrentBusinessFlow, offlineMode);
                                 }
                                 break;
-                            case ActivitiesGroup.executionLoggerStatus.Finished:
+                            case executionLoggerStatus.Finished:
                                 // do nothing
                                 break;
                         }
@@ -3700,7 +3701,7 @@ namespace Ginger.Run
             //check in Activity Group
             if (string.IsNullOrEmpty(CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID) == false)
             {
-                ActivitiesGroup group = CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                ActivitiesGroup group =(ActivitiesGroup) CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault();
                 if(group != null)
                     foreach (Guid tagGuid in group.Tags)
                         if (this.FilterExecutionTags.Where(x => Guid.Equals(x, tagGuid) == true).FirstOrDefault() != Guid.Empty)

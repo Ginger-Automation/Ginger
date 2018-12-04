@@ -31,6 +31,7 @@ using GingerCore;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
+using GingerCore.Activities;
 
 namespace Ginger.Reports.GingerExecutionReport
 {
@@ -1506,7 +1507,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
                         try
                         {
-                            BF.ActivitiesGroups.Where(x => x.Guid.ToString() == ag.SourceGuid).FirstOrDefault().TempReportFolder = currentHTMLReportsFolder + @"\" + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name);
+                            ((ActivitiesGroup)BF.ActivitiesGroups.Where(x => x.Guid.ToString() == ag.SourceGuid).FirstOrDefault()).TempReportFolder = currentHTMLReportsFolder + @"\" + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name);
                         }
                         catch { }
                         foreach (ActivityReport ac in BusinessFlowReport.Activities.Where(x => ag.ExecutedActivitiesGUID.Select(y => y.ToString()).Contains(x.SourceGuid)).OrderBy(x => x.Seq))

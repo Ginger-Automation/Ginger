@@ -426,7 +426,7 @@ namespace GingerCore.ALM.RQM
             }
         }
 
-        public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)
+        public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups, ref string result)
         {
             LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
             //ActivityPlan is TestPlan in RQM and BusinessFlow in Ginger
@@ -635,7 +635,7 @@ namespace GingerCore.ALM.RQM
             return testCase;
         }
 
-        private ACL_Data_Contract.ActivityData GetTestScriptStep(ObservableList<ActivityIdentifiers> stepList)
+        private ACL_Data_Contract.ActivityData GetTestScriptStep(ObservableList<IActivityIdentifiers> stepList)
         {
             ActivityData ad = new ActivityData();
             int orderID = 0;
@@ -670,7 +670,7 @@ namespace GingerCore.ALM.RQM
 
                 activityStep.EntityName = actIden.ActivityName;
                 string description = actIden.ActivityDescription == null ? string.Empty : actIden.ActivityDescription;
-                activityStep.StepExpResults = actIden.IdentifiedActivity.Expected;
+                activityStep.StepExpResults =((Activity)( actIden.IdentifiedActivity)).Expected;
                 activityStep.StepOrderId = orderID;
                 orderID++;
                 activityStep.EntityId = 0;

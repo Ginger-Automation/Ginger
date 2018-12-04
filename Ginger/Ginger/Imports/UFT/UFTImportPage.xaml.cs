@@ -38,6 +38,7 @@ using System.Xml;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Imports.UFT
 {
@@ -175,7 +176,7 @@ namespace Ginger.Imports.UFT
 
         private void AddAction(object sender, RoutedEventArgs e)
         {
-            ObservableList<Act> ActionsList = new ObservableList<Act>();
+            ObservableList<IAct> ActionsList = new ObservableList<IAct>();
 
             // We create one dummy activity in case we convert code without function
             mBusinessFlow.Activities = new ObservableList<IActivity>();
@@ -190,7 +191,7 @@ namespace Ginger.Imports.UFT
             addAction.ShowAsWindow(ActionsList);
 
             // We will get only one action currently
-            Act a = ActionsList[0];
+            Act a = (Act)ActionsList[0];
             CommonFunctionMapping CFM = new CommonFunctionMapping();                        
             CFM.TargetAction = a;
             mCommonFunctionConvertor.CommonFunctionMappingList.Add(CFM);

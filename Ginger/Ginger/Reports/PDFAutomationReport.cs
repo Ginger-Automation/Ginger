@@ -519,7 +519,7 @@ namespace Ginger.Reports
 
          internal void SavePDFReport(Run.BusinessFlowExecutionSummary bf, string filename)
          {
-             GeneratePDF(bf.BusinessFlow, filename);
+             GeneratePDF((BusinessFlow)bf.BusinessFlow, filename);
          }
     }
 }

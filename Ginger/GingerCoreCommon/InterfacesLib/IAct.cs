@@ -49,5 +49,6 @@ namespace Amdocs.Ginger.Common.InterfacesLib
 
         ObservableList<VariableDependency> VariablesDependencies { get; set; }
         bool SupportSimulation { get; set; }
+        String ActionDescription { get;  }
     }
 }

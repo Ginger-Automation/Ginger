@@ -25,6 +25,7 @@ using GingerCore.Variables;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Exports.ExportToJava
 {
@@ -108,7 +109,7 @@ namespace Ginger.Exports.ExportToJava
             Output.AppendLine(txt);
         }
 
-        void AddActions(ObservableList<Act> acts)
+        void AddActions(ObservableList<IAct> acts)
         {
             WriteLine("// Actions");
             foreach (Act act in acts)

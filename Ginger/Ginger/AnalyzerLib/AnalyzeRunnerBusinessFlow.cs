@@ -24,6 +24,7 @@ using GingerCore;
 using GingerCore.Platforms;
 using GingerCore.FlowControlLib;
 using Ginger.Run;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.AnalyzerLib
 {
@@ -41,7 +42,7 @@ namespace Ginger.AnalyzerLib
                 {
                     if (f.Active == true)
                     {
-                        if (f.BusinessFlowControlAction == FlowControl.eBusinessFlowControlAction.GoToBusinessFlow)
+                        if (f.BusinessFlowControlAction == eBusinessFlowControlAction.GoToBusinessFlow)
                         {
                             string GoToBusinessFlow = f.GetNameFromValue();
                             BusinessFlow bf = null;
@@ -80,7 +81,7 @@ namespace Ginger.AnalyzerLib
                                 ABF.Severity = eSeverity.High;
                             }
                         }
-                        if (f.BusinessFlowControlAction == FlowControl.eBusinessFlowControlAction.SetVariableValue)
+                        if (f.BusinessFlowControlAction == eBusinessFlowControlAction.SetVariableValue)
                         {
                             if (string.IsNullOrEmpty(f.Value) || ValueExpression.IsThisDynamicVE(f.Value) == false)
                             {

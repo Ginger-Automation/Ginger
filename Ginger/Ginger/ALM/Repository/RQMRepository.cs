@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.ALM.QC.TreeViewItems;
 using Ginger.ALM.RQM;
 using Ginger.Repository;
@@ -100,8 +101,8 @@ namespace Ginger.ALM.Repository
                 {
                     //Refresh Ginger repository and allow GingerRQM to use it
 
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivitiesGroup>();
+                    ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivity>();
 
                     try
                     {
@@ -183,7 +184,7 @@ namespace Ginger.ALM.Repository
             }
         }
 
-        public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
+        public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups)
         {
             if (businessFlow == null) return;
 

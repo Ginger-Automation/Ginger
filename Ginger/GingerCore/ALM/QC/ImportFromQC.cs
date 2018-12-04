@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Variables;
@@ -37,8 +38,8 @@ namespace GingerCore.ALM.QC
     {
         static TDConnection mTDConn = QCConnect.TDConn;
 
-        public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
-        public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public static ObservableList<IActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
+        public static ObservableList<IActivity> GingerActivitiesRepo { get; set; }
         
         public static QCTestSet ImportTestSetData(QCTestSet TS)
         {
@@ -299,17 +300,17 @@ namespace GingerCore.ALM.QC
                 {
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
-                    ActivitiesGroup repoActivsGroup = null;
+                    IActivitiesGroup repoActivsGroup = null;
                     if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
                     if (repoActivsGroup == null)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
                     if (repoActivsGroup != null)
                     {
-                        List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
+                        List<IActivity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
                                                                                        .Where(x => !tc.Steps.Select(y => y.StepID).ToList().Contains(x.ExternalID)).ToList();
 
-                        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance(true);
+                        tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance(true);
 
                         var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID)); 
                         for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)
@@ -355,7 +356,7 @@ namespace GingerCore.ALM.QC
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
@@ -532,9 +533,9 @@ namespace GingerCore.ALM.QC
                         foreach (QCTSTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
-                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                            ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
                             if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
-                            Activity act = actIdent.IdentifiedActivity;
+                            Activity act = (Activity)actIdent.IdentifiedActivity;
                             int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                             int bfActIndx = busFlow.Activities.IndexOf(act);
 
@@ -551,7 +552,7 @@ namespace GingerCore.ALM.QC
 
                                 if (numOfSeenSteps >= stepIndx) break;
                             }
-                            ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                            ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                             if (identOnPlace.ActivityGuid != act.Guid)
                             {
                                 //replace places in group
@@ -651,7 +652,7 @@ namespace GingerCore.ALM.QC
                     if (repoStepActivity != null)
                     {
                         //check if it is part of the Activities Group
-                        ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                        ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
                         if (groupStepActivityIdent != null)
                         {
                             //already in Activities Group so get link to it
@@ -824,9 +825,9 @@ namespace GingerCore.ALM.QC
                     foreach (QCTSTestStep step in tc.Steps)
                     {
                         int stepIndx = tc.Steps.IndexOf(step) + 1;
-                        ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                        ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
                         if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
-                        Activity act = actIdent.IdentifiedActivity;
+                        Activity act = (Activity)actIdent.IdentifiedActivity;
                         int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                         int bfActIndx = busFlow.Activities.IndexOf(act);
 
@@ -843,7 +844,7 @@ namespace GingerCore.ALM.QC
 
                             if (numOfSeenSteps >= stepIndx) break;
                         }
-                        ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                        ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                         if (identOnPlace.ActivityGuid != act.Guid)
                         {
                             //replace places in group
@@ -902,7 +903,7 @@ namespace GingerCore.ALM.QC
                     if (repoStepActivity != null)
                     {
                         //check if it is part of the Activities Group
-                        ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                        ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
                         if (groupStepActivityIdent != null)
                         {
                             //already in Activities Group so get link to it
@@ -1075,9 +1076,9 @@ namespace GingerCore.ALM.QC
                     foreach (QCTSTestStep step in tc.Steps)
                     {
                         int stepIndx = tc.Steps.IndexOf(step) + 1;
-                        ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                        ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
                         if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
-                        Activity act = actIdent.IdentifiedActivity;
+                        Activity act = (Activity)actIdent.IdentifiedActivity;
                         int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                         int bfActIndx = busFlow.Activities.IndexOf(act);
 
@@ -1094,7 +1095,7 @@ namespace GingerCore.ALM.QC
 
                             if (numOfSeenSteps >= stepIndx) break;
                         }
-                        ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                        ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                         if (identOnPlace.ActivityGuid != act.Guid)
                         {
                             //replace places in group

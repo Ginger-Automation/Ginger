@@ -18,6 +18,7 @@ using GingerCore.ALM.QCRestAPI;
 using ALM_Common.DataContracts;
 using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.ALM.Repository
 {
@@ -137,8 +138,8 @@ namespace Ginger.ALM.Repository
                 if (testSetsItemsToImport.Count == 0) return false; //noting to import
 
                 //Refresh Ginger repository and allow GingerQC to use it                
-                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-                ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivitiesGroup>();
+                ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivity>();
 
                 foreach (QCTestSetTreeItem testSetItemtoImport in testSetsItemsToImport)
                 {
@@ -276,7 +277,7 @@ namespace Ginger.ALM.Repository
             return false;
         }
 
-        public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
+        public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups)
         {
             throw new NotImplementedException();
         }

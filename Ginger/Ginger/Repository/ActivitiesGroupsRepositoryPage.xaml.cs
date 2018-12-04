@@ -34,6 +34,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.BusinessFlowFolder;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Repository
 {
@@ -131,7 +132,7 @@ namespace Ginger.Repository
                         mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                         
                         int selectedActIndex = -1;
-                        ObservableList<ActivitiesGroup> actsList = App.BusinessFlow.ActivitiesGroups;
+                        ObservableList<IActivitiesGroup> actsList = App.BusinessFlow.ActivitiesGroups;
                         if (actsList.CurrentItem != null)
                         {
                             selectedActIndex = actsList.IndexOf((ActivitiesGroup)actsList.CurrentItem);

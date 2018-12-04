@@ -101,7 +101,7 @@ namespace GingerCore.ALM.Rally
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RallyIndex).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent =(ActivityIdentifiers) tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RallyIndex).FirstOrDefault();
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it

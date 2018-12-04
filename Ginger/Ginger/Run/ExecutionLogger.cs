@@ -38,6 +38,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Common.InterfacesLib;
+using static Amdocs.Ginger.Common.InterfacesLib.IActivitiesGroup;
 
 namespace Ginger.Run
 {
@@ -714,7 +715,7 @@ namespace Ginger.Run
                         return;
 
                     //
-                    ActivitiesGroup currrentGroup = this.CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == Activity.ActivitiesGroupID).FirstOrDefault();
+                    ActivitiesGroup currrentGroup = (ActivitiesGroup)this.CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == Activity.ActivitiesGroupID).FirstOrDefault();
                     string currrentGroupName = string.Empty;
                     if (currrentGroup != null)
                         currrentGroupName = currrentGroup.Name;
@@ -1077,13 +1078,13 @@ namespace Ginger.Run
                 businessFlow.ExecutionLogActivityCounter = 0;
                 foreach (Activity activity in businessFlow.Activities)
                 {
-                    ActivitiesGroup currentActivityGroup = businessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
+                    ActivitiesGroup currentActivityGroup = (ActivitiesGroup)businessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
                     if (currentActivityGroup != null)
                     {
                         currentActivityGroup.ExecutionLogFolder = logFolderPath;
                         switch (currentActivityGroup.ExecutionLoggerStatus)
                         {
-                            case ActivitiesGroup.executionLoggerStatus.NotStartedYet:
+                            case executionLoggerStatus.NotStartedYet:
                                 ActivityGroupStart(currentActivityGroup, businessFlow);
                                 break;
                         }

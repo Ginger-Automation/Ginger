@@ -248,7 +248,7 @@ namespace Ginger
                             UpdateBusinessFlowActivitiesExpanders();
                             App.BusinessFlow.Activities.CollectionChanged -= Activities_CollectionChanged;
                             App.BusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
-                            mCurrentActivity = App.BusinessFlow.CurrentActivity;            
+                            mCurrentActivity = (Activity)App.BusinessFlow.CurrentActivity;            
                             UpdateCurrentActivityVariabelsExpanders();
                             UpdateCurrentActivityActionsExpanders();
                         }
@@ -746,7 +746,7 @@ namespace Ginger
                         mCurrentActivity.Acts.CollectionChanged -= CurrentActivityActions_CollectionChanged;
                         mCurrentActivity.PropertyChanged -= MCurrentActivity_PropertyChanged;
                     }
-                    mCurrentActivity = App.BusinessFlow.CurrentActivity;
+                    mCurrentActivity =(Activity) App.BusinessFlow.CurrentActivity;
                     if (mCurrentActivity != null)
                     {
                         //Add current Activity events registration
@@ -866,10 +866,10 @@ namespace Ginger
                         App.AutomateTabGingerRunner.ResetStatus(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.All, App.BusinessFlow);
                         break;
                     case Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards:
-                        App.AutomateTabGingerRunner.ResetStatus(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards, App.BusinessFlow, App.BusinessFlow.CurrentActivity);
+                        App.AutomateTabGingerRunner.ResetStatus(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity);
                         break;
                     case Run.GingerRunner.eResetStatus.FromSpecificActionOnwards:
-                        App.AutomateTabGingerRunner.ResetStatus(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActionOnwards, App.BusinessFlow, App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
+                        App.AutomateTabGingerRunner.ResetStatus(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActionOnwards, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -959,7 +959,7 @@ namespace Ginger
                 EnabelGridSelectedItemChangeOnClick(ActPage.grdActions);
                 if (App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
                 {
-                    App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent.IsFailedToStart = false;
+                   ((Agent) App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
                 }                    
             }
         }
@@ -978,7 +978,7 @@ namespace Ginger
 
         public async Task RunActivity()
         {
-            await App.AutomateTabGingerRunner.RunActivityAsync(App.BusinessFlow.CurrentActivity, false).ConfigureAwait(false);
+            await App.AutomateTabGingerRunner.RunActivityAsync((Activity)App.BusinessFlow.CurrentActivity, false).ConfigureAwait(false);
 
             //When running Runactivity as standalone from GUI, SetActionSkipStatus is not called. Handling it here for now.
             foreach (Act act in App.BusinessFlow.CurrentActivity.Acts)
@@ -1177,7 +1177,7 @@ namespace Ginger
 
             if (App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
             {
-                App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent.IsFailedToStart = false;
+                ((Agent)App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
             }
 
             AutoLogProxy.UserOperationEnd();
@@ -1227,10 +1227,10 @@ namespace Ginger
                         await App.AutomateTabGingerRunner.ContinueRunAsync(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eContinueFrom.LastStoppedAction);
                         break;
                     case Run.GingerRunner.eContinueFrom.SpecificAction:
-                        await App.AutomateTabGingerRunner.ContinueRunAsync(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eContinueFrom.SpecificAction, App.BusinessFlow, App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
+                        await App.AutomateTabGingerRunner.ContinueRunAsync(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eContinueFrom.SpecificAction, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
                         break;
                     case Run.GingerRunner.eContinueFrom.SpecificActivity:
-                        await App.AutomateTabGingerRunner.ContinueRunAsync(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eContinueFrom.SpecificActivity, App.BusinessFlow, App.BusinessFlow.CurrentActivity);
+                        await App.AutomateTabGingerRunner.ContinueRunAsync(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eContinueFrom.SpecificActivity, App.BusinessFlow,(Activity) App.BusinessFlow.CurrentActivity);
                         break;
                     default:
                         throw new NotImplementedException();

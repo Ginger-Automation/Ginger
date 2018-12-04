@@ -31,6 +31,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.ALM.QC;
 using GingerCore.ALM.QCRestAPI;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.ALM
 {
@@ -316,8 +317,8 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eAppReporterLogLevel.INFO, ("Update selected Activities Groups of business flow: " + businessFlow.Name + " from ALM"));
 
-            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivitiesGroup>();
+            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivity>();
 
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
@@ -332,8 +333,8 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eAppReporterLogLevel.INFO, ("Update business flow: " + businessFlow.Name + " from ALM"));
 
-            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivitiesGroup>();
+            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivity>();
 
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
@@ -343,7 +344,7 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = null;
         }
 
-        public void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
+        public void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> grdActivitiesGroups)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             Reporter.ToLog(eAppReporterLogLevel.INFO, ("Exporting Activity Groups of business flow: " + businessFlow.Name + " to ALM"));

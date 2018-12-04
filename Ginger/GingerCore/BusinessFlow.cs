@@ -600,7 +600,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActivitiesGroup> ActivitiesGroups = new ObservableList<ActivitiesGroup>();
+        public ObservableList<IActivitiesGroup> ActivitiesGroups = new ObservableList<IActivitiesGroup>();
 
         public void AddActivitiesGroup(ActivitiesGroup activitiesGroup = null)
         {
@@ -635,8 +635,8 @@ namespace GingerCore
         {
             if (this.ActivitiesGroups.Where(ag => ag.Name == activitiesGroup.Name).FirstOrDefault() == null) return; //no name like it in the group
 
-            List<ActivitiesGroup> sameNameObjList =
-                this.ActivitiesGroups.Where(obj => obj.Name == activitiesGroup.Name).ToList<ActivitiesGroup>();
+            List<IActivitiesGroup> sameNameObjList =
+                this.ActivitiesGroups.Where(obj => obj.Name == activitiesGroup.Name).ToList();
             if (sameNameObjList.Count == 1 && sameNameObjList[0] == activitiesGroup) return; //Same internal object
 
             //Set unique name
@@ -707,7 +707,7 @@ namespace GingerCore
             {
                 for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
                 {
-                    ActivityIdentifiers actIdentifis = group.ActivitiesIdentifiers[indx];
+                    ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[indx];
                     IActivity activ = this.Activities.Where(act => act.ActivityName == actIdentifis.ActivityName && act.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
                     if (activ == null)
                         activ = this.Activities.Where(act => act.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
@@ -742,7 +742,7 @@ namespace GingerCore
                 case (eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities):
                     foreach (Activity act in this.Activities)
                     {
-                        ActivitiesGroup group = this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault();
+                        IActivitiesGroup group = this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault();
                         if (group != null)
                             if ((group.ActivitiesIdentifiers.Where(actidnt => actidnt.ActivityName == act.ActivityName && actidnt.ActivityGuid == act.Guid).FirstOrDefault()) == null)
                                 act.ActivitiesGroupID = string.Empty;

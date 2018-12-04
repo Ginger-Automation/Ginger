@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using static Amdocs.Ginger.Common.InterfacesLib.IActivitiesGroup;
 
 namespace GingerCore.Activities
 {
@@ -42,12 +43,7 @@ namespace GingerCore.Activities
         }
 
 
-        public enum executionLoggerStatus
-        {
-            NotStartedYet,
-            StartedNotFinishedYet,
-            Finished
-        }
+    
 
         private executionLoggerStatus _executionLoggerStatus = executionLoggerStatus.NotStartedYet;
 
@@ -110,7 +106,7 @@ namespace GingerCore.Activities
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActivityIdentifiers> ActivitiesIdentifiers = new ObservableList<ActivityIdentifiers>();
+        public ObservableList<IActivityIdentifiers> ActivitiesIdentifiers { get; set; } = new ObservableList<IActivityIdentifiers>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();
@@ -151,7 +147,7 @@ namespace GingerCore.Activities
 
         public bool CheckActivityInGroup(Activity activity)
         {
-            ObservableList<ActivityIdentifiers> lstactIden = this.ActivitiesIdentifiers;
+            ObservableList<IActivityIdentifiers> lstactIden = this.ActivitiesIdentifiers;
             foreach (ActivityIdentifiers actIdents in lstactIden)
             {
                 if (actIdents.IdentifiedActivity == activity)
@@ -162,7 +158,7 @@ namespace GingerCore.Activities
 
         public void RemoveActivityFromGroup(Activity activity)
         {
-            ObservableList<ActivityIdentifiers> lstactIden = this.ActivitiesIdentifiers;
+            ObservableList<IActivityIdentifiers> lstactIden = this.ActivitiesIdentifiers;
             foreach (ActivityIdentifiers actIdents in lstactIden)
             {
                 if (actIdents.IdentifiedActivity == activity)
@@ -182,8 +178,10 @@ namespace GingerCore.Activities
         { 
             get
             {
-                foreach (ActivityIdentifiers actIdent in ActivitiesIdentifiers) actIdent.RefreshActivityIdentifiers();
-                List<ActivityIdentifiers> automatedActsInGroup = ActivitiesIdentifiers.Where(x=>x.ActivityAutomationStatus ==
+                foreach (IActivityIdentifiers actIdent in ActivitiesIdentifiers)
+                {
+                   ((ActivityIdentifiers)actIdent).RefreshActivityIdentifiers();
+                } List<IActivityIdentifiers> automatedActsInGroup = ActivitiesIdentifiers.Where(x=>x.ActivityAutomationStatus ==
                                                                               eActivityAutomationStatus.Automated).ToList();
                 double automatedActsPrecanteg;
                 if (automatedActsInGroup == null || automatedActsInGroup.Count == 0)

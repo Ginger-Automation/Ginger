@@ -80,12 +80,12 @@ namespace GingerCore.ALM.RQM
 
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
-                    ActivitiesGroup repoActivsGroup = null;
+                    IActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
                     if (repoActivsGroup != null)
                     {
-                        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance(true);
+                        tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance(true);
                         tcActivsGroup.ExternalID = tcActivsGroup.ExternalID.Replace("RQMRecordID=" + ExportToRQM.GetExportedIDString(tcActivsGroup.ExternalID, "RQMRecordID"), "RQMRecordID=");
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                         busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
@@ -131,7 +131,7 @@ namespace GingerCore.ALM.RQM
                         {
                             //check if it is part of the Activities Group
                             //ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RQMIndex).FirstOrDefault();
-                            ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID != null ? x.ActivityExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID != null ? x.ActivityExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false).FirstOrDefault();
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
@@ -324,12 +324,12 @@ namespace GingerCore.ALM.RQM
 
                             //check if the TC is already exist in repository
                             ActivitiesGroup tcActivsGroup;
-                            ActivitiesGroup repoActivsGroup = null;
+                            IActivitiesGroup repoActivsGroup = null;
                             if (repoActivsGroup == null)
                                 repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
                             if (repoActivsGroup != null)
                             {
-                                tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
+                                tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance();
                                 busFlow.InsertActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
                                 busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
                                 busFlow.AttachActivitiesGroupsAndActivities();
@@ -367,7 +367,7 @@ namespace GingerCore.ALM.RQM
                                 if (repoStepActivity != null)
                                 {
                                     //check if it is part of the Activities Group
-                                    ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RQMIndex).FirstOrDefault();
+                                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RQMIndex).FirstOrDefault();
                                     if (groupStepActivityIdent != null)
                                     {
                                         //already in Activities Group so get link to it
@@ -538,12 +538,12 @@ namespace GingerCore.ALM.RQM
 
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
-                    ActivitiesGroup repoActivsGroup = null;
+                    IActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
                     if (repoActivsGroup != null)
                     {
-                        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
+                        tcActivsGroup =(ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance();
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                         busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
                         busFlow.AttachActivitiesGroupsAndActivities();
@@ -581,7 +581,7 @@ namespace GingerCore.ALM.RQM
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RQMIndex).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent =(ActivityIdentifiers) tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RQMIndex).FirstOrDefault();
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it

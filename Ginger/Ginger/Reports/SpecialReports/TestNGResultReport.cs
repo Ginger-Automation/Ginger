@@ -22,6 +22,7 @@ using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Actions;
 using Ginger.Reports;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Reports
 {
@@ -49,7 +50,7 @@ namespace Ginger.Reports
             foreach (BusinessFlowReport BFR in BizFlows)
             {
                 string BFResults = "";
-                BusinessFlow BF = BFR.GetBusinessFlow();
+                BusinessFlow BF =(BusinessFlow)BFR.GetBusinessFlow();
                 totalCount = totalCount + BF.Activities.Count;
                 reportClasses = reportClasses + @"
             <class name=""" + BF.Name + @".Ginger Business Flow"">";
@@ -94,14 +95,14 @@ namespace Ginger.Reports
                 {
                     if (item.ActivitiesIdentifiers.Count > 0)
                     {
-                        List<Activity> acts = item.ActivitiesIdentifiers.Select(a => a.IdentifiedActivity).ToList();
+                        List<IActivity> acts = item.ActivitiesIdentifiers.Select(a => a.IdentifiedActivity).ToList();
                         Amdocs.Ginger.CoreNET.Execution.eRunStatus status = getGroupActivityStatus(acts, ref elapsed);
                         BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, GingerCore.General.ConvertInvalidXMLCharacters(BF.Name), GingerCore.General.ConvertInvalidXMLCharacters(item.Name), GingerCore.General.ConvertInvalidXMLCharacters(item.Description), elapsed);
                     }
                 }
 
                 //create ungrouped for activities that are not in any group
-                List<Activity> unGroupedAct = new List<Activity>();
+                List<IActivity> unGroupedAct = new List<IActivity>();
                 foreach (var item in BF.Activities)
                 {
                     if (item.ActivitiesGroupID == string.Empty)
@@ -124,7 +125,7 @@ namespace Ginger.Reports
             return BFResults;
         }
 
-        private Amdocs.Ginger.CoreNET.Execution.eRunStatus getGroupActivityStatus(List<Activity> activityList, ref long? elapsed)
+        private Amdocs.Ginger.CoreNET.Execution.eRunStatus getGroupActivityStatus(List<IActivity> activityList, ref long? elapsed)
         {
             Amdocs.Ginger.CoreNET.Execution.eRunStatus status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
 

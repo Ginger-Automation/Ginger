@@ -40,7 +40,7 @@ namespace GingerCore.ALM.QCRestAPI
 
                     int order = 1;
                     foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
-                        CreateTestStep(test, actIdent.IdentifiedActivity, designStepsFields, designStepsParamsFields, order++);
+                        CreateTestStep(test, (Activity)actIdent.IdentifiedActivity, designStepsFields, designStepsParamsFields, order++);
                 }
                 else //##update existing test case
                 {
@@ -61,7 +61,7 @@ namespace GingerCore.ALM.QCRestAPI
         public static bool ExportBusinessFlowToQC(BusinessFlow businessFlow, QCTestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ObservableList<ExternalItemFieldBase> testInstanceFields, ref string result)
         {
             QCTestSet testSet = null;
-            ObservableList<ActivitiesGroup> existingActivitiesGroups = new ObservableList<ActivitiesGroup>();
+            ObservableList<IActivitiesGroup> existingActivitiesGroups = new ObservableList<IActivitiesGroup>();
 
             try
             {
@@ -106,7 +106,7 @@ namespace GingerCore.ALM.QCRestAPI
                     QCTestInstanceColl qcTSTests = QCRestAPIConnect.GetTestInstancesOfTestSet(testSet.Id); //list of TSTest's on main TestSet in TestLab 
 
                     //get all BF Activities groups
-                    ObservableList<ActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
+                    ObservableList<IActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
                     if (activGroups.Count > 0)
                     {
                         foreach (ActivitiesGroup activGroup in activGroups)
@@ -482,7 +482,7 @@ namespace GingerCore.ALM.QCRestAPI
                 return false;
         }
 
-        private static void CreateNewTestInstances(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields)
+        private static void CreateNewTestInstances(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields)
         {
             int counter = 1;
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
@@ -530,7 +530,7 @@ namespace GingerCore.ALM.QCRestAPI
             {
                 if(activitiesGroup.ActivitiesIdentifiers[i].ActivityExternalID == null)
                 {
-                    CreateTestStep(test, activitiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity, designStepsFields, designStepsParamsFields, i + 1);
+                    CreateTestStep(test,(Activity) activitiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity, designStepsFields, designStepsParamsFields, i + 1);
                 }
             }
 
@@ -557,7 +557,7 @@ namespace GingerCore.ALM.QCRestAPI
 
             foreach (QCTestCaseStep step in testCaseDesignStep)
             {
-                Activity identifiedActivity = activitiesGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault().IdentifiedActivity;
+                Activity identifiedActivity =(Activity) activitiesGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault().IdentifiedActivity;
                 //set item fields
                 foreach (ExternalItemFieldBase field in designStepsFields)
                 {
@@ -697,13 +697,13 @@ namespace GingerCore.ALM.QCRestAPI
             }
         }
 
-        private static void UpdateTestInstances(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields)
+        private static void UpdateTestInstances(BusinessFlow businessFlow, ObservableList<IActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields)
         {
             QCTestInstanceColl testInstances = ImportFromQCRest.ImportTestSetInstanceData(testSet);
 
             foreach (QCTestInstance testInstance in testInstances)
             {
-                ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString())).FirstOrDefault();
+                IActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString())).FirstOrDefault();
                 if (ag == null)
                     QCRestAPIConnect.DeleteEntity(ResourceType.TEST_CYCLE, testInstance.Id);
                 else

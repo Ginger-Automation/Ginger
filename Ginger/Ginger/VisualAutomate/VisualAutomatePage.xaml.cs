@@ -129,7 +129,7 @@ namespace Ginger.VisualAutomate
 
         private void RefreshDiagram()
         {
-            CreateActivityDiagram(mBusinessFlow.CurrentActivity);
+            CreateActivityDiagram((Activity)mBusinessFlow.CurrentActivity);
         }
 
         private void ActivitiesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

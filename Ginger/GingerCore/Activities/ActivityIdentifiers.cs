@@ -17,12 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using System;
 
 namespace GingerCore.Activities
 {
-    public class ActivityIdentifiers : RepositoryItemBase
+    public class ActivityIdentifiers : RepositoryItemBase, IActivityIdentifiers
     {
         public new static class Fields
         {
@@ -51,8 +52,8 @@ namespace GingerCore.Activities
         
         public bool ExistInRepository { get; set; }
 
-        private Activity mIdentifiedActivity;
-        public Activity IdentifiedActivity
+        private IActivity mIdentifiedActivity;
+        public IActivity IdentifiedActivity
         {
             get
             {
@@ -60,12 +61,12 @@ namespace GingerCore.Activities
             }
             set
             {
-                if (mIdentifiedActivity != null) mIdentifiedActivity.PropertyChanged -= Activity_PropertyChanged;
+                if (mIdentifiedActivity != null)((Activity) mIdentifiedActivity).PropertyChanged -= Activity_PropertyChanged;
                 mIdentifiedActivity= value;
                 if (mIdentifiedActivity != null)
                 {
                     RefreshActivityIdentifiers();
-                    mIdentifiedActivity.PropertyChanged += Activity_PropertyChanged;
+                  ((Activity)  mIdentifiedActivity).PropertyChanged += Activity_PropertyChanged;
                 }
             }
         }

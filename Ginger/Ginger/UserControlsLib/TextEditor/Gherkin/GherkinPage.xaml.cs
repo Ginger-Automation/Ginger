@@ -561,7 +561,7 @@ namespace Ginger.GherkinLib
         {
             // We put all template optimized activity in Activities Group 
 
-            ActivitiesGroup AG = (from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities" select x).FirstOrDefault();
+            ActivitiesGroup AG = (ActivitiesGroup)(from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities" select x).FirstOrDefault();
 
             if (AG == null)
             {
@@ -569,7 +569,7 @@ namespace Ginger.GherkinLib
                 AG.Name = "Optimized Activities";
                 mBizFlow.ActivitiesGroups.Add(AG);
             }
-            ActivitiesGroup AG1 = (from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities - Not in Use" select x).FirstOrDefault();
+            ActivitiesGroup AG1 =(ActivitiesGroup)(from x in mBizFlow.ActivitiesGroups where x.Name == "Optimized Activities - Not in Use" select x).FirstOrDefault();
             if (AG1 == null)
             {
                 AG1 = new ActivitiesGroup();

@@ -140,7 +140,7 @@ namespace Ginger.Activities
             {
                 mBusinessFlow.CurrentActivity = (Activity)grdErrorHandler.CurrentItem;
                 if (mBusinessFlow.CurrentActivity != null)
-                    mBusinessFlow.CurrentActivity.PropertyChanged += CurrentActivity_PropertyChanged;
+                   ((Activity) mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
             }
         }
         private void MarkUnMarkAllActivities(bool ActiveStatus)

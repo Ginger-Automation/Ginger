@@ -99,7 +99,7 @@ namespace Ginger.Actions
             if (actParentActivity != null)
                 mActParentActivity = actParentActivity;
             else
-                mActParentActivity = App.BusinessFlow.CurrentActivity;
+                mActParentActivity = (Activity)App.BusinessFlow.CurrentActivity;
 
             EditMode = editMode;
             mAction.PropertyChanged += ActionPropertyChanged;

@@ -207,7 +207,7 @@ namespace Ginger.GherkinLib
 
             for (int indx = 0; indx < BF.ActivitiesGroups.Count; indx++)
             {
-                if (BF.ActivitiesGroups[indx].ItemName != "Optimized Activities" && BF.ActivitiesGroups[indx].ItemName != "Optimized Activities - Not in Use")
+                if (((ActivitiesGroup)BF.ActivitiesGroups[indx]).ItemName != "Optimized Activities" && ((ActivitiesGroup)BF.ActivitiesGroups[indx]).ItemName != "Optimized Activities - Not in Use")
                 {
                     BF.ActivitiesGroups.RemoveAt(indx);
                     indx--;

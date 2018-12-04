@@ -55,7 +55,7 @@ namespace GingerCore.ALM.QC
                     List<TSTest> qcTSTests = ImportFromQC.GetTSTestsList(testSet); //list of TSTest's on main TestSet in TestLab 
 
                     //get all BF Activities groups
-                    ObservableList<ActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
+                    ObservableList<IActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
                     if (activGroups.Count > 0)
                     {
                         foreach (ActivitiesGroup activGroup in activGroups)
@@ -138,7 +138,7 @@ namespace GingerCore.ALM.QC
                                     {
                                         //search for matching activity based on ID and not order, un matching steps need to be left as No Run
                                         int stepDesignID = (stepsList[index]).Field("ST_DESSTEP_ID");
-                                        Activity matchingActivity = activities.Where(x => x.ExternalID == stepDesignID.ToString()).FirstOrDefault();
+                                        IActivity matchingActivity = activities.Where(x => x.ExternalID == stepDesignID.ToString()).FirstOrDefault();
                                         if (matchingActivity != null)
                                         {
                                             switch(matchingActivity.Status)
@@ -311,7 +311,7 @@ namespace GingerCore.ALM.QC
 
                 //Add/update all test steps + Parameters
                 foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
-                    ExportActivityAsTestStep(test, actIdent.IdentifiedActivity);
+                    ExportActivityAsTestStep(test, (Activity)actIdent.IdentifiedActivity);
 
                 return true;
             }
@@ -397,7 +397,7 @@ namespace GingerCore.ALM.QC
         public static bool ExportBusinessFlowToQC(BusinessFlow businessFlow, TestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ref string result)
         {
             TestSet testSet;
-            ObservableList<ActivitiesGroup> existingActivitiesGroups = new ObservableList<ActivitiesGroup>();
+            ObservableList<IActivitiesGroup> existingActivitiesGroups = new ObservableList<IActivitiesGroup>();
             try
             {
                 if (mappedTestSet == null)
@@ -421,7 +421,7 @@ namespace GingerCore.ALM.QC
                     List tsTestsList = testsF.NewList("");
                     foreach (TSTest tsTest in tsTestsList)
                     {
-                        ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString())).FirstOrDefault();
+                        IActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString())).FirstOrDefault();
                         if (ag == null)
                             testsF.RemoveItem(tsTest.ID);
                         else
