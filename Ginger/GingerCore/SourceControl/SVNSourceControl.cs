@@ -96,7 +96,7 @@ namespace GingerCore.SourceControl
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems, ref string error)
         {
-            if (Path == null ||  Path.Length == 0) return SourceControlFileInfo.eRepositoryItemStatus.Unknown;
+            if (Path == null || Path.Length == 0) return SourceControlFileInfo.eRepositoryItemStatus.Unknown;
 
             if (client == null) Init();
 
@@ -149,7 +149,7 @@ namespace GingerCore.SourceControl
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, List<string> PathsToIgnore = null,bool includLockedFiles = false)
+        public override ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, List<string> PathsToIgnore = null, bool includLockedFiles = false)
         {
             if (client == null) Init();
             ObservableList<SourceControlFileInfo> files = new ObservableList<SourceControlFileInfo>();
@@ -158,14 +158,14 @@ namespace GingerCore.SourceControl
             try
             {
                 client.GetStatus(Path, out statuses);
-                
+
                 foreach (SvnStatusEventArgs arg in statuses)
                 {
                     if (PathsToIgnore != null)
                     {
                         bool pathToIgnoreFound = false;
-                        foreach(string pathToIgnore in PathsToIgnore)
-                            if (System.IO.Path.GetFullPath(arg.FullPath).Contains(System.IO.Path.GetFullPath(pathToIgnore)) ||  arg.FullPath.Contains(pathToIgnore))
+                        foreach (string pathToIgnore in PathsToIgnore)
+                            if (System.IO.Path.GetFullPath(arg.FullPath).Contains(System.IO.Path.GetFullPath(pathToIgnore)) || arg.FullPath.Contains(pathToIgnore))
                             {
                                 pathToIgnoreFound = true;
                                 break;
@@ -174,7 +174,7 @@ namespace GingerCore.SourceControl
                     }
 
                     if (System.IO.Path.GetExtension(arg.FullPath) == ".ldb" || System.IO.Path.GetExtension(arg.FullPath) == ".ignore")
-                         continue;
+                        continue;
 
                     SourceControlFileInfo SCFI = new SourceControlFileInfo();
                     SCFI.Path = arg.FullPath;
@@ -184,9 +184,9 @@ namespace GingerCore.SourceControl
                     SCFI.Diff = "";
                     if (arg.LocalContentStatus == SvnStatus.Modified)
                     {
-                       SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Modified;
-                       Task.Run(() =>
-                       SCFI.Diff = Diff(arg.FullPath, arg.Uri));                       
+                        SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Modified;
+                        Task.Run(() =>
+                        SCFI.Diff = Diff(arg.FullPath, arg.Uri));
                     }
                     if (arg.LocalContentStatus == SvnStatus.NotVersioned)
                     {
@@ -196,7 +196,7 @@ namespace GingerCore.SourceControl
                     {
                         SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Deleted;
                     }
-                    
+
                     if (includLockedFiles)
                     {
                         Collection<SvnListEventArgs> ListEventArgs;
@@ -219,12 +219,12 @@ namespace GingerCore.SourceControl
 
                     if (SCFI.Status != SourceControlFileInfo.eRepositoryItemStatus.Unknown)
                         files.Add(SCFI);
-                }                
+                }
             }
             catch (Exception ex)
             {
                 error = ex.Message + Environment.NewLine + ex.InnerException;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to communicate with SVN server through path "+Path+" got error "+ex.Message);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to communicate with SVN server through path " + Path + " got error " + ex.Message);
                 return files;
             }
 
@@ -254,7 +254,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                
+
                 throw e;
             }
         }
@@ -275,7 +275,7 @@ namespace GingerCore.SourceControl
                     conflictsPaths = mConflictsPaths;
                     return false;
                 }
-                                
+
                 if (result.Revision != -1)
                 {
                     if (supressMessage == true)
@@ -308,7 +308,7 @@ namespace GingerCore.SourceControl
 
             try
             {
-                client.CheckOut(new Uri(URI), Path, out result);              
+                client.CheckOut(new Uri(URI), Path, out result);
             }
             catch (Exception e)
             {
@@ -365,11 +365,11 @@ namespace GingerCore.SourceControl
                             }
                         }
                     }
-                }                
+                }
 
                 client.Commit(Paths, ca, out result);
                 if (result != null)
-                    if ( result.Revision != -1)
+                    if (result.Revision != -1)
                     {
                         Reporter.ToUser(eUserMsgKeys.CommitedToRevision, result.Revision);
                     }
@@ -380,7 +380,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                if (e.InnerException!= null && e.InnerException.ToString().Contains("conflict"))
+                if (e.InnerException != null && e.InnerException.ToString().Contains("conflict"))
                 {
                     if (mConflictsPaths.Count > 0)
                     {
@@ -408,12 +408,12 @@ namespace GingerCore.SourceControl
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private Uri GetRemoteUriFromPath(string Path,out Collection<SvnListEventArgs> ListEventArgs)
+        private Uri GetRemoteUriFromPath(string Path, out Collection<SvnListEventArgs> ListEventArgs)
         {
             try
             {
                 string relativePath = System.IO.Path.GetFullPath(Path);
-                relativePath = relativePath.Replace(SolutionFolder,"");
+                relativePath = relativePath.Replace(SolutionFolder, "");
                 Uri targetUri = new Uri(SourceControlURL + relativePath);
                 SvnTarget target = SvnTarget.FromUri(targetUri);
                 SvnListArgs args = new SvnListArgs();
@@ -431,7 +431,7 @@ namespace GingerCore.SourceControl
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override bool Lock(string Path,string lockComment, ref string error)
+        public override bool Lock(string Path, string lockComment, ref string error)
         {
             if (client == null)
             {
@@ -441,8 +441,8 @@ namespace GingerCore.SourceControl
             try
             {
                 string relativePath = System.IO.Path.GetFullPath(Path);
-                relativePath = relativePath.Replace(SolutionFolder,"");
-                
+                relativePath = relativePath.Replace(SolutionFolder, "");
+
                 Uri targetUri = new Uri(SourceControlURL + relativePath);
                 result = client.RemoteLock(targetUri, lockComment);
             }
@@ -538,12 +538,12 @@ namespace GingerCore.SourceControl
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override bool Revert(string Path,ref string error)
+        public override bool Revert(string Path, ref string error)
         {
             if (client == null) Init();
             try
             {
-                client.Revert(Path, new SvnRevertArgs {Depth = SvnDepth.Infinity });//throw all local changes and return to base copy
+                client.Revert(Path, new SvnRevertArgs { Depth = SvnDepth.Infinity });//throw all local changes and return to base copy
             }
             catch (Exception e)
             {
@@ -660,16 +660,17 @@ namespace GingerCore.SourceControl
                        return true;
                    }
                    );
-                
+
                 bool result = false;
                 if (SourceControlURL.ToUpper().Trim().StartsWith("HTTP"))
                 {
-                    if(!SourceControlURL.EndsWith("/"))
+                    if (!SourceControlURL.EndsWith("/"))
                     {
                         SourceControlURL = SourceControlURL + "/";
                     }
                     WebRequest request = WebRequest.Create(SourceControlURL);
-                    request.Timeout = 15000;
+
+                    request.Timeout = SourceControlTimeout * 1000;
                     request.Credentials = new System.Net.NetworkCredential(SourceControlUser, SourceControlPass);
                     response = (WebResponse)request.GetResponse();
                 }
@@ -750,7 +751,7 @@ namespace GingerCore.SourceControl
                 Collection<SvnListEventArgs> ListEventArgs;
                 Uri targetUri = GetRemoteUriFromPath(path, out ListEventArgs);
 
-                SourceControlItemInfoDetails  SCIID = new SourceControlItemInfoDetails();
+                SourceControlItemInfoDetails SCIID = new SourceControlItemInfoDetails();
 
                 SCIID.ShowFileInfo = true;
                 SCIID.FilePath = info.Path;

@@ -34,7 +34,8 @@ using System.Reflection;
 
 namespace Ginger
 {
-    public enum eGingerStatus {
+    public enum eGingerStatus
+    {
         Closed, Active, AutomaticallyClosed
     }
 
@@ -156,8 +157,8 @@ namespace Ginger
                             RecentSolutions.RemoveAt(j);
                             j--;
                         }
-                    }                        
-                }                    
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -173,7 +174,7 @@ namespace Ginger
                 if (mRecentSolutionsAsObjects == null)
                 {
                     LoadRecentSolutionsAsObjects();
-                }                    
+                }
                 return mRecentSolutionsAsObjects;
             }
             set
@@ -278,6 +279,10 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public string SolutionSourceControlProxyPort { get; set; }
 
+        
+        [IsSerializedForLocalRepository(80)]
+        public int SolutionSourceControlTimeout { get; set; }
+
         [IsSerializedForLocalRepository]
         public string EncryptedSourceControlPass { get; set; }
 
@@ -374,7 +379,7 @@ namespace Ginger
         eUserType mUserType;
         [IsSerializedForLocalRepository]
         public eUserType UserType
-        { 
+        {
             get
             {
                 return mUserType;
@@ -403,7 +408,7 @@ namespace Ginger
                 SaveRecentAppAgentsMapping();
             }
             catch (Exception ex) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
-            
+
             RepositorySerializer.SaveToFile(this, UserProfileFilePath);
         }
 
@@ -416,7 +421,7 @@ namespace Ginger
                 if (string.IsNullOrEmpty(existingSolMapping) == false)
                 {
                     RecentAppAgentsMapping.Remove(existingSolMapping);
-                }                    
+                }
 
                 //create new save to this solution
                 existingSolMapping = mSolution.Name + "***";
@@ -480,10 +485,10 @@ namespace Ginger
         public static UserProfile LoadUserProfile()
         {
             if (General.isDesignMode()) return null;
-            
+
             string InstallationConfigurationPath = System.Reflection.Assembly.GetExecutingAssembly().Location.Replace("Ginger.exe", "Ginger.InstallationConfiguration.Json");
             DateTime InstallationDT = File.GetLastWriteTime(InstallationConfigurationPath);
-            
+
             string UserConfigJsonString = string.Empty;
             JObject UserConfigJsonObj = null;
             Dictionary<string, string> UserConfigdictObj = null;
@@ -502,7 +507,7 @@ namespace Ginger
                     Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("Loading existing User Profile at '{0}'", UserProfileFilePath));
                     string userProfileTxt = File.ReadAllText(UserProfileFilePath);
                     UserProfile up = (UserProfile)NewRepositorySerializer.DeserializeFromText(userProfileTxt);
-                    up.FilePath = UserProfileFilePath;                 
+                    up.FilePath = UserProfileFilePath;
                     if (DateTime.Compare(UserProfileDT, InstallationDT) < 0)
                     {
                         if (UserConfigdictObj != null)
@@ -526,7 +531,7 @@ namespace Ginger
             {
                 up2.AddUserConfigProperties(UserConfigdictObj);
             }
-            
+
             return up2;
         }
 
@@ -567,9 +572,9 @@ namespace Ginger
         public void LoadDefaults()
         {
             AutoLoadLastSolution = true; //#Task 160            
-            string defualtFolder= WorkSpace.Instance.DefualtUserLocalWorkingFolder;//calling it so it will be created
+            string defualtFolder = WorkSpace.Instance.DefualtUserLocalWorkingFolder;//calling it so it will be created
         }
-               
+
         internal string GetDefaultReport()
         {
             if (!string.IsNullOrEmpty(ReportTemplateName))

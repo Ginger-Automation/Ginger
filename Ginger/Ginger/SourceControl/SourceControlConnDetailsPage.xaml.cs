@@ -42,7 +42,7 @@ namespace Ginger.SourceControl
             DownloadProjectPage
         }
 
-        public SourceControlConnDetailsPage( )
+        public SourceControlConnDetailsPage()
         {
             InitializeComponent();
             Init();
@@ -50,7 +50,7 @@ namespace Ginger.SourceControl
 
         private void Init()
         {
-            Bind();            
+            Bind();
         }
 
         private void Bind()
@@ -59,13 +59,23 @@ namespace Ginger.SourceControl
             SourceControlClassTextBox.IsReadOnly = true;
             SourceControlClassTextBox.IsEnabled = false;
 
-            SourceControlURLTextBox.Text = SourceControlIntegration.GetRepositoryURL( App.UserProfile.Solution.SourceControl);
-                SourceControlURLTextBox.IsReadOnly = true;
-                SourceControlURLTextBox.IsEnabled = false;
+            SourceControlURLTextBox.Text = SourceControlIntegration.GetRepositoryURL(App.UserProfile.Solution.SourceControl);
+            SourceControlURLTextBox.IsReadOnly = true;
+            SourceControlURLTextBox.IsEnabled = false;
 
-                App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlUser);
-                App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlPass);
-
+            App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlUser);
+            App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SourceControlPass);
+            if (SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString())
+            {
+                xTimeoutPanel.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                App.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
+                xTimeoutPanel.Visibility = Visibility.Visible;
+               
+              
+            }
             App.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorName);
             App.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty, App.UserProfile.Solution.SourceControl, SourceControlBase.Fields.SolutionSourceControlAuthorEmail);
 
@@ -79,7 +89,7 @@ namespace Ginger.SourceControl
 
             SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
 
-            if(String.IsNullOrEmpty(App.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+            if (String.IsNullOrEmpty(App.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorEmail))
             {
                 App.UserProfile.Solution.SourceControl.SolutionSourceControlAuthorEmail = App.UserProfile.Solution.SourceControl.SourceControlUser;
             }
@@ -98,7 +108,7 @@ namespace Ginger.SourceControl
 
         public bool TestSourceControlConnection()
         {
-            bool result =  SourceControlIntegration.TestConnection(App.UserProfile.Solution.SourceControl, eSourceControlContext.ConnectionDetailsPage, false);
+            bool result = SourceControlIntegration.TestConnection(App.UserProfile.Solution.SourceControl, eSourceControlContext.ConnectionDetailsPage, false);
             Mouse.OverrideCursor = null;
             return result;
         }
@@ -109,8 +119,8 @@ namespace Ginger.SourceControl
         }
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
-        {           
-            App.UserProfile.Solution.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);           
+        {
+            App.UserProfile.Solution.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)
@@ -136,13 +146,20 @@ namespace Ginger.SourceControl
             Button SaveBtn = new Button();
             SaveBtn.Content = "Save Configuration";
             SaveBtn.Click += new RoutedEventHandler(SaveConfiguration_Click);
-     
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn, SaveBtn },true,"Close", new RoutedEventHandler(Close_Click));
+
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn, SaveBtn }, true, "Close", new RoutedEventHandler(Close_Click));
         }
-      
+
         private void SourceControlUserDetails_TextChanged(object sender, TextChangedEventArgs e)
         {
             SourceControlIntegration.Init(App.UserProfile.Solution.SourceControl);
+            
+        }
+
+        private void txtSourceControlConnectionTimeout_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SourceControlIntegration.Init(App.UserProfile.Solution.SourceControl);
+            App.UserProfile.SolutionSourceControlTimeout = Int32.Parse(xTextSourceControlConnectionTimeout.Text);
         }
     }
 }
