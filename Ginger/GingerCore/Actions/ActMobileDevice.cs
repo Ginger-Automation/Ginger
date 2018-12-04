@@ -67,10 +67,41 @@ namespace GingerCore.Actions
             Wait = 9,
             TakeScreenShot = 10,
             RefreshDeviceScreenImage = 14,
+            PressKey = 15,
+            OpenAppByName = 16
+        }
+
+        public enum ePressKey
+        {
+            OK,
+            MENU,
+            HOME,
+            BACK,
+            LEFT,
+            RIGHT,
+            UP,
+            DOWN,
+            VOL_UP,
+            VOL_DOWN,
+            CAMERA,
+            CLEAR,
+            APP_SWITCH,
+            LONGHOME,
+            KEYBOARD_GO,
+            KEYBOARD_SEARCH,
+            KEYBOARD_SEND,
+            KEYBOARD_NEXT,
+            KEYBOARD_DONE,
+            KEYBOARD_PREVIOUS,
+            KEYBOARD_ENTER,
+            KEYBOARD_SUBMIT
         }
 
         [IsSerializedForLocalRepository]
         public eMobileDeviceAction MobileDeviceAction { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public ePressKey MobilePressKey { get; set; }
 
         public override String ToString()
         {

@@ -31,10 +31,20 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
+using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Appium.Android;
+using System.Drawing;
+using System.IO;
+using System.Windows.Media.Imaging;
+using static GingerCore.Actions.ActMobileDevice;
+using OpenQA.Selenium.Appium.iOS;
+using OpenQA.Selenium.Safari;
 
-namespace GingerCore.Drivers.Mobile.Perfecto {
+namespace GingerCore.Drivers.Mobile.Perfecto
+{
 
-    public class PerfectoDriver : DriverBase {
+    public class PerfectoDriver : DriverBase
+    {
 
         [UserConfigured]
         [UserConfiguredDefault("partners.perfectomobile.com")]
@@ -56,119 +66,192 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
         [UserConfiguredDescription("Perfecto device ID")]
         public String Perfecto_Device_ID { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("30")]
+        [UserConfiguredDescription("Implicit Wait for Web Action Completion")]
+        public int ImplicitWait { get; set; }
+
         public bool ConnectedToDevice = false;
-        private RemoteWebDriverExtended Driver;
-        
-        public enum eSwipeSide {
-            Up, Down, Left, Right
+        //private AppiumDriver<IWebElement> AppiumDriver;
+        private RemoteWebDriver AppiumDriver;
+        private SeleniumDriver mSeleniumDriver;//selenium base
+
+
+        public enum eContextType
+        {
+            NativeAndroid,
+            NativeIOS,
+            WebAndroid,
+            WebIOS
         }
 
-        public PerfectoDriver(BusinessFlow BF) {
+
+
+        private eContextType mContextType { get; set; }
+
+        //private RemoteWebDriver WebDriver;
+
+        public enum eSwipeSide
+        {
+            Up,
+            Down,
+            Left,
+            Right
+        }
+
+        public PerfectoDriver(eContextType ContextType, BusinessFlow BF)
+        {
+            mContextType = ContextType;
             BusinessFlow = BF;
         }
 
-        public override void StartDriver() {
+        public override void StartDriver()
+        {
             ConnectedToDevice = ConnectToPerfecto();
         }
 
         //Connect to Perfecto mobile driver
-        public Boolean ConnectToPerfecto() {
-
-            var browserName = "mobileOS";
+        public Boolean ConnectToPerfecto()
+        {
 
             //Show Perfecto device dashboard in order to view running test flow
             String devicesDashboard = "https://" + Perfecto_Host_URL + "/nexperience/dashboard.jsp";
-
             System.Diagnostics.Process.Start(devicesDashboard);
+            //PerfectoLabUtils.SetPerfectoLabExecutionId(capabilities, Perfecto_Host_URL);
 
-            //Get List of devices available in Perfecto
-            //XmlDocument XmlListOfDevices = new XmlDocument();
-            //String urlToGetDevicesList = "https://" + Perfecto_Host_URL + "/services/handsets?operation=list&user=" + Perfecto_User_Name + "&password=" + Perfecto_Password + "&status=connected";
-            //XmlListOfDevices.Load(urlToGetDevicesList);
-            //ShowListOfDevices(XmlListOfDevices);
+            var url = new Uri(string.Format("https://{0}/nexperience/perfectomobile/wd/hub", Perfecto_Host_URL));
 
-            DesiredCapabilities capabilities = new DesiredCapabilities(browserName, string.Empty, new Platform(PlatformType.Any));
+            try
+            {
+                if (mContextType == eContextType.NativeAndroid)
+                {
+                    DriverOptions DO = GetDriverOptions();
+                    AppiumDriver = new AndroidDriver<IWebElement>(url, DO);
+                }
+                else if (mContextType == eContextType.NativeIOS)
+                {
+                    DriverOptions DO = GetDriverOptions();
+                    AppiumDriver = new IOSDriver<IWebElement>(url, DO);
+                }
+                else if (mContextType == eContextType.WebAndroid || mContextType == eContextType.WebIOS)
+                {
+                    DesiredCapabilities capabilities = GetDesiredCapabilities();
+                    AppiumDriver = new RemoteWebDriver(url, capabilities);
+                }
+
+                mSeleniumDriver = new SeleniumDriver(AppiumDriver);
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error, Could not create Perfecto Mobile Automation Driver, " + e.Message);
+            }
+
+            if (mContextType != eContextType.WebAndroid)
+            {
+                ((AppiumDriver<IWebElement>)AppiumDriver).Context = "NATIVE_APP";
+                //driver.context("WEBVIEW"); 
+            }
+
+
+            AppiumDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
+
+
+            return true;
+        }
+
+        private DesiredCapabilities GetDesiredCapabilities()
+        {
+            DesiredCapabilities capabilities = new DesiredCapabilities("mobileOS", string.Empty, new Platform(PlatformType.Any));
 
             capabilities.SetCapability("user", Perfecto_User_Name);
             capabilities.SetCapability("password", Perfecto_Password);
             //capabilities.SetCapability("securityToken", Perfecto_Password);
             capabilities.SetCapability("deviceName", Perfecto_Device_ID);
             capabilities.SetPerfectoLabExecutionId(Perfecto_Host_URL);
-          
-            var url = new Uri(string.Format("https://{0}/nexperience/perfectomobile/wd/hub", Perfecto_Host_URL));
-            try
-            {
-                Driver = new RemoteWebDriverExtended(url, capabilities);
-            }
-            catch (Exception e)
-            {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error, Could not create Perfecto Mobile Automation Driver, " + e.Message);
-            }
-            Driver.Manage().Timeouts().ImplicitWait=TimeSpan.FromSeconds(15);
-
-            Dictionary<String, Object> pars = new Dictionary<String, Object>();
-            pars.Add("sources", "Device");
-            pars.Add("interval", 15);
-            Driver.ExecuteScript("mobile:monitor:start", pars);
-
-            return true;
+            return capabilities;
         }
 
-        private void ShowListOfDevices(XmlDocument XmlListOfDevices) {
+        private DriverOptions GetDriverOptions()
+        {
+            DriverOptions driverOptions = null;
+            switch (mContextType)
+            {
+                case eContextType.NativeIOS:
+                case eContextType.NativeAndroid:
+                    driverOptions = new AppiumOptions();
+                    break;
+                case eContextType.WebAndroid:
+                    driverOptions = new ChromeOptions();
+                    break;
+                case eContextType.WebIOS:
+                    driverOptions = new SafariOptions();
+                    break;
+            }
+
+            driverOptions.AddAdditionalCapability("user", Perfecto_User_Name);
+            driverOptions.AddAdditionalCapability("password", Perfecto_Password);
+            driverOptions.AddAdditionalCapability("deviceName", Perfecto_Device_ID);
+
+            return driverOptions;
         }
 
-        public override void CloseDriver() {
-            Driver.Quit();
+
+        public override void CloseDriver()
+        {
+            AppiumDriver.Quit();
             ConnectedToDevice = false;
         }
 
-        public override void RunAction(Act act) {
+        public override void RunAction(Act act)
+        {
             //Handle all actions types
             Type ActType = act.GetType();
 
-            if (ActType == typeof(ActGotoURL)) {
-                GotoURL((ActGotoURL)act);
-                return;
-            }
-            if (ActType == typeof(ActMobileDevice)) {
+            if (ActType == typeof(ActMobileDevice))
+            {
                 MobileDeviceActionHandler((ActMobileDevice)act);
                 return;
             }
-            if (ActType == typeof(ActGenElement)) {
+            if (ActType == typeof(ActUIElement))
+            {
+                mSeleniumDriver.HandleActUIElement((ActUIElement)act);
+                return;
+            }
+            if (ActType == typeof(ActBrowserElement))
+            {
+                mSeleniumDriver.ActBrowserElementHandler((ActBrowserElement)act);
+                return;
+            }
+            if (ActType == typeof(ActGenElement))
+            {
                 GenElementHandler((ActGenElement)act);
                 return;
             }
-            if (ActType == typeof(ActScreenShot)) {
-                TakeScreenShot(act);
+            if (ActType == typeof(ActScreenShot))
+            {
+                AddCurrentScreenShot(act);
                 return;
             }
         }
 
-        private void GotoURL(ActGotoURL act) {
-            string sURL = act.ValueForDriver.ToLower();
-            if (sURL.StartsWith("www")) {
-                sURL = "http://" + act.ValueForDriver;
-            }
-            else {
-                sURL = act.ValueForDriver;
-            }
-
-            Driver.Navigate().GoToUrl(sURL);
-        }
 
         //Handle all Generic Actions
-        public void GenElementHandler(ActGenElement act) {
+        public void GenElementHandler(ActGenElement act)
+        {
             IWebElement e;
-            switch (act.GenElementAction) {
+            switch (act.GenElementAction)
+            {
                 //Click and ClickAt
                 case ActGenElement.eGenElementAction.ClickAt:
                 case ActGenElement.eGenElementAction.Click:
                     e = LocateElement(act);
-                    if (e == null) {
+                    if (e == null)
+                    {
                         act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValue;
                         return;
                     }
-                    else {
+                    else
+                    {
                         e.Click();
                     }
                     break;
@@ -176,28 +259,33 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
                 //Set Value
                 case ActGenElement.eGenElementAction.SetValue:
                     e = LocateElement(act);
-                    if (e != null) {
-                        if (e.TagName == "select") {
+                    if (e != null)
+                    {
+                        if (e.TagName == "select")
+                        {
                             SelectElement combobox = new SelectElement(e);
                             string val = act.ValueForDriver;
                             combobox.SelectByText(val);
                             act.ExInfo += "Selected Value - " + val;
                             return;
                         }
-                        if (e.TagName == "input" && e.GetAttribute("type") == "checkbox") {
-                            ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('checked',arguments[1])", e, act.ValueForDriver);
+                        if (e.TagName == "input" && e.GetAttribute("type") == "checkbox")
+                        {
+                            ((IJavaScriptExecutor)AppiumDriver).ExecuteScript("arguments[0].setAttribute('checked',arguments[1])", e, act.ValueForDriver);
                             return;
                         }
 
                         //Special case for FF 
-                        if (Driver.GetType() == typeof(FirefoxDriver) && e.TagName == "input" && e.GetAttribute("type") == "text") {
+                        if (AppiumDriver.GetType() == typeof(FirefoxDriver) && e.TagName == "input" && e.GetAttribute("type") == "text")
+                        {
                             e.Clear();
                             e.SendKeys(GetKeyName(act.ValueForDriver));
                         }
                         else
-                            ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.ValueForDriver);
+                            ((IJavaScriptExecutor)AppiumDriver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.ValueForDriver);
                     }
-                    else {
+                    else
+                    {
                         act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
                         return;
                     }
@@ -206,11 +294,13 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
                 //KeyType - similar to Keyboard Input
                 case ActGenElement.eGenElementAction.KeyType:
                     e = LocateElement(act);
-                    if (e != null) {
+                    if (e != null)
+                    {
                         e.Clear();
                         e.SendKeys(GetKeyName(act.ValueForDriver));
                     }
-                    else {
+                    else
+                    {
                         act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
                         return;
                     }
@@ -220,10 +310,12 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
                 case ActGenElement.eGenElementAction.KeyboardInput:
                     e = LocateElement(act);
 
-                    if (e != null) {
+                    if (e != null)
+                    {
                         e.SendKeys(GetKeyName(act.ValueForDriver));
                     }
-                    else {
+                    else
+                    {
                         act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
                         return;
                     }
@@ -232,12 +324,14 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
                 //Check this
                 case ActGenElement.eGenElementAction.GetValue:
                     e = LocateElement(act);
-                    if (e != null) {
+                    if (e != null)
+                    {
                         act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("text"));
                         if (act.GetReturnParam("Actual") == null)
                             act.AddOrUpdateReturnParamActual("Actual", e.Text);
                     }
-                    else {
+                    else
+                    {
                         act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValue;
                         return;
                     }
@@ -246,14 +340,16 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
                 //GoToURL - implemented also as GoToURL action and not in GenElementHandler action
                 case ActGenElement.eGenElementAction.GotoURL:
                     string sURL = act.ValueForDriver.ToLower();
-                    if (sURL.StartsWith("www")) {
+                    if (sURL.StartsWith("www"))
+                    {
                         sURL = "http://" + act.ValueForDriver;
                     }
-                    else {
+                    else
+                    {
                         sURL = act.ValueForDriver;
                     }
 
-                    Driver.Navigate().GoToUrl(sURL);
+                    AppiumDriver.Navigate().GoToUrl(sURL);
                     break;
 
                 //Wait Action
@@ -263,7 +359,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
 
                 //Delete all Cookies
                 case ActGenElement.eGenElementAction.DeleteAllCookies:  //TODO: FIXME: This action should not be part of GenElement
-                    Driver.Manage().Cookies.DeleteAllCookies();
+                    AppiumDriver.Manage().Cookies.DeleteAllCookies();
                     break;
 
                 //Back Click
@@ -272,15 +368,19 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
                     break;
 
                 case ActGenElement.eGenElementAction.CloseBrowser:
-                    Dictionary<String, Object> pars = new Dictionary<String, Object>();
-                    Driver.ExecuteScript("mobile:monitor:stop", pars);
                     break;
             }
         }
 
-        private void MobileDeviceActionHandler(ActMobileDevice act) {
-            try {
-                switch (act.MobileDeviceAction) {
+        private void MobileDeviceActionHandler(ActMobileDevice act)
+        {
+            try
+            {
+                switch (act.MobileDeviceAction)
+                {
+                    case ActMobileDevice.eMobileDeviceAction.PressKey:
+                        PressBtn(act.MobilePressKey);
+                        break;
                     case ActMobileDevice.eMobileDeviceAction.PressBackButton:
                         PressBackBtn();
                         break;
@@ -302,101 +402,179 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
                     case ActMobileDevice.eMobileDeviceAction.Wait:
                         Thread.Sleep(Convert.ToInt32(act.ValueForDriver) * 1000);
                         break;
+                    case ActMobileDevice.eMobileDeviceAction.OpenAppByName:
+                        OpenAppByName(act.ValueForDriver);
+                        break;
                     case ActMobileDevice.eMobileDeviceAction.TakeScreenShot:
-                        TakeScreenShot(act);
+                        AddCurrentScreenShot(act);
+                        break;
+                    default:
+                        act.Error = "Error: This operation is missing implementation";
                         break;
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
         }
 
+        private void OpenAppByName(string valueForDriver)
+        {
+            Dictionary<String, Object> params1 = new Dictionary<String, Object>();
+            params1.Add("name", valueForDriver);
+            AppiumDriver.ExecuteScript("mobile:application:open", params1);
+        }
+
+        private void PressBtn(ePressKey PressKey)
+        {
+            Dictionary<String, Object> params1 = new Dictionary<String, Object>();
+            params1.Add("keySequence", PressKey.ToString());
+            AppiumDriver.ExecuteScript("mobile:presskey", params1);
+        }
+
+
         //Back Click Action
-        private void PressBackBtn() {
+        private void PressBackBtn()
+        {
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
             params1.Add("keySequence", "BACK");
-            Driver.ExecuteScript("mobile:presskey", params1);
+            AppiumDriver.ExecuteScript("mobile:presskey", params1);
+        }
+
+        private void PressMenuBtn()
+        {
+            Dictionary<String, Object> params1 = new Dictionary<String, Object>();
+            params1.Add("keySequence", "Menu");
+            AppiumDriver.ExecuteScript("mobile:presskey", params1);
         }
 
         //Home Click Action
-        private void PressHomeBtn() {
+        private void PressHomeBtn()
+        {
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
             params1.Add("keySequence", "HOME");
-            Driver.ExecuteScript("mobile:presskey", params1);
+            AppiumDriver.ExecuteScript("mobile:presskey", params1);
         }
 
         //Swipe Action
-        private void SwipeScreen(eSwipeSide side) {
+        private void SwipeScreen(eSwipeSide side)
+        {
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
-            switch (side) {
+            switch (side)
+            {
                 case eSwipeSide.Down:
                     params1.Add("start", "50%,80%");
                     params1.Add("end", "50%,20%");
-                    Driver.ExecuteScript("mobile:touch:swipe", params1);
+                    AppiumDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 case eSwipeSide.Up:
                     params1.Add("start", "50%,20%");
                     params1.Add("end", "50%,80%");
-                    Driver.ExecuteScript("mobile:touch:swipe", params1);
+                    AppiumDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 case eSwipeSide.Left:
                     params1.Add("start", "20%,50%");
                     params1.Add("end", "80%,50%");
-                    Driver.ExecuteScript("mobile:touch:swipe", params1);
+                    AppiumDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 case eSwipeSide.Right:
                     params1.Add("start", "80%,50%");
                     params1.Add("end", "20%,50%");
-                    Driver.ExecuteScript("mobile:touch:swipe", params1);
+                    AppiumDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
             }
         }
 
         //Wait Action
-        private void WaitAction(ActGenElement act) {
-            try {
+        private void WaitAction(ActGenElement act)
+        {
+            try
+            {
                 int number = Int32.Parse(act.ValueForDriver);
                 Thread.Sleep(number * 1000);
             }
-            catch (FormatException) {
+            catch (FormatException)
+            {
 
                 //TODO: give message to user in grid
                 //if format isn't right
 
             }
-            catch (OverflowException) {
+            catch (OverflowException)
+            {
                 //TODO: give message to user in grid
                 //totally bogus value
             }
         }
 
-        private void TakeScreenShot(Act act) {
-            //Deal with screen shots here
+        private Bitmap GetScreenShot(Act act)
+        {
+            try
+            {
+                Screenshot ss = AppiumDriver.GetScreenshot();
+                using (var ms = new System.IO.MemoryStream(ss.AsByteArray))
+                {
+                    using (MemoryStream outStream = new MemoryStream())
+                    {
+                        BitmapEncoder enc = new BmpBitmapEncoder();
+                        enc.Frames.Add(BitmapFrame.Create(ms));
+                        enc.Save(outStream);
+                        System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
+                        return new Bitmap(bitmap);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "PerfectoDriver - Failed to take Screenshot", ex);
+                return null;
+            }
+
+
         }
 
-        public IWebElement LocateElement(Act act, bool AlwaysReturn = false) {
+        private void AddCurrentScreenShot(Act act)
+        {
+            Bitmap bmp = GetScreenShot(act);
+            if (bmp != null)
+            {
+                act.AddScreenShot(bmp, AppiumDriver.Title);
+            }
+            else
+            {
+                act.Error += "Error: Cannot take screen shot.";
+            }
+        }
+
+        public IWebElement LocateElement(Act act, bool AlwaysReturn = false)
+        {
             eLocateBy LocatorType = act.LocateBy;
             string LocValue = act.LocateValueCalculated;
             IWebElement elem = null;
-            
-            if (LocatorType == eLocateBy.ByID) {
-                elem = Driver.FindElementById(LocValue);
+
+            if (LocatorType == eLocateBy.ByID)
+            {
+                var Elements = AppiumDriver.FindElement(By.XPath("//*[@content-desc=\"AirWatch Samsung ELM Service\"]//*[@resource-id=\"com.sec.android.app.launcher:id / iconview_imageView\"]"));
             }
-            if (LocatorType == eLocateBy.ByXPath) {
-                elem = Driver.FindElementByXPath(LocValue);
+            if (LocatorType == eLocateBy.ByXPath)
+            {
+                elem = AppiumDriver.FindElementByXPath(LocValue);
             }
             return elem;
         }
 
         public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
 
-        public override bool IsRunning() {
+        public override bool IsRunning()
+        {
             return ConnectedToDevice;
         }
 
-        private string GetKeyName(string skey) {
-            switch (skey) {
+        private string GetKeyName(string skey)
+        {
+            switch (skey)
+            {
                 case "Keys.Alt":
                     return OpenQA.Selenium.Keys.Alt;
                 case "Keys.ArrowDown":
@@ -584,17 +762,21 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
         }
 
 
-        public override Act GetCurrentElement() {
-            try {
+        public override Act GetCurrentElement()
+        {
+            try
+            {
                 Act act = null;
-                IWebElement currentElement = Driver.SwitchTo().ActiveElement();
+                IWebElement currentElement = AppiumDriver.SwitchTo().ActiveElement();
 
                 string tagname = currentElement.TagName;
 
-                if (tagname == "input") {
+                if (tagname == "input")
+                {
                     string ctlType = currentElement.GetAttribute("type");
 
-                    switch (ctlType) {
+                    switch (ctlType)
+                    {
                         case "text":
                             act = getActTextBox(currentElement);
                             break;
@@ -626,13 +808,15 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
                     return act;
                 }
 
-                if (tagname == "a") {
+                if (tagname == "a")
+                {
                     act = getActLink(currentElement);
                     return act;
                 }
                 return null;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
 
                 return null;
@@ -641,7 +825,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
 
         //----------------------------getAct... methods---------------------------------------------
         //TODO:change to use ActUIElement
-        private Act getActTextBox(IWebElement currentElement) {
+        private Act getActTextBox(IWebElement currentElement)
+        {
             ActTextBox a = new ActTextBox();
             setActLocator(currentElement, a);
             a.TextBoxAction = ActTextBox.eTextBoxAction.SetValue;
@@ -650,7 +835,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
             return a;
         }
 
-        private Act getActButton(IWebElement currentElement) {
+        private Act getActButton(IWebElement currentElement)
+        {
             ActButton act = new ActButton();
             string locVal = currentElement.GetAttribute("id");
             act.LocateBy = eLocateBy.ByID;
@@ -658,7 +844,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
             return act;
         }
 
-        private Act getActPassword(IWebElement currentElement) {
+        private Act getActPassword(IWebElement currentElement)
+        {
             ActPassword a = new ActPassword();
             setActLocator(currentElement, a);
             a.PasswordAction = ActPassword.ePasswordAction.SetValue;
@@ -667,7 +854,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
             return a;
         }
 
-        private Act getActCheckbox(IWebElement currentElement) {
+        private Act getActCheckbox(IWebElement currentElement)
+        {
             ActCheckbox act = new ActCheckbox();
             string locVal = currentElement.GetAttribute("id");
             act.LocateBy = eLocateBy.ByID;
@@ -675,7 +863,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
             return act;
         }
 
-        private Act getActRadioButton(IWebElement currentElement) {
+        private Act getActRadioButton(IWebElement currentElement)
+        {
             ActRadioButton act = new ActRadioButton();
             string locVal = currentElement.GetAttribute("id");
             act.LocateBy = eLocateBy.ByID;
@@ -683,7 +872,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
             return act;
         }
 
-        private Act getActLink(IWebElement currentElement) {
+        private Act getActLink(IWebElement currentElement)
+        {
             ActLink al = new ActLink();
             setActLocator(currentElement, al);
             al.Value = currentElement.Text;
@@ -692,12 +882,14 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
 
         //---------------------End of getAct... methods-----------------------------
 
-        public void setActLocator(IWebElement currentElement, Act act) {
+        public void setActLocator(IWebElement currentElement, Act act)
+        {
             //order by priority
 
             // By ID
             string locVal = currentElement.GetAttribute("id");
-            if (locVal != "") {
+            if (locVal != "")
+            {
                 act.LocateBy = eLocateBy.ByID;
                 act.LocateValue = locVal;
                 return;
@@ -705,7 +897,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
 
             // By name
             locVal = currentElement.GetAttribute("name");
-            if (locVal != "") {
+            if (locVal != "")
+            {
                 act.LocateBy = eLocateBy.ByName;
                 act.LocateValue = locVal;
                 return;
@@ -715,7 +908,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
 
             //By href
             locVal = currentElement.GetAttribute("href");
-            if (locVal != "") {
+            if (locVal != "")
+            {
                 act.LocateBy = eLocateBy.ByHref;
                 act.LocateValue = locVal;
                 return;
@@ -723,7 +917,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
 
             //By Value
             locVal = currentElement.GetAttribute("value");
-            if (locVal != "") {
+            if (locVal != "")
+            {
                 act.LocateBy = eLocateBy.ByValue;
                 act.LocateValue = locVal;
                 return;
@@ -731,7 +926,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
 
             // by text
             locVal = currentElement.Text;
-            if (locVal != "") {
+            if (locVal != "")
+            {
                 act.LocateBy = eLocateBy.ByLinkText;
                 act.LocateValue = locVal;
                 return;
@@ -740,23 +936,28 @@ namespace GingerCore.Drivers.Mobile.Perfecto {
             //TODO: add XPath
         }
 
-        public override string GetURL() {
+        public override string GetURL()
+        {
             return "TBD";
         }
 
-        public override List<ActButton> GetAllButtons() {
+        public override List<ActButton> GetAllButtons()
+        {
             return null;
         }
 
-        public override List<ActWindow> GetAllWindows() {
+        public override List<ActWindow> GetAllWindows()
+        {
             return null;
         }
 
-        public override List<ActLink> GetAllLinks() {
+        public override List<ActLink> GetAllLinks()
+        {
             return null;
         }
 
-        public override void HighlightActElement(Act act) {
+        public override void HighlightActElement(Act act)
+        {
         }
     }
 }
