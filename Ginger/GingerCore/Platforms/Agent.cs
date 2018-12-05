@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
@@ -932,7 +933,7 @@ namespace GingerCore
 
             //ProjEnvironment = App.AutomateTabEnvironment;
             //BusinessFlow = App.BusinessFlow; ;
-            //SolutionFolder = App.UserProfile.Solution.Folder;
+            SolutionFolder = WorkSpace.Instance.SolutionRepository.SolutionFolder;
             //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             try
             {
