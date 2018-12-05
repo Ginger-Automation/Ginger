@@ -93,6 +93,18 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 this.ValueComboBox.Style = App.GetStyle("@ComboBoxStyle");   // TODO: use const/enum so will pass compile check             
                 return;
             }
+
+            // Int
+            if (AIV.ParamType == typeof(bool))
+            {
+                 this.xValueCheckBox.Visibility = Visibility.Visible;
+                 this.xValueCheckBox.BindControl(AIV, nameof(ActInputValue.Value));
+                
+                return;
+            }
+
+
+
         }
 
         private void AddItem(object sender, RoutedEventArgs e)
