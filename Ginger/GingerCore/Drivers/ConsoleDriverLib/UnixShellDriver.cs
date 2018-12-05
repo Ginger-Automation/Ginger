@@ -300,9 +300,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         if (!string.IsNullOrEmpty(p.Value))
                             cmd += " " + p.ValueForDriver;
                     if (UnixScriptFilePath.Trim().EndsWith(".sh", StringComparison.CurrentCultureIgnoreCase))
-                        return "sh " + UnixScriptFilePath + cmd;
+                        return "dos2unix " + UnixScriptFilePath + cmd + ";sh " + UnixScriptFilePath + cmd;
                     else
-                        return "" + UnixScriptFilePath + cmd;
+                        return "dos2unix " + UnixScriptFilePath + cmd + "; " + UnixScriptFilePath + cmd;
                
                 default:
                     Reporter.ToLog(eAppReporterLogLevel.INFO, "Error - unknown command");
