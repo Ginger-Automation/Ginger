@@ -19,9 +19,19 @@ namespace Amdocs.Ginger
                 if (!InputBoxWindow.GetInputWithValidation(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ref runSetName, System.IO.Path.GetInvalidPathChars()))
                 {
                     return null;
-                }                    
+                }
+
+                while (CheckAmbiguity(runSetName))
+                {
+                    Reporter.ToUser(eUserMsgKeys.ValueIssue, runSetName + " already exists ! Run Set name should be unique !");
+
+                    if (!InputBoxWindow.GetInputWithValidation(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ref runSetName, System.IO.Path.GetInvalidPathChars()))
+                    {
+                        return null;
+                    }
+                }
             }
-            
+
             RunSetConfig runSetConfig = new RunSetConfig();
             runSetConfig.Name = runSetName;
             runSetConfig.GingerRunners.Add(new GingerRunner() { Name = "Runner 1" });
@@ -29,13 +39,26 @@ namespace Amdocs.Ginger
             if (runSetsFolder == null)
             {
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(runSetConfig);
-            }                
+            }
             else
             {
                 runSetsFolder.AddRepositoryItem(runSetConfig);
-            }                
+            }
 
             return runSetConfig;
+        }
+
+        private static bool CheckAmbiguity(string runSetName)
+        {
+            Common.ObservableList<RunSetConfig> allRunsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+
+            foreach (RunSetConfig existingRunset in allRunsets)
+            {
+                if (existingRunset.Name.Equals(runSetName, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
         }
     }
 }
