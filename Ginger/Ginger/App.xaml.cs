@@ -122,11 +122,11 @@ namespace Ginger
                 {
                     if (ApplicationInfo.ProductPrivatePart != 0)//Alpha
                     {
-                        mAppShortVersion = string.Format("{0}.{1}.{2}.{3}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart, ApplicationInfo.ProductPrivatePart);                        
+                        mAppShortVersion = string.Format("{0}.{1}.{2}.{3}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart, ApplicationInfo.ProductPrivatePart);
                     }
                     else if (ApplicationInfo.ProductBuildPart != 0)//Beta
                     {
-                        mAppShortVersion = string.Format("{0}.{1}.{2}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart);                        
+                        mAppShortVersion = string.Format("{0}.{1}.{2}", ApplicationInfo.ProductMajorPart, ApplicationInfo.ProductMinorPart, ApplicationInfo.ProductBuildPart);
                     }
                     else//Official Release
                     {
@@ -188,7 +188,7 @@ namespace Ginger
         //TODO: whenever changed check if isDirty - and ask the user if to save
         public static RepositoryItemBase CurrentRepositoryItem { get; set; }
 
-        public static ITreeViewItem CurrentSelectedTreeItem { get; set; }       
+        public static ITreeViewItem CurrentSelectedTreeItem { get; set; }
 
         public static string RecoverFolderPath = null;
         public static IEnumerable<object> CurrentFolderItem { get; set; }
@@ -307,14 +307,16 @@ namespace Ginger
             {
                 case Amdocs.Ginger.Core.eSkinDicsType.Default:
                     Application.Current.Resources.MergedDictionaries.Add(
-                            new ResourceDictionary() {
+                            new ResourceDictionary()
+                            {
                                 Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefaultSkinDictionary.xaml")
                             });
                     break;
 
                 default:
                     Application.Current.Resources.MergedDictionaries.Add(
-                            new ResourceDictionary() {
+                            new ResourceDictionary()
+                            {
                                 Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefaultSkinDictionary.xaml")
                             });
                     break;
@@ -369,7 +371,7 @@ namespace Ginger
             }
 
             Reporter.ToLog(eAppReporterLogLevel.INFO, "######################## Application version " + App.AppVersion + " Started ! ########################");
-           
+
             AppSplashWindow.LoadingInfo("Init Application");
 
             // We init the classed dictionary for the Repository Serialize only once
@@ -423,7 +425,7 @@ namespace Ginger
             Reporter.ToLog(eAppReporterLogLevel.INFO, phase);
             AppSplashWindow.LoadingInfo("Ready!");
             App.AppSplashWindow = null;
-            
+
             AutoLogProxy.LogAppOpened();
 
             AutomateTabGingerRunner.GiveUserFeedback = true;
@@ -451,7 +453,7 @@ namespace Ginger
                     return;
                 }
             }
-            Reporter.ToLog(eAppReporterLogLevel.FATAL, ">>>>>>>>>>>>>> Error occurred on stand alone thread(non UI) - " + e.ExceptionObject);            
+            Reporter.ToLog(eAppReporterLogLevel.FATAL, ">>>>>>>>>>>>>> Error occurred on stand alone thread(non UI) - " + e.ExceptionObject);
             //Reporter.ToUser(eUserMsgKeys.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
             App.AppSolutionAutoSave.DoAutoSave();
 
@@ -495,7 +497,7 @@ namespace Ginger
             list.Add("GingerCore.Actions.ActInputValue", typeof(ActInputValue));
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
-            list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));            
+            list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
 
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
@@ -585,6 +587,7 @@ namespace Ginger
                 mSourceControl.SourceControlConfigureProxy = App.UserProfile.SolutionSourceControlConfigureProxy;
                 mSourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
                 mSourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
+                mSourceControl.SourceControlTimeout = App.UserProfile.SolutionSourceControlTimeout;
                 mSourceControl.supressMessage = true;
             }
 
@@ -691,7 +694,7 @@ namespace Ginger
                             return false;
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while checking if Solution requires Ginger Upgrade", ex);
                     }
@@ -753,7 +756,7 @@ namespace Ginger
                     return false;
                 }
 
-                
+
                 return true;
             }
             catch (Exception ex)
@@ -783,7 +786,7 @@ namespace Ginger
             {
                 solution.SourceControl = new SVNSourceControl();
             }
-            
+
             if (solution.SourceControl != null)
             {
                 if (string.IsNullOrEmpty(App.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(App.UserProfile.SolutionSourceControlPass))
@@ -811,6 +814,7 @@ namespace Ginger
                 solution.SourceControl.SourceControlLocalFolder = App.UserProfile.SourceControlLocalFolder;
                 solution.SourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
                 solution.SourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
+                solution.SourceControl.SourceControlTimeout = App.UserProfile.SolutionSourceControlTimeout;
 
                 WorkSpace.Instance.SourceControl = solution.SourceControl;
                 RepositoryItemBase.SetSourceControl(solution.SourceControl);
@@ -847,7 +851,7 @@ namespace Ginger
         public static SolutionRepository CreateGingerSolutionRepository()
         {
             SolutionRepository SR = new SolutionRepository();
-           
+
             SR.AddItemInfo<BusinessFlow>("*.Ginger.BusinessFlow.xml", @"~\BusinessFlows", true, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), PropertyNameForFileName: nameof(BusinessFlow.Name));
 
             SR.AddItemInfo<ApplicationAPIModel>("*.Ginger.ApplicationAPIModel.xml", @"~\Applications Models\API Models", true, "API Models", PropertyNameForFileName: nameof(ApplicationAPIModel.Name));
@@ -874,10 +878,10 @@ namespace Ginger
             SR.AddItemInfo<Act>("*.Ginger.Action.xml", @"~\SharedRepository\Actions", true, "Shared Actions", PropertyNameForFileName: nameof(Act.Description));
             SR.AddItemInfo<VariableBase>("*.Ginger.Variable.xml", @"~\SharedRepository\Variables", true, GingerDicser.GetTermResValue(eTermResKey.Variables, "Shared "), PropertyNameForFileName: nameof(VariableBase.Name));
 
-            SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", @"~\RunSetConfigs", true, GingerDicser.GetTermResValue(eTermResKey.RunSets), PropertyNameForFileName: nameof(RunSetConfig.Name));           
+            SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", @"~\RunSetConfigs", true, GingerDicser.GetTermResValue(eTermResKey.RunSets), PropertyNameForFileName: nameof(RunSetConfig.Name));
 
             return SR;
-        }               
+        }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
@@ -1086,7 +1090,7 @@ namespace Ginger
                 App.BusinessFlow = (BusinessFlow)args.Object;
                 App.BusinessFlow.SaveBackup();
             }
-        }        
+        }
 
         
 
