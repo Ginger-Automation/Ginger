@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
@@ -2012,6 +2013,17 @@ namespace Ginger.Run
             PL.AddValue(ActPlugIn.ActionId);
             //Add Params
             List<NewPayLoad> Params = new List<NewPayLoad>();
+
+            // if this is the first time the action run it will not have param type
+            // so read it from plugin action info
+            if (ActPlugIn.InputValues.Count > 0 )
+            {
+                if (ActPlugIn.InputValues[0].ParamType == null)
+                { 
+                    UpdateParamsType(ActPlugIn);
+                }
+            }
+
             foreach (ActInputValue AP in ActPlugIn.InputValues)
             {
                 // Why we need GA?
@@ -2019,7 +2031,23 @@ namespace Ginger.Run
                 // TODO: use const
                 NewPayLoad p = new NewPayLoad("P");   // To save network traffic we send just one letter
                 p.AddValue(AP.Param);
-                p.AddValue(AP.ValueForDriver.ToString());
+                if (AP.ParamType == typeof(string))
+                {
+                    p.AddValue(AP.ValueForDriver.ToString());
+
+                }
+                else if (AP.ParamType == typeof(bool))
+                {
+                    p.AddValue(AP.BoolValue);
+                }
+                else if (AP.ParamType == typeof(Ginger.UserControlsLib.ActionInputValueUserControlLib.DynamicListWrapper))
+                {
+                    p.AddValue(AP.ValueForDriver.ToString());
+                }
+                else
+                {
+                    throw new Exception("Unknown param typee to pack: " + AP.ParamType.FullName);
+                }
                 p.ClosePackage();
                 Params.Add(p);
             }
@@ -2027,6 +2055,16 @@ namespace Ginger.Run
 
             PL.ClosePackage();
             return PL;          
+        }
+
+        private void UpdateParamsType(ActPlugIn actPlugIn)
+        {
+            List<ActionInputValueInfo> paramsList = WorkSpace.Instance.PlugInsManager.GetActionEditInfo(actPlugIn.PluginId, actPlugIn.ServiceId, actPlugIn.ActionId);
+            foreach (ActInputValue AP in actPlugIn.InputValues)
+            {
+                ActionInputValueInfo actionInputValueInfo = (from x in paramsList where x.Param == AP.Param select x).SingleOrDefault();
+                AP.ParamType = actionInputValueInfo.ParamType;
+            }
         }
 
         private void ResetAction(Act act)
