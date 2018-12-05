@@ -1951,23 +1951,24 @@ namespace Ginger.Run
 
                 //    // it is param name, type and value
                     string PName = OPL.GetValueString();
+                    string path = OPL.GetValueString();
                     string mOutputValueType = OPL.GetValueEnum();
-                    
+                   
                     switch (mOutputValueType)
                     {
                         case nameof(OutputValueType.String):
-                            string v = OPL.GetValueString();
-                            //GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueString = v });
-                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = v});
+                            string stringValue = OPL.GetValueString();
+                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Path = path, Actual = stringValue});
                             break;
                         case nameof(OutputValueType.ByteArray):
                             byte[] b = OPL.GetBytes();
                             // GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueByteArray = b });
-                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types
+                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Path= path, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types
                             break;
                         default:
                             throw new Exception("Unknown param type: " + mOutputValueType);
                     }
+                    
                 }
             }
             else

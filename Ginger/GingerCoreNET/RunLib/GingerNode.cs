@@ -434,6 +434,7 @@ namespace GingerCoreNET.DriversLib
             {
                 NewPayLoad PLO = new NewPayLoad(SocketMessages.ActionOutputValue);  
                 PLO.AddValue(AOV.Param);
+                PLO.AddValue(AOV.Path);
                 PLO.AddEnumValue(AOV.GetParamType());
                 switch (AOV.GetParamType())
                 {
