@@ -460,6 +460,7 @@
       <DependentUpon>AgentDriverConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\AgentNameValidationRule.cs" />
+    <Compile Include="ALM\Repository\JiraRepository.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelBodyNodeSyncPage.xaml.cs">
       <DependentUpon>APIModelBodyNodeSyncPage.xaml</DependentUpon>
     </Compile>

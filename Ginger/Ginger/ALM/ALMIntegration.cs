@@ -74,6 +74,10 @@ namespace Ginger.ALM
                     AlmCore = new RallyCore();
                     AlmRepo = new RallyRepository();
                     break;
+                case eALMType.Jira:
+                    AlmCore = new JiraCore();
+                    AlmRepo = new JiraRepository();
+                    break;
             }
             if(firstSync)
                 SetALMCoreConfigurations();
@@ -116,7 +120,8 @@ namespace Ginger.ALM
         {
             QC = 1,
             RQM = 2,
-            RALLY = 3
+            RALLY = 3,
+            Jira = 4
         }
 
         public enum eALMConnectType

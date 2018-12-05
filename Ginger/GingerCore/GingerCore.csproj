@@ -544,6 +544,7 @@
     <Compile Include="Activities\ActivityIdentifiers.cs" />
     <Compile Include="ALM\ALMConfig.cs" />
     <Compile Include="ALM\ALMCore.cs" />
+    <Compile Include="ALM\JiraCore.cs" />
     <Compile Include="ALM\PublishToALMConfig.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
     <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
