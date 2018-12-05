@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -22,14 +22,6 @@ namespace GingerCore.Environments
 {
     public class LoginUser : RepositoryItemBase
     {        
-
-        public  static class Fields
-        {
-            public static string UserProfileName = "UserProfileName";
-            public static string Type = "Type";
-            public static string Username = "Username";
-            public static string Password = "Password";
-        }
 
         [IsSerializedForLocalRepository]
         public string UserProfileName { get; set; }
