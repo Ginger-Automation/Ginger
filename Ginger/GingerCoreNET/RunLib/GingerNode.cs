@@ -247,7 +247,7 @@ namespace GingerCoreNET.DriversLib
             {
                 // we get Param name and value
                 string Name = PLP.GetValueString();
-                string Value = PLP.GetValueString();
+                object Value = PLP.GetValueByObjectType();
                 Console.WriteLine("Param " + Name + " = " + Value);
                 ActionParam AP = actionInputParams[Name];
                 if (AP != null)
