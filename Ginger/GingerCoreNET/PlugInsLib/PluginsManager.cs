@@ -175,8 +175,8 @@ namespace Amdocs.Ginger.Repository
         {
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();            
-            PluginServiceActionInfo standAloneAction = (from x in pluginServiceInfo.Actions where x.ActionId == actionId select x).SingleOrDefault();
-            return standAloneAction.InputValues;
+            PluginServiceActionInfo actionInfo = (from x in pluginServiceInfo.Actions where x.ActionId == actionId select x).SingleOrDefault();
+            return actionInfo.InputValues;
         }
 
         public ObservableList<OnlinePluginPackage> GetOnlinePluginsIndex()
