@@ -146,7 +146,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error, Could not create Perfecto Mobile Automation Driver, " + e.Message);
             }
 
-            if (mContextType != eContextType.WebAndroid)
+            if (mContextType != eContextType.WebAndroid && mContextType != eContextType.WebIOS)
             {
                 ((AppiumDriver<IWebElement>)AppiumDriver).Context = "NATIVE_APP";
                 //driver.context("WEBVIEW"); 
