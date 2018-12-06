@@ -21,11 +21,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Ginger.Run;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Environments;
 using System.IO;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.CoreNET.Utility;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports
 {
@@ -52,9 +53,9 @@ namespace Ginger.Reports
         }
         public ReportInfoLevel reportInfoLevel;
         
-        private ObservableList<Run.BusinessFlowExecutionSummary> mBFESs;
-        private ProjEnvironment mProjEnvironment;
-        private RunsetExecutor mGingersMultiRun;        
+        private ObservableList<BusinessFlowExecutionSummary> mBFESs;
+        private IProjEnvironment mProjEnvironment;
+        private IRunsetExecutor mGingersMultiRun;        
 
         public string DateCreatedShort { get; set; }
         public string DateCreated { get; set; }
@@ -70,7 +71,7 @@ namespace Ginger.Reports
         /// <summary>
         /// Should be deleted after switch will be fully done to serialized objects 
         /// </summary> 
-        public ReportInfo(ProjEnvironment Env, RunsetExecutor GMR, bool ReportOnlyExecuted = false)   // to remove after discussion !!!
+        public ReportInfo(IProjEnvironment Env, IRunsetExecutor GMR, bool ReportOnlyExecuted = false)   // to remove after discussion !!!
         {
             mProjEnvironment = Env;
             mBFESs = GMR.GetAllBusinessFlowsExecutionSummary(ReportOnlyExecuted);
@@ -88,7 +89,7 @@ namespace Ginger.Reports
         /// <summary>
         /// Should be deleted after switch will be fully done to serialized objects 
         /// </summary> 
-        public ReportInfo(ProjEnvironment Env, GingerRunner GR, bool ReportOnlyExecuted = false) // to remove after discussion !!!
+        public ReportInfo(IProjEnvironment Env, IGingerRunner GR, bool ReportOnlyExecuted = false) // to remove after discussion !!!
         {
             mProjEnvironment = Env;
             mBFESs = GR.GetAllBusinessFlowsExecutionSummary(ReportOnlyExecuted);
@@ -104,7 +105,7 @@ namespace Ginger.Reports
         /// <summary>
         /// Should be deleted after switch will be fully done to serialized objects 
         /// </summary> 
-        public ReportInfo(ProjEnvironment Env, BusinessFlow BF,GingerRunner GR=null) // to remove after discussion !!!
+        public ReportInfo(IProjEnvironment Env, IBusinessFlow BF,IGingerRunner GR=null) // to remove after discussion !!!
         {
             mProjEnvironment = Env;
             mBFESs=new ObservableList<BusinessFlowExecutionSummary>();
@@ -167,31 +168,31 @@ namespace Ginger.Reports
                 {
                     case "RunSet.txt":
                         curFileWithPath = folder + @"\RunSet.txt";
-                        ReportInfoRootObject = (RunSetReport)ExecutionLogger.LoadObjFromJSonFile(curFileWithPath, typeof(RunSetReport));
+                        ReportInfoRootObject = (RunSetReport)JsonLib.LoadObjFromJSonFile(curFileWithPath, typeof(RunSetReport));
                         ((RunSetReport)ReportInfoRootObject).LogFolder = folder;
                         reportInfoLevel = ReportInfo.ReportInfoLevel.RunSetLevel;
                         break;
                     case "Ginger.txt":
                         curFileWithPath = folder + @"\Ginger.txt";
-                        ReportInfoRootObject = (GingerReport)ExecutionLogger.LoadObjFromJSonFile(curFileWithPath, typeof(GingerReport));
+                        ReportInfoRootObject = (GingerReport)JsonLib.LoadObjFromJSonFile(curFileWithPath, typeof(GingerReport));
                         ((GingerReport)ReportInfoRootObject).LogFolder = folder;
                         reportInfoLevel = ReportInfo.ReportInfoLevel.GingerLevel;
                         break;
                     case "BusinessFlow.txt":
                         curFileWithPath = folder + @"\BusinessFlow.txt";
-                        ReportInfoRootObject = (BusinessFlowReport)ExecutionLogger.LoadObjFromJSonFile(curFileWithPath, typeof(BusinessFlowReport));
+                        ReportInfoRootObject = (BusinessFlowReport)JsonLib.LoadObjFromJSonFile(curFileWithPath, typeof(BusinessFlowReport));
                         ((BusinessFlowReport)ReportInfoRootObject).LogFolder = folder;
                         reportInfoLevel = ReportInfo.ReportInfoLevel.BussinesFlowLevel;
                         break;
                     case "Activity.txt":
                         curFileWithPath = folder + @"\Activity.txt";
-                        ReportInfoRootObject = (ActivityReport)ExecutionLogger.LoadObjFromJSonFile(curFileWithPath, typeof(ActivityReport));
+                        ReportInfoRootObject = (ActivityReport)JsonLib.LoadObjFromJSonFile(curFileWithPath, typeof(ActivityReport));
                         ((ActivityReport)ReportInfoRootObject).LogFolder = folder;
                         reportInfoLevel = ReportInfo.ReportInfoLevel.ActivityLevel;
                         break;
                     case "Action.txt":
                         curFileWithPath = folder + @"\Action.txt";
-                        ReportInfoRootObject = (ActionReport)ExecutionLogger.LoadObjFromJSonFile(curFileWithPath, typeof(ActionReport));
+                        ReportInfoRootObject = (ActionReport)JsonLib.LoadObjFromJSonFile(curFileWithPath, typeof(ActionReport));
                         ((ActionReport)ReportInfoRootObject).LogFolder = folder;
                         reportInfoLevel = ReportInfo.ReportInfoLevel.ActionLevel;
                         break;
@@ -339,7 +340,7 @@ namespace Ginger.Reports
                 // We cache it for next time, so gen only one time
                 if (mAllActivitiesForReport == null)
                 {
-                    mAllActivitiesForReport = BusinessFlows.SelectMany(b => b.Activities).Where(z => z.Active == true && z.GetType() != typeof(ErrorHandler));
+                    mAllActivitiesForReport = BusinessFlows.SelectMany(b => b.Activities).Where(z => z.Active == true && z.GetType() != typeof(IErrorHandler));
                 }
 
                 return mAllActivitiesForReport;                

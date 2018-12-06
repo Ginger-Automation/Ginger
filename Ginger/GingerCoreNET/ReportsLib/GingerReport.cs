@@ -21,11 +21,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Ginger.Run;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Variables;
 using Newtonsoft.Json;
 using System.IO;
 using System.Data;
+using Amdocs.Ginger.CoreNET.Utility;
 
 namespace Ginger.Reports
 {
@@ -130,7 +130,7 @@ namespace Ginger.Reports
                     {
                         try
                         {
-                            BusinessFlowReport br = (BusinessFlowReport)ExecutionLogger.LoadObjFromJSonFile(folder + @"\BusinessFlow.txt", typeof(BusinessFlowReport));
+                            BusinessFlowReport br = (BusinessFlowReport)JsonLib.LoadObjFromJSonFile(folder + @"\BusinessFlow.txt", typeof(BusinessFlowReport));
                             br.LogFolder = folder;
                             br.ExecutionLoggerIsEnabled = true;
                             businessFlowReports.Add(br);

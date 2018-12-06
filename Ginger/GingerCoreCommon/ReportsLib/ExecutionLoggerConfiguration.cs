@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -33,8 +33,8 @@ namespace Ginger.Reports
             ContinueRun,
             Reset
         }
-            
-        
+
+
         [IsSerializedForLocalRepository]
         public long Seq { get; set; }
 
@@ -49,14 +49,14 @@ namespace Ginger.Reports
 
         [IsSerializedForLocalRepository]
         public string ExecutionLoggerConfigurationExecResultsFolder { get; set; }
-        
+
         [IsSerializedForLocalRepository]
         public long ExecutionLoggerConfigurationMaximalFolderSize { get; set; }
-        
+
         public string ExecutionLoggerConfigurationHTMLReportsFolder { get; set; }
-        
+
         public bool ExecutionLoggerHTMLReportsAutomaticProdIsEnabled { get; set; }
-        
+
         public ObservableList<HTMLReportConfiguration> temporaryPlacedHTMLReportConfigurationList = new ObservableList<HTMLReportConfiguration>();
 
         public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }

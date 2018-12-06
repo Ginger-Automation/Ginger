@@ -26,11 +26,15 @@ namespace Amdocs.Ginger.Common
         ObservableList<VariableBase> Variables { get; set; }
         IActivity CurrentActivity { get; set; }
         string ExecutionLogFolder { get; set; }
+        double? Elapsed { get; set; }
 
         ObservableList<VariableBase> GetVariables();
 
         VariableBase GetHierarchyVariableByName(string varName, bool considerLinkedVar = true);
         ObservableList<VariableBase> GetSolutionVariables();
         string GetPublishStatusString();
+        int GetValidationsCount();
+        int GetActionsCount();
+        ObservableList<VariableBase> GetBFandActivitiesVariabeles(bool includeParentDetails, bool includeOnlySetAsInputValue = false, bool includeOnlySetAsOutputValue = false);
     }
 }

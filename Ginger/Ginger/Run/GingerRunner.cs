@@ -141,7 +141,7 @@ namespace Ginger.Run
         public bool AgentsRunning = false;
         public ExecutionWatch RunnerExecutionWatch = new ExecutionWatch();        
         public eExecutedFrom ExecutedFrom;
-        public ExecutionLogger ExecutionLogger;
+        public IExecutionLogger ExecutionLogger { get; set; }
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
         public int ExecutionLogBusinessFlowCounter { get; set; }
@@ -3024,7 +3024,7 @@ namespace Ginger.Run
                 if (doContinueRun == false)
                 {
                     CurrentBusinessFlow.ExecutionLogActivityCounter = 0;
-                    ExecutionLogger.BusinessFlowStart(CurrentBusinessFlow);
+               ((ExecutionLogger)ExecutionLogger).BusinessFlowStart(CurrentBusinessFlow);
                 }
 
                 //Executing the Activities
@@ -3644,7 +3644,7 @@ namespace Ginger.Run
             this.OnPropertyChanged(nameof(ApplicationAgents));//to notify who shows this list
         }
 
-        internal ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false,string GingerRunnerName = "")
+        public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false,string GingerRunnerName = "")
         {
             var BFESs = new ObservableList<BusinessFlowExecutionSummary>();
 

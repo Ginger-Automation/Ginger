@@ -19,9 +19,10 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ginger.Run;
+
 using Newtonsoft.Json;
 using System.IO;
+using Amdocs.Ginger.CoreNET.Utility;
 
 namespace Ginger.Reports
 {
@@ -178,7 +179,7 @@ namespace Ginger.Reports
                     {
                         try
                         {
-                            GingerReport gr = (GingerReport)ExecutionLogger.LoadObjFromJSonFile(folder + @"\Ginger.txt", typeof(GingerReport));
+                            GingerReport gr = (GingerReport)JsonLib.LoadObjFromJSonFile(folder + @"\Ginger.txt", typeof(GingerReport));
                             gr.LogFolder = folder;
                             gingerReports.Add(gr);
                         }

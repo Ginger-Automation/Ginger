@@ -1347,7 +1347,7 @@ namespace Ginger
                 Directory.CreateDirectory(exec_folder);
             }
             
-            if (App.AutomateTabGingerRunner.ExecutionLogger.OfflineBusinessFlowExecutionLog(App.BusinessFlow, exec_folder))
+            if (((ExecutionLogger)App.AutomateTabGingerRunner.ExecutionLogger).OfflineBusinessFlowExecutionLog(App.BusinessFlow, exec_folder))
             {
                 //create the HTML report
                 try

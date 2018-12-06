@@ -503,7 +503,7 @@ namespace GingerCore.ALM.QC
                     {
                         foreach (ActivityIdentifiers actIdent in ag.ActivitiesIdentifiers)
                         {
-                            ExportActivityAsTestStep(ImportFromQC.GetQCTest(ag.ExternalID), actIdent.IdentifiedActivity);
+                            ExportActivityAsTestStep(ImportFromQC.GetQCTest(ag.ExternalID),(Activity) actIdent.IdentifiedActivity);
                         }
                     }
                 }

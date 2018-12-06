@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Properties;
 
@@ -25,7 +26,7 @@ namespace GingerCore
 {
     //Activity can have several steps - Acts
     // The activities can come from external like: QC TC Step, vStorm    
-    public class ErrorHandler : Activity
+    public class ErrorHandler : Activity, IErrorHandler
     {
         public new static class Fields
         {

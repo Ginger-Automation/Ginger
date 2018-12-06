@@ -1104,7 +1104,6 @@
     <Compile Include="DataSource\DataSourcesPage.xaml.cs">
       <DependentUpon>DataSourcesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\HTMLReportsConfiguration.cs" />
     <Compile Include="Reports\HTMLReportsConfigurationPage.xaml.cs">
       <DependentUpon>HTMLReportsConfigurationPage.xaml</DependentUpon>
     </Compile>
@@ -1409,15 +1408,12 @@
     <Compile Include="Help\TreeViewItems\VideoHelpFileTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\MHTHelpFileTreeItem.cs" />
     <Compile Include="Reports\HTMLReportConfiguration.cs" />
-    <Compile Include="Reports\RunSetReport.cs" />
-    <Compile Include="Reports\GingerReport.cs" />
     <Compile Include="Reports\Designer\HTMLReportTemplateDesignerPage .xaml.cs">
       <DependentUpon>HTMLReportTemplateDesignerPage .xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\Designer\ReportTemplateDesignerPage.xaml.cs">
       <DependentUpon>ReportTemplateDesignerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\EnvironmentReport.cs" />
     <Compile Include="Reports\FlowControlReport.cs" />
     <Compile Include="Reports\HTMLReports\HTMLPlainReport.cs" />
     <Compile Include="Reports\HTMLReports\HTMLSummaryReport.cs" />
@@ -1428,14 +1424,12 @@
     <Compile Include="Reports\ExecutionResultsConfiguration.xaml.cs">
       <DependentUpon>ExecutionResultsConfiguration.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ExecutionLoggerConfiguration.cs" />
     <Compile Include="Run\ExecutionLogger.cs" />
     <Compile Include="Reports\ReportPage.xaml.cs">
       <DependentUpon>ReportPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\HTMLReportTemplate.cs" />
     <Compile Include="Reports\ReportTemplate.cs" />
-    <Compile Include="Reports\ReportInfo.cs" />
     <Compile Include="Reports\ReportList.cs" />
     <Compile Include="Reports\HTMLReportTemplateSelector.xaml.cs">
       <DependentUpon>HTMLReportTemplateSelector.xaml</DependentUpon>
