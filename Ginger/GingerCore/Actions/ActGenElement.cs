@@ -419,7 +419,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Scroll Down")]
             ScrollDown = 64,
             [EnumValueDescription("Scroll Up")]
-            ScrollUp = 65
+            ScrollUp = 65,
+            [EnumValueDescription("Set Attribute Value")]
+            SetAttributeValue = 66
         }
         
         [IsSerializedForLocalRepository]
