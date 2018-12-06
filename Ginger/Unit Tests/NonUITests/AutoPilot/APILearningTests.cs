@@ -134,12 +134,11 @@ namespace UnitTests.NonUITests.AutoPilot
 
 
             //Assert
-            Assert.AreEqual(AAMSList.Count, 4, "Is API's equal to 6");
-            Assert.AreEqual(AAMSList[0].EndpointURL, "illin3000:4009//getFutureTransactionDetails", "Is EndpointURL equal");
-            Assert.AreEqual(AAMSList[0].SOAPAction, "http://ws.cdyne.com/GetQuote", "Is SOAPAction equal");
+            Assert.AreEqual(AAMSList.Count, 22, "Is API's equal to 6");
+            Assert.AreEqual(AAMSList[0].EndpointURL, "https://petstore.swagger.io/v2/pet", "Is EndpointURL equal");
             Assert.AreEqual(String.IsNullOrEmpty(AAMSList[0].RequestBody), false, "Is body not empty equal");
-            Assert.AreEqual(AAMSList[0].AppModelParameters.Count, 2, "are parameters are equal");
-            Assert.AreEqual(AAMSList[0].AppModelParameters[0].PlaceHolder, "{STOCKSYMBOL}", "Is parameter name equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters.Count, 7, "are parameters are equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[0].PlaceHolder, "<ID>", "Is parameter name equal");
         }
     }
 }
