@@ -681,6 +681,15 @@ namespace GingerCore.Drivers.WindowsLib
 
             return rc;
         }
+        public string GetElementID(ElementInfo EI)
+        {
+            return "";
+        }
+
+        public string GetElementTagName(ElementInfo EI)
+        {
+            return "";
+        }
 
         public ElementInfo GetPreviousSibling(ElementInfo EI)
         {

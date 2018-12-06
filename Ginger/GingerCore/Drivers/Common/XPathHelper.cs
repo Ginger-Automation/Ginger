@@ -401,5 +401,38 @@ namespace GingerCore.Drivers.Common
             list.Add(EI);
             return list;
         }
+
+        public string GetElementRelXPath(ElementInfo elemInfo)
+        {
+            var relxpath = "";
+            string xpath = elemInfo.XPath;
+            try
+            {
+                while (relxpath.IndexOf("//") == -1 && elemInfo.ElementObject != null)
+                {
+                    string id = mDriver.GetElementID(elemInfo);
+                    if (!string.IsNullOrEmpty(id))
+                    {
+                        relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@id='" + id + "']");
+                        continue;
+                    }
+                    string name = Convert.ToString(mDriver.GetElementProperty(elemInfo,"name"));
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@name='" + name + "']");
+                        continue;
+                    }
+                    elemInfo = mDriver.GetElementParent(elemInfo);
+                }
+            }
+            catch (Exception e)
+            {
+                relxpath = xpath;
+                //Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+            }
+            if (relxpath == "")
+                relxpath = xpath;
+            return relxpath;
+        }
     }
 }

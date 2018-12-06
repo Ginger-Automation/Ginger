@@ -101,7 +101,17 @@ namespace GingerCore.Drivers.Common
         {
             return ((IXPath)mUIAutomationHelper).GetNextSibling(EI);
         }
-        
+
+        string IXPath.GetElementID(ElementInfo EI)
+        {
+            return ((IXPath)mUIAutomationHelper).GetElementID(EI);
+        }
+
+        string IXPath.GetElementTagName(ElementInfo EI)
+        {
+            return ((IXPath)mUIAutomationHelper).GetElementTagName(EI);
+        }
+
         #endregion IXPath
 
         public void HighLightElement(ElementInfo ElementInfo)
