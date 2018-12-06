@@ -27,6 +27,8 @@ namespace Amdocs.Ginger.Common
         IActivity CurrentActivity { get; set; }
         string ExecutionLogFolder { get; set; }
         double? Elapsed { get; set; }
+        object Mandatory { get; set; }
+        string ExecutionFullLogFolder { get; set; }
 
         ObservableList<VariableBase> GetVariables();
 
@@ -36,5 +38,8 @@ namespace Amdocs.Ginger.Common
         int GetValidationsCount();
         int GetActionsCount();
         ObservableList<VariableBase> GetBFandActivitiesVariabeles(bool includeParentDetails, bool includeOnlySetAsInputValue = false, bool includeOnlySetAsOutputValue = false);
+        IBusinessFlow CreateCopy(bool v);
+        void Reset();
+        void AttachActivitiesGroupsAndActivities();
     }
 }

@@ -18,7 +18,9 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
+using Ginger.Run;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SourceControl;
 using System;
@@ -45,7 +47,16 @@ namespace amdocs.ginger.GingerCoreNET
         // public ProjEnvironment CurrentEnvironment;
 
         public SourceControlBase SourceControl;
+        public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
+        public static eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
 
+        public static string TempFolder
+        {
+            get
+            {
+                return System.IO.Path.GetDirectoryName(System.IO.Path.GetTempFileName()) + "\\Ginger_Email_Reports";
+            }
+        }
         PluginsManager mPluginsManager = null;
         public PluginsManager PlugInsManager
         {

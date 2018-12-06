@@ -22,6 +22,7 @@ using Ginger.Run.RunSetActions;
 using GingerCore.GeneralLib;
 using Amdocs.Ginger.Common.Enums;
 using System;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run
 {
@@ -59,7 +60,7 @@ namespace Ginger.Run
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<GingerRunner> GingerRunners = new ObservableList<GingerRunner>();
+        public ObservableList<IGingerRunner> GingerRunners = new ObservableList<IGingerRunner>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<RunSetActionBase> RunSetActions = new ObservableList<RunSetActionBase>();

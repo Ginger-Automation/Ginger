@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Amdocs.Ginger.Common;
 using GingerCore;
 
 namespace Ginger.Reports
@@ -52,7 +53,7 @@ namespace Ginger.Reports
             
             foreach (BusinessFlowReport BFR in BizFlows)
             {
-                BusinessFlow BF =(BusinessFlow) BFR.GetBusinessFlow();
+                IBusinessFlow BF =(IBusinessFlow) BFR.GetBusinessFlow();
                 bftable = "";
                 string runColor = "#00000";
                 TableSize = TableSize + 16.7;
@@ -80,7 +81,7 @@ namespace Ginger.Reports
                 }
 
 
-                foreach (Activity a in BF.Activities.Where(a => a.GetType() != typeof(ErrorHandler) && a.Active == true).ToList())
+                foreach (IActivity a in BF.Activities.Where(a => a.GetType() != typeof(ErrorHandler) && a.Active == true).ToList())
                 {
                     //Added as part of resolving defect 2147
                     if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)   //(a.ElapsedSecs == null) 

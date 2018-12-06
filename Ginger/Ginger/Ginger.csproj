@@ -652,7 +652,6 @@
     <Compile Include="MenusLib\ResourcesMenu.cs" />
     <Compile Include="MenusLib\RunMenu.cs" />
     <Compile Include="RunSetLib\RunSetOperations.cs" />
-    <Compile Include="Run\RunSetConfig.cs" />
     <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
       <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
     </Compile>
@@ -660,7 +659,6 @@
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml.cs">
       <DependentUpon>ImportDataSourceBrowseFile.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TelemertryLib\AutoLogProxy.cs" />
     <Compile Include="TestLib\WizardLib\MyWizard.cs" />
     <Compile Include="TestLib\WizardLib\MyWizardDetailsPage.xaml.cs">
       <DependentUpon>MyWizardDetailsPage.xaml</DependentUpon>
@@ -873,7 +871,6 @@
     <Compile Include="Run\FailedActionsScreenshotsPage.xaml.cs">
       <DependentUpon>FailedActionsScreenshotsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\DefectSuggestion.cs" />
     <Compile Include="Run\BusinessFlowRunFlowControlPage.xaml.cs">
       <DependentUpon>BusinessFlowRunFlowControlPage.xaml</DependentUpon>
     </Compile>
@@ -1065,7 +1062,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\EmailHtmlReportAttachment.cs" />
     <Compile Include="SourceControl\SourceControlIntegration.cs" />
     <Compile Include="SourceControl\SourceControlItemInfoPage.xaml.cs">
       <DependentUpon>SourceControlItemInfoPage.xaml</DependentUpon>
@@ -1116,7 +1112,6 @@
     <Compile Include="Run\RunSetActions\RunSetActionHTMLReportEditPage.xaml.cs">
       <DependentUpon>RunSetActionHTMLReportEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionHTMLReport.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\DataSourceTableTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportsTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportTreeItem.cs" />
@@ -1420,7 +1415,6 @@
     <Compile Include="Reports\HTMLReportPage .xaml.cs">
       <DependentUpon>HTMLReportPage .xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\GingerExecutionReport\GingerExecutionReport.cs" />
     <Compile Include="Reports\ExecutionResultsConfiguration.xaml.cs">
       <DependentUpon>ExecutionResultsConfiguration.xaml</DependentUpon>
     </Compile>
@@ -1446,13 +1440,10 @@
     <Compile Include="Reports\RTFtoPDF.cs" />
     <Compile Include="Reports\SpecialReports\XMLReportBase.cs" />
     <Compile Include="Reports\SpecialReports\TestNGResultReport.cs" />
-    <Compile Include="Run\RunSetActions\EmailAttachment.cs" />
-    <Compile Include="Run\RunSetActions\RunSetActionBase.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionEditPage.xaml.cs">
       <DependentUpon>RunSetActionEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\RunSetActions\RunSetActionPublishToQC.cs" />
-    <Compile Include="Run\RunSetActions\RunSetActionSaveResults.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionSaveResultsEditPage.xaml.cs">
       <DependentUpon>RunSetActionSaveResultsEditPage.xaml</DependentUpon>
     </Compile>
@@ -1464,7 +1455,6 @@
     <Compile Include="Run\RunSetActions\RunSetActionScriptEditPage.xaml.cs">
       <DependentUpon>RunSetActionScriptEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunSetActions\RunSetActionSendEmail.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionSendSMSditPage.xaml.cs">
       <DependentUpon>RunSetActionSendSMSditPage.xaml</DependentUpon>
     </Compile>
@@ -1764,7 +1754,6 @@
     <Compile Include="Repository\RepositoryItemUsagePage.xaml.cs">
       <DependentUpon>RepositoryItemUsagePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\HTMLReports\HTMLDetailedReport.cs" />
     <Compile Include="SolutionWindows\AddApplicationPage.xaml.cs">
       <DependentUpon>AddApplicationPage.xaml</DependentUpon>
     </Compile>
@@ -1840,8 +1829,6 @@
     <Compile Include="Run\BusinessFlowRunConfigurationsPage.xaml.cs">
       <DependentUpon>BusinessFlowRunConfigurationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\RunsetExecutor.cs" />
-    <Compile Include="Reports\HTMLReports\HTMLReportBase.cs" />
     <Compile Include="SolutionWindows\AddSolutionPage.xaml.cs">
       <DependentUpon>AddSolutionPage.xaml</DependentUpon>
     </Compile>
@@ -4393,6 +4380,7 @@
     <Folder Include="Help\Library\" />
     <Folder Include="LicenseControl\" />
     <Folder Include="Settings\TreeViewItems\" />
+    <Folder Include="TelemertryLib\" />
     <Folder Include="UserControlsLib\TextEditor\Java\" />
     <Folder Include="WindowExplorer\InternalBrowser\" />
   </ItemGroup>

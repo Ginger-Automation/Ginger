@@ -21,17 +21,12 @@ using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Media.Imaging;
 using System.Reflection;
 using System.IO;
-using System.Drawing;
-using GingerCore;
 
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
-using GingerCore.Activities;
 
 namespace Ginger.Reports.GingerExecutionReport
 {
@@ -1477,7 +1472,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = null;
         }
 
-        public void CreateActivitiesGroupReportsOfBusinessFlow(BusinessFlowReport BusinessFlowReport, ref BusinessFlow BF, string currentHTMLReportsFolder = "", string ReportLevel = "", bool calledAsRoot = false)
+        public void CreateActivitiesGroupReportsOfBusinessFlow(BusinessFlowReport BusinessFlowReport, ref IBusinessFlow BF, string currentHTMLReportsFolder = "", string ReportLevel = "", bool calledAsRoot = false)
         {
             if (BusinessFlowReport.ActivitiesGroupReports != null)
             {
@@ -2711,7 +2706,7 @@ namespace Ginger.Reports.GingerExecutionReport
             return l.HTMLReportMainFolder;
         }
 
-        public static string CreateActivitiesGroupReportsOfBusinessFlow(BusinessFlow BF, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null)
+        public static string CreateActivitiesGroupReportsOfBusinessFlow(IBusinessFlow BF, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null)
         {
             Ginger.Reports.GingerExecutionReport.GingerExecutionReport l = new Ginger.Reports.GingerExecutionReport.GingerExecutionReport();
             l.TemplatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");

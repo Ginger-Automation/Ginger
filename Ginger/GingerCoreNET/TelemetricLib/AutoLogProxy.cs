@@ -16,9 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore;
-using GingerCore.Actions;
-using GingerCoreNET.ReporterLib;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using System;
 using System.IO;
 using System.Reflection;
@@ -82,27 +81,27 @@ namespace Amdocs.Ginger
             
         }
 
-        public static void LogAction(BusinessFlow BF, Act act)
+        public static void LogAction(IBusinessFlow BF, IAct act)
         {
         
         }
 
-        public static void LogActivity(BusinessFlow BF, Activity activity)
+        public static void LogActivity(IBusinessFlow BF, IActivity activity)
         {
         
         }
 
-        public static void LogBusinessFlow(BusinessFlow BF)
+        public static void LogBusinessFlow(IBusinessFlow BF)
         {
         
         }
 
-        static string GetBusinessFlowPlatforms(BusinessFlow BF)
+        static string GetBusinessFlowPlatforms(IBusinessFlow BF)
         {        
             return null;
         }
 
-        public static void LogActionPublished(Act act)
+        public static void LogActionPublished(IAct act)
         {
          
         }

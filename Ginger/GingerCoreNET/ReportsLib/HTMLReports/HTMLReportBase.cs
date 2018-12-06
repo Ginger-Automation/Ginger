@@ -24,6 +24,7 @@ using System.Xml.Linq;
 using GingerCore;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Reports
 {
@@ -57,7 +58,7 @@ namespace Ginger.Reports
 
         protected string BizFlowHTMLColumns(BusinessFlowReport BFR)
         {            
-            BusinessFlow BF=(BusinessFlow) BFR.GetBusinessFlow();
+            IBusinessFlow BF=(IBusinessFlow) BFR.GetBusinessFlow();
             XElement xe = new XElement("div", BF.Name);
             xe.Add(new XElement("td",BF.ElapsedSecs));
             

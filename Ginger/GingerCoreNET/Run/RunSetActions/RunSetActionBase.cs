@@ -6,8 +6,10 @@ using Amdocs.Ginger.Common;
 using GingerCoreNET.ReporterLib;
 using System.Diagnostics;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Ginger.Reports;
+using amdocs.ginger.GingerCoreNET;
 
-namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
+namespace Ginger.Run.RunSetActions
 {
     public abstract class RunSetActionBase : RepositoryItemBase
     {
@@ -164,17 +166,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
             }
         }
 
-        public abstract void Execute(IReportInfo RI);
+        public abstract void Execute(ReportInfo RI);
 
         public abstract string GetEditPage();
 
         internal void ExecuteWithRunPageBFES()
         {
-            //ReportInfo RI = new ReportInfo(App.RunsetExecutor.RunsetExecutionEnvironment, App.RunsetExecutor);
-            //RunAction(RI);
+            ReportInfo RI = new ReportInfo(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.RunsetExecutor);
+            RunAction(RI);
         }
 
-        internal void RunAction(IReportInfo RI)
+        internal void RunAction(ReportInfo RI)
         {
             Reporter.ToGingerHelper(eGingerHelperMsgKey.ExecutingRunSetAction, null, this.Name);
             try

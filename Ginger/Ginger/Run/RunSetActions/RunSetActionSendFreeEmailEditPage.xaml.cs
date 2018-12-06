@@ -31,70 +31,70 @@ namespace Ginger.Run.RunSetActions
         public RunSetActionSendFreeEmailEditPage(RunSetActionSendFreeEmail runSetActionSendFreeEmail)
         {
             InitializeComponent();
-            /* if (runSetActionSendFreeEmail.Email == null)
-             {
-                 runSetActionSendFreeEmail.Email = new Email();
-             }
-             MailFromTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailFrom);
-             MailToTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailTo);
-             MailCCTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailCC);
-             SubjectTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.Subject);
-             BodyTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.Bodytext);
-             BodyTextBox.AdjustHight(100);            
-             App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, Email.Fields.SMTPPort);
-             App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, Email.Fields.SMTPPass);
-             App.FillComboFromEnumVal(xEmailMethodComboBox, runSetActionSendFreeEmail.Email.EmailMethod);
-             xSMTPMailHostTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailHost);
-             xSMTPUserTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailUser);           
-             App.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendFreeEmail.Email, Email.Fields.EmailMethod);
-             App.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, Email.Fields.EnableSSL);
-             App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, Email.Fields.ConfigureCredential);
-             if (string.IsNullOrEmpty(runSetActionSendFreeEmail.MailTo))
-             {
-                 runSetActionSendFreeEmail.MailTo = App.UserProfile.UserEmail;
-             }
-         }
+            if (runSetActionSendFreeEmail.Email == null)
+            {
+                runSetActionSendFreeEmail.Email = new Email();
+            }
+            MailFromTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailFrom);
+            MailToTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailTo);
+            MailCCTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailCC);
+            SubjectTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.Subject);
+            BodyTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.Bodytext);
+            BodyTextBox.AdjustHight(100);
+            //App.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, Email.Fields.SMTPPort);
+            //App.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, Email.Fields.SMTPPass);
+            //App.FillComboFromEnumVal(xEmailMethodComboBox, runSetActionSendFreeEmail.Email.EmailMethod);
+            //xSMTPMailHostTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailHost);
+            //xSMTPUserTextBox.Init(runSetActionSendFreeEmail, RunSetActionHTMLReportSendEmail.Fields.MailUser);
+            //App.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendFreeEmail.Email, Email.Fields.EmailMethod);
+            //App.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, Email.Fields.EnableSSL);
+            //App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, Email.Fields.ConfigureCredential);
+            if (string.IsNullOrEmpty(runSetActionSendFreeEmail.MailTo))
+            {
+                runSetActionSendFreeEmail.MailTo = App.UserProfile.UserEmail;
+            }
+        }
 
-         private void xEmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-         {
-             if (xEmailMethodComboBox.SelectedItem.ToString() == "OUTLOOK")
-             {
-                 xSMTPConfig.Visibility = Visibility.Collapsed;
-             }
-             else
-             {
-                 xSMTPConfig.Visibility = Visibility.Visible;
-             }
-         }
+        private void xEmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xEmailMethodComboBox.SelectedItem.ToString() == "OUTLOOK")
+            {
+                xSMTPConfig.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                xSMTPConfig.Visibility = Visibility.Visible;
+            }
+        }
 
-           private void xcbConfigureCredential_Checked(object sender, RoutedEventArgs e)
-         {            
-                 xSMTPUserTextBox.Visibility = Visibility.Visible;
-                 xSMTPPassTextBox.Visibility = Visibility.Visible;
-                 xLabelPass.Visibility = Visibility.Visible;
-                 xLabelUser.Visibility = Visibility.Visible;
-         }
+        private void xcbConfigureCredential_Checked(object sender, RoutedEventArgs e)
+        {
+            xSMTPUserTextBox.Visibility = Visibility.Visible;
+            xSMTPPassTextBox.Visibility = Visibility.Visible;
+            xLabelPass.Visibility = Visibility.Visible;
+            xLabelUser.Visibility = Visibility.Visible;
+        }
 
-         private void xSMTPPassTextBox_LostFocus(object sender, RoutedEventArgs e)
-         {
-             bool res, checkValueDecrypt;
-             res = false;
-             checkValueDecrypt = true;            
-             EncryptionHandler.DecryptString(xSMTPPassTextBox.Text, ref checkValueDecrypt);
+        private void xSMTPPassTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            bool res, checkValueDecrypt;
+            res = false;
+            checkValueDecrypt = true;
+            EncryptionHandler.DecryptString(xSMTPPassTextBox.Text, ref checkValueDecrypt);
 
-             if (!checkValueDecrypt) xSMTPPassTextBox.Text = EncryptionHandler.EncryptString(xSMTPPassTextBox.Text, ref res);
-         }
+            if (!checkValueDecrypt) xSMTPPassTextBox.Text = EncryptionHandler.EncryptString(xSMTPPassTextBox.Text, ref res);
+        }
 
-         private void xcbConfigureCredential_Unchecked(object sender, RoutedEventArgs e)
-         {
-             xSMTPUserTextBox.Visibility = Visibility.Collapsed;
-             xSMTPPassTextBox.Visibility = Visibility.Collapsed;
-             xLabelPass.Visibility = Visibility.Collapsed;
-             xLabelUser.Visibility = Visibility.Collapsed;
-         }    
-     }
- }
- */
+        private void xcbConfigureCredential_Unchecked(object sender, RoutedEventArgs e)
+        {
+            xSMTPUserTextBox.Visibility = Visibility.Collapsed;
+            xSMTPPassTextBox.Visibility = Visibility.Collapsed;
+            xLabelPass.Visibility = Visibility.Collapsed;
+            xLabelUser.Visibility = Visibility.Collapsed;
         }
     }
 }
+ 
+//        }
+//    }
+//}
