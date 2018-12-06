@@ -314,7 +314,7 @@ namespace Ginger.Run
         public void SetExecutionEnvironment(ProjEnvironment defaultEnv, ObservableList<ProjEnvironment> allEnvs)
         {
             ProjEnvironment = null;
-            if (UseSpecificEnvironment == true && string.IsNullOrEmpty(SpecificEnvironmentName) == false)
+            if (UseSpecificEnvironment == true && string.IsNullOrEmpty(SpecificEnvironmentName) == false && allEnvs != null)
             {
                 ProjEnvironment specificEnv = (from x in allEnvs where x.Name == SpecificEnvironmentName select x).FirstOrDefault();
                 if (specificEnv != null)
@@ -326,6 +326,7 @@ namespace Ginger.Run
             if (ProjEnvironment == null)
             {
                 ProjEnvironment = defaultEnv;
+
             }
         }
 

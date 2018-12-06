@@ -101,7 +101,12 @@ namespace Ginger.Run
             {
                 mRunsetExecutionEnvironment = value;
                 if (mRunsetExecutionEnvironment != null)
-                    App.UserProfile.RecentEnvironment = mRunsetExecutionEnvironment.Guid;
+                {
+                    if (App.UserProfile != null)
+                    {
+                        App.UserProfile.RecentEnvironment = mRunsetExecutionEnvironment.Guid;
+                    }
+                }
                 OnPropertyChanged(nameof(this.RunsetExecutionEnvironment));
             }
         }
@@ -120,14 +125,19 @@ namespace Ginger.Run
 
         public void ConfigureRunnerForExecution(GingerRunner runner)
         {
-            runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
-            
+            if (WorkSpace.Instance != null)
+            {
+                runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
+                runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+            }
+            else
+            {
+                runner.SetExecutionEnvironment(RunsetExecutionEnvironment, null);
+            }
             runner.CurrentSolution = App.UserProfile.Solution;
-            runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-            // runner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
-            runner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             runner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
             runner.SolutionFolder = App.UserProfile.Solution.Folder;
+
         }
 
         public void InitRunner(GingerRunner runner)
@@ -234,7 +244,7 @@ namespace Ginger.Run
         {
             _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
 
-            if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
+            if (_selectedExecutionLoggerConfiguration!=null && _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 DateTime currentExecutionDateTime = DateTime.Now;
 
@@ -291,10 +301,17 @@ namespace Ginger.Run
             if (doContinueRun == false)
             {
                 Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                App.MainWindow.Dispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
+                if (App.MainWindow != null)
                 {
-                    App.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution});
-                });
+                    App.MainWindow.Dispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
+                    {
+                        App.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
+                    });
+                }
+                else
+                {
+                    ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
+                }
             }
 
             //Start Run 
@@ -376,10 +393,17 @@ namespace Ginger.Run
             {
                 // Process all post execution RunSet Operations
                 Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                App.MainWindow.Dispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
+                if (App.MainWindow != null)
                 {
-                    App.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
-                });
+                    App.MainWindow.Dispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
+                    {
+                        App.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
+                    });
+                }
+                else
+                {
+                    ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
+                }
             }
             Reporter.ToLog(eAppReporterLogLevel.INFO, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             CreateGingerExecutionReportAutomaticly();
@@ -391,7 +415,7 @@ namespace Ginger.Run
         {
             HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            if ((_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled) && (Runners != null) && (Runners.Count > 0))
+            if ((_selectedExecutionLoggerConfiguration!= null)&&(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled) && (Runners != null) && (Runners.Count > 0))
             {
                 if (_selectedExecutionLoggerConfiguration.ExecutionLoggerHTMLReportsAutomaticProdIsEnabled)
                 {
