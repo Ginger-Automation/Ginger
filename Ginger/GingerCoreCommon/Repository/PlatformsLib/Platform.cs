@@ -39,7 +39,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         PowerBuilder,
         Java,
         MainFrame,
-        Android,
+        //Android,
         AndroidDevice,  // rename to Android, join with Android
         IOS
     }
