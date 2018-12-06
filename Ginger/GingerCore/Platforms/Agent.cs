@@ -935,7 +935,7 @@ namespace GingerCore
             //BusinessFlow = App.BusinessFlow; ;
             //SolutionFolder = App.UserProfile.Solution.Folder;
             //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            SolutionFolder = WorkSpace.Instance.SolutionRepository.SolutionFolder;
+            SolutionFolder =WorkSpace.Instance.SolutionRepository.SolutionFolder;
             try
             {
                 StartDriver();
