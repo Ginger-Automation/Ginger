@@ -357,7 +357,7 @@ namespace Ginger.BusinessFlowFolder
             if (mBusinessFlow != null)
             {
                 grdActivities.Title = "'" + mBusinessFlow.Name + "' - " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-                ObservableList<IActivity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IActivity>();
+                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.Activities, (IEnumerable<object>)activities);
                 grdActivities.DataSourceList = mBusinessFlow.Activities;                
             }

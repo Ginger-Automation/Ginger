@@ -438,9 +438,9 @@ namespace Amdocs.Ginger.Repository
         private SolutionRepositoryItemInfo<T> GetSolutionRepositoryItemInfo<T>()
         {
             Type type= RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(typeof(T));
-            SolutionRepositoryItemInfoBase SRIIBase = GetSolutionRepositoryItemInfo(type);
+            SolutionRepositoryItemInfoBase SRIIBase = GetSolutionRepositoryItemInfo(typeof(T));
         SolutionRepositoryItemInfo<T> SRII = (SolutionRepositoryItemInfo<T>)SRIIBase;
-            return GetSolutionRepositoryItemInfo(type); ;
+            return SRII;
         }
 
         private void VerifyOrCreateSolutionFolders(string folder)
