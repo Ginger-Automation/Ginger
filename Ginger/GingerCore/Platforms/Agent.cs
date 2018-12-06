@@ -44,6 +44,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore
 {
@@ -934,6 +935,7 @@ namespace GingerCore
             //BusinessFlow = App.BusinessFlow; ;
             //SolutionFolder = App.UserProfile.Solution.Folder;
             //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            SolutionFolder = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.SolutionFolder;
             try
             {
                 StartDriver();
@@ -959,6 +961,7 @@ namespace GingerCore
         }
 
         public object Tag;
+        private object WorkSpace;
 
         public override eImageType ItemImageType
         {
