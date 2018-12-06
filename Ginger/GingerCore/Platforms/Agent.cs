@@ -935,7 +935,7 @@ namespace GingerCore
             //BusinessFlow = App.BusinessFlow; ;
             //SolutionFolder = App.UserProfile.Solution.Folder;
             //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            SolutionFolder = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.SolutionFolder;
+            SolutionFolder = WorkSpace.Instance.SolutionRepository.SolutionFolder;
             try
             {
                 StartDriver();
@@ -961,8 +961,7 @@ namespace GingerCore
         }
 
         public object Tag;
-        private object WorkSpace;
-
+       
         public override eImageType ItemImageType
         {
             get
