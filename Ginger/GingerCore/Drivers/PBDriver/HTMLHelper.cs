@@ -1242,6 +1242,17 @@ namespace GingerCore.Drivers.PBDriver
                 return "false";
             }
         }
+
+        string IXPath.GetElementID(ElementInfo EI)
+        {
+            return getElementId((IHTMLElement)EI.ElementObject);
+        }
+
+        string IXPath.GetElementTagName(ElementInfo EI)
+        {
+            return ((IHTMLElement)EI.ElementObject).tagName;
+        }
+
         public string getElementId(IHTMLElement h1)
         {
             string id = h1.id;
