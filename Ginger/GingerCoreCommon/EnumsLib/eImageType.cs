@@ -17,6 +17,8 @@
         /// Ginger Icon image
         /// </summary>
         Ginger,
+        GingerLogo,
+        GingerLogoGray,
         GingerIconWhite,
         GingerIconGray,
         #endregion

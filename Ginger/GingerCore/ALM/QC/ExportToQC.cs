@@ -266,7 +266,7 @@ namespace GingerCore.ALM.QC
                 else
                 {
                     //##update existing test case
-                    test = mappedTest;
+                    test = ImportFromQC.GetQCTest(activitiesGroup.ExternalID);
 
                     //delete the un-needed steps
                     DesignStepFactory stepF = test.DesignStepFactory;
@@ -497,6 +497,13 @@ namespace GingerCore.ALM.QC
                         if (tsTest != null)
                         {
                             ag.ExternalID2 = tsTest.ID;//the test case instance ID in the test set- used for exporting the execution details
+                        }
+                    }
+                    else
+                    {
+                        foreach (ActivityIdentifiers actIdent in ag.ActivitiesIdentifiers)
+                        {
+                            ExportActivityAsTestStep(ImportFromQC.GetQCTest(ag.ExternalID), actIdent.IdentifiedActivity);
                         }
                     }
                 }
