@@ -3620,8 +3620,8 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
-                            Driver.SwitchTo().DefaultContent();
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnFullElementInfoDetails);                            
+                            Driver.SwitchTo().ParentFrame();
                         }
 
                     }
