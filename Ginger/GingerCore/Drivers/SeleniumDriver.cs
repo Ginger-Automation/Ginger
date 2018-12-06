@@ -197,6 +197,8 @@ namespace GingerCore.Drivers
         private bool IsRecording = false;
 
         IWebElement LastHighLightedElement;
+        XPathHelper mXPathHelper;
+
         private string CurrentFrame;
 
         public SeleniumDriver()
@@ -509,14 +511,14 @@ namespace GingerCore.Drivers
 
 
                 DefaultWindowHandler = Driver.CurrentWindowHandle;
+                InitXpathHelper();
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in start driver", ex);
                 ErrorMessageFromDriver = ex.Message;
             }
-        }
-
+        }       
         public override void CloseDriver()
         {
             try
@@ -3179,7 +3181,7 @@ namespace GingerCore.Drivers
                     }
 
                 }
-                if (locator.LocateBy == eLocateBy.ByXPath)
+                if (locator.LocateBy == eLocateBy.ByXPath || locator.LocateBy == eLocateBy.ByRelXPath)
                 {
                     elem = Driver.FindElement(By.XPath(locator.LocateValue));
                 }
@@ -3314,7 +3316,7 @@ namespace GingerCore.Drivers
                     catch { }
                 }
             }
-            if (LocatorType == eLocateBy.ByXPath)
+            if (LocatorType == eLocateBy.ByXPath || LocatorType == eLocateBy.ByRelXPath)
             {
                 elem = Driver.FindElements(By.XPath(LocValue));
             }
@@ -4398,7 +4400,8 @@ namespace GingerCore.Drivers
             {
                 list.Add(new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = name, Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
             }
-            list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended (sensitive to page design changes)", Active = true, IsAutoLearned = true });
+            list.Add(new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = mXPathHelper.GetElementRelXPath(ElementInfo) , Help = "Very Recommended (usually unique)", Active = true, IsAutoLearned = true });
+            list.Add(new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = ElementInfo.XPath, Help = "Recommended (sensitive to page design changes)", Active = true, IsAutoLearned = true });            
             string eClass = e.GetAttribute("class");
             if (!string.IsNullOrEmpty(eClass) && eClass != "GingerHighlight")
             {
@@ -6259,13 +6262,17 @@ namespace GingerCore.Drivers
             //Driver.SwitchTo().DefaultContent();
         }
 
-        XPathHelper IXPath.GetXPathHelper(ElementInfo info)
+        private void InitXpathHelper()
         {
             List<string> importantProperties = new List<string>();
             importantProperties.Add("SeleniumDriver");
             importantProperties.Add("Web");
-            XPathHelper xPathHelper = new XPathHelper(this, importantProperties);
-            return xPathHelper;
+            mXPathHelper = new XPathHelper(this, importantProperties);            
+        }
+
+        XPathHelper IXPath.GetXPathHelper(ElementInfo info)
+        {            
+            return mXPathHelper;
         }
 
         ElementInfo IXPath.GetRootElement()
@@ -6289,8 +6296,18 @@ namespace GingerCore.Drivers
         {
             IWebElement childElement = Driver.FindElement(By.XPath(ElementInfo.XPath));
             IWebElement parentElement = childElement.FindElement(By.XPath(".."));
-            ElementInfo parentEI = GetElementInfoFromIWebElement(parentElement, ElementInfo);
+            ElementInfo parentEI = GetElementInfoFromIWebElement(parentElement,ElementInfo);
             return parentEI;
+        }
+
+        string IXPath.GetElementID(ElementInfo EI)
+        {
+            return GenerateElementID((IWebElement)EI.ElementObject);
+        }
+
+        string IXPath.GetElementTagName(ElementInfo EI)
+        {
+            return ((IWebElement)EI.ElementObject).TagName;
         }
 
         private ElementInfo GetElementInfoFromIWebElement(IWebElement el, ElementInfo FatherElementInfo)
@@ -6305,7 +6322,7 @@ namespace GingerCore.Drivers
             EI.ElementType = GenerateElementType(el);
             EI.ElementTypeEnum = GetElementTypeEnum(el);
             EI.Path = FatherElementInfo.Path;
-            EI.XPath = FatherElementInfo.XPath + "/" + el.TagName;
+            EI.XPath = GenerateXpath(FatherElementInfo.Path,)
             EI.ElementObject = el;
             return EI;
         }
