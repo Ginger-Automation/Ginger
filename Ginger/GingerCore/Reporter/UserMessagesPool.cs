@@ -121,7 +121,7 @@ namespace GingerCore
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty, 
-        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI
+        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName
     }
 
     public static class UserMessagesPool
@@ -400,6 +400,7 @@ namespace GingerCore
             Reporter.UserMessagesPool.Add(eUserMsgKeys.RunsetBuinessFlowWasChanged, new UserMessage(eAppReporterMessageType.WARN, GingerDicser.GetTermResValue(eTermResKey.RunSet) + " " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Changed", "One or more of the " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " were changed/deleted." + Environment.NewLine + "You must reload the " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " for changes to be viewed/executed." + Environment.NewLine + Environment.NewLine + "Do you want to reload the " + GingerDicser.GetTermResValue(eTermResKey.RunSet) +"?" + Environment.NewLine + Environment.NewLine + "Note: Reload will cause un-saved changes to be lost.", MessageBoxButton.YesNo, MessageBoxResult.No));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.RunSetReloadhWarn, new UserMessage(eAppReporterMessageType.WARN, "Reload " + GingerDicser.GetTermResValue(eTermResKey.RunSet), "Reload process will cause all un-saved changes to be lost." + Environment.NewLine + Environment.NewLine+ " To continue wite reload?", MessageBoxButton.YesNo, MessageBoxResult.No));
             Reporter.UserMessagesPool.Add(eUserMsgKeys.CantDeleteRunner, new UserMessage(eAppReporterMessageType.WARN, "Delete Runner", "You can't delete last Runner, you must have at least one.", MessageBoxButton.OK, MessageBoxResult.None));
+            Reporter.UserMessagesPool.Add(eUserMsgKeys.DuplicateRunsetName, new UserMessage(eAppReporterMessageType.WARN, "Duplicate Runset Name", "{0}", MessageBoxButton.OK, MessageBoxResult.None));
             #endregion Runset Messages
 
             #region Excel Messages

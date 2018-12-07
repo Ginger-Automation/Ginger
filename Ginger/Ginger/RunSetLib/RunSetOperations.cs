@@ -4,6 +4,7 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.GeneralLib;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
@@ -21,9 +22,9 @@ namespace Amdocs.Ginger
                     return null;
                 }
 
-                while (CheckAmbiguity(runSetName))
+                while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().Where(r => r.ItemName.ToLower() == runSetName.ToLower()).FirstOrDefault() != null)
                 {
-                    Reporter.ToUser(eUserMsgKeys.ValueIssue, runSetName + " already exists ! Run Set name should be unique !");
+                    Reporter.ToUser(eUserMsgKeys.DuplicateRunsetName, string.Format("'{0}' already exists, please use different name", runSetName));
 
                     if (!InputBoxWindow.GetInputWithValidation(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ref runSetName, System.IO.Path.GetInvalidPathChars()))
                     {
@@ -46,19 +47,6 @@ namespace Amdocs.Ginger
             }
 
             return runSetConfig;
-        }
-
-        private static bool CheckAmbiguity(string runSetName)
-        {
-            Common.ObservableList<RunSetConfig> allRunsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-
-            foreach (RunSetConfig existingRunset in allRunsets)
-            {
-                if (existingRunset.Name.Equals(runSetName, StringComparison.OrdinalIgnoreCase))
-                    return true;
-            }
-
-            return false;
         }
     }
 }
