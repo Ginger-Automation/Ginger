@@ -145,9 +145,9 @@ namespace GingerCoreNET.RunLib
         }
         
 
-        internal NewPayLoad SendRequestPayLoad(Guid sessionID, NewPayLoad pL)
+        internal NewPayLoad SendRequestPayLoad(Guid sessionID, NewPayLoad payload)
         {
-            NewPayLoad rc = mGingerSocketServer.SendPayLoad(sessionID, pL);
+            NewPayLoad rc = mGingerSocketServer.SendPayLoad(sessionID, payload);
             return rc;
         }
 

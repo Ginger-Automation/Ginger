@@ -81,35 +81,15 @@ namespace GingerCoreNET.RunLib
 
         public NewPayLoad RunAction(NewPayLoad newPayLoad)
         {
-            // Here we decompose the GA and create Payload to transfer it to the agent
-            //NewPayLoad PL = new NewPayLoad("RunAction");
-            //PL.AddValue(GA.ID);
-            //List<NewPayLoad> Params = new List<NewPayLoad>();
-            //foreach (ActionParam AP in GA.InputParams.Values)
-            //{
-            //    if (AP.Name == "GA" || AP.Name == "PluginID") continue;
-            //    // TODO: use const
-            //    NewPayLoad p = new NewPayLoad("P");   // To save network trafic we send just one letter
-            //    p.AddValue(AP.Name);
-            //    p.AddValue(AP.Value.ToString());
-            //    p.ClosePackage();
-            //    Params.Add(p);
-            //}
-
-            //PL.AddListPayLoad(Params);
-            //PL.ClosePackage();
-
-            // TODO: use function which goes to local grid or remote grid
             NewPayLoad RC = SendRequestPayLoad(newPayLoad);
-            return RC;
-           
+            return RC;           
         }
 
-        private NewPayLoad SendRequestPayLoad(NewPayLoad pL)
+        private NewPayLoad SendRequestPayLoad(NewPayLoad payload)
         {
             
             // if local grid use
-            return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, pL);
+            return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, payload);
             // else use remote grid
             
         }
@@ -165,41 +145,6 @@ namespace GingerCoreNET.RunLib
             SendRequestPayLoad(PL);
         }
 
-        //internal void RunAction(Act act)
-        //{
-        //    // We can create the Payload here and avoid creating GingerAction 
-
-        //    try
-        //    {
-        //        GingerAction GA = new GingerAction(act.ID);
-        //        if (string.IsNullOrEmpty(GA.ID))
-        //        {
-        //            throw new Exception("Ginger Action ID cannot be empty - " + act.Description);
-        //        }
-
-        //        // Copy the parameters
-        //        foreach (ActInputValue AP in act.InputValues)
-        //        {
-        //            GA.InputParams[AP.Param].Value = AP.ValueForDriver;
-        //        }
-
-        //        RunAction(GA);
-
-        //        act.Error = GA.Errors;
-        //        act.ExInfo = GA.ExInfo;
-
-        //        act.AddNewReturnParams = true;
-        //        //Copy output values
-        //        foreach (ActionOutputValue AOV in GA.Output.Values)
-        //        {
-        //            act.AddOrUpdateReturnParamActual(AOV.Param, AOV.ValueString);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        act.Status = eRunStatus.Failed;
-        //        act.Error += ex.Message;
-        //    }
-        //}
+        
     }
 }
