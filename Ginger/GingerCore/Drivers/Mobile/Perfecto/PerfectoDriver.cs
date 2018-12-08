@@ -48,32 +48,31 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
         [UserConfigured]
         [UserConfiguredDefault("partners.perfectomobile.com")]
-        [UserConfiguredDescription("The URL of Perfecto cloud")]
+        [UserConfiguredDescription("Perfecto Cloud URL")]
         public String Perfecto_Host_URL { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Perfecto cloud Username")]
+        [UserConfiguredDescription("Perfecto Cloud Username")]
         public String Perfecto_User_Name { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Perfecto Password")]
+        [UserConfiguredDescription("Perfecto Cloud Password")]
         public String Perfecto_Password { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Perfecto device ID")]
+        [UserConfiguredDescription("Perfecto Cloud device ID")]
         public String Perfecto_Device_ID { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("30")]
-        [UserConfiguredDescription("Implicit Wait for Web Action Completion")]
+        [UserConfiguredDescription("Driver Implicit Wait")]
         public int ImplicitWait { get; set; }
 
         public bool ConnectedToDevice = false;
-        //private AppiumDriver<IWebElement> AppiumDriver;
-        private RemoteWebDriver AppiumDriver;
+        private RemoteWebDriver mDriver;
         private SeleniumDriver mSeleniumDriver;//selenium base
 
 
@@ -89,7 +88,6 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
         private eContextType mContextType { get; set; }
 
-        //private RemoteWebDriver WebDriver;
 
         public enum eSwipeSide
         {
@@ -117,7 +115,6 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             //Show Perfecto device dashboard in order to view running test flow
             String devicesDashboard = "https://" + Perfecto_Host_URL + "/nexperience/dashboard.jsp";
             System.Diagnostics.Process.Start(devicesDashboard);
-            //PerfectoLabUtils.SetPerfectoLabExecutionId(capabilities, Perfecto_Host_URL);
 
             var url = new Uri(string.Format("https://{0}/nexperience/perfectomobile/wd/hub", Perfecto_Host_URL));
 
@@ -125,21 +122,21 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             {
                 if (mContextType == eContextType.NativeAndroid)
                 {
-                    DriverOptions DO = GetDriverOptions();
-                    AppiumDriver = new AndroidDriver<IWebElement>(url, DO);
+                    DriverOptions DO = GetNativeCapabilities();
+                    mDriver = new AndroidDriver<IWebElement>(url, DO);
                 }
                 else if (mContextType == eContextType.NativeIOS)
                 {
-                    DriverOptions DO = GetDriverOptions();
-                    AppiumDriver = new IOSDriver<IWebElement>(url, DO);
+                    DriverOptions DO = GetNativeCapabilities();
+                    mDriver = new IOSDriver<IWebElement>(url, DO);
                 }
                 else if (mContextType == eContextType.WebAndroid || mContextType == eContextType.WebIOS)
                 {
-                    DesiredCapabilities capabilities = GetDesiredCapabilities();
-                    AppiumDriver = new RemoteWebDriver(url, capabilities);
+                    DesiredCapabilities capabilities = GetWebCapabilities();
+                    mDriver = new RemoteWebDriver(url, capabilities);
                 }
 
-                mSeleniumDriver = new SeleniumDriver(AppiumDriver);
+                mSeleniumDriver = new SeleniumDriver(mDriver);
             }
             catch (Exception e)
             {
@@ -148,18 +145,18 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
             if (mContextType != eContextType.WebAndroid && mContextType != eContextType.WebIOS)
             {
-                ((AppiumDriver<IWebElement>)AppiumDriver).Context = "NATIVE_APP";
-                //driver.context("WEBVIEW"); 
+                //Context to be switch back to "WEBVIEW" if web element should be searched
+                ((AppiumDriver<IWebElement>)mDriver).Context = "NATIVE_APP";
             }
 
 
-            AppiumDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
+            mDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(ImplicitWait);
 
 
             return true;
         }
 
-        private DesiredCapabilities GetDesiredCapabilities()
+        private DesiredCapabilities GetWebCapabilities()
         {
             DesiredCapabilities capabilities = new DesiredCapabilities("mobileOS", string.Empty, new Platform(PlatformType.Any));
 
@@ -171,7 +168,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             return capabilities;
         }
 
-        private DriverOptions GetDriverOptions()
+        private DriverOptions GetNativeCapabilities()
         {
             DriverOptions driverOptions = null;
             switch (mContextType)
@@ -186,6 +183,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                 case eContextType.WebIOS:
                     driverOptions = new SafariOptions();
                     break;
+                default:
+                    break;
             }
 
             driverOptions.AddAdditionalCapability("user", Perfecto_User_Name);
@@ -198,7 +197,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
         public override void CloseDriver()
         {
-            AppiumDriver.Quit();
+            mDriver.Quit();
             ConnectedToDevice = false;
         }
 
@@ -222,155 +221,11 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                 mSeleniumDriver.ActBrowserElementHandler((ActBrowserElement)act);
                 return;
             }
-            if (ActType == typeof(ActGenElement))
-            {
-                GenElementHandler((ActGenElement)act);
-                return;
-            }
-            if (ActType == typeof(ActScreenShot))
-            {
-                AddCurrentScreenShot(act);
-                return;
-            }
+
         }
 
 
-        //Handle all Generic Actions
-        public void GenElementHandler(ActGenElement act)
-        {
-            IWebElement e;
-            switch (act.GenElementAction)
-            {
-                //Click and ClickAt
-                case ActGenElement.eGenElementAction.ClickAt:
-                case ActGenElement.eGenElementAction.Click:
-                    e = LocateElement(act);
-                    if (e == null)
-                    {
-                        act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValue;
-                        return;
-                    }
-                    else
-                    {
-                        e.Click();
-                    }
-                    break;
-
-                //Set Value
-                case ActGenElement.eGenElementAction.SetValue:
-                    e = LocateElement(act);
-                    if (e != null)
-                    {
-                        if (e.TagName == "select")
-                        {
-                            SelectElement combobox = new SelectElement(e);
-                            string val = act.ValueForDriver;
-                            combobox.SelectByText(val);
-                            act.ExInfo += "Selected Value - " + val;
-                            return;
-                        }
-                        if (e.TagName == "input" && e.GetAttribute("type") == "checkbox")
-                        {
-                            ((IJavaScriptExecutor)AppiumDriver).ExecuteScript("arguments[0].setAttribute('checked',arguments[1])", e, act.ValueForDriver);
-                            return;
-                        }
-
-                        //Special case for FF 
-                        if (AppiumDriver.GetType() == typeof(FirefoxDriver) && e.TagName == "input" && e.GetAttribute("type") == "text")
-                        {
-                            e.Clear();
-                            e.SendKeys(GetKeyName(act.ValueForDriver));
-                        }
-                        else
-                            ((IJavaScriptExecutor)AppiumDriver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.ValueForDriver);
-                    }
-                    else
-                    {
-                        act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
-                        return;
-                    }
-                    break;
-
-                //KeyType - similar to Keyboard Input
-                case ActGenElement.eGenElementAction.KeyType:
-                    e = LocateElement(act);
-                    if (e != null)
-                    {
-                        e.Clear();
-                        e.SendKeys(GetKeyName(act.ValueForDriver));
-                    }
-                    else
-                    {
-                        act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
-                        return;
-                    }
-                    break;
-
-                //Keyboard Input - similar to KeyType
-                case ActGenElement.eGenElementAction.KeyboardInput:
-                    e = LocateElement(act);
-
-                    if (e != null)
-                    {
-                        e.SendKeys(GetKeyName(act.ValueForDriver));
-                    }
-                    else
-                    {
-                        act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
-                        return;
-                    }
-                    break;
-
-                //Check this
-                case ActGenElement.eGenElementAction.GetValue:
-                    e = LocateElement(act);
-                    if (e != null)
-                    {
-                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("text"));
-                        if (act.GetReturnParam("Actual") == null)
-                            act.AddOrUpdateReturnParamActual("Actual", e.Text);
-                    }
-                    else
-                    {
-                        act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValue;
-                        return;
-                    }
-                    break;
-
-                //GoToURL - implemented also as GoToURL action and not in GenElementHandler action
-                case ActGenElement.eGenElementAction.GotoURL:
-                    string sURL = act.ValueForDriver.ToLower();
-                    if (sURL.StartsWith("www"))
-                    {
-                        sURL = "http://" + act.ValueForDriver;
-                    }
-                    else
-                    {
-                        sURL = act.ValueForDriver;
-                    }
-
-                    AppiumDriver.Navigate().GoToUrl(sURL);
-                    break;
-
-                //Wait Action
-                case ActGenElement.eGenElementAction.Wait:
-                    WaitAction(act);
-                    break;
-
-                //Delete all Cookies
-                case ActGenElement.eGenElementAction.DeleteAllCookies:  //TODO: FIXME: This action should not be part of GenElement
-                    AppiumDriver.Manage().Cookies.DeleteAllCookies();
-                    break;
-
-                //Back Click
-                case ActGenElement.eGenElementAction.Back: //TODO: FIXME: This action should not be part of GenElement
-                    PressBackBtn();
-                    break;
-
-                case ActGenElement.eGenElementAction.CloseBrowser:
-                    break;
-            }
-        }
+      
 
         private void MobileDeviceActionHandler(ActMobileDevice act)
         {
@@ -386,6 +241,22 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                         break;
                     case ActMobileDevice.eMobileDeviceAction.PressHomeButton:
                         PressHomeBtn();
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.PressCamera:
+                       PressCamera();
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.PressVolumeUp:
+                       PressVolumeUp();
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.PressVolumeDown:
+                        PressVolumeDown();
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.PressSwitchApp:
+                        PressSwitchApp();
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.PressLongHome:
+                        PressLongHome();
                         break;
                     case ActMobileDevice.eMobileDeviceAction.SwipeDown:
                         SwipeScreen(eSwipeSide.Down);
@@ -405,9 +276,6 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                     case ActMobileDevice.eMobileDeviceAction.OpenAppByName:
                         OpenAppByName(act.ValueForDriver);
                         break;
-                    case ActMobileDevice.eMobileDeviceAction.TakeScreenShot:
-                        AddCurrentScreenShot(act);
-                        break;
                     default:
                         act.Error = "Error: This operation is missing implementation";
                         break;
@@ -419,18 +287,53 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             }
         }
 
+        private void PressLongHome()
+        {
+            Dictionary<String, Object> params1 = new Dictionary<String, Object>();
+            params1.Add("keySequence", "LONGHOME");
+            mDriver.ExecuteScript("mobile:presskey", params1);
+        }
+
+        private void PressSwitchApp()
+        {
+            Dictionary<String, Object> params1 = new Dictionary<String, Object>();
+            params1.Add("keySequence", "APP_SWITCH");
+            mDriver.ExecuteScript("mobile:presskey", params1);
+        }
+
+        private void PressVolumeDown()
+        {
+            Dictionary<String, Object> params1 = new Dictionary<String, Object>();
+            params1.Add("keySequence", "VOL_DOWN");
+            mDriver.ExecuteScript("mobile:presskey", params1);
+        }
+
+        private void PressVolumeUp()
+        {
+            Dictionary<String, Object> params1 = new Dictionary<String, Object>();
+            params1.Add("keySequence", "VOL_UP");
+            mDriver.ExecuteScript("mobile:presskey", params1);
+        }
+
+        private void PressCamera()
+        {
+            Dictionary<String, Object> params1 = new Dictionary<String, Object>();
+            params1.Add("keySequence", "CAMERA");
+            mDriver.ExecuteScript("mobile:presskey", params1);
+        }
+
         private void OpenAppByName(string valueForDriver)
         {
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
             params1.Add("name", valueForDriver);
-            AppiumDriver.ExecuteScript("mobile:application:open", params1);
+            mDriver.ExecuteScript("mobile:application:open", params1);
         }
 
         private void PressBtn(ePressKey PressKey)
         {
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
             params1.Add("keySequence", PressKey.ToString());
-            AppiumDriver.ExecuteScript("mobile:presskey", params1);
+            mDriver.ExecuteScript("mobile:presskey", params1);
         }
 
 
@@ -439,14 +342,14 @@ namespace GingerCore.Drivers.Mobile.Perfecto
         {
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
             params1.Add("keySequence", "BACK");
-            AppiumDriver.ExecuteScript("mobile:presskey", params1);
+            mDriver.ExecuteScript("mobile:presskey", params1);
         }
 
         private void PressMenuBtn()
         {
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
             params1.Add("keySequence", "Menu");
-            AppiumDriver.ExecuteScript("mobile:presskey", params1);
+            mDriver.ExecuteScript("mobile:presskey", params1);
         }
 
         //Home Click Action
@@ -454,7 +357,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
         {
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
             params1.Add("keySequence", "HOME");
-            AppiumDriver.ExecuteScript("mobile:presskey", params1);
+            mDriver.ExecuteScript("mobile:presskey", params1);
         }
 
         //Swipe Action
@@ -466,103 +369,29 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                 case eSwipeSide.Down:
                     params1.Add("start", "50%,80%");
                     params1.Add("end", "50%,20%");
-                    AppiumDriver.ExecuteScript("mobile:touch:swipe", params1);
+                    mDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 case eSwipeSide.Up:
                     params1.Add("start", "50%,20%");
                     params1.Add("end", "50%,80%");
-                    AppiumDriver.ExecuteScript("mobile:touch:swipe", params1);
+                    mDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 case eSwipeSide.Left:
                     params1.Add("start", "20%,50%");
                     params1.Add("end", "80%,50%");
-                    AppiumDriver.ExecuteScript("mobile:touch:swipe", params1);
+                    mDriver.ExecuteScript("mobile:touch:swipe", params1);
                     break;
                 case eSwipeSide.Right:
                     params1.Add("start", "80%,50%");
                     params1.Add("end", "20%,50%");
-                    AppiumDriver.ExecuteScript("mobile:touch:swipe", params1);
+                    mDriver.ExecuteScript("mobile:touch:swipe", params1);
+                    break;
+                default:
                     break;
             }
         }
 
-        //Wait Action
-        private void WaitAction(ActGenElement act)
-        {
-            try
-            {
-                int number = Int32.Parse(act.ValueForDriver);
-                Thread.Sleep(number * 1000);
-            }
-            catch (FormatException)
-            {
 
-                //TODO: give message to user in grid
-                //if format isn't right
-
-            }
-            catch (OverflowException)
-            {
-                //TODO: give message to user in grid
-                //totally bogus value
-            }
-        }
-
-        private Bitmap GetScreenShot(Act act)
-        {
-            try
-            {
-                Screenshot ss = AppiumDriver.GetScreenshot();
-                using (var ms = new System.IO.MemoryStream(ss.AsByteArray))
-                {
-                    using (MemoryStream outStream = new MemoryStream())
-                    {
-                        BitmapEncoder enc = new BmpBitmapEncoder();
-                        enc.Frames.Add(BitmapFrame.Create(ms));
-                        enc.Save(outStream);
-                        System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-                        return new Bitmap(bitmap);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "PerfectoDriver - Failed to take Screenshot", ex);
-                return null;
-            }
-
-
-        }
-
-        private void AddCurrentScreenShot(Act act)
-        {
-            Bitmap bmp = GetScreenShot(act);
-            if (bmp != null)
-            {
-                act.AddScreenShot(bmp, AppiumDriver.Title);
-            }
-            else
-            {
-                act.Error += "Error: Cannot take screen shot.";
-            }
-        }
-
-        public IWebElement LocateElement(Act act, bool AlwaysReturn = false)
-        {
-            eLocateBy LocatorType = act.LocateBy;
-            string LocValue = act.LocateValueCalculated;
-            IWebElement elem = null;
-
-            if (LocatorType == eLocateBy.ByID)
-            {
-                var Elements = AppiumDriver.FindElement(By.XPath("//*[@content-desc=\"AirWatch Samsung ELM Service\"]//*[@resource-id=\"com.sec.android.app.launcher:id / iconview_imageView\"]"));
-            }
-            if (LocatorType == eLocateBy.ByXPath)
-            {
-                elem = AppiumDriver.FindElementByXPath(LocValue);
-            }
-            return elem;
-        }
 
         public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
 
@@ -571,203 +400,13 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             return ConnectedToDevice;
         }
 
-        private string GetKeyName(string skey)
-        {
-            switch (skey)
-            {
-                case "Keys.Alt":
-                    return OpenQA.Selenium.Keys.Alt;
-                case "Keys.ArrowDown":
-                    return OpenQA.Selenium.Keys.ArrowDown;
-                case "Keys.ArrowLeft":
-                    return OpenQA.Selenium.Keys.ArrowLeft;
-                case "Keys.ArrowRight":
-                    return OpenQA.Selenium.Keys.ArrowRight;
-                case "Keys.ArrowUp":
-                    return OpenQA.Selenium.Keys.ArrowUp;
-                case "Keys.Backspace":
-                    return OpenQA.Selenium.Keys.Backspace;
-
-                case "Keys.Cancel":
-                    return OpenQA.Selenium.Keys.Cancel;
-
-                case "Keys.Clear":
-                    return OpenQA.Selenium.Keys.Clear;
-
-                case "Keys.Command":
-                    return OpenQA.Selenium.Keys.Command;
-
-                case "Keys.Control":
-                    return OpenQA.Selenium.Keys.Control;
-
-                case "Keys.Decimal":
-                    return OpenQA.Selenium.Keys.Decimal;
-
-                case "Keys.Delete":
-                    return OpenQA.Selenium.Keys.Delete;
-
-                case "Keys.Divide":
-                    return OpenQA.Selenium.Keys.Divide;
-
-                case "Keys.Down":
-                    return OpenQA.Selenium.Keys.Down;
-
-                case "Keys.End":
-                    return OpenQA.Selenium.Keys.End;
-
-                case "Keys.Enter":
-                    return OpenQA.Selenium.Keys.Enter;
-
-                case "Keys.Equal":
-                    return OpenQA.Selenium.Keys.Equal;
-
-                case "Keys.Escape":
-                    return OpenQA.Selenium.Keys.Escape;
-
-                case "Keys.F1":
-                    return OpenQA.Selenium.Keys.F1;
-
-                case "Keys.F10":
-                    return OpenQA.Selenium.Keys.F10;
-
-                case "Keys.F11":
-                    return OpenQA.Selenium.Keys.F11;
-
-                case "Keys.F12":
-                    return OpenQA.Selenium.Keys.F12;
-
-                case "Keys.F2":
-                    return OpenQA.Selenium.Keys.F2;
-
-                case "Keys.F3":
-                    return OpenQA.Selenium.Keys.F3;
-
-                case "Keys.F4":
-                    return OpenQA.Selenium.Keys.F4;
-
-                case "Keys.F5":
-                    return OpenQA.Selenium.Keys.F5;
-
-                case "Keys.F6":
-                    return OpenQA.Selenium.Keys.F6;
-
-                case "Keys.F7":
-                    return OpenQA.Selenium.Keys.F7;
-
-                case "Keys.F8":
-                    return OpenQA.Selenium.Keys.F8;
-
-                case "Keys.F9":
-                    return OpenQA.Selenium.Keys.F9;
-
-                case "Keys.Help":
-                    return OpenQA.Selenium.Keys.Help;
-
-                case "Keys.Home":
-                    return OpenQA.Selenium.Keys.Home;
-
-                case "Keys.Insert":
-                    return OpenQA.Selenium.Keys.Insert;
-
-                case "Keys.Left":
-                    return OpenQA.Selenium.Keys.Left;
-
-                case "Keys.LeftAlt":
-                    return OpenQA.Selenium.Keys.LeftAlt;
-
-                case "Keys.LeftControl":
-                    return OpenQA.Selenium.Keys.LeftControl;
-
-                case "Keys.LeftShift":
-                    return OpenQA.Selenium.Keys.LeftShift;
-
-                case "Keys.Meta":
-                    return OpenQA.Selenium.Keys.Meta;
-
-                case "Keys.Multiply":
-                    return OpenQA.Selenium.Keys.Multiply;
-
-                case "Keys.Null":
-                    return OpenQA.Selenium.Keys.Null;
-
-                case "Keys.NumberPad0":
-                    return OpenQA.Selenium.Keys.NumberPad0;
-
-                case "Keys.NumberPad1":
-                    return OpenQA.Selenium.Keys.NumberPad1;
-
-                case "Keys.NumberPad2":
-                    return OpenQA.Selenium.Keys.NumberPad2;
-
-                case "Keys.NumberPad3":
-                    return OpenQA.Selenium.Keys.NumberPad3;
-
-                case "Keys.NumberPad4":
-                    return OpenQA.Selenium.Keys.NumberPad4;
-
-                case "Keys.NumberPad5":
-                    return OpenQA.Selenium.Keys.NumberPad5;
-
-                case "Keys.NumberPad6":
-                    return OpenQA.Selenium.Keys.NumberPad6;
-
-                case "Keys.NumberPad7":
-                    return OpenQA.Selenium.Keys.NumberPad7;
-
-                case "Keys.NumberPad8":
-                    return OpenQA.Selenium.Keys.NumberPad8;
-
-                case "Keys.NumberPad9":
-                    return OpenQA.Selenium.Keys.NumberPad9;
-
-                case "Keys.PageDown":
-                    return OpenQA.Selenium.Keys.PageDown;
-
-                case "Keys.PageUp":
-                    return OpenQA.Selenium.Keys.PageUp;
-
-                case "Keys.Pause":
-                    return OpenQA.Selenium.Keys.Pause;
-
-                case "Keys.Return":
-                    return OpenQA.Selenium.Keys.Return;
-
-                case "Keys.Right":
-                    return OpenQA.Selenium.Keys.Right;
-
-                case "Keys.Semicolon":
-                    return OpenQA.Selenium.Keys.Semicolon;
-
-                case "Keys.Separator":
-                    return OpenQA.Selenium.Keys.Separator;
-
-                case "Keys.Shift":
-                    return OpenQA.Selenium.Keys.Shift;
-
-                case "Keys.Space":
-                    return OpenQA.Selenium.Keys.Space;
-
-                case "Keys.Subtract":
-                    return OpenQA.Selenium.Keys.Subtract;
-
-                case "Keys.Tab":
-                    return OpenQA.Selenium.Keys.Tab;
-
-                case "Keys.Up":
-                    return OpenQA.Selenium.Keys.Up;
-                default:
-                    return skey;
-
-            }
-        }
-
 
         public override Act GetCurrentElement()
         {
             try
             {
                 Act act = null;
-                IWebElement currentElement = AppiumDriver.SwitchTo().ActiveElement();
+                IWebElement currentElement = mDriver.SwitchTo().ActiveElement();
 
                 string tagname = currentElement.TagName;
 
@@ -803,6 +442,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                             break;
                         case "radio":
                             act = getActRadioButton(currentElement);
+                            break;
+                        default:
                             break;
                     }
                     return act;
@@ -958,6 +599,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
         public override void HighlightActElement(Act act)
         {
+            act.Error = "Method iot implemented";
         }
     }
 }

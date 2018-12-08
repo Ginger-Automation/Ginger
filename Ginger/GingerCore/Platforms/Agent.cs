@@ -114,13 +114,13 @@ namespace GingerCore
             MobileAppiumAndroidBrowser,
             [Description("Mobile Appium IOS Browser")]
             MobileAppiumIOSBrowser,
-            [Description("Perfecto Mobile Android Device")]
+            [Description("Mobile Perfecto Android")]
             PerfectoMobileAndroid,
-            [Description("Perfecto Mobile Android Device Web Testing")]
+            [Description("Mobile Perfecto Android Browser")]
             PerfectoMobileAndroidWeb,
-            [Description("Perfecto Mobile IOS Device")]
+            [Description("Mobile Perfecto IOS")]
             PerfectoMobileIOS,
-            [Description("Perfecto Mobile Android Device Web Testing")]
+            [Description("Mobile Perfecto IOS Browser")]
             PerfectoMobileIOSWeb,
 
             //Java

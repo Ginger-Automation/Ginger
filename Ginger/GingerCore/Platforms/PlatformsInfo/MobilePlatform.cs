@@ -82,8 +82,6 @@ namespace GingerCore.Platforms.PlatformsInfo
             List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();
 
             list.Add(ActUIElement.eElementAction.IsEnabled);
-            //list.Add(ActUIElement.eElementAction.Exist);
-            //list.Add(ActUIElement.eElementAction.NotExist);
             list.Add(ActUIElement.eElementAction.IsVisible);
 
             return list;
@@ -93,18 +91,13 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
             List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();
-            switch (ElementType)
+            ElementTypeData elementTypeOperations = GetPlatformElementTypesData().Where(x => x.ElementType == ElementType).FirstOrDefault();
+            if (elementTypeOperations != null)
             {
-                default:
-                    ElementTypeData elementTypeOperations = GetPlatformElementTypesData().Where(x => x.ElementType == ElementType).FirstOrDefault();
-                    if (elementTypeOperations != null)
-                    {
-                        if (elementTypeOperations.ActionType == typeof(ActUIElement))
-                        {
-                            elementTypeOperations.ElementOperationsList.ForEach(z => list.Add((ActUIElement.eElementAction)(object)z));
-                        }
-                    }
-                    break;
+                if (elementTypeOperations.ActionType == typeof(ActUIElement))
+                {
+                    elementTypeOperations.ElementOperationsList.ForEach(z => list.Add((ActUIElement.eElementAction)(object)z));
+                }
             }
             return list;
         }
@@ -343,6 +336,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add("src");
                     list.Add("width");
                     list.Add("height");
+                    break;
+                default:
                     break;
 
             }
