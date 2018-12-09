@@ -21,7 +21,7 @@
             <StackPanel Grid.Row="0" Margin="5,0,0,0">
                 <StackPanel>
                     <Label Style="{StaticResource $LabelStyle}" Content="Name:" VerticalAlignment="Center"/>
-                    <TextBox x:Name="xAgentNameTextBox" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBox x:Name="xAgentNameTextBox" AutomationProperties.AutomationId="AgentNameTextBox" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel>
                     <Label Style="{StaticResource $LabelStyle}" Content="Description:"/>
