@@ -47,6 +47,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore
 {
@@ -131,8 +132,14 @@ namespace GingerCore
             MobileAppiumAndroidBrowser,
             [Description("Mobile Appium IOS Browser")]
             MobileAppiumIOSBrowser,
-            [Description("Perfecto Mobile")]
-            PerfectoMobile,
+            [Description("Mobile Perfecto Android")]
+            PerfectoMobileAndroid,
+            [Description("Mobile Perfecto Android Browser")]
+            PerfectoMobileAndroidWeb,
+            [Description("Mobile Perfecto IOS")]
+            PerfectoMobileIOS,
+            [Description("Mobile Perfecto IOS Browser")]
+            PerfectoMobileIOSWeb,
 
             //Java
             [Description("Java")]
@@ -406,8 +413,17 @@ namespace GingerCore
                             case eDriverType.MobileAppiumIOSBrowser:
                                 Driver = new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser, BusinessFlow);
                                 break;
-                            case eDriverType.PerfectoMobile:
-                                Driver = new PerfectoDriver(BusinessFlow);
+                            case eDriverType.PerfectoMobileAndroid:
+                                Driver = new PerfectoDriver(PerfectoDriver.eContextType.NativeAndroid, BusinessFlow);
+                                break;
+                            case eDriverType.PerfectoMobileAndroidWeb:
+                                Driver = new PerfectoDriver(PerfectoDriver.eContextType.WebAndroid, BusinessFlow);
+                                break;
+                            case eDriverType.PerfectoMobileIOS:
+                                Driver = new PerfectoDriver(PerfectoDriver.eContextType.NativeIOS, BusinessFlow);
+                                break;
+                            case eDriverType.PerfectoMobileIOSWeb:
+                                Driver = new PerfectoDriver(PerfectoDriver.eContextType.WebIOS, BusinessFlow);
                                 break;
 
                             case eDriverType.WebServices:
@@ -682,7 +698,10 @@ namespace GingerCore
                 case Agent.eDriverType.AndroidADB:
                     SetDriverDefualtParams(typeof(AndroidADBDriver));
                     break;
-                case Agent.eDriverType.PerfectoMobile:
+                case Agent.eDriverType.PerfectoMobileAndroid:
+                case Agent.eDriverType.PerfectoMobileAndroidWeb:
+                case Agent.eDriverType.PerfectoMobileIOS:
+                case Agent.eDriverType.PerfectoMobileIOSWeb:
                     SetDriverDefualtParams(typeof(PerfectoDriver));
                     break;
                 default:
@@ -892,7 +911,10 @@ namespace GingerCore
                 case eDriverType.MobileAppiumAndroid:
                 case eDriverType.MobileAppiumIOS:
                 //Add Perfecto Mobile
-                case eDriverType.PerfectoMobile:
+                case eDriverType.PerfectoMobileAndroid:
+                case eDriverType.PerfectoMobileAndroidWeb:
+                case eDriverType.PerfectoMobileIOS:
+                case eDriverType.PerfectoMobileIOSWeb:
                     return ePlatformType.Mobile;
                 case eDriverType.MobileAppiumAndroidBrowser:
                 case eDriverType.MobileAppiumIOSBrowser:
@@ -935,7 +957,10 @@ namespace GingerCore
             {
                 driverTypes.Add(Agent.eDriverType.MobileAppiumAndroid);
                 driverTypes.Add(Agent.eDriverType.MobileAppiumIOS);
-                driverTypes.Add(Agent.eDriverType.PerfectoMobile);
+                driverTypes.Add(Agent.eDriverType.PerfectoMobileAndroid);
+                driverTypes.Add(Agent.eDriverType.PerfectoMobileAndroidWeb);
+                driverTypes.Add(Agent.eDriverType.PerfectoMobileIOS);
+                driverTypes.Add(Agent.eDriverType.PerfectoMobileIOSWeb);
                 driverTypes.Add(Agent.eDriverType.MobileAppiumAndroidBrowser);
                 driverTypes.Add(Agent.eDriverType.MobileAppiumIOSBrowser);
             }
@@ -1062,6 +1087,7 @@ namespace GingerCore
             //BusinessFlow = App.BusinessFlow; ;
             //SolutionFolder = App.UserProfile.Solution.Folder;
             //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            SolutionFolder =WorkSpace.Instance.SolutionRepository.SolutionFolder;
             try
             {
                 StartDriver();
@@ -1087,7 +1113,7 @@ namespace GingerCore
         }
 
         public object Tag;
-
+       
         public override eImageType ItemImageType
         {
             get

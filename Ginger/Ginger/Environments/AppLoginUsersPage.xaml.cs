@@ -64,10 +64,10 @@ namespace Ginger.Environments
             //Set the Data Grid columns
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = LoginUser.Fields.Type, Header = "Type", WidthWeight = 150 }); //TODO: to show types in combo box?
-            view.GridColsView.Add(new GridColView() { Field = LoginUser.Fields.UserProfileName, Header = "User Profile Name", WidthWeight = 200 });
-            view.GridColsView.Add(new GridColView() { Field = LoginUser.Fields.Username, Header = "User Name", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = LoginUser.Fields.Password, Header = "Password", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(LoginUser.Type), Header = "Type", WidthWeight = 150 }); //TODO: to show types in combo box?
+            view.GridColsView.Add(new GridColView() { Field = nameof(LoginUser.UserProfileName), Header = "User Profile Name", WidthWeight = 200 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(LoginUser.Username), Header = "User Name", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(LoginUser.Password), Header = "Password", WidthWeight = 150 });
             grdAppLogins.SetAllColumnsDefaultView(view);
             grdAppLogins.InitViewItems();
         }

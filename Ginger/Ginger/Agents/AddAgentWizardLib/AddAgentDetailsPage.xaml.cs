@@ -55,8 +55,7 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xAgentTagsViewer.Init(mWizard.Agent.Tags);
 
                     xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
-                    App.FillComboFromEnumVal(xPlatformTypeComboBox, mWizard.Agent.Platform);
-                    xPlatformTypeComboBox.SelectedIndex = 0;
+                    App.FillComboFromEnumVal(xPlatformTypeComboBox, mWizard.Agent.Platform);                    
 
                     xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
@@ -72,6 +71,8 @@ namespace Ginger.Agents.AddAgentWizardLib
                         xDriverRadioButton.IsChecked = true;
                     }
                     
+
+                    xPlatformTypeComboBox.SelectedIndex = 0;
                     break;                
             }
 
