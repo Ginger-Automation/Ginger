@@ -5562,7 +5562,7 @@ namespace GingerCore.Drivers
         // New HandleActUIElement - will replace ActGenElement
         // ----------------------------------------------------------------------------------------------------------------------------------
 
-        private void HandleActUIElement(ActUIElement act)
+        public void HandleActUIElement(ActUIElement act)
         {
             IWebElement e = null;
 
