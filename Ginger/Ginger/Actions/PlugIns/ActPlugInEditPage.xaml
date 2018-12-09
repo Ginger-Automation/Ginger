@@ -8,21 +8,17 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="ActPlugInEditPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="150*"/>
-            <RowDefinition Height="150*"/>
-        </Grid.RowDefinitions>
+    <DockPanel Background="{StaticResource $BackgroundColor_LightGray}"  >
 
-        <DockPanel x:Name="xActionInputControlsPnl" Grid.Row="0">
-        </DockPanel>
-
-        <DataGrid x:Name="InputGrid" Grid.Row="1" AutoGenerateColumns="False">
+        <DockPanel x:Name="xActionInputControlsPnl" DockPanel.Dock="Top" Margin="0,0,20,10"/>
+        
+        <!--Grid be used for debug only-->
+        <DataGrid x:Name="InputGrid" AutoGenerateColumns="False" DockPanel.Dock="Top" Margin="0,20,0,0" Visibility="Collapsed">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Param" Binding="{Binding Param}" Width="80"></DataGridTextColumn>
                 <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="80"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
 
-    </Grid>
+    </DockPanel>
 </Page>
