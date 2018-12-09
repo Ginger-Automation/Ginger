@@ -86,10 +86,16 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             if (mActInputValue.ParamType == typeof(DynamicListWrapper))
             {
                 xListInputGrid.Visibility = Visibility.Visible;
-                xListInputGrid.Title = GetInputFieldformatedName();                
+                xListInputGrid.Title = GetInputFieldformatedName();          
+                
+                //set data
                 ObservableList<dynamic> DynList = mActInputValue.ListDynamicValue;
-                DynList.CollectionChanged += ListCollectionChanged;
                 xListInputGrid.DataSourceList = DynList;
+
+                //data changes catch
+                DynList.CollectionChanged += ListCollectionChanged;
+                xListInputGrid.Grid.CellEditEnding += Grid_CellEditEnding;
+
                 xListInputGrid.btnAdd.Click += AddItem;
                 SetListGridView();
                 return;
@@ -99,7 +105,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         private string GetInputFieldformatedName()
         {
             // Make first letter upper case
-            string formatedName = char.ToUpper(mActInputValue.Param[0]) + mActInputValue.Param.Substring(1); 
+            string formatedName = char.ToUpper(mActInputValue.Param[0]) + mActInputValue.Param.Substring(1);
 
             //split by Uper case
             string[] split = Regex.Split(formatedName, @"(?<!^)(?=[A-Z])");
@@ -110,21 +116,9 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             }
 
             return (formatedName.Trim());
-
         }
 
-        private void AddItem(object sender, RoutedEventArgs e)
-        {
-            dynamic expando = new ExpandoObject();
-            // TODO set obj with item default value - expando.Name = "";
-            ((ObservableList<dynamic>)xListInputGrid.DataSourceList).Add(expando);
-        }
-
-        private void ListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            ObservableList<dynamic> list = (ObservableList<dynamic>)xListInputGrid.DataSourceList;
-            mActInputValue.ListDynamicValue = list;
-        }
+        #region List Grid Handlers
 
         void SetListGridView()
         {
@@ -134,10 +128,10 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
             // Create grid columns based on list item properties
             List<string> props = mActInputValue.GetListItemProperties();
-            foreach(string prop in props)
+            foreach (string prop in props)
             {
                 viewCols.Add(new GridColView() { Field = prop, WidthWeight = 10 });
-                viewCols.Add(new GridColView() { Field = "...", MaxWidth = 20, Header = "...", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PagePanel.Resources["ValueExpressionButton"] });
+                viewCols.Add(new GridColView() { Field = prop + "VE", Header = "...", WidthWeight = 1, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PagePanel.Resources["ValueExpressionButton"] });
             }
 
             xListInputGrid.SetAllColumnsDefaultView(view);
@@ -148,10 +142,37 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         {
             dynamic currentListItem = (dynamic)xListInputGrid.CurrentItem;
             //get name of relevent field
-            int currentColIndex= xListInputGrid.Grid.CurrentColumn.DisplayIndex;
-            object field= xListInputGrid.Grid.Columns[currentColIndex - 1].Header;
+            int currentColIndex = xListInputGrid.Grid.CurrentColumn.DisplayIndex;
+            object field = xListInputGrid.Grid.Columns[currentColIndex - 1].Header;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(currentListItem, field.ToString());
             VEEW.ShowAsWindow();
+            UpdateListValues();
         }
+
+        private void Grid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            UpdateListValues();
+        }
+
+        private void ListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateListValues();
+        }
+
+        private void UpdateListValues()
+        {
+            ObservableList<dynamic> list = (ObservableList<dynamic>)xListInputGrid.DataSourceList;
+            mActInputValue.ListDynamicValue = list;
+        }
+
+        private void AddItem(object sender, RoutedEventArgs e)
+        {
+            dynamic expando = new ExpandoObject();
+            // TODO set obj with item default value - expando.Name = "";
+            ((ObservableList<dynamic>)xListInputGrid.DataSourceList).Add(expando);
+        }
+        #endregion
+
+
     }
 }
