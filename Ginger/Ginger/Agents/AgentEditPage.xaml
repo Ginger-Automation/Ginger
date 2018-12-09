@@ -5,53 +5,64 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.Agents.AgentEditPage" 
       mc:Ignorable="d" 
-    xmlns:h="clr-namespace:Ginger.Help"
-    xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" h:GingerHelpProvider.HelpString="Agent"
+      xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" h:GingerHelpProvider.HelpString="Agent"
       d:DesignHeight="600" d:DesignWidth="800"
 	Title="AgentEditPage">
 
-    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="130"/>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="2*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="125"/>
-            <RowDefinition Height="25*"/>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="71*"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer>
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="150"/>
+                <RowDefinition Height="120"/>
+                <RowDefinition Height="200*"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Grid.Column="0" Margin="10">
-            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Agent Name:"/>
-            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Platform Type:" Margin="0,10,0,0"/>
-            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Driver Type:" Margin="0,10,0,0"/>
-        </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10">
-            <TextBox x:Name="AgentNameTextBox" Style="{StaticResource @TextBoxStyle}" FontSize="14" FontWeight="Bold"/>
-            <TextBox x:Name="txtPlatformType" Style="{StaticResource @TextBoxStyle}" Width="250" HorizontalAlignment="Left"  Margin="0,15,0,0"  IsReadOnly="True" Background="#FFE8E8EC" />
-            <ComboBox x:Name="driverTypeComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,15,0,0"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Vertical">
-            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Description:"/>
-            <TextBox x:Name="NotesTextBox" Text="" Height="50" Style="{StaticResource @MultiRowsTextBoxStyle}" />
-            <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="0,5,0,0" HorizontalAlignment="Left" />
-        </StackPanel>
-
-        <!--<StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" Margin="5">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Remote Agent"/>
-                <CheckBox x:Name="RemoteCheckBox" Margin="5"></CheckBox>
+            <StackPanel Grid.Row="0" Margin="5,0,0,0">
+                <StackPanel>
+                    <Label Style="{StaticResource $LabelStyle}" Content="Name:" VerticalAlignment="Center"/>
+                    <TextBox x:Name="xAgentNameTextBox" AutomationProperties.AutomationId="AgentNameTextBox" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel>
+                    <Label Style="{StaticResource $LabelStyle}" Content="Description:"/>
+                    <TextBox x:Name="xDescriptionTextBox" Text="" Height="50" Style="{StaticResource $MultiRowsTextBoxStyle}" />
+                    <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-5,5,0,0" HorizontalAlignment="Left" />
+                </StackPanel>
             </StackPanel>
-            <Label Content="Host"/>
-            <TextBox x:Name="HostTextBox"/>
-            <Label Content="Port"/>
-            <TextBox x:Name="PortTextBox"/>
-        </StackPanel>-->
 
-        <usercontrols:ucButton x:Name="xTestBtn" Grid.Row="2" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="0,0,10,0" ButtonType="RoundTextAndImageButton" ButtonText="Test Agent" ButtonImageType="Play" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ToolTip="Test will start the Agent, run test Action and will close it"/>
-        <Frame x:Name="DriverConfigFrmae" Grid.Row="3" Grid.ColumnSpan="3"></Frame>
-    </Grid>
+            <StackPanel Grid.Row="1" Margin="0,0,0,0">
+                <DockPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DockPanel.Dock="Left">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Type:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                        <Label x:Name="xAgentTypelbl" Style="{StaticResource $LabelStyle}"  HorizontalAlignment="Left"  Margin="10,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
+                    </StackPanel>
+                    <usercontrols:ucButton x:Name="xTestBtn" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" ButtonType="RoundTextAndImageButton" ButtonText="Test Agent" ButtonImageType="Play" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ToolTip="Test will start the Agent, run test Action and will close it"/>
+                </DockPanel>
+
+                <StackPanel x:Name="xDriverConfigPnl" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Platform Type:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                        <TextBox x:Name="xPlatformTxtBox" Style="{StaticResource $TextBoxStyle}" Width="250" HorizontalAlignment="Left"  Margin="10,0,0,0"  IsReadOnly="True" IsEnabled="False" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Driver Type:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="xDriverTypeComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="25,0,0,0" FontWeight="Bold"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel x:Name="xPluginConfigPnl" Visibility="Collapsed" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Plugin ID:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="xPluginIdComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="35,0,0,0" FontWeight="Bold" SelectionChanged="xPluginIdComboBox_SelectionChanged" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Service ID:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="xServiceIdComboBox"  Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="30,0,0,0" FontWeight="Bold" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+
+            <Frame x:Name="xAgentConfigFrame" Grid.Row="2" Margin="5,0,0,0"></Frame>
+        </Grid>
+    </ScrollViewer>
 </Page>

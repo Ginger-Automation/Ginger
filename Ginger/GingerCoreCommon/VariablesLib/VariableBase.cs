@@ -327,7 +327,7 @@ namespace GingerCore.Variables
 
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
-                dynamic value = null;
+                object value = null;
                 try
                 {
                     if (mi.MemberType == MemberTypes.Property)
@@ -345,7 +345,7 @@ namespace GingerCore.Variables
                 
                 if (value is IObservableList)
                 {
-                    foreach (object o in value)
+                    foreach (object o in (IObservableList)value)
                         GetListOfUsedVariables(o, ref usedVariables);
                 }
                 else
@@ -370,7 +370,7 @@ namespace GingerCore.Variables
                                 }
                                 else if(mi.Name == "ValueCalculated" && mi.DeclaringType.Name == "FlowControl") // get used variable in flow control with set variable action type.
                                 {
-                                    string[] vals = value.Split(new[] { '=' });
+                                    string[] vals = ((string)value).Split(new[] { '=' });
                                     const int count = 2;
                                     if (vals.Count() == count && !usedVariables.Contains(vals[0]))
                                     {                                       
@@ -381,7 +381,7 @@ namespace GingerCore.Variables
                                 {
                                     if(!usedVariables.Contains(value))
                                     {
-                                        usedVariables.Add(value);
+                                        usedVariables.Add((string)value);
                                     }
                                 }
                                 else

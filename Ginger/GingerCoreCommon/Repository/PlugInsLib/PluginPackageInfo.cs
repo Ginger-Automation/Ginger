@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -33,5 +34,8 @@ namespace Amdocs.Ginger.Repository
         public string Summary { get; set; }
         public string StartupDLL { get; set; }
         public string UIDLL { get; set; }
+
+        
+
     }
 }

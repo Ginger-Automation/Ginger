@@ -16,28 +16,28 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Variables;
-using System.Data;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Windows.Media.Imaging;
-using System;
-using System.Diagnostics;
-using Ginger.Actions;
-using System.Windows.Data;
 using GingerCore.Platforms;
+using GingerCore.Variables;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media.Imaging;
 using System.Xml;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Imports.UFT
 {
@@ -64,7 +64,7 @@ namespace Ginger.Imports.UFT
         public List<ObjectRepositoryItem> Objectlist_ORI = new List<ObjectRepositoryItem>();
         public List<BusFunction> BusList = new List<BusFunction>();
         public List<string> ListOfSelectedGuis = new List<string>();
-        public ObservableList<TargetApplication> TargetApplicationsList = new ObservableList<TargetApplication>();
+        public ObservableList<TargetBase> TargetApplicationsList = new ObservableList<TargetBase>();
         public CommonFunctionConvertor Convertor = new CommonFunctionConvertor();
 
         // Data Table
