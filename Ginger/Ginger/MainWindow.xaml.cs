@@ -372,17 +372,21 @@ namespace Ginger
             GingerCore.General.DoEvents();
             App.AutomateTabGingerRunner.CloseAgents();
             GingerCore.General.CleanDirectory(GingerCore.Actions.Act.ScreenshotTempFolder, true);
-            App.UserProfile.GingerStatus = eGingerStatus.Closed;
-            App.UserProfile.SaveUserProfile();
-            App.AppSolutionAutoSave.SolutionAutoSaveEnd();
-            try
+            
+            if (!App.RunningFromConfigFile)
             {
-                //TODO: no need to to log if running from comamnd line
-                AutoLogProxy.LogAppClosed();
-            }
-            catch
-            {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
+                App.UserProfile.GingerStatus = eGingerStatus.Closed;
+                App.UserProfile.SaveUserProfile();
+                App.AppSolutionAutoSave.SolutionAutoSaveEnd();
+                try
+                {
+                    //TODO: no need to to log if running from comamnd line
+                    AutoLogProxy.LogAppClosed();
+                }
+                catch
+                {
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
+                }
             }
             CW.Close();
         }

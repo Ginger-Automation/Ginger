@@ -666,7 +666,10 @@ namespace Ginger
 
                 // Cleanup last loaded solution 
                 WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
-                AppSolutionAutoSave.SolutionAutoSaveEnd();
+                if (!App.RunningFromConfigFile)
+                {
+                    AppSolutionAutoSave.SolutionAutoSaveEnd();
+                }
 
                 //Cleanup
                 SolutionCleanup();
