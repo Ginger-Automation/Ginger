@@ -406,6 +406,7 @@ namespace GingerCore.Drivers.Common
         {
             var relxpath = "";
             string xpath = elemInfo.XPath;
+            List<object> elemsList = null;
             try
             {
                 while (relxpath.IndexOf("//") == -1 && elemInfo.ElementObject != null)
@@ -414,12 +415,36 @@ namespace GingerCore.Drivers.Common
                     if (!string.IsNullOrEmpty(id))
                     {
                         relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@id='" + id + "']");
-                        continue;
+                        elemsList = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath,relxpath);
+                        if (elemsList == null || (elemsList != null && elemsList.Count() < 2)) {
+                            continue;
+                        }                        
                     }
                     string name = Convert.ToString(mDriver.GetElementProperty(elemInfo,"name"));
                     if (!string.IsNullOrEmpty(name))
                     {
-                        relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@name='" + name + "']");
+                        if(relxpath == "")
+                            relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@name='" + name + "']");
+                        else
+                            relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@id='" + id + "' and @name ='" + name + "']");
+                        elemsList = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
+                        if (elemsList == null || (elemsList != null && elemsList.Count() < 2))
+                        {
+                            continue;
+                        }
+                    }
+                    if(relxpath.IndexOf("//") != -1 && elemsList != null)
+                    {
+                        string path = relxpath;
+                        for (int i = 1; i <= elemsList.Count(); i++)
+                        {
+                            relxpath = "(" + path + ")[" + i + "]";
+                            List<object> newElem = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
+                            if (newElem != null && newElem.Count() >0 && newElem[0].Equals(elemInfo.ElementObject))
+                            {
+                                break;
+                            }
+                        }
                         continue;
                     }
                     elemInfo = mDriver.GetElementParent(elemInfo);

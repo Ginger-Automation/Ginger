@@ -112,6 +112,10 @@ namespace GingerCore.Drivers.Common
             return ((IXPath)mUIAutomationHelper).GetElementTagName(EI);
         }
 
+        List<object> IXPath.GetAllElementsByLocator(eLocateBy LocatorType, string LocValue)
+        {
+            return null;
+        }
         #endregion IXPath
 
         public void HighLightElement(ElementInfo ElementInfo)

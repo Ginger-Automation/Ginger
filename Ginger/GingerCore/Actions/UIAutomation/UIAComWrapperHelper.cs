@@ -6037,6 +6037,11 @@ namespace GingerCore.Drivers
             return "";
         }
 
+        List<object> IXPath.GetAllElementsByLocator(eLocateBy LocatorType, string LocValue)
+        {
+            return null;
+        }
+
         private void GetChildrenUsingRawWalker(
             AutomationElement EAE, List<XpathPropertyCondition> conditions, out List<AutomationElement> listRAE,
             bool flagFindFirst=false)
