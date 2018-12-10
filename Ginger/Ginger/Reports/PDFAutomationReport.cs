@@ -151,7 +151,7 @@ namespace Ginger.Reports
             //TODO: put it in nice table
             if (bf.TargetApplications != null)
             {
-                paragraph.AddFormattedText("Application(s): " + string.Join(";", bf.TargetApplications.Select(p => p.AppName).ToList()));
+                paragraph.AddFormattedText("Application(s): " + string.Join(";", bf.TargetApplications.Select(p => p.Name).ToList()));
                 paragraph.AddLineBreak();
                 
                 // TODO: fix me to add at BF which Agent used to run it

@@ -206,6 +206,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerActionLogTest.cs" />
+    <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerPluginDriverTest.cs" />
     <Compile Include="NonUITests\GingerRunnerTests\GingerVariableTests.cs" />
     <Compile Include="NonUITests\ObservableListTest.cs" />
     <Compile Include="NonUITests\UsedVariablesTest.cs" />
@@ -289,6 +290,19 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="TestResources\PBTestApp\pb_test_ws.pbw">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\Plugins\PluginDriverExample4\Ginger.PluginPackage.Actions.json" />
+    <None Include="TestResources\Plugins\PluginDriverExample4\Ginger.PluginPackage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.deps.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.runtimeconfig.dev.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.runtimeconfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="TestResources\sh\TextParamsEcho.sh">
@@ -764,6 +778,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\PBTestApp\xerces-depdom_2_8.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Plugins\PluginDriverExample4\GingerCoreNET.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Plugins\PluginDriverExample4\GingerPluginCore.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\WindowsApp\WindowsTestApplication.exe">

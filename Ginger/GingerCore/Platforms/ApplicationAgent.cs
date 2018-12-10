@@ -35,6 +35,8 @@ namespace GingerCore.Platforms
             public static string Agent = "Agent";
         }
 
+
+        //Change to target
         private string mAppName;
         [IsSerializedForLocalRepository]
         public string AppName {

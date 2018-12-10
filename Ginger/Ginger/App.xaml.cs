@@ -58,6 +58,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
 using System.Windows.Input;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
@@ -665,8 +666,11 @@ namespace Ginger
                 OnPropertyChanged(nameof(LoadingSolution));
 
                 // Cleanup last loaded solution 
-                //WorkSpace.Instance.LocalGingerGrid.Reset();  //Temp
-                AppSolutionAutoSave.SolutionAutoSaveEnd();
+                WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
+                if (!App.RunningFromConfigFile)
+                {
+                    AppSolutionAutoSave.SolutionAutoSaveEnd();
+                }
 
                 //Cleanup
                 SolutionCleanup();
@@ -949,8 +953,8 @@ namespace Ginger
             a.Acts = new ObservableList<IAct>();
             if (biz.TargetApplications.Count > 0)
             {
-                a.TargetApplication = biz.TargetApplications[0].AppName;
-            }
+                a.TargetApplication = biz.TargetApplications[0].Name;
+            }                
             biz.Activities.Add(a);
 
             biz.Activities.CurrentItem = a;
@@ -993,7 +997,7 @@ namespace Ginger
                     {
                         // take it from solution main platform
                         if (App.BusinessFlow.TargetApplications == null)
-                            App.BusinessFlow.TargetApplications = new ObservableList<TargetApplication>();
+                            App.BusinessFlow.TargetApplications = new ObservableList<TargetBase>();
 
                         App.BusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = App.UserProfile.Solution.MainApplication });
                     }
@@ -1091,6 +1095,8 @@ namespace Ginger
                 App.BusinessFlow.SaveBackup();
             }
         }
+
+        
 
     }
 }

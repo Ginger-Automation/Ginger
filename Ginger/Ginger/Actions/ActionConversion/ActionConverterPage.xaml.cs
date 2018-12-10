@@ -70,7 +70,7 @@ namespace Ginger.Actions.ActionConversion
 
             btnConvert.Visibility = Visibility.Collapsed;
 
-            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.AppName).ToList());
+            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.Name).ToList());
             if ((cmbTargetApp != null) && (cmbTargetApp.Items.Count > 0))
             {
                 cmbTargetApp.SelectedIndex = 0;
@@ -164,7 +164,7 @@ namespace Ginger.Actions.ActionConversion
         {
             // fetch list of existing platforms in the business flow
             List<ePlatformType> lstExistingPlatform = mSolution.ApplicationPlatforms.Where(x => mBusinessFlow.TargetApplications
-                                               .Any(a => a.AppName == x.AppName)).Select(x => x.Platform).ToList();
+                                               .Any(a => a.Name == x.AppName)).Select(x => x.Platform).ToList();
             Dictionary<ePlatformType, string> lstMissingPlatform = new Dictionary<ePlatformType, string>();
             // create list of missing platforms
             foreach (ActionConversionHandler ACH in lstActionToBeConverted)
@@ -414,7 +414,7 @@ namespace Ginger.Actions.ActionConversion
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.AppName).ToList());
+            cmbTargetApp.BindControl(mBusinessFlow.TargetApplications.Select(x => x.Name).ToList());
             if ((cmbTargetApp != null) && (cmbTargetApp.Items.Count > 0))
             {
                 cmbTargetApp.SelectedIndex = 0;

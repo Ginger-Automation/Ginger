@@ -122,8 +122,8 @@
       <HintPath>..\packages\Gherkin.4.0.0\lib\net45\Gherkin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GingerPluginCore, Version=2.6.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ginger.Plugin.Core.2.6.6\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
+    <Reference Include="GingerPluginCore, Version=3.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ginger.Plugin.Core.3.0.3\lib\netstandard2.0\GingerPluginCore.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.6.13.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.6.13\lib\Net45\HtmlAgilityPack.dll</HintPath>

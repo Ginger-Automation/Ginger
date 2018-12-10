@@ -3,47 +3,22 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Ginger.Actions.PlugIns"
-      xmlns:UserControls="clr-namespace:Ginger.UserControls" x:Class="Ginger.Actions.PlugIns.ActPlugInEditPage"
+      x:Class="Ginger.Actions.PlugIns.ActPlugInEditPage"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="ActPlugInEditPage">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="59*"/>
-            <RowDefinition Height="25"/>
-            <RowDefinition Height="93*"/>
-            <RowDefinition Height="148*"/>
-        </Grid.RowDefinitions>
-        <!--<Label x:Name="NoConfigLabel" Content="This action doesn't require any configuration" />-->
-        <Label x:Name="LoadErrorLbl" HorizontalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Foreground="Red" Content="Failed To Load The PlugIn Action Edit Page"  Visibility="Collapsed" Margin="150,0" Grid.RowSpan="3" Width="0"/>
-        <Frame x:Name="EditFrame" VerticalAlignment="Top" Content="Plugin Edit action Frame" Grid.Row="0" HorizontalAlignment="Stretch" Height="16"/>
+    <DockPanel Background="{StaticResource $BackgroundColor_LightGray}"  >
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Label Style="{StaticResource @SubInputFieldLabelStyle}">Plugin Id</Label>
-            <Label x:Name="PluginIdLabel" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">P ID</Label>
-            <Label Style="{StaticResource @SubInputFieldLabelStyle}">Service Id</Label>
-            <Label x:Name="ServiceIdLabel" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">S ID</Label>
-            <Label Style="{StaticResource @SubInputFieldLabelStyle}">Action Id</Label>
-            <Label x:Name="ActionIdLabel" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">A ID</Label>
-        </StackPanel>
-        <!--<UserControls:UCDataColGrid HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Grid.RowSpan="3"/>-->
+        <DockPanel x:Name="xActionInputControlsPnl" DockPanel.Dock="Top" Margin="0,0,20,10"/>
         
-        <Grid x:Name="ActionConfigGrid" Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="31*"/>
-                <ColumnDefinition Width="69*"/>
-            </Grid.ColumnDefinitions>
-        </Grid>
-        
-
-        <DataGrid x:Name="InputGrid" Grid.Row="3" AutoGenerateColumns="False">
+        <!--Grid be used for debug only-->
+        <DataGrid x:Name="InputGrid" AutoGenerateColumns="False" DockPanel.Dock="Top" Margin="0,20,0,0" Visibility="Collapsed">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Param" Binding="{Binding Param}" Width="80"></DataGridTextColumn>
                 <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="80"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
 
-    </Grid>
+    </DockPanel>
 </Page>

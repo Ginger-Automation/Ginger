@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Newtonsoft.Json;
 using System;
@@ -12,7 +30,7 @@ namespace Amdocs.Ginger.Repository
 {
     public class OnlinePluginPackage : INotifyPropertyChanged
     {
-        public string Name { get; set; }
+        public string Id { get; set; }
         public string Description { get; set; }
         public string URL { get; set; }
 
@@ -91,7 +109,7 @@ namespace Amdocs.Ginger.Repository
 
         public string InstallPluginPackage(OnlinePluginPackageRelease release)
         {
-            string pluginSubFolder = Path.Combine(Name, release.Version);
+            string pluginSubFolder = Path.Combine(Id, release.Version);
             string folder = DownloadPackage(release.assets[0].browser_download_url, pluginSubFolder).Result;
             return folder;
         }
