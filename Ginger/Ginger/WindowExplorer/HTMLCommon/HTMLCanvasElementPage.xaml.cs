@@ -78,11 +78,9 @@ namespace Ginger.WindowExplorer.HTMLCommon
             else
             {
                 XOffset.Text = x;
-                YOffset.Text = y;
-                ActInputValue AIX = (from aiv in ElementInfo.actInputValue where aiv.Param == "XCoordinate" select aiv).FirstOrDefault();
-                ActInputValue AIY = (from aiv in ElementInfo.actInputValue where aiv.Param == "YCoordinate" select aiv).FirstOrDefault();
-                AIX.Value = x;
-                AIY.Value = y;
+                YOffset.Text = y;              
+                ElementInfo.AddOrUpdateInputParamValue("XCoordinate", x);
+                ElementInfo.AddOrUpdateInputParamValue("YCoordinate", y);              
                 //foreach (Act act in actList)
                 //{
 

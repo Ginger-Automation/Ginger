@@ -281,11 +281,8 @@ namespace Ginger.Reports
                     {
                         String[] elementsAfter = variable.Split(new string[] { "_:_" }, StringSplitOptions.None);
 
-                        var row_result = from row in dt.AsEnumerable() where row.Field<string>("Name") == elementsAfter[0] select row;
-                        if(dt.Rows.Count > 0)
-                        {
-                            dt.AsEnumerable().Where(p => p.Field<string>("Name") == elementsAfter[0]).FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
-                        }                        
+                        var row_result = from row in dt.AsEnumerable() where row.Field<string>("Name") == elementsAfter[0] select row;                       
+                        dt.AsEnumerable().Where(p => p.Field<string>("Name") == elementsAfter[0]).FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];                                               
                     }                
                 }                    
                 return dt;

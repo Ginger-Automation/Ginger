@@ -36,9 +36,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
         Page ITreeViewItem.EditPage()
         {
             if (mHTMLCanvasElementPage == null)
-            {
-                ElementInfo.actInputValue.Add(new Amdocs.Ginger.Repository.ActInputValue() { Param = "XCoordinate", Value = "0" });
-                ElementInfo.actInputValue.Add(new Amdocs.Ginger.Repository.ActInputValue() { Param = "YCoordinate", Value = "0" });
+            {           
                 mHTMLCanvasElementPage = new HTMLCanvasElementPage(actList, ElementInfo);
             }
                 return mHTMLCanvasElementPage;

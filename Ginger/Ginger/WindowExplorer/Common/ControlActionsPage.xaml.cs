@@ -182,11 +182,9 @@ namespace Ginger.WindowExplorer
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, aaa.GetInputParamValue(ActUIElement.Fields.WhereOperator));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, aaa.GetInputParamValue(ActUIElement.Fields.WhereProperty));
-                ActInputValue AIX = mElementInfo.actInputValue.Where(z => z.Param == "XCoordinate").FirstOrDefault();
-                ActInputValue AIY = mElementInfo.actInputValue.Where(z => z.Param == "YCoordinate").FirstOrDefault();
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, AIX.Value);
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate, AIY.Value);
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, aaa.GetInputParamValue(ActUIElement.Fields.WhereProperty));               
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, mElementInfo.GetInputParamValue(ActUIElement.Fields.XCoordinate));
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate, mElementInfo.GetInputParamValue(ActUIElement.Fields.YCoordinate));
                 act = actUI;
             }
             else
@@ -245,11 +243,9 @@ namespace Ginger.WindowExplorer
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, aaa.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
                 actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, aaa.GetInputParamValue(ActUIElement.Fields.WhereOperator));
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, aaa.GetInputParamValue(ActUIElement.Fields.WhereProperty));
-                ActInputValue AIX = (from aiv in mElementInfo.actInputValue where aiv.Param == "XCoordinate" select aiv).FirstOrDefault();
-                ActInputValue AIY = (from aiv in mElementInfo.actInputValue where aiv.Param == "YCoordinate" select aiv).FirstOrDefault();
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, AIX.Value);
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate, AIY.Value);
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, aaa.GetInputParamValue(ActUIElement.Fields.WhereProperty));             
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, mElementInfo.GetInputParamValue(ActUIElement.Fields.XCoordinate));
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate, mElementInfo.GetInputParamValue(ActUIElement.Fields.YCoordinate));
                 act = actUI;
             }
             else
