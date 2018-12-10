@@ -427,6 +427,9 @@
     <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByModelEditPage.xaml.cs">
       <DependentUpon>LocateByModelEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\_Common\ActUIElementLib\UIElementXYCoordinatePage.xaml.cs">
+      <DependentUpon>UIElementXYCoordinatePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Activities\ErrorHandlerMappingPage.xaml.cs">
       <DependentUpon>ErrorHandlerMappingPage.xaml</DependentUpon>
     </Compile>
@@ -2573,6 +2576,10 @@
     <Page Include="Actions\_Common\ActUIElementLib\UIElementSelectAndValidate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\_Common\ActUIElementLib\UIElementXYCoordinatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AdornerLib\HighlightAdornerControl.xaml">
       <SubType>Designer</SubType>

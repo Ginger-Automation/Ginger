@@ -349,6 +349,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.ClickXY,
                                                                 ActUIElement.eElementAction.DrawObject,
+                                                                ActUIElement.eElementAction.XYDoubleClick,
+                                                                ActUIElement.eElementAction.XYSendKeys,
                                                                }
                 });
 

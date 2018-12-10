@@ -18,11 +18,13 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -34,8 +36,8 @@ namespace Ginger.WindowExplorer.HTMLCommon
     public partial class HTMLCanvasElementPage : Page
     {
         ElementInfo ElementInfo;
-        ObservableList<Act> actList;
-
+        ObservableList<Act> actList;    
+        
         public HTMLCanvasElementPage(ObservableList<Act> list, ElementInfo elementInfo)
         {
             InitializeComponent();
@@ -76,14 +78,9 @@ namespace Ginger.WindowExplorer.HTMLCommon
             else
             {
                 XOffset.Text = x;
-                YOffset.Text = y;
-
-                foreach (Act act in actList)
-                {
-
-                    ((ActGenElement)act).Xoffset = x;
-                    ((ActGenElement)act).Yoffset = y;
-                }
+                YOffset.Text = y;              
+                ElementInfo.AddOrUpdateInputParamValue("XCoordinate", x);
+                ElementInfo.AddOrUpdateInputParamValue("YCoordinate", y);                            
             }
             //TODO list actions
         }

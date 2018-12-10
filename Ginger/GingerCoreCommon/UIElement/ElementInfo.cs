@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.Enums;
+using System.Linq;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -75,6 +76,8 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set { mElementTitle = value; }
         }
+
+        public ObservableList<ActInputValue> actInputValue = new ObservableList<ActInputValue>();
 
         public enum eElementStatus
         {
@@ -311,6 +314,30 @@ namespace Amdocs.Ginger.Common.UIElement
             return mData;
         }
 
+        public void AddOrUpdateInputParamValue(string Param, string Value)
+        {
+            // check if param already exist then update as it can be saved and loaded + keep other values
+            ActInputValue AIV = (from aiv in actInputValue where aiv.Param == Param select aiv).FirstOrDefault();
+            if (AIV == null)
+            {
+                AIV = new ActInputValue();              
+                AIV.Param = Param;
+                actInputValue.Add(AIV);
+            }
+
+            AIV.Value = Value;
+        }
+        public string GetInputParamValue(string Param)
+        {
+            // check if param already exist then update as it can be saved and loaded + keep other values
+            ActInputValue AIV = (from aiv in actInputValue where aiv.Param == Param select aiv).FirstOrDefault();
+            if (AIV == null)
+            {
+                return null;
+            }
+
+            return AIV.Value;
+        }
     }
 
     public enum eLocateBy

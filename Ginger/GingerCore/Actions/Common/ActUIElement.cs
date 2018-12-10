@@ -436,6 +436,10 @@ namespace GingerCore.Actions.Common
             IsDisabled,
             [EnumValueDescription("Switch")]
             Switch,
+            [EnumValueDescription("XYDoubleClick")]
+            XYDoubleClick,
+            [EnumValueDescription("XYSendKeys")]
+            XYSendKeys,
             #endregion Generic Action Types
 
             #region TextBox Action Types
