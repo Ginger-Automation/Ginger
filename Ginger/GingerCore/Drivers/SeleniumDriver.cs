@@ -3946,7 +3946,7 @@ namespace GingerCore.Drivers
                     ElementsCount[EL.TagName] += 1;
             }
 
-            foreach (IWebElement EL in ElementsList)
+            foreach (IWebElement EL in ElementsList)            
             {
                 if (!ElementsIndexes.ContainsKey(EL.TagName))
                     ElementsIndexes.Add(EL.TagName, 0);
@@ -3960,12 +3960,12 @@ namespace GingerCore.Drivers
                 EI.ID = GenerateElementID(EL);
                 EI.Value = GenerateElementValue(EL);
                 EI.Path = GenetratePath(path, xpath, EL.TagName);
-                EI.XPath = GenerateXpath(path, xpath, EL.TagName, ElementsIndexes[EL.TagName], ElementsCount[EL.TagName]); /*EI.GetAbsoluteXpath(); */                 
+                EI.XPath = GenerateXpath(path, xpath, EL.TagName, ElementsIndexes[EL.TagName], ElementsCount[EL.TagName]); /*EI.GetAbsoluteXpath(); */
                 EI.ElementType = GenerateElementType(EL);
                 EI.ElementTypeEnum = GetElementTypeEnum(EL);
                 EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
                 list.Add(EI);
-            }
+                }           
             return list;
         }
 
@@ -6314,6 +6314,11 @@ namespace GingerCore.Drivers
             return ((IWebElement)EI.ElementObject).TagName;
         }
 
+        List<object> IXPath.GetAllElementsByLocator(eLocateBy LocatorType, string LocValue)
+        {                  
+            return LocateElements(LocatorType, LocValue).ToList<object>();
+        }
+        
         private ElementInfo GetElementInfoFromIWebElement(IWebElement el, ElementInfo ChildElementInfo)
         {
 

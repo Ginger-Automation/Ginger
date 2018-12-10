@@ -1253,6 +1253,11 @@ namespace GingerCore.Drivers.PBDriver
             return ((IHTMLElement)EI.ElementObject).tagName;
         }
 
+        List<object> IXPath.GetAllElementsByLocator(eLocateBy LocatorType, string LocValue)
+        {
+            return null;
+        }
+
         public string getElementId(IHTMLElement h1)
         {
             string id = h1.id;
@@ -1365,6 +1370,36 @@ namespace GingerCore.Drivers.PBDriver
             return HEle;
         }
 
+        private IHTMLElement FindElementsByLocator(eLocateBy locateBy, string LocValueCalculated)
+        {
+            IHTMLElement HEle = null;
+
+            switch (locateBy)
+            {
+                case eLocateBy.ByID:
+                    if (currentFrame == null)
+                        HEle = mHtmlDocument.getElementById(LocValueCalculated);
+                    else
+                        HEle = currentFrameDocument.getElementById(LocValueCalculated);
+
+                    break;
+                case eLocateBy.ByName:
+                    if (currentFrame == null)
+                        HEle = (mshtml.IHTMLElement)mHtmlDocument.getElementsByName(LocValueCalculated).item(0);
+                    else
+                        HEle = (mshtml.IHTMLElement)currentFrameDocument.getElementsByName(LocValueCalculated).item(0);
+
+                    break;
+                case eLocateBy.ByXPath:
+                case eLocateBy.ByRelXPath:
+                    HEle = GetElementByXPath(LocValueCalculated);
+                    break;
+                default:
+                    throw new Exception("Locator not implement - " + locateBy.ToString());
+            }
+
+            return HEle;
+        }
         public ObservableList<ElementInfo> GetElements(ElementLocator EL)
         {
             ObservableList<ElementInfo> list = new ObservableList<ElementInfo>();
@@ -2107,7 +2142,7 @@ namespace GingerCore.Drivers.PBDriver
             return xpath;
         }
 
-        public IHTMLElement GetElementByXPath(string xpath)
+        public IHTMLElement GetElementByXPath(string xpath,bool multi=false)
         {
             if(currentFrameDocument != null)
                 sourceDoc = (mshtml.IHTMLDocument3)currentFrameDocument;
@@ -2121,7 +2156,7 @@ namespace GingerCore.Drivers.PBDriver
             IHTMLElement h1 = null;
             HtmlNode node = null;
             try
-            {
+            {                
                 node = HAPDocument.DocumentNode.SelectSingleNode(xpath);
             }
             catch

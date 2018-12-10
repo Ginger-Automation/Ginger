@@ -691,6 +691,12 @@ namespace GingerCore.Drivers.WindowsLib
             return "";
         }
 
+        public List<object> GetAllElementsByLocator(eLocateBy LocatorType, string LocValue)
+        {
+            return null;
+        }
+        
+
         public ElementInfo GetPreviousSibling(ElementInfo EI)
         {
             ITreeWalker walker = ((AutomationElement)EI.ElementObject).Automation.TreeWalkerFactory.GetRawViewWalker();
