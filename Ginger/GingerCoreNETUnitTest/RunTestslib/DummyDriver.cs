@@ -22,7 +22,8 @@ using System.Collections.Generic;
 
 namespace GingerCoreNETUnitTests.RunTestslib
 {
-    public class DummyDriver : IGingerService, IGingerDriver
+    [GingerService("DummyService","Dummy Service")]
+    public class DummyDriver : IServiceSession
     {
         public List<string> Platforms => throw new NotImplementedException();
 
@@ -55,12 +56,12 @@ namespace GingerCoreNETUnitTests.RunTestslib
         //    act.ExInfo = "A2 Result";
         //}
 
-        public void Start()
+        public void StartSession()
         {
             throw new NotImplementedException();
         }
 
-        public void Stop()
+        public void StopSession()
         {
             throw new NotImplementedException();
         }
