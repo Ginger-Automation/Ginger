@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.Actions;
 using System.Windows.Controls;
+using System.Windows;
 
 namespace Ginger.Actions
 {
@@ -25,12 +27,41 @@ namespace Ginger.Actions
     /// </summary>
     public partial class ActMobileDeviceEditPage : Page
     {
-        public ActMobileDeviceEditPage(GingerCore.Actions.ActMobileDevice Act)
+
+        ActMobileDevice mAct;
+
+        public ActMobileDeviceEditPage(ActMobileDevice Act)
         {
             InitializeComponent();
 
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.MobileDeviceAction);
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "MobileDeviceAction");         
+            mAct = Act;
+
+
+            xActionNameComboBox.Init(mAct, nameof(mAct.MobileDeviceAction), typeof(ActMobileDevice.eMobileDeviceAction));
+            xKeyPressComboBox.Init(mAct, nameof(mAct.MobilePressKey), typeof(ActMobileDevice.ePressKey));
+            xActionNameComboBox.ComboBox.SelectionChanged -= ActionNameComboBox_SelectionChanged;
+            xActionNameComboBox.ComboBox.SelectionChanged += ActionNameComboBox_SelectionChanged;
+
+            HideUnHideKeyPress();
+        }
+
+        private void HideUnHideKeyPress()
+        {
+            if (mAct != null && mAct.MobileDeviceAction == ActMobileDevice.eMobileDeviceAction.PressKey)
+            {
+                xKeyPressComboBox.Visibility = Visibility.Visible;
+                xKeyPressLable.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xKeyPressComboBox.Visibility = Visibility.Collapsed;
+                xKeyPressLable.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            HideUnHideKeyPress();
         }
     }
 }
