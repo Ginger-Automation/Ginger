@@ -24,7 +24,7 @@ namespace Amdocs.Ginger
 
                 while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().Where(r => r.ItemName.ToLower() == runSetName.ToLower()).FirstOrDefault() != null)
                 {
-                    Reporter.ToUser(eUserMsgKeys.DuplicateRunsetName, string.Format("'{0}' already exists, please use different name", runSetName));
+                    Reporter.ToUser(eUserMsgKeys.DuplicateRunsetName, runSetName);
 
                     if (!InputBoxWindow.GetInputWithValidation(string.Format("Add New {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), string.Format("{0} Name:", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ref runSetName, System.IO.Path.GetInvalidPathChars()))
                     {
