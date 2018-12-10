@@ -1102,6 +1102,11 @@ namespace GingerCore
             throw new NotImplementedException();
         }
 
+        IBusinessFlow IBusinessFlow.CreateCopy(bool v)
+        {
+            throw new NotImplementedException();
+        }
+
         [IsSerializedForLocalRepository]
         public ObservableList<IFlowControl> BFFlowControls { get; set; } = new ObservableList<IFlowControl>();
 
@@ -1136,6 +1141,6 @@ namespace GingerCore
             }
         }
 
-     
+        object IBusinessFlow.Mandatory { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

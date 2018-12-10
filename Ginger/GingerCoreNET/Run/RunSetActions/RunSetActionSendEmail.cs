@@ -1,9 +1,11 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunsetActions;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
+using Ginger.Reports.HTMLReports;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
@@ -90,7 +92,7 @@ namespace Ginger.Run.RunSetActions
                     //attach report - after generating from template
                     if (r.AttachmentType == EmailAttachment.eAttachmentType.Report)
                     {
-                        string repFileName = ReportTemplate.GenerateReport(r.Name, RI);
+                        string repFileName = null;// ReportTemplate.GenerateReport(r.Name, RI);
                         if (repFileName != null)
                         {
                             AddAttachmentToEmail(Email, repFileName, r.ZipIt);
@@ -107,7 +109,7 @@ namespace Ginger.Run.RunSetActions
 
         public void SetBodyFromHTMLReport(ReportInfo RI)
         {
-            IHTMLReportBase HRB = null;
+            HTMLReportBase HRB = null;
 
             switch (HTMLReportTemplate)
             {
@@ -136,9 +138,9 @@ namespace Ginger.Run.RunSetActions
                         }
                     }
 
-                    HTMLReportPage HTP = new HTMLReportPage(RI, html);
+                    //HTMLReportPage HTP = new HTMLReportPage(RI, html);
 
-                    Email.Body = HTP.HTML;
+                    //Email.Body = HTP.HTML;
 
                     return;
                     // break;

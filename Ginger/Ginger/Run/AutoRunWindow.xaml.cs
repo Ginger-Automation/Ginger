@@ -65,7 +65,7 @@ namespace Ginger.Run
 
                 //TODO: create initialize run inside the RunSet executer
                 App.RunsetExecutor.RunsetExecutionEnvironment = env;
-                App.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());                
+                App.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IProjEnvironment>());                
             }
             catch (Exception ex)
             {

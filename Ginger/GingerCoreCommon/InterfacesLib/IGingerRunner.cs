@@ -6,6 +6,18 @@ using Ginger.Run;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
 {
+    public enum eContinueLevel
+    {
+        StandalonBusinessFlow,
+        Runner
+    }
+    public enum eContinueFrom
+    {
+        LastStoppedAction,
+        SpecificAction,
+        SpecificActivity,
+        SpecificBusinessFlow
+    }
     public interface IGingerRunner
     {
         double? Elapsed { get;  }
@@ -24,14 +36,16 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         Guid Guid { get; }
         IEnumerable<object> ApplicationAgents { get; set; }
         bool IsRunning { get; set; }
-
+        
         ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false, string GingerRunnerName = "");
         void SetExecutionEnvironment(IProjEnvironment runsetExecutionEnvironment, ObservableList<IProjEnvironment> observableList);
         void RunRunner();
-        void ContinueRun(object runner, object lastStoppedAction);
+        //void ContinueRun(object runner, object lastStoppedAction);
         void ResetRunnerExecutionDetails(bool doNotResetBusFlows);
         void ResetRunnerExecutionDetails();
         void CloseAgents();
         void StopRun();
+        void ContinueRun(object runner, eContinueFrom lastStoppedAction);
+        void UpdateApplicationAgents();
     }
 }

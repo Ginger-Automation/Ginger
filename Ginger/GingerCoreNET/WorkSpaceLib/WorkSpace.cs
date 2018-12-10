@@ -18,9 +18,11 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SourceControl;
 using System;
@@ -33,7 +35,7 @@ namespace amdocs.ginger.GingerCoreNET
     // WorkSpace is one object per user accessible from anywhere and hold the current status of the user selection
     // For GingerWPF it is one per running app
     // For Web it can be one per user connected
-    public class WorkSpace
+    public class WorkSpace : RepositoryItemBase
     {
         private static WorkSpace mWorkSpace;
 
@@ -48,6 +50,19 @@ namespace amdocs.ginger.GingerCoreNET
 
         public SourceControlBase SourceControl;
         public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
+
+        //public static IGingerRunner AutomateTabGingerRunner = new IGingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
+        public  Solution mSolution { get; set; }
+        public  Solution Solution
+        {
+            get { return mSolution; }
+            set
+            {
+                mSolution = value;
+                OnPropertyChanged(nameof(Solution));
+            }
+        }
+
         public static eRunStatus RunSetExecutionStatus = eRunStatus.Failed;
 
         public static string TempFolder
@@ -166,6 +181,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public BetaFeatures mBetaFeatures;
+
         public BetaFeatures BetaFeatures
         {
             get
@@ -184,6 +200,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public static IBusinessFlow Businessflow { get; internal set; }
+        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 
         //TODO: move to GingerRunner - pass the obj needed

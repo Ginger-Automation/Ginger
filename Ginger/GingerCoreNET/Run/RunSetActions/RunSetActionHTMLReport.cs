@@ -66,7 +66,7 @@ namespace Ginger.Run.RunSetActions
         public override void Execute(ReportInfo RI)
         {
             string reportsResultFolder = string.Empty;
-            HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
             {
                 string runSetFolder = string.Empty;
@@ -77,7 +77,7 @@ namespace Ginger.Run.RunSetActions
                 }
                 else
                 {
-                    runSetFolder = ExecutionLogger.GetRunSetLastExecutionLogFolderOffline();
+                    //runSetFolder = ExecutionLogger.GetRunSetLastExecutionLogFolderOffline();
                     AutoLogProxy.UserOperationStart("Offline Report");
                 }
                 if (!string.IsNullOrEmpty(selectedHTMLReportTemplateID.ToString()))

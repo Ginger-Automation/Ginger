@@ -31,6 +31,7 @@ using Ginger.ALM;
 using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -79,7 +80,7 @@ namespace Ginger.Run.RunSetActions
             get { return false; }
         }
 
-        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
         {
             //Set flag for each BF to execute runset when BF execute finish
             SetExportToALMConfig();
@@ -117,10 +118,13 @@ namespace Ginger.Run.RunSetActions
             }
         }
         
-        public override Page GetEditPage()
-        {            
-            return new ExportResultsToALMConfigPage(this);
+        public override string GetEditPage()
+        {
+            //return new ExportResultsToALMConfigPage(this);
+            return "ExportResultsToALMConfigPage";
         }
+
+        
 
         public override string Type { get { return "Publish to ALM"; } }
     }

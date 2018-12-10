@@ -977,5 +977,6 @@ namespace GingerCore
             }
         }
 
+        object IAgent.Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

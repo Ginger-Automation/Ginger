@@ -60,7 +60,7 @@ namespace Ginger.Run.RunSetActions
                 {
 
                     Reporter.ToGingerHelper(eGingerHelperMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
-                    string folder = Path.Combine(App.UserProfile.Solution.Folder, @"ExecutionResults");
+                    string folder = Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults");
                     if (!Directory.Exists(folder))
                     {
                         Directory.CreateDirectory(folder);
@@ -91,42 +91,42 @@ namespace Ginger.Run.RunSetActions
 
                         foreach (IGingerRunner GR in WorkSpace.RunsetExecutor.Runners)
                         {
-                            foreach (IBusinessFlow bf in GR.BusinessFlows)
-                            {
-                                if (bf.Active == true)
-                                {
-                                    if (bf.RunStatus.ToString() == nameof(eRunStatus.Passed) || bf.RunStatus.ToString() == nameof(eRunStatus.Failed) || bf.RunStatus.ToString() == nameof(eRunStatus.Stopped))
-                                    {
-                                        ReportInfo BFRI = new ReportInfo(App.AutomateTabGingerRunner.ProjEnvironment, bf);
+                            //foreach (IBusinessFlow bf in GR.BusinessFlows)
+                            //{
+                            //    if (bf.Active == true)
+                            //    {
+                            //        if (bf.RunStatus.ToString() == nameof(eRunStatus.Passed) || bf.RunStatus.ToString() == nameof(eRunStatus.Failed) || bf.RunStatus.ToString() == nameof(eRunStatus.Stopped))
+                            //        {
+                            //            ReportInfo BFRI = new ReportInfo((IProjEnvironment)RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment, bf);
 
-                                        string TempRepFileName = ReportTemplate.GenerateReport(TemplateName, BFRI);
-                                        String RepFileName = DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + WorkSpace.RunsetExecutor.RunSetConfig.Name + "_" + GR.Name + "_" + bf.Name + "_" + WorkSpace.RunsetExecutor.RunsetExecutionEnvironment.Name;
+                            //            string TempRepFileName = IReportTemplate.GenerateReport(TemplateName, BFRI);
+                            //            String RepFileName = DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + WorkSpace.RunsetExecutor.RunSetConfig.Name + "_" + GR.Name + "_" + bf.Name + "_" + WorkSpace.RunsetExecutor.RunsetExecutionEnvironment.Name;
 
-                                        while (RepFileName.Length > 250)
-                                        {
-                                            RepFileName = RepFileName.Substring(0, 250);
-                                        }
+                            //            while (RepFileName.Length > 250)
+                            //            {
+                            //                RepFileName = RepFileName.Substring(0, 250);
+                            //            }
 
-                                        RepFileName = RepFileName + ".pdf";
+                            //            RepFileName = RepFileName + ".pdf";
 
-                                        if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
-                                        {
-                                            System.IO.File.Copy(TempRepFileName, SaveResultsInSolutionFolderName + "\\" + RepFileName);
-                                        }
+                            //            if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
+                            //            {
+                            //                System.IO.File.Copy(TempRepFileName, SaveResultsInSolutionFolderName + "\\" + RepFileName);
+                            //            }
 
-                                        if (SaveResultsInSolutionFolderName != SaveResultstoFolderName)
-                                        {
-                                            if (!string.IsNullOrEmpty(SaveResultstoFolderName))
-                                            {
-                                                System.IO.File.Copy(TempRepFileName, SaveResultstoFolderName + "\\" + RepFileName);
-                                            }
+                            //            if (SaveResultsInSolutionFolderName != SaveResultstoFolderName)
+                            //            {
+                            //                if (!string.IsNullOrEmpty(SaveResultstoFolderName))
+                            //                {
+                            //                    System.IO.File.Copy(TempRepFileName, SaveResultstoFolderName + "\\" + RepFileName);
+                            //                }
 
-                                        }
-                                        if (System.IO.File.Exists(Path.GetTempPath() + RepFileName))
-                                            System.IO.File.Delete(Path.GetTempPath() + RepFileName);
-                                    }
-                                }
-                            }
+                            //            }
+                            //            if (System.IO.File.Exists(Path.GetTempPath() + RepFileName))
+                            //                System.IO.File.Delete(Path.GetTempPath() + RepFileName);
+                            //        }
+                            //    }
+                            //}
                         }
                     }
                 }
@@ -147,7 +147,7 @@ namespace Ginger.Run.RunSetActions
         //TODO: move to Run SetAction
         private void SaveBFResults(ReportInfo RI, string folder)
         {
-            string repFileName = IReportTemplate.GenerateReport(TemplateName, RI);
+            string repFileName = null;// IReportTemplate.GenerateReport(TemplateName, RI);
             string FName = Path.GetFileName(repFileName);
 
             //TODO: let the user select file prefix

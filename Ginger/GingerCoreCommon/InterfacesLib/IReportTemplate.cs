@@ -6,5 +6,6 @@ namespace Amdocs.Ginger.Common.InterfacesLib
 {
     public interface IReportTemplate
     {
+        string Name { get; set; }
     }
 }

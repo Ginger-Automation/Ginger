@@ -18,18 +18,13 @@ limitations under the License.
 
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Controls;
-using Ginger.ALM.QC;
 using Ginger.Reports;
-using GingerCore;
-using GingerCore.Repository;
-using GingerCore.ALM.QC;
-using Ginger.ALM;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCoreNET.ALMLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -76,7 +71,7 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(ReportInfo RI)
         {
-            if ((App.RunsetExecutor.DefectSuggestionsList != null) && (App.RunsetExecutor.DefectSuggestionsList.Count > 0))
+            if ((WorkSpace.RunsetExecutor.DefectSuggestionsList != null) && (WorkSpace.RunsetExecutor.DefectSuggestionsList.Count > 0))
             {
                 Dictionary<Guid, Dictionary<string, string>> defectsForOpening = new Dictionary<Guid, Dictionary<string, string>>();
 
@@ -97,7 +92,7 @@ namespace Ginger.Run.RunSetActions
 
                 if (DefectsOpeningModeForMarked)
                 {
-                    foreach (DefectSuggestion defectSuggestion in App.RunsetExecutor.DefectSuggestionsList.Where(x => x.AutomatedOpeningFlag == true).ToList())
+                    foreach (DefectSuggestion defectSuggestion in WorkSpace.RunsetExecutor.DefectSuggestionsList.Where(x => x.AutomatedOpeningFlag == true).ToList())
                     {
                         Dictionary<string, string> currentALMDefectFieldsValues = defaultALMDefectProfile.ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
                                                                                                                                              z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
@@ -110,7 +105,7 @@ namespace Ginger.Run.RunSetActions
                 }
                 else if (DefectsOpeningModeForAll)
                 {
-                    foreach (DefectSuggestion defectSuggestion in App.RunsetExecutor.DefectSuggestionsList)
+                    foreach (DefectSuggestion defectSuggestion in WorkSpace.RunsetExecutor.DefectSuggestionsList)
                     {
                         Dictionary<string, string> currentALMDefectFieldsValues = defaultALMDefectProfile.ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
                                                                                                                                              z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
@@ -127,32 +122,33 @@ namespace Ginger.Run.RunSetActions
                 Dictionary<Guid, string> defectsOpeningResults;
                 if ((defectsForOpening != null) && (defectsForOpening.Count > 0))
                 {
-                    defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening);
+                   ////defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening);
                 }
                 else
                     return;
 
-                if ((defectsOpeningResults != null) && (defectsOpeningResults.Count > 0))
-                {
-                    foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
-                    {
-                        if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
-                        {
-                            App.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
-                        }
-                    }
-                }
+                ////if ((defectsOpeningResults != null) && (defectsOpeningResults.Count > 0))
+                ////{
+                ////    foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
+                ////    {
+                ////        if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
+                ////        {
+                ////            WorkSpace.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
+                ////        }
+                ////    }
+                ////}
             }
         }
 
-        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }
 
-        public override Page GetEditPage()
+        public override string GetEditPage()
         {
-            return new RunSetActionAutomatedALMDefectsEditPage(this);
+            //return new RunSetActionAutomatedALMDefectsEditPage(this);
+            return  "RunSetActionAutomatedALMDefectsEditPage";
         }
         public override string Type { get { return "Automated ALM Defect’s Opening"; } }
     }

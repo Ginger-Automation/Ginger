@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using Ginger.Reports;
 using GingerCore.Actions;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -80,13 +81,13 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        public override Page GetEditPage()
+        public override string GetEditPage()
         {
             RunSetActionScriptEditPage p = new RunSetActionScriptEditPage(this);
-            return p;
+            return "RunSetActionScriptEditPage";
         }
 
-        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

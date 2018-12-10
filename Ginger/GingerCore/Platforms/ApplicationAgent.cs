@@ -16,12 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using System.ComponentModel;
 
 namespace GingerCore.Platforms
 {
-    public class ApplicationAgent : RepositoryItemBase
+    public class ApplicationAgent : RepositoryItemBase, IApplicationAgent
     {
         private Agent mAgent;
 
@@ -130,5 +131,8 @@ namespace GingerCore.Platforms
                 return;
             }
         }
+
+        object IApplicationAgent.AgentName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        IAgent IApplicationAgent.Agent { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     }
 }

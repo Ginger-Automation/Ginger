@@ -1,12 +1,15 @@
 ﻿using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using Ginger.Run.RunSetActions;
 using GingerCoreNET.ReporterLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Ginger.Reports;
+using Amdocs.Ginger.Common;
 
-namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
+namespace Ginger.Run.RunSetActions
 {
     public class RunSetActionGenerateTestNGReport : RunSetActionBase
     {
@@ -55,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
             set { isStatusByActivity = value; }
         }
 
-        public override void Execute(IReportInfo RI)
+        public override void Execute(ReportInfo RI)
         {
             try
             {
@@ -83,7 +86,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
         }
 
         //TODO: move to Run SetAction
-        private void SaveBFResults(IReportInfo RI, string folder, bool statusByGroupActivity)
+        private void SaveBFResults(ReportInfo RI, string folder, bool statusByGroupActivity)
         {
             //ITestNGResultReport TNGReport = new ITestNGResultReport();
             //string xml = TNGReport.CreateReport(RI, statusByGroupActivity);
@@ -98,7 +101,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
             return "RunSetActionGenerateTestNGReportEditPage";
         }
 
-        public override void PrepareDuringExecAction(Common.ObservableList<IGingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<IGingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

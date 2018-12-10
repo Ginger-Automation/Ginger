@@ -44,8 +44,8 @@ namespace Ginger.Run.RunSetActions
             App.ObjFieldBinding(StatusTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Status);
             App.ObjFieldBinding(ErrorsTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Errors);
 
-            Page p = mRunSetAction.GetEditPage();
-            //Page p = GetEditPage(mRunSetAction.GetEditPage());
+            //Page p = mRunSetAction.GetEditPage();
+            Page p = GetEditPage(mRunSetAction.GetEditPage());
 
             ActionEditPageFrame.Content = p;
 

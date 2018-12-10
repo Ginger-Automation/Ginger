@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -16,6 +17,10 @@ namespace Ginger.Repository
             return new BusinessFlow();
         }
 
+        public ObservableList<IBusinessFlow> GetListofBusinessFlow()
+        {
+            return new ObservableList<IBusinessFlow>();
+        }
         public IValueExpression CreateValueExpression(IProjEnvironment mProjEnvironment, IBusinessFlow mBusinessFlow)
         {
             return new ValueExpression(mProjEnvironment, mBusinessFlow);
@@ -34,6 +39,10 @@ namespace Ginger.Repository
             return new ObservableList<IDatabase>();
         }
 
+        public IGingerRunner RunExecutioFrom(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
+        {
+            return new GingerRunner(executedFrom);
+        }
 
         public Type GetRepositoryItemTypeFromInterface(Type interfaceType)
         {
@@ -65,5 +74,7 @@ namespace Ginger.Repository
                 return interfaceType;
             }
         }
+
+        
     }
 }

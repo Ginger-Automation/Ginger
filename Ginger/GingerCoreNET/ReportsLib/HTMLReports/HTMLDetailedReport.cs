@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore;
 
 namespace Ginger.Reports
@@ -81,7 +82,7 @@ namespace Ginger.Reports
                 }
 
 
-                foreach (IActivity a in BF.Activities.Where(a => a.GetType() != typeof(ErrorHandler) && a.Active == true).ToList())
+                foreach (IActivity a in BF.Activities.Where(a => a.GetType() != typeof(IErrorHandler) && a.Active == true).ToList())
                 {
                     //Added as part of resolving defect 2147
                     if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)   //(a.ElapsedSecs == null) 

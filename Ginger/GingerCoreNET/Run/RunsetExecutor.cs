@@ -37,6 +37,7 @@ using GingerCoreNET.ReporterLib;
 using Amdocs.Ginger;
 using Amdocs.Ginger.CoreNET.Execution;
 
+
 namespace Ginger.Run
 {
     public class RunsetExecutor : INotifyPropertyChanged, IRunsetExecutor
@@ -97,7 +98,7 @@ namespace Ginger.Run
             {
                 mRunsetExecutionEnvironment = value;
                 if (mRunsetExecutionEnvironment != null)
-                    App.UserProfile.RecentEnvironment = mRunsetExecutionEnvironment.Guid;
+                    //App.UserProfile.RecentEnvironment = mRunsetExecutionEnvironment.Guid;
                 OnPropertyChanged(nameof(this.RunsetExecutionEnvironment));
             }
         }
@@ -118,12 +119,12 @@ namespace Ginger.Run
         {
             runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IProjEnvironment>());
             
-            runner.CurrentSolution = App.UserProfile.Solution;
+            runner.CurrentSolution = WorkSpace.Instance.Solution;
             runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>();
             // runner.PlugInsList = App.LocalRepository.GetSolutionPlugIns();
             runner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>();
-            runner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
-            runner.SolutionFolder = App.UserProfile.Solution.Folder;
+            runner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
+            runner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
         }
 
         public void InitRunner(IGingerRunner runner)
@@ -133,14 +134,14 @@ namespace Ginger.Run
             ConfigureRunnerForExecution(runner);
 
             //Set the Apps agents
-            foreach (ApplicationAgent p in runner.ApplicationAgents)
+            foreach (IApplicationAgent p in runner.ApplicationAgents)
             {
                 if (p.AgentName != null)
-                    p.Agent = (from a in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where a.Name == p.AgentName select a).FirstOrDefault();
+                   p.Agent = (from a in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>() where a.Name == p.AgentName select a).FirstOrDefault();
             }
 
             //Load the biz flows     
-            runner.BusinessFlows.Clear();
+            ////runner.BusinessFlows.Clear();
             foreach (BusinessFlowRun bf in runner.BusinessFlowsRunList)
             {
                 ObservableList<IBusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IBusinessFlow>();
@@ -187,7 +188,7 @@ namespace Ginger.Run
                     }
                     BFCopy.RunDescription = bf.BusinessFlowRunDescription;
                     BFCopy.BFFlowControls = bf.BFFlowControls;
-                    runner.BusinessFlows.Add(BFCopy);
+                    ////runner.BusinessFlows.Add(BFCopy);
                 }
             }
         }     
@@ -208,12 +209,12 @@ namespace Ginger.Run
             {
                 if (gr.UseSpecificEnvironment)
                 {
-                    if (gr.ProjEnvironment != null)
-                        gr.ProjEnvironment.CloseEnvironment();
+                    if (gr.ProjEnvironment != null) { }
+                        ////gr.ProjEnvironment.CloseEnvironment();
                 }
             }
-            if (App.AutomateTabGingerRunner.ProjEnvironment != null)
-                App.AutomateTabGingerRunner.ProjEnvironment.CloseEnvironment();
+            if (RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment != null) { }
+                ////RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment.CloseEnvironment();
         }
 
 
@@ -228,13 +229,13 @@ namespace Ginger.Run
         
         public void SetRunnersExecutionLoggerConfigs()
         {
-            _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
 
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 DateTime currentExecutionDateTime = DateTime.Now;
 
-                Ginger.Run.ExecutionLogger.RunSetStart(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder, _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, currentExecutionDateTime);
+                //IExecutionLogger.RunSetStart(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder, _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, currentExecutionDateTime);
 
                 int ginger_index = 0;
                 while (Runners.Count > ginger_index)
@@ -242,8 +243,8 @@ namespace Ginger.Run
                     Runners[ginger_index].ExecutionLogger.GingerData.Seq = ginger_index + 1;
                     Runners[ginger_index].ExecutionLogger.GingerData.GingerName = Runners[ginger_index].Name;
                     Runners[ginger_index].ExecutionLogger.GingerData.Ginger_GUID = Runners[ginger_index].Guid;
-                    Runners[ginger_index].ExecutionLogger.GingerData.GingerAggentMapping = Runners[ginger_index].ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
-                    Runners[ginger_index].ExecutionLogger.GingerData.GingerEnv = Runners[ginger_index].ProjEnvironment.Name.ToString();
+                    ////Runners[ginger_index].ExecutionLogger.GingerData.GingerAggentMapping = Runners[ginger_index].ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
+                    ////Runners[ginger_index].ExecutionLogger.GingerData.GingerEnv = Runners[ginger_index].ProjEnvironment.Name.ToString();
                     Runners[ginger_index].ExecutionLogger.CurrentExecutionDateTime = currentExecutionDateTime;
                     Runners[ginger_index].ExecutionLogger.Configuration = _selectedExecutionLoggerConfiguration;
                     ginger_index++;
@@ -287,10 +288,10 @@ namespace Ginger.Run
             if (doContinueRun == false)
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                App.MainWindow.Dispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
-                {
-                    WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution});
-                });
+                //App.MainWindow.Dispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
+                //{
+                //    WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution});
+                //});
             }
 
             //Start Run 
@@ -317,7 +318,7 @@ namespace Ginger.Run
                             if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
                             {
                                 GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
-                                GR.ContinueRun(IGingerRunner.eContinueLevel.Runner, IGingerRunner.eContinueFrom.LastStoppedAction);
+                                GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
                             }
                     }, TaskCreationOptions.LongRunning);
                     runnersTasks.Add(t);
@@ -342,7 +343,7 @@ namespace Ginger.Run
                             if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
                             {
                                 GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
-                                GR.ContinueRun(IGingerRunner.eContinueLevel.Runner, IGingerRunner.eContinueFrom.LastStoppedAction);
+                                GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
                             }
                             else if(GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
                             {
@@ -367,15 +368,15 @@ namespace Ginger.Run
 
             //Do post execution items
             Reporter.ToLog(eLogLevel.INFO, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            Ginger.Run.ExecutionLogger.RunSetEnd();
+            //IExecutionLogger.RunSetEnd();
             if (mStopRun == false)
             {
                 // Process all post execution RunSet Operations
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                App.MainWindow.Dispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
-                {
-                    WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
-                });
+                //App.MainWindow.Dispatcher.Invoke(() => //ToDO: Remove dependency on UI thread- it should run in backend
+                //{
+                //    WorkSpace.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
+                //});
             }
             Reporter.ToLog(eLogLevel.INFO, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             CreateGingerExecutionReportAutomaticly();
@@ -385,8 +386,8 @@ namespace Ginger.Run
 
         public void CreateGingerExecutionReportAutomaticly()
         {
-            HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if ((_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled) && (Runners != null) && (Runners.Count > 0))
             {
                 if (_selectedExecutionLoggerConfiguration.ExecutionLoggerHTMLReportsAutomaticProdIsEnabled)
@@ -398,10 +399,10 @@ namespace Ginger.Run
                     }
                     else
                     {
-                        runSetReportName = IExecutionLogger.defaultRunTabLogName;
+                        ////runSetReportName = IExecutionLogger.defaultRunTabLogName;
                     }
-                    string exec_folder = IExecutionLogger.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + runSetReportName + "_" + Runners[0].ExecutionLogger.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmss"));
-                    string reportsResultFolder = GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), false,null, null, false,currentConf.HTMLReportConfigurationMaximalFolderSize);
+                    ////string exec_folder = IExecutionLogger.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + runSetReportName + "_" + Runners[0].ExecutionLogger.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmss"));
+                    ////string reportsResultFolder = GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), false,null, null, false,currentConf.HTMLReportConfigurationMaximalFolderSize);
                 }
             }
         }
@@ -415,7 +416,7 @@ namespace Ginger.Run
             }
         }
 
-        internal void StopRun()
+        public void StopRun()
         {
             mStopRun = true;
             foreach (IGingerRunner runner in Runners)
@@ -438,8 +439,8 @@ namespace Ginger.Run
                     switch (RSA.RunAt)
                     {
                         case RunSetActionBase.eRunAt.DuringExecution:
-                            if(RSA is RunSetActions.RunSetActionPublishToQC)
-                                RSA.PrepareDuringExecAction(Runners);
+                            //if(RSA is RunSetActions.RunSetActionPublishToQC)
+                            //    RSA.PrepareDuringExecAction(Runners);
                             break;
 
                         case RunSetActionBase.eRunAt.ExecutionStart:
@@ -459,7 +460,7 @@ namespace Ginger.Run
         {
             //TODO: write UT to validate this function
 
-            RSA.SolutionFolder = App.UserProfile.Solution.Folder;
+            RSA.SolutionFolder = WorkSpace.Instance.Solution.Folder;
             switch (RSA.Condition)
             {
                 case RunSetActionBase.eRunSetActionCondition.AlwaysRun:
@@ -508,10 +509,10 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 try
                 {
-                    App.MainWindow.Hide();
-                    App.AppSplashWindow.Close();
-                    AutoRunWindow RP = new AutoRunWindow();
-                    RP.Show();
+                    //App.MainWindow.Hide();
+                    //App.AppSplashWindow.Close();
+                    //AutoRunWindow RP = new AutoRunWindow();
+                    //RP.Show();
                 }
                 catch (Exception ex)
                 {
@@ -600,89 +601,89 @@ namespace Ginger.Run
                     switch (param)
                     {
                         case "SourceControlType":
-                            Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlType: '" + value + "'");
-                            if (value.Equals("GIT"))
-                                App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
-                            else if (value.Equals("SVN"))
-                                App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
-                            else
-                                App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
+                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlType: '" + value + "'");
+                            //if (value.Equals("GIT"))
+                            //    App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
+                            //else if (value.Equals("SVN"))
+                            //    App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
+                            //else
+                            //    App.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
                             break;
 
                         case "SourceControlUrl":
-                            Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUrl: '" + value + "'");
-                            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
-                            {
-                                if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
-                                    value = value + "svn/";
-                                if (!value.ToUpper().EndsWith("/"))
-                                    value = value + "/";
-                            }
-                            App.UserProfile.SourceControlURL = value;
-                            scURL = value;
+                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUrl: '" + value + "'");
+                            //if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+                            //{
+                            //    if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
+                            //        value = value + "svn/";
+                            //    if (!value.ToUpper().EndsWith("/"))
+                            //        value = value + "/";
+                            //}
+                            //App.UserProfile.SourceControlURL = value;
+                            //scURL = value;
                             break;
 
                         case "SourceControlUser":
-                            Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUser: '" + value + "'");
-                            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
-                                value = "Test";
-                            App.UserProfile.SourceControlUser = value;
-                            scUser = value;
+                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlUser: '" + value + "'");
+                            //if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
+                            //    value = "Test";
+                            //App.UserProfile.SourceControlUser = value;
+                            //scUser = value;
                             break;
 
                         case "SourceControlPassword":
-                            Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlPassword: '" + value + "'");
-                            App.UserProfile.SourceControlPass = value;
-                            scPswd = value;
+                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlPassword: '" + value + "'");
+                            //App.UserProfile.SourceControlPass = value;
+                            //scPswd = value;
                             break;
 
                         case "PasswordEncrypted":
-                            Reporter.ToLogAndConsole(eLogLevel.INFO, "PasswordEncrypted: '" + value + "'");
-                            string pswd = App.UserProfile.SourceControlPass;
-                            if (value == "Y")
-                                pswd = EncryptionHandler.DecryptwithKey(App.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
-                            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
-                                pswd = "Test";
-                            App.UserProfile.SourceControlPass = pswd;
+                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "PasswordEncrypted: '" + value + "'");
+                            //string pswd = App.UserProfile.SourceControlPass;
+                            //if (value == "Y")
+                            //    pswd = EncryptionHandler.DecryptwithKey(App.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
+                            //if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
+                            //    pswd = "Test";
+                            //App.UserProfile.SourceControlPass = pswd;
                             break;
 
                         case "SourceControlProxyServer":
-                            Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyServer: '" + value + "'");
-                            if (value == "")
-                                App.UserProfile.SolutionSourceControlConfigureProxy = false;
-                            else
-                                App.UserProfile.SolutionSourceControlConfigureProxy = true;
-                            if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
-                                value = "http://" + value;
-                            App.UserProfile.SolutionSourceControlProxyAddress = value;
+                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyServer: '" + value + "'");
+                            //if (value == "")
+                            //    WorkSpace.Instance.SolutionSourceControlConfigureProxy = false;
+                            //else
+                            //    WorkSpace.Instance.SolutionSourceControlConfigureProxy = true;
+                            //if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
+                            //    value = "http://" + value;
+                            //WorkSpace.Instance.SolutionSourceControlProxyAddress = value;
                             break;
 
                         case "SourceControlProxyPort":
-                            if (value == "")
-                                App.UserProfile.SolutionSourceControlConfigureProxy = false;
-                            else
-                                App.UserProfile.SolutionSourceControlConfigureProxy = true;
-                            Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
-                            App.UserProfile.SolutionSourceControlProxyPort = value;
+                            //if (value == "")
+                            //    WorkSpace.Instance.SolutionSourceControlConfigureProxy = false;
+                            //else
+                            //    WorkSpace.Instance.SolutionSourceControlConfigureProxy = true;
+                            //Reporter.ToLogAndConsole(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
+                            //WorkSpace.Instance.SolutionSourceControlProxyPort = value;
                             break;
 
                         case "Solution":
                             if (scURL != null && scUser != "" && scPswd != null)
                             {
                                 Reporter.ToLogAndConsole(eLogLevel.INFO, "Downloading Solution from source control");
-                                if (value.IndexOf(".git") != -1)
-                                    App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                                else
-                                    App.DownloadSolution(value);
+                                //if (value.IndexOf(".git") != -1)
+                                //    App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
+                                //else
+                                //    App.DownloadSolution(value);
                             }
                             Reporter.ToLog(eLogLevel.INFO, "Loading the Solution: '" + value + "'");
                             try
                             {
-                                if (App.SetSolution(value) == false)
-                                {
-                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                                    return false;
-                                }
+                                //if (App.SetSolution(value) == false)
+                                //{
+                                //    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
+                                //    return false;
+                                //}
                             }
                             catch (Exception ex)
                             {
@@ -752,21 +753,21 @@ namespace Ginger.Run
                 Reporter.ToGingerHelper(eGingerHelperMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                 try
                 {
-                    AnalyzerPage analyzerPage = new AnalyzerPage();
+                    //AnalyzerPage analyzerPage = new AnalyzerPage();
 
-                    analyzerPage.Init(App.UserProfile.Solution, mRunSetConfig);
-                    await analyzerPage.AnalyzeWithoutUI();
+                    //analyzerPage.Init(WorkSpace.Instance.Solution, mRunSetConfig);
+                    //await analyzerPage.AnalyzeWithoutUI();
 
 
-                    if (analyzerPage.TotalHighAndCriticalIssues > 0)
-                    {
-                        if (!runInSilentMode)
-                        {
-                            Reporter.ToUser(eUserMsgKeys.AnalyzerFoundIssues);
-                            analyzerPage.ShowAsWindow();
-                        }
-                        return 1;//issues found
-                    }
+                    //if (analyzerPage.TotalHighAndCriticalIssues > 0)
+                    //{
+                    //    if (!runInSilentMode)
+                    //    {
+                    //        Reporter.ToUser(eUserMsgKeys.AnalyzerFoundIssues);
+                    //        analyzerPage.ShowAsWindow();
+                    //    }
+                    //    return 1;//issues found
+                    //}
                 }
                 finally
                 {

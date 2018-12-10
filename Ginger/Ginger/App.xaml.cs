@@ -209,7 +209,7 @@ namespace Ginger
             }
         }
 
-        public static GingerRunner AutomateTabGingerRunner = new GingerRunner(GingerRunner.eExecutedFrom.Automation);
+        public static GingerRunner AutomateTabGingerRunner = new GingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
 
 
         public static AppProgressBar AppProgressBar { get; set; }

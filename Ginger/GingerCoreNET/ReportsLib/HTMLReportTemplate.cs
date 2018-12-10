@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using GingerCore;
-using GingerCore.Repository;
+
 
 namespace Ginger.Reports
 {
@@ -103,7 +103,7 @@ namespace Ginger.Reports
             return Name;
         }
 
-        internal static List<HTMLReportTemplate> GetInternalTemplates()
+        public static List<HTMLReportTemplate> GetInternalTemplates()
         {
             var list = new List<HTMLReportTemplate>();
             var RT1 = new HTMLReportTemplate();

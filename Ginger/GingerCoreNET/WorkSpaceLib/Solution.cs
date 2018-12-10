@@ -20,8 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.ALM;
-using Ginger.GeneralLib;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.Variables;
@@ -33,6 +31,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text;
+using GingerCoreNET.ReporterLib;
+using GingerCoreNET.ALMLib;
+using GingerCoreNET.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.SolutionGeneral
 {
@@ -191,10 +193,10 @@ namespace Ginger.SolutionGeneral
                 {
                     extraChangedItems= extraChangedItems.TrimEnd();
                     extraChangedItems= extraChangedItems.TrimEnd(new char[] { ',' });                    
-                    if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == System.Windows.MessageBoxResult.Yes)
-                    {
-                        doSave = true;
-                    }
+                    ////if (Reporter.ToUser(eUserMsgKeys.SolutionSaveWarning, extraChangedItems) == System.Windows.MessageBoxResult.Yes)
+                    ////{
+                    ////    doSave = true;
+                    ////}
                 }
             }
 
@@ -303,7 +305,8 @@ namespace Ginger.SolutionGeneral
                 HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
             }
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-            App.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            //App.AutomateTabGingerRunner.ExecutionLogger.Configuration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 
         [IsSerializedForLocalRepository]
@@ -421,28 +424,28 @@ namespace Ginger.SolutionGeneral
             });
         }
 
-        internal ReportTemplate CreateNewReportTemplate(string path = "")
+        public IReportTemplate CreateNewReportTemplate(string path = "")
         {
-            ReportTemplate NewReportTemplate = new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
+            IReportTemplate NewReportTemplate = null;//new ReportTemplate() { Name = "New Report Template", Status = ReportTemplate.eReportStatus.Development };
             
-            ReportTemplateSelector RTS = new ReportTemplateSelector();
-            RTS.ShowAsWindow();
+            //ReportTemplateSelector RTS = new ReportTemplateSelector();
+            //RTS.ShowAsWindow();
 
-            if (RTS.SelectedReportTemplate != null)
-            {
+            //if (RTS.SelectedReportTemplate != null)
+            //{
 
-                NewReportTemplate.Xaml = RTS.SelectedReportTemplate.Xaml;
+            //    NewReportTemplate.Xaml = RTS.SelectedReportTemplate.Xaml;
 
-                //Make it Generic or Const string for names used for File
-                string NewReportName = string.Empty;
-                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
-                {
-                    NewReportTemplate.Name = NewReportName;                    
-                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
-                }
-                return NewReportTemplate;
-            }
-            return null;
+            //    //Make it Generic or Const string for names used for File
+            //    string NewReportName = string.Empty;
+            //    if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
+            //    {
+            //        NewReportTemplate.Name = NewReportName;                    
+            //        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(()NewReportTemplate);
+            //    }
+             return NewReportTemplate;
+            //}
+           // return null;
         }
 
 

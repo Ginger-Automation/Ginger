@@ -5,9 +5,10 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using Ginger.Reports;
 using GingerCore.GeneralLib;
 
-namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
+namespace Ginger.Run.RunSetActions
 {
     public class RunSetActionSendSMS : RunSetActionBase
     {
@@ -27,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunsetActions
             get { return true; }
         }
 
-        public override void Execute(IReportInfo RI)
+        public override void Execute(ReportInfo RI)
         {
             //TODO: check number of chars and show err if more or update Errors field
             SMSEmail.Send();

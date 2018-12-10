@@ -170,7 +170,7 @@ namespace Ginger.Run.RunSetActions
 
         public abstract string GetEditPage();
 
-        internal void ExecuteWithRunPageBFES()
+        public void ExecuteWithRunPageBFES()
         {
             ReportInfo RI = new ReportInfo(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.RunsetExecutor);
             RunAction(RI);

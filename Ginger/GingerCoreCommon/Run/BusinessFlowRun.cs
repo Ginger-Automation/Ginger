@@ -19,16 +19,14 @@ limitations under the License.
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
 using System;
-using GingerCore;
 using GingerCore.Variables;
-using GingerCore.FlowControlLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run
 {
     // This class is for selected business flow to run for agent
     // Being saved as part of AgentRunConfig
-    public class BusinessFlowRun : RepositoryItem
+    public class BusinessFlowRun : IRepositoryItem
     {
         [IsSerializedForLocalRepository]
         public string BusinessFlowName { get; set; }
@@ -57,7 +55,7 @@ namespace Ginger.Run
         [IsSerializedForLocalRepository]
         public ObservableList<IFlowControl> BFFlowControls = new ObservableList<IFlowControl>();
 
-        public override string ItemName
+        public string ItemName
         {
             get
             {
@@ -67,6 +65,11 @@ namespace Ginger.Run
             {
                 return;
             }
+        }
+
+        public string GetNameForFileName()
+        {
+            throw new NotImplementedException();
         }
     }
 }

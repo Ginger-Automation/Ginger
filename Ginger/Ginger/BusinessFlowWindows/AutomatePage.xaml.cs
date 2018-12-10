@@ -167,10 +167,10 @@ namespace Ginger
                     RunActivity();
                     break;
                 case AutomateEventArgs.eEventType.ContinueActionRun:
-                    ContinueRunFRomAutomateTab(Run.GingerRunner.eContinueFrom.SpecificAction);
+                    ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificAction);
                     break;
                 case AutomateEventArgs.eEventType.ContinueActivityRun:
-                    ContinueRunFRomAutomateTab(Run.GingerRunner.eContinueFrom.SpecificActivity);
+                    ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificActivity);
                     break;
                 case AutomateEventArgs.eEventType.StopRun:
                     StopAutomateRun();
@@ -863,13 +863,13 @@ namespace Ginger
                 switch (resetFrom)
                 {
                     case Run.GingerRunner.eResetStatus.All:
-                        App.AutomateTabGingerRunner.ResetStatus(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.All, App.BusinessFlow);
+                        App.AutomateTabGingerRunner.ResetStatus(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.All, App.BusinessFlow);
                         break;
                     case Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards:
-                        App.AutomateTabGingerRunner.ResetStatus(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity);
+                        App.AutomateTabGingerRunner.ResetStatus(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActivityOnwards, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity);
                         break;
                     case Run.GingerRunner.eResetStatus.FromSpecificActionOnwards:
-                        App.AutomateTabGingerRunner.ResetStatus(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActionOnwards, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
+                        App.AutomateTabGingerRunner.ResetStatus(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eResetStatus.FromSpecificActionOnwards, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1204,15 +1204,15 @@ namespace Ginger
 
         private void btnContinute_Click(object sender, RoutedEventArgs e)
         {
-            ContinueRunFRomAutomateTab(Run.GingerRunner.eContinueFrom.LastStoppedAction);
+            ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.LastStoppedAction);
         }
 
         private void ContinuteRunActiviytButton_Click(object sender, RoutedEventArgs e)
         {
-            ContinueRunFRomAutomateTab(Run.GingerRunner.eContinueFrom.SpecificActivity);
+            ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificActivity);
         }
 
-        private async Task ContinueRunFRomAutomateTab(Run.GingerRunner.eContinueFrom continueFrom)
+        private async Task ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom continueFrom)
         {
             try
             {
@@ -1223,14 +1223,14 @@ namespace Ginger
                 App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
                 switch (continueFrom)
                 {
-                    case Run.GingerRunner.eContinueFrom.LastStoppedAction:
-                        await App.AutomateTabGingerRunner.ContinueRunAsync(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eContinueFrom.LastStoppedAction);
+                    case Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.LastStoppedAction:
+                        await App.AutomateTabGingerRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.LastStoppedAction);
                         break;
-                    case Run.GingerRunner.eContinueFrom.SpecificAction:
-                        await App.AutomateTabGingerRunner.ContinueRunAsync(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eContinueFrom.SpecificAction, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
+                    case Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificAction:
+                        await App.AutomateTabGingerRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificAction, App.BusinessFlow, (Activity)App.BusinessFlow.CurrentActivity, (Act)App.BusinessFlow.CurrentActivity.Acts.CurrentItem);
                         break;
-                    case Run.GingerRunner.eContinueFrom.SpecificActivity:
-                        await App.AutomateTabGingerRunner.ContinueRunAsync(Run.GingerRunner.eContinueLevel.StandalonBusinessFlow, Run.GingerRunner.eContinueFrom.SpecificActivity, App.BusinessFlow,(Activity) App.BusinessFlow.CurrentActivity);
+                    case Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificActivity:
+                        await App.AutomateTabGingerRunner.ContinueRunAsync(Amdocs.Ginger.Common.InterfacesLib.eContinueLevel.StandalonBusinessFlow, Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificActivity, App.BusinessFlow,(Activity) App.BusinessFlow.CurrentActivity);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1250,7 +1250,7 @@ namespace Ginger
 
         private void ContinuteRunButton_Click(object sender, RoutedEventArgs e)
         {
-            ContinueRunFRomAutomateTab(Run.GingerRunner.eContinueFrom.SpecificAction);
+            ContinueRunFRomAutomateTab(Amdocs.Ginger.Common.InterfacesLib.eContinueFrom.SpecificAction);
         }
 
         private void StartAgent_Click(object sender, RoutedEventArgs e)

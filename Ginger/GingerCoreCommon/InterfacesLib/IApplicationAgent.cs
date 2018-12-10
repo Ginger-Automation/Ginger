@@ -4,8 +4,9 @@ using System.Text;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
 {
-    public interface IAgent
+    public interface IApplicationAgent
     {
-        object Name { get; set; }
+        object AgentName { get; set; }
+        IAgent Agent { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         ParentGingerData GingerData { get; set; }
         DateTime CurrentExecutionDateTime { get; set; }
        ExecutionLoggerConfiguration Configuration { get; set; }
-
+        
         void GingerStart();
         void ActivityGroupStart(IActivitiesGroup currentActivityGroup, IBusinessFlow currentBusinessFlow);
         void ActivityStart(IBusinessFlow currentBusinessFlow,IActivity activity);

@@ -42,7 +42,7 @@ namespace Ginger.ALM
 
         private ALMIntegration()
         {
-            UpdateALMType(App.UserProfile.Solution.AlmType);
+            UpdateALMType((eALMType)App.UserProfile.Solution.AlmType);
         }
 
         public void UpdateALMType(eALMType AlmType)

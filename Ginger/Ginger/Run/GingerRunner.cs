@@ -63,12 +63,6 @@ namespace Ginger.Run
 {
     public class GingerRunner : RepositoryItemBase, IGingerRunner
     {
-        public enum eExecutedFrom
-        {
-            Automation,
-            Run
-        }
-
         public enum eActionExecutorType
         {
             RunWithoutDriver,
@@ -85,19 +79,9 @@ namespace Ginger.Run
             StopAllBusinessFlows = 1,
         }
 
-        public enum eContinueLevel
-        {
-            StandalonBusinessFlow,
-            Runner
-        }
+        
         public PublishToALMConfig PublishToALMConfig = null;
-        public enum eContinueFrom
-        {
-            LastStoppedAction,
-            SpecificAction,
-            SpecificActivity,
-            SpecificBusinessFlow
-        }
+        
         public enum eResetStatus
         {
             All,
@@ -305,10 +289,10 @@ namespace Ginger.Run
             ExecutedFrom = eExecutedFrom.Run;
             ExecutionLogger = new ExecutionLogger(eExecutedFrom.Run);            
         }
-       
-        public GingerRunner(eExecutedFrom executedFrom)
+
+        public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom eExecutedFrom)
         {
-            ExecutedFrom = executedFrom;
+            ExecutedFrom = eExecutedFrom;
             ExecutionLogger = new ExecutionLogger(ExecutedFrom);
         }
 
@@ -3690,6 +3674,20 @@ namespace Ginger.Run
             }
         }
 
+        object IGingerRunner.CurrentSolution { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        ObservableList<IAgent> IGingerRunner.SolutionAgents { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        ObservableList<IDataSourceBase> IGingerRunner.DSList { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        object IGingerRunner.SolutionApplications { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        object IGingerRunner.SolutionFolder { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        object IGingerRunner.BusinessFlows => throw new NotImplementedException();
+
+        IEnumerable<BusinessFlowRun> IGingerRunner.BusinessFlowsRunList => throw new NotImplementedException();
+
+        object IGingerRunner.ProjEnvironment { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        IEnumerable<object> IGingerRunner.ApplicationAgents { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        bool IGingerRunner.IsRunning { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         private bool CheckIfActivityTagsMatch()
         {
             //check if Activity or The parent Activities Group has at least 1 tag from filter tags
@@ -3885,6 +3883,46 @@ namespace Ginger.Run
                 Reporter.ToLog(eAppReporterLogLevel.ERROR, "Business Flow Name not found - " + Name);
                 return false;
             }
+        }
+
+        public void SetExecutionEnvironment(IProjEnvironment runsetExecutionEnvironment, ObservableList<IProjEnvironment> observableList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RunRunner()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ContinueRun(object runner, object lastStoppedAction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResetRunnerExecutionDetails()
+        {
+            throw new NotImplementedException();
+        }
+
+        void IGingerRunner.CloseAgents()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RunExecutioFrom()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ContinueRun(object runner, eContinueFrom lastStoppedAction)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IGingerRunner.UpdateApplicationAgents()
+        {
+            throw new NotImplementedException();
         }
     }
 }
