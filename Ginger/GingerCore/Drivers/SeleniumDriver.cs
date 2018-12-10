@@ -3656,8 +3656,8 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
-                            Driver.SwitchTo().DefaultContent();
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnFullElementInfoDetails);                            
+                            Driver.SwitchTo().ParentFrame();
                         }
 
                     }
@@ -5598,7 +5598,7 @@ namespace GingerCore.Drivers
         // New HandleActUIElement - will replace ActGenElement
         // ----------------------------------------------------------------------------------------------------------------------------------
 
-        private void HandleActUIElement(ActUIElement act)
+        public void HandleActUIElement(ActUIElement act)
         {
             IWebElement e = null;
 

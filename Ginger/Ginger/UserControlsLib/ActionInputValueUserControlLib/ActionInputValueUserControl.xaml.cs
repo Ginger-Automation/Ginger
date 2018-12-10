@@ -18,10 +18,12 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Actions;
 using Ginger.UserControls;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Dynamic;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -34,80 +36,89 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
     public partial class ActionInputValueUserControl : UserControl
     {
         ActInputValue mActInputValue;
-        public ActionInputValueUserControl()
+
+        public ActionInputValueUserControl(ActInputValue actInputValue)
         {
             InitializeComponent();
+
+            mActInputValue = actInputValue;
+
+            ResetControls();
+
+            SetControlToInputValue();
         }
 
-        public void BindControl(ActInputValue AIV)
+        private void ResetControls()
         {
-            mActInputValue = AIV;
-            this.ValueTextBox.Visibility = Visibility.Collapsed;
-            this.ValueDataGrid.Visibility = Visibility.Collapsed;
-            this.ValueComboBox.Visibility = Visibility.Collapsed;
-            
-            // simple string or unknown type show text box
-            if  (AIV.ParamType == typeof(string) || AIV.ParamType == null)
+            xTextBoxInputPnl.Visibility = Visibility.Collapsed;
+            xComboBoxInputPnl.Visibility = Visibility.Collapsed;
+            xCheckBoxInput.Visibility = Visibility.Collapsed;
+            xListInputGrid.Visibility = Visibility.Collapsed;
+        }
+
+        private void SetControlToInputValue()
+        {           
+            // simple string or number or unknown type show text box
+            if  (mActInputValue.ParamType == typeof(string) || mActInputValue.ParamType == typeof(int) || mActInputValue.ParamType == null)
             {
-                this.ValueTextBox.Visibility = Visibility.Visible;
-                this.ValueTextBox.BindControl(AIV, nameof(ActInputValue.Value));
-                this.ValueTextBox.Style = App.GetStyle("@TextBoxStyle");   // TODO: use const/enum so will pass compile check             
+                xTextBoxInputPnl.Visibility = Visibility.Visible;
+                xTextBoxInputLabel.Content = string.Format("{0}:", GetInputFieldformatedName());
+                xTextBoxInputTextBox.Init(mActInputValue, nameof(ActInputValue.Value));          
                 return;
             }
 
-            // Int
-            if (AIV.ParamType == typeof(int))
+            if (mActInputValue.ParamType.IsEnum)
             {
-                this.ValueTextBox.Visibility = Visibility.Visible;
-                this.ValueTextBox.BindControl(AIV, nameof(ActInputValue.Value));
-                this.ValueTextBox.Style = App.GetStyle("@TextBoxStyle");   // TODO: use const/enum so will pass compile check             
-
-                this.ValueTextBox.Background = Brushes.Yellow;  // TODO: make it accept only numbers !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                xComboBoxInputPnl.Visibility = Visibility.Visible;
+                xComboBoxInputLabel.Content = string.Format("{0}:", GetInputFieldformatedName());
+                xComboBoxInputComboBox.BindControl(mActInputValue, nameof(ActInputValue.Value));
                 return;
             }
 
-            
-            // List - Show in Grid
-            if (AIV.ParamType == typeof(DynamicListWrapper))
+            if (mActInputValue.ParamType == typeof(bool))
             {
-                ValueExpressionButton.Visibility = Visibility.Collapsed;
-                this.ValueDataGrid.Visibility = Visibility.Visible;
-                xUCcGrid.Visibility = Visibility.Visible;
-                xUCcGrid.Title = AIV.Param;                
+                xCheckBoxInput.Visibility = Visibility.Visible;
+                xCheckBoxInput.Content =  GetInputFieldformatedName();
+                xCheckBoxInput.BindControl(mActInputValue, nameof(ActInputValue.Value));
+                return;
+            }
+
+            if (mActInputValue.ParamType == typeof(DynamicListWrapper))
+            {
+                xListInputGrid.Visibility = Visibility.Visible;
+                xListInputGrid.Title = GetInputFieldformatedName();          
+                
+                //set data
                 ObservableList<dynamic> DynList = mActInputValue.ListDynamicValue;
+                xListInputGrid.DataSourceList = DynList;
+
+                //data changes catch
                 DynList.CollectionChanged += ListCollectionChanged;
-                xUCcGrid.DataSourceList = DynList;
-                xUCcGrid.btnAdd.Click += AddItem;
+                xListInputGrid.Grid.CellEditEnding += Grid_CellEditEnding;
+
+                xListInputGrid.btnAdd.Click += AddItem;
                 SetListGridView();
                 return;
             }
+        }
 
-            
+        private string GetInputFieldformatedName()
+        {
+            // Make first letter upper case
+            string formatedName = char.ToUpper(mActInputValue.Param[0]) + mActInputValue.Param.Substring(1);
 
-
-            if (AIV.ParamType.IsEnum)
+            //split by Uper case
+            string[] split = Regex.Split(formatedName, @"(?<!^)(?=[A-Z])");
+            formatedName = string.Empty;
+            foreach (string str in split)
             {
-                this.ValueComboBox.Visibility = Visibility.Visible;
-                // TODO: get the enum values and fill combo
-                this.ValueComboBox.BindControl(AIV, nameof(ActInputValue.Value));
-                this.ValueComboBox.Style = App.GetStyle("@ComboBoxStyle");   // TODO: use const/enum so will pass compile check             
-                return;
+                formatedName += str + " ";
             }
+
+            return (formatedName.Trim());
         }
 
-        private void AddItem(object sender, RoutedEventArgs e)
-        {
-            dynamic expando = new ExpandoObject();
-            // TODO set obj with item default value - expando.Name = "";
-            
-            ((ObservableList<dynamic>)xUCcGrid.DataSourceList).Add(expando);
-        }
-
-        private void ListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            ObservableList<dynamic> list = (ObservableList<dynamic>)xUCcGrid.DataSourceList;
-            mActInputValue.ListDynamicValue = list;
-        }
+        #region List Grid Handlers
 
         void SetListGridView()
         {
@@ -117,20 +128,51 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
             // Create grid columns based on list item properties
             List<string> props = mActInputValue.GetListItemProperties();
-            foreach(string prop in props)
+            foreach (string prop in props)
             {
                 viewCols.Add(new GridColView() { Field = prop, WidthWeight = 10 });
+                viewCols.Add(new GridColView() { Field = prop + "VE", Header = "...", WidthWeight = 1, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PagePanel.Resources["ValueExpressionButton"] });
             }
 
-            xUCcGrid.SetAllColumnsDefaultView(view);
-            xUCcGrid.InitViewItems();
+            xListInputGrid.SetAllColumnsDefaultView(view);
+            xListInputGrid.InitViewItems();
         }
 
-      
-        private void ValueExpressionButton_Click(object sender, RoutedEventArgs e)
+        private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage valueExpressionEditorPage = new ValueExpressionEditorPage(mActInputValue, nameof(ActInputValue.Value));
-            valueExpressionEditorPage.ShowAsWindow();
+            dynamic currentListItem = (dynamic)xListInputGrid.CurrentItem;
+            //get name of relevent field
+            int currentColIndex = xListInputGrid.Grid.CurrentColumn.DisplayIndex;
+            object field = xListInputGrid.Grid.Columns[currentColIndex - 1].Header;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(currentListItem, field.ToString());
+            VEEW.ShowAsWindow();
+            UpdateListValues();
         }
+
+        private void Grid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            UpdateListValues();
+        }
+
+        private void ListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateListValues();
+        }
+
+        private void UpdateListValues()
+        {
+            ObservableList<dynamic> list = (ObservableList<dynamic>)xListInputGrid.DataSourceList;
+            mActInputValue.ListDynamicValue = list;
+        }
+
+        private void AddItem(object sender, RoutedEventArgs e)
+        {
+            dynamic expando = new ExpandoObject();
+            // TODO set obj with item default value - expando.Name = "";
+            ((ObservableList<dynamic>)xListInputGrid.DataSourceList).Add(expando);
+        }
+        #endregion
+
+
     }
 }

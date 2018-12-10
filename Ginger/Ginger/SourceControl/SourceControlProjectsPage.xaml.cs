@@ -23,10 +23,12 @@ using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Ginger.SourceControl
 {
@@ -36,9 +38,10 @@ namespace Ginger.SourceControl
     public partial class SourceControlProjectsPage : Page
     {
         ObservableList<SolutionInfo> SourceControlSolutions = new ObservableList<SolutionInfo>();
-       
+
         GenericWindow genWin = null;
         Button downloadProjBtn = null;
+
         public static SourceControlBase mSourceControl;
 
         public SourceControlProjectsPage()
@@ -49,7 +52,7 @@ namespace Ginger.SourceControl
             ConnectionDetailsExpender.IsExpanded = true;
 
             SourceControlInit();
-           
+
             SourceControlLocalFolderLable.Visibility = Visibility.Collapsed;
             SourceControlLocalFolderTextBox.Visibility = Visibility.Collapsed;
             BrowseButton.Visibility = Visibility.Collapsed;
@@ -63,13 +66,13 @@ namespace Ginger.SourceControl
             //ConnecitonDetailsPage Binding
             if (App.UserProfile.SourceControlURL == null)
             {
-         
+
                 App.UserProfile.SourceControlURL = "";
             }
 
             SourceControlClassComboBox.Init(App.UserProfile, nameof(UserProfile.SourceControlType), typeof(SourceControlBase.eSourceControlType), false, SourceControlClassComboBox_SelectionChanged);
             SourceControlClassComboBox.ComboBox.Items.RemoveAt(0);//removing the NONE option from user selection
-            
+
             //ProjectPage Binding.
             App.ObjFieldBinding(SourceControlLocalFolderTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlLocalFolder);
             if (String.IsNullOrEmpty(App.UserProfile.SourceControlLocalFolder))
@@ -87,15 +90,30 @@ namespace Ginger.SourceControl
             App.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlProxyPort);
             if (String.IsNullOrEmpty(App.UserProfile.SolutionSourceControlProxyPort))
                 mSourceControl.SourceControlProxyPort = @"8080";
-            
+
+            App.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
+
             SolutionsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
         }
-
+        private void UpdateTimeoutVisibility()
+        {
+            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                xTimeoutPanel.Visibility = Visibility.Hidden;
+            }
+            if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            {
+                xTimeoutPanel.Visibility = Visibility.Visible;
+            }
+        }
+        
         private void Bind()
         {
             App.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlURL);
             App.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlUser);
             App.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, SourceControlBase.Fields.SourceControlPass);
+            App.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
+            UpdateTimeoutVisibility();
             SourceControlPassTextBox.Password = mSourceControl.SourceControlPass;
             SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
         }
@@ -108,9 +126,9 @@ namespace Ginger.SourceControl
 
         private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-                mSourceControl.SourceControlPass = ((PasswordBox)sender).Password;
-                App.UserProfile.SaveUserProfile();//todo: check if needed
-                SourceControlIntegration.Init(mSourceControl);
+            mSourceControl.SourceControlPass = ((PasswordBox)sender).Password;
+            App.UserProfile.SaveUserProfile();//todo: check if needed
+            SourceControlIntegration.Init(mSourceControl);
         }
 
         private void RefreshGrid(object sender, RoutedEventArgs e)
@@ -119,7 +137,7 @@ namespace Ginger.SourceControl
             GetProjetList();
         }
 
-        private async void GetProjetList()
+        private async Task GetProjetList()
         {
             try
             {
@@ -135,7 +153,7 @@ namespace Ginger.SourceControl
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
-                
+
                 SourceControlIntegration.CreateConfigFile(mSourceControl);
                 if (SourceControlIntegration.TestConnection(mSourceControl, SourceControlConnDetailsPage.eSourceControlContext.DownloadProjectPage, true) == false)
                 {
@@ -146,12 +164,14 @@ namespace Ginger.SourceControl
 
                 await Task.Run(() => SourceControlSolutions = SourceControlIntegration.GetProjectsList(mSourceControl)
                 );
+
                 SolutionsGrid.DataSourceList = SourceControlSolutions;
                 SetGridView();
                 Mouse.OverrideCursor = null;
 
                 ConnectionConfigurationsExpender.IsExpanded = false;
                 ConnectionDetailsExpender.IsExpanded = false;
+
             }
             catch (Exception e)
             {
@@ -170,6 +190,7 @@ namespace Ginger.SourceControl
                         downloadProjBtn.IsEnabled = true;
                     }
                 }
+
             }
         }
 
@@ -181,7 +202,7 @@ namespace Ginger.SourceControl
 
             view.GridColsView.Add(new GridColView() { Field = SolutionInfo.Fields.SourceControlLocation, Header = "Source Control Solution Name", WidthWeight = 30, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = SolutionInfo.Fields.LocalFolder, Header = "Solution Local Folder Path", WidthWeight = 50, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = SolutionInfo.Fields.ExistInLocaly, Header = "Exist Locally", StyleType=GridColView.eGridColStyleType.Text, WidthWeight = 20, MaxWidth=800, ReadOnly=true }); 
+            view.GridColsView.Add(new GridColView() { Field = SolutionInfo.Fields.ExistInLocaly, Header = "Exist Locally", StyleType = GridColView.eGridColStyleType.Text, WidthWeight = 20, MaxWidth = 800, ReadOnly = true });
 
             SolutionsGrid.SetAllColumnsDefaultView(view);
             SolutionsGrid.InitViewItems();
@@ -199,7 +220,7 @@ namespace Ginger.SourceControl
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
 
-                if (App.UserProfile.SourceControlLocalFolder== string.Empty)
+                if (App.UserProfile.SourceControlLocalFolder == string.Empty)
                 {
                     Reporter.ToUser(eUserMsgKeys.SourceControlConnMissingLocalFolderInput);
                 }
@@ -210,12 +231,12 @@ namespace Ginger.SourceControl
                     Reporter.ToUser(eUserMsgKeys.AskToSelectSolution);
                     return;
                 }
-                
+
                 string ProjectURI = string.Empty;
                 if (App.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
-                    ProjectURI =App.UserProfile.SourceControlURL.StartsWith("SVN",StringComparison.CurrentCultureIgnoreCase)?
-                    sol.SourceControlLocation:App.UserProfile.SourceControlURL + sol.SourceControlLocation;
+                    ProjectURI = App.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
+                    sol.SourceControlLocation : App.UserProfile.SourceControlURL + sol.SourceControlLocation;
                 }
                 else
                 {
@@ -244,14 +265,14 @@ namespace Ginger.SourceControl
                     genWin.Close();
                 }
             }
-          finally
+            finally
             {
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
                 xProcessingIcon.Visibility = Visibility.Collapsed;
             }
         }
 
-        private void OpenSolution(string Path,string ProjectURI)
+        private void OpenSolution(string Path, string ProjectURI)
         {
             string SoFileName = CheckForSolutionFileName(Path);
             if (System.IO.File.Exists(SoFileName))
@@ -283,8 +304,9 @@ namespace Ginger.SourceControl
             downloadProjBtn = new Button();
             downloadProjBtn.Content = "Download Selected Solution";
             downloadProjBtn.Click += new RoutedEventHandler(GetProject_Click);
-                      
+
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Download Source Control Solution", this, new ObservableList<Button> { downloadProjBtn });
+
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -298,13 +320,13 @@ namespace Ginger.SourceControl
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 SourceControlLocalFolderTextBox.Text = dlg.SelectedPath;
-                 GetProjetList();
+                GetProjetList();
             }
         }
 
         private void ConnectionDetailsExpended(object sender, RoutedEventArgs e)
         {
-            ExpenderDetailsRow.Height = new GridLength(280);
+            ExpenderDetailsRow.Height = new GridLength(200);
         }
 
         private void ConnectionDetailsCollapsed(object sender, RoutedEventArgs e)
@@ -332,6 +354,7 @@ namespace Ginger.SourceControl
                 mSourceControl.SourceControlConfigureProxy = App.UserProfile.SolutionSourceControlConfigureProxy;
                 mSourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
                 mSourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
+                mSourceControl.SourceControlTimeout = App.UserProfile.SolutionSourceControlTimeout;
 
                 mSourceControl.PropertyChanged += SourceControl_PropertyChanged;
             }
@@ -348,21 +371,44 @@ namespace Ginger.SourceControl
             App.UserProfile.SolutionSourceControlConfigureProxy = mSourceControl.SourceControlConfigureProxy;
             App.UserProfile.SolutionSourceControlProxyAddress = mSourceControl.SourceControlProxyAddress;
             App.UserProfile.SolutionSourceControlProxyPort = mSourceControl.SourceControlProxyPort;
+            App.UserProfile.SolutionSourceControlTimeout = mSourceControl.SourceControlTimeout;
         }
 
-        private void TestConnectionAndSearchRepositories_Click(object sender, RoutedEventArgs e)
+
+        private async void TestConnectionAndSearchRepositories_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
+            try
             {
-                Reporter.ToUser(eUserMsgKeys.SourceControlConnMissingConnInputs);
-                return;
+                if (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
+                {
+                    Reporter.ToUser(eUserMsgKeys.SourceControlConnMissingConnInputs);
+                    return;
+                }
+                xConnectButton.Visibility = Visibility.Visible;
+                xProcessingIcon.Visibility = Visibility.Visible;
+
+                xConnectButton.IsEnabled = false;
+                SourceControlLocalFolderLable.Visibility = Visibility.Visible;
+                SourceControlLocalFolderTextBox.Visibility = Visibility.Visible;
+                BrowseButton.Visibility = Visibility.Visible;
+                SolutionsGrid.Visibility = Visibility.Visible;
+                SourceControlIntegration.BusyInProcessWhileDownloading = false;
+
+                await GetProjetList().ConfigureAwait(false);
+
             }
-            SourceControlLocalFolderLable.Visibility = Visibility.Visible;
-            SourceControlLocalFolderTextBox.Visibility = Visibility.Visible;
-            BrowseButton.Visibility = Visibility.Visible;
-            SolutionsGrid.Visibility = Visibility.Visible;
-            SourceControlIntegration.BusyInProcessWhileDownloading = false;
-            GetProjetList(); 
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error Occured :", ex);
+            }
+            finally
+            {
+                this.Dispatcher.Invoke(() =>
+               {
+                   xConnectButton.IsEnabled = true;
+               }
+                );
+            }
         }
 
         private void SourceControlURLTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -394,7 +440,9 @@ namespace Ginger.SourceControl
         private void ConfigureProxyCheckBoxUnchecked(object sender, RoutedEventArgs e)
         {
             ProxyAddressTextBox.IsEnabled = false;
-            ProxyPortTextBox.IsEnabled = false;
+            ProxyPortTextBox.IsEnabled = false;            
         }
+
+  
     }
 }

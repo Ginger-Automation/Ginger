@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
+using Amdocs.Ginger.Plugin.Core;
 using GingerCoreNET.Drivers;
 using GingerCoreNET.DriversLib;
 using GingerCoreNET.RunLib;
@@ -46,19 +47,22 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // TODO: check how to externalize  // make it NodeInfo and drivers capabilities
             DummyDriver DummyDriver1 = new DummyDriver();
-            DriverCapabilities DC = new DriverCapabilities();
-            DC.OS = "Windows";    //TODO: use const
-            DC.Platform = "Web";   //TODO: use const
-            GingerNode GN = new GingerNode(DC, DummyDriver1);
-            GN.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: HubPort);
+            //DriverCapabilities DC = new DriverCapabilities();
+            //DC.OS = "Windows";    //TODO: use const
+            //DC.Platform = "Web";   //TODO: use const
+            //GingerNode GN = new GingerNode(DC, DummyDriver1);
+            //GN.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: HubPort);
+            GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
+            gingerNodeStarter.StartNode("N1", new DummyDriver());
 
+            gingerNodeStarter.StartNode("N2", new DummyDriver());
 
-            DummyDriver DummyDriver2 = new DummyDriver();
-            DriverCapabilities DC2 = new DriverCapabilities();
-            DC2.OS = "Mac";
-            DC2.Platform = "Java";
-            GingerNode GingerNode2 = new GingerNode(DC2, DummyDriver2);
-            GingerNode2.StartGingerNode("N2", HubIP: SocketHelper.GetLocalHostIP(), HubPort: HubPort);
+            // DummyDriver DummyDriver2 = new DummyDriver();
+            //DriverCapabilities DC2 = new DriverCapabilities();
+            //DC2.OS = "Mac";
+            //DC2.Platform = "Java";
+            //GingerNode GingerNode2 = new GingerNode(DC2, DummyDriver2);
+            //GingerNode2.StartGingerNode("N2", HubIP: SocketHelper.GetLocalHostIP(), HubPort: HubPort);
         }
 
         [ClassCleanup]
@@ -81,7 +85,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
 
-
+        [Ignore]
         [TestMethod]
         public void ListGingerNodes()
         {
