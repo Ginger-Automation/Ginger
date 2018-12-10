@@ -243,6 +243,22 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 UIElementActionEditPageFrame.Content = new UIElementDragAndDropEditPage(mAction, mPlatform);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
             }
+            else if ((mAction.Platform == ePlatformType.Java &&
+                       (mAction.ElementAction == ActUIElement.eElementAction.DoubleClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.WinClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.MouseClick ||
+                       mAction.ElementAction == ActUIElement.eElementAction.MousePressRelease) &&
+                           (mAction.ElementType == eElementType.RadioButton ||
+                               mAction.ElementType == eElementType.CheckBox ||
+                               mAction.ElementType == eElementType.ComboBox ||
+                               mAction.ElementType == eElementType.Button))
+                      ||
+                      (mAction.Platform == ePlatformType.Web &&
+                       mAction.ElementAction == ActUIElement.eElementAction.ClickXY || mAction.ElementAction == ActUIElement.eElementAction.XYDoubleClick || mAction.ElementAction == ActUIElement.eElementAction.XYSendKeys))
+            {
+                UIElementActionEditPageFrame.Content = new UIElementXYCoordinatePage(mAction);
+                UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
+            }
             else
             {
                 List<ElementConfigControl> configControlsList = GetRequiredConfigControls();
@@ -401,48 +417,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         mAction.GetInputParamValue(ActUIElement.Fields.Value).Split(',').ToList()
                     });
                 }
-            }
-            else if ( (mAction.Platform == ePlatformType.Java &&
-                        (mAction.ElementAction == ActUIElement.eElementAction.DoubleClick ||
-                        mAction.ElementAction == ActUIElement.eElementAction.WinClick ||
-                        mAction.ElementAction == ActUIElement.eElementAction.MouseClick ||
-                        mAction.ElementAction == ActUIElement.eElementAction.MousePressRelease) &&
-                            (mAction.ElementType == eElementType.RadioButton ||
-                                mAction.ElementType == eElementType.CheckBox ||
-                                mAction.ElementType == eElementType.ComboBox ||
-                                mAction.ElementType == eElementType.Button))
-                       ||
-                       (mAction.Platform == ePlatformType.Web &&
-                        mAction.ElementAction == ActUIElement.eElementAction.ClickXY || mAction.ElementAction == ActUIElement.eElementAction.XYDoubleClick || mAction.ElementAction == ActUIElement.eElementAction.XYSendKeys ))
-                {
-                elementList.Add(new ElementConfigControl()
-                {
-                    Title = "XCoordinate",
-                    BindedString = ActUIElement.Fields.XCoordinate,
-                    ControlType = eElementType.TextBox,
-                    PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.XCoordinate)) ? new List<string>() { "0" } :
-                    mAction.GetInputParamValue(ActUIElement.Fields.XCoordinate).Split(',').ToList()
-                });
-                elementList.Add(new ElementConfigControl()
-                {
-                    Title = "YCoordinate",
-                    BindedString = ActUIElement.Fields.YCoordinate,
-                    ControlType = eElementType.TextBox,
-                    PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate)) ? new List<string>() { "0" } :
-                    mAction.GetInputParamValue(ActUIElement.Fields.YCoordinate).Split(',').ToList()
-                });
-                if(mAction.ElementAction == ActUIElement.eElementAction.XYSendKeys)
-                {
-                    elementList.Add(new ElementConfigControl()
-                    {
-                        Title = "Value",
-                        BindedString = ActUIElement.Fields.Value,
-                        ControlType = eElementType.TextBox,
-                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
-                         mAction.GetInputParamValue(ActUIElement.Fields.Value).Split(',').ToList()
-                    });
-                }
-            }
+            }           
             else if ((mAction.ElementAction == ActUIElement.eElementAction.GetControlProperty))
             {
                 //TODO: find a better way to bind list of enum with possible values.
