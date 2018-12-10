@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.Common
         IActivity CurrentActivity { get; set; }
         string ExecutionLogFolder { get; set; }
         double? Elapsed { get; set; }
-        object Mandatory { get; set; }
+        bool Mandatory { get; set; }
         string ExecutionFullLogFolder { get; set; }
 
         ObservableList<VariableBase> GetVariables();

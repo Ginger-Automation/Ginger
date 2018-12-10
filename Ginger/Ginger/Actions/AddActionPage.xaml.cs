@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Repository;
@@ -259,7 +260,7 @@ namespace Ginger.Actions
                     int selectedActIndex = -1;
                     if (mActionsList.CurrentItem != null)
                     {
-                        selectedActIndex = mActionsList.IndexOf((Act)mActionsList.CurrentItem);
+                        selectedActIndex = mActionsList.IndexOf((IAct)mActionsList.CurrentItem);
                     }
                     mActionsList.Add(aNew);
                     if (selectedActIndex >= 0)
