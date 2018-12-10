@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         object SolutionApplications { get; set; }
         object SolutionFolder { get; set; }
         eRunStatus Status { get; set; }
-        object BusinessFlows { get; }
+        ObservableList <IBusinessFlow> BusinessFlows { get; set; }
         IEnumerable<BusinessFlowRun> BusinessFlowsRunList { get; }
         string Name { get; set; }
         bool UseSpecificEnvironment { get; set; }

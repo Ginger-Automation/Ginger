@@ -383,7 +383,7 @@ namespace Ginger.Run
             }
         }
 
-        public ObservableList<BusinessFlow> BusinessFlows = new ObservableList<BusinessFlow>();
+        public ObservableList<IBusinessFlow> BusinessFlows { get; set; } = new ObservableList<IBusinessFlow>();
 
         public async Task<int> RunRunnerAsync()
         {
@@ -440,7 +440,7 @@ namespace Ginger.Run
                 int? flowControlIndx = null;                
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
                 {
-                    BusinessFlow executedBusFlow = BusinessFlows[bfIndx];
+                    BusinessFlow executedBusFlow =(BusinessFlow) BusinessFlows[bfIndx];
 
                     //stop if needed before executing next BF
                     if (mStopRun)
@@ -556,7 +556,7 @@ namespace Ginger.Run
             ObservableList<BusinessFlow> prevBFs = new ObservableList<BusinessFlow>();
             for (int i = 0; i < BusinessFlows.IndexOf(bfToUpdate); i++)
             {
-                prevBFs.Add(BusinessFlows[i]);
+                prevBFs.Add((BusinessFlow)BusinessFlows[i]);
             }
             foreach (BusinessFlow bf in prevBFs.Reverse())//doing in reverse for passing the most updated value of variables with similar name
             {
@@ -3794,7 +3794,7 @@ namespace Ginger.Run
         object IGingerRunner.SolutionApplications { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         object IGingerRunner.SolutionFolder { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        object IGingerRunner.BusinessFlows => throw new NotImplementedException();
+        
 
         IEnumerable<BusinessFlowRun> IGingerRunner.BusinessFlowsRunList => throw new NotImplementedException();
 
@@ -3960,7 +3960,7 @@ namespace Ginger.Run
                 guidToLookBy = Guid.Parse(fc.GetGuidFromValue().ToString());
             }
 
-            List<BusinessFlow> lstBusinessFlow = null;
+            List<IBusinessFlow> lstBusinessFlow = null;
             if (guidToLookBy != Guid.Empty)
             {
                 lstBusinessFlow = BusinessFlows.Where(x => x.InstanceGuid == guidToLookBy).ToList();
@@ -3972,18 +3972,18 @@ namespace Ginger.Run
             }
             else if (lstBusinessFlow.Count == 1)
             {
-                bf = lstBusinessFlow[0];
+                bf =(BusinessFlow) lstBusinessFlow[0];
             }
             else//we have more than 1
             {
-                BusinessFlow firstActive = lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
+                BusinessFlow firstActive = (BusinessFlow)lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
                 if (firstActive != null)
                 {
                     bf = firstActive;
                 }
                 else
                 {
-                    bf = lstBusinessFlow[0]; //no one is Active so returning the first one
+                    bf = (BusinessFlow)lstBusinessFlow[0]; //no one is Active so returning the first one
                 }
             }
 
