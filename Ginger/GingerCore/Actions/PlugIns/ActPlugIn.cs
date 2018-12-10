@@ -38,7 +38,8 @@ namespace GingerCore.Actions.PlugIns
         {
             get
             {                
-                return "Plugin Description";
+                // TODO: get action description from plugin
+                return PluginId + "." + ServiceId + "." + ActionId;
             }
         }
 

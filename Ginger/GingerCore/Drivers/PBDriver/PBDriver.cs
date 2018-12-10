@@ -640,6 +640,20 @@ namespace GingerCore.Drivers.PBDriver
                         else
                             actPBC.Error = "Unable to set value to " + ValDrv;
                         break;
+                    case ActGenElement.eGenElementAction.SetAttributeValue:
+                        string attrName = "value";
+                        string attValue = ValDrv;
+                        if (ValDrv.IndexOf("=") > 0)
+                        {
+                            attrName = ValDrv.Split('=')[0];
+                            attValue = ValDrv.Split('=')[1];
+                        }
+                        result = mUIAutomationHelper.GetHTMLHelper().SetValue(PBEle, attValue, attrName);
+                        if (result)
+                            actPBC.ExInfo = ValDrv + " set";
+                        else
+                            actPBC.Error = "Unable to set value to " + ValDrv;
+                        break;
                     case ActGenElement.eGenElementAction.SendKeys:
 
                         result = mUIAutomationHelper.GetHTMLHelper().SendKeys(PBEle, ValDrv);

@@ -208,13 +208,11 @@
     <Reference Include="PdfSharp.Charting-WPF">
       <HintPath>..\packages\PDFsharp-MigraDoc-WPF.1.32.2608.0\lib\net20\PdfSharp.Charting-WPF.dll</HintPath>
     </Reference>
-    <Reference Include="PerfectoLab, Version=6.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PerfectoLab.6.5.0.0\lib\PerfectoLab.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="PerfectoLab, Version=18.4.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PerfectoLab.18.4.0.1\lib\PerfectoLab.dll</HintPath>
     </Reference>
-    <Reference Include="PerfectoLab.Extended, Version=6.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PerfectoLab.Extended.6.5.0.0\lib\PerfectoLab.Extended.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="PerfectoLab.Extended, Version=18.4.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PerfectoLab.Extended.18.4.0.1\lib\PerfectoLab.Extended.dll</HintPath>
     </Reference>
     <Reference Include="Protractor, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Protractor.0.11.0\lib\net40\Protractor.dll</HintPath>
@@ -676,6 +674,7 @@
     <Compile Include="NoSqlBase\MyClassBuilder.cs" />
     <Compile Include="NoSqlBase\NoSqlBase.cs" />
     <Compile Include="Platforms\PlatformsInfo\AndroidPlatformInfo.cs" />
+    <Compile Include="Platforms\PlatformsInfo\MobilePlatform.cs" />
     <Compile Include="Platforms\PlatformsInfo\WindowsPlatform.cs" />
     <Compile Include="Platforms\PlatformsInfo\PowerBuilderPlatform.cs" />
     <Compile Include="Platforms\PlatformsInfo\JavaPlatform.cs" />

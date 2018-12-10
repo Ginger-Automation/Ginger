@@ -1,4 +1,22 @@
-﻿using System;
+#region License
+/*
+Copyright © 2014-2018 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -26,6 +44,7 @@ namespace Amdocs.Ginger.Common.Actions
                 if (ParamType == typeof(Int32)) return "int";
                 if (ParamType == typeof(List<string>)) return "List<string>";
                 if (ParamType == typeof(IGingerAction)) return "IGingerAction";
+                if (ParamType == typeof(bool)) return "bool";
 
 
                 // Check if it is a List 
@@ -61,6 +80,9 @@ namespace Amdocs.Ginger.Common.Actions
                         break;
                     case "IGingerAction":
                         ParamType = typeof(IGingerAction);
+                        break;
+                    case "bool":
+                        ParamType = typeof(bool);
                         break;
                     default:
                         if (value.StartsWith("List<"))
