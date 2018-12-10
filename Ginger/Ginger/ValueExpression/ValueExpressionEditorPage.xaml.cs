@@ -43,6 +43,8 @@ using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionGeneral;
 using System.IO;
+using System.Dynamic;
+using Newtonsoft.Json.Linq;
 
 namespace Ginger
 {
@@ -587,8 +589,22 @@ namespace Ginger
                 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
+            string value = ValueUCTextEditor.textEditor.Text;
+
             //Update the obj attr with new Value
-            mObj.GetType().GetProperty(mAttrName).SetValue(mObj, ValueUCTextEditor.textEditor.Text);
+            if (mObj is ExpandoObject)
+            {
+                ((IDictionary<string, object>)mObj)[mAttrName] = value;
+            }
+            else if (mObj is JObject)
+            {
+                ((JObject)mObj).Property(mAttrName).Value = value;
+            }
+            else
+            {
+                mObj.GetType().GetProperty(mAttrName).SetValue(mObj, value);
+            }
+            
             mWin.Close();
         }
 

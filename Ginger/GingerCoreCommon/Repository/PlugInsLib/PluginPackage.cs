@@ -26,6 +26,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Plugin.Core;
 using Newtonsoft.Json;
+using Amdocs.Ginger.Common.Repository.PlugInsLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -33,6 +34,18 @@ namespace Amdocs.Ginger.Repository
     {
         // Not serialized loaded from Ginger.PluginPackage.json in the root folder
         PluginPackageInfo mPluginPackageInfo;
+        ObservableList<PluginServiceInfo> mServices { get; set; }
+        public ObservableList<PluginServiceInfo> Services
+        {
+            get
+            {
+                if (mServices == null)
+                {
+                    LoadServicesFromJSON();
+                }
+                return mServices;
+            }
+        }
 
         PluginPackageInfo PluginPackageInfo
         {
@@ -46,14 +59,31 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-      
+        
         [IsSerializedForLocalRepository]
         public string PluginId { get; set;  }
 
         [IsSerializedForLocalRepository]
         public string PluginPackageVersion { get; set; }
 
-        
+
+        // When in dev mode we can add package from folder  which will ref a local folder
+        string mLocalFolder;
+        [IsSerializedForLocalRepository]
+        public string LocalFolder
+        {
+            get
+            {
+                return mLocalFolder;
+            }
+            set
+            {
+                mLocalFolder = value;
+                mFolder = value;
+            }
+        }
+
+
         public bool Isloaded = false;
         // must have empty constructor
         public PluginPackage()
@@ -64,12 +94,12 @@ namespace Amdocs.Ginger.Repository
         public PluginPackage(string folder)
         {            
             mFolder = folder;
-            LoadInfo();
+            LoadInfoFromJSON();            
             PluginId = PluginPackageInfo.Id;
             PluginPackageVersion = PluginPackageInfo.Version;
         }
 
-        private void LoadInfo()
+        private void LoadInfoFromJSON()
         {
             //TODO: compare saved plugin id and version with the info file on folder
 
@@ -90,34 +120,13 @@ namespace Amdocs.Ginger.Repository
             // load info
             string txt = System.IO.File.ReadAllText(pluginInfoFile);
             mPluginPackageInfo = (PluginPackageInfo)JsonConvert.DeserializeObject(txt, typeof(PluginPackageInfo));
+            if (mPluginPackageInfo.Version.ToLower().StartsWith("v"))
+            {
+                mPluginPackageInfo.Version = mPluginPackageInfo.Version.Substring(1);
+
+            }
         }
 
-        //public PluginDriverBase GetDriver(string driverName)
-        //{
-        //    if (!Isloaded)
-        //    {
-        //        ScanPackage();
-        //    }
-
-        //    // TODO: fix make more efficent and load only what needed
-        //    foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
-        //    {
-        //        var list = from type in PAI.Assembly.GetTypes()
-        //                   where typeof(PluginDriverBase).IsAssignableFrom(type) && type.IsAbstract == false
-        //                   select type;
-
-        //        foreach (Type t in list)
-        //        {
-        //            PluginDriverBase driver = (PluginDriverBase)PAI.Assembly.CreateInstance(t.FullName);   // TODO: fix me find the driver without creating instance
-        //            if (driver.Name == driverName)
-        //            {
-        //                return driver;
-        //            }
-        //        }
-        //    }
-        //    throw new Exception("Driver not found in Plugin Package - " + driverName);
-
-        //}
 
         string mFolder;        
         public string Folder {
@@ -125,7 +134,14 @@ namespace Amdocs.Ginger.Repository
             {       
                 if (string.IsNullOrEmpty(mFolder))
                 {
-                    mFolder = Path.Combine(LocalPluginsFolder, PluginId, PluginPackageVersion);
+                    //if (!string.IsNullOrEmpty(LocalFolder))
+                    //{
+                    //    mFolder = LocalFolder;  // use for debug or when adding local folder instead of download
+                    //}
+                    //else
+                    //{
+                        mFolder = Path.Combine(LocalPluginsFolder, PluginId, PluginPackageVersion);
+                   //}
                 }
 
                 return mFolder;
@@ -135,7 +151,8 @@ namespace Amdocs.Ginger.Repository
                 if (mFolder != value)
                 {
                     mFolder = value;
-                    LoadInfo();
+                    LoadInfoFromJSON();
+                    LoadServicesFromJSON();
                     OnPropertyChanged(nameof(Folder));
                 }
             }
@@ -162,7 +179,7 @@ namespace Amdocs.Ginger.Repository
             return PluginId;
         }
 
-        public void ScanPackage()
+        public void LoadInfoFromDLL()
         {
             LoadGingerPluginsDLL();
             string startupDLLFileName = Path.Combine(mFolder, mPluginPackageInfo.StartupDLL);            
@@ -170,239 +187,166 @@ namespace Amdocs.Ginger.Repository
             PAI.Name = startupDLLFileName;
             PAI.FilePath = startupDLLFileName;
             mAssembliesInfo.Add(PAI);
+            LoadPluginServicesFromDll();
         }
 
 
-        List<PluginService> mPluginServices = null;
-        List<PluginService> GetPluginServices()
-        {
-            ScanPackage();  // do once !
-            if (mPluginServices == null)
+        void LoadPluginServicesFromDll()
+        {                    
+            if (mServices == null)
             {
-                mPluginServices = new List<PluginService>();
+                mServices = new ObservableList<PluginServiceInfo>();
                 foreach (PluginAssemblyInfo asssembly in mAssembliesInfo)
-                {
-                    IEnumerable<Type> types = from x in asssembly.Assembly.GetTypes() where typeof(IGingerService).IsAssignableFrom(x) select x;
-                    foreach (Type t in types)
+                {                    
+                    IEnumerable<Type> types = from x in asssembly.Assembly.GetTypes() where x.GetCustomAttribute(typeof(GingerServiceAttribute)) != null select x;
+                    foreach (Type type in types)
                     {
-                        GingerServiceAttribute gingerServiceAttribute = (GingerServiceAttribute)Attribute.GetCustomAttribute(t, typeof(GingerServiceAttribute), false);
-                        PluginService pluginService = new PluginService() { ServiceId = gingerServiceAttribute.Id };
+                        GingerServiceAttribute gingerServiceAttribute = (GingerServiceAttribute)Attribute.GetCustomAttribute(type, typeof(GingerServiceAttribute), false);
+                        bool IsServiceSession = typeof(IServiceSession).IsAssignableFrom(type);  
+                        // if service impl IServiceSession then mark it so we know we need and agent Start/Stop
+                        // if it is not session , then all actions are stand alone 
+
+                        PluginServiceInfo pluginServiceInfo = new PluginServiceInfo() { ServiceId = gingerServiceAttribute.Id, IsSession = IsServiceSession };
                         // expecting to get ExcelAction, FileAction, DatabaseAction...
-                        MethodInfo[] methods = t.GetMethods();
+                        MethodInfo[] methods = type.GetMethods();
+                        Type[] interfaces = type.GetInterfaces();
                         foreach (MethodInfo MI in methods)
                         {
-                            //Check if method have token [GingerAction]  else we ignore
-                            GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);
+                            //Check if method have token [GingerAction] or is is of interface else we ignore
+                            GingerActionAttribute gingerActionAttr = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);                            
 
-                            if (token == null) continue;
+                            if (gingerActionAttr == null && !MI.IsVirtual)   // Virtual if it is interface
+                            {                                
+                                 continue;                                
+                            }
+                            
+                            PluginServiceActionInfo action = new PluginServiceActionInfo();
 
-                            pluginService.mStandAloneMethods.Add(MI);
+                            if (gingerActionAttr != null)
+                            {
+                                action.ActionId = gingerActionAttr.Id;
+                                action.Description = gingerActionAttr.Description;
+                            }
+                            else
+                            {
+                                // Check if the method is from interface
+                                if (MI.IsVirtual)
+                                {
+                                    foreach (Type serviceInterface in interfaces)
+                                    {
+                                        //check if marked with [GingerInterface] 
+                                        GingerInterfaceAttribute gingerInterfaceAttr = (GingerInterfaceAttribute)Attribute.GetCustomAttribute(serviceInterface, typeof(GingerInterfaceAttribute), false);
+                                        
+                                        if (gingerInterfaceAttr != null)
+                                        {
+                                            var mm = serviceInterface.GetMethod(MI.Name);
+                                            if (mm != null)
+                                            {
+                                                // Get the action id and desc from the interface
+                                                action.Interface = serviceInterface.FullName;
+
+                                                GingerActionAttribute interfaceGAAttr = (GingerActionAttribute)Attribute.GetCustomAttribute(mm, typeof(GingerActionAttribute), false);
+                                                if (interfaceGAAttr == null)
+                                                {
+                                                    // no GA attr then ignore
+                                                    continue;
+                                                }
+                                                else
+                                                {
+                                                    action.ActionId = interfaceGAAttr.Id;
+                                                    action.Description = interfaceGAAttr.Description;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
+
+                            if (string.IsNullOrEmpty(action.ActionId)) continue;
+
+                            foreach (ParameterInfo PI in MI.GetParameters())
+                            {
+                                if (PI.ParameterType.Name != nameof(IGingerAction))
+                                {
+                                    action.InputValues.Add(new ActionInputValueInfo() { Param = PI.Name, ParamType = PI.ParameterType });
+                                }
+                            }
+                            pluginServiceInfo.Actions.Add(action);
                         }
-                        mPluginServices.Add(pluginService);
-                    }
-                    
+                        mServices.Add(pluginServiceInfo);
+                    }                    
                 }
-            }
-            return mPluginServices;
+            }            
         }
 
-        public ObservableList<StandAloneAction> GetStandAloneActions()
-        {
-            ObservableList<StandAloneAction> list = new ObservableList<StandAloneAction>();
-
-            foreach (PluginService pluginService in GetPluginServices())
-            {
-                foreach (MethodInfo MI in pluginService.mStandAloneMethods)
-                {
-                    GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);
-                    StandAloneAction DA = new StandAloneAction();
-                    DA.ActionId = token.Id;
-                    // AssemblyName AN = MI.DeclaringType.Assembly.GetName();
-                    DA.PluginId = PluginId;  //AN.Name;
-                    DA.ServiceId = pluginService.ServiceId;
-                    DA.Description = token.Description;
-                    foreach (ParameterInfo PI in MI.GetParameters())
-                    {
-                        if (PI.ParameterType.Name != nameof(GingerAction))
-                        {
-                            DA.InputValues.Add(new ActionInputValueInfo() { Param = PI.Name, ParamType = PI.ParameterType });
-                        }
-                    }
-                    list.Add(DA);
-                }
-            }
-            return list;
-        }
-
-        //public ActionHandler GetStandAloneActionHandler(string id)
-        //{
-        //    if (!Isloaded)
-        //    {
-        //        ScanPackage();
-        //    }
-        //    foreach (MethodInfo MI in GetStandAloneMethods())
-        //    {
-        //        GingerActionAttribute token = (GingerActionAttribute)Attribute.GetCustomAttribute(MI, typeof(GingerActionAttribute), false);
-        //        if (token.ID == id)
-        //        {
-        //            ActionHandler AH = new ActionHandler();
-        //            AH.ID = id;
-        //            AH.MethodInfo = MI;
-
-        //            //TODO: create on demand nad cache to 1
-        //            AH.Instance = MI.DeclaringType.Assembly.CreateInstance(MI.DeclaringType.FullName); // !!!!!!!!!!!!
-        //            AH.GingerAction = new GingerAction(id);
-        //            // do we need the params?
-        //            return AH;
-        //        }
-        //    }
-        //    return null;
-        //}
+        
 
         private void LoadGingerPluginsDLL()
         {
-
-            //??
-
             // We make sure our latest in Ginger is the one to load GingerPlugin DLL so it will not be loaded from the folder of the plugin in case some one copied it too, or we point to debug folder
-
             // Just dummy does nothing except making sure we load the DLL first from inside Ginger
             GingerActionAttribute PIC = new GingerActionAttribute("ID DUMMY", "Desc DUMMY");
         }
 
-        //TODO: return DriverInfo
-
-        //List<string> drivers = null;
-        //public List<string> GetDrivers()
-        //{
-        //    if (!Isloaded)
-        //    {
-        //        ScanPackage();
-        //    }
-        //    if (drivers == null)
-        //    {
-        //        drivers = new List<string>();
-        //        foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
-        //        {
-        //            var list = from type in PAI.Assembly.GetTypes()
-        //                       where typeof(PluginDriverBase).IsAssignableFrom(type) && type.IsAbstract == false
-        //                       select type;
-
-        //            foreach (Type t in list)
-        //            {
-        //                PluginDriverBase driver = (PluginDriverBase)PAI.Assembly.CreateInstance(t.FullName);
-
-        //                //TODO: get driver info from annotation on the class
-
-        //                drivers.Add(driver.Name);
-        //            }
-
-        //        }
-        //    }
-        //    return drivers;
-        //}
-
-        // Services are used for standalone action/ ActWithoutDriver
-        public IGingerService GetService(string serviceName)
-        {
-            if (!Isloaded)
-            {
-                ScanPackage();
-            }
-            // TODO: fix make more efficent and load only what needed
-            foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
-            {
-                var list = from type in PAI.Assembly.GetTypes()
-                           where typeof(IGingerService).IsAssignableFrom(type) && type.IsAbstract == false
-                           select type;
-
-                foreach (Type t in list)
-                {
-                    IGingerService service = (IGingerService)PAI.Assembly.CreateInstance(t.FullName);   // TODO: fix me find the driver without creating instance
-                    //TODO: read the attr of service
-                    //if (service.Name == serviceName)
-                    //{
-                    //    return service;
-                    //}
-                }
-
-            }
-            throw new Exception("Service not found in Plugin Package - " + serviceName);
-        }
-
-        public List<IGingerService> GetServices()
-        {
-            // TODO: cache
-            if (!Isloaded)
-            {
-                ScanPackage();
-            }
-
-            List<IGingerService> services = new List<IGingerService>();
-            // TODO: fix make more efficent and load only what needed
-            foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
-            {
-                var list = from type in PAI.Assembly.GetTypes()
-                           where typeof(IGingerService).IsAssignableFrom(type) && type.IsAbstract == false
-                           select type;
-
-                foreach (Type t in list)
-                {
-                    IGingerService service = (IGingerService)PAI.Assembly.CreateInstance(t.FullName);   // TODO: fix me find the driver without creating instance
-                    services.Add(service);
-                }
-
-            }
-            return services;
-        }
 
         string PluginPackageServicesInfoFileName()
         {
-            return Path.Combine(Folder, "Ginger.PluginPackage.Actions.json");
+            return Path.Combine(mFolder, "Ginger.PluginPackage.Services.json");
         }
 
         public void CreateServicesInfo()
         {
-            ObservableList<StandAloneAction> actions = GetStandAloneActions();
+            LoadInfoFromDLL();
 
             // Verify no dup IDs
-            var query = actions.GroupBy(x => new { x.ServiceId, x.ActionId } )
-                          .Where(g => g.Count() > 1)
-                          .Select(y => y.Key)
-                          .ToList();
-            if (query.Count > 0)
+            foreach (PluginServiceInfo pluginServiceInfo in mServices)
             {
-                string errorText = "Error: Plugin contains duplicate Action ID for same service" + Environment.NewLine;
-                foreach (object item in query)
+                var query = pluginServiceInfo.Actions.GroupBy(x => new { x.ActionId })
+                              .Where(g => g.Count() > 1)
+                              .Select(y => y.Key)
+                              .ToList();
+                if (query.Count > 0)
                 {
-                    errorText += item.ToString() + Environment.NewLine;
+                    string errorText = "Error: Plugin contains duplicate Action ID for same service" + Environment.NewLine;
+                    foreach (object item in query)
+                    {
+                        errorText += "Service=" + pluginServiceInfo.ServiceId + ", " + item.ToString() + Environment.NewLine;
+                    }
+                    throw new Exception(errorText);
                 }
-                throw new Exception(errorText);
             }
-
-            string txt = JsonConvert.SerializeObject(actions, Formatting.Indented);
-            File.WriteAllText(PluginPackageServicesInfoFileName(), txt);  
-        }
-
-        public List<StandAloneAction> LoadServicesInfoFromFile()
-        {
+            string txt = JsonConvert.SerializeObject(mServices, Formatting.Indented);
             string fileName = PluginPackageServicesInfoFileName();
-            if (!File.Exists(fileName))
-            {
-                throw new Exception("PluginPackage Services info file not found: " + fileName);
-            }
-            string txt = File.ReadAllText(fileName);
-            List<StandAloneAction> actions = JsonConvert.DeserializeObject <List<StandAloneAction>>(txt);
-            return actions;
+            File.WriteAllText(fileName, txt);
+            Console.WriteLine("Services file created at: " + fileName);
         }
 
+
+        
+        public void LoadServicesFromJSON()
+        {                          
+                string fileName = PluginPackageServicesInfoFileName();
+                if (!File.Exists(fileName))
+                {
+                    throw new Exception("PluginPackage Services info file not found: " + fileName);
+                }
+                string txt = File.ReadAllText(fileName);
+                mServices = JsonConvert.DeserializeObject<ObservableList<PluginServiceInfo>>(txt);                            
+        }
+
+        
 
         public ObservableList<ITextEditor> GetTextFileEditors()
         {
             //TODO: cache
             if (!Isloaded)
             {
-                ScanPackage();
+                LoadInfoFromDLL();
             }
 
             ObservableList<ITextEditor> textEditors = new ObservableList<ITextEditor>();
@@ -451,6 +395,18 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public string StartupDLL { get { return mPluginPackageInfo.StartupDLL; } }
+        public string StartupDLL
+        {
+            get
+            {
+                if (mPluginPackageInfo == null)
+                {
+                    LoadInfoFromJSON();
+                }
+                return mPluginPackageInfo.StartupDLL;
+            }
+        }
+
+
     }
 }
