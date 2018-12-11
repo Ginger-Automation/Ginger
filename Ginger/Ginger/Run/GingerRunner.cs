@@ -1594,9 +1594,6 @@ namespace Ginger.Run
 
                         case eActionExecutorType.RunOnPlugIn:
                             GingerNodeInfo GNI = GetGNIFor((ActPlugIn)act);
-                            // TODO: keep the GNI on activity or BF atrget app
-                            // CurrentBusinessFlow.TargetApplications.
-                            gingerNodeInfo = GNI; // tmep - assuming one service !!!!!!!!!!!!!!!!!!!!!!!!!!! FIXME
                             if (GNI != null)
                             {
                                 ExecutePlugInAction((ActPlugIn)act, GNI);
@@ -1773,7 +1770,11 @@ namespace Ginger.Run
             Agent.eStatus agentStatus = AA.Agent.Status;
             if (agentStatus != Agent.eStatus.Running && agentStatus != Agent.eStatus.Starting && agentStatus != Agent.eStatus.FailedToStart)
             {
-                StartAgent(AA.Agent);
+                int count = (from x in CurrentBusinessFlow.CurrentActivity.Acts where x.GetType() != typeof(ActPlugIn) select x).Count();
+                if (count > 0)
+                {
+                    StartAgent(AA.Agent);
+                }
             }
 
             CurrentBusinessFlow.CurrentActivity.CurrentAgent = AA.Agent;
@@ -1849,48 +1850,52 @@ namespace Ginger.Run
             }
         }
 
-        //private void ExecutePlugInActionOnDriver(ActPlugIn actPlugin)
-        //{
-        //    // SetCurrentActivityAgent();            
-        //    GingerNodeInfo GNI = CurrentBusinessFlow.CurrentActivity.CurrentAgent.GingerNodeInfo;
-        //    ExecutePlugInAction(actPlugin, GNI);
-        //}
+       
 
-
-        // tmep !!!!!!!!! will work only for one time one service FIXME !!!!!!!!!!!!!
-        GingerNodeInfo gingerNodeInfo;
+       // keep list of GNI for Plugin which are session
+        Dictionary<string, GingerNodeInfo> dic = new Dictionary<string, GingerNodeInfo>();
 
         private GingerNodeInfo GetGNIFor(ActPlugIn actPlugin)
         {
-            if (gingerNodeInfo != null)
-            {
-                return gingerNodeInfo;
-            }
-
-            GingerNodeInfo GNI = null;
             bool DoStartSession = false;
             bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, actPlugin.ServiceId);
-           
-                // running stand alone plugin action
-            GNI = GetGingerNode(actPlugin);
+            GingerNodeInfo gingerNodeInfo;
+            string key = actPlugin.PluginId + "." + actPlugin.ServiceId;
+            
+            if (IsSessionService)
+            {
+                bool found = dic.TryGetValue(key, out gingerNodeInfo);
+                if (found)
+                {
+                    if (gingerNodeInfo.IsAlive())
+                    {
+                        return gingerNodeInfo;
+                    }
+                    else
+                    {
+                        dic.Remove(key);
+                    }
+                }
+            }
 
-            if (GNI == null)
+            gingerNodeInfo = GetGingerNode(actPlugin);
+
+            if (gingerNodeInfo == null)
             {
                 // call plugin to start service and wait for ready
                 WorkSpace.Instance.PlugInsManager.StartService(actPlugin.PluginId);
 
                 Stopwatch stopwatch = Stopwatch.StartNew();
-                while (GNI == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
+                while (gingerNodeInfo == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
                 {
                     Thread.Sleep(500);
-                    GNI = GetGingerNode(actPlugin);
+                    gingerNodeInfo = GetGingerNode(actPlugin);
                 }
-                if (GNI == null)
+                if (gingerNodeInfo == null)
                 {
-                    actPlugin.Error = "GNI not found";  //temp fix me!!!   !!!!
+                    actPlugin.Error = "GNI not found";  
                     actPlugin.Error += "Timeout waiting for service to be available in GingerGrid";
                     return null;
-                    // throw new Exception("Timeout waiting for service to start");
                 }
             }
 
@@ -1901,22 +1906,23 @@ namespace Ginger.Run
             }
             else
             {
-                GNI.Status = "Reserved";
+                gingerNodeInfo.Status = "Reserved";
             }
             
 
             // keep the proxy on agent
-            GingerNodeProxy GNP = new GingerNodeProxy(GNI);
+            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
             GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
 
             //TODO: check if service is session start session only once
             if (DoStartSession)
             {
-                GNI.Status = "Reserved";
+                gingerNodeInfo.Status = "Reserved";
                 GNP.StartDriver();
+                dic.Add(key, gingerNodeInfo);
             }
-
-            return GNI;
+            
+            return gingerNodeInfo;
         }
 
         private void ExecutePlugInAction(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)     

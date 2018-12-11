@@ -16,8 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using System;
 using System.ComponentModel;
+using System.Linq;
 
 namespace GingerCoreNET.RunLib
 {
@@ -60,6 +62,22 @@ namespace GingerCoreNET.RunLib
                 handler(this, new PropertyChangedEventArgs(name));
             }
         }
+
+        public bool IsAlive()
+        {
+            GingerNodeInfo gingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x == this select x).SingleOrDefault();
+            if (gingerNodeInfo != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+
         // TOOD: add drivers info
     }
 }
