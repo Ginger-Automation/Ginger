@@ -515,6 +515,7 @@
     <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportList.cs" />
     <Compile Include="Reports\ReportTemplate.cs" />
     <Compile Include="Repository\RepositoryItemFactory.cs" />
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
@@ -1407,7 +1408,6 @@
     <Compile Include="Reports\Designer\ReportTemplateDesignerPage.xaml.cs">
       <DependentUpon>ReportTemplateDesignerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\FlowControlReport.cs" />
     <Compile Include="Reports\HTMLReportPage .xaml.cs">
       <DependentUpon>HTMLReportPage .xaml</DependentUpon>
     </Compile>
@@ -1418,7 +1418,6 @@
     <Compile Include="Reports\ReportPage.xaml.cs">
       <DependentUpon>ReportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportList.cs" />
     <Compile Include="Reports\HTMLReportTemplateSelector.xaml.cs">
       <DependentUpon>HTMLReportTemplateSelector.xaml</DependentUpon>
     </Compile>
@@ -4441,8 +4440,6 @@
     <Resource Include="GingerAgentStarter.xml" />
     <Content Include="CI\increasebuildNum.vbs" />
     <Resource Include="Reports\Designer\ScreenShot1.png" />
-    <EmbeddedResource Include="Reports\HTMLTemplates\SummaryHTMLReport.html" />
-    <EmbeddedResource Include="Reports\HTMLTemplates\SkeletonHTMLReport.html" />
     <Content Include="Reports\GingerExecutionReport\ActionReport.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

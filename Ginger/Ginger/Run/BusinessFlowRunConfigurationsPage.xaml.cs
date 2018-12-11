@@ -182,7 +182,7 @@ namespace Ginger.Run
                     List<VariableBase> selectedVars = grdVariables.Grid.SelectedItems.Cast<VariableBase>().ToList();
                     foreach (GingerRunner runner in App.RunsetExecutor.Runners)
                     {
-                        List<BusinessFlow> matchingBfs = runner.BusinessFlows.Where(x => x.Guid == mBusinessFlow.Guid).ToList();
+                        List<IBusinessFlow> matchingBfs = runner.BusinessFlows.Where(x => x.Guid == mBusinessFlow.Guid).ToList();
                         countMatchingBfs += matchingBfs.Count;
                         foreach (BusinessFlow bf in matchingBfs)
                         {

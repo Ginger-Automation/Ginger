@@ -72,6 +72,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         eFlowControlAction FlowControlAction { get; set; }
         eStatus Status { get; set; }
         eBusinessFlowControlAction BusinessFlowControlAction { get; set; }
+        bool Active { get; set; }
 
         Guid GetGuidFromValue(bool doNotUseValueCalculated = false);
     }

@@ -1025,7 +1025,7 @@ namespace Ginger.Run
             try
             {
                 runner.ExecutionLogBusinessFlowCounter = 0;
-                ObservableList<BusinessFlow> listBF = runner.BusinessFlows;
+                ObservableList<IBusinessFlow> listBF = runner.BusinessFlows;
                 int counter = 1;
                 foreach (BusinessFlow bf in listBF)
                 {

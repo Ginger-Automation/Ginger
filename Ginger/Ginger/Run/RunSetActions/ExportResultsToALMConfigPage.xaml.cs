@@ -36,7 +36,7 @@ namespace Ginger.Run
     public partial class ExportResultsToALMConfigPage : Page
     {
         GenericWindow genWin = null;
-        ObservableList<BusinessFlow> mBfs = new ObservableList<BusinessFlow>();
+        ObservableList<IBusinessFlow> mBfs = new ObservableList<IBusinessFlow>();
         PublishToALMConfig mPublishToALMConfig = new PublishToALMConfig();        
         public bool IsProcessing = false;
         ValueExpression mVE = null;
@@ -81,7 +81,7 @@ namespace Ginger.Run
             }
         }
 
-        public void Init(ObservableList<BusinessFlow> bfs, ValueExpression VE)
+        public void Init(ObservableList<IBusinessFlow> bfs, ValueExpression VE)
         {
             this.Title = "Export Results To ALM";
             mBfs = bfs;

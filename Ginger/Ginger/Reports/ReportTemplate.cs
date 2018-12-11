@@ -148,7 +148,7 @@ namespace Ginger.Reports
                 if (!GetReportOnlyForExecutedFlow ||
                          (GetReportOnlyForExecutedFlow && !(BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked)))
                 {
-                    ShowReport(GR, BF, Template, Env);
+                    ShowReport(GR,(BusinessFlow) BF, Template, Env);
                 }
             }
         }

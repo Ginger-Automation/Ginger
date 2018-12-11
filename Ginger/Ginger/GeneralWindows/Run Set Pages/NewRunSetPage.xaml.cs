@@ -2146,7 +2146,7 @@ namespace Ginger.Run
 
         private void xExportToAlmBtn_Click(object sender, RoutedEventArgs e)
         {            
-            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+            ObservableList<IBusinessFlow> bfs = new ObservableList<IBusinessFlow>();
             
             foreach (GingerRunner GR in App.RunsetExecutor.Runners)
             {

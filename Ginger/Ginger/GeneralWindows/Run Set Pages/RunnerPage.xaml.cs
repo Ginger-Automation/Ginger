@@ -79,7 +79,7 @@ namespace Ginger.Run
             Legend
         }
         StatusColorSelector ColorSelector = new StatusColorSelector();
-        ObservableList<BusinessFlow> mBFESs;
+        ObservableList<IBusinessFlow> mBFESs;
         ObservableList<RunnerItemPage> mBusinessflowRunnerItems = null;
         public ObservableList<RunnerItemPage> BusinessflowRunnerItems
         {

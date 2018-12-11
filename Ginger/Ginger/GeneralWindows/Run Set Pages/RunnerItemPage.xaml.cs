@@ -354,7 +354,7 @@ namespace Ginger.Run
         {
             if (ItemObject.GetType() == typeof(GingerCore.BusinessFlow))
             {
-                ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+                ObservableList<IBusinessFlow> bfs = new ObservableList<IBusinessFlow>();
                 bfs.Add(((BusinessFlow)ItemObject));
                
                 if (!ExportResultsToALMConfigPage.Instance.IsProcessing)

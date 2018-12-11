@@ -50,7 +50,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         public SourceControlBase SourceControl;
         public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
-
+        public static string AppVersion;
         //public static IGingerRunner AutomateTabGingerRunner = new IGingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
         public  Solution mSolution { get; set; }
         public  Solution Solution
@@ -138,6 +138,7 @@ namespace amdocs.ginger.GingerCoreNET
         public static void Init(IWorkSpaceEventHandler WSEH)
         {
             mWorkSpace = new WorkSpace();
+            WorkSpace.AppVersion = AppVersion;
             mWorkSpace.EventHandler = WSEH;
         }
 

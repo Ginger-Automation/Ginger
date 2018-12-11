@@ -31,7 +31,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             
             // Create new solution
             mBusinessFlow = new BusinessFlow();
-            mBusinessFlow.Activities = new ObservableList<Activity>();
+            mBusinessFlow.Activities = new ObservableList<IActivity>();
             mBusinessFlow.Name = "MyDriver BF";
             mBusinessFlow.Active = true;
             Platform p = new Platform();

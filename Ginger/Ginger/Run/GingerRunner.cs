@@ -471,7 +471,7 @@ namespace Ginger.Run
                     if (PublishToALMConfig!=null)
                     {
                         string result = string.Empty;
-                        ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+                        ObservableList<IBusinessFlow> bfs = new ObservableList<IBusinessFlow>();
                         bfs.Add(executedBusFlow);
                         ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALM.ALMIntegration.eALMConnectType.Silence);
                     }

@@ -1411,7 +1411,7 @@ namespace Ginger
 
         private void ExportExecutionResultsToALM_Click(object sender, RoutedEventArgs e)
         {
-            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+            ObservableList<IBusinessFlow> bfs = new ObservableList<IBusinessFlow>();
             bfs.Add(App.BusinessFlow);
             ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(App.AutomateTabEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.DataSource.DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables));
             ExportResultsToALMConfigPage.Instance.ShowAsWindow();
