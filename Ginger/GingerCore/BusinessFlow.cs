@@ -526,21 +526,28 @@ namespace GingerCore
                 return;
 
             int selectedActivityIndex = 0;
+            int i = 1;
             if (indexActivity == null)
             {
-
-
-                String activityGroupName = CurrentActivity.ActivitiesGroupID;
-                if (!string.IsNullOrEmpty(activityGroupName))
+                if (CurrentActivity != null)
                 {
-                    ActivitiesGroup activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == activityGroupName).FirstOrDefault();
-
-                    if (activitiesGroup != null)
+                    String activityGroupName = CurrentActivity.ActivitiesGroupID;
+                    if (!string.IsNullOrEmpty(activityGroupName))
                     {
-
-                        selectedActivityIndex += Activities.IndexOf(CurrentActivity) + activitiesGroup.ActivitiesIdentifiers.Count;
-
+                        ActivitiesGroup activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == activityGroupName).FirstOrDefault();
+                        
+                        while (!string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) && CurrentActivity.ActivitiesGroupID.Equals(activitiesGroup.FileName) == true )
+                        {
+                            selectedActivityIndex = Activities.IndexOf(CurrentActivity) + 1;
+                            CurrentActivity = (Activity)Activities.CurrentItem;
+                            Activities.MoveNext();
+                            CurrentActivity = (Activity)Activities.CurrentItem;
+                        }
                     }
+                }
+                else
+                {
+                    CurrentActivity = a;
                 }
 
             }
@@ -552,6 +559,12 @@ namespace GingerCore
             if (selectedActivityIndex > 0)
             {
                 Activities.Insert(selectedActivityIndex, a);
+            }
+            else if (selectedActivityIndex == 0)
+            {
+                selectedActivityIndex = Activities.IndexOf(CurrentActivity) + 1;
+                Activities.Insert(selectedActivityIndex, a);
+
             }
             else
             {
@@ -636,8 +649,7 @@ namespace GingerCore
         {
             if (this.ActivitiesGroups.Where(ag => ag.Name == activitiesGroup.Name).FirstOrDefault() == null) return; //no name like it in the group
 
-            List<ActivitiesGroup> sameNameObjList =
-                this.ActivitiesGroups.Where(obj => obj.Name == activitiesGroup.Name).ToList<ActivitiesGroup>();
+            List<ActivitiesGroup> sameNameObjList = this.ActivitiesGroups.Where(obj => obj.Name == activitiesGroup.Name).ToList<ActivitiesGroup>();
             if (sameNameObjList.Count == 1 && sameNameObjList[0] == activitiesGroup) return; //Same internal object
 
             //Set unique name
