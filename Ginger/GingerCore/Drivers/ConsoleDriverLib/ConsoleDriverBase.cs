@@ -43,7 +43,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return true;
         }
 
-        protected ConsoleDriverWindow mConsoleDriverWindow;
+        public ConsoleDriverWindow mConsoleDriverWindow;
 
         public abstract bool Connect();
         public abstract void Disconnect();
@@ -93,7 +93,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 if (mConsoleDriverWindow != null)
                 {
-                    mConsoleDriverWindow.Close();
+                    mConsoleDriverWindow.Close();                                        
                     mConsoleDriverWindow = null;
                 }
             }

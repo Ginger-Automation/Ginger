@@ -16,6 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -42,30 +45,52 @@ namespace Ginger.Agents
             if (agent != null)
             {
                 mAgent = agent;
-                mOriginalPlatformType = mAgent.Platform;
-                mOriginalDriverType = mAgent.DriverType.ToString();
 
-                App.ObjFieldBinding(AgentNameTextBox, TextBox.TextProperty, mAgent, Agent.Fields.Name);
-                txtPlatformType.Text = mOriginalPlatformType.ToString();
-                
-                App.ObjFieldBinding(NotesTextBox, TextBox.TextProperty, mAgent, Agent.Fields.Notes);
-
-                // Remote Agent config
-                //App.ObjFieldBinding(HostTextBox, TextBox.TextProperty, mAgent, Agent.Fields.Host);
-                //App.ObjFieldBinding(PortTextBox, TextBox.TextProperty, mAgent, Agent.Fields.Port);                
-                //App.ObjFieldBinding(RemoteCheckBox, CheckBox.IsCheckedProperty, mAgent, Agent.Fields.Remote);
-
+                App.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
+                App.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Notes));
+                App.ObjFieldBinding(xAgentTypelbl, Label.ContentProperty, mAgent, nameof(Agent.AgentType));
                 TagsViewer.Init(mAgent.Tags);
 
-                SetDriverTypeCombo();                
-                App.ObjFieldBinding(driverTypeComboBox, ComboBox.TextProperty, mAgent, Agent.Fields.DriverType);
+                if (mAgent.AgentType == eAgentType.Driver)
+                {
+                    mOriginalPlatformType = mAgent.Platform;
+                    mOriginalDriverType = mAgent.DriverType.ToString();
 
-                driverTypeComboBox.SelectionChanged += driverTypeComboBox_SelectionChanged;
-                                    
-                DriverConfigFrmae.SetContent(new AgentDriverConfigPage(mAgent));                
+                    xPlatformTxtBox.Text = mOriginalPlatformType.ToString();
+                    SetDriverTypeCombo();
+                    App.ObjFieldBinding(xDriverTypeComboBox, ComboBox.TextProperty, mAgent, nameof(Agent.DriverType));
+                    xDriverTypeComboBox.SelectionChanged += driverTypeComboBox_SelectionChanged;
+                }
+                else//Plugin
+                {
+                    xDriverConfigPnl.Visibility = Visibility.Collapsed;
+                    xPluginConfigPnl.Visibility = Visibility.Visible;
+
+                    // Plugin combo
+                    xPluginIdComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+                    xPluginIdComboBox.DisplayMemberPath = nameof(PluginPackage.PluginId);
+                    xPluginIdComboBox.BindControl(mAgent, nameof(Agent.PluginId));
+                }
+                         
+                xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent));                
             }
         }
 
+        private void xPluginIdComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            PluginPackage p = (PluginPackage)xPluginIdComboBox.SelectedItem;
+            p.LoadServicesFromJSON();
+            xServiceIdComboBox.ItemsSource = p.Services;
+            xServiceIdComboBox.DisplayMemberPath = nameof(PluginServiceInfo.ServiceId);
+            xServiceIdComboBox.SelectedValuePath = nameof(PluginServiceInfo.ServiceId);
+            xServiceIdComboBox.BindControl(mAgent, nameof(Agent.ServiceId));
+
+            // auto select if there is only one service in the plugin
+            if (p.Services.Count == 1)
+            {
+                xServiceIdComboBox.SelectedItem = p.Services[0];
+            }
+        }
 
         private void SetDriverTypeCombo()
         {            
@@ -79,37 +104,36 @@ namespace Ginger.Agents
                 }
             }
             
-            App.FillComboFromEnumVal(driverTypeComboBox, mAgent.DriverType, lst);           
+            App.FillComboFromEnumVal(xDriverTypeComboBox, mAgent.DriverType, lst);           
         }
 
 
         private void driverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (driverTypeComboBox.SelectedItem == null) return;
+            if (xDriverTypeComboBox.SelectedItem == null) return;
 
-            if ((Agent.eDriverType)driverTypeComboBox.SelectedValue == mAgent.DriverType) return;
+            if ((Agent.eDriverType)xDriverTypeComboBox.SelectedValue == mAgent.DriverType) return;
 
             //notify user that all driver configurations will be reset
-            if (driverTypeComboBox.SelectedItem.ToString() != mOriginalDriverType)
+            if (xDriverTypeComboBox.SelectedItem.ToString() != mOriginalDriverType)
             {
                 if (Reporter.ToUser(eUserMsgKeys.ChangingAgentDriverAlert) == MessageBoxResult.No)
                 {
-                    foreach (object item in driverTypeComboBox.Items)
+                    foreach (object item in xDriverTypeComboBox.Items)
                         if (item.ToString() == mOriginalDriverType)
                         {
-                            driverTypeComboBox.SelectedItem = item;
+                            xDriverTypeComboBox.SelectedItem = item;
                             break;
                         }                    
                 }
                 else
                 {
-                    mOriginalDriverType = driverTypeComboBox.SelectedItem.ToString();                    
+                    mOriginalDriverType = xDriverTypeComboBox.SelectedItem.ToString();                    
                     mAgent.InitDriverConfigs(); 
                 }                
             }
         }
-        
-        
+                
         private void xTestBtn_Click(object sender, RoutedEventArgs e)
         {
             xTestBtn.IsEnabled = false;                        

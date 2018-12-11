@@ -16,28 +16,28 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions;
+using Ginger.Imports.UFT;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Variables;
-using System.Data;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Windows.Media.Imaging;
-using System;
-using System.Diagnostics;
-using Ginger.Actions;
-using System.Windows.Data;
 using GingerCore.Platforms;
-using Ginger.Imports.UFT;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using amdocs.ginger.GingerCoreNET;
+using GingerCore.Variables;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace Ginger.Imports.QTP
 {
@@ -63,7 +63,7 @@ namespace Ginger.Imports.QTP
         public List<ObjectRepositoryItem> Objectlist_ORI = new List<ObjectRepositoryItem>();
         public List<BusFunction> BusList = new List<BusFunction>();
         public List<string> ListOfSelectedGuis = new List<string>();
-        public ObservableList<TargetApplication> TargetApplicationsList = new ObservableList<TargetApplication>();
+        public ObservableList<TargetBase> TargetApplicationsList = new ObservableList<TargetBase>();
 
         // Data Table
         public DataTable dt_BizFlow = new DataTable();
@@ -83,15 +83,11 @@ namespace Ginger.Imports.QTP
 
             eFilter mFilter = eFilter.AllLines;
             App.FillComboFromEnumVal(FilterComboBox, mFilter);
-
-            //TODO: Clear the hardcode values
-            UFTObjectRepositoryTextBox.Text = @"C:\RaviKethe\T-Mobile\TMO-POC-QTP\uVerse_OR.xml";  //""; 
-            ScriptFileTextBox.Text = @"C:\RaviKethe\T-Mobile\TMO-POC-QTP\Sc005_Original.txt";   //""; //
-
+            
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            if (App.UserProfile.Solution != null )
+            if (App.UserProfile.Solution != null)
             {
                 sTarget.AppName = App.UserProfile.Solution.MainApplication.ToString();
                 sTarget.Selected = true;

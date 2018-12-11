@@ -137,8 +137,8 @@ namespace Ginger.BusinessFlowWindows
         private void FillTargetAppsComboBox()
         {
             TargetApplicationComboBox.ItemsSource = mActivityParentBusinessFlow.TargetApplications;
-            TargetApplicationComboBox.SelectedValuePath = TargetApplication.Fields.AppName;
-            TargetApplicationComboBox.DisplayMemberPath = TargetApplication.Fields.AppName;
+            TargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
+            TargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
         }
 
         public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset=false)
