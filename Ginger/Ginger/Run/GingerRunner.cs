@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
@@ -75,8 +74,7 @@ namespace Ginger.Run
             RunWithoutDriver,
             RunOnDriver,
             RunInSimulationMode,
-            RunOnPlugIn,
-            // RunOnPlugInDriver
+            RunOnPlugIn
         }
 
         public enum eRunOptions
@@ -816,12 +814,7 @@ namespace Ginger.Run
 
         private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true)
         {
-            //Keep DebugStopWatch when testing performance
-            //Stopwatch DebugStopWatch = new Stopwatch();
-            //DebugStopWatch.Reset();
-            //DebugStopWatch.Start();
-            //Not suppose to happen but just in case
-            
+                //Not suppose to happen but just in case        
                 if (act == null)
                 {
                     Reporter.ToUser(eUserMsgKeys.AskToSelectAction);
@@ -1906,7 +1899,7 @@ namespace Ginger.Run
             }
             else
             {
-                gingerNodeInfo.Status = "Reserved";
+                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
             }
             
 
@@ -1917,7 +1910,7 @@ namespace Ginger.Run
             //TODO: check if service is session start session only once
             if (DoStartSession)
             {
-                gingerNodeInfo.Status = "Reserved";
+                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
                 GNP.StartDriver();
                 dic.Add(key, gingerNodeInfo);
             }
@@ -1992,7 +1985,7 @@ namespace Ginger.Run
             if (!IsSessionService) 
             {
                 // standalone plugin action release the node
-                gingerNodeInfo.Status = "Ready";
+                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
             }
             st.Stop();
             long millis = st.ElapsedMilliseconds;
@@ -2005,7 +1998,7 @@ namespace Ginger.Run
 
             GingerNodeInfo GNI = (from x in gingerGrid.NodeList
                                     where x.ServiceId == actPlugin.ServiceId
-                                         && x.Status == "Ready"
+                                         && x.Status == GingerNodeInfo.eStatus.Ready
                                     select x).FirstOrDefault();
 
             return GNI;

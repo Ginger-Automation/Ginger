@@ -23,13 +23,17 @@ using System.Linq;
 
 namespace GingerCoreNET.RunLib
 {
+    
     public class GingerNodeInfo : INotifyPropertyChanged
     {
+        public enum eStatus
+        {
+            Ready,
+            Reserved
+        }
+
         public Guid SessionID { get; set; }
         public string Name { get; set; }
-        // public string PluginId { get; set; }
-        // DO we want version?
-
         public string ServiceId { get; set; }
         public string IP { get; set; }
         public string Host { get; set; }
@@ -40,9 +44,8 @@ namespace GingerCoreNET.RunLib
             get { return mPing; }
             set { if (mPing != value) { mPing = value; OnPropertyChanged(nameof(Ping)); } } }
 
-        // TOdo change to enum
-        private string mStatus;        
-        public string Status { get { return mStatus; } set { if (mStatus != value) { mStatus = value; OnPropertyChanged(nameof(Status)); } } }  
+        private eStatus mStatus;        
+        public eStatus Status { get { return mStatus; } set { if (mStatus != value) { mStatus = value; OnPropertyChanged(nameof(Status)); } } }  
         
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -76,8 +79,5 @@ namespace GingerCoreNET.RunLib
             }
         }
 
-
-
-        // TOOD: add drivers info
     }
 }
