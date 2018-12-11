@@ -106,6 +106,11 @@ namespace GingerCore.Drivers
         public bool BrowserPrivateMode { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Only for Chrome | Headless Chrome : A Browser without UI for faster Execution ")]
+        public bool HeadlessBrowserMode { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Only for Chrome & Firefox | Full path for the User Profile folder")]
         public string UserProfileFolderPath { get; set; }
@@ -410,6 +415,10 @@ namespace GingerCore.Drivers
                         {
                             options.AddArgument("--incognito");
                         }
+
+                        if (HeadlessBrowserMode == true)
+                            options.AddArgument("--headless");
+
                         if (SeleniumUserArgs != null)
                             foreach (string arg in SeleniumUserArgs)
                                 options.AddArgument(arg);
