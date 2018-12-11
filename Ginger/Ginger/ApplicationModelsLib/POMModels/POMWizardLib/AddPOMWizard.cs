@@ -92,6 +92,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override void Finish()
         {
+            if (PomAllElementsPage.mDispatcherTimer != null)
+            {
+                PomAllElementsPage.mDispatcherTimer.IsEnabled = false;
+            }
             if (ScreenShot != null)
             {
                 using (var ms = new MemoryStream())
@@ -99,12 +103,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     POM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShot);
                 }
             }
-
             if (mPomModelsFolder != null)
                 mPomModelsFolder.AddRepositoryItem(POM);
             else
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
-
             //close all Agents raised in Wizard
             CloseStartedAgents();
         }
@@ -116,10 +118,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 mAgent.Driver.mStopProcess = true;
             }
-
+            if (PomAllElementsPage.mDispatcherTimer != null)
+            {
+                PomAllElementsPage.mDispatcherTimer.IsEnabled = false;
+            }
             //close all Agents raised in Wizard
             CloseStartedAgents();
-
             base.Cancel();
         }
 

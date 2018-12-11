@@ -144,7 +144,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         }
 
 
-        System.Windows.Threading.DispatcherTimer dispatcherTimer = null;
+        public static System.Windows.Threading.DispatcherTimer mDispatcherTimer = null;
 
         private void LiveSpyHandler(object sender, RoutedEventArgs e)
         {
@@ -163,20 +163,20 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (LiveSpyButton.IsChecked == true)
             {
                 xStatusLable.Content = "Spying is On";
-                if (dispatcherTimer == null)
+                if (mDispatcherTimer == null)
                 {
-                    dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-                    dispatcherTimer.Tick += new EventHandler(timenow);
-                    dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+                    mDispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+                    mDispatcherTimer.Tick += new EventHandler(timenow);
+                    mDispatcherTimer.Interval = new TimeSpan(0, 0, 1);
                 }
 
-                dispatcherTimer.IsEnabled = true;
+                mDispatcherTimer.IsEnabled = true;
             }
             else
             {
                 xCreateNewElement.Visibility = Visibility.Collapsed;
                 xStatusLable.Content = "Spying is Off";
-                dispatcherTimer.IsEnabled = false;
+                mDispatcherTimer.IsEnabled = false;
             }
         }
 
@@ -184,7 +184,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             xCreateNewElement.Visibility = Visibility.Collapsed;
             xStatusLable.Content = "Spying is Off";
-            dispatcherTimer.IsEnabled = false;
+            mDispatcherTimer.IsEnabled = false;
         }
 
         ElementInfo mSpyElement;
