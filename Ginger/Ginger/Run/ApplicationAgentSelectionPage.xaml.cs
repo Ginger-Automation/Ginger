@@ -88,6 +88,17 @@ namespace Ginger.Run
                 }
             }
 
+
+            // FIXME : !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // Add Plugin agents
+            // if (mApplicationAgent.target - plugin...) search based on type
+            // Search plugins            
+            var list = from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.ServiceId == mApplicationAgent.AppName select x;
+            foreach (Agent agent in list)
+            {
+                optionalAgents.Add(agent);
+            }
+
             if (optionalAgents.Count == 0)
                 Reporter.ToUser(eUserMsgKeys.NoOptionalAgent);
 

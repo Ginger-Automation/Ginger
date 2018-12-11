@@ -44,6 +44,7 @@ namespace Amdocs.Ginger.Common.Actions
                 if (ParamType == typeof(Int32)) return "int";
                 if (ParamType == typeof(List<string>)) return "List<string>";
                 if (ParamType == typeof(IGingerAction)) return "IGingerAction";
+                if (ParamType == typeof(bool)) return "bool";
 
 
                 // Check if it is a List 
@@ -79,6 +80,9 @@ namespace Amdocs.Ginger.Common.Actions
                         break;
                     case "IGingerAction":
                         ParamType = typeof(IGingerAction);
+                        break;
+                    case "bool":
+                        ParamType = typeof(bool);
                         break;
                     default:
                         if (value.StartsWith("List<"))
