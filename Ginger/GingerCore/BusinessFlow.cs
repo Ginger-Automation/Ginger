@@ -526,7 +526,6 @@ namespace GingerCore
                 return;
 
             int selectedActivityIndex = 0;
-            int i = 1;
             if (indexActivity == null)
             {
                 if (CurrentActivity != null)
