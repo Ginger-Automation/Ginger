@@ -324,7 +324,7 @@ namespace GingerCore.GeneralLib
                     Port = (int)this.SMTPPort,
                     EnableSsl = EnableSSL,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = ConfigureCredential   
+                    UseDefaultCredentials = !ConfigureCredential   
                 };
 
                 if (ConfigureCredential)

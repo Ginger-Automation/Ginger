@@ -45,7 +45,7 @@ namespace GingerCore
             Name = sName;
             Activities = new ObservableList<Activity>();
             Variables = new ObservableList<VariableBase>();
-            TargetApplications = new ObservableList<TargetApplication>();
+            TargetApplications = new ObservableList<TargetBase>();
 
             Activity a = new Activity() { Active = true };
             a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
@@ -287,7 +287,7 @@ namespace GingerCore
         public ObservableList<Platform> Platforms;
 
         [IsSerializedForLocalRepository]
-        public ObservableList<TargetApplication> TargetApplications = new ObservableList<TargetApplication>();
+        public ObservableList<TargetBase> TargetApplications = new ObservableList<TargetBase>();       
 
         private Activity mCurrentActivity { get; set; }
 
@@ -829,7 +829,7 @@ namespace GingerCore
             {
                 if (TargetApplications != null && TargetApplications.Count() > 0)
                 {
-                    return TargetApplications[0].AppName;
+                    return TargetApplications[0].Name;
                 }
                 else
                 {
@@ -966,7 +966,7 @@ namespace GingerCore
 
         public void SetActivityTargetApplication(Activity activity)
         {
-            if (this.TargetApplications.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault() == null)
+            if (this.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
                 activity.TargetApplication = this.MainApplication;
         }
 
@@ -1147,6 +1147,6 @@ namespace GingerCore
             {
                 return nameof(this.Name);
             }
-        }
+        }       
     }
 }
