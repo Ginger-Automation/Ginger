@@ -657,7 +657,18 @@ namespace GingerCore
                 counter++;
             activitiesGroup.Name = activitiesGroup.Name + "_" + counter.ToString();
         }
-        public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false, Activity indexActivity = null)
+
+        public void ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup, ObservableList<Activity> activitiesRepository, bool inSilentMode)
+        {
+            ImportActivitiesGroupActivitiesFromRepository(activitiesGroup, activitiesRepository, inSilentMode, false, null);
+        }
+
+        public void ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup, ObservableList<Activity> activitiesRepository, bool inSilentMode, bool keepOriginalTargetApplicationMapping)
+        {
+            ImportActivitiesGroupActivitiesFromRepository(activitiesGroup, activitiesRepository, inSilentMode, keepOriginalTargetApplicationMapping, null);
+        }
+
+        public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,ObservableList<Activity> activitiesRepository, bool inSilentMode, bool keepOriginalTargetApplicationMapping, Activity indexActivity)
         {
             string missingActivities = string.Empty;
 
