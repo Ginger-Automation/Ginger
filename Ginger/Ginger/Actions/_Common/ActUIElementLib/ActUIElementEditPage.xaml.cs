@@ -254,7 +254,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                                mAction.ElementType == eElementType.Button))
                       ||
                       (mAction.Platform == ePlatformType.Web &&
-                       mAction.ElementAction == ActUIElement.eElementAction.ClickXY || mAction.ElementAction == ActUIElement.eElementAction.XYDoubleClick || mAction.ElementAction == ActUIElement.eElementAction.XYSendKeys))
+                       mAction.ElementAction == ActUIElement.eElementAction.ClickXY || mAction.ElementAction == ActUIElement.eElementAction.DoubleClickXY || mAction.ElementAction == ActUIElement.eElementAction.SendKeysXY))
             {
                 UIElementActionEditPageFrame.Content = new UIElementXYCoordinatePage(mAction);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;

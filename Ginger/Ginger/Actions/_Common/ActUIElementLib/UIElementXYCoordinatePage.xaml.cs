@@ -30,7 +30,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             xXCoordinate.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, mAct.GetInputParamValue(ActUIElement.Fields.XCoordinate)));
             xYCoordinate.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate, mAct.GetInputParamValue(ActUIElement.Fields.YCoordinate)));
             xValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.Value, mAct.GetInputParamValue(ActUIElement.Fields.Value)));
-            if (mAct.ElementAction == ActUIElement.eElementAction.XYSendKeys)
+            if (mAct.ElementAction == ActUIElement.eElementAction.SendKeysXY)
             {
                 xValuePanel.Visibility = Visibility.Visible;
             }

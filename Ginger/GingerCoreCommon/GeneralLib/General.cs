@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -81,5 +81,6 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
 
         }
+        
     }
 }
