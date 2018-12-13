@@ -178,8 +178,6 @@ namespace Ginger.ALM
             ProjectComboBox.SelectedValue = null;
             ProjectComboBox.Items.Clear();
             RestAPICheckBox.IsChecked = false;
-
-            ALMIntegration.Instance.SyncConfigurations();
         }
 
         private bool GetProjectsDetails()
@@ -355,7 +353,10 @@ namespace Ginger.ALM
                     RallyRadioButton.FontWeight = FontWeights.Regular;
                     RallyRadioButton.Foreground = Brushes.Black;
                     RallyRadioButton.IsChecked = false;                    
-                    RestAPICheckBox.Visibility = Visibility.Visible;                    
+                    RestAPICheckBox.Visibility = Visibility.Visible;
+                    JiraRadioButton.IsChecked = false;
+                    JiraRadioButton.FontWeight = FontWeights.Regular;
+                    JiraRadioButton.Foreground = Brushes.Black;
                     break;
 
                 case ALMIntegration.eALMType.RQM:
@@ -376,6 +377,9 @@ namespace Ginger.ALM
                     RallyRadioButton.Foreground = Brushes.Black;
                     RallyRadioButton.IsChecked = false;
                     RestAPICheckBox.Visibility = Visibility.Hidden;
+                    JiraRadioButton.IsChecked = false;
+                    JiraRadioButton.FontWeight = FontWeights.Regular;
+                    JiraRadioButton.Foreground = Brushes.Black;
                     break;
                 case ALMIntegration.eALMType.RALLY:
                     RallyRadioButton.IsChecked = true;
@@ -403,6 +407,39 @@ namespace Ginger.ALM
                     RQMRadioButton.Foreground = Brushes.Black;
                     RQMRadioButton.IsChecked = false;
                     RestAPICheckBox.Visibility = Visibility.Hidden;
+                    JiraRadioButton.IsChecked = false;
+                    JiraRadioButton.FontWeight = FontWeights.Regular;
+                    JiraRadioButton.Foreground = Brushes.Black;
+                    break;
+                case ALMIntegration.eALMType.Jira:
+                    JiraRadioButton.IsChecked = true;
+                    JiraRadioButton.FontWeight = FontWeights.ExtraBold;
+                    JiraRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                    RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
+                    DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    Grid.SetColumnSpan(ServerURLTextBox, 2);
+                    ExampleURLHint.Content = "Example: http://server:8080/almbin";
+                    if (!isServerDetailsCorrect)
+                    {
+                        ServerURLTextBox.IsEnabled = true;
+                        ServerURLTextBox.IsReadOnly = false;
+                    }
+                    else
+                    {
+                        ServerURLTextBox.IsEnabled = false;
+                        ServerURLTextBox.IsReadOnly = true;
+                    }
+                    ServerURLTextBox.Cursor = null;
+                    QCRadioButton.FontWeight = FontWeights.Regular;
+                    QCRadioButton.Foreground = Brushes.Black;
+                    QCRadioButton.IsChecked = false;
+                    RQMRadioButton.FontWeight = FontWeights.Regular;
+                    RQMRadioButton.Foreground = Brushes.Black;
+                    RQMRadioButton.IsChecked = false;
+                    RestAPICheckBox.Visibility = Visibility.Hidden;
+                    RallyRadioButton.IsChecked = false;
+                    RallyRadioButton.FontWeight = FontWeights.Regular;
+                    RallyRadioButton.Foreground = Brushes.Black;
                     break;
             }
         }
@@ -430,7 +467,6 @@ namespace Ginger.ALM
                             App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.QC;
                             ClearALMConfigs();
                         }
-
                         break;
                     case "RQMRadioButton":
                         if (App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RQM)
@@ -446,6 +482,13 @@ namespace Ginger.ALM
                         if (App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.RALLY)
                         {
                             App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.RALLY;
+                            ClearALMConfigs();
+                        }
+                        break;
+                    case "JiraRadioButton":
+                        if (App.UserProfile.Solution.AlmType != ALMIntegration.eALMType.Jira)
+                        {
+                            App.UserProfile.Solution.AlmType = ALMIntegration.eALMType.Jira;
                             ClearALMConfigs();
                         }
                         break;
