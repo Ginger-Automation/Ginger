@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using System;
 using System.Collections;
@@ -407,5 +408,9 @@ namespace Amdocs.Ginger.Common
             Move(Count - 1, 0);
         }
 
+        public static implicit operator ObservableList<T>(ObservableList<IDataSourceBase> v)
+        {
+            throw new NotImplementedException();
+        }
     } 
 }

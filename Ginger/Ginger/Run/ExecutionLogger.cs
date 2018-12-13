@@ -347,7 +347,7 @@ namespace Ginger.Run
                 gingerReport.GUID = GR.Guid.ToString();
                 gingerReport.Name = GR.Name;
                 gingerReport.ApplicationAgentsMappingList = GR.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
-                gingerReport.EnvironmentName = GR.ProjEnvironment != null ? GR.ProjEnvironment.Name : string.Empty;
+                gingerReport.EnvironmentName = GR.projEnvironment != null ? GR.projEnvironment.Name : string.Empty;
                 gingerReport.Elapsed = (double)GR.Elapsed / 1000;
                 gingerReport.LogFolder = filename;
                 SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");

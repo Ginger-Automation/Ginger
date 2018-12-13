@@ -26,5 +26,6 @@ namespace Amdocs.Ginger.Common
         object Guid { get; }
 
         EnvApplication GetApplication(string appName);
+        void CloseEnvironment();
     }
 }

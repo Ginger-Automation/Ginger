@@ -312,7 +312,7 @@ namespace GingerCore
 
         public string SolutionFolder { get; set; }
 
-        public ObservableList<DataSourceBase> DSList { get; set; }
+        public ObservableList<IDataSourceBase> DSList { get; set; }
         
         private BusinessFlow mBusinessFlow;
         public BusinessFlow BusinessFlow
@@ -1077,7 +1077,7 @@ namespace GingerCore
                 }
             }         
         }
-        public bool UsedForAutoMapping=false;
+        public bool UsedForAutoMapping { get; set; } = false;
 
 
         public void Test()

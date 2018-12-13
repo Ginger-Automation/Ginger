@@ -119,7 +119,7 @@ namespace GingerCore.FlowControlLib
         public eStatus Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(Fields.Status); } }
 
 
-        public void CalculateCondition(BusinessFlow BusinessFlow, Environments.ProjEnvironment ProjEnvironment, Act act, ObservableList<DataSourceBase> DSList)
+        public void CalculateCondition(BusinessFlow BusinessFlow, Environments.ProjEnvironment ProjEnvironment, Act act, ObservableList<IDataSourceBase> DSList)
         {
             if (Condition == null)
             {
@@ -162,7 +162,7 @@ namespace GingerCore.FlowControlLib
             ConditionCalculated = VE.ValueCalculated;
         }
 
-        public void CalculateCondition(BusinessFlow BusinessFlow, Environments.ProjEnvironment ProjEnvironment, ObservableList<DataSourceBase> DSList)
+        public void CalculateCondition(BusinessFlow BusinessFlow, Environments.ProjEnvironment ProjEnvironment, ObservableList<IDataSourceBase> DSList)
         {
             if (Condition == null)
             {
@@ -189,7 +189,7 @@ namespace GingerCore.FlowControlLib
             ConditionCalculated = VE.ValueCalculated;
         }
 
-        public void CalcualtedValue(BusinessFlow BusinessFlow, Environments.ProjEnvironment ProjEnvironment, ObservableList<DataSourceBase> DSList)
+        public void CalcualtedValue(BusinessFlow BusinessFlow, Environments.ProjEnvironment ProjEnvironment, ObservableList<IDataSourceBase> DSList)
         {
             ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
             VE.Value = Value;

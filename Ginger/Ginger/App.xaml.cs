@@ -205,7 +205,7 @@ namespace Ginger
             set
             {
                 mAutomateTabEnvironment = value;
-                App.AutomateTabGingerRunner.ProjEnvironment = mAutomateTabEnvironment;
+                App.AutomateTabGingerRunner.projEnvironment = mAutomateTabEnvironment;
                 App.UserProfile.RecentEnvironment = mAutomateTabEnvironment.Guid;
             }
         }
@@ -829,9 +829,9 @@ namespace Ginger
         private static void HandleAutomateRunner(Solution solution)
         {
             App.AutomateTabGingerRunner.SolutionFolder = solution.Folder;
-            App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+            App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>();
             App.AutomateTabGingerRunner.SolutionApplications = solution.ApplicationPlatforms;
-            App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>();
             App.AutomateTabGingerRunner.CurrentSolution = solution;
         }
 
@@ -1005,7 +1005,7 @@ namespace Ginger
             }
 
             if (App.UserProfile.Solution != null)
-                App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+                App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>();
             else
                 App.AutomateTabGingerRunner.SolutionAgents = null;
             App.AutomateTabGingerRunner.UpdateApplicationAgents();
