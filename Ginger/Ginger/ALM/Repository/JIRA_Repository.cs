@@ -6,18 +6,26 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Activities;
+using GingerCore.ALM;
 
 namespace Ginger.ALM.Repository
 {
     class JIRA_Repository : ALMRepository
     {
+
+        public ALMCore AlmCore { get; set; }
+
+        public JIRA_Repository(ALMCore almCore)
+        {
+            this.AlmCore = almCore;
+        }
         public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
         {
             bool isConnectSucc = false;
             Reporter.ToLog(eAppReporterLogLevel.INFO, "Connecting to Jira server");
             try
             {
-                isConnectSucc = ALMIntegration.Instance.AlmCore.ConnectALMServer();
+                isConnectSucc = this.AlmCore.ConnectALMServer();
             }
             catch (Exception e)
             {
