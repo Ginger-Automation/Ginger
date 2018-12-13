@@ -651,7 +651,7 @@ namespace Ginger.Functionalities
 
                 case eContext.RunsetPage:
                     foreach (GingerRunner runner in App.RunsetExecutor.RunSetConfig.GingerRunners)
-                        AddVariableFromBusinessFlowList(runner.BusinessFlows, App.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\", App.RunsetExecutor.RunSetConfig);
+                        AddVariableFromBusinessFlowList((BusinessFlow)runner.BusinessFlows, App.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\", App.RunsetExecutor.RunSetConfig);
                     break;
             }
         }

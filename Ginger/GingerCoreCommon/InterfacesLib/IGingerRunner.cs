@@ -21,7 +21,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
     }
     public interface IGingerRunner
     {
-        double? Elapsed { get; }
+        double? Elapsed { get;  }
         IExecutionLogger ExecutionLogger { get; }
         object CurrentSolution { get; set; }
         ObservableList<IAgent> SolutionAgents { get; set; }
@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         ObservableList<ApplicationPlatform> SolutionApplications { get; set; }
         string SolutionFolder { get; set; }
         eRunStatus Status { get; set; }
-        ObservableList<IBusinessFlow> BusinessFlows { get; set; }
+        ObservableList <IBusinessFlow> BusinessFlows { get; set; }
         ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; }
         string Name { get; set; }
         bool UseSpecificEnvironment { get; set; }
@@ -37,13 +37,13 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         Guid Guid { get; }
         ObservableList<IApplicationAgent> ApplicationAgents { get; set; }
         bool IsRunning { get; }
-
+        
         ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false, string GingerRunnerName = "");
         void SetExecutionEnvironment(IProjEnvironment runsetExecutionEnvironment, ObservableList<IProjEnvironment> observableList);
-        void RunRunner(bool run = false);
+        void RunRunner(bool run= false);
         //void ContinueRun(object runner, object lastStoppedAction);
-        void ResetRunnerExecutionDetails(bool doNotResetBusFlows = false);
-
+        void ResetRunnerExecutionDetails(bool doNotResetBusFlows=false);
+        
         void CloseAgents();
         void StopRun();
         bool ContinueRun(eContinueLevel continueLevel, eContinueFrom continueFrom, IBusinessFlow specificBusinessFlow = null, IActivity specificActivity = null, IAct specificAction = null);

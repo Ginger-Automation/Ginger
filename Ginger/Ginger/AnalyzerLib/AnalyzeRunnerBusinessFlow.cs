@@ -56,7 +56,7 @@ namespace Ginger.AnalyzerLib
 
                             List<IBusinessFlow> lstBusinessFlow = null;
                             if (guidToLookBy != Guid.Empty)
-                                lstBusinessFlow = GR.BusinessFlows.Where(x => x.InstanceGuid == guidToLookBy).ToList();
+                                lstBusinessFlow =  GR.BusinessFlows.Where(x => x.InstanceGuid == guidToLookBy).ToList();
 
                             if (lstBusinessFlow == null || lstBusinessFlow.Count == 0)
                                 bf = null;

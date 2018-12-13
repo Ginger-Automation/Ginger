@@ -57,6 +57,11 @@ namespace Ginger.Repository
             return new ObservableList<IDatabase>();
         }
 
+        public ObservableList<IDataSourceBase> GetDatasourceList()
+        {
+            return new ObservableList<IDataSourceBase>();
+        }
+
         public IGingerRunner RunExecutioFrom(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             return new GingerRunner(executedFrom);

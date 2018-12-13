@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
@@ -109,7 +110,7 @@ namespace GingerCore
             return VE;
         }
 
-        ObservableList<DataSourceBase> DSList;
+        ObservableList<IDataSourceBase> DSList;
 
         IBusinessFlow BF;
         IProjEnvironment Env;
@@ -138,7 +139,7 @@ namespace GingerCore
             return Value;
         }
 
-        public ValueExpression(IProjEnvironment Env, IBusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
+        public ValueExpression(IProjEnvironment Env, IBusinessFlow BF, ObservableList<IDataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true, ObservableList<VariableBase> solutionVariables = null)
         {
             this.Env = Env;
             this.BF = BF;
@@ -1018,7 +1019,7 @@ namespace GingerCore
         /// <param name="BusinessFlow">Business Flow containing the Variables</param>
         /// <param name="Value">the Expression string</param>
         /// <returns></returns>
-        public static string Calculate(IProjEnvironment ProjEnvironment, IBusinessFlow BusinessFlow, string Value,ObservableList <DataSourceBase> DSList,bool bUpdate = false, string UpdateValue = "")
+        public static string Calculate(IProjEnvironment ProjEnvironment, IBusinessFlow BusinessFlow, string Value,ObservableList <IDataSourceBase> DSList,bool bUpdate = false, string UpdateValue = "")
         {
             //TODO: this is static func, we can later on do cache and other stuff for performence if needed
             ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList, bUpdate,UpdateValue);

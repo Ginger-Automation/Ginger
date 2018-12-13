@@ -72,7 +72,7 @@ namespace GingerCore.Platforms
                 OnPropertyChanged(Fields.AppAndAgent);                
             }
         }
-
+       // public IAgent agent { get; set; } 
         private string mAgentName;
         [IsSerializedForLocalRepository]
         public string AgentName
@@ -134,7 +134,6 @@ namespace GingerCore.Platforms
             }
         }
 
-        object IApplicationAgent.AgentName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        IAgent IApplicationAgent.Agent { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        
     }
 }
