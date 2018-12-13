@@ -66,7 +66,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 Type t = Assembly.GetExecutingAssembly().GetType(classname);
                 if (t == null)
                 {
-                    Reporter.ToLog(eAppReporterLogLevel.FATAL,"Action edit page not found - " + classname);
+                    Reporter.ToLog(eAppReporterLogLevel.ERROR,"Action edit page not found - " + classname);
                     return null;
                 }
                 Page platformPage = (Page)Activator.CreateInstance(t, mAct);
