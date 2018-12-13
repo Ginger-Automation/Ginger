@@ -76,7 +76,7 @@ namespace Ginger.ALM
                     break;
                 case eALMType.Jira:
                     AlmCore = new JiraCore();
-                    AlmRepo = new JIRA_Repository();
+                    AlmRepo = new JIRA_Repository(AlmCore);
                     break;
             }
             if(firstSync)
