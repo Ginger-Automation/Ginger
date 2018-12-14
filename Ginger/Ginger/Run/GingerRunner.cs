@@ -1886,8 +1886,7 @@ namespace Ginger.Run
                 }
                 if (gingerNodeInfo == null)
                 {
-                    actPlugin.Error = "GNI not found";  
-                    actPlugin.Error += "Timeout waiting for service to be available in GingerGrid";
+                    actPlugin.Error = "GNI not found, Timeout waiting for service to be available in GingerGrid";
                     return null;
                 }
             }
@@ -1958,12 +1957,12 @@ namespace Ginger.Run
                     {
                         case nameof(OutputValueType.String):
                             string stringValue = OPL.GetValueString();
-                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Path = path, Actual = stringValue});
+                            actPlugin.AddOrUpdateReturnParamActualWithPath(PName, stringValue, path);
                             break;
                         case nameof(OutputValueType.ByteArray):
                             byte[] b = OPL.GetBytes();
-                            // GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueByteArray = b });
-                            actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Path= path, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types
+                            //actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Path= path, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types
+                            actPlugin.AddOrUpdateReturnParamActualWithPath(PName, "aaa", path);   //FIXME!!! when act can have values types
                             break;
                         default:
                             throw new Exception("Unknown param type: " + mOutputValueType);
@@ -3253,10 +3252,10 @@ namespace Ginger.Run
 
         private void UpdateLastExecutingAgent()
         {
-            foreach (TargetApplication TA in CurrentBusinessFlow.TargetApplications)
+            foreach (TargetBase target in CurrentBusinessFlow.TargetApplications)
             {
-                string a = (from x in ApplicationAgents where x.AppName == TA.AppName select x.AgentName).FirstOrDefault();
-                TA.LastExecutingAgentName = a;
+                string a = (from x in ApplicationAgents where x.AppName == target.Name select x.AgentName).FirstOrDefault();
+                target.LastExecutingAgentName = a;
             }
         }
 
