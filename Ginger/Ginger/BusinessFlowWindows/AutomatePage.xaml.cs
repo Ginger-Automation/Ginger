@@ -1170,7 +1170,6 @@ namespace Ginger
             {
                 App.AutomateTabGingerRunner.SetCurrentActivityAgent();
             }
-
             
             if ((typeof(ActPlugIn).IsAssignableFrom(actType)))
             {
