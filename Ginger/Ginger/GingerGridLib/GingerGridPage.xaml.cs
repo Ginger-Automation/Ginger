@@ -159,6 +159,7 @@ namespace Ginger.GingerGridLib
             foreach  (GingerNodeInfo GNI in  mGingerGrid.NodeList)
             {
                 GingerNodeProxy GNA = new GingerNodeProxy(GNI);
+                GNA.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
                 GNA.Reserve();
                 string rc = GNA.Ping();
                 GNI.Ping = rc;
