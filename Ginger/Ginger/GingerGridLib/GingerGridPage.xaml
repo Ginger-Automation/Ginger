@@ -12,6 +12,7 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="49*"/>
+            <RowDefinition Height="49*"/>
         </Grid.RowDefinitions>
         <Label Content="Gingers Grid" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0" />
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,0,0">
@@ -26,7 +27,8 @@
         </StackPanel>
         
         
-        <Grid x:Name="GingersGrid" Grid.Row="2"/>
+        <Grid x:Name="xGingersGrid" Grid.Row="2"/>
+        <DataGrid x:Name="xProcessesDataGrid" Grid.Row="3" IsReadOnly="True"/>
 
     </Grid>
 </Page>

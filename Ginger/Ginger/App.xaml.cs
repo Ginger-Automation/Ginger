@@ -646,7 +646,7 @@ namespace Ginger
         }
 
         private static void SolutionCleanup()
-        {
+        {            
             App.UserProfile.Solution = null;
             App.AutomateTabGingerRunner.ClearAgents();
             App.BusinessFlow = null;
@@ -664,8 +664,15 @@ namespace Ginger
                 mLoadingSolution = true;
                 OnPropertyChanged(nameof(LoadingSolution));
 
-                // Cleanup last loaded solution 
-                WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
+                // Cleanup last loaded solution Plugins 
+                // WorkSpace.Instance.LocalGingerGrid.Reset();  //Clear the grid
+
+                if (WorkSpace.Instance.SolutionRepository != null)
+                {
+                    WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
+                }
+
+
                 if (!App.RunningFromConfigFile)
                 {
                     AppSolutionAutoSave.SolutionAutoSaveEnd();

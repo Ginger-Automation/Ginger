@@ -35,6 +35,18 @@ namespace Amdocs.Ginger.Repository
         private ObservableList<PluginPackage> mPluginPackages;
         SolutionRepository mSolutionRepository;
 
+
+        List<System.Diagnostics.Process> mProcesses = new List<System.Diagnostics.Process>();
+
+        public List<System.Diagnostics.Process> PluginProcesses
+        {
+            get
+            {
+                return mProcesses;
+            }
+        }
+
+
         public PluginsManager(SolutionRepository solutionRepository)
         {
             mSolutionRepository = solutionRepository;
@@ -135,7 +147,7 @@ namespace Amdocs.Ginger.Repository
         //            return null;
         //        }
 
-
+       
         public System.Diagnostics.Process StartService(string PluginId)
         {
             if (string.IsNullOrEmpty(PluginId))
@@ -162,14 +174,35 @@ namespace Amdocs.Ginger.Repository
             string nodeFileName = NodeConfigFile.CreateNodeConfigFile(PluginId + "1");  // TODO: check if 1 exist then try 2,3 in case more than one same id service start
             string cmd = "dotnet \"" + dll + "\" \"" + nodeFileName + "\"";
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);            
-            procStartInfo.UseShellExecute = true;             
+            procStartInfo.UseShellExecute = true;
+            
+            // TODO: Make it config not to show the console window
+           // procStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
-            proc.Start();            
+            proc.Start();
+            mProcesses.Add(proc);
             return proc;
             //TODO: delete the temp file - or create temp files tracker with auto delete 
         }
 
+
+        public void CloseAllRunningPluginProcesses()
+        {
+            foreach (System.Diagnostics.Process process in mProcesses)
+            {                
+                try
+                {
+                    process.CloseMainWindow();
+                }
+                catch(Exception ex)
+                {
+                    // do nothing
+                }
+            }
+            mProcesses.Clear();
+        }
 
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
         {
@@ -198,15 +231,20 @@ namespace Amdocs.Ginger.Repository
             return list;
         }
 
-        public bool IsRunOnPluginDriver(string pluginId, string serviceId)
-        {
-            // PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
-            // PluginService pluginService = pluginPackage.GetService(serviceId);
-            return true; // temp!!!!!!!!!!!!!!!
-        }
+        //public bool IsRunOnPluginDriver(string pluginId, string serviceId)
+        //{
+        //    // FIXME!!
+
+        //    // PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
+        //    // PluginService pluginService = pluginPackage.GetService(serviceId);
+        //    return true; // temp!!!!!!!!!!!!!!!
+        //}
 
         public bool IsSessionService(string pluginId, string serviceId)
         {
+            // TODO: Cache
+
+
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             pluginPackage.LoadServicesFromJSON();
             PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
