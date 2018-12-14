@@ -550,14 +550,13 @@ namespace GingerCore
             }
 
 
-            mGingerNodeInfo.Status = "Reserved";   // add who
+            mGingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
+            // TODO: add by which agent to GNI
 
             // Keep GNP on agent
             GingerNodeProxy GNP = new GingerNodeProxy(mGingerNodeInfo);
             GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
             GNP.StartDriver();
-            //TODO: send start service
-
         }
 
         private void driverMessageEventHandler(object sender, DriverMessageEventArgs e)
