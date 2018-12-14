@@ -148,13 +148,13 @@ namespace Amdocs.Ginger.Repository
         //        }
 
        
-        public System.Diagnostics.Process StartService(string PluginId)
+        public System.Diagnostics.Process StartService(string pluginId, string serviceID)
         {
-            if (string.IsNullOrEmpty(PluginId))
+            if (string.IsNullOrEmpty(pluginId))
             {
-                throw new ArgumentNullException(nameof(PluginId));
+                throw new ArgumentNullException(nameof(pluginId));
             }
-            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == PluginId select x).SingleOrDefault();
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
 
             // TODO: only once !!!!!!!!!!!!!!!!!!!!!!!!! temp             
             pluginPackage.LoadServicesFromJSON();
@@ -162,16 +162,16 @@ namespace Amdocs.Ginger.Repository
 
             if (pluginPackage == null)
             {                
-                throw new Exception("PluginPackage not found in solution PluginId=" + PluginId);
+                throw new Exception("PluginPackage not found in solution PluginId=" + pluginId);
             }
             if (string.IsNullOrEmpty(pluginPackage.StartupDLL))
             {
-                throw new Exception("StartupDLL is missing in the Ginger.PluginPackage.json for: " + PluginId);
+                throw new Exception("StartupDLL is missing in the Ginger.PluginPackage.json for: " + pluginId);
             }
 
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
 
-            string nodeFileName = NodeConfigFile.CreateNodeConfigFile(PluginId + "1");  // TODO: check if 1 exist then try 2,3 in case more than one same id service start
+            string nodeFileName = NodeConfigFile.CreateNodeConfigFile(pluginId + "1", serviceID);  // TODO: check if 1 exist then try 2,3 in case more than one same id service start
             string cmd = "dotnet \"" + dll + "\" \"" + nodeFileName + "\"";
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);            
             procStartInfo.UseShellExecute = true;
