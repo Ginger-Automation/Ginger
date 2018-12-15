@@ -36,9 +36,9 @@ namespace Amdocs.Ginger.Repository
         SolutionRepository mSolutionRepository;
 
 
-        List<PluginProcessWrapper> mProcesses = new List<PluginProcessWrapper>();
+        ObservableList<PluginProcessWrapper> mProcesses = new ObservableList<PluginProcessWrapper>();
 
-        public List<PluginProcessWrapper> PluginProcesses
+        public ObservableList<PluginProcessWrapper> PluginProcesses
         {
             get
             {
