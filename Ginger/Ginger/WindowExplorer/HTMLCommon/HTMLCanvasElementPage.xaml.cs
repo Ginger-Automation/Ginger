@@ -78,9 +78,9 @@ namespace Ginger.WindowExplorer.HTMLCommon
             else
             {
                 XOffset.Text = x;
-                YOffset.Text = y;              
-                ElementInfo.AddOrUpdateInputParamValue("XCoordinate", x);
-                ElementInfo.AddOrUpdateInputParamValue("YCoordinate", y);                            
+                YOffset.Text = y;                              
+                Amdocs.Ginger.Common.GeneralLib.General.AddOrUpdateInputParamValue("XCoordinate", x, ElementInfo.actInputValue);
+                Amdocs.Ginger.Common.GeneralLib.General.AddOrUpdateInputParamValue("YCoordinate", y, ElementInfo.actInputValue);
             }
             //TODO list actions
         }
