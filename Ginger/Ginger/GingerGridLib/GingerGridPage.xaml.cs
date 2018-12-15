@@ -154,8 +154,7 @@ namespace Ginger.GingerGridLib
         }
 
         private void xPingButton_Click(object sender, RoutedEventArgs e)
-        {
-            //TODO: make me work to ping each node
+        {            
             foreach  (GingerNodeInfo GNI in  mGingerGrid.NodeList)
             {
                 GingerNodeProxy GNA = new GingerNodeProxy(GNI);
@@ -165,6 +164,9 @@ namespace Ginger.GingerGridLib
                 GNI.Ping = rc;
                 GNA.Disconnect();
             }
+            ShowProcesses();
+
+
         }
 
         private void xClearButton_Click(object sender, RoutedEventArgs e)

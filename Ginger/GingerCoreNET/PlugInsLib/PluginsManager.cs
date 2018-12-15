@@ -36,9 +36,9 @@ namespace Amdocs.Ginger.Repository
         SolutionRepository mSolutionRepository;
 
 
-        List<System.Diagnostics.Process> mProcesses = new List<System.Diagnostics.Process>();
+        List<PluginProcessWrapper> mProcesses = new List<PluginProcessWrapper>();
 
-        public List<System.Diagnostics.Process> PluginProcesses
+        public List<PluginProcessWrapper> PluginProcesses
         {
             get
             {
@@ -182,7 +182,7 @@ namespace Amdocs.Ginger.Repository
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
             proc.Start();
-            mProcesses.Add(proc);
+            mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
             return proc;
             //TODO: delete the temp file - or create temp files tracker with auto delete 
         }
@@ -190,16 +190,9 @@ namespace Amdocs.Ginger.Repository
 
         public void CloseAllRunningPluginProcesses()
         {
-            foreach (System.Diagnostics.Process process in mProcesses)
-            {                
-                try
-                {
-                    process.CloseMainWindow();
-                }
-                catch(Exception ex)
-                {
-                    // do nothing
-                }
+            foreach (PluginProcessWrapper process in mProcesses)
+            {
+                process.Close();                
             }
             mProcesses.Clear();
         }
@@ -231,20 +224,11 @@ namespace Amdocs.Ginger.Repository
             return list;
         }
 
-        //public bool IsRunOnPluginDriver(string pluginId, string serviceId)
-        //{
-        //    // FIXME!!
-
-        //    // PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginID == pluginId select x).SingleOrDefault();
-        //    // PluginService pluginService = pluginPackage.GetService(serviceId);
-        //    return true; // temp!!!!!!!!!!!!!!!
-        //}
+        
 
         public bool IsSessionService(string pluginId, string serviceId)
         {
             // TODO: Cache
-
-
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             pluginPackage.LoadServicesFromJSON();
             PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
