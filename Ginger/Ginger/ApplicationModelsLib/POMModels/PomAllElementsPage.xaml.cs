@@ -144,7 +144,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
         }
 
 
-        public static System.Windows.Threading.DispatcherTimer mDispatcherTimer = null;
+        static System.Windows.Threading.DispatcherTimer mDispatcherTimer = null;
+
+        public void StopSpy()
+        {
+            if (mDispatcherTimer != null)
+            {
+                mDispatcherTimer.IsEnabled = false;
+            }
+        }
 
         private void LiveSpyHandler(object sender, RoutedEventArgs e)
         {

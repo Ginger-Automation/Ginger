@@ -39,7 +39,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     {
         AddPOMWizard mWizard;
         ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();                      
-        PomAllElementsPage mPomAllElementsPage = null;
+        //PomAllElementsPage mPomAllElementsPage = null;
         List<eElementType> mSelectedElementTypesList = new List<eElementType>();
         
         public POMObjectsMappingWizardPage()
@@ -61,20 +61,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     break;
 
                 case EventType.Active:
-                    if (mPomAllElementsPage.mAgent == null)
+                    if (mWizard.mPomAllElementsPage.mAgent == null)
                     {
-                        mPomAllElementsPage.SetAgent(mWizard.Agent);
+                        mWizard.mPomAllElementsPage.SetAgent(mWizard.Agent);
                     }
 
                     if (mWizard.ManualElementConfiguration)
                     {
                         xReLearnButton.Visibility = Visibility.Hidden;
-                        mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
+                        mWizard.mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
                     }
                     else
                     {
-                        mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
-                        mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
+                        mWizard.mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Clear();
+                        mWizard.mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
 
                         xReLearnButton.Visibility = Visibility.Visible;
 
@@ -85,7 +85,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                 case EventType.LeavingForNextPage:
                 case EventType.Finish:
-                    mPomAllElementsPage.FinishEditInAllGrids();
+                    mWizard.mPomAllElementsPage.FinishEditInAllGrids();
                     break;
             }
         }
@@ -153,12 +153,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         
         private void InitilizePomElementsMappingPage()
         {
-            if (mPomAllElementsPage == null)
+            if (mWizard.mPomAllElementsPage == null)
             {
-                mPomAllElementsPage = new PomAllElementsPage(mWizard.POM);
-                mPomAllElementsPage.ShowTestAllElementsButton = Visibility.Collapsed;
-                mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
-                xPomElementsMappingPageFrame.Content = mPomAllElementsPage;
+                mWizard.mPomAllElementsPage = new PomAllElementsPage(mWizard.POM);
+                mWizard.mPomAllElementsPage.ShowTestAllElementsButton = Visibility.Collapsed;
+                mWizard.mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
+                xPomElementsMappingPageFrame.Content = mWizard.mPomAllElementsPage;
             }
         }
 

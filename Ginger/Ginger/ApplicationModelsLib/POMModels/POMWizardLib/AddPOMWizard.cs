@@ -39,6 +39,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     {
         RepositoryFolder<ApplicationPOMModel> mPomModelsFolder;
         public ApplicationPOMModel POM;
+        public PomAllElementsPage mPomAllElementsPage;
         public string POMFolder;
         public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
         public ObservableList<Agent> OptionalAgentsList = null;
@@ -92,9 +93,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override void Finish()
         {
-            if (PomAllElementsPage.mDispatcherTimer != null)
+            if (mPomAllElementsPage != null)
             {
-                PomAllElementsPage.mDispatcherTimer.IsEnabled = false;
+                mPomAllElementsPage.StopSpy();
             }
             if (ScreenShot != null)
             {
@@ -118,10 +119,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 mAgent.Driver.mStopProcess = true;
             }
-            if (PomAllElementsPage.mDispatcherTimer != null)
+            if (mPomAllElementsPage != null)
             {
-                PomAllElementsPage.mDispatcherTimer.IsEnabled = false;
+                mPomAllElementsPage.StopSpy();
             }
+
             //close all Agents raised in Wizard
             CloseStartedAgents();
             base.Cancel();
