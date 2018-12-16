@@ -352,6 +352,7 @@
     <Content Include="TestResources\HTML\JSPayLoad.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\HTML\POMTestingPage.html" />
     <Content Include="TestResources\HTML\SCMCusotmersIndex.HTML">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

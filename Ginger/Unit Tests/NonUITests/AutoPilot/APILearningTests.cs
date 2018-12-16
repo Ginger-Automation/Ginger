@@ -65,6 +65,7 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(String.IsNullOrEmpty(AAMSList[0].RequestBody), false, "Is body not empty equal");
             Assert.AreEqual(AAMSList[0].AppModelParameters.Count, 2, "are parameters are equal");
             Assert.AreEqual(AAMSList[0].AppModelParameters[0].PlaceHolder, "{STOCKSYMBOL}", "Is parameter name equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[1].PlaceHolder, "{LICENSEKEY}", "Is parameter name equal");
         }
 
         private async void Learn(ObservableList<ApplicationAPIModel> AAMSList, WSDLParser wsdlParser)
@@ -94,7 +95,9 @@ namespace UnitTests.NonUITests.AutoPilot
             //Assert
             Assert.AreEqual(createPaymentProfileModels.Count, 1, "APIModels count");
             Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters.Count, 1, "AppModelParameters count");
+            Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[0].PlaceHolder, "{BLZ}", "PlaceHolder name check");
             Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[0].OptionalValuesList.Count, 1, "AppModelParameters count");
+            Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[0].OptionalValuesList[0].Value, "46451012", "OptionalValue check");
         }
 
         [TestMethod]
@@ -118,7 +121,10 @@ namespace UnitTests.NonUITests.AutoPilot
             //Assert
             Assert.AreEqual(createPaymentProfileModels.Count, 1, "APIModels count");
             Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters.Count, 2, "AppModelParameters count");
+            Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[0].PlaceHolder, "<USER>", "PlaceHolder name check");
+            Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[1].PlaceHolder, "<PASSWORD>", "PlaceHolder name check");
             Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[0].OptionalValuesList.Count, 1, "AppModelParameters count");
+            Assert.AreEqual(createPaymentProfileModels[0].AppModelParameters[0].OptionalValuesList[0].Value, "restOwner", "OptionalValue check");
         }
 
         [TestMethod]
@@ -138,7 +144,13 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(AAMSList[0].EndpointURL, "https://petstore.swagger.io/v2/pet", "Is EndpointURL equal");
             Assert.AreEqual(String.IsNullOrEmpty(AAMSList[0].RequestBody), false, "Is body not empty equal");
             Assert.AreEqual(AAMSList[0].AppModelParameters.Count, 7, "are parameters are equal");
-            Assert.AreEqual(AAMSList[0].AppModelParameters[0].PlaceHolder, "<ID>", "Is parameter name equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[0].PlaceHolder, "<ID>", "are parameters are equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[1].PlaceHolder, "<CATEGORY>", "are parameters are equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[2].PlaceHolder, "<NAME>", "are parameters are equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[3].PlaceHolder, "<PHOTOURLS[0]>", "are parameters are equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[4].PlaceHolder, "<ID1>", "Is parameter name equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[5].PlaceHolder, "<NAME1>", "Is parameter name equal");
+            Assert.AreEqual(AAMSList[0].AppModelParameters[6].PlaceHolder, "<STATUS>", "Is parameter name equal");
         }
     }
 }

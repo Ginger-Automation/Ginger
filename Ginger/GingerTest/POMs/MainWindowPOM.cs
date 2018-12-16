@@ -29,6 +29,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Controls.Ribbon;
+using System.Linq;
 
 namespace GingerWPFUnitTest.POMs
 {
@@ -38,6 +39,7 @@ namespace GingerWPFUnitTest.POMs
         Ginger.MainWindow mMainWindow;
         public EnvironmentsPOM Environments;
         public AgentsPOM Agents;
+        public POMsPOM POMs;
         public GlobalVariablesPOM GlobalVariables;
 
         public MainWindowPOM(Ginger.MainWindow mainWin)
@@ -259,7 +261,8 @@ namespace GingerWPFUnitTest.POMs
                 Frame f = (Frame)mMainWindow .FindName("xMainWindowFrame");
                 TwoLevelMenuPage p = (TwoLevelMenuPage)f.Content;
                 
-                ListView lvi =  (ListView)FindElementByAutomationID<ListViewItem>(p, "Agents AID");
+                //ListView lvi =  (ListView)FindElementByAutomationID<ListViewItem>(p, "Agents AID");
+
                 TwoLevelMenuPage configurationsPage = (TwoLevelMenuPage)f.Content;
 
                 ListView lv = (ListView)configurationsPage.FindName("xMainNavigationListView");
@@ -284,6 +287,52 @@ namespace GingerWPFUnitTest.POMs
             if (Agents == null) throw new Exception("Cannot goto Agents");
 
             return Agents;
+
+        }
+
+        internal POMsPOM GotoPOMs()
+        {
+            Agents = null;
+            Execute(() =>
+            {
+                ClickResourcesRibbon();
+                Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                TwoLevelMenuPage p = (TwoLevelMenuPage)f.Content;
+
+                TwoLevelMenuPage resourcesPage = (TwoLevelMenuPage)f.Content;
+
+                ListView lv = (ListView)resourcesPage.FindName("xMainNavigationListView");
+
+                foreach (TopMenuItem topMenuItem in lv.Items)
+                {
+                    if (topMenuItem.AutomationID == "Application Models AID")
+                    {
+                        lv.SelectedItem = topMenuItem;
+                        ListView lvi = (ListView)resourcesPage.FindName("xSubNavigationListView");
+                        foreach (SubMenuItem subMenuItem in lvi.Items)
+                        {
+                            if (subMenuItem.AutomationID == "POM Menu AID")
+                            {
+                                lvi.SelectedItem = subMenuItem;
+                            }
+
+                        }
+                        SleepWithDoEvents(100);
+                        Frame f1 = (Frame)FindElementByName(resourcesPage, "xSelectedItemFrame");
+                        SingleItemTreeViewExplorerPage itemExplorerPage = (SingleItemTreeViewExplorerPage)f1.Content;
+                        while (!itemExplorerPage.IsVisible)
+                        {
+                            SleepWithDoEvents(100);
+                        }
+                        POMs = new POMsPOM(itemExplorerPage);
+                        break;
+                    }
+                }
+            });
+
+            if (POMs == null) throw new Exception("Cannot goto POMs");
+
+            return POMs;
 
         }
 

@@ -16,6 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.UserControls;
+using Ginger.Agents;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,6 +51,8 @@ namespace GingerWPFUnitTest.POMs
             });
         }
 
+
+
         /// <summary>
         /// Get TextBlock text value
         /// </summary>
@@ -73,6 +78,54 @@ namespace GingerWPFUnitTest.POMs
         {
             Execute(() => {                
                 ((ComboBox)dependencyObject).SelectedValue = obj;
+            });
+        }
+
+        public void SelectValueUCAgentControl(int obj)
+        {
+            Execute(() => {
+                ((ComboBox)((ucAgentControl)dependencyObject).FindName("xAgentsComboBox")).SelectedIndex = obj;
+            });
+        }
+
+
+        public void SelectValueUCAgentControl(Agent agent)
+        {
+            Execute(() => {
+                ((ComboBox)((ucAgentControl)dependencyObject).FindName("xAgentsComboBox")).SelectedValue = agent;
+            });
+        }
+
+
+
+
+        public void UCAgentControlStatusButtonClick()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Execute(() =>
+                    {
+                        ((ucButton)((ucAgentControl)dependencyObject).FindName("xAgentStatusBtn")).DoClick();
+                    });
+                });
+            });
+
+
+            //Execute(() => {
+            //    ((ucButton)((ucAgentControl)dependencyObject).FindName("xAgentStatusBtn")).DoClick();
+            //});
+        }
+
+        /// <summary>
+        /// Set the selected item of combo box 
+        /// </summary>
+        /// <param name="obj"></param>
+        public void SelectedIndex(int index)
+        {
+            Execute(() => {
+                ((ComboBox)dependencyObject).SelectedIndex = index;
             });
         }
 
