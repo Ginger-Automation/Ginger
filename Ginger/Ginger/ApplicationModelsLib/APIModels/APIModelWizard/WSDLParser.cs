@@ -1993,7 +1993,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             if (directory != containigFolder)
             {
                 int ContainingFolderLeanth = containigFolder.Length;
-                if (ContainingFolderLeanth < directory.Length)
+                if (ContainingFolderLeanth < directory.Length && !directory.StartsWith("http"))
                     relativeDirectories = directory.Substring(ContainingFolderLeanth).TrimStart('\\');
             }
             GetAllURLsFFromSchemaItems(Items, relativeDirectories, containigFolder);
