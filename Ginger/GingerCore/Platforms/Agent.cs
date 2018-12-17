@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
@@ -36,10 +37,12 @@ using GingerCore.Drivers.PBDriver;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
+using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -57,6 +60,20 @@ namespace GingerCore
     public class Agent : RepositoryItemBase
     {
         
+        public enum eAgentType
+        {
+            Driver,  // old legacy drivers - default
+            Service // new Plugin Service driver with session
+        }
+
+        [IsSerializedForLocalRepository]
+        public eAgentType AgentType { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public string PluginId { get; set; }   // only for AgentType plugin
+
+        [IsSerializedForLocalRepository]
+        public string ServiceId { get; set; }   // only for AgentType plugin
 
         public enum eDriverType
         {
@@ -135,7 +152,7 @@ namespace GingerCore
             //Android
             [Description("Android ADB")]
             AndroidADB,
-            NA
+            NA    
         }
 
         public enum eStatus
@@ -247,10 +264,23 @@ namespace GingerCore
         public eStatus Status
         {
             get
-            {
+            {                
                 if (IsFailedToStart) return eStatus.FailedToStart;
 
                 if (mIsStarting) return eStatus.Starting;
+
+                if (AgentType == eAgentType.Service)
+                {
+                    if (mGingerNodeInfo != null)
+                    {
+                        return eStatus.Running;
+                    }
+                    else
+                    {
+                        return eStatus.NotStarted;
+                    }
+                }
+                
 
                 if (Driver == null) return eStatus.NotStarted;
                 //TODO: fixme  running called too many - and get stuck
@@ -433,9 +463,8 @@ namespace GingerCore
                                     //TODO: Load create sample folder/device, or start the wizard
                                     throw new Exception("Please set device config folder");
                                 }
-                                break;
-
-                                //TODO: default mess
+                                break;                            
+                            //TODO: default mess
                         }
                     }
                 }
@@ -443,35 +472,93 @@ namespace GingerCore
                 {                    
                     Reporter.ToUser(eUserMsgKeys.FailedToConnectAgent, Name, e.Message);
                 }
-                Driver.BusinessFlow = this.BusinessFlow;            
-                SetDriverConfiguration();
 
-                //if STA we need to start it on seperate thread, so UI/Window can be refreshed: Like IB, Mobile, Unix
-                if (Driver.IsSTAThread())
-                {
-                    CTS = new CancellationTokenSource();
-
-                    MSTATask = new Task(() => { Driver.StartDriver(); }, CTS.Token, TaskCreationOptions.LongRunning);                  
-                    MSTATask.Start();                   
+                if (AgentType == eAgentType.Service)
+                {                    
+                    StartPluginService();
+                    OnPropertyChanged(Fields.Status);
                 }
                 else
-                {
-                    Driver.StartDriver();
+                {                   
+                    Driver.BusinessFlow = this.BusinessFlow;
+                    SetDriverConfiguration();
+
+                    //if STA we need to start it on seperate thread, so UI/Window can be refreshed: Like IB, Mobile, Unix
+                    if (Driver.IsSTAThread())
+                    {
+                        CTS = new CancellationTokenSource();
+
+                        MSTATask = new Task(() => { Driver.StartDriver(); }, CTS.Token, TaskCreationOptions.LongRunning);
+                        MSTATask.Start();
+                    }
+                    else
+                    {
+                        Driver.StartDriver();
+                    }
                 }
             }
             finally
             {
-                // Give the driver time to start            
-                Thread.Sleep(500);
-                mIsStarting = false;
-                Driver.IsDriverRunning = true;
-                OnPropertyChanged(Fields.Status);
-                Driver.driverMessageEventHandler += driverMessageEventHandler;
-                OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
+                if (AgentType == eAgentType.Service)
+                {
+                    mIsStarting = false;                    
+                }
+                else
+                {
+                    // Give the driver time to start            
+                    Thread.Sleep(500);
+                    mIsStarting = false;
+                    Driver.IsDriverRunning = true;
+                    OnPropertyChanged(Fields.Status);
+                    Driver.driverMessageEventHandler += driverMessageEventHandler;
+                    OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
+                }
             }
         }
 
-        
+
+        System.Diagnostics.Process mProcess;
+        private void StartPluginService()
+        {
+
+            /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< MyDriver
+            // Find the first service which match
+            mGingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == "SeleniumChromeDriver" select x).FirstOrDefault();  // Keep First!!!
+
+            // Service not found start new one
+            // Add plugin config start if not exist and more depeneds on the config 
+            if (mGingerNodeInfo == null)
+            {
+                // Dup with GR consolidate with timeout
+                mProcess = WorkSpace.Instance.PlugInsManager.StartService(PluginId);    
+            }
+
+            Stopwatch st = Stopwatch.StartNew();
+            while (mGingerNodeInfo == null && st.ElapsedMilliseconds < 30000) // max 30 seconds to wait
+            {
+
+                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+                mGingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == "SeleniumChromeDriver" select x).FirstOrDefault();  // Keep First!!!
+                if (mGingerNodeInfo != null) break;
+                Thread.Sleep(100);
+            }
+
+            if (mGingerNodeInfo == null)
+            {
+                throw new Exception("Plugin not started " + PluginId);
+            }
+
+
+            mGingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
+            // TODO: add by which agent to GNI
+
+            // Keep GNP on agent
+            GingerNodeProxy GNP = new GingerNodeProxy(mGingerNodeInfo);
+            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
+            GNP.StartDriver();
+        }
+
         private void driverMessageEventHandler(object sender, DriverMessageEventArgs e)
         {
             if (e.DriverMessageType == DriverBase.eDriverMessageType.DriverStatusChanged)
@@ -644,22 +731,37 @@ namespace GingerCore
                 DriverConfiguration.Add(DCP);
             }
         }
-        
+       
+        // keep GingerNodeProxy here
+
+        // We keep the GingerNodeInfo for Plugin driver
+        private GingerNodeInfo mGingerNodeInfo;
+        public GingerNodeInfo GingerNodeInfo
+        {
+            get
+            {
+                return mGingerNodeInfo;
+            }
+            set { mGingerNodeInfo = value;
+            }
+        }
+
+
         public void RunAction(Act act)
         {          
             try
-            {
-                if (Driver.IsSTAThread())
-                {
-                    Driver.Dispatcher.Invoke(() =>
+            {              
+                    if (Driver.IsSTAThread())
+                    {
+                        Driver.Dispatcher.Invoke(() =>
+                        {
+                            Driver.RunAction(act);
+                        });
+                    }
+                    else
                     {
                         Driver.RunAction(act);
-                    });
-                }
-                else
-                {
-                    Driver.RunAction(act);
-                }        
+                    }              
             }
             catch (Exception ex)
             {
@@ -677,10 +779,28 @@ namespace GingerCore
         {
             try
             {
-                if (Driver == null)
+                if (AgentType == eAgentType.Service)
                 {
-                    return;
+                    if (mGingerNodeInfo != null)
+                    {
+                        // this is plugin driver
+                        GingerNodeProxy GNP = new GingerNodeProxy(mGingerNodeInfo);
+                        GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
+                        GNP.CloseDriver();
+                        if (mProcess != null)
+                        {
+                            // mProcess.Kill();
+                            //mProcess.Close();
+                            //GingerCore.General.DoEvents();
+                            mProcess.CloseMainWindow();
+                        }
+                        mGingerNodeInfo = null;
+                        // GNP.Shutdown();
+                        return;
+                    }
                 }
+                if (Driver == null) return;
+
                 Driver.IsDriverRunning = false;                
                 if (Driver.Dispatcher != null)
                 {
@@ -746,7 +866,14 @@ namespace GingerCore
         { 
             get 
             {
-                return GetDriverPlatformType(DriverType);
+                if (AgentType == eAgentType.Service)
+                {
+                    return ePlatformType.NA;
+                }
+                else
+                {
+                    return GetDriverPlatformType(DriverType);
+                }                
             } 
         }
 
@@ -800,7 +927,7 @@ namespace GingerCore
                 case eDriverType.MainFrame3270:
                     return ePlatformType.MainFrame;
                 case eDriverType.AndroidADB:
-                    return ePlatformType.AndroidDevice;
+                    return ePlatformType.AndroidDevice;               
                 default:
                     return ePlatformType.NA;
             }                
@@ -874,7 +1001,7 @@ namespace GingerCore
             else if (platformType == ePlatformType.MainFrame.ToString())
             {
                 driverTypes.Add(Agent.eDriverType.MainFrame3270);
-            }
+            }           
             else
             {
                 driverTypes.Add(Agent.eDriverType.NA);

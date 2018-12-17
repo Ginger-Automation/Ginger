@@ -42,7 +42,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 mErrors += Environment.NewLine;
             }
 
-            mErrors += error; 
+            mErrors += error;
+
+            Log(error, LogLevel.Error);
         }
 
         public void AddExInfo(string info)
@@ -67,6 +69,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 Output.Add(param, value.ToString(), path);
             }            
         }
-        
+
+        public void Log(string text, LogLevel logLevel = LogLevel.Info)
+        {
+            switch (logLevel)
+            {
+                case LogLevel.Info:
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    break;
+                case LogLevel.Debug:
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    break;
+                case LogLevel.Error:
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    break;
+            }
+
+            Console.WriteLine(DateTime.Now + ": " + logLevel + " " + text);
+        }
+
     }
 }

@@ -71,11 +71,7 @@ namespace Ginger.ActionLib
                 l.Style = App.GetStyle("@InputFieldLabelStyle");                
                 Grid.SetRow(l, rnum);
 
-
-                //TODO: based on the param type create textbox, check box, combo, etc...
-
-                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl();  
-                actionInputValueUserControl.BindControl(param);                
+                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(param);             
                 actionInputValueUserControl.Margin = new Thickness(5);
                 ActionConfigGrid.Children.Add(actionInputValueUserControl);
                 Grid.SetRow(actionInputValueUserControl, rnum);
