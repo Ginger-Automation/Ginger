@@ -199,7 +199,7 @@ namespace GingerCore.Variables
         //used to identify the variables which the user customized for specific BF run
         private bool mDiffrentFromOrigin;
         [IsSerializedForLocalRepository]
-        public bool DifferentFromOrigin
+        public bool DiffrentFromOrigin
         {
             get
             {
@@ -210,7 +210,7 @@ namespace GingerCore.Variables
                 }
                 return mDiffrentFromOrigin;
             }
-            set { mDiffrentFromOrigin = value; OnPropertyChanged(nameof(DifferentFromOrigin)); } }
+            set { mDiffrentFromOrigin = value; OnPropertyChanged(nameof(DiffrentFromOrigin)); } }
 
         public string NameBeforeEdit;
 
@@ -511,7 +511,7 @@ namespace GingerCore.Variables
             {                
                 if (String.IsNullOrEmpty(value) == false)
                 {
-                    DifferentFromOrigin = true;
+                    DiffrentFromOrigin = true;
                     mMappedOutputType = eOutputType.Variable;
                     mMappedOutputValue = value;
                     OnPropertyChanged(nameof(MappedOutputType));
@@ -545,9 +545,9 @@ namespace GingerCore.Variables
             {
                 mMappedOutputValue = value;
                 if (String.IsNullOrEmpty(value) == false || VarValChanged == true)                
-                    DifferentFromOrigin = true;
+                    DiffrentFromOrigin = true;
                 else
-                    DifferentFromOrigin = false;
+                    DiffrentFromOrigin = false;
                 OnPropertyChanged(nameof(MappedOutputValue));
             }
         }

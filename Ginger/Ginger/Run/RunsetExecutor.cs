@@ -179,12 +179,12 @@ namespace Ginger.Run
                             if (runVar != null)
                             {
                                 RepositoryItemBase.ObjectsDeepCopy(runVar, varb);
-                                varb.DifferentFromOrigin = runVar.DifferentFromOrigin;
+                                varb.DiffrentFromOrigin = runVar.DiffrentFromOrigin;
                                 varb.MappedOutputVariable = runVar.MappedOutputVariable;
                             }
                             else
                             {
-                                varb.DifferentFromOrigin = false;
+                                varb.DiffrentFromOrigin = false;
                                 varb.MappedOutputVariable = null;
                             }
                         }

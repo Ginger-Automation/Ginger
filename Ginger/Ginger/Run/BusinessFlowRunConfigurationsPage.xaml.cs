@@ -123,7 +123,7 @@ namespace Ginger.Run
                 view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 40});
             }
                 
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.DifferentFromOrigin), Header = "Different From Origin", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.DiffrentFromOrigin), Header = "Different From Origin", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
             grdVariables.SetAllColumnsDefaultView(view);
             grdVariables.InitViewItems();
 
@@ -212,7 +212,7 @@ namespace Ginger.Run
                                     if (copiedVar.Formula != originalFormula || copiedVar.Value != originalValue) //variable was changed
                                     {
                                         copiedVar.VarValChanged = true;
-                                        copiedVar.DifferentFromOrigin = true;
+                                        copiedVar.DiffrentFromOrigin = true;
                                     }
                                 }
                             }
@@ -285,7 +285,7 @@ namespace Ginger.Run
             if (varToEdit.Formula != originalFormula || varToEdit.Value != originalValue)//variable was changed
             {
                 varToEdit.VarValChanged = true;
-                varToEdit.DifferentFromOrigin = true;
+                varToEdit.DiffrentFromOrigin = true;
             }
             UpdateEditVariablesTabVisual();
         }
@@ -349,7 +349,7 @@ namespace Ginger.Run
         private void SetAutoDescription()
         {
             string autoDesc = string.Empty;
-            List<VariableBase> bfVariables = (mBusinessFlow.GetBFandActivitiesVariabeles(true)).Where(var => var.GetType() == typeof(VariableSelectionList) || var.DifferentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputVariable)==false || string.IsNullOrEmpty(var.MappedOutputValue) == false).ToList(); ;
+            List<VariableBase> bfVariables = (mBusinessFlow.GetBFandActivitiesVariabeles(true)).Where(var => var.GetType() == typeof(VariableSelectionList) || var.DiffrentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputVariable)==false || string.IsNullOrEmpty(var.MappedOutputValue) == false).ToList(); ;
             if (bfVariables != null && bfVariables.Count > 0)
             {
                 autoDesc = "Running Configurations: ";
@@ -433,7 +433,7 @@ namespace Ginger.Run
         {
             int count = 0;
             foreach (VariableBase var in mBusinessFlow.GetBFandActivitiesVariabeles(true,true))
-                if (var.DifferentFromOrigin == true)
+                if (var.DiffrentFromOrigin == true)
                     count++;
 
             if (count > 0)
