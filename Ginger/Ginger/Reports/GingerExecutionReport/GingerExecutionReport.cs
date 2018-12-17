@@ -1945,6 +1945,11 @@ namespace Ginger.Reports.GingerExecutionReport
 
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.ActivityFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
             {
+                if (((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue((ActivityReport)ActivityReport) == null)
+                {
+                    fieldsValuesHTMLTableCells.Append("<td> N/A </td>");
+                    continue;
+                }
                 fieldsNamesHTMLTableCells.Append("<td>" + selectedField.FieldName + "</td>");
 
                 if (selectedField.FieldKey == ActivityReport.Fields.RunStatus)
