@@ -72,10 +72,10 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <Image Source="{StaticResource  @GeneralAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="Service Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock Text="Services" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="PlugInsActionsGrid" Title="PlugIn Actions" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
+                <Ginger:ucGrid x:Name="xServicesGrid" Title="Services" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
             </TabItem>
             <TabItem x:Name="TextEditorTab" Margin="2,0,-6,0">
                 <TabItem.Header>

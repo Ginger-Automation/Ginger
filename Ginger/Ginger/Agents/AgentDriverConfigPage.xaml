@@ -14,12 +14,12 @@
         <TabControl>
             <TabItem Header="Standard">
                 <DockPanel >
-                    <ginger:ucGrid x:Name="DriverConfigurationGrid" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Title="Driver Configurations" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
+                    <ginger:ucGrid x:Name="DriverConfigurationGrid" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Title="Configurations" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
                     <Frame x:Name="DriverConfigurationFrame"  DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"></Frame>
                 </DockPanel>
             </TabItem>
             <TabItem Header="Advanced" Name="AdvancedConfigurationTab" Visibility="Hidden">
-                <ginger:ucGrid x:Name="AdvancedConfigurationGrid" Title="Advanced Driver Configurations"/>
+                <ginger:ucGrid x:Name="AdvancedConfigurationGrid" Title="Advanced Configurations"/>
             </TabItem>
         </TabControl>
 
