@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
@@ -212,7 +211,7 @@ namespace Amdocs.Ginger.Repository
             // raw url to get the file content            
             string url = "https://raw.githubusercontent.com/Ginger-Automation/Ginger-Plugins-Index/master/PluginsList.json";
             ObservableList < OnlinePluginPackage > list = GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);
-            ObservableList<PluginPackage> installedPlugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            ObservableList<PluginPackage> installedPlugins = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
             foreach (OnlinePluginPackage onlinePluginPackage in list)
             {                
                 PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Id select x).SingleOrDefault();
