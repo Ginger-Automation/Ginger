@@ -59,7 +59,7 @@ namespace GingerCore.ALM
 
         public override bool DisconnectALMProjectStayLoggedIn()
         {
-            throw new NotImplementedException();
+            return JiraConnect.Instance.DisconnectALMProjectStayLoggedIn();
         }
 
         public override void DisconnectALMServer()

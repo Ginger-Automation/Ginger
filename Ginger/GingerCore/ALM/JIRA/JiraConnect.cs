@@ -41,7 +41,7 @@ namespace GingerCore.ALM.JIRA
         bool connectedToServer;
         bool connectedToProject;
         IProjectDefinitions connectedProjectDefenition;
-        List<ProjectArea> JiraProjectsDataList;
+        AlmDomainColl JiraProjectsDataList;
 
         private JiraConnect()
         {
@@ -56,16 +56,16 @@ namespace GingerCore.ALM.JIRA
         {
             GetJiraDomainProjects();
 
-            IProjectDefinitions selectedProj = JiraProjectsDataList.Where(x => x.ProjectName.Equals(ALMCore.AlmConfig.ALMProjectName) == true).FirstOrDefault();
-            if (selectedProj != null)
-            {
-                //Save selected project details
-                connectedProjectDefenition = selectedProj;
-                ALMCore.AlmConfig.ALMProjectName = selectedProj.ProjectName;
-                JiraCore.ALMProjectGuid = selectedProj.Guid;
-                JiraCore.ALMProjectGroupName = selectedProj.Prefix;
-                return true;
-            }
+            //IProjectDefinitions selectedProj = JiraProjectsDataList.Where(x => x.ProjectName.Equals(ALMCore.AlmConfig.ALMProjectName) == true).FirstOrDefault();
+            //if (selectedProj != null)
+            //{
+            //    //Save selected project details
+            //    connectedProjectDefenition = selectedProj;
+            //    ALMCore.AlmConfig.ALMProjectName = selectedProj.ProjectName;
+            //    JiraCore.ALMProjectGuid = selectedProj.Guid;
+            //    JiraCore.ALMProjectGroupName = selectedProj.Prefix;
+            //    return true;
+            //}
             return false;
         }
 
@@ -120,13 +120,13 @@ namespace GingerCore.ALM.JIRA
         internal List<string> GetJiraDomainProjects()
         {
             LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
-            ALM_Common.DataContracts.AlmResponseWithData<List<ProjectArea>> jiraProjectsData = JiraRep.GetLoginProjects(loginData.User, loginData.Password,loginData.Server);
+            ALM_Common.DataContracts.AlmResponseWithData<AlmDomainColl> jiraProjectsData = JiraRep.GetLoginProjects(loginData.User, loginData.Password,loginData.Server);
             JiraProjectsDataList = jiraProjectsData.DataResult;
 
             List<string> JiraProjects = new List<string>();
             foreach (var proj in JiraProjectsDataList)
             {
-                JiraProjects.Add(proj.ProjectName);
+                //JiraProjects.Add(proj.ProjectName);
             }
 
             return JiraProjects;

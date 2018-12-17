@@ -46,46 +46,40 @@ namespace GingerCore.ALM.JIRA
         internal static ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
-            JiraRepository.JiraRepository jiraRep = new JiraRepository.JiraRepository();
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
-            AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList;
-            testCaseFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMProjectName, ALM_Common.DataContracts.ResourceType.TEST_CASE);
-                
-            //Get Test Case fields
-            foreach (var field in testCaseFieldsList.DataResult)
+            try
             {
-                if (string.IsNullOrEmpty(field.name)) continue;
+                JiraRepository.JiraRepository jiraRep = new JiraRepository.JiraRepository();
+                LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+                AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList;
+                testCaseFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.AlmConfig.ALMProjectName, ALM_Common.DataContracts.ResourceType.TEST_CASE);
 
-                ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
-                itemfield.ID = field.name;
-                itemfield.Name = field.name;
-                itemfield.Mandatory = field.required;
-                if (itemfield.Mandatory)
-                    itemfield.ToUpdate = true;
-                //itemfield.ItemType = eQCItemType.TestCase.ToString();
-
-                if (field.allowedValues != null) // field.List.RootNode.Children.Count > 0
+                //Get Test Case fields
+                foreach (var field in testCaseFieldsList.DataResult)
                 {
-                    //CustomizationListNode lnode = field.allowedValues;
-                    //List cNodes = lnode.Children;
-                    //foreach (CustomizationListNode ccNode in cNodes)
-                    //{
-                    //    //adds list of valid selections of Field
-                    //    itemfield.PossibleValues.Add(ccNode.Name);
-                    //}
+                    if (string.IsNullOrEmpty(field.name)) continue;
+
+                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
+                    itemfield.ID = field.name;
+                    itemfield.Name = field.name;
+                    itemfield.Mandatory = field.required;
+                    if (itemfield.Mandatory)
+                        itemfield.ToUpdate = true;
+                    itemfield.ItemType = ResourceType.TEST_CASE.ToString();
+
+                    if (field.allowedValues.Count > 0)
+                    {
+                        itemfield.SelectedValue = field.allowedValues[0].name;
+                    }
+                    else
+                    {
+                        itemfield.SelectedValue = "Unassigned";
+                    }
+                    fields.Add(itemfield);
                 }
-
-                //if (itemfield.PossibleValues.Count > 0)
-                //    itemfield.SelectedValue = itemfield.PossibleValues[0];
-                //else
-                //    itemfield.SelectedValue = "NA";
-
-                //fields.Add(itemfield);
             }
+            catch (Exception e) { Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
 
             return fields;
-
-            return null;
         }
     }
 }
