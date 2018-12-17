@@ -494,6 +494,7 @@ namespace Ginger.ALM
 
         public void RefreshALMItemFields(ObservableList<ExternalItemFieldBase> exitingFields, bool online, BackgroundWorker bw = null)
         {
+            ObservableList<ExternalItemFieldBase> mergedFields = new ObservableList<ExternalItemFieldBase>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
                 //Get latestALMFields from ALMCore with Online flag
