@@ -143,7 +143,7 @@ namespace GingerCore.Actions
         // -----------------------------------------------------------------------------------------------------------------------------------------------
 
         [IsSerializedForLocalRepository]
-        public ActionLogConfig ActionLogConfig;
+        public ActionLogConfig ActionLogConfig { get; set; }
 
         private bool mEnableActionLogConfig;
         [IsSerializedForLocalRepository]

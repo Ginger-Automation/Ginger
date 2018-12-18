@@ -39,7 +39,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         ObservableList<IActivityIdentifiers> ActivitiesIdentifiers { get; set; }
         string TestSuiteId { get; set; }
         executionLoggerStatus ExecutionLoggerStatus { get; set; }
-        object ExecutionLogFolder { get; set; }
-        double Elapsed { get; set; }
+        string ExecutionLogFolder { get; set; }
+        double? Elapsed { get; set; }
     }
 }

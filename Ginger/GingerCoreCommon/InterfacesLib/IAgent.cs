@@ -7,7 +7,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
 {
     public interface IAgent
     {
-        object Name { get; set; }
+        string Name { get; set; }
         ePlatformType Platform { get; }
         bool UsedForAutoMapping { get; set; }
     }

@@ -54,6 +54,6 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         string ExecutionLogFolder { get; set; }
         bool EnableActionLogConfig { get; set; }
         ActionLogConfig ActionLogConfig { get; set; }
-        string ElapsedSecs { get; set; }
+        Single? ElapsedSecs { get; }
     }
 }

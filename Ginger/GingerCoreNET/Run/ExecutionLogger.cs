@@ -45,7 +45,7 @@ namespace Ginger.Run
     // Create new ExecutionLogger for each run 
 
     public enum eExecutionPahse { Start, End }
-    public class ExecutionLogger: IExecutionLogger
+    public class ExecutionLogger
     {
  
 

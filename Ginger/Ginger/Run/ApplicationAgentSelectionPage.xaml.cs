@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms;
@@ -72,11 +73,11 @@ namespace Ginger.Run
 
                     //get the solution Agents which match to this platform
                     //List<Agent> optionalAgentsList = (from p in App.UserProfile.Solution.Agents where p.Platform == appPlatform select p).ToList();
-                    List<Agent> optionalAgentsList = (from p in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where p.Platform == appPlatform select p).ToList();
+                    List<IAgent> optionalAgentsList = (from p in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>() where p.Platform == appPlatform select p).ToList();
                     if (optionalAgentsList != null && mGingerRunner != null)
                     {
                         //remove already mapped agents
-                        List<ApplicationAgent> mappedApps = mGingerRunner.ApplicationAgents.Where(x => x.Agent != null).ToList();
+                        List<IApplicationAgent> mappedApps = mGingerRunner.ApplicationAgents.Where(x => x.Agent != null).ToList();
                         foreach (ApplicationAgent mappedApp in mappedApps)
                         {
                             if (mappedApp.Agent.Platform == appPlatform && mappedApp != mApplicationAgent)

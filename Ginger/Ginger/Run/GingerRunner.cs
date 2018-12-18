@@ -473,7 +473,7 @@ namespace Ginger.Run
                     if (PublishToALMConfig!=null)
                     {
                         string result = string.Empty;
-                        ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+                        ObservableList<IBusinessFlow> bfs = new ObservableList<IBusinessFlow>();
                         bfs.Add(executedBusFlow);
                         ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALM.ALMIntegration.eALMConnectType.Silence);
                     }
@@ -643,9 +643,9 @@ namespace Ginger.Run
         {
             foreach (ApplicationAgent AA in ApplicationAgents)
             {
-                if (AA.Agent != null)
+                if (((Agent)AA.Agent) != null)
                 {
-                    AA.Agent.Close();
+                    ((Agent)AA.Agent).Close();
                 }
             }
             AgentsRunning = false;
@@ -660,19 +660,19 @@ namespace Ginger.Run
 
             foreach (ApplicationAgent AA in ApplicationAgents)
             {
-                if (AA.Agent == null)
+                if (((Agent)AA.Agent) == null)
                 {
                     //TODO: else ask user to define agent  
                 }
                 else
                 {    
-                    if (AA.Agent.Driver == null)
+                    if (((Agent)AA.Agent).Driver == null)
                     {
                         //what is this? hard coded? - if we need to set agents order let's add a way to sort the agents
-                        if (AA.Agent.DriverType == Agent.eDriverType.UnixShell)
+                        if (((Agent)AA.Agent).DriverType == Agent.eDriverType.UnixShell)
                             ApplicationAgentsToStartLast.Add(AA);
                         else
-                            StartAgent(AA.Agent);
+                            StartAgent(((Agent)AA.Agent));
                     }
                 }
             }
@@ -681,17 +681,17 @@ namespace Ginger.Run
             {
                 foreach (ApplicationAgent AA in ApplicationAgentsToStartLast)
                 {
-                    if (AA.Agent.Driver == null)
-                        StartAgent(AA.Agent);
+                    if (((Agent)AA.Agent).Driver == null)
+                        StartAgent(((Agent)AA.Agent));
                 }
             }
 
             //Wait for all agents to be running            
             foreach (ApplicationAgent AA in ApplicationAgents)
             {
-                if (AA.Agent != null)
+                if (((Agent)AA.Agent) != null)
                 {
-                    AA.Agent.WaitForAgentToBeReady();
+                    ((Agent)AA.Agent).WaitForAgentToBeReady();
                 }
             }
             AgentsRunning = true;
@@ -1748,7 +1748,7 @@ namespace Ginger.Run
             }
 
             ApplicationAgent AA = (ApplicationAgent)(from x in ApplicationAgents where x.AppName == AppName select x).FirstOrDefault();
-            if (AA == null || AA.Agent == null)
+            if (AA == null || ((Agent)AA.Agent) == null)
             {
 
                 Reporter.ToUser(eUserMsgKeys.StaticWarnMessage, "The current target application, " + AppName + ", doesn't have a mapped agent assigned to it");
@@ -1756,15 +1756,15 @@ namespace Ginger.Run
                 return;
             }
 
-            AA.Agent.BusinessFlow = CurrentBusinessFlow;
+            ((Agent)AA.Agent).BusinessFlow = CurrentBusinessFlow;
             // Verify the Agent for the action is running 
-            Agent.eStatus agentStatus = AA.Agent.Status;
+            Agent.eStatus agentStatus = ((Agent)AA.Agent).Status;
             if (agentStatus != Agent.eStatus.Running && agentStatus != Agent.eStatus.Starting && agentStatus != Agent.eStatus.FailedToStart)
             {
-                StartAgent(AA.Agent);
+                StartAgent(((Agent)AA.Agent));
             }
 
-            CurrentBusinessFlow.CurrentActivity.CurrentAgent = AA.Agent;
+            CurrentBusinessFlow.CurrentActivity.CurrentAgent = ((Agent)AA.Agent);
         }
         
         private void ProcessStoretoValue(Act act)
@@ -3573,7 +3573,7 @@ namespace Ginger.Run
                 {
                     try
                     {
-                        p.Agent.Close();
+                      ((Agent)p.Agent).Close();
                     }
                     catch (Exception ex)
                     {
@@ -3582,7 +3582,7 @@ namespace Ginger.Run
                         else
                             Reporter.ToLog(eAppReporterLogLevel.ERROR, "Failed to Close the Agent", ex);
                     }
-                    p.Agent.IsFailedToStart = false;
+                    ((Agent)p.Agent).IsFailedToStart = false;
                 }
             }
             AgentsRunning = false;
@@ -3594,7 +3594,7 @@ namespace Ginger.Run
             {
                 if (p.Agent != null)
                 {                   
-                    p.Agent.IsFailedToStart = false;
+                   ((Agent)p.Agent).IsFailedToStart = false;
                 }
             }           
         }
@@ -3660,7 +3660,7 @@ namespace Ginger.Run
             //Remove the non relevant ApplicationAgents
             for (int indx = 0; indx < ApplicationAgents.Count;)
             {
-                if (bfsTargetApplications.Where(x => x.Name == ApplicationAgents[indx].AppName).FirstOrDefault() == null || ApplicationAgents[indx].agent == null)
+                if (bfsTargetApplications.Where(x => x.Name == ApplicationAgents[indx].AppName).FirstOrDefault() == null || ((ApplicationAgent)ApplicationAgents[indx]).Agent == null)
                     ApplicationAgents.RemoveAt(indx);
                 else
                     indx++;

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
 {
-  public  interface IErrorHandler
+   public interface IHTMLReportConfiguration
     {
     }
 }

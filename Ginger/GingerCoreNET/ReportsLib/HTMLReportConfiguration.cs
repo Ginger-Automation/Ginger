@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using System;
 using System.Linq;
@@ -25,7 +26,7 @@ using System.Reflection;
 
 namespace Ginger.Reports
 {
-    public class HTMLReportConfiguration : RepositoryItemBase
+    public class HTMLReportConfiguration : RepositoryItemBase, IHTMLReportConfiguration
     {        
 
         public  static partial class Fields

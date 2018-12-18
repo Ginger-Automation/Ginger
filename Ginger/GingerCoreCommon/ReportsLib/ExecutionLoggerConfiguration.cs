@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
 using GingerCore;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports
 {
@@ -57,7 +58,7 @@ namespace Ginger.Reports
 
         public bool ExecutionLoggerHTMLReportsAutomaticProdIsEnabled { get; set; }
 
-        public ObservableList<HTMLReportConfiguration> temporaryPlacedHTMLReportConfigurationList = new ObservableList<HTMLReportConfiguration>();
+        public ObservableList<IHTMLReportConfiguration> temporaryPlacedHTMLReportConfigurationList = new ObservableList<IHTMLReportConfiguration>();
 
         public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }
 

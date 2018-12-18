@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
+using GingerCore;
 using GingerCore.Drivers.ASCF;
 
 namespace Ginger.Actions.Locators.ASCF
@@ -44,7 +45,7 @@ namespace Ginger.Actions.Locators.ASCF
         private void InjectHTMLSpyButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: remove hard code [0]
-            ASCFDriver d = (ASCFDriver)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent.Driver;
+            ASCFDriver d = ((Agent)(ASCFDriver)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
             d.InjectHTMLSpy(mPath);           
         }
     }
