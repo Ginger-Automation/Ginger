@@ -50,6 +50,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using HtmlAgilityPack;
 
 namespace GingerCore.Drivers
 {
@@ -198,6 +199,8 @@ namespace GingerCore.Drivers
 
         IWebElement LastHighLightedElement;
         XPathHelper mXPathHelper;
+
+        List<ElementInfo> allReadElem = new List<ElementInfo>();
 
         private string CurrentFrame;
 
@@ -3550,13 +3553,13 @@ namespace GingerCore.Drivers
             try
             {
                 UnhighlightLast();
-
+               
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
                 List<ElementInfo> list = new List<ElementInfo>();
                 Driver.SwitchTo().DefaultContent();
-
-                list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList, learnFullElementInfoDetails)));
-
+                allReadElem.Clear();                
+                list = GingerCore.General.ConvertObservableListToList<ElementInfo>((GetAllElementsFromPage("", filteredElementType, foundElementsList, learnFullElementInfoDetails)));                
+                allReadElem.Clear();
                 CurrentFrame = "";
                 Driver.SwitchTo().DefaultContent();
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -3568,30 +3571,39 @@ namespace GingerCore.Drivers
             }
 
         }
-
+       
 
         private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
 
-            ReadOnlyCollection<IWebElement> ElementsList = Driver.FindElements(By.CssSelector("*"));
+            string documentContents = Driver.PageSource;
+            HtmlAgilityPack.HtmlDocument HAPDocument = new HtmlAgilityPack.HtmlDocument();
+            HAPDocument.LoadHtml(documentContents);
+            IEnumerable<HtmlNode> tocChildren = HAPDocument.DocumentNode.Descendants();
 
-            if (ElementsList.Count != 0)
+            if (tocChildren.Count() != 0)
             {
-                foreach (IWebElement el in ElementsList)
-                {
+                foreach (HtmlNode htmlNode in tocChildren)                
+                {   
                     try
                     {
                         if (mStopProcess)
-                        {
+                        {                            
                             return foundElementsList;
                         }
-
+                        if (htmlNode.Name.StartsWith("#"))
+                            continue;
+                         
+                        IWebElement el = Driver.FindElement(By.XPath(htmlNode.XPath));
+                        if (el == null)
+                            continue;
+                            
                         // grab only visible elements
                         if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
                         {
-                            continue;
+                            continue;                            
                         }
 
                         //filter element if needed
@@ -3600,18 +3612,18 @@ namespace GingerCore.Drivers
                         {
                             if (!filteredElementType.Contains(foundElementType))
                             {
-                                continue;
+                                continue;                                
                             }
                         }
 
                         ElementInfo foundElemntInfo = null;
-                        foundElemntInfo = GetElementInfoWithIWebElement(el, path, learnFullElementInfoDetails);
+                        foundElemntInfo = GetElementInfoWithIWebElement(el, path, htmlNode.XPath,learnFullElementInfoDetails);
                         foundElemntInfo.IsAutoLearned = true;
                         foundElementsList.Add(foundElemntInfo);
-
+                        allReadElem.Add(foundElemntInfo);
                         if (el.TagName == "iframe" || el.TagName == "frame")
                         {
-                            string xpath = GenerateXpathForIWebElement(el, "");
+                            string xpath = htmlNode.XPath;
                             Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
                             string newPath = string.Empty;
                             if (path == string.Empty)
@@ -3622,17 +3634,16 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnFullElementInfoDetails);                            
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnFullElementInfoDetails);
                             Driver.SwitchTo().ParentFrame();
                         }
 
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Falied to learn the Web Element '{0}'", el.TagName), ex);
+                       Reporter.ToLog(eAppReporterLogLevel.ERROR, string.Format("Falied to learn the Web Element '{0}'", htmlNode.Name), ex);
                     }
-                }
-
+                }                
             }
 
             return foundElementsList;
@@ -3754,8 +3765,8 @@ namespace GingerCore.Drivers
             return elementType;
         }       
 
-        private ElementInfo GetElementInfoWithIWebElement(IWebElement el, string path, bool setFullElementInfoDetails=false)
-        {
+        private ElementInfo GetElementInfoWithIWebElement(IWebElement el, string path,string xPath="", bool setFullElementInfoDetails=false)
+        {            
             HTMLElementInfo EI = new HTMLElementInfo();
             EI.WindowExplorer = this;
             EI.ElementTitle = GenerateElementTitle(el);            
@@ -3765,7 +3776,7 @@ namespace GingerCore.Drivers
             EI.ElementType = GenerateElementType(el);
             EI.ElementTypeEnum = GetElementTypeEnum(el);
             EI.Path = path;
-            EI.XPath = string.Empty;
+            EI.XPath = xPath;
             EI.ElementObject = el;
 
             if (setFullElementInfoDetails)
@@ -3860,6 +3871,8 @@ namespace GingerCore.Drivers
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)
         {
+            allReadElem.Clear();
+            allReadElem.Add(ElementInfo);            
             List<ElementInfo> list = new List<ElementInfo>();
             ReadOnlyCollection<IWebElement> el;
             Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
@@ -3868,7 +3881,7 @@ namespace GingerCore.Drivers
             string elementPath = GeneratePath(ElementInfo.XPath);
             el = Driver.FindElements(By.XPath(elementPath));
             Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
-            list = GetElementsFromIWebElementList(el, ElementInfo.Path, ElementInfo.XPath);
+            list = GetElementsFromIWebElementList(el, ElementInfo.Path, ElementInfo.XPath);            
             return list;
         }
 
@@ -4561,23 +4574,23 @@ namespace GingerCore.Drivers
 
         public string GenerateXpathForIWebElement(IWebElement IWE, string current)
         {
-            if (IWE.TagName == "html")
-                return IWE.TagName + current;
+            if (IWE.TagName == "html")            
+                return "/" + IWE.TagName + current;
+            
             IWebElement parentElement = IWE.FindElement(By.XPath(".."));
-            ReadOnlyCollection<IWebElement> childrenElements = parentElement.FindElements(By.XPath("*"));
-            int count = 0;
+            ReadOnlyCollection<IWebElement> childrenElements = parentElement.FindElements(By.XPath("./" + IWE.TagName));
+            int count = 1;
             foreach (IWebElement childElement in childrenElements)
-            {
-                string childrenElementTag = childElement.TagName;
-                if (childrenElementTag == IWE.TagName)
-                {
-                    count++;
-                }
+            {                
                 try
                 {
                     if (IWE.Equals(childElement))
-                    {
+                    {                        
                         return GenerateXpathForIWebElement(parentElement, "/" + IWE.TagName + "[" + count + "]" + current);
+                    }
+                    else
+                    {
+                        count++;
                     }
                 }
                 catch (Exception ex)
@@ -4594,7 +4607,7 @@ namespace GingerCore.Drivers
 
             }
             return "";
-        }
+        }        
 
         AppWindow IWindowExplorer.GetActiveWindow()
         {
@@ -6252,7 +6265,7 @@ namespace GingerCore.Drivers
             //Driver.SwitchTo().DefaultContent();
             //SwitchFrame(ei.Path, ei.XPath, true);
             if (string.IsNullOrEmpty(ei.XPath))
-                ei.XPath = GenerateXpathForIWebElement((IWebElement)ei.ElementObject, "");
+                ei.XPath = GenerateXpathForIWebElement((IWebElement)ei.ElementObject, "");                
 
             IWebElement e = (IWebElement)ei.ElementObject;
             if (e != null)
@@ -6298,9 +6311,20 @@ namespace GingerCore.Drivers
 
         ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo)
         {
-            IWebElement childElement = Driver.FindElement(By.XPath(ElementInfo.XPath));
+            IWebElement childElement = (IWebElement)ElementInfo.ElementObject;
+            if(childElement == null)
+                Driver.FindElement(By.XPath(ElementInfo.XPath));
+
             IWebElement parentElement = childElement.FindElement(By.XPath(".."));
-            ElementInfo parentEI = GetElementInfoFromIWebElement(parentElement,ElementInfo);
+
+            ElementInfo parentEI = allReadElem.Find(el => el.ElementObject != null && el.ElementObject.Equals(parentElement));
+
+            if (parentEI !=null)
+            {
+                return parentEI;
+            }
+            
+            parentEI = GetElementInfoFromIWebElement(parentElement,ElementInfo);                            
             return parentEI;
         }
 
@@ -6332,6 +6356,7 @@ namespace GingerCore.Drivers
             EI.ElementTypeEnum = GetElementTypeEnum(el);
             EI.Path = ChildElementInfo.Path;
             EI.XPath = ChildElementInfo.XPath.Substring(0, ChildElementInfo.XPath.LastIndexOf("/"));
+            EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
             EI.ElementObject = el;
             return EI;
         }
