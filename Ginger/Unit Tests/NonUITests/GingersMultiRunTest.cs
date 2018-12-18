@@ -37,6 +37,8 @@ namespace UnitTests.NonUITests
     {
         RunsetExecutor mGMR;
         ProjEnvironment mEnv;
+        BusinessFlow mBF;
+        GingerRunner mGR;
 
         [TestInitialize]
         public void TestInitialize()
@@ -68,20 +70,31 @@ namespace UnitTests.NonUITests
         
         private void AddGinger(Agent.eDriverType DriverType)
         {
-            GingerRunner mGR = new GingerRunner();
-            Platform p22 = new Platform() { PlatformType = ePlatformType.Web };
-            Agent a2 = new Agent();
-            //a.Driver = new InternalBrowser(mBF);
-            a2.DriverType = DriverType;
-            p22.Agent = a2;
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(a2);
-            mGR.Platforms.Add(p22);
-            AddBusinessFlow(mGR);
-            
+            mBF = new BusinessFlow();
+            mBF.Activities = new ObservableList<Activity>();
+            mBF.Name = "BF Status Result Test";
+            mBF.Active = true;
+            Platform p = new Platform();
+            p.PlatformType = ePlatformType.Web;
+            mBF.Platforms = new ObservableList<Platform>();
+            mBF.Platforms.Add(p);
+            mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
-            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a2 });
-            mGMR.Runners.Add(mGR);
+
+            mGR = new GingerRunner();
+            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.GiveUserFeedback = true;
+
+            Agent a = new Agent();
+            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents.Add(a);
+
+            mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web });
+            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
+
+            mGR.BusinessFlows.Add(mBF);
         }
 
 
@@ -108,6 +121,22 @@ namespace UnitTests.NonUITests
             AddGinger(Agent.eDriverType.SeleniumChrome);
             mGMR.RunRunset();
             
+            //Assert
+            foreach (GingerRunner GR in mGMR.Runners)
+            {
+                foreach (BusinessFlow bf in GR.BusinessFlows)
+                {
+                    Assert.AreEqual(bf.RunStatus, eRunStatus.Passed);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void DuplicateGingersInParallelAndRun()
+        {
+            //Act
+            AddGinger(Agent.eDriverType.SeleniumChrome);
+
             //Assert
             foreach (GingerRunner GR in mGMR.Runners)
             {
@@ -152,25 +181,18 @@ namespace UnitTests.NonUITests
 
             Activity a1 = new Activity();
             a1.Active = true;
+            a1.TargetApplication = "WebApp";
+            
             mBF.Activities.Add(a1);
 
-            ActDummy actDummy = new ActDummy() { Active = true };
-            a1.Acts.Add(actDummy);
+            ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://ginger-automation.github.io/test.html", Active = true };
+            a1.Acts.Add(act1);
 
-            //ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "http://:8099/", Active = true };
-            //a1.Acts.Add(act1);
+            ActTextBox act2 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "UserName", Value = "Yaron", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
+            a1.Acts.Add(act2);
 
-            //ActTextBox act2 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "UserName", Value = "Yaron", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
-            //a1.Acts.Add(act2);
-
-            //ActTextBox act3 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "Password", Value = "123456", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
-            //a1.Acts.Add(act3);
-
-            //ActSubmit act4 = new ActSubmit() { LocateBy = eLocateBy.ByValue, LocateValue = "Log in", Active = true };
-            //a1.Acts.Add(act4);
-
-            //ActLink act5 = new ActLink() { LocateBy = eLocateBy.ByLinkText, Wait = 1, LocateValue = "Manage Customer", LinkAction = ActLink.eLinkAction.Click, Active = true };
-            //a1.Acts.Add(act5);
+            ActTextBox act3 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "Password", Value = "123456", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
+            a1.Acts.Add(act3);
 
             GR.BusinessFlows.Add(mBF);
         }
