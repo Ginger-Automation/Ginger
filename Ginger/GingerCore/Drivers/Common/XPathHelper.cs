@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.Drivers.Common
 {
@@ -458,10 +459,12 @@ namespace GingerCore.Drivers.Common
             catch (Exception e)
             {
                 relxpath = xpath;
-                //Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                Reporter.ToLog(eAppReporterLogLevel.ERROR, "Exception in GetElementRelXPath ::", e, true, true);
             }
             if (relxpath == "")
+            {
                 relxpath = xpath;
+            }                
             return relxpath;
         }
     }
