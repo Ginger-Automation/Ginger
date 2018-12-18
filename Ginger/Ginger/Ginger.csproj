@@ -1756,7 +1756,7 @@
     <Compile Include="Environments\EnvsListPage.xaml.cs">
       <DependentUpon>EnvsListPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Solution.cs" />    
+    <Compile Include="Solution.cs" />
     <Compile Include="GeneralLib\GeneralErrorWindow.xaml.cs">
       <DependentUpon>GeneralErrorWindow.xaml</DependentUpon>
     </Compile>
