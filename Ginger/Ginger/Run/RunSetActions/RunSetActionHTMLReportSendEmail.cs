@@ -623,7 +623,7 @@ namespace Ginger.Run.RunSetActions
                                             fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'></td>");
                                         }
                                     }
-                                    else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.ExecutionDescription)
+                                    else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.RunDescription)
                                     {
                                         if (firstIteration)
                                         {
