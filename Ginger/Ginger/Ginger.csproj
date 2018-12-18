@@ -516,7 +516,6 @@
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Repository\RepositoryItemFactory.cs" />
-    <Compile Include="Solution.cs" />
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
@@ -1757,6 +1756,7 @@
     <Compile Include="Environments\EnvsListPage.xaml.cs">
       <DependentUpon>EnvsListPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Solution.cs" />    
     <Compile Include="GeneralLib\GeneralErrorWindow.xaml.cs">
       <DependentUpon>GeneralErrorWindow.xaml</DependentUpon>
     </Compile>

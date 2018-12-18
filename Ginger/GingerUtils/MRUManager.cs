@@ -19,7 +19,7 @@ limitations under the License.
 using System.Collections.Generic;
 using System.IO;
 
-namespace GingerUtils
+namespace Amdocs.Ginger.Utils
 {
     // Most Recently Used Manager Class
     public class MRUManager
@@ -34,7 +34,7 @@ namespace GingerUtils
             this.MRUFileName = FileName;
         }
 
-        internal string[] GetList()
+        public string[] GetList()
         { 
             string[] list;
             if (File.Exists(MRUFileName))
