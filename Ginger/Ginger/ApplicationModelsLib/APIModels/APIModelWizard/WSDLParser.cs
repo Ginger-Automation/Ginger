@@ -1115,23 +1115,27 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 if (!string.IsNullOrEmpty(URLTuple.Item1))
                 {
                     string CompleteURL = GetCompleteURL(URLTuple.Item1, URLTuple.Item2);
-                    XmlTextReader reader = new XmlTextReader(CompleteURL);
-                    XmlSchema schema = XmlSchema.Read(reader, null);
+                    using (XmlReader reader = XmlReader.Create(CompleteURL))
+                    {
+                        XmlSchema schema = XmlSchema.Read(reader, null);
+                        XmlDocument doc1 = new XmlDocument();
+                        doc1.Load("http://api.wunderground.com/api/your_key/conditions/q/92135.xml");
 
-                    if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
-                    {
-                        List<string> AllNameSpaceURLs = new List<string>();
-                        AllNameSpaceURLs.Add(CompleteURL);
-                        AllNameSpaces.Add(schema.TargetNamespace, AllNameSpaceURLs);
-                        AllSourcesNameSpaces.Add(AllNameSpaceURLs, schema.TargetNamespace);
+                        if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                        {
+                            List<string> AllNameSpaceURLs = new List<string>();
+                            AllNameSpaceURLs.Add(CompleteURL);
+                            AllNameSpaces.Add(schema.TargetNamespace, AllNameSpaceURLs);
+                            AllSourcesNameSpaces.Add(AllNameSpaceURLs, schema.TargetNamespace);
+                        }
+                        else if (schema.TargetNamespace != null && AllNameSpaces.ContainsKey(schema.TargetNamespace))
+                        {
+                            AllNameSpaces[schema.TargetNamespace].Add(CompleteURL);
+                            KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Value == schema.TargetNamespace).FirstOrDefault();
+                            KeyValue.Key.Add(CompleteURL);
+                        }
+                        GetAllElementsAndComplexTypesFromImportedSchema(schema);
                     }
-                    else if (schema.TargetNamespace != null && AllNameSpaces.ContainsKey(schema.TargetNamespace))
-                    {
-                        AllNameSpaces[schema.TargetNamespace].Add(CompleteURL);
-                        KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Value == schema.TargetNamespace).FirstOrDefault();
-                        KeyValue.Key.Add(CompleteURL);
-                    }
-                    GetAllElementsAndComplexTypesFromImportedSchema(schema);
                 }
             }
         }
