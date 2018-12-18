@@ -354,7 +354,12 @@ namespace Ginger.SourceControl
                 mSourceControl.SourceControlConfigureProxy = App.UserProfile.SolutionSourceControlConfigureProxy;
                 mSourceControl.SourceControlProxyAddress = App.UserProfile.SolutionSourceControlProxyAddress;
                 mSourceControl.SourceControlProxyPort = App.UserProfile.SolutionSourceControlProxyPort;
-                mSourceControl.SourceControlTimeout = App.UserProfile.SolutionSourceControlTimeout;
+                // If the UserProfile has been deleted or been created for the first time
+                if (App.UserProfile.SolutionSourceControlTimeout == 0)
+                {
+                    App.UserProfile.SolutionSourceControlTimeout = 80;
+                }
+                mSourceControl.SourceControlTimeout = mSourceControl.SourceControlTimeout;
 
                 mSourceControl.PropertyChanged += SourceControl_PropertyChanged;
             }
