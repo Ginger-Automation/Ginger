@@ -282,7 +282,22 @@ namespace Ginger.Run
         [IsSerializedForLocalRepository]
         public bool FilterExecutionByTags { get; set; }
 
-        public ProjEnvironment ProjEnvironment { get; set; }
+        ProjEnvironment mProjEnvironment;
+        public ProjEnvironment ProjEnvironment
+        {
+            get
+            {
+                return mProjEnvironment;
+            }
+            set
+            {
+                mProjEnvironment = value;
+                if (ExecutionLogger != null)
+                {
+                    ExecutionLogger.ExecutionEnvironment = value;
+                }
+            }
+        }
 
         public ObservableList<DataSourceBase> DSList { get; set; }
 
@@ -303,13 +318,13 @@ namespace Ginger.Run
         public GingerRunner()
         {
             ExecutedFrom = eExecutedFrom.Run;
-            ExecutionLogger = new ExecutionLogger(eExecutedFrom.Run);            
+            ExecutionLogger = new ExecutionLogger(ProjEnvironment, eExecutedFrom.Run);            
         }
        
         public GingerRunner(eExecutedFrom executedFrom)
         {
             ExecutedFrom = executedFrom;
-            ExecutionLogger = new ExecutionLogger(ExecutedFrom);
+            ExecutionLogger = new ExecutionLogger(ProjEnvironment, ExecutedFrom);
         }
 
 

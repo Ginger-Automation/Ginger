@@ -36,6 +36,7 @@ using Amdocs.Ginger;
 using GingerCore.DataSource;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using GingerCore.Environments;
 
 namespace Ginger.Run
 {
@@ -61,6 +62,30 @@ namespace Ginger.Run
         public BusinessFlow CurrentBusinessFlow;
 
         ValueExpression mVE;
+
+        ProjEnvironment mExecutionEnvironment = null;
+        public ProjEnvironment ExecutionEnvironment
+        {
+            get
+            {
+                if (mExecutionEnvironment == null)//not supposed to be null but in case it is
+                {
+                    if (this.ExecutedFrom == GingerRunner.eExecutedFrom.Automation)
+                    {
+                        mExecutionEnvironment = App.AutomateTabEnvironment;
+                    }
+                    else
+                    {
+                        mExecutionEnvironment = App.RunsetExecutor.RunsetExecutionEnvironment;
+                    }
+                }
+                return mExecutionEnvironment;
+            }
+            set
+            {
+                mExecutionEnvironment = value;
+            }
+        }
 
         private Ginger.Reports.GingerReport gingerReport = new GingerReport();
         //public bool gingerReportClosed = false;
@@ -136,11 +161,12 @@ namespace Ginger.Run
         };
         public ParentGingerData GingerData = new ParentGingerData();
 
-        public ExecutionLogger(GingerRunner.eExecutedFrom executedFrom = GingerRunner.eExecutedFrom.Run)
+        public ExecutionLogger(ProjEnvironment environment, GingerRunner.eExecutedFrom executedFrom = GingerRunner.eExecutedFrom.Run)
         {
             mJsonSerializer = new JsonSerializer();
             mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
             ExecutedFrom = executedFrom;
+            ExecutionEnvironment = environment;//needed for supporting diffrent env config per Runner
         }
 
         private static void CleanDirectory(string folderName, bool isCleanFile= true)
@@ -347,7 +373,7 @@ namespace Ginger.Run
                     gingerReport.GUID = this.GingerData.Ginger_GUID.ToString();
                     gingerReport.Name = this.GingerData.GingerName.ToString();
                     gingerReport.ApplicationAgentsMappingList = this.GingerData.GingerAggentMapping;
-                    gingerReport.EnvironmentName = this.GingerData.GingerEnv != null ? this.GingerData.GingerEnv.ToString() : string.Empty;
+                    gingerReport.EnvironmentName = ExecutionEnvironment != null ? ExecutionEnvironment.Name : string.Empty;
                     gingerReport.Elapsed = (double)gingerReport.Watch.ElapsedMilliseconds / 1000;
                     SaveObjToJSonFile(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
                     this.ExecutionLogBusinessFlowsCounter = 0;
@@ -477,7 +503,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
+                        mVE = new ValueExpression(ExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
                     }
                     mVE.Value = BusinessFlow.RunDescription;
                     BFR.RunDescription = mVE.ValueCalculated;
@@ -566,7 +592,7 @@ namespace Ginger.Run
                 {
                     if (mVE == null)
                     {
-                        mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
+                        mVE = new ValueExpression(ExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
                     }
                     mVE.Value = Activity.RunDescription;
                     AR.RunDescription = mVE.ValueCalculated;
@@ -657,25 +683,17 @@ namespace Ginger.Run
                     if (System.IO.Directory.Exists(executionLogFolder + act.ExecutionLogFolder))
                     {
                         if (!offlineMode)
+                        {
                             act.EndTimeStamp = DateTime.Now.ToUniversalTime();
-                        GingerCore.Environments.ProjEnvironment environment = null;
-
-                        if (this.ExecutedFrom == GingerRunner.eExecutedFrom.Automation)
-                        {
-                            environment = App.AutomateTabEnvironment;
-                        }
-                        else
-                        {
-                            environment = App.RunsetExecutor.RunsetExecutionEnvironment;
                         }
 
-                        ActionReport AR = new ActionReport(act,environment);
+                        ActionReport AR = new ActionReport(act, ExecutionEnvironment);
                         AR.Seq = Activity.ExecutionLogActionCounter;
                         if ((act.RunDescription != null) && (act.RunDescription != string.Empty))
                         {
                             if (mVE == null)
                             {
-                                mVE = new ValueExpression(App.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
+                                mVE = new ValueExpression(ExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false, App.UserProfile.Solution.Variables);
                             }
                             mVE.Value = act.RunDescription;
                             AR.RunDescription = mVE.ValueCalculated;
@@ -932,7 +950,7 @@ namespace Ginger.Run
                     else
                         System.IO.Directory.CreateDirectory(folder);
 
-                    ExecutionLogger ExecutionLogger = new ExecutionLogger();
+                    ExecutionLogger ExecutionLogger = new ExecutionLogger(gingerrunner.ProjEnvironment);
                     Amdocs.Ginger.CoreNET.Execution.eRunStatus gingerRunnerStatus = gingerrunner.RunsetStatus;
                     if (gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
                     {
@@ -980,11 +998,11 @@ namespace Ginger.Run
             }
         }
 
-        public static void GenerateBusinessFlowOfflineReport(string reportsResultFolder, BusinessFlow BusinessFlow, string RunsetName = null)
+        public static void GenerateBusinessFlowOfflineReport(ProjEnvironment environment, string reportsResultFolder, BusinessFlow BusinessFlow, string RunsetName = null)
         {
             HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             string exec_folder = string.Empty;
-            exec_folder = GenerateBusinessflowOfflineExecutionLogger(BusinessFlow, RunsetName);
+            exec_folder = GenerateBusinessflowOfflineExecutionLogger(environment, BusinessFlow, RunsetName);
             if(string.IsNullOrEmpty(exec_folder))
             {
                 Reporter.ToUser(eUserMsgKeys.ExecutionsResultsProdIsNotOn);
@@ -1010,7 +1028,7 @@ namespace Ginger.Run
                 }
             }
         }
-        public static string GenerateBusinessflowOfflineExecutionLogger(BusinessFlow BusinessFlow, string RunsetName = null)
+        public static string GenerateBusinessflowOfflineExecutionLogger(ProjEnvironment environment, BusinessFlow BusinessFlow, string RunsetName = null)
         {            
             ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             string exec_folder = string.Empty;
@@ -1031,7 +1049,7 @@ namespace Ginger.Run
                 GingerCore.General.ClearDirectoryContent(exec_folder);
             else
                 System.IO.Directory.CreateDirectory(exec_folder);
-            ExecutionLogger ExecutionLogger = new ExecutionLogger();
+            ExecutionLogger ExecutionLogger = new ExecutionLogger(environment);
             ExecutionLogger.Configuration.ExecutionLoggerConfigurationIsEnabled = true;
             ExecutionLogger.OfflineBusinessFlowExecutionLog(BusinessFlow, exec_folder);
             return exec_folder;
