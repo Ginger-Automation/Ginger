@@ -95,6 +95,7 @@
     <Compile Include="POMs\Common\PagePOM.cs" />
     <Compile Include="POMs\Common\POMButtons.cs" />
     <Compile Include="POMs\Common\TreeViewItemPOM.cs" />
+    <Compile Include="POMs\Common\ucAgentControlPOM.cs" />
     <Compile Include="POMs\Common\ucGridPOM.cs" />
     <Compile Include="POMs\Common\WindowPOM.cs" />
     <Compile Include="POMs\EnvironmentsPOM.cs" />

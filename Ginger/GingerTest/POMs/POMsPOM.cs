@@ -42,18 +42,26 @@ namespace GingerTest.POMs
 
 
             //set name
+            ucAgentControl ucAgentControl = (ucAgentControl)wizard.CurrentPage["ucAgentControl AID"].dependencyObject;
 
-            ucAgentControl agentUC = (ucAgentControl)wizard.CurrentPage["ucAgentControl AID"].dependencyObject;//(ucAgentControl)FindElementByAutomationID<ucAgentControl>(wizard.CurrentPage, "ucAgentControl AID");
-            (ucAgentControl)wizard.CurrentPage["ucAgentControl AID"].SelectValueUCAgentControl(agentName);
-            wizard.CurrentPage["ucAgentControl AID"].UCAgentControlStatusButtonClick();
 
-            UIElementPOM mUcAgentControl = wizard.CurrentPage["ucAgentControl AID"];
+            ucAgentControlPOM ucAgentControlPOM = new ucAgentControlPOM(ucAgentControl);
+
+            ucAgentControlPOM.SelectValueUCAgentControl(agentName);
+            ucAgentControlPOM.UCAgentControlStatusButtonClick();
             SleepWithDoEvents(20000);
+
+
+
+
+
+            //UIElementPOM mUcAgentControl = wizard.CurrentPage["ucAgentControl AID"];
+            //SleepWithDoEvents(20000);
 
             //wizard.CurrentPage["AutoMapElementTypesGrid AID"].UCAgentControlAutoMapElementTypesGridCheckBoxSelect("HiperLink");
 
 
-            ucGridPOM gridPOM = new ucGridPOM((ucGrid)wizard.FindElementByAutomationID<ucGrid>(wizard.CurrentWizardPage,"AutoMapElementTypesGrid AID"));
+            //ucGridPOM gridPOM = new ucGridPOM((ucGrid)wizard.FindElementByAutomationID<ucGrid>(wizard.CurrentWizardPage,"AutoMapElementTypesGrid AID"));
 
 
 

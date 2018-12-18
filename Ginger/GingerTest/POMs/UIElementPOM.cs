@@ -81,42 +81,7 @@ namespace GingerWPFUnitTest.POMs
             });
         }
 
-        public void SelectValueUCAgentControl(int obj)
-        {
-            Execute(() => {
-                ((ComboBox)((ucAgentControl)dependencyObject).FindName("xAgentsComboBox")).SelectedIndex = obj;
-            });
-        }
 
-
-        public void SelectValueUCAgentControl(Agent agent)
-        {
-            Execute(() => {
-                ((ComboBox)((ucAgentControl)dependencyObject).FindName("xAgentsComboBox")).SelectedValue = agent;
-            });
-        }
-
-
-
-
-        public void UCAgentControlStatusButtonClick()
-        {
-            Task.Factory.StartNew(() =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    Execute(() =>
-                    {
-                        ((ucButton)((ucAgentControl)dependencyObject).FindName("xAgentStatusBtn")).DoClick();
-                    });
-                });
-            });
-
-
-            //Execute(() => {
-            //    ((ucButton)((ucAgentControl)dependencyObject).FindName("xAgentStatusBtn")).DoClick();
-            //});
-        }
 
         /// <summary>
         /// Set the selected item of combo box 
