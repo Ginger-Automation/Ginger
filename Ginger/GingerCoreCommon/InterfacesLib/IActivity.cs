@@ -83,6 +83,9 @@ namespace Amdocs.Ginger.Common
         ObservableList<Guid> MappedErrorHandlers { get; set; }
         eHandlerMappingType ErrorHandlerMappingType { get; set; }
         bool SelectedForConversion { get; set; }
+        int ExecutionLogActionCounter { get; set; }
+        string ExecutionLogFolder { get; set; }
+        List<string> VariablesBeforeExec { get; set; }
 
         void AddVariable(VariableBase stepActivityVar);
     }

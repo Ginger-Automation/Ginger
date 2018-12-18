@@ -173,47 +173,9 @@ namespace Ginger
 
         public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
         {
-            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
-            DirectoryInfo[] dirs = dir.GetDirectories();
 
-            // If the source directory does not exist, throw an exception.
-            if (!dir.Exists)
-            {
-                throw new DirectoryNotFoundException(
-                    "Source directory does not exist or could not be found: "
-                    + sourceDirName);
-            }
-
-            // If the destination directory does not exist, create it.
-            if (!Directory.Exists(destDirName))
-            {
-                Directory.CreateDirectory(destDirName);
-            }
-
-            // Get the file contents of the directory to copy.
-            FileInfo[] files = dir.GetFiles();
-
-            foreach (FileInfo file in files)
-            {
-                // Create the path to the new copy of the file.
-                string temppath = System.IO.Path.Combine(destDirName, file.Name);
-
-                // Copy the file.
-                file.CopyTo(temppath, true);
-            }
-
-            // If copySubDirs is true, copy the subdirectories.
-            if (copySubDirs)
-            {
-                foreach (DirectoryInfo subdir in dirs)
-                {
-                    // Create the subdirectory.
-                    string temppath = System.IO.Path.Combine(destDirName, subdir.Name);
-
-                    // Copy the subdirectories.
-                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
-                }
-            }
+            Amdocs.Ginger.Common.GeneralLib.General.DirectoryCopy(sourceDirName, destDirName, copySubDirs);
+           
         }
 
         //TODO: same function and code is copied in several placed - unite all to use the one below
@@ -492,16 +454,9 @@ namespace Ginger
         //For Screenshots
         public static Tuple<int, int> RecalculatingSizeWithKeptRatio(Tuple<int, int> a, int boxWidth, int boxHight)
         {
-            //calculate the ratio
-            double dbl = (double)a.Item1 / (double)a.Item2;
-            if ((int)((double)boxHight * dbl) <= boxWidth)
-            {
-                return new Tuple<int, int>((int)((double)boxHight * dbl), boxHight);
-            }
-            else
-            {
-                return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
-            }
+
+          return  Amdocs.Ginger.Common.GeneralLib.General.RecalculatingSizeWithKeptRatio(a, boxWidth, boxHight);
+          
         }
 
         //For logos

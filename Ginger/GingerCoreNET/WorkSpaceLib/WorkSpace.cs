@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
-using Ginger.SolutionGeneral;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SourceControl;
 using System;
@@ -42,6 +41,7 @@ namespace amdocs.ginger.GingerCoreNET
         // public UserProfile UserProfile;
 
         public SolutionRepository SolutionRepository;
+       
 
         // Will be back when we moved GR to GingerCoreNET
         // public GingerRunner GingerRunner;
@@ -52,8 +52,8 @@ namespace amdocs.ginger.GingerCoreNET
         public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
         public static string AppVersion;
         //public static IGingerRunner AutomateTabGingerRunner = new IGingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
-        public  Solution mSolution { get; set; }
-        public  Solution Solution
+        public  ISolution mSolution { get; set; }
+        public  ISolution Solution
         {
             get { return mSolution; }
             set
@@ -173,6 +173,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+
         public string DefualtUserLocalWorkingFolder
         {
             get
@@ -200,7 +201,9 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static IBusinessFlow Businessflow { get; internal set; }
+        public static IBusinessFlow Businessflow { get;  set; }
+        public static bool RunningFromConfigFile = false;
+        public static IProjEnvironment AutomateTabEnvironment;
         public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 

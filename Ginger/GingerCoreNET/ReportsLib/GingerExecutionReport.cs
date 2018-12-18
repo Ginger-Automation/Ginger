@@ -21,14 +21,17 @@ using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
+
 using System.Reflection;
 using System.IO;
+using System.Drawing;
+using GingerCore;
 
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.ReporterLib;
-
+using System.Drawing;
 namespace Ginger.Reports.GingerExecutionReport
 {
     public class GingerExecutionReport
@@ -127,7 +130,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{RunSetGeneralDetails_Headers}", fieldsNamesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{RunSetGeneralDetails_Data}", fieldsValuesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
-            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + WorkSpace.AppVersion + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + WorkSpace.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -225,9 +228,9 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{ginger_logo}", GingerLogo);
             if (currentTemplate.UseLocalStoredStyling)
             {
-                ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");                
+                ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");
             }
-            
+
             CanvasJs = ExtensionMethods.GetHTMLTemplate("donutchart.js", TemplatesFolder + "/assets/js/");
             CanvasJs = "<script type='text/jsx'>" + CanvasJs + "</script>";
             // populating "Run Set General Details"
@@ -259,7 +262,7 @@ namespace Ginger.Reports.GingerExecutionReport
                         if (selectedField.FieldKey == RunSetReport.Fields.EnvironmentsDetails)
                         {
                             StringBuilder environmentNames_str = new StringBuilder();
-                            ((RunSetReport)RI.ReportInfoRootObject).GingerReports.Where(x => x.EnvironmentName != null && x.EnvironmentName != string.Empty).GroupBy(q =>q.EnvironmentName).Select(q => q.First()).ToList().ForEach(x => environmentNames_str.Append(x.EnvironmentName + ", "));
+                            ((RunSetReport)RI.ReportInfoRootObject).GingerReports.Where(x => x.EnvironmentName != null && x.EnvironmentName != string.Empty).GroupBy(q => q.EnvironmentName).Select(q => q.First()).ToList().ForEach(x => environmentNames_str.Append(x.EnvironmentName + ", "));
                             fieldsValuesHTMLTableOneCells.Append("<td>" + environmentNames_str.ToString().TrimEnd(',', ' ') + "</td>");
                             environmentNames_str.Remove(0, environmentNames_str.Length);
                         }
@@ -272,7 +275,7 @@ namespace Ginger.Reports.GingerExecutionReport
                     {
                         if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
                         {
-                           // fieldsValuesHTMLTableOneCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(GingerCore.General.TimeConvert(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString())) + "</td>");
+                            fieldsValuesHTMLTableOneCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(General.TimeConvert(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString())) + "</td>");
                         }
                         else if ((selectedField.FieldKey == ActionReport.Fields.StartTimeStamp) || (selectedField.FieldKey == ActionReport.Fields.EndTimeStamp))
                         {
@@ -298,7 +301,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{Parent_RunSetReport_Name_Link}", "SUMMARY VIEW");
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
             ReportHTML = ReportHTML.Replace("{canvas_path}", CanvasJs);
-            //ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + App.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + WorkSpace.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -488,7 +491,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                         {
                                             fieldsNamesHTMLTableOneCells.Append("<td>" + selectedField_internal.FieldName + "</td>");
                                         }
-                                        //fieldsValuesHTMLTableOneCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) != null ? GingerCore.General.TimeConvert(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) : string.Empty) + "</td>");
+                                        fieldsValuesHTMLTableOneCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br) != null ? General.TimeConvert(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) : string.Empty) + "</td>");
                                     }
                                     else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.RunStatus)
                                     {
@@ -545,7 +548,7 @@ namespace Ginger.Reports.GingerExecutionReport
                     if (!selectedField.IsSelected)
                     {
                         string executionStatisticsSection = ExtensionMethods.GetStringBetween(ReportHTML, "<!--ExecutionActivitiesDetails_Start-->", "<!--ExecutionActivitiesDetails_End-->");
-                        if(!executionStatisticsSection.Equals(string.Empty))
+                        if (!executionStatisticsSection.Equals(string.Empty))
                             ReportHTML = ReportHTML.Replace(executionStatisticsSection, "");
                     }
                     else
@@ -745,7 +748,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 ReportJS = ExtensionMethods.GetHTMLTemplate("circlechart.js", TemplatesFolder + "/assets/js/");
             }
             if (currentTemplate.UseLocalStoredStyling)
-            {              
+            {
                 if (ReportsCSS == string.Empty || ReportsCSS == "")
                 {
                     ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");
@@ -777,7 +780,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 }
                 else if ((selectedField.FieldKey == GingerReport.Fields.Elapsed))
                 {
-                   // fieldsValuesHTMLTableCells.Append("<td>" + GingerCore.General.TimeConvert(gr.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(gr).ToString()) + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(gr.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(gr).ToString()) + "</td>");
                 }
                 else
                 {
@@ -806,7 +809,7 @@ namespace Ginger.Reports.GingerExecutionReport
                     {
                         ReportHTML = ReportHTML.Replace("<!--Section_PlaceHolder_ApplicationAgentsMapping-->",
                                                      ConvertingDatatableToHTML((DataTable)gr.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(gr), "Target Application - Agents Mapping", "table table-striped table-bordered table-hover", selectedField.IsSectionCollapsed));
-                    }                      
+                    }
                 }
                 else if (selectedField.FieldKey == GingerReport.Fields.BusinessFlowsDetails)
                 {
@@ -885,9 +888,9 @@ namespace Ginger.Reports.GingerExecutionReport
                                 {
                                     fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()).ToLocalTime().ToString() + "</td>");
                                 }
-                                else if(selectedField_internal.FieldKey == BusinessFlowReport.Fields.Elapsed)
+                                else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Elapsed)
                                 {
-                                    //fieldsValuesHTMLTableCells.Append("<td>" + GingerCore.General.TimeConvert(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) + " </td>");
+                                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(br.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(br).ToString()) + " </td>");
                                 }
                                 else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Seq)
                                 {
@@ -906,7 +909,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                     }
                                 }
                             }
-                            fieldsValuesHTMLTableCells.Append("</tr>");                            
+                            fieldsValuesHTMLTableCells.Append("</tr>");
                             fieldsValuesHTMLTableCells.Append("<tr id='BusinessFlow" + lastseq + "Collapse' class='collapse'><td colspan='11' style='padding-left:40px'><table class='table table-striped table-bordered table-hover'>");
                             fieldsValuesHTMLTableCells.Append(" <thead class='table-space'><tr>");
                             lastbusinessflow = ExtensionMethods.folderNameNormalazing(br.Seq + " " + br.Name);
@@ -947,7 +950,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                     }
                                     else if (selectedField_internal.FieldKey == ActivityReport.Fields.ElapsedSecs)
                                     {
-                                       // fieldsValuesHTMLTableCells.Append("<td>" + GingerCore.General.TimeConvert(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + " </td>");
+                                        fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + " </td>");
                                     }
                                     else if (selectedField_internal.FieldKey == ActivityReport.Fields.Seq)
                                     {
@@ -1043,7 +1046,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
             ReportHTML = ReportHTML.Replace("{Parent_GingerRunner_Name}", currentGingerRunnerLinkText);
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
-            //ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + App.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + WorkSpace.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -1118,7 +1121,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 ReportJS = ExtensionMethods.GetHTMLTemplate("circlechart.js", TemplatesFolder + "/assets/js/");
             }
             if (currentTemplate.UseLocalStoredStyling)
-            {               
+            {
                 if (ReportsCSS == string.Empty || ReportsCSS == "")
                 {
                     ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");
@@ -1150,9 +1153,9 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(((BusinessFlowReport)BusinessFlowReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((BusinessFlowReport)BusinessFlowReport)).ToString()).ToLocalTime().ToString() + "</td>");
                 }
-                else if(selectedField.FieldKey == BusinessFlowReport.Fields.Elapsed)
+                else if (selectedField.FieldKey == BusinessFlowReport.Fields.Elapsed)
                 {
-                  //  fieldsValuesHTMLTableCells.Append("<td>" + GingerCore.General.TimeConvert(((BusinessFlowReport)BusinessFlowReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((BusinessFlowReport)BusinessFlowReport)).ToString()) + " </td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(((BusinessFlowReport)BusinessFlowReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((BusinessFlowReport)BusinessFlowReport)).ToString()) + " </td>");
                 }
                 else
                 {
@@ -1209,7 +1212,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{BusinessFlow_Headers}", fieldsNamesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{BusinessFlow_Data}", fieldsValuesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
-           // ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + App.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + WorkSpace.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -1278,7 +1281,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
                         fieldsNamesHTMLTableCells = new StringBuilder();
                         fieldsValuesHTMLTableCells = new StringBuilder();
-                        foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.ActivityFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldName!= "ScreenShot" && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
+                        foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.ActivityFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldName != "ScreenShot" && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
                         {
                             fieldsNamesHTMLTableCells.Append("<td>" + selectedField_internal.FieldName + "</td>");
                         }
@@ -1297,10 +1300,10 @@ namespace Ginger.Reports.GingerExecutionReport
 
                                 if ((selectedField_internal.FieldKey == ActivityReport.Fields.ActivityGroupName) && (currentTemplate.ReportLowerLevelToShow != HTMLReportConfiguration.ReportsLevel.ActivityGroupLevel.ToString()))
                                 {
-                                    fieldsValuesHTMLTableCells.Append(@"<td><a href='.\" + @"ActivityGroups\"+ ExtensionMethods.folderNameNormalazing(ac.ActivityGroupSeq + " " + ExtensionMethods.OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString())) +
+                                    fieldsValuesHTMLTableCells.Append(@"<td><a href='.\" + @"ActivityGroups\" + ExtensionMethods.folderNameNormalazing(ac.ActivityGroupSeq + " " + ExtensionMethods.OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString())) +
                                                                                            @"\ActivityGroupReport.html'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + @"</a></td>");
                                 }
-                                else if((selectedField_internal.FieldKey == ActivityReport.Fields.ActivityName) && (currentTemplate.ReportLowerLevelToShow != HTMLReportConfiguration.ReportsLevel.BusinessFlowLevel.ToString()))
+                                else if ((selectedField_internal.FieldKey == ActivityReport.Fields.ActivityName) && (currentTemplate.ReportLowerLevelToShow != HTMLReportConfiguration.ReportsLevel.BusinessFlowLevel.ToString()))
                                 {
                                     fieldsValuesHTMLTableCells.Append(@"<td><a href='.\" + ExtensionMethods.folderNameNormalazing(ac.GetType().GetProperty(ActivityReport.Fields.Seq).GetValue(ac) + " " + ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString())
                                                                                          + @"\ActivityReport.html'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + @"</a></td>");
@@ -1317,9 +1320,9 @@ namespace Ginger.Reports.GingerExecutionReport
                                 {
                                     fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()).ToLocalTime().ToString() + "</td>");
                                 }
-                                else if(selectedField_internal.FieldKey == ActivityReport.Fields.ElapsedSecs)
+                                else if (selectedField_internal.FieldKey == ActivityReport.Fields.ElapsedSecs)
                                 {
-                                   // fieldsValuesHTMLTableCells.Append("<td>" + GingerCore.General.TimeConvert(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + " </td>");
+                                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + " </td>");
                                 }
                                 else if (selectedField_internal.FieldKey == ActivityReport.Fields.Seq)
                                 {
@@ -1385,9 +1388,10 @@ namespace Ginger.Reports.GingerExecutionReport
                                                     ScreenshotCount++;
                                                 }
                                             }
-                                            //Tuple<int, int> sizesPreview = Ginger.General.RecalculatingSizeWithKeptRatio(Ginger.General.GetImageHeightWidth(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
+                                     
+                                            Tuple<int, int> sizesPreview = General.RecalculatingSizeWithKeptRatio(Image.FromFile(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
                                             string id_str = @"ScreenShot_" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + act.Seq.ToString() + "_" + ScreenshotCount;
-                                            //fieldsValuesHTMLTableCells.Append(@"<td align='center'><img style='display:block;' src='"  + @".\" + lastActivity + "\\" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Seq).GetValue(act) + " " + act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString())  + @"\Screenshots\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png' alt='" + act.Description + " - Action - Screenshot" + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + id_str + "' onclick='show_modal(\"" + id_str + "\")'></img></td>");
+                                            fieldsValuesHTMLTableCells.Append(@"<td align='center'><img style='display:block;' src='" + @".\" + lastActivity + "\\" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Seq).GetValue(act) + " " + act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + @"\Screenshots\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png' alt='" + act.Description + " - Action - Screenshot" + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + id_str + "' onclick='show_modal(\"" + id_str + "\")'></img></td>");
                                         }
                                         catch
                                         {
@@ -1503,7 +1507,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
                         try
                         {
-                           // ((ActivitiesGroup)BF.ActivitiesGroups.Where(x => x.Guid.ToString() == ag.SourceGuid).FirstOrDefault()).TempReportFolder = currentHTMLReportsFolder + @"\" + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name);
+                            BF.ActivitiesGroups.Where(x => x.Guid.ToString() == ag.SourceGuid).FirstOrDefault().TempReportFolder = currentHTMLReportsFolder + @"\" + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name);
                         }
                         catch { }
                         foreach (ActivityReport ac in BusinessFlowReport.Activities.Where(x => ag.ExecutedActivitiesGUID.Select(y => y.ToString()).Contains(x.SourceGuid)).OrderBy(x => x.Seq))
@@ -1573,7 +1577,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 ReportJS = ExtensionMethods.GetHTMLTemplate("circlechart.js", TemplatesFolder + "/assets/js/");
             }
             if (currentTemplate.UseLocalStoredStyling)
-            {                
+            {
                 if (ReportsCSS == string.Empty || ReportsCSS == "")
                 {
                     ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");
@@ -1607,7 +1611,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 }
                 else if (selectedField.FieldKey == ActivityGroupReport.Fields.Elapsed)
                 {
-                   // fieldsValuesHTMLTableCells.Append("<td>" + GingerCore.General.TimeConvert(((ActivityGroupReport)ActivityGroupReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityGroupReport)ActivityGroupReport)).ToString()) + " </td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(((ActivityGroupReport)ActivityGroupReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityGroupReport)ActivityGroupReport)).ToString()) + " </td>");
                 }
                 else
                 {
@@ -1667,7 +1671,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{ActivityGroup_Headers}", fieldsNamesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{ActivityGroup_Data}", fieldsValuesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
-            //ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + App.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + WorkSpace.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -1725,7 +1729,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                     {
                                         fieldsValuesHTMLTableCells.Append(@"<td><a href='.\" + ExtensionMethods.folderNameNormalazing(ac.GetType().GetProperty(ActivityReport.Fields.Seq).GetValue(ac) + " " + ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString())
                                                                                              + @"\ActivityReport.html?Parent_ActivitiesGroup_Folder_Name=" + ExtensionMethods.folderNameNormalazing(ActivityGroupReport.Seq + " " + ActivityGroupReport.Name)
-                                                                                                                   + "&Parent_ActivitiesGroup_Name=" + ExtensionMethods.folderNameNormalazing(ActivityGroupReport.Name) 
+                                                                                                                   + "&Parent_ActivitiesGroup_Name=" + ExtensionMethods.folderNameNormalazing(ActivityGroupReport.Name)
                                                                                                                    + "&ActivitiesGroupCalledAsRoot=true" + "'>"
                                                                                                                    + ExtensionMethods.OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + @"</a></td>");
                                     }
@@ -1733,7 +1737,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                     {
                                         fieldsValuesHTMLTableCells.Append(@"<td><a href='.\..\..\" + ExtensionMethods.folderNameNormalazing(ac.GetType().GetProperty(ActivityReport.Fields.Seq).GetValue(ac) + " " + ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString())
                                                                                          + @"\ActivityReport.html?Parent_ActivitiesGroup_Folder_Name=" + ExtensionMethods.folderNameNormalazing(ActivityGroupReport.Seq + " " + ActivityGroupReport.Name)
-                                                                                                                   + "&Parent_ActivitiesGroup_Name=" + ExtensionMethods.folderNameNormalazing(ActivityGroupReport.Name) 
+                                                                                                                   + "&Parent_ActivitiesGroup_Name=" + ExtensionMethods.folderNameNormalazing(ActivityGroupReport.Name)
                                                                                                                    + "&ActivitiesGroupCalledAsRoot=false" + "'>"
                                                                                                                    + ExtensionMethods.OverrideHTMLRelatedCharacters(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + @"</a></td>");
                                     }
@@ -1752,7 +1756,7 @@ namespace Ginger.Reports.GingerExecutionReport
                                 }
                                 else if (selectedField_internal.FieldKey == ActivityReport.Fields.ElapsedSecs)
                                 {
-                                    //fieldsValuesHTMLTableCells.Append("<td>" + GingerCore.General.TimeConvert(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + " </td>");
+                                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(ac.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(ac).ToString()) + " </td>");
                                 }
                                 else if (selectedField_internal.FieldKey == ActivityReport.Fields.Seq)
                                 {
@@ -1818,9 +1822,9 @@ namespace Ginger.Reports.GingerExecutionReport
                                                     ScreenshotCount++;
                                                 }
                                             }
-                                            //Tuple<int, int> sizesPreview = Ginger.General.RecalculatingSizeWithKeptRatio(Ginger.General.GetImageHeightWidth(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
-                                            //string id_str = @"ScreenShot_" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + act.Seq.ToString() + "_" + ScreenshotCount;
-                                            //fieldsValuesHTMLTableCells.Append(@"<td align='center'><img style='display:block;' src='" + @"..\..\" + lastActivity + "\\" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Seq).GetValue(act) + " " + act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + @"\Screenshots\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png' alt='" + act.Description + " - Action - Screenshot" + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + id_str + "' onclick='show_modal(\"" + id_str + "\")'></img></td>");
+                                            Tuple<int, int> sizesPreview = General.RecalculatingSizeWithKeptRatio(Image.FromFile(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
+                                            string id_str = @"ScreenShot_" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + act.Seq.ToString() + "_" + ScreenshotCount;
+                                            fieldsValuesHTMLTableCells.Append(@"<td align='center'><img style='display:block;' src='" + @"..\..\" + lastActivity + "\\" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Seq).GetValue(act) + " " + act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + @"\Screenshots\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png' alt='" + act.Description + " - Action - Screenshot" + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + id_str + "' onclick='show_modal(\"" + id_str + "\")'></img></td>");
                                         }
                                         catch
                                         {
@@ -1929,7 +1933,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 ReportJS = ExtensionMethods.GetHTMLTemplate("circlechart.js", TemplatesFolder + "/assets/js/");
             }
             if (currentTemplate.UseLocalStoredStyling)
-            {               
+            {
                 if (ReportsCSS == string.Empty || ReportsCSS == "")
                 {
                     ReportsCSS = ExtensionMethods.GetHTMLTemplate("Styles.css", TemplatesFolder + "/assets/css/");
@@ -1956,11 +1960,11 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString()).ToLocalTime().ToString() + "</td>");
                 }
-                else if(selectedField.FieldKey == ActivityReport.Fields.ElapsedSecs)
+                else if (selectedField.FieldKey == ActivityReport.Fields.ElapsedSecs)
                 {
-                  //  fieldsValuesHTMLTableCells.Append("<td>" + GingerCore.General.TimeConvert(((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString()) + " </td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString()) + " </td>");
                 }
-                else if(selectedField.FieldKey == ActivityReport.Fields.ActivityName)
+                else if (selectedField.FieldKey == ActivityReport.Fields.ActivityName)
                 {
                     fieldsValuesHTMLTableCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString()) + "</td>");
                 }
@@ -1975,7 +1979,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
                 if (selectedField.FieldKey == ActivityReport.Fields.ActivityName)
                 {
-                    currentActivityLinkText =ExtensionMethods.OverrideHTMLRelatedCharacters(((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString());
+                    currentActivityLinkText = ExtensionMethods.OverrideHTMLRelatedCharacters(((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString());
                 }
             }
 
@@ -2026,7 +2030,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{Activity_Headers}", fieldsNamesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{Activity_Data}", fieldsValuesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
-            //ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + App.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + WorkSpace.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -2129,9 +2133,9 @@ namespace Ginger.Reports.GingerExecutionReport
                                                 ScreenshotCount++;
                                             }
                                         }
-                                        //Tuple<int, int> sizesPreview = Ginger.General.RecalculatingSizeWithKeptRatio(Ginger.General.GetImageHeightWidth(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
-                                        //string id_str = @"ScreenShot_" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + act.Seq.ToString() + "_" + ScreenshotCount;
-                                        //fieldsValuesHTMLTableCells.Append(@"<td align='center'><img style='display:block;' src='" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Seq).GetValue(act) + " " + act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + @"\Screenshots\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png' alt='" + act.Description + " - Action - Screenshot" + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + id_str + "' onclick='show_modal(\"" + id_str + "\")'></img></td>");
+                                        Tuple<int, int> sizesPreview = General.RecalculatingSizeWithKeptRatio(Image.FromFile(act.LogFolder + @"\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png"), screenShotSampleWidth, screenShotSampleHight);
+                                        string id_str = @"ScreenShot_" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + act.Seq.ToString() + "_" + ScreenshotCount;
+                                        fieldsValuesHTMLTableCells.Append(@"<td align='center'><img style='display:block;' src='" + ExtensionMethods.folderNameNormalazing(act.GetType().GetProperty(ActionReport.Fields.Seq).GetValue(act) + " " + act.GetType().GetProperty(ActionReport.Fields.Description).GetValue(act).ToString()) + @"\Screenshots\ScreenShot_" + act.Seq.ToString() + "_" + ScreenshotCount + ".png' alt='" + act.Description + " - Action - Screenshot" + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + id_str + "' onclick='show_modal(\"" + id_str + "\")'></img></td>");
                                     }
                                     catch
                                     {
@@ -2253,7 +2257,7 @@ namespace Ginger.Reports.GingerExecutionReport
             // running on all selected fields and getting this fields names AND values from the Report file (both into separate html-table string)
             StringBuilder fieldsNamesHTMLTableCells = new StringBuilder();
             StringBuilder fieldsValuesHTMLTableCells = new StringBuilder();
-            foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.ActionFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldKey!= ActionReport.Fields.ScreenShot && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
+            foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.ActionFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldKey != ActionReport.Fields.ScreenShot && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
             {
                 fieldsNamesHTMLTableCells.Append("<td>" + selectedField.FieldName + "</td>");
                 if (((ActionReport)ActionReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActionReport)ActionReport)) == null)
@@ -2261,7 +2265,7 @@ namespace Ginger.Reports.GingerExecutionReport
                     fieldsValuesHTMLTableCells.Append("<td> N/A </td>");
                     continue;
                 }
-                
+
                 if (selectedField.FieldKey == ActionReport.Fields.Description)
                 {
                     if ((currentActionNameText == null) || (currentActionNameText.ToString() == string.Empty))
@@ -2337,7 +2341,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
             ReportHTML = ReportHTML.Replace("{ReportLevel}", ReportLevel);
-            //ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + App.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + WorkSpace.AppVersion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             fieldsNamesHTMLTableCells.Remove(0, fieldsNamesHTMLTableCells.Length);
             fieldsValuesHTMLTableCells.Remove(0, fieldsValuesHTMLTableCells.Length);
             // adding Sections 
@@ -2395,8 +2399,8 @@ namespace Ginger.Reports.GingerExecutionReport
                             fileName = System.IO.Path.GetFileName(txt_file);
                             if (fileName.Contains("ScreenShot_"))
                             {
-                                //Tuple<int, int> sizesPreview = Ginger.General.RecalculatingSizeWithKeptRatio(Ginger.General.GetImageHeightWidth(txt_file), screenShotFullWidth, screenShotFullHight);
-                                //strHTMLBuilder.Append(@"<tr><td align='center'><img style='display:block;' src='.\Screenshots\" + fileName.ToString() + "' alt='" + ActionReport.Description + " - Action - Screenshot" + screenshotCount.ToString() + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + fileName + "' onclick='show_modal(\"" + fileName + "\")'></img></td></tr>");
+                                Tuple<int, int> sizesPreview = General.RecalculatingSizeWithKeptRatio(Image.FromFile(txt_file), screenShotFullWidth, screenShotFullHight);
+                                strHTMLBuilder.Append(@"<tr><td align='center'><img style='display:block;' src='.\Screenshots\" + fileName.ToString() + "' alt='" + ActionReport.Description + " - Action - Screenshot" + screenshotCount.ToString() + "' width='" + sizesPreview.Item1.ToString() + "' height='" + sizesPreview.Item2.ToString() + "' id='" + fileName + "' onclick='show_modal(\"" + fileName + "\")'></img></td></tr>");
                             }
                         }
                         strHTMLBuilder.Append("</tbody>");
@@ -2417,7 +2421,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
         private static string ConvertingDatatableToHTML(DataTable dt, string tableCaption, string tableClass, bool isCollapsed = false)
         {
-            string Htmltext = string.Empty, collapse = string.Empty, tableID = string.Empty,collpaseStyle=string.Empty;
+            string Htmltext = string.Empty, collapse = string.Empty, tableID = string.Empty, collpaseStyle = string.Empty;
             if (isCollapsed)
             {
                 collapse = "collapse";
@@ -2435,9 +2439,9 @@ namespace Ginger.Reports.GingerExecutionReport
                 StringBuilder strHTMLBuilder = new StringBuilder();
                 strHTMLBuilder.Append(@"<div class='panel-heading'>");
                 strHTMLBuilder.Append(@"<a class='accordion-toggle' data-toggle=" + collapse + " href =#" + tableID + "> ");
-                strHTMLBuilder.Append(@"<i class='"+ collpaseStyle +"' data-icon-hide='ace-icon fa fa-angle-down' data-icon-show='ace-icon fa fa-angle-right'></i>");
+                strHTMLBuilder.Append(@"<i class='" + collpaseStyle + "' data-icon-hide='ace-icon fa fa-angle-down' data-icon-show='ace-icon fa fa-angle-right'></i>");
                 strHTMLBuilder.Append(@"<h4 class='orangetxt'>" + tableCaption + "</h4></a></div>");
-                strHTMLBuilder.Append(@"<div class='" + collapse +" tableScroll' id=" + tableID + ">");
+                strHTMLBuilder.Append(@"<div class='" + collapse + " tableScroll' id=" + tableID + ">");
                 strHTMLBuilder.Append("<table class='" + tableClass + "' summary='" + tableCaption + "'>");
                 strHTMLBuilder.Append(@"<thead>");
 
@@ -2480,9 +2484,13 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                //BitmapImage beatSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@BeatLogo.jpg"));
-                //Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(beatSource, logoWidth, logoHight);
-                //beatLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(beatSource)) + "' style='padding-left:70px'/>";
+
+
+               Image Logoimage=Bitmap.FromFile(new Uri("pack://application:,,,/Ginger;component/Images/" + "@BeatLogo.jpg").AbsolutePath);
+                //beatSource.
+                Tuple<int, int> sizes=General.RecalculatingSizeWithKeptRatio(Logoimage, logoWidth, logoHight);
+
+                beatLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + General.ImagetoBase64String(Logoimage) + "' style='padding-left:70px'/>";
             }
             return beatLogo;
         }
@@ -2496,9 +2504,9 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                //BitmapImage gingerSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@GingerLogo_lowRes.jpg"));
-                //Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(gingerSource, logoWidth, logoHight);
-                //gingerLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(gingerSource)) + "' style='float:right;padding-left:70px' />";
+                Image gingerSource =  Bitmap.FromFile(new Uri("pack://application:,,,/Ginger;component/Images/" + "@GingerLogo_lowRes.jpg").AbsolutePath);
+                Tuple<int, int> sizes = General.RecalculatingSizeWithKeptRatio(gingerSource, logoWidth, logoHight);
+                gingerLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + General.ImagetoBase64String(gingerSource) + "' style='float:right;padding-left:70px' />";
             }
             return gingerLogo;
         }
@@ -2508,20 +2516,20 @@ namespace Ginger.Reports.GingerExecutionReport
             string customerLogo = string.Empty;
             if (!currentTemplate.UseLocalStoredStyling)
             {
-                //System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
-                //BitmapSource customerSourceS = Ginger.General.GetImageStream(CustomerLogo);
-                //Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(customerSourceS, logoWidth, logoHight);
-                //if (Directory.Exists(HTMLReportMainFolder + "/assets/img"))
-                //{
-                //    CustomerLogo.Save(HTMLReportMainFolder + "/assets/img/CustomerLogo.png");
-                //}
-                //customerLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='{ReportLevel}assets/img/CustomerLogo.png' />";
+                Image CustomerLogo = General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
+      
+                Tuple<int, int> sizes = General.RecalculatingSizeWithKeptRatio(CustomerLogo, logoWidth, logoHight);
+                if (Directory.Exists(HTMLReportMainFolder + "/assets/img"))
+                {
+                    CustomerLogo.Save(HTMLReportMainFolder + "/assets/img/CustomerLogo.png");
+                }
+                customerLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='{ReportLevel}assets/img/CustomerLogo.png' />";
             }
             else
             {
-                //BitmapSource customerSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString()));
-                //Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(customerSource, logoWidth, logoHight);
-                //customerLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + currentTemplate.LogoBase64Image.ToString() + "' style='padding-right:70px'/>";
+                Image customerSource = General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
+                Tuple<int, int> sizes = General.RecalculatingSizeWithKeptRatio(customerSource, logoWidth, logoHight);
+                customerLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + currentTemplate.LogoBase64Image.ToString() + "' style='padding-right:70px'/>";
             }
             return customerLogo;
         }
@@ -2535,9 +2543,9 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                //BitmapImage nextImageSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@ItemNext.jpg"));
-                //Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(nextImageSource, itemPrevNextWidth, itemPrevNextHight);
-                //itemNextImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(nextImageSource)) + "' style='padding-left:1px'/>";
+                Image nextImage = Image.FromFile(new Uri("pack://application:,,,/Ginger;component/Images/" + "@ItemNext.jpg").AbsolutePath);
+                Tuple<int, int> sizes = General.RecalculatingSizeWithKeptRatio(nextImage, itemPrevNextWidth, itemPrevNextHight);
+                itemNextImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + General.ImagetoBase64String(nextImage) + "' style='padding-left:1px'/>";
             }
             return itemNextImage;
         }
@@ -2551,9 +2559,9 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                //BitmapImage prevImageSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@ItemPrev.jpg"));
-                //Tuple<int, int> sizes = Ginger.General.RecalculatingSizeWithKeptRatio(prevImageSource, itemPrevNextWidth, itemPrevNextHight);
-                //itemPrevImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(prevImageSource)) + "' style='padding-left:1px'/>";
+                Image prevImage = Image.FromFile(new Uri("pack://application:,,,/Ginger;component/Images/" + "@ItemPrev.jpg").AbsolutePath);
+                Tuple<int, int> sizes = General.RecalculatingSizeWithKeptRatio(prevImage, itemPrevNextWidth, itemPrevNextHight);
+                itemPrevImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + General.ImagetoBase64String(prevImage)+ "' style='padding-left:1px'/>";
             }
             return itemPrevImage;
         }
@@ -2568,7 +2576,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 //3. update links and style to be relative to the above       
                 if (!Directory.Exists(HTMLReportMainFolder + "/assets"))
                 {
-                    //GingerCore.General.DirectoryCopy(TemplatesFolder + "/assets/", HTMLReportMainFolder + "/assets", true);
+                    General.DirectoryCopy(TemplatesFolder + "/assets/", HTMLReportMainFolder + "/assets", true);
                 }
                 mStyleBundle.Append(@"<style>@font-face {font-family:Source Sans Pro;src: url('{ReportLevel}assets/fonts/SourceSansPro-Regular.ttf');}</style>");
                 mStyleBundle.Append(@"<link rel='stylesheet' href='{ReportLevel}assets/css/bootstrap.css' />");
@@ -2590,9 +2598,9 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/jquery.js'></script>");
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/bootstrap.js'></script>");
-                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/babel.js'></script>");                
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/babel.js'></script>");
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/react-with-addons.min.js'></script>");
-                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/react-dom.min.js'></script>");                
+                mJSBundle.Append(@"<script src='{ReportLevel}assets/js/react-dom.min.js'></script>");
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/prop-types.min.js'></script>");
                 mJSBundle.Append(@"<script src='{ReportLevel}assets/js/Recharts.min.js'></script>");
             }
@@ -2600,7 +2608,7 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>");
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.js'></script>");
-                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js'></script>");                
+                mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js'></script>");
                 mJSBundle.Append(@"<script src='https://unpkg.com/react@15/dist/react-with-addons.js'></script>");
                 mJSBundle.Append(@"<script src='https://unpkg.com/react-dom@15.6.1/dist/react-dom.min.js'></script>");
                 mJSBundle.Append(@"<script src='https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.2/prop-types.min.js'></script>");
@@ -2612,7 +2620,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
     }
 
-    public  class ExtensionMethods
+    public static class ExtensionMethods
     {
         public static string defaultAutomationTabReportName = "{name_to_replace}_{date_to_replace}_AutomationTab_{objectType_to_replace}";
 
@@ -2632,7 +2640,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 // TODO - need to delete, template always should be initialize with fields.
                 if (defualtConfig != null)
                 {
-                   // l.currentTemplate = Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig);
+                    l.currentTemplate = HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig);
                 }
                 else
                 {
@@ -2645,45 +2653,44 @@ namespace Ginger.Reports.GingerExecutionReport
                 return string.Empty;
             }
 
-            //HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            //if (!calledFromAutomateTab)
-            //{
-            //    if ((mHTMLReportsFolder != null) && (mHTMLReportsFolder != string.Empty))
-            //    {
-            //        if(isHTMLReportPermanentFolderNameUsed)
-            //        {
-            //            mHTMLReportsFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
-            //        }
-            //        l.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder);
-            //    }
-            //    else
-            //    {
-            //        if (!isHTMLReportPermanentFolderNameUsed)
-            //        {
-            //            l.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).LogFolder));
-            //        }
-            //        else
-            //        {
-            //            l.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
-            //        }
-              // }
+            HTMLReportsConfiguration currentConf = App.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            if (!calledFromAutomateTab)
+            {
+                if ((mHTMLReportsFolder != null) && (mHTMLReportsFolder != string.Empty))
+                {
+                    if (isHTMLReportPermanentFolderNameUsed)
+                    {
+                        mHTMLReportsFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
+                    }
+                    l.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder);
+                }
+                else
+                {
+                    if (!isHTMLReportPermanentFolderNameUsed)
+                    {
+                        l.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).LogFolder));
+                    }
+                    else
+                    {
+                        l.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
+                    }
+                }
+            }
+            else
+            {
+                l.HTMLReportMainFolder = currentConf.HTMLReportsFolder + "\\" + defaultAutomationTabReportName;
+            }
 
-            //}
-            //else
-            //{
-            //    l.HTMLReportMainFolder = currentConf.HTMLReportsFolder + "\\" + defaultAutomationTabReportName;
-            //}
+            if (Directory.Exists(l.HTMLReportMainFolder))
+            {
+                CleanDirectory(l.HTMLReportMainFolder);
+            }
+            string Folder = App.UserProfile.Solution.ContainingFolderFullPath.ToString() + "\\HTMLReports\\";
 
-            //if (Directory.Exists(l.HTMLReportMainFolder))
-            //{
-            //    CleanDirectory(l.HTMLReportMainFolder);
-            //}
-            //string Folder = App.UserProfile.Solution.ContainingFolderFullPath.ToString() + "\\HTMLReports\\";
-
-            //if (currentConf.LimitReportFolderSize)
-            //{
-            //    DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(Folder, maxFolderSize);
-            //}
+            if (currentConf.LimitReportFolderSize)
+            {
+                DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(Folder, maxFolderSize);
+            }
 
             switch (RI.reportInfoLevel)
             {
@@ -2719,18 +2726,19 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();                
+                ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
                 l.currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
             if (string.IsNullOrEmpty(BF.ExecutionFullLogFolder))
             {
                 string exec_folder = string.Empty;
-                //exec_folder = Ginger.Run.ExecutionLogger.GenerateBusinessflowOfflineExecutionLogger(BF);
-                //if (string.IsNullOrEmpty(exec_folder))
-                //{
-                //    return string.Empty;
-                //}
-                //BF.ExecutionFullLogFolder = exec_folder;
+                exec_folder = Ginger.Run.ExecutionLogger.GenerateBusinessflowOfflineExecutionLogger(BF);
+                exec_folder = Ginger.Run.ExecutionLogger.GenerateBusinessflowOfflineExecutionLogger(BF);
+                if (string.IsNullOrEmpty(exec_folder))
+                {
+                    return string.Empty;
+                }
+                BF.ExecutionFullLogFolder = exec_folder;
             }
             ReportInfo RI = new ReportInfo(BF.ExecutionFullLogFolder);
             if ((RI.ReportInfoRootObject == null) || (RI.ReportInfoRootObject.GetType() == typeof(Object)))
@@ -2816,7 +2824,8 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             catch (Exception ex)
             {
-                //Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+              
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 
@@ -2824,22 +2833,22 @@ namespace Ginger.Reports.GingerExecutionReport
         {
             try
             {
-                //logsFolder = logsFolder.Replace(@"~", App.UserProfile.Solution.Folder);
-                //if (Directory.Exists(logsFolder))
-                //{
-                //    return logsFolder;
-                //}
-                //else
-                //{
-                //    System.IO.Directory.CreateDirectory(logsFolder);
-                //    return logsFolder;
-                //}
+                logsFolder = logsFolder.Replace(@"~", App.UserProfile.Solution.Folder);
+                if (Directory.Exists(logsFolder))
+                {
+                    return logsFolder;
+                }
+                else
+                {
+                    System.IO.Directory.CreateDirectory(logsFolder);
+                    return logsFolder;
+                }
             }
             catch (Exception)
             {
-                //logsFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"HTMLReports\");
-                //System.IO.Directory.CreateDirectory(logsFolder);
-                //App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
+                logsFolder = System.IO.Path.Combine(App.UserProfile.Solution.Folder, @"HTMLReports\");
+                System.IO.Directory.CreateDirectory(logsFolder);
+                App.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
             }
 
             return logsFolder;
@@ -2882,24 +2891,24 @@ namespace Ginger.Reports.GingerExecutionReport
         public static ObservableList<HTMLReportConfiguration> GetSolutionHTMLReportConfigurations()
         {
             var list = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            //list.ToList().ForEach(y => y = Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(y));
+            list.ToList().ForEach(y => y = HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidating(y));
             return list;
         }
 
         public static void SetTemplateAsDefault(HTMLReportConfiguration templateToSetAsDefualt)
         {
-            //if (Reporter.ToUser(eUserMsgKeys.ReportsTemplatesSaveWarn) != MessageBoxResult.Yes) return;
+//            if (Reporter.ToUser(eUserMsgKeys.ReportsTemplatesSaveWarn) != MessageBoxResult.Yes) return;
 
             templateToSetAsDefualt.IsDefault = true;
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(templateToSetAsDefualt);
 
-            var defuatlTemplates = GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).ToList();            
+            var defuatlTemplates = GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).ToList();
             foreach (HTMLReportConfiguration template in defuatlTemplates)
                 if (template != templateToSetAsDefualt)
                 {
                     template.IsDefault = false;
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(template);
-                }            
-        }        
+                }
+        }
     }
 }

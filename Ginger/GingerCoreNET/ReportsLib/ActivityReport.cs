@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -24,7 +24,7 @@ using System.IO;
 using System.Data;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Utility;
+
 
 namespace Ginger.Reports
 {

@@ -16,13 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.ObjectModel;
+using Amdocs.Ginger.Common;
+using GingerCore.Environments;
 
 namespace Ginger.Reports
 {
-    public class ReportList<T> : Collection<T>
+    public class EnvironmentReport
     {
-        public new int Count { get { return base.Count; } }
-        public new T this[int index] { get { return base[index]; } }
+        private IProjEnvironment mEnvironment;
+        public string Name { get { return mEnvironment.Name; } }
+        public EnvironmentReport(IProjEnvironment env)
+        {            
+            mEnvironment = env;
+        }
     }
 }

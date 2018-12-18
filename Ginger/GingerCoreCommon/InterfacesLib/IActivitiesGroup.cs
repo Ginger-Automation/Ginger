@@ -27,15 +27,19 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         Guid Guid { get; set; }
         string Name { get; set; }
         string Description { get; set; }
-        string AutomationPrecentage { get;  }
+        string AutomationPrecentage { get; }
         DateTime StartTimeStamp { get; set; }
         DateTime EndTimeStamp { get; set; }
         Single? ElapsedSecs { get; set; }
         eActivitiesGroupRunStatus RunStatus { get; set; }
         string ExternalID { get; set; }
         string ExternalID2 { get; set; }
+
+        string TempReportFolder { get; set; }
         ObservableList<IActivityIdentifiers> ActivitiesIdentifiers { get; set; }
         string TestSuiteId { get; set; }
         executionLoggerStatus ExecutionLoggerStatus { get; set; }
+        object ExecutionLogFolder { get; set; }
+        double Elapsed { get; set; }
     }
 }

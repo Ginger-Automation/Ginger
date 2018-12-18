@@ -8,5 +8,6 @@ namespace Amdocs.Ginger.Common.InterfacesLib
     {
         object AgentName { get; set; }
         IAgent Agent { get; set; }
+        string AppName { get; set; }
     }
 }

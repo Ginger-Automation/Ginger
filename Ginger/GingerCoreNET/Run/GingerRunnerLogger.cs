@@ -17,9 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace Ginger.Run
             this.fileName = loggerFile;
         }
 
-        public void LogAction(Act logAction)
+        public void LogAction(IAct logAction)
         {
             if (!logAction.EnableActionLogConfig) return;
 

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -23,7 +23,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using System.Data;
 using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports

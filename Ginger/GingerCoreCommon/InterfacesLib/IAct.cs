@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using GingerCore.Variables;
@@ -50,5 +51,9 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         ObservableList<VariableDependency> VariablesDependencies { get; set; }
         bool SupportSimulation { get; set; }
         String ActionDescription { get;  }
+        string ExecutionLogFolder { get; set; }
+        bool EnableActionLogConfig { get; set; }
+        ActionLogConfig ActionLogConfig { get; set; }
+        string ElapsedSecs { get; set; }
     }
 }

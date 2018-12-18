@@ -184,8 +184,18 @@ namespace Ginger
         /// <summary>
         /// Hold all Run Set execution data + execution methods
         /// </summary>        
-        public static RunsetExecutor RunsetExecutor = new RunsetExecutor();
+        public static RunsetExecutor RunsetExecutor
+        {
+            get
+            {
+                return WorkSpace.RunsetExecutor;
+            }
 
+            set
+            {
+                WorkSpace.RunsetExecutor = value;
+            }
+        }
         //TODO: whenever changed check if isDirty - and ask the user if to save
         public static RepositoryItemBase CurrentRepositoryItem { get; set; }
 
@@ -195,7 +205,18 @@ namespace Ginger
         public static IEnumerable<object> CurrentFolderItem { get; set; }
 
         // Business Flow Objects        
-        private static ProjEnvironment mAutomateTabEnvironment;
+        private static ProjEnvironment mAutomateTabEnvironment
+        {
+            get
+            {
+                return (ProjEnvironment)WorkSpace.AutomateTabEnvironment;
+
+            }
+            set{
+
+                WorkSpace.AutomateTabEnvironment = value;
+            }
+        }
         public static ProjEnvironment AutomateTabEnvironment
         {
             get
@@ -234,7 +255,17 @@ namespace Ginger
 
 
         public static BusinessFlow LastBusinessFlow { get; set; }
-        private static BusinessFlow mBusinessFlow;
+        private static BusinessFlow mBusinessFlow
+        {
+            get
+            {
+                return(BusinessFlow) WorkSpace.Businessflow;
+            }
+            set
+            {
+                WorkSpace.Businessflow = value;
+            }
+        }
         public static BusinessFlow BusinessFlow
         {
             get { return mBusinessFlow; }
@@ -285,7 +316,17 @@ namespace Ginger
         //    }
         //}
 
-        public static bool RunningFromConfigFile = false;
+        public static bool RunningFromConfigFile
+        {
+            get
+            {
+                return WorkSpace.RunningFromConfigFile;
+            }
+            set
+            {
+                WorkSpace.RunningFromConfigFile = value;
+            }
+        }
 
         public static bool RunningFromUnitTest = false;
 

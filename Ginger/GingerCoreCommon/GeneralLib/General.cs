@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using Amdocs.Ginger.Repository;
@@ -81,5 +82,110 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
 
         }
+
+        public static Tuple<int, int> RecalculatingSizeWithKeptRatio(Tuple<int, int> a, int boxWidth, int boxHight)
+        {
+            //calculate the ratio
+            double dbl = (double)a.Item1 / (double)a.Item2;
+            if ((int)((double)boxHight * dbl) <= boxWidth)
+            {
+                return new Tuple<int, int>((int)((double)boxHight * dbl), boxHight);
+            }
+            else
+            {
+                return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
+            }
+        }
+
+
+        public static Tuple<int, int> RecalculatingSizeWithKeptRatio(Image Img, int boxWidth, int boxHight)
+        {
+           
+
+            //calculate the ratio
+            double dbl = (double)Img.Width / (double)Img.Height;
+            if ((int)((double)boxHight * dbl) <= boxWidth)
+            {
+                return new Tuple<int, int>((int)((double)boxHight * dbl), boxHight);
+            }
+            else
+            {
+                return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
+            }
+        }
+
+
+        public static string ImagetoBase64String(Image Img)
+        {
+            throw new  NotImplementedException();
+        }
+
+
+        public static string TimeConvert(string s)
+        {
+            double seconds = Convert.ToDouble(s);
+            TimeSpan ts = TimeSpan.FromSeconds(seconds);
+            return ts.ToString(@"hh\:mm\:ss");
+        }
+
+        public static Image Base64StringToImage(string v)
+        {
+            throw new NotImplementedException();
+        }
+        public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            // If the source directory does not exist, throw an exception.
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            // If the destination directory does not exist, create it.
+            if (!Directory.Exists(destDirName))
+            {
+                Directory.CreateDirectory(destDirName);
+            }
+
+            // Get the file contents of the directory to copy.
+            FileInfo[] files = dir.GetFiles();
+
+            foreach (FileInfo file in files)
+            {
+                // Create the path to the new copy of the file.
+                string temppath = System.IO.Path.Combine(destDirName, file.Name);
+
+                // Copy the file.
+                file.CopyTo(temppath, true);
+            }
+
+            // If copySubDirs is true, copy the subdirectories.
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    // Create the subdirectory.
+                    string temppath = System.IO.Path.Combine(destDirName, subdir.Name);
+
+                    // Copy the subdirectories.
+                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
+                }
+            }
+        }
+
+        public static void ClearDirectoryContent(string DirPath)
+        {
+            //clear directory
+            System.IO.DirectoryInfo di = new DirectoryInfo(DirPath);
+            foreach (FileInfo file in di.GetFiles())
+                file.Delete();
+            foreach (DirectoryInfo dir in di.GetDirectories())
+                dir.Delete(true);
+        }
+
     }
 }

@@ -16,8 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using System.Collections.Generic;
 using Amdocs.Ginger.Common;
+using Ginger.Reports;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -25,6 +28,9 @@ namespace Amdocs.Ginger.Repository
     {
         string Name { get; set; }
         string Folder { get; set; }
-       ObservableList<VariableBase> Variables { get; set; }
+        ObservableList<VariableBase> Variables { get; set; }
+        ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
+        ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; }
+        ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; }
     }
 }

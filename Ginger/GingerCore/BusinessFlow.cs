@@ -600,7 +600,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IActivitiesGroup> ActivitiesGroups = new ObservableList<IActivitiesGroup>();
+        public ObservableList<IActivitiesGroup> ActivitiesGroups { get; set; } = new ObservableList<IActivitiesGroup>();
 
         public void AddActivitiesGroup(ActivitiesGroup activitiesGroup = null)
         {

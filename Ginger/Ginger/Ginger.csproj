@@ -221,8 +221,8 @@
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.4.5.0\lib\net461\System.Drawing.Common.dll</HintPath>
+    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.4.5.1\lib\net461\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.Globalization.Calendars, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Globalization.Calendars.4.3.0\lib\net46\System.Globalization.Calendars.dll</HintPath>
@@ -515,9 +515,9 @@
     <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportList.cs" />
     <Compile Include="Reports\ReportTemplate.cs" />
     <Compile Include="Repository\RepositoryItemFactory.cs" />
+    <Compile Include="Solution.cs" />
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
@@ -657,7 +657,6 @@
     <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
       <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\GingerRunnerLogger.cs" />
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml.cs">
       <DependentUpon>ImportDataSourceBrowseFile.xaml</DependentUpon>
     </Compile>
@@ -1401,7 +1400,6 @@
     <Compile Include="Help\TreeViewItems\HelpDocumentsFolderTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\VideoHelpFileTreeItem.cs" />
     <Compile Include="Help\TreeViewItems\MHTHelpFileTreeItem.cs" />
-    <Compile Include="Reports\HTMLReportConfiguration.cs" />
     <Compile Include="Reports\Designer\HTMLReportTemplateDesignerPage .xaml.cs">
       <DependentUpon>HTMLReportTemplateDesignerPage .xaml</DependentUpon>
     </Compile>
@@ -1414,7 +1412,6 @@
     <Compile Include="Reports\ExecutionResultsConfiguration.xaml.cs">
       <DependentUpon>ExecutionResultsConfiguration.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Run\ExecutionLogger.cs" />
     <Compile Include="Reports\ReportPage.xaml.cs">
       <DependentUpon>ReportPage.xaml</DependentUpon>
     </Compile>
@@ -4471,7 +4468,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\GingerExecutionReport.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\RunSetReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
