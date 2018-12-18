@@ -30,6 +30,7 @@ using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.WizardLib;
 using amdocs.ginger.GingerCoreNET;
 using static Ginger.ExtensionMethods;
+using Ginger.GeneralValidationRules;
 
 namespace Ginger.GherkinLib
 {
@@ -138,11 +139,13 @@ namespace Ginger.GherkinLib
                 case EventType.Init:
                     mWizard = (ImportGherkinFeatureWizard)WizardArgs.Wizard;
                     //TO DO::Feature File Cannot BE NULL
+                    FetaureFileName.FilePathTextBox.BindControl(mWizard, nameof(ImportGherkinFeatureWizard.mFeatureFile));
+                    FetaureFileName.FilePathTextBox.AddValidationRule(new FileValidationRule());
                     break;
-                case EventType.Validate:
+                case EventType.LeavingForNextPage:
                     if (!File.Exists(FetaureFileName.FilePathTextBox.Text))
                     {
-                        // WizardArgs.AddError("File not found - " + FetaureFileName.FilePathTextBox.Text);
+                        // WizardArgs.AddError("File not found - " + FetaureFileName.FilePathTextBox.Text);                        
                     }
                     break;
                 
