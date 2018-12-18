@@ -39,6 +39,7 @@ namespace Amdocs.Ginger.Common.Enums
         GingerLogoGray,
         GingerIconWhite,
         GingerIconGray,
+        GingerSplash,
         #endregion
 
 

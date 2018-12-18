@@ -124,7 +124,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public string RunDescription { get { return mActivity.RunDescription; } set { mActivity.RunDescription = value; } }
+        public string RunDescription { get; set; }
 
         [JsonProperty]
         [FieldParams]
@@ -267,12 +267,15 @@ namespace Ginger.Reports
                 {
                     foreach (string variable in VariablesBeforeExec)
                     {
-                        String[] elementsAfter = variable.Split(new string[] { "_:_" }, StringSplitOptions.None);
-                        DataRow dr = dt.NewRow();
-                        dr["Name"] = elementsAfter[0];
-                        dr["ValueBeforeExec"] = elementsAfter[1];
-                        dr["Description"] = elementsAfter[2];
-                        dt.Rows.Add(dr);
+                        String[] elementsBefore = variable.Split(new string[] { "_:_" }, StringSplitOptions.None);
+                        if (elementsBefore.Count() >= 3)
+                        {
+                            DataRow dr = dt.NewRow();
+                            dr["Name"] = elementsBefore[0];
+                            dr["ValueBeforeExec"] = elementsBefore[1];
+                            dr["Description"] = elementsBefore[2];
+                            dt.Rows.Add(dr);
+                        }
                     }
                 }     
                 if(VariablesAfterExec!=null)
@@ -280,9 +283,11 @@ namespace Ginger.Reports
                     foreach (string variable in VariablesAfterExec)
                     {
                         String[] elementsAfter = variable.Split(new string[] { "_:_" }, StringSplitOptions.None);
-
-                        var row_result = from row in dt.AsEnumerable() where row.Field<string>("Name") == elementsAfter[0] select row;
-                        dt.AsEnumerable().Where(p => p.Field<string>("Name") == elementsAfter[0]).FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
+                        if (elementsAfter.Count() >= 2)
+                        {
+                            var row_result = from row in dt.AsEnumerable() where row.Field<string>("Name") == elementsAfter[0] select row;
+                            dt.AsEnumerable().Where(p => p.Field<string>("Name") == elementsAfter[0]).FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
+                        }
                     }                
                 }                    
                 return dt;
