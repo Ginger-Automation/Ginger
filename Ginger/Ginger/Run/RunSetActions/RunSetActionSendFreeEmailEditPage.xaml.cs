@@ -51,7 +51,7 @@ namespace Ginger.Run.RunSetActions
             App.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, Email.Fields.ConfigureCredential);
             if (string.IsNullOrEmpty(runSetActionSendFreeEmail.MailTo))
             {
-                runSetActionSendFreeEmail.MailTo = App.UserProfile.UserEmail;
+                runSetActionSendFreeEmail.MailFrom = App.UserProfile.UserEmail;
             }
         }
 
