@@ -86,6 +86,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.LeavingForNextPage:
                 case EventType.Finish:
                     mPomAllElementsPage.FinishEditInAllGrids();
+                    if (mPomAllElementsPage != null)
+                    {
+                        mPomAllElementsPage.StopSpy();
+                    }
+                    break;
+                case EventType.Cancel:
+                    if (mPomAllElementsPage != null)
+                    {
+                        mPomAllElementsPage.StopSpy();
+                    }
                     break;
             }
         }
