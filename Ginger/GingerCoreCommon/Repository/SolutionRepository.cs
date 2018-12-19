@@ -189,6 +189,7 @@ namespace Amdocs.Ginger.Repository
             RepositoryFolderBase repoFolder = null;
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
+
                 if (repoFolder == null)
                 {
                     if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
