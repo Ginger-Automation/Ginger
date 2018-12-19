@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -29,6 +29,12 @@ namespace Amdocs.Ginger.Common.Actions
     [JsonObject(MemberSerialization.OptIn)]
     public class ActionInputValueInfo
     {
+        public Type ParamType { get; set; }
+
+        //For List<T> keep the full type name
+        public string ParamTypeStr { get; set; }
+
+
         [JsonProperty]
         public string Param { get; set; }
 
@@ -45,7 +51,17 @@ namespace Amdocs.Ginger.Common.Actions
                 if (ParamType == typeof(List<string>)) return "List<string>";
                 if (ParamType == typeof(IGingerAction)) return "IGingerAction";
                 if (ParamType == typeof(bool)) return "bool";
-
+                if (ParamType.IsEnum)
+                {
+                    
+                    string vals = "";
+                    foreach (object o in Enum.GetValues(ParamType))
+                    {
+                        if (vals.Length > 0) vals += ",";
+                        vals += o.ToString();
+                    }
+                    return "enum{" + vals + "}";
+                }
 
                 // Check if it is a List 
                 if (ParamType.IsGenericType && ParamType.GetGenericTypeDefinition() == typeof(List<>))
@@ -89,6 +105,10 @@ namespace Amdocs.Ginger.Common.Actions
                         {
                             ParamType = typeof(DynamicListWrapper);                            
                         }
+                        else if(value.StartsWith("enum"))
+                        {
+                            ParamType = typeof(EnumParamWrapper);
+                        }
                         else
                         {
                             throw new Exception("Unknown param type to handle: " + ParamType.FullName);
@@ -109,9 +129,6 @@ namespace Amdocs.Ginger.Common.Actions
             return "{Properties=" + s + "}" ;
         }
 
-        public Type ParamType { get; set; }
-
-        //For List<T> keep the full type name
-        public string ParamTypeStr { get; set; }
+        
     }
 }

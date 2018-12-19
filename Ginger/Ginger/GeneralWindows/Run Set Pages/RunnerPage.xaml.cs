@@ -306,7 +306,7 @@ namespace Ginger.Run
             }
             else
             {
-                ExecutionLogger.GenerateBusinessFlowOfflineReport(currentConf.HTMLReportsFolder + bf.Name, bf, App.RunsetExecutor.RunSetConfig.Name);
+                ExecutionLogger.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, App.RunsetExecutor.RunSetConfig.Name);
             }
         }
         private void Businessflow_ClickActive(object sender, RoutedEventArgs e)

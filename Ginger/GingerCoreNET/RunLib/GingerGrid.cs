@@ -17,12 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
-using GingerCoreNET.Drivers;
-using GingerCoreNET.GeneralLib;
 using System.Linq;
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 
 namespace GingerCoreNET.RunLib
 {
@@ -76,7 +74,7 @@ namespace GingerCoreNET.RunLib
                         gingerSocketInfo.Response = RC;
 
                         // add the info of the new node to the grid list
-                        mGingerNodeInfo.Add(new GingerNodeInfo() { Name = NodeName, ServiceId = NodeServiceID, OS = NodeOS, Host = NodeHost, IP = NodeIP, SessionID = gingerSocketInfo.SessionID , Status = "Ready"});
+                        mGingerNodeInfo.Add(new GingerNodeInfo() { Name = NodeName, ServiceId = NodeServiceID, OS = NodeOS, Host = NodeHost, IP = NodeIP, SessionID = gingerSocketInfo.SessionID , Status = GingerNodeInfo.eStatus.Ready });
                         break;
                     }
 
@@ -156,10 +154,12 @@ namespace GingerCoreNET.RunLib
             // TODO: send ShutDown to each node
             //foreach (GingerNodeInfo GNI in NodeList)
             //{
-            //    GNI.
+            //    GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(GNI);
+            //    gingerNodeProxy.GingerGrid = this;
+            //    gingerNodeProxy.Shutdown();
+            //    NodeList.Remove(GNI);
             //}
-
-            NodeList.Clear();
+            //}
         }
     }
 }

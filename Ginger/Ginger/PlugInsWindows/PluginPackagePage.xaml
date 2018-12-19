@@ -75,7 +75,14 @@
                         <TextBlock Text="Services" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="xServicesGrid" Title="Services" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30*"/>
+                        <RowDefinition Height="70*"/>
+                    </Grid.RowDefinitions>
+                    <Ginger:ucGrid x:Name="xServicesGrid" Title="Services" RowChangedEvent="XServicesGrid_RowChangedEvent" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
+                    <Ginger:ucGrid x:Name="xServiceActionGrid" Grid.Row="1" Title="Service Actions" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
+                </Grid>
             </TabItem>
             <TabItem x:Name="TextEditorTab" Margin="2,0,-6,0">
                 <TabItem.Header>
