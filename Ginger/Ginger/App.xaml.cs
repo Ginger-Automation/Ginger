@@ -60,6 +60,7 @@ using System.Windows.Threading;
 using System.Windows.Input;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -231,7 +232,8 @@ namespace Ginger
             }
         }
 
-        public static GingerRunner AutomateTabGingerRunner = new GingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
+
+        public static GingerRunner AutomateTabGingerRunner=new GingerRunner(eExecutedFrom.Automation);
 
 
         public static AppProgressBar AppProgressBar { get; set; }
@@ -396,7 +398,7 @@ namespace Ginger
             string phase = string.Empty;
 
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
-            WorkSpace.Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
+            Helper.RuntimeObjectFactory = new RuntimeObjectFactory();
 
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);

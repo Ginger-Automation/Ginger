@@ -42,6 +42,6 @@ namespace Amdocs.Ginger.Common
        
         ObservableList<IDataSourceBase> GetDatasourceList();
         ObservableList<IDatabase> GetDatabaseList();
-        Type GetRepositoryItemTypeFromInterface(Type interfaceType);
+   
     }
 }

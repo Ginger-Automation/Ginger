@@ -45,7 +45,7 @@ namespace Ginger.Activities
             mBusinessFlow = businessFlow;
 
             lstCurrentBusinessFlowErrorHandler = new ObservableList<ErrorHandler>(mBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && a.Active == true
-                      && ((GingerCore.ErrorHandler)a).HandlerType == GingerCore.ErrorHandler.eHandlerType.Error_Handler).Cast<ErrorHandler>().ToList());
+                      && ((ErrorHandler)a).HandlerType == eHandlerType.Error_Handler).Cast<ErrorHandler>().ToList());
 
             if (mActivity.MappedErrorHandlers.Count!= 0)
             {

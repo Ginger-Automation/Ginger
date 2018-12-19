@@ -39,6 +39,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.Run;
 using GingerCoreNET.ReporterLib;
 using Amdocs.Ginger.CoreNET.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 
 namespace Ginger.Run
 {
@@ -1068,7 +1069,7 @@ namespace Ginger.Run
                     CleanDirectory(logFolderPath);
                 else
                     Directory.CreateDirectory(logFolderPath);
-                IGingerRunner Gr = WorkSpace.Helper.RuntimeObjectFactory.CreateGingerRunner();
+                IGingerRunner Gr = Helper.RuntimeObjectFactory.CreateGingerRunner();
 
                 businessFlow.ExecutionLogFolder = logFolderPath;
                 businessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();

@@ -68,7 +68,7 @@ namespace Ginger.BusinessFlowWindows
             List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
             AutomationStatusCombo.ItemsSource = automationStatusList;
             RunOptionCombo.BindControl(activity, Activity.Fields.ActionRunOption);            
-            HandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(ErrorHandler.eHandlerType));
+            HandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eHandlerType));
 
             App.FillComboFromEnumVal(cmbErrorHandlerMapping, mActivity.ErrorHandlerMappingType);
             App.ObjFieldBinding(txtActivityName, TextBox.TextProperty, mActivity, Activity.Fields.ActivityName);

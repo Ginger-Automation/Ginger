@@ -51,10 +51,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common.InterfacesLib;
-using static Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue;
-using static GingerCore.ErrorHandler;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.InterfacesLib;
+
 
 //   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
@@ -1016,7 +1014,7 @@ namespace Ginger.Run
                 if (DataSource.FilePath.StartsWith("~"))
                 {
                     DataSource.FileFullPath = DataSource.FilePath.Replace(@"~\", "").Replace("~", "");
-                    DataSource.FileFullPath = System.IO.Path.Combine(Ginger.App.UserProfile.Solution.Folder, DataSource.FileFullPath);
+                  //  DataSource.FileFullPath = System.IO.Path.Combine(Ginger.App.UserProfile.Solution.Folder, DataSource.FileFullPath);
                 }
                 DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dstTables = DataSource.DSC.GetTablesList();
@@ -1946,11 +1944,11 @@ namespace Ginger.Run
                    
                     switch (mOutputValueType)
                     {
-                        case nameof(OutputValueType.String):
+                        case nameof(Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue.OutputValueType.String):
                             string stringValue = OPL.GetValueString();
                             actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Path = path, Actual = stringValue});
                             break;
-                        case nameof(OutputValueType.ByteArray):
+                        case nameof(Amdocs.Ginger.CoreNET.RunLib.NodeActionOutputValue.OutputValueType.ByteArray):
                             byte[] b = OPL.GetBytes();
                             // GA.Output.Values.Add(new NodeActionOutputValue() { Param = PName, ValueByteArray = b });
                             actPlugin.ReturnValues.Add(new ActReturnValue() { Param = PName, Path= path, Actual = "aaaaaaa" });   //FIXME!!! when act can have values types

@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Amdocs.Ginger.CoreNET
 {
-    public  class Helper
+    public class Helper
     {
-        public  IRuntimeObjectFactory RuntimeObjectFactory { get; set; }
+        public static IRuntimeObjectFactory RuntimeObjectFactory { get; set; }
 
     }
 }
