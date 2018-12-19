@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -702,7 +702,7 @@ namespace GingerCore
                 if (missingActivities != string.Empty && inSilentMode == false)
                 {
                     missingActivities = missingActivities.TrimEnd(new char[] { ',', ' ' });
-                    Reporter.ToUser(eUserMsgKeys.PartOfActivitiesGroupActsNotFound, missingActivities);
+                    AppReporter.ToUser(eUserMsgKeys.PartOfActivitiesGroupActsNotFound, missingActivities);
                     return false;
                 }
                 else
@@ -710,7 +710,7 @@ namespace GingerCore
             }
 
             if (inSilentMode == false)
-                Reporter.ToUser(eUserMsgKeys.ActivitiesGroupActivitiesNotFound);
+                AppReporter.ToUser(eUserMsgKeys.ActivitiesGroupActivitiesNotFound);
             return false;
         }
 

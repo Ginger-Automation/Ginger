@@ -419,16 +419,13 @@
     <Compile Include="Actions\WebServices\ActSoapUiInputValue.cs" />
     <Compile Include="Actions\WebServices\WebAPI\ActWebAPIModel.cs" />
     <Compile Include="Actions\WebServices\WebAPI\WebAPIKeyBodyValues.cs" />
-    <Compile Include="Actions\ActOutDataSourceConfig.cs" />
     <Compile Include="Actions\Common\ActMedia.cs" />
     <Compile Include="Actions\Common\ActBattery.cs" />
     <Compile Include="Actions\Common\ActPhone.cs" />
     <Compile Include="Actions\Common\ActDevice.cs" />
     <Compile Include="Actions\ActDemoPage.cs" />
-    <Compile Include="Actions\Common\ActionParamInfo.cs" />
     <Compile Include="Actions\Common\ElementConfigControl.cs" />
     <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
-    <Compile Include="Actions\PlugIns\ActPlugIn.cs" />
     <Compile Include="Actions\VisualTesting\ApplitoolsAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\IVisualAnalyzer.cs" />
     <Compile Include="Actions\VisualTesting\IVisualTestingDriver.cs" />
@@ -443,7 +440,6 @@
     <Compile Include="Actions\ActImage.cs" />
     <Compile Include="Actions\ActLowLevelClicks.cs" />
     <Compile Include="Actions\ActCreatePDFChart.cs" />
-    <Compile Include="Actions\Act.cs" />
     <Compile Include="Actions\ActActivateRow.cs" />
     <Compile Include="Actions\ActGetMsgboxText.cs" />
     <Compile Include="Actions\ActButton.cs" />
@@ -488,7 +484,6 @@
     <Compile Include="Actions\ActWebService.cs" />
     <Compile Include="Actions\ActWebSitePerformanceTiming.cs" />
     <Compile Include="Actions\ActWindow.cs" />
-    <Compile Include="Actions\Common\ActionDetails.cs" />
     <Compile Include="Actions\Common\ActDeviceButton.cs" />
     <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
@@ -523,7 +518,6 @@
       <DependentUpon>ActionHelper.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\UIAutomation\ActUIASwitchWindow.cs" />
-    <Compile Include="Actions\ActWithoutDriver.cs" />
     <Compile Include="Actions\UIAutomation\ActUIAGrid.cs" />
     <Compile Include="Actions\UIAutomation\ActUIALabel.cs" />
     <Compile Include="Actions\UIAutomation\ActUIAClickOnPoint.cs" />
@@ -538,8 +532,6 @@
     <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
     <Compile Include="Actions\XML\ActXMLProcessing.cs" />
     <Compile Include="Actions\XML\XMLProcessor.cs" />
-    <Compile Include="Activities\ActivitiesGroup.cs" />
-    <Compile Include="Activities\ActivityIdentifiers.cs" />
     <Compile Include="ALM\ALMConfig.cs" />
     <Compile Include="ALM\ALMCore.cs" />
     <Compile Include="ALM\PublishToALMConfig.cs" />
@@ -580,9 +572,7 @@
     <Compile Include="ALM\RQM\RQMConnect.cs" />
     <Compile Include="DataSource\ActDSTableElement.cs" />
     <Compile Include="DataSource\ActDSConditon.cs" />
-    <Compile Include="DataSource\DataSourceBase.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
-    <Compile Include="DataSource\DataSourceTable.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">
       <DependentUpon>AndroidADBDriverWindow.xaml</DependentUpon>
@@ -696,7 +686,6 @@
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>
     </Compile>
     <Compile Include="Activities\ErrorHandler.cs" />
-    <Compile Include="Activities\Activity.cs" />
     <Compile Include="Animations\Animations.cs" />
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
@@ -730,8 +719,6 @@
     </Compile>
     <Compile Include="Drivers\WebServicesDriverLib\WebServiceXML.cs" />
     <Compile Include="Drivers\WindowsLib\WindowsDriver.cs" />
-    <Compile Include="Environments\ProjEnvironment.cs" />
-    <Compile Include="FlowControlLib\FlowControl.cs" />
     <Compile Include="Environments\Database.cs" />
     <Compile Include="GeneralLib\General.cs" />
     <Compile Include="GeneralLib\GenericWindow.xaml.cs">
@@ -764,7 +751,6 @@
     </Compile>
     <Compile Include="Reporter\UserMessagesPool.cs" />
     <Compile Include="Repository\RepositorySerializer.cs" />
-    <Compile Include="BusinessFlow.cs" />
     <Compile Include="Drivers\ASCF\ASCFDriver.cs" />
     <Compile Include="Drivers\DriverBase.cs" />
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowserWindow.xaml.cs">
@@ -915,11 +901,13 @@
     <None Include="Resources\Pin32x32.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Actions\PlugIns\" />
     <Folder Include="Actions\Simulators\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
+    <Folder Include="FlowControlLib\" />
     <Folder Include="Plugins\Jenkins\" />
     <Folder Include="Themes\Theme1\Images\Logo\" />
   </ItemGroup>

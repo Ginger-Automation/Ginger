@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -114,12 +114,13 @@ namespace GingerCore.FlowControlLib
         /// <summary>
         /// Enable getting the condition as VE - used in Grid cell for example
         /// </summary>
-        public ValueExpression ConditionVE
+        public IValueExpression ConditionVE
         {
             get
             {
-                ValueExpression ve = new ValueExpression(this, Fields.Condition);
-                return ve;
+                // IValueExpression ve = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(this, Fields.Condition);
+                // return ve;
+                return null;  // FIXME YW NET
             }
         }
 

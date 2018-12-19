@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2018 European Support Limited
 
@@ -791,7 +791,7 @@ namespace GingerCore.Actions
                 catch (Exception ex)
                 {
                     Array a = Enum.GetValues(typeof(T));
-                    Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     return a.GetValue(0).ToString();
                 }
             }
@@ -811,7 +811,7 @@ namespace GingerCore.Actions
             catch (Exception ex)
             {
                 Error = "Failed to save the screenshot bitmap to temp file. Error= " + ex.Message;
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, Error, ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, Error, ex);
             }
         }
 
@@ -921,7 +921,7 @@ namespace GingerCore.Actions
                             }
                             catch (Exception ex)
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
+                                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                             }
                         }
                     }
@@ -938,12 +938,12 @@ namespace GingerCore.Actions
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
+                        AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                     }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
+                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
             }
         }   // end of AddJsonKeyValueToOutputValue
 
@@ -1416,7 +1416,7 @@ namespace GingerCore.Actions
                             }
                             catch (System.IO.IOException ex)
                             {
-                                Reporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
+                                AppReporter.ToLog(eAppReporterLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
                             }
                         }
                     }
