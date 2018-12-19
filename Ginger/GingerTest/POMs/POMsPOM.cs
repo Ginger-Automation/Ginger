@@ -50,7 +50,7 @@ namespace GingerTest.POMs
 
             ucAgentControlPOM.SelectValueUCAgentControl(agentName);
             ucAgentControlPOM.UCAgentControlStatusButtonClick();
-            SleepWithDoEvents(20000);
+            SleepWithDoEvents(10000);
 
 
             ucGrid ucGrid = (ucGrid)wizard.CurrentPage["AutoMapElementTypesGrid AID"].dependencyObject;

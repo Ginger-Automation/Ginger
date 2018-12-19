@@ -51,11 +51,28 @@ namespace GingerTest.POMs.Common
 
         public void ClickOnCheckBox(string property, string value)
         {
+            int i = 0;
+            foreach (DataGridRow row in mGrid.GetDataGridRows(mGrid.Grid))
+            {
+                CheckBox cb = (CheckBox)mGrid.GetDataTemplateCellControl<CheckBox>(row, 0);
+
+
+                DataGridCell cell = null;
+                
+                Execute(() => {
+                    cell = mGrid.GetDataGridCell(row, i);
+
+                });
+                
+                
+                i++;
+            }
+
             foreach (var item in mGrid.DataSourceList)
             {
                 if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
                 {
-                    
+                    mGrid.GetDataGridRows(mGrid.Grid);
                 }
             }
         }
