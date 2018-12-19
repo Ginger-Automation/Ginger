@@ -58,6 +58,9 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void InstalledPluginPackageFromOnline()
         {
             //Arrange   
+
+            // TODO: create a simple plugin for unit test which will download faster.
+
             string PluginId = "PACT";
             string PluginVersion = "1.6";
             string path = TestResources.getGingerUnitTesterTempFolder(@"Solutions\PluginsManagerSR1");
@@ -77,14 +80,14 @@ namespace GingerCoreNETUnitTest.PluginsLib
             // Act            
             var p = pluginsManager.GetOnlinePluginsIndex();
             OnlinePluginPackage onlinePluginPackage = (from x in p where x.Id == PluginId select x).SingleOrDefault();
-            OnlinePluginPackageRelease onlinePluginPackageRelease 
+            //OnlinePluginPackageRelease onlinePluginPackageRelease 
             pluginsManager.InstallPluginPackage(onlinePluginPackage, onlinePluginPackage.Releases[0]);
             //string folder = Path.Combine(Common.GetTestResourcesFolder(), @"PluginPackages\SeleniumPluginPackage.1.0.0");
 
             
             //Assert
             Assert.AreEqual(1, pluginPackages.Count);
-            Assert.AreEqual("Selenium Driver", pluginPackages[0].PluginId);            
+            Assert.AreEqual("PACT", pluginPackages[0].PluginId);            
         }
 
         [TestMethod]
