@@ -1118,9 +1118,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     using (XmlReader reader = XmlReader.Create(CompleteURL))
                     {
                         XmlSchema schema = XmlSchema.Read(reader, null);
-                        XmlDocument doc1 = new XmlDocument();
-                        doc1.Load("http://api.wunderground.com/api/your_key/conditions/q/92135.xml");
-
                         if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
                         {
                             List<string> AllNameSpaceURLs = new List<string>();
