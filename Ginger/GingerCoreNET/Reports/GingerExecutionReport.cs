@@ -2722,7 +2722,7 @@ namespace Ginger.Reports.GingerExecutionReport
             return l.HTMLReportMainFolder;
         }
 
-        public static string CreateActivitiesGroupReportsOfBusinessFlow(ProjEnvironment environment, BusinessFlow BF, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null)
+        public static string CreateActivitiesGroupReportsOfBusinessFlow(IProjEnvironment environment, IBusinessFlow BF, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null)
         {
             Ginger.Reports.GingerExecutionReport.GingerExecutionReport l = new Ginger.Reports.GingerExecutionReport.GingerExecutionReport();
             l.TemplatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
@@ -2772,7 +2772,8 @@ namespace Ginger.Reports.GingerExecutionReport
         {
             //TODO: Currently we return the Ginger EXE in GingerUnitTest, later on need to be the deployed one
             string GingerEXEFileName = Assembly.GetExecutingAssembly().Location;
-            GingerEXEFileName = GingerEXEFileName.Replace(@"GingerUnitTester.exe", "Ginger.exe");
+            
+            GingerEXEFileName = GingerEXEFileName.Replace(Path.GetFileName(GingerEXEFileName), "Ginger.exe");
             return GingerEXEFileName;
         }
 

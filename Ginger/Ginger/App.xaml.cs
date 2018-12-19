@@ -227,7 +227,7 @@ namespace Ginger
             set
             {
                 mAutomateTabEnvironment = value;
-                App.AutomateTabGingerRunner.projEnvironment = mAutomateTabEnvironment;
+                App.AutomateTabGingerRunner.ProjEnvironment = mAutomateTabEnvironment;
                 App.UserProfile.RecentEnvironment = mAutomateTabEnvironment.Guid;
             }
         }

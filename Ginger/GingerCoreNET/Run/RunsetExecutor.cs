@@ -213,11 +213,11 @@ namespace Ginger.Run
             {
                 if (gr.UseSpecificEnvironment)
                 {
-                    if (gr.projEnvironment != null) { }
+                    if (gr.ProjEnvironment != null) { }
                         ////gr.ProjEnvironment.CloseEnvironment();
                 }
             }
-            if (Helper.RuntimeObjectFactory.RunExecutioFrom(eExecutedFrom.Automation).projEnvironment != null) { }
+            if (Helper.RuntimeObjectFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment != null) { }
                 ////RepositoryItemHelper.RepositoryItemFactory.RunExecutioFrom(eExecutedFrom.Automation).ProjEnvironment.CloseEnvironment();
         }
 

@@ -537,7 +537,7 @@ namespace Ginger.Actions
                     if (typeof(ActWithoutDriver).IsAssignableFrom(a.GetType()))
                     {
                         ((ActWithoutDriver)a).RunOnBusinessFlow = (BusinessFlow)App.AutomateTabGingerRunner.CurrentBusinessFlow;
-                        ((ActWithoutDriver)a).RunOnEnvironment =(ProjEnvironment) App.AutomateTabGingerRunner.projEnvironment;
+                        ((ActWithoutDriver)a).RunOnEnvironment =(ProjEnvironment) App.AutomateTabGingerRunner.ProjEnvironment;
                         ((ActWithoutDriver)a).DSList = App.AutomateTabGingerRunner.DSList;
                     }
 

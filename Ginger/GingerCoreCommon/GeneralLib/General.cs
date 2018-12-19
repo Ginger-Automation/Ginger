@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using Amdocs.Ginger.Repository;
@@ -117,7 +118,16 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public static string ImagetoBase64String(Image Img)
         {
-            throw new  NotImplementedException();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                // Convert Image to byte[]
+                Img.Save(ms, ImageFormat.Bmp);
+                byte[] imageBytes = ms.ToArray();
+
+                // Convert byte[] to base 64 string
+                string base64String = Convert.ToBase64String(imageBytes);
+                return base64String;
+            }
         }
 
 
@@ -130,7 +140,14 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public static Image Base64StringToImage(string v)
         {
-            throw new NotImplementedException();
+            byte[] imageBytes = Convert.FromBase64String(v);
+            MemoryStream ms = new MemoryStream(imageBytes, 0, imageBytes.Length);
+
+            // Convert byte[] to Image
+            ms.Write(imageBytes, 0, imageBytes.Length);
+            Image image = Image.FromStream(ms, true);
+
+            return image;
         }
         public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
         {

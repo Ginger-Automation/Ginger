@@ -270,7 +270,7 @@ namespace Ginger.Run
         public bool FilterExecutionByTags { get; set; }
 
         ProjEnvironment mProjEnvironment;
-        public ProjEnvironment ProjEnvironment
+        public IProjEnvironment ProjEnvironment
         {
             get
             {
@@ -278,7 +278,7 @@ namespace Ginger.Run
             }
             set
             {
-                mProjEnvironment = value;
+                mProjEnvironment = (ProjEnvironment)value;
                 if (ExecutionLogger != null)
                 {
                     ExecutionLogger.ExecutionEnvironment = value;
@@ -308,7 +308,7 @@ namespace Ginger.Run
             ExecutionLogger = new ExecutionLogger(ProjEnvironment, eExecutedFrom.Run);            
         }
 
-        public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom eExecutedFrom)
+        public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             ExecutedFrom = executedFrom;
             ExecutionLogger = new ExecutionLogger(ProjEnvironment, ExecutedFrom);
@@ -317,19 +317,19 @@ namespace Ginger.Run
 
         public void SetExecutionEnvironment(IProjEnvironment defaultEnv, ObservableList<IProjEnvironment> allEnvs)
         {
-            projEnvironment = null;
+            ProjEnvironment = null;
             if (UseSpecificEnvironment == true && string.IsNullOrEmpty(SpecificEnvironmentName) == false)
             {
                 ProjEnvironment specificEnv = (from x in allEnvs where x.Name == SpecificEnvironmentName select (ProjEnvironment)x).FirstOrDefault();
                 if (specificEnv != null)
                 {
-                    projEnvironment = specificEnv;
+                    ProjEnvironment = specificEnv;
                 }
             }
 
-            if (projEnvironment == null)
+            if (ProjEnvironment == null)
             {
-                projEnvironment = defaultEnv;
+                ProjEnvironment = defaultEnv;
             }
         }
 
@@ -517,8 +517,8 @@ namespace Ginger.Run
                     if (!mStopRun)//not on stop run
                     {
                         CloseAgents();
-                        if (projEnvironment != null)
-                            projEnvironment.CloseEnvironment();
+                        if (ProjEnvironment != null)
+                            ProjEnvironment.CloseEnvironment();
                         Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Completed;
                     }
                     PostScopeVariableHandling(BusinessFlow.SolutionVariables);
@@ -594,7 +594,7 @@ namespace Ginger.Run
                 }                    
                 else if(inputVar.MappedOutputType == VariableBase.eOutputType.DataSource)
                 {
-                    mappedValue = GingerCore.ValueExpression.Calculate(projEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
+                    mappedValue = GingerCore.ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
                 }
 
                 if (mappedValue != "")
@@ -633,7 +633,7 @@ namespace Ginger.Run
         {
             try
             {
-                Agent.ProjEnvironment = (ProjEnvironment)projEnvironment;
+                Agent.ProjEnvironment = (ProjEnvironment)ProjEnvironment;
                 Agent.BusinessFlow = CurrentBusinessFlow;
                 Agent.SolutionFolder = SolutionFolder;
                 Agent.DSList = DSList;                
@@ -1181,7 +1181,7 @@ namespace Ginger.Run
         public void ProcessReturnValueForDriver(Act act)
         {
             //Handle all output values, create Value for Driver for each
-            ValueExpression VE = new ValueExpression(projEnvironment, CurrentBusinessFlow, DSList);
+            ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
 
             foreach (ActReturnValue ARV in act.ActReturnValues)
             {
@@ -1195,7 +1195,7 @@ namespace Ginger.Run
         public void ProcessInputValueForDriver(Act act)
         {
             //Handle all input values, create Value for Driver for each
-            ValueExpression VE = new ValueExpression(projEnvironment, CurrentBusinessFlow, DSList);
+            ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
 
             VE.DecryptFlag = true;
             foreach (var IV in act.InputValues)
@@ -1235,7 +1235,7 @@ namespace Ginger.Run
 
         private void ProcessWait(Act act, Stopwatch st)
         {
-            ValueExpression valueExpression = new ValueExpression(projEnvironment, CurrentBusinessFlow, DSList);
+            ValueExpression valueExpression = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
 
             valueExpression.Value = act.WaitVE;
             if (!String.IsNullOrEmpty(valueExpression.ValueCalculated))
@@ -1366,7 +1366,7 @@ namespace Ginger.Run
 
         public void PrepActionVE(Act act)
         {
-            ValueExpression VE = new ValueExpression(projEnvironment, CurrentBusinessFlow, DSList);
+            ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
             if (!string.IsNullOrEmpty(act.LocateValue))
             {
                 
@@ -1389,7 +1389,7 @@ namespace Ginger.Run
             foreach (VariableBase v in vars)
             {
                 VariableDynamic vd = (VariableDynamic)v;
-                vd.Init(projEnvironment, CurrentBusinessFlow);
+                vd.Init(ProjEnvironment, CurrentBusinessFlow);
             }
         }
 
@@ -1714,7 +1714,7 @@ namespace Ginger.Run
             if (act.ReturnValues.Count == 0)
                 return;
 
-            ValueExpression VE = new ValueExpression(projEnvironment, CurrentBusinessFlow, DSList);
+            ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
             foreach (ActReturnValue item in act.ActReturnValues)
             {
                 if (item.SimulatedActual != null)
@@ -1768,7 +1768,7 @@ namespace Ginger.Run
                 int count = (from x in CurrentBusinessFlow.CurrentActivity.Acts where x.GetType() != typeof(ActPlugIn) select x).Count();
                 if (count > 0)
                 {
-                    StartAgent(AA.Agent);
+                    StartAgent((Agent)AA.Agent);
                 }
             }
 
@@ -1797,7 +1797,7 @@ namespace Ginger.Run
                 //Adding for New Control
                 else if (item.StoreTo == ActReturnValue.eStoreTo.DataSource && !String.IsNullOrEmpty(item.StoreToValue))
                 {
-                    GingerCore.ValueExpression.Calculate(projEnvironment, CurrentBusinessFlow, item.StoreToValue, DSList, true, item.Actual);
+                    GingerCore.ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, item.StoreToValue, DSList, true, item.Actual);
                 }
                 else if(item.StoreTo == ActReturnValue.eStoreTo.ApplicationModelParameter && !string.IsNullOrEmpty(item.StoreToValue))
                 {
@@ -1827,7 +1827,7 @@ namespace Ginger.Run
             ActWithoutDriver AWD = (ActWithoutDriver)act;
             AWD.RunOnBusinessFlow = CurrentBusinessFlow;
 
-            AWD.RunOnEnvironment = (ProjEnvironment)projEnvironment;
+            AWD.RunOnEnvironment = (ProjEnvironment)ProjEnvironment;
             // avoid NPE when running UT
 
             AWD.SolutionFolder = SolutionFolder;
@@ -2078,7 +2078,7 @@ namespace Ginger.Run
             {                                                 
                 //TODO: on pass, on fail etc...
                 bool IsStopLoop = false;                
-                ValueExpression VE = new ValueExpression(this.projEnvironment, this.CurrentBusinessFlow, this.DSList);
+                ValueExpression VE = new ValueExpression(this.ProjEnvironment, this.CurrentBusinessFlow, this.DSList);
 
                 foreach (FlowControl FC in act.FlowControls)
                 {
@@ -2088,7 +2088,7 @@ namespace Ginger.Run
                         continue;
                     }
 
-                    FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)projEnvironment, act, this.DSList);
+                    FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, act, this.DSList);
 
                     //TODO: Move below condition inside calculate condition once move execution logger to Ginger core
 
@@ -2103,7 +2103,7 @@ namespace Ginger.Run
                             FC.ConditionCalculated = FC.ConditionCalculated.Replace("{LastActivityStatus}", "Last executed Activity Status not available");
                         }
                     }
-                    FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)projEnvironment, this.DSList);
+                    FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, this.DSList);
 
                     string rc = VBS.ExecuteVBSEval(FC.ConditionCalculated.Trim());
 
@@ -2453,7 +2453,7 @@ namespace Ginger.Run
                 else
                 {
                     //get Expected Calculated
-                    ValueExpression ve = new ValueExpression(projEnvironment, CurrentBusinessFlow, DSList);
+                    ValueExpression ve = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
                     ve.Value = ARC.Expected;
                     //replace {Actual} place holder with real Actual value
                     if (ve.Value.Contains("{Actual}"))
@@ -3123,7 +3123,7 @@ namespace Ginger.Run
                 //Do run preparations
                 SetBusinessFlowInputVarsWithOutputValues(CurrentBusinessFlow);
                 UpdateLastExecutingAgent();
-                CurrentBusinessFlow.Environment = projEnvironment == null ? "" : projEnvironment.Name;
+                CurrentBusinessFlow.Environment = ProjEnvironment == null ? "" : ProjEnvironment.Name;
                 PrepDynamicVariables();
                 
                 //Start execution
@@ -3837,7 +3837,7 @@ namespace Ginger.Run
             int? fcReturnIndex = null;
             //TODO: on pass, on fail etc...
             bool IsStopLoop = false;
-            ValueExpression VE = new ValueExpression(this.projEnvironment, this.CurrentBusinessFlow, this.DSList);
+            ValueExpression VE = new ValueExpression(this.ProjEnvironment, this.CurrentBusinessFlow, this.DSList);
 
             foreach (FlowControl FC in bf.BFFlowControls)
             {
@@ -3851,9 +3851,9 @@ namespace Ginger.Run
                     FC.Status = eStatus.Pending;
                 }
 
-                FC.CalculateCondition(CurrentBusinessFlow,(ProjEnvironment) projEnvironment, this.DSList);
+                FC.CalculateCondition(CurrentBusinessFlow,(ProjEnvironment) ProjEnvironment, this.DSList);
 
-                FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)projEnvironment, this.DSList);
+                FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, this.DSList);
 
                 string rc = VBS.ExecuteVBSEval(FC.ConditionCalculated.Trim());
 

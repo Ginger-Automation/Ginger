@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET.InterfacesLib
         ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; }
         string Name { get; set; }
         bool UseSpecificEnvironment { get; set; }
-        IProjEnvironment projEnvironment { get; set; }
+        IProjEnvironment ProjEnvironment { get; set; }
         Guid Guid { get; }
         ObservableList<IApplicationAgent> ApplicationAgents { get; set; }
         bool IsRunning { get; }
