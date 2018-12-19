@@ -272,7 +272,7 @@ namespace Ginger.Run
                 {
                     Parallel.ForEach(mRunSetConfig.GingerRunners, Runner =>
                     {
-                        Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>();
+                        Runner.SolutionAgents = new ObservableList<IAgent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x).ToList());
                         //to get the latest list of applications agents
                         Runner.UpdateApplicationAgents();
                     });
@@ -444,7 +444,7 @@ namespace Ginger.Run
             }
             this.Dispatcher.Invoke(() =>
             {
-                mCurrentSelectedRunner.Runner.TotalBusinessflow = ((IList<BusinessFlow>)sender).Count;
+                mCurrentSelectedRunner.Runner.TotalBusinessflow = ((IList<IBusinessFlow>)sender).Count;
                 mCurrentSelectedRunner.UpdateExecutionStats();
                 UpdateBusinessflowCounter();
                 mCurrentSelectedRunner.UpdateRunnerInfo();

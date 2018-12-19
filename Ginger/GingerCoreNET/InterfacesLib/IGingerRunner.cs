@@ -4,6 +4,7 @@ using System.Text;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
@@ -25,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.InterfacesLib
     {
         double? Elapsed { get;  }
         ExecutionLogger ExecutionLogger { get; }
-        object CurrentSolution { get; set; }
+        ISolution CurrentSolution { get; set; }
         ObservableList<IAgent> SolutionAgents { get; set; }
         ObservableList<IDataSourceBase> DSList { get; set; }
         ObservableList<ApplicationPlatform> SolutionApplications { get; set; }

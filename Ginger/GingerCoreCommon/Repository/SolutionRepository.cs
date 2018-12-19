@@ -415,7 +415,7 @@ namespace Amdocs.Ginger.Repository
         {
             SolutionRepositoryItemInfoBase SRII;
 
-//           type= RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(type);
+           //type= RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(type);
 
             mSolutionRepositoryItemInfoDictionary.TryGetValue(type, out SRII);
 

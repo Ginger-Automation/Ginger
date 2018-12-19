@@ -42,6 +42,7 @@ using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
+using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerCoreNET.RunLib;
@@ -968,8 +969,8 @@ namespace Ginger
         {
             App.AutomateTabGingerRunner.projEnvironment = App.AutomateTabEnvironment;
             App.AutomateTabGingerRunner.SolutionFolder = App.UserProfile.Solution.Folder;
-            App.AutomateTabGingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IDataSourceBase>();
-            App.AutomateTabGingerRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<IAgent>();            
+            App.AutomateTabGingerRunner.DSList = new ObservableList<IDataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().ListItems.ConvertAll(x => (IDataSourceBase)x).ToList());
+            App.AutomateTabGingerRunner.SolutionAgents = new ObservableList<IAgent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x).ToList());
             App.AutomateTabGingerRunner.SolutionApplications = App.UserProfile.Solution.ApplicationPlatforms;
 
             SetGingerRunnerSpeed();

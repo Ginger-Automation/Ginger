@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.Run;
@@ -25,6 +26,7 @@ using GingerCore.Activities;
 using GingerCore.Environments;
 using GingerCore.Variables;
 using System;
+using System.Collections.Generic;
 
 namespace Ginger.Repository
 {
@@ -62,7 +64,7 @@ namespace Ginger.Repository
             return new ObservableList<IDataSourceBase>();
         }
 
-  
+
 
         public Type GetRepositoryItemTypeFromInterface(Type interfaceType)
         {
@@ -95,6 +97,13 @@ namespace Ginger.Repository
             }
         }
 
-        
+        public ObservableList<IAgent> GetAllIAgents()
+        {
+            return new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x));
+        }
+        public ObservableList<IProjEnvironment> GetAllEnvironments()
+        {
+            return new ObservableList<IProjEnvironment>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ListItems.ConvertAll(x => (IProjEnvironment)x));
+        }
     }
 }

@@ -320,7 +320,7 @@ namespace Ginger.Run
             }
         }
 
-        public Solution CurrentSolution { get; set; }
+        public ISolution CurrentSolution { get; set; }
 
         [IsSerializedForLocalRepository]
         public ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; } = new ObservableList<BusinessFlowRun>();
@@ -3789,7 +3789,7 @@ namespace Ginger.Run
             }
         }
 
-        object IGingerRunner.CurrentSolution { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+   
 
         private bool CheckIfActivityTagsMatch()
         {
